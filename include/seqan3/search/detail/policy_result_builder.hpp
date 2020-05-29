@@ -14,6 +14,7 @@
 
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/search/search_result.hpp>
 
 namespace seqan3::detail
 {
@@ -23,11 +24,11 @@ namespace seqan3::detail
 struct policy_result_builder
 {
 protected:
-    /*!\brief Returns all hits (index cursor) without calling locate on each cursor.
+    /*!\brief Returns all hits (index cursors) without calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over index cursors.
+     * \returns a range over seqan3::search_result.
      *
      * \details
      *
@@ -39,14 +40,21 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
-        return internal_hits;
+        using search_result_t = search_result<size_t, index_cursor_t, empty_type, empty_type>;
+        std::vector<search_result_t> results(internal_hits.size());
+
+        for (size_t i = 0; i < internal_hits.size(); ++i)
+            results[i] = search_result_t{0, internal_hits[i]};
+
+        return results;
     }
 
-    /*!\brief If `internal_hits` is not empty, calls lazy_locate on the first cursor and returns the first text position.
+    /*!\brief If `internal_hits` is not empty, calls lazy_locate on the first cursor and returns a
+    *         seqan3::search_result with the first text position.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over a single text position.
+     * \returns a range over a seqan3::search_result.
      */
     template <typename index_cursor_t, typename configuration_t>
     //!\cond
@@ -55,33 +63,31 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
-        using index_t = typename index_cursor_t::index_type;
-        using position_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                              typename index_t::size_type>;
-        std::vector<position_t> positions;
+        using index_size_t = typename index_cursor_t::index_type::size_type;
+        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
+
+        std::vector<search_result_t> results{};
 
         if (!internal_hits.empty())
         {
             // only one cursor is reported but it might contain more than one text position
-            auto text_pos = internal_hits[0].lazy_locate();
-            positions.push_back(text_pos[0]);
+            auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
+            results.push_back(search_result_t{0, ref_id, ref_pos});
         }
-
-        return positions;
+        return results;
     }
 
-    /*!\brief Returns a range over text positions by calling locate on each cursor.
+    /*!\brief Returns a range over seqan3::search_result by calling locate on each cursor.
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam configuration_t The search configuration type.
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over text positions.
+     * \returns a range over seqan3::search_result.
      *
      * \details
      *
      * This function is used for all search modi except single_best (which are all, all_best, and strata).
      *
-     * The text positions are sorted and made unique before returning them.
+     * The text positions are sorted and made unique by position before returning them.
      */
     template <typename index_cursor_t, typename configuration_t>
     //!\cond
@@ -90,19 +96,27 @@ protected:
     //!\endcond
     auto make_results(std::vector<index_cursor_t> internal_hits, configuration_t const &)
     {
-        using index_t = typename index_cursor_t::index_type;
-        using position_t = std::conditional_t<index_t::text_layout_mode == text_layout::collection,
-                                              std::pair<typename index_t::size_type, typename index_t::size_type>,
-                                              typename index_t::size_type>;
-        std::vector<position_t> positions;
+        using index_size_t = typename index_cursor_t::index_type::size_type;
+        using search_result_t = search_result<size_t, empty_type, index_size_t, index_size_t>;
+
+        std::vector<search_result_t> results{};
+        results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
         for (auto const & cursor : internal_hits)
-            std::ranges::move(cursor.locate(), std::ranges::back_inserter(positions));
+            for (auto && [ref_id, ref_pos] : cursor.locate())
+                results.push_back(search_result_t{0, ref_id, ref_pos});
 
-        std::sort(positions.begin(), positions.end());
-        positions.erase(std::unique(positions.begin(), positions.end()), positions.end());
+        // sort by reference id or by reference position if both have the same reference id.
+        auto compare = [] (auto const & r1, auto const & r2)
+        {
+            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos())
+                                                            : (r1.reference_id() < r2.reference_id());
+        };
 
-        return positions;
+        std::sort(results.begin(), results.end(), compare);
+        results.erase(std::unique(results.begin(), results.end()), results.end());
+
+        return results;
     }
 };
 

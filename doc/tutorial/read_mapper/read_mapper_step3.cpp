@@ -46,7 +46,7 @@ void map_reads(std::filesystem::path const & query_path,
         iarchive(index);
     }
 
-    seqan3::sequence_file_input query_in{query_path};
+    seqan3::sequence_file_input query_file_in{query_path};
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error{seqan3::search_cfg::total{errors}} |
                                                 seqan3::search_cfg::hit_all_best;
@@ -57,17 +57,18 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 //! [alignment_config]
 
-    for (auto & [query, id, qual] : query_in | seqan3::views::take(20))
+    for (auto && record : query_file_in | seqan3::views::take(20))
     {
-        for (auto & [query_idx, text_pos] : search(query, index, search_config))
+        auto & query = seqan3::get<seqan3::field::seq>(record);
+        for (auto && result : search(query, index, search_config))
         {
-            size_t start = text_pos.second ? text_pos.second - 1 : 0;
-            std::span text_view{std::data(storage.seqs[text_pos.first]) + start, query.size() + 1};
+            size_t start = result.reference_begin_pos() ? result.reference_begin_pos() - 1 : 0;
+            std::span text_view{std::data(storage.seqs[result.reference_id()]) + start, query.size() + 1};
 
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
                 auto && [aligned_database, aligned_query] = alignment.alignment();
-                seqan3::debug_stream << "id:       " << id << '\n';
+                seqan3::debug_stream << "id:       " << seqan3::get<seqan3::field::id>(record) << '\n';
                 seqan3::debug_stream << "score:    " << alignment.score() << '\n';
                 seqan3::debug_stream << "database: " << aligned_database << '\n';
                 seqan3::debug_stream << "query:    "  << aligned_query << '\n';

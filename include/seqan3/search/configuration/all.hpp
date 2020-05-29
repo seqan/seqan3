@@ -60,6 +60,10 @@
  * | \ref search_configuration_subsection_hit_strategy "3. Hit"          |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
  * | \ref seqan3::search_cfg::parallel "4: Parallel"                     |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
+ * \subsection search_configuration_search_result Search result type
+ *
+ * \copydetails seqan3::search_result
+ *
  * \subsection search_configuration_subsection_hit_strategy 3. Hit Configuration
  *
  * This configuration can be used to determine which hits are reported.

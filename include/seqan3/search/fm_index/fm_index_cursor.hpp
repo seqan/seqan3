@@ -58,7 +58,6 @@ template <typename index_t>
 class fm_index_cursor
 {
 public:
-
     /*!\name Member types
      * \{
      */
@@ -69,8 +68,6 @@ public:
     //!\}
 
 private:
-    //!\privatesection
-
     /*!\name Member types
      * \{
      */
@@ -84,6 +81,10 @@ private:
     using sdsl_sigma_type = typename index_type::sdsl_sigma_type;
     //!\brief Alphabet type of the index.
     using index_alphabet_type = typename index_t::alphabet_type;
+    //!\brief The result value type when calling locate, a pair of reference id and reference position.
+    using locate_result_value_type = std::pair<size_type, size_type>;
+    //!\brief The result vector type when calling locate.
+    using locate_result_type = std::vector<locate_result_value_type>;
     //!\}
 
     //!\brief Underlying FM index.
@@ -539,30 +540,32 @@ public:
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
-    std::vector<size_type> locate() const
+    locate_result_type locate() const
     //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
     //!\endcond
     {
         assert(index != nullptr);
 
-        std::vector<size_type> occ(count());
-        for (size_type i = 0; i < occ.size(); ++i)
+        locate_result_type occ{};
+        occ.reserve(count());
+        for (size_type i = 0; i < count(); ++i)
         {
-            occ[i] = offset() - index->index[node.lb + i];
+            occ.emplace_back(0, offset() - index->index[node.lb + i]);
         }
+
         return occ;
     }
 
     //!\overload
-    std::vector<std::pair<size_type, size_type>> locate() const
+    locate_result_type locate() const
     //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
     //!\endcond
     {
         assert(index != nullptr);
 
-        std::vector<std::pair<size_type, size_type>> occ;
+        locate_result_type occ;
         occ.reserve(count());
         for (size_type i = 0; i < count(); ++i)
         {
@@ -594,7 +597,10 @@ public:
         assert(index != nullptr);
 
         return std::views::iota(node.lb, node.lb + count())
-               | std::views::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; });
+             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
+               {
+                   return locate_result_value_type{0u, _offset - index->index[sa_pos]};
+               });
     }
 
     //!\overload
@@ -606,15 +612,17 @@ public:
         assert(index != nullptr);
 
         return std::views::iota(node.lb, node.lb + count())
-               | std::views::transform([*this, _offset = offset()] (auto sa_pos) { return _offset - index->index[sa_pos]; })
-               | std::views::transform([*this] (auto loc)
+             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
+               {
+                   return _offset - index->index[sa_pos];
+               })
+             | std::views::transform([*this] (auto loc)
                {
                    size_type sequence_rank = index->text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->text_begin_ss.select(sequence_rank);
-                   return std::make_pair(sequence_rank-1, sequence_position);
+                   return locate_result_value_type{sequence_rank - 1, sequence_position};
                });
     }
-
 };
 
 //!\}

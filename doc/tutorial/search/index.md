@@ -17,7 +17,7 @@ In this tutorial you will learn how to construct an index and conduct searches.
 # Introduction
 
 Exact and approximate string matching is a common problem in bioinformatics, e.g. in read mapping.
-Usually, we want to search for a match of one or many small sequences (queries) in a database consisting of one or
+Usually, we want to search for a hit of one or many small sequences (queries) in a database consisting of one or
 more large sequences (references). Trivial approaches such as on-line search fail at this task for large data due
 to prohibitive run times.
 
@@ -39,8 +39,8 @@ search them efficiently using seqan3::search.
 
 With this module you can:
 * Create, store and load (Bi)-FM-Indices
-* Search for exact matches
-* Search for approximate matches (allowing substitutions and indels)
+* Search for exact hits
+* Search for approximate hits (allowing substitutions and indels)
 
 The results of the search can be passed on to other modules, e.g. to create an alignment.
 
@@ -104,21 +104,20 @@ allow substitutions and indels, and how to configure what kind of results we wan
 the best result.
 
 ## Terminology
-### Match
-If a query can be found in the reference with the specified error configuration, we denote this result as a match.
-If the query matches the reference without any errors, we call this an exact match. If a match contains errors,
-it's an approximate match.
+### Hit
+If a query can be found in the reference with the specified error configuration, we denote this result as a hit.
+If the query is found in the reference sequence without any errors, we call this an exact hit, otherwise, if it contains errors,
+it's an approximate hit.
 
-## Searching for exact matches
+## A hit is stored in a seqan3::search_result
 
-We can search for all exact matches using seqan3::search:
+\copydetails seqan3::search_result
+
+## Searching for exact hits
+
+We can search for all exact hits using seqan3::search:
 
 \include doc/tutorial/search/search_basic_search.cpp
-
-When using a single text, the search will return a std::vector of the begin positions of matches in the reference.
-
-For text collections, a std::vector over std::tuple where the first element represents the index of the text in the
-collection and the second element represents the position within the text is returned.
 
 You can also pass multiple queries at the same time:
 
@@ -143,15 +142,21 @@ std::vector<dna4_vector> text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTA"_dna4,
 ```console
 =====   Running on a single text   =====
 There are 3 hits.
-The positions are [1,41,77]
+The following hits were found:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:0, reference_pos:41>
+<query_id:0, reference_id:0, reference_pos:77>
 
 ===== Running on a text collection =====
 There are 3 hits.
-The positions are [(0,1),(1,9),(2,16)]
+The following hits were found:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:1, reference_pos:9>
+<query_id:0, reference_id:2, reference_pos:16>
 ```
 \endsolution
 
-## Searching for approximate matches
+## Searching for approximate hits
 
 If you want to allow for errors in your query, you need to configure the approximate search with a
 seqan3::search_cfg::max_error or seqan3::search_cfg::max_error_rate object.

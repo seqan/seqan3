@@ -11,8 +11,11 @@ void run_text_single()
                 text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
-    seqan3::debug_stream << "=====   Running on a single text   =====\n";
-    seqan3::debug_stream << "The positions are " << search("GCT"_dna4, index) << '\n';
+    seqan3::debug_stream << "=====   Running on a single text   =====\n"
+                         << "The following hits were found:\n";
+
+    for (auto && result : search("GCT"_dna4, index))
+        seqan3::debug_stream << result << '\n';
 }
 
 void run_text_collection()
@@ -22,8 +25,11 @@ void run_text_collection()
                                           "GGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};
 
-    seqan3::debug_stream << "===== Running on a text collection =====\n";
-    seqan3::debug_stream << "The positions are " << search("GCT"_dna4, index) << '\n';
+    seqan3::debug_stream << "===== Running on a text collection =====\n"
+                         << "The following hits were found:\n";
+
+    for (auto && result : search("GCT"_dna4, index))
+        seqan3::debug_stream << result << '\n';
 }
 
 int main()

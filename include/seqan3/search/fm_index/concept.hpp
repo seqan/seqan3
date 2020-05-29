@@ -174,9 +174,7 @@ SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires 
     { cur.last_rank()    } -> typename t::size_type;
     { cur.query_length() } -> typename t::size_type;
     { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::conditional_t<t::index_type::text_layout_mode == text_layout::collection,
-                                                std::vector<std::pair<typename t::size_type, typename t::size_type>>,
-                                                std::vector<typename t::size_type>>;
+    { cur.locate()       } -> std::vector<std::pair<typename t::size_type, typename t::size_type>>;
     { cur.lazy_locate()  } -> auto;
 };
 //!\endcond

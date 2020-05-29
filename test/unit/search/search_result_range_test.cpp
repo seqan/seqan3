@@ -21,16 +21,42 @@
 // Simple executor used as mock for the test.
 // ----------------------------------------------------------------------------
 
+struct dummy_result_type
+{
+    size_t query_id_{};
+    size_t reference_begin_pos_{};
+
+    friend bool operator==(dummy_result_type const & lhs, dummy_result_type const & rhs)
+    {
+        return std::tie(lhs.query_id_, lhs.reference_begin_pos_) == std::tie(rhs.query_id_, rhs.reference_begin_pos_);
+    }
+
+    friend bool operator!=(dummy_result_type const & lhs, dummy_result_type const & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    friend std::ostream & operator<<(std::ostream & stream, const dummy_result_type & result)
+    {
+        stream << "query_id:" << result.query_id_ << " pos:" << result.reference_begin_pos_;
+        return stream;
+    }
+};
+
 struct dummy_search_algorithm
 {
     using value_type      = size_t;
     using reference       = value_type;
     using difference_type = std::ptrdiff_t;
 
+    // Currently, the query id is set within the search result range. This needs to be adapted.
+    template <typename search_algorithm_t, typename query_range_t>
+    friend class search_result_range;
+
     template <typename query_t>
     auto operator()(query_t && /*query*/)
     {
-        return std::vector<size_t>{0, 1, 2, 3, 4};
+        return std::vector<dummy_result_type>{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}};
     }
 };
 
@@ -54,9 +80,9 @@ struct iterator_fixture<search_range_iterator> : search_result_range_test
     static constexpr bool const_iterable = false;
 
     search_result_range_t test_range{dummy_search_algorithm{}, this->query_range | seqan3::views::type_reduce};
-    std::vector<std::pair<size_t, size_t>> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
-                                                          {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
-                                                          {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
+    std::vector<dummy_result_type> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
+                                                  {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
+                                                  {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(search_range_iterator, iterator_fixture, search_range_iterator, );
@@ -100,9 +126,9 @@ TEST_F(search_result_range_test, empty_query_range)
 
 TEST_F(search_result_range_test, issue1799)
 {
-    std::vector<std::pair<size_t, size_t>> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
-                                                          {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
-                                                          {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
+    std::vector<dummy_result_type> expected_range{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4},
+                                                  {1, 0}, {1, 1}, {1, 2}, {1, 3}, {1, 4},
+                                                  {2, 0}, {2, 1}, {2, 2}, {2, 3}, {2, 4}};
     { // move construction
         seqan3::search_result_range rng{dummy_search_algorithm{}, query_range | seqan3::views::type_reduce};
         seqan3::search_result_range moved_range{std::move(rng)};

@@ -45,16 +45,16 @@ void map_reads(std::filesystem::path const & query_path,
         iarchive(index);
     }
 
-    seqan3::sequence_file_input query_in{query_path};
+    seqan3::sequence_file_input query_file_in{query_path};
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error{seqan3::search_cfg::total{errors}} |
                                                 seqan3::search_cfg::hit_all_best;
 
-    for (auto & [query, id, qual] : query_in | seqan3::views::take(20))
+    for (auto && record : query_file_in | seqan3::views::take(20))
     {
-        auto positions = search(query, index, search_config);
-        seqan3::debug_stream << "id:           " << id << '\n';
-        seqan3::debug_stream << "positions:    " << positions << '\n';
+        seqan3::debug_stream << "Hits:" << '\n';
+        for (auto && result : search(seqan3::get<seqan3::field::seq>(record), index, search_config))
+            seqan3::debug_stream << result << '\n';
         seqan3::debug_stream << "======================" << '\n';
     }
     (void) sam_path; // prevent unused parameter warning
