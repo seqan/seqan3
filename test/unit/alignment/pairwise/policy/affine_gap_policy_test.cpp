@@ -62,10 +62,14 @@ struct affine_gap_fixture : public ::testing::Test
     {
         if constexpr (std::tuple_element_t<2, test_types>::value)
         {
-            score_matrix = score_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
-                                                                                        seqan3::upper_bound{2}}};
-            trace_matrix = trace_matrix_t{"ACGT"_dna4, "ACGT"_dna4, seqan3::static_band{seqan3::lower_bound{-2},
-                                                                                        seqan3::upper_bound{2}}};
+            score_matrix = score_matrix_t{"ACGT"_dna4,
+                                          "ACGT"_dna4,
+                                          seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                                             seqan3::align_cfg::upper_diagonal{2}}};
+            trace_matrix = trace_matrix_t{"ACGT"_dna4,
+                                          "ACGT"_dna4,
+                                          seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                                             seqan3::align_cfg::upper_diagonal{2}}};
         }
         else
         {

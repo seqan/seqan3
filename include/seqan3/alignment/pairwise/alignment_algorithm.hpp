@@ -291,8 +291,9 @@ private:
 
         if constexpr (traits_t::is_banded)
         {
+            using seqan3::get;
             // Get the band and check if band configuration is valid.
-            auto const & band = seqan3::get<align_cfg::band>(*cfg_ptr).value;
+            auto const & band = get<align_cfg::band_fixed_size>(*cfg_ptr);
             check_valid_band_parameter(sequence1, sequence2, band);
             auto && [subsequence1, subsequence2] = this->slice_sequences(sequence1, sequence2, band);
             // It would be great to use this interface here instead
@@ -325,27 +326,27 @@ private:
     template <typename sequence1_t, typename sequence2_t>
     constexpr void check_valid_band_parameter(sequence1_t && sequence1,
                                               sequence2_t && sequence2,
-                                              static_band const & band)
+                                              align_cfg::band_fixed_size const & band)
     {
-        static_assert(config_t::template exists<align_cfg::band>(),
+        static_assert(config_t::template exists<align_cfg::band_fixed_size>(),
                       "The band configuration is required for the banded alignment algorithm.");
 
         using diff_type = std::iter_difference_t<std::ranges::iterator_t<sequence1_t>>;
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
-        if (static_cast<diff_type>(band.lower_bound) > std::ranges::distance(sequence1))
+        if (static_cast<diff_type>(band.lower_diagonal.get()) > std::ranges::distance(sequence1))
         {
             throw invalid_alignment_configuration
             {
-                "Invalid band error: The lower bound excludes the whole alignment matrix."
+                "Invalid band error: The lower diagonal excludes the whole alignment matrix."
             };
         }
 
-        if (static_cast<diff_type>(band.upper_bound) < -std::ranges::distance(sequence2))
+        if (static_cast<diff_type>(band.upper_diagonal.get()) < -std::ranges::distance(sequence2))
         {
             throw invalid_alignment_configuration
             {
-                "Invalid band error: The upper bound excludes the whole alignment matrix."
+                "Invalid band error: The upper diagonal excludes the whole alignment matrix."
             };
         }
     }
@@ -411,7 +412,7 @@ private:
 
     //!\overload
     template <typename sequence1_t, typename sequence2_t>
-    void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2, static_band const & band)
+    void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2, align_cfg::band_fixed_size const & band)
     //!\cond
         requires traits_t::is_banded
     //!\endcond

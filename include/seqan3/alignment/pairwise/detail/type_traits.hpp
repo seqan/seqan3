@@ -112,7 +112,7 @@ public:
     //!\brief Flag indicating whether local alignment mode is enabled.
     static constexpr bool is_local = configuration_t::template exists<align_cfg::mode<detail::local_alignment_type>>();
     //!\brief Flag indicating whether banded alignment mode is enabled.
-    static constexpr bool is_banded = configuration_t::template exists<align_cfg::band>();
+    static constexpr bool is_banded = configuration_t::template exists<align_cfg::band_fixed_size>();
     //!\brief Flag indicating whether debug mode is enabled.
     static constexpr bool is_debug = configuration_t::template exists<detail::debug_mode>();
 

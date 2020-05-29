@@ -20,7 +20,6 @@
 //! [include_result]
 
 //! [include_band]
-#include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 //! [include_band]
 
@@ -92,7 +91,8 @@ auto cfg = seqan3::align_cfg::result{seqan3::with_score};
 //! [band]
 
 // Configure a banded alignment.
-auto cfg = seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-4}, seqan3::upper_bound{4}}};
+auto cfg = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
+                                              seqan3::align_cfg::upper_diagonal{4}};
 //! [band]
 (void) cfg;
 }

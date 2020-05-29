@@ -1,6 +1,5 @@
 #include <utility>
 
-#include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -20,7 +19,8 @@ int main()
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
                   seqan3::align_cfg::result{seqan3::with_alignment} |
-                  seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-3}, seqan3::upper_bound{8}}};
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                                     seqan3::align_cfg::upper_diagonal{8}};
 
     for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))
     {

@@ -118,7 +118,10 @@ INSTANTIATE_TYPED_TEST_SUITE_P(banded_trace_matrix_inner_iterator,
 TEST(trace_matrix, trace_path)
 {
     seqan3::detail::alignment_trace_matrix_full_banded<seqan3::detail::trace_directions>
-        matrix{"acgt", "acgt", seqan3::static_band{seqan3::lower_bound{-3}, seqan3::upper_bound{3}}};
+        matrix{"acgt",
+               "acgt",
+               seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                                  seqan3::align_cfg::upper_diagonal{3}}};
 
     EXPECT_THROW((matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{7u},
                                                                       seqan3::detail::column_index_type{4u}})),

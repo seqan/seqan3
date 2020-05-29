@@ -25,7 +25,7 @@ enum struct align_config_id : uint8_t
     //!\brief ID for the \ref seqan3::align_cfg::alignment_result_capture "alignment_result_capture" option.
     alignment_result_capture,
     aligned_ends, //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
-    band,         //!< ID for the \ref seqan3::align_cfg::band "band" option.
+    band,         //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
     debug,        //!< ID for the \ref seqan3::align_cfg::debug "debug" option.
     gap,          //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
     global,       //!< ID for the \ref seqan3::global_alignment "global alignment" option.

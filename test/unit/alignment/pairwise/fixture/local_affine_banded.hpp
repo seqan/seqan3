@@ -48,7 +48,8 @@ static auto dna4_01 = []()
         "ACGTCTACGTA"_dna4,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{5}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                          seqan3::align_cfg::upper_diagonal{5}},
         11,
         "GTTTA",
         "GTCTA",
@@ -101,7 +102,8 @@ static auto dna4_02 = []()
         "AACCGGTTTAACCGGTT"_dna4,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{5}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                          seqan3::align_cfg::upper_diagonal{5}},
         8,
         "AC",
         "AC",
@@ -168,7 +170,8 @@ static auto dna4_03 = []()
             | seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{0}, seqan3::gap_open_score{0}}}
             | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{2},
                                                                            seqan3::mismatch_score{-1}}}
-            | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{0}, seqan3::upper_bound{0}}},
+            | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
+                                                 seqan3::align_cfg::upper_diagonal{0}},
         8,
         "TAAGCGT",
         "TCAGAGT",
@@ -221,7 +224,8 @@ static auto dna4_04 = []()
         "CCCCCC"_dna4,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                          seqan3::align_cfg::upper_diagonal{2}},
         0,
         "",
         "",
@@ -264,7 +268,8 @@ static auto dna4_05 = []()
         "CCCCCCTAAAAAA"_dna4,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-100}, seqan3::upper_bound{0}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-100},
+                                                          seqan3::align_cfg::upper_diagonal{0}},
         24,
         "AAAAAA",
         "AAAAAA",
@@ -322,7 +327,8 @@ static auto dna4_06 = []()
         "CCCCCCTAAAAAA"_dna4,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{0}, seqan3::upper_bound{100}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
+                                                          seqan3::align_cfg::upper_diagonal{100}},
         24,
         "CCCCCC",
         "CCCCCC",
@@ -378,7 +384,8 @@ static auto rna5_01 = []()
         "AAAAAAUUUUNNUUUUCCCCCC"_rna5,
         "AAAAAACCCCCC"_rna5,
         align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}}
-                     | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-10}, seqan3::upper_bound{10}}},
+                     | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10},
+                                                          seqan3::align_cfg::upper_diagonal{10}},
         28,
         "AAAAAAUUUUNNUUUUCCCCCC",
         "AAAAAA----------CCCCCC",
@@ -433,7 +440,8 @@ static auto aa27_01 = []()
         "GALORA"_aa27,
         align_config
             | seqan3::align_cfg::scoring{aminoacid_scoring_scheme{aminoacid_similarity_matrix::BLOSUM62}}
-            | seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-10000}, seqan3::upper_bound{10000}}},
+            | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10000},
+                                                 seqan3::align_cfg::upper_diagonal{10000}},
         13,
         "GATOR",
         "GALOR",

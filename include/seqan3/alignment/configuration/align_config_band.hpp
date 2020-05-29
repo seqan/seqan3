@@ -14,51 +14,104 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/alignment/exception.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
+#include <seqan3/core/detail/strong_type.hpp>
 
 namespace seqan3::align_cfg
 {
 
-/*!\brief Configuration element for setting the band.
+/*!\brief A strong type representing the lower diagonal of the seqan3::align_cfg::band_fixed_size.
  * \ingroup alignment_configuration
- *
- * \tparam band_t The type of the band.
+ */
+struct lower_diagonal : public seqan3::detail::strong_type<int32_t, lower_diagonal>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<int32_t, lower_diagonal>;
+    // Import the base class constructors
+    using base_t::base_t;
+};
+
+/*!\brief A strong type representing the upper diagonal of the seqan3::align_cfg::band_fixed_size.
+ * \ingroup alignment_configuration
+ */
+struct upper_diagonal : public seqan3::detail::strong_type<int32_t, upper_diagonal>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<int32_t, upper_diagonal>;
+    // Import the base class constructors
+    using base_t::base_t;
+};
+
+/*!\brief Configuration element for setting a fixed size band.
+ * \ingroup alignment_configuration
  *
  * \details
  *
- * Configures the banded alignment algorithm. Currently only seqan3::static_band is allowed as argument.
- * If no band is configured for the alignment algorithm the full alignment matrix will be computed.
- * Before executing the algorithm the band is tested for valid settings, e.g. that the upper bound is not smaller than
- * the lower bound, or the band is not shifted out of the alignment matrix. If an invalid setting is detected, a
- * seqan3::invalid_alignment_configuration exception will be thrown.
+ * Configures the banded alignment algorithm. Currently only a fixed size band is allowed.
+ * The band is given in form of a seqan3::align_cfg::lower_diagonal and a seqan3::align_cfg::upper_diagonal.
+ * A diagonal represents the cells in the alignment matrix that are not crossed by the alignment either downwards by
+ * the lower diagonal or rightwards by the upper diagonal. Thus any computed alignment will be inside the area defined
+ * by the lower and the upper diagonal.
+ *
+ * If this configuration is default constructed or not set during the algorithm configuration the full alignment
+ * matrix will be computed.
+ *
+ * During the construction of this configuration element or before the execution of the alignment algorithm the
+ * band configuration is validated. If the user provided an invalid band, e.g. the upper diagonal is smaller than
+ * the lower diagonal, the alignment matrix would be ill configured such that the requested alignment method cannot
+ * be computed (because the global alignment requires the first cell and the last cell of the matrix to be reachable),
+ * then a seqan3::invalid_alignment_configuration will be thrown.
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_band_example.cpp
  */
-template <typename band_t>
-//!\cond
-    requires std::same_as<band_t, static_band>
-//!\endcond
-struct band : public pipeable_config_element<band<band_t>, band_t>
+class band_fixed_size : public pipeable_config_element<band_fixed_size>
 {
+private:
+    //!\brief The base class type.
+    using base_t = pipeable_config_element<band_fixed_size>;
+
+public:
+    //!\brief The selected lower diagonal. Defaults to `std::%numeric_limits<int32_t>::%lowest()`.
+    seqan3::align_cfg::lower_diagonal lower_diagonal{std::numeric_limits<int32_t>::lowest()};
+    //!\brief The selected upper diagonal. Defaults to `std::%numeric_limits<int32_t>::%max()`.
+    seqan3::align_cfg::upper_diagonal upper_diagonal{std::numeric_limits<int32_t>::max()};
+
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr band_fixed_size() = default; //!< Defaulted.
+    constexpr band_fixed_size(band_fixed_size const &) = default; //!< Defaulted.
+    constexpr band_fixed_size(band_fixed_size &&) = default; //!< Defaulted.
+    constexpr band_fixed_size & operator=(band_fixed_size const &) = default; //!< Defaulted.
+    constexpr band_fixed_size & operator=(band_fixed_size &&) = default; //!< Defaulted.
+    ~band_fixed_size() = default; //!< Defaulted.
+
+    /*!\brief Initialises the fixed size band by setting the lower and the upper matrix diagonal.
+     *
+     * \param lower_diagonal \copybrief seqan3::align_cfg::band_fixed_size::lower_diagonal
+     * \param upper_diagonal \copybrief seqan3::align_cfg::band_fixed_size::upper_diagonal
+     *
+     * \details
+     *
+     * The lower diagonal represents the lower bound of the banded matrix, i.e. the alignment cannot pass below this
+     * diagonal. Similar, the upper diagonal represents the upper bound of the alignment. During the alignment
+     * configuration and execution the band parameters will be checked and an exception will be thrown in case of
+     * an invalid configuration.
+     */
+    constexpr band_fixed_size(seqan3::align_cfg::lower_diagonal const lower_diagonal,
+                              seqan3::align_cfg::upper_diagonal const upper_diagonal) :
+        lower_diagonal{std::move(lower_diagonal)},
+        upper_diagonal{std::move(upper_diagonal)}
+    {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::band};
 };
 
-/*!\name Type deduction guides
- * \brief Deduces the template parameter from the argument.
- * \relates seqan3::align_cfg::band
- * \{
- */
-/*!
- * \brief Deduces the underlying band type.
- * \tparam band_t The underlying type of the band.
- */
-template <typename band_t>
-band(band_t) -> band<band_t>;
-//!\}
-
-} // namespace seqan3::detail
+} // namespace seqan3::align_cfg

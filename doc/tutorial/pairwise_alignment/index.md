@@ -267,14 +267,14 @@ In many situations it is not necessary to compute the entire alignment matrix bu
 positive impacts on the performance. To limit the computation space the alignment matrix can be bounded by a band.
 Thus, only the alignment is computed that fits in this band. Note that this must not be the optimal alignment but in
 many cases we can give a rough bound on how similar the sequences will be and therefor use the banded alignment.
-To do so, you can use a seqan3::static_band. It will be initialised with a seqan3::lower_bound and a
-seqan3::upper_bound. To configure the banded alignment you need to use the seqan3::align_cfg::band configuration.
+To do so, you can configure the alignment using the seqan3::align_cfg::band_fixed_size option. This configuration
+element will be initialised with a seqan3::align_cfg::lower_diagonal and seqan3::align_cfg::upper_diagonal.
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_band
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp band
 
 \assignment{Assignment 5}
-Use the example from assignment 4 and compute it in a band with lower bound set to `-3` and upper bound set to `8`.
+Use the example from assignment 4 and compute it in a band with lower diagonal set to `-3` and upper diagonal set to `8`.
 How does the result change?
 
 \endassignment
