@@ -3,7 +3,6 @@
 #include <seqan3/range/views/minimiser_hash.hpp>
 
 using seqan3::operator""_dna4;
-using seqan3::operator""_shape;
 
 int main()
 {
