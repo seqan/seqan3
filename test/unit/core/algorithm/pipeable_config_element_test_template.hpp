@@ -46,6 +46,13 @@ TYPED_TEST_P(pipeable_config_element_test, configuration_assignment)
     EXPECT_TRUE((std::same_as<decltype(cfg), seqan3::configuration<TypeParam>>));
 }
 
+TYPED_TEST_P(pipeable_config_element_test, exists)
+{
+    using configuration_t = seqan3::configuration<TypeParam>;
+
+    EXPECT_TRUE(configuration_t::template exists<TypeParam>());
+}
+
 // make mock config element foo always pipeable with any other config element
 namespace seqan3::detail
 {
@@ -91,4 +98,5 @@ REGISTER_TYPED_TEST_SUITE_P(pipeable_config_element_test,
                             standard_construction,
                             configuration_construction,
                             configuration_assignment,
+                            exists,
                             pipeability);
