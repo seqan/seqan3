@@ -56,13 +56,16 @@ static void seqan_kmer_hash_ungapped(benchmark::State & state)
     assert(k > 0);
     auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
 
-    volatile size_t sum{0};
+    size_t sum{0};
 
     for (auto _ : state)
     {
         for (auto h : seq | seqan3::views::kmer_hash(seqan3::ungapped{static_cast<uint8_t>(k)}))
             benchmark::DoNotOptimize(sum += h);
     }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile auto fin = sum;
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
@@ -75,13 +78,16 @@ static void seqan_kmer_hash_gapped(benchmark::State & state)
     assert(k > 0);
     auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
 
-    volatile size_t sum{0};
+    size_t sum{0};
 
     for (auto _ : state)
     {
         for (auto h : seq | seqan3::views::kmer_hash(make_gapped_shape(k)))
             benchmark::DoNotOptimize(sum += h);
     }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile auto fin = sum;
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
@@ -94,13 +100,16 @@ static void naive_kmer_hash(benchmark::State & state)
     assert(k > 0);
     auto seq = seqan3::test::generate_sequence<seqan3::dna4>(sequence_length, 0, 0);
 
-    volatile size_t sum{0};
+    size_t sum{0};
 
     for (auto _ : state)
     {
         for (auto h : seq | seqan3::views::naive_kmer_hash(k))
             benchmark::DoNotOptimize(sum += h);
     }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile auto fin = sum;
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
@@ -129,7 +138,7 @@ static void seqan2_kmer_hash_ungapped(benchmark::State & state)
     seqan::Shape<seqan::Dna, seqan::SimpleShape> s;
     seqan::resize(s, k);
 
-    volatile size_t sum{0};
+    size_t sum{0};
 
     for (auto _ : state)
     {
@@ -140,6 +149,9 @@ static void seqan2_kmer_hash_ungapped(benchmark::State & state)
             benchmark::DoNotOptimize(sum += seqan::hashNext(s, it));
         }
     }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile auto fin = sum;
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
@@ -153,7 +165,7 @@ static void seqan2_kmer_hash_gapped(benchmark::State & state)
     auto seq = seqan3::test::generate_sequence_seqan2<seqan::Dna>(sequence_length, 0, 0);
     seqan::Shape<seqan::Dna, seqan::GenericShape> s = make_gapped_shape_seqan2(k);
 
-    volatile size_t sum{0};
+    size_t sum{0};
 
     for (auto _ : state)
     {
@@ -164,6 +176,9 @@ static void seqan2_kmer_hash_gapped(benchmark::State & state)
             benchmark::DoNotOptimize(sum += seqan::hashNext(s, it));
         }
     }
+
+    // prevent complete optimisation
+    [[maybe_unused]] volatile auto fin = sum;
 
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
