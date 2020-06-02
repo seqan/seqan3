@@ -11,6 +11,11 @@ In contrast to the Tutorials (which are expected to be useful for all developers
 or specific guides.
 If you have previous experience with SeqAn2 or SeqAn1, have a look at \ref howto_porting.
 
+\ref cookbook contains a listing of code snippets, or *recipes* that might prove helpful once you
+have finished the full tutorial and you are implementing your own code.
+When you are looking for some inspiration on how to perform a particular task or when you searching for something you
+already know - its on the tip of your tongue - but you can't remember the syntax, take a look here.
+
 Before you publish and/or redistribute software based on SeqAn, please read through the notes on \ref about_copyright
 and \ref about_citing.
 There are few requirements beyond proper attribution, but this requirement we take seriously as it is the basis of
