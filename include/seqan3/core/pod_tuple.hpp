@@ -54,7 +54,7 @@ struct pod_tuple
 template <typename type0, typename ...types>
 struct pod_tuple<type0, types...>
 {
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    static_assert(std::is_standard_layout_v<type0> && std::is_trivial_v<type0>, SEQAN_NOT_POD);
     //!\cond DEV
     //!\brief The first element as member.
     type0 _head;
@@ -111,7 +111,7 @@ struct pod_tuple<type0, types...>
 template <typename type0>
 struct pod_tuple<type0>
 {
-    static_assert(std::is_pod_v<type0>, SEQAN_NOT_POD);
+    static_assert(std::is_standard_layout_v<type0> && std::is_trivial_v<type0>, SEQAN_NOT_POD);
     //!\cond DEV
     //!\brief The first element as member.
     type0 _head;
