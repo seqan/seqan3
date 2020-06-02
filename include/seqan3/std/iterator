@@ -15,6 +15,20 @@
 
 #include <iterator>
 
+// import API that changed behaviour from C++-17 to C++20 into std::cpp20
+#ifdef __cpp_lib_ranges
+namespace std
+{
+inline namespace cpp20
+{
+// see https://github.com/orgs/seqan/projects/4#card-37029069
+using ::std::back_inserter;
+// using ::std::front_inserter;
+// using ::std::insert_iterator;
+} // inline namespace cpp20
+} // namespace std
+#endif // __cpp_lib_ranges
+
 #ifndef __cpp_lib_ranges // implement C++20 iterators via range-v3
 
 #ifndef RANGES_DEEP_STL_INTEGRATION
