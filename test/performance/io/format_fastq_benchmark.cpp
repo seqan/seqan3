@@ -13,11 +13,10 @@
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
@@ -31,14 +30,13 @@ constexpr unsigned default_seed = 1234u;
 // generate fastq file
 // ============================================================================
 
-constexpr size_t default_sequence_length = 50; //length of nucleotide and quality sequence
+inline constexpr size_t default_sequence_length = 50; //length of nucleotide and quality sequence
+inline std::string const fastq_id{"the fastq file"};
 
-std::string generate_fastq_file(size_t const entries_size)
+std::string generate_fastq_string(size_t const entries_size)
 {
     std::ostringstream stream_buffer{};
-    seqan3::debug_stream_type format_stream{stream_buffer};
-
-    std::string const id{"@name"};
+    seqan3::sequence_file_output fastq_ostream{stream_buffer, seqan3::format_fastq{}};
 
     auto seed = default_seed;
 
@@ -46,12 +44,11 @@ std::string generate_fastq_file(size_t const entries_size)
     {
         auto random_sequence = seqan3::test::generate_sequence<seqan3::dna5>(default_sequence_length, 0, seed);
         auto random_qualities = seqan3::test::generate_sequence<seqan3::phred42>(default_sequence_length, 0, seed);
-        format_stream << id << '\n'  // write id
-                      << random_sequence << '\n' // write sequence
-                      << '+' << '\n' // write qualities separator
-                      << random_qualities << '\n'; // write qualities
+
+        fastq_ostream.emplace_back(random_sequence, fastq_id, random_qualities);
     }
 
+    stream_buffer.flush();
     return stream_buffer.str();
 }
 
@@ -59,7 +56,7 @@ std::string generate_fastq_file(size_t const entries_size)
 // save file on disc temporarily
 // ============================================================================
 
-auto create_fastq_file(size_t const entries_size)
+auto create_fastq_file_for(std::string const & fastq_string)
 {
     // create temporary file, automatically removed on destruction
     seqan3::test::tmp_filename fastq_file{"format_fastq_benchmark_test_file.fastq"};
@@ -67,30 +64,50 @@ auto create_fastq_file(size_t const entries_size)
 
     // fill temporary file with a fastq file
     std::ofstream ostream{fastq_file_path};
-    ostream << generate_fastq_file(entries_size);
+    ostream << fastq_string;
     ostream.close();
     return fastq_file;
 }
 
 // ============================================================================
-// write 3-line entry to stream as often as possible
+// seqan3 fastq output benchmark
 // ============================================================================
+
+// ----------------------------------------------------------------------------
+// write dummy fastq file to a string stream
+// ----------------------------------------------------------------------------
 
 void fastq_write_to_stream_seqan3(benchmark::State & state)
 {
+    size_t const iterations_per_run = state.range(0);
     std::ostringstream ostream;
-    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}};
+    seqan3::sequence_file_output fout{ostream, seqan3::format_fastq{}, seqan3::fields<seqan3::field::id,
+                                                                                      seqan3::field::seq,
+                                                                                      seqan3::field::qual>{}};
 
-    std::string const id{"@name"};
     auto seq = seqan3::test::generate_sequence<seqan3::dna5>(default_sequence_length, 0, default_seed);
     auto qual = seqan3::test::generate_sequence<seqan3::phred42>(default_sequence_length, 0, default_seed);
 
     for (auto _ : state)
-        fout.emplace_back(seq, id, qual);
+    {
+        for (size_t i = 0; i < iterations_per_run; ++i)
+            fout.emplace_back(fastq_id, seq, qual);
+    }
+
+    ostream.str(""); // Reset stream.
+    fout.emplace_back(fastq_id, seq, qual); // Write one entry.
+    ostream.flush(); // Make sure the buffer is flushed.
+
+    size_t bytes_per_run = ostream.str().size() * iterations_per_run;
+    state.counters["iterations_per_run"] = iterations_per_run;
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
+BENCHMARK(fastq_write_to_stream_seqan3)->Arg(100)->Arg(1000)->Arg(10000);
+
 // ============================================================================
-// seqan3 benchmark
+// seqan3 fastq input benchmark
 // ============================================================================
 
 // ----------------------------------------------------------------------------
@@ -99,30 +116,25 @@ void fastq_write_to_stream_seqan3(benchmark::State & state)
 
 void fastq_read_from_stream_seqan3(benchmark::State & state)
 {
-    std::string file = generate_fastq_file(state.range(0));
-
-    seqan3::dna5_vector sequence{};
-    std::string id{};
-    std::vector<seqan3::phred42> quality{};
+    size_t const iterations_per_run = state.range(0);
+    std::string fastq_file = generate_fastq_string(iterations_per_run);
+    std::istringstream istream{fastq_file};
+    seqan3::sequence_file_input fastq_file_in{istream, seqan3::format_fastq{}};
 
     for (auto _ : state)
     {
-        state.PauseTiming();
-        std::istringstream istream{file};
-        state.ResumeTiming();
+        istream.clear();
+        istream.seekg(0, std::ios::beg);
 
-        seqan3::sequence_file_input fin{istream, seqan3::format_fastq{}};
-        for (auto && [read_sequence, read_id, read_quality] : fin)
-        {
-            sequence = std::move(read_sequence);
-            id = std::move(read_id);
-            quality = std::move(read_quality);
-        }
-
-        sequence.clear();
-        id.clear();
-        quality.clear();
+        auto it = fastq_file_in.begin();
+        for (size_t i = 0; i < iterations_per_run; ++i)
+            it++;
     }
+
+    size_t bytes_per_run = fastq_file.size();
+    state.counters["iterations_per_run"] = iterations_per_run;
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
 // ----------------------------------------------------------------------------
@@ -131,32 +143,26 @@ void fastq_read_from_stream_seqan3(benchmark::State & state)
 
 void fastq_read_from_disk_seqan3(benchmark::State & state)
 {
-    auto file = create_fastq_file(state.range(0));
-    auto path = file.get_path();
-
-    std::vector<seqan3::dna5_vector> sequences{};
-    std::vector<std::string> ids{};
-    std::vector<std::vector<seqan3::phred42>> qualities{};
+    size_t const iterations_per_run = state.range(0);
+    std::string fastq_file = generate_fastq_string(iterations_per_run);
+    auto file_name = create_fastq_file_for(fastq_file);
 
     for (auto _ : state)
     {
-        seqan3::sequence_file_input fin{path};
-
-        for (auto && [read_sequence, read_id, read_quality] : fin)
-        {
-            sequences.push_back(std::move(read_sequence));
-            ids.push_back(std::move(read_id));
-            qualities.push_back(std::move(read_quality));
-        }
-
-        sequences.clear();
-        ids.clear();
-        qualities.clear();
+        seqan3::sequence_file_input fastq_file_in{file_name.get_path()};
+        auto it = fastq_file_in.begin();
+        for (size_t i = 0; i < iterations_per_run; ++i)
+            it++;
     }
+
+    size_t bytes_per_run = fastq_file.size();
+    state.counters["iterations_per_run"] = iterations_per_run;
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
 // ============================================================================
-// seqan2 benchmark
+// seqan2 fastq input benchmark
 // ============================================================================
 
 #if SEQAN3_HAS_SEQAN2
@@ -167,37 +173,33 @@ void fastq_read_from_disk_seqan3(benchmark::State & state)
 
 void fastq_read_from_stream_seqan2(benchmark::State & state)
 {
-    std::istringstream istream{};
-    size_t entries_size = state.range(0);
-    auto file = generate_fastq_file(entries_size);
+    size_t const iterations_per_run = state.range(0);
+    std::string fastq_file = generate_fastq_string(iterations_per_run);
+    std::istringstream istream{fastq_file};
 
-    auto restart_iterator = [&istream, &file]()    // cf. format_fasta_benchmark
-    {
-        istream = std::istringstream{file};
-        // same constant as seqan3 benchmark
-
-        seqan::VirtualStream<char, seqan::Input> comp{};
-        seqan::open(comp, istream);
-        return seqan::directionIterator(comp, seqan::Input());
-    };
-
-    seqan::String<char> id{};
-    seqan::String<seqan::Dna5> seq{};
-    seqan::String<char> qual{};
+    seqan::CharString id{};
+    seqan::Dna5String seq{};
+    seqan::CharString qual{};
 
     for (auto _ : state)
     {
-        state.PauseTiming();
-        auto it = restart_iterator();
-        state.ResumeTiming();
+        istream.clear();
+        istream.seekg(0, std::ios::beg);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(istream);
 
-        for (size_t i = 0; i < entries_size; ++i)
-            seqan::readRecord(id, seq, qual, it, seqan::Fastq{});
-
-        seqan::clear(id);
-        seqan::clear(seq);
-        seqan::clear(qual);
+        for (size_t i = 0; i < iterations_per_run; ++i)
+        {
+            readRecord(id, seq, qual, it, seqan::Fastq{});
+            clear(id);
+            clear(seq);
+            clear(qual);
+        }
     }
+
+    size_t bytes_per_run = fastq_file.size();
+    state.counters["iterations_per_run"] = iterations_per_run;
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
 // ----------------------------------------------------------------------------
@@ -206,30 +208,34 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 
 void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
-    seqan3::test::tmp_filename file_name{"tmp.fastq"};
-    auto tmp_path = file_name.get_path();
+    size_t const iterations_per_run = state.range(0);
+    std::string fastq_file = generate_fastq_string(iterations_per_run);
+    auto file_name = create_fastq_file_for(fastq_file);
 
-    std::ofstream ostream{tmp_path};
-    ostream << generate_fastq_file(state.range(0));
-    ostream.close();
-
-    seqan::StringSet<seqan::String<char>> ids{};
-    seqan::StringSet<seqan::String<seqan::Dna5>> seqs{};
-    seqan::StringSet<seqan::String<char>> quals{};
+    seqan::CharString id{};
+    seqan::Dna5String seq{};
+    seqan::CharString qual{};
 
     for (auto _ : state)
     {
-        seqan::SeqFileIn seqFileIn(tmp_path.c_str());
-        seqan::readRecords(ids, seqs, quals, seqFileIn);
+        seqan::SeqFileIn seqFileIn(file_name.get_path().c_str());
+        auto it = seqFileIn.iter;
 
-        seqan::clear(ids);
-        seqan::clear(seqs);
-        seqan::clear(quals);
+        for (size_t i = 0; i < iterations_per_run; ++i)
+        {
+            readRecord(id, seq, qual, it, seqan::Fastq{});
+            clear(id);
+            clear(seq);
+            clear(qual);
+        }
     }
+
+    size_t bytes_per_run = fastq_file.size();
+    state.counters["iterations_per_run"] = iterations_per_run;
+    state.counters["bytes_per_run"] = bytes_per_run;
+    state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 #endif // SEQAN3_HAS_SEQAN2
-
-BENCHMARK(fastq_write_to_stream_seqan3);
 
 BENCHMARK(fastq_read_from_stream_seqan3)->Arg(100)->Arg(1000)->Arg(10000);
 BENCHMARK(fastq_read_from_disk_seqan3)->Arg(100)->Arg(1000)->Arg(10000);
