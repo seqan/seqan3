@@ -42,13 +42,13 @@ namespace seqan3::views
  * | std::ranges::forward_range       |                                       | *preserved*                     |
  * | std::ranges::bidirectional_range |                                       | *preserved*                     |
  * | std::ranges::random_access_range |                                       | *preserved*                     |
- * | std::ranges::contiguous_range    |                                       | *lost*¹                         |
+ * | std::ranges::contiguous_range    |                                       | <i>lost</i>¹                    |
  * |                                  |                                       |                                 |
  * | std::ranges::viewable_range      | *required*                            | *guaranteed*                    |
  * | std::ranges::view                |                                       | *guaranteed*                    |
  * | std::ranges::sized_range         |                                       | *preserved*                     |
  * | std::ranges::common_range        |                                       | *preserved*                     |
- * | std::ranges::output_range        |                                       | *lost*¹                         |
+ * | std::ranges::output_range        |                                       | <i>lost</i>¹                    |
  * | seqan3::const_iterable_range     |                                       | *preserved*                     |
  * |                                  |                                       |                                 |
  * | std::ranges::range_reference_t   | seqan3::convertible_to<out_t>         | `out_t`                         |
