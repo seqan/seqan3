@@ -317,3 +317,35 @@ TYPED_TEST(view_to_simd_test, ends_not_on_chunk_boundary)
     auto simd_view = this->sequences | seqan3::views::to_simd<simd_t>;
     this->compare(simd_view, this->transformed_simd_vec);
 }
+
+// See https://github.com/seqan/seqan3/pull/1813
+// Before this fix we created a default constructed instance of the underlying range to use it as an empty range.
+// But a default constructed view is not guaranteed to be comparable, i.e. it results in UB.
+// This test checks now that if the underlying range is a view the conversion to simd sequence still works.
+TYPED_TEST(view_to_simd_test, issue_1813)
+{
+    using simd_t = typename TestFixture::simd_t;
+    using container_t = typename TestFixture::container_t;
+    using take_view_t = decltype(std::declval<container_t &>() | std::views::take(5));
+
+    std::vector<take_view_t> take_sequences{};
+
+    for (auto & sequence : this->sequences)
+        take_sequences.push_back(sequence | std::views::take(10));
+
+    // Remove one sequence
+    take_sequences.pop_back();
+
+    // If simd size is only 1, the compare range needs to be cleared.
+    if (take_sequences.empty())
+        this->transformed_simd_vec.clear();
+
+    // delete the last sequence in the set.
+    for (simd_t & vec : this->transformed_simd_vec)
+        vec[seqan3::simd::simd_traits<simd_t>::length - 1] = TestFixture::padding_value_dna4;
+
+    { // without padding
+        auto v = seqan3::views::to_simd<simd_t>(take_sequences);
+        this->compare(v, this->transformed_simd_vec | std::views::take(10));
+    }
+}

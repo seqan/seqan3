@@ -188,7 +188,6 @@ public:
 private:
 
     urng_t urng{}; //!< The underlying range.
-    std::ranges::range_value_t<urng_t> empty_inner_range{}; //!< A defaulted inner range if fewer sequences are present.
     std::array<chunk_type, total_chunks> cached_simd_chunks{}; //!< The cached chunks of transformed simd vectors.
     simd_t padding_simd_vector{}; //!< A cached simd vector with the padding symbol.
     scalar_type padding_value{}; //!< The padding value used to fill the corresponding simd vector element.
@@ -244,12 +243,20 @@ public:
             cached_sentinel[seq_id] = std::ranges::end(*it);
         }
 
-        // If the batch is not full, i.e. less than chunk_size many sequences, then fill them up with dummy sequences.
+        // The batch is empty and by default the constructed iterator is pointing to the end.
+        if (seq_id == 0)
+            return;
+
+        // The batch is not empty but might not be full either.
+        // If a slot is supposed to be empty, it will be initialised with the iterator of the first sequence set to the
+        // end emulating an empty sequence.
+        auto sentinel_it = std::ranges::next(cached_iter[0], cached_sentinel[0]);
         for (; seq_id < chunk_size; ++seq_id)
         {
-            cached_iter[seq_id] = std::ranges::begin(this_view.empty_inner_range);
-            cached_sentinel[seq_id] = std::ranges::end(this_view.empty_inner_range);
+            cached_iter[seq_id] = sentinel_it;
+            cached_sentinel[seq_id] = cached_sentinel[0];
         }
+
         // Check if this is the final chunk already.
         final_chunk = all_iterators_reached_sentinel();
 
@@ -582,9 +589,9 @@ private:
     //!\brief The current chunk position.
     uint8_t current_chunk_pos{0};
     //!\brief Flag indicating that final chunk was reached.
-    bool final_chunk{false};
+    bool final_chunk{true};
     //!\brief Flag indicating that iterator is at end.
-    bool at_end{false};
+    bool at_end{true};
 };
 
 // ============================================================================
