@@ -30,9 +30,13 @@ namespace seqan3
 // value_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `value_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam it_t The type you wish to query; must model std::input_iterator.
+ * \deprecated This is deprecated use std::iter_value_t.
  */
 template <std::input_iterator it_t>
 struct value_type<it_t>
@@ -40,6 +44,8 @@ struct value_type<it_t>
     //!\brief Return the member type as return type.
     using type = std::iter_value_t<it_t>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // see specialisation for ranges in core/type_traits/range.hpp
 
@@ -47,9 +53,13 @@ struct value_type<it_t>
 // reference
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `reference` type of another type.
  * \implements seqan3::transformation_trait
  * \tparam it_t The type you wish to query; must model std::input_iterator.
+ * \deprecated This is deprecated use std::iter_reference_t.
  */
 template <std::input_iterator it_t>
 struct reference<it_t>
@@ -57,6 +67,8 @@ struct reference<it_t>
     //!\brief Return the member type as return type.
     using type = std::iter_reference_t<it_t>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // see specialisation for ranges in core/type_traits/range.hpp
 
@@ -64,9 +76,13 @@ struct reference<it_t>
 // rvalue_reference
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `rvalue_reference` type of another type.
  * \implements seqan3::transformation_trait
  * \tparam it_t The type you wish to query; must model std::input_iterator.
+ * \deprecated This is deprecated use std::iter_rvalue_reference_t.
  */
 template <std::input_iterator it_t>
 struct rvalue_reference<it_t>
@@ -74,6 +90,8 @@ struct rvalue_reference<it_t>
     //!\brief Return the member type as return type.
     using type = std::iter_rvalue_reference_t<it_t>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // see specialisation for ranges in core/type_traits/range.hpp
 
@@ -87,9 +105,13 @@ struct rvalue_reference<it_t>
 // difference_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `difference_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam it_t The type you wish to query; must model std::weakly_incrementable.
+ * \deprecated This is deprecated use std::iter_difference_t.
  */
 template <std::weakly_incrementable it_t>
 struct difference_type<it_t>
@@ -97,6 +119,8 @@ struct difference_type<it_t>
     //!\brief Return the member type as return type.
     using type = std::iter_difference_t<it_t>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // see specialisation for ranges in core/type_traits/range.hpp
 
@@ -104,9 +128,15 @@ struct difference_type<it_t>
 // size_type
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace detail
+{
 /*!\brief Exposes the `size_type` of another type.
  * \implements seqan3::transformation_trait
  * \tparam it_t The type you wish to query; must model std::weakly_incrementable.
+ * \deprecated This is deprecated. There is no alternative! Unlike std::ranges::range_size_t, the Standard has no
+ *            std::iter_size_t. We decided that it does not make sense to define it on the difference type of the
+ *            iterator.
  */
 template <std::weakly_incrementable it_t>
 struct size_type<it_t>
@@ -114,6 +144,8 @@ struct size_type<it_t>
     //!\brief Return the member type as return type.
     using type = std::make_unsigned_t<std::iter_difference_t<it_t>>;
 };
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
 
 // see specialisation for ranges in core/type_traits/range.hpp
 
