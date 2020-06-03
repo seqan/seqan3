@@ -242,7 +242,8 @@ div.solution {
 #nav-tree .label a[class="annotated.html"],
 #nav-tree .label a[class="hierarchy.html"],
 #nav-tree .label a[class="index.html"],
-#nav-tree .label a[class="files.html"] {
+#nav-tree .label a[class="files.html"],
+#nav-tree .label a[class="cookbook.html"] {
     color: #3D578C;
     font-weight: bolder;
 }

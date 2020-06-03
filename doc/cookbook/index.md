@@ -14,7 +14,7 @@ please feel free to contact us.
 \snippet doc/tutorial/introduction/introduction_file_input.cpp fileinput
 
 # Write a custom validator
-This recipe implements a validator that checks if a numeric argument is an integral square (i.e.  0, 1, 4, 9...).
+This recipe implements a validator that checks if a numeric argument is an integral square (i.e. 0, 1, 4, 9...).
 Invalid values throw a seqan3::validation_error.
 
 \snippet doc/tutorial/concepts/custom_validator_solution2.cpp validator
@@ -36,7 +36,7 @@ This recipe creates a small program that
 
 # Reading records
 After construction, you can now read the sequence records.
-Our file object behaves like a range so you can use a range based for loop to conveniently iterate over the file:
+Our file object behaves like a range so you can use a range-based for loop to conveniently iterate over the file:
 
 \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
 
@@ -44,8 +44,8 @@ Our file object behaves like a range so you can use a range based for loop to co
 
 \note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 
-You can also use structured binding, i.e. `for (auto & [seq, id, qual] : fin)`  
-**But beware: with structured bindings you do need to get the order of elements correctly!**
+You can also use structured binding, i.e. `for (auto & [seq, id, qual] : fin)`
+**But beware: with structured bindings you do need to get the order of elements correct!**
 
 You can also read a file in chunks:
 
@@ -54,19 +54,19 @@ You can also read a file in chunks:
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp read_in_batches
 
 The example above will iterate over the file by reading 10 records at a time.
-If no 10 records are available any more, it will just print the remaining records
+If no 10 records are available anymore, it will just print the remaining records.
 
 # Applying a filter to a file
-In some occasions you are only interested in sequence records that fulfill a certain criterion,
+On some occasions you are only interested in sequence records that fulfill a certain criterion,
 e.g. having a minimum sequence length or a minimum average quality.
 
-This recipe can be used to filter the sequences in your file on a custom criterion.
+This recipe can be used to filter the sequences in your file by a custom criterion.
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp quality_filter
 
 # Reading paired-end reads
 In modern Next Generation Sequencing experiments you often have paired-end read data which is split into two files.
-The read pairs are identified by their identical name/id and that their position in the two files is the same.
+The read pairs are identified by their identical name/id and position in the two files.
 
 This recipe can be used to handle one pair of reads at a time.
 
@@ -85,7 +85,7 @@ Note that you can move the record out of the file if you want to store it somewh
 
 The easiest way to write to a sequence file is to use the seqan3::sequence_file_output::push_back()
 or seqan3::sequence_file_output::emplace_back() member functions.
-These work similarly to how they work on an std::vector.
+These work similarly to how they work on a std::vector.
 
 \include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
 
@@ -100,7 +100,7 @@ These work similarly to how they work on an std::vector.
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp scoring_scheme
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
-positive value and the score for mismatch and gaps must be negative in order to maximize over the matching letters.
+positive value and the scores for mismatch and gap must be negative in order to maximize over the matching letters.
 
 # Calculate edit distance for a set of sequences
 
@@ -135,7 +135,7 @@ You can access it by querying seqan3::field::alignment from the record:
 This recipe can be used to:
 1. Read in a FASTA file with the reference and a SAM file with the alignment
 2. Filter the alignment records and only take those with a mapping quality >= 30.
-3. For the resulting alignments, print which read was mapped against the reference id and the number of seqan3::gap's
+3. For the resulting alignments, print which read was mapped against with reference id and the number of seqan3::gap's
    involved in the alignment (either in aligned reference or in read sequence).
 
 \snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp solution
