@@ -24,7 +24,7 @@ namespace seqan3
 {
 //!\cond
 // Forward declarations
-template <typename derived_t, typename value_t>
+template <typename derived_t, typename value_t = void>
 struct pipeable_config_element;
 //!\endcond
 }
@@ -57,9 +57,6 @@ class config_element_base;
 /*!\var id
  * \brief Algorithm specific static id used for internal validation checks.
  */
-/*!\var value
- * \brief Member storing the configuration value.
- */
 //!\}
 //!\cond
 template <typename config_t>
@@ -67,9 +64,7 @@ SEQAN3_CONCEPT config_element = std::semiregular<std::remove_reference_t<config_
 requires (config_t c)
 {
     { std::remove_reference_t<config_t>::id };
-    { c.value };
-    // Must inherit from the pipeable_config_element class.
-    requires std::is_base_of_v<pipeable_config_element<config_t, decltype(c.value)>, config_t>;
 };
 //!\endcond
+
 } // namespace seqan3::detail

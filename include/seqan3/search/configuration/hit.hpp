@@ -28,7 +28,7 @@ namespace seqan3::detail
 /*!\brief Configuration element to receive all hits within the error bounds.
  * \ingroup search_configuration
  */
-struct hit_all_tag : public pipeable_config_element<hit_all_tag, empty_type>
+struct hit_all_tag : public pipeable_config_element<hit_all_tag>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
@@ -38,7 +38,7 @@ struct hit_all_tag : public pipeable_config_element<hit_all_tag, empty_type>
 /*!\brief Configuration element to receive all hits with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
  */
-struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag, empty_type>
+struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
@@ -48,7 +48,7 @@ struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag, empty
 /*!\brief Configuration element to receive a single best hit with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
  */
-struct hit_single_best_tag : public pipeable_config_element<hit_single_best_tag, empty_type>
+struct hit_single_best_tag : public pipeable_config_element<hit_single_best_tag>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.

@@ -23,7 +23,7 @@ namespace seqan3::detail
 /*!\brief A tag to select the vectorised alignment algorithm.
  * \ingroup alignment_configuration
  */
-struct vectorise_tag : public pipeable_config_element<vectorise_tag, empty_type>
+struct vectorise_tag : public pipeable_config_element<vectorise_tag>
 {
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::vectorise};
