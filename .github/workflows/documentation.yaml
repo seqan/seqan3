@@ -41,6 +41,8 @@ jobs:
         run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz # graphviz for dot, latex to parse formulas
 
       - name: Build documentation
+        env:
+          TZ: Europe/Berlin
         shell: bash
         run: |
           mkdir doc-build
