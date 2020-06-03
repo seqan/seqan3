@@ -122,7 +122,7 @@ void seqan2_affine_dna4_accelerated(benchmark::State & state, args_t && ...args)
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        auto res = seqan::globalAlignmentScore(exec, vec1, vec2, seqan::Score<int>{4, -5, -1, -11});
+        auto res = seqan::globalAlignmentScore(exec, vec1, vec2, seqan::Score<int16_t>{4, -5, -1, -11});
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 

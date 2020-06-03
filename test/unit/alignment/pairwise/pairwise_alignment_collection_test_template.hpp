@@ -9,12 +9,14 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
+
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "fixture/alignment_fixture.hpp"
 
@@ -42,9 +44,8 @@ TYPED_TEST_P(pairwise_alignment_collection_test, score)
     auto [database, query] = fixture.get_sequences();
     auto alignment_rng = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
 
-    auto scores = fixture.get_scores();
-    EXPECT_TRUE((std::ranges::equal(alignment_rng | std::views::transform([] (auto res) { return res.score(); } ),
-                                    fixture.get_scores())));
+    EXPECT_RANGE_EQ(alignment_rng | std::views::transform([] (auto res) { return res.score(); } ),
+                    fixture.get_scores());
 }
 
 TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
