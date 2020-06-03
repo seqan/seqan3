@@ -75,6 +75,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 #### Search
 
 * Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
+* The `seqan3::search_result_range` returns now a `seqan3::search_result` which unifies the interface for all search instanes, e.g. using an index over a single text or a text collection
+  ([\#1706](https://github.com/seqan/seqan3/pull/1706)).
 * Configuration refactoring:
   * The names for the search mode configuration have changed and are now individual config elements
     that are pipeable ([\#1639](https://github.com/seqan/seqan3/pull/1639)):
