@@ -62,6 +62,11 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## API changes
 
+* In accordance with the standard, the following concepts are renamed:
+  * `default_constructible` to `default_initializable`
+  * `readable` to `indirectly_readable`
+  * `writable` to `indirectly_writable` ([\#1860](https://github.com/seqan/seqan3/pull/1860)).
+
 #### Range
 
 * The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()`
