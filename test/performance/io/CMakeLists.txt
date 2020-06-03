@@ -1,4 +1,5 @@
 seqan3_benchmark(format_fasta_benchmark.cpp)
+seqan3_benchmark(format_fastq_benchmark.cpp)
 seqan3_benchmark(format_vienna_benchmark.cpp)
 seqan3_benchmark(lowlevel_stream_input_benchmark.cpp)
 seqan3_benchmark(lowlevel_stream_output_benchmark.cpp)
