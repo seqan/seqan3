@@ -89,6 +89,7 @@ public:
      *
      * \param[in] number_of_columns The number of columns for this matrix.
      * \param[in] number_of_rows The number of rows for this matrix.
+     * \param[in] initial_value Optional initial score value to use when resizing the underlying container.
      *
      * \details
      *
@@ -97,7 +98,8 @@ public:
      * Note the alignment matrix requires the number of columns and rows to be one bigger than the size of sequence1,
      * respectively sequence2.
      * Reallocation happens only if the new column size exceeds the current capacity of the optimal and horizontal
-     * score column. The underlying vectors will not be cleared during the reset.
+     * score column. The underlying vectors are initialised with the given `initial_value` or the default value of
+     * the class's score type.
      *
      * ### Complexity
      *
@@ -109,12 +111,15 @@ public:
      */
     template <std::integral column_index_t, std::integral row_index_t>
     void resize(column_index_type<column_index_t> const number_of_columns,
-                row_index_type<row_index_t> const number_of_rows)
+                row_index_type<row_index_t> const number_of_rows,
+                score_t const initial_value = score_t{})
     {
         this->number_of_columns = number_of_columns.get();
-        optimal_column.resize(number_of_rows.get());
-        horizontal_column.resize(number_of_rows.get());
-        vertical_column = views::repeat_n(score_t{}, number_of_rows.get());
+        optimal_column.clear();
+        horizontal_column.clear();
+        optimal_column.resize(number_of_rows.get(), initial_value);
+        horizontal_column.resize(number_of_rows.get(), initial_value);
+        vertical_column = views::repeat_n(initial_value, number_of_rows.get());
     }
 
     /*!\name Iterators
