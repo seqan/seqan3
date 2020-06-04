@@ -53,8 +53,9 @@ struct drop_fn
         // safeguard against wrong size
         if constexpr (std::ranges::sized_range<urng_t>)
         {
-            drop_size = std::min(drop_size, static_cast<size_t>(std::ranges::size(urange)));
-            new_size = std::ranges::size(urange) - drop_size;
+            size_t urange_size = std::ranges::size(urange);
+            drop_size = std::min(drop_size, urange_size);
+            new_size = urange_size - drop_size;
         }
 
         // string_view
