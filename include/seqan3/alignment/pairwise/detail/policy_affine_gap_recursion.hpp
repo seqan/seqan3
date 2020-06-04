@@ -218,5 +218,21 @@ protected:
                 first_row_is_free ? previous_cell.horizontal_score() : new_horizontal_score,
                 previous_cell.horizontal_score() + gap_open_score};
     }
+
+    /*!\brief Returns the lowest viable score.
+     *
+     * \details
+     *
+     * In some versions of the algorithms a value representing minus infinity is needed. Since the data type is an
+     * signed integral there is no infinity but only the lowest possible value that can be represented by the score
+     * type. In order to avoid unnecessary if conditions to protect against signed integer underflow the lowest viable
+     * score is computed. Subtracting a gap penalty from this will still result in a valid score which represents
+     * minus infinity.
+     */
+    score_type lowest_viable_score() const noexcept
+    {
+        assert(gap_open_score <= 0 && gap_extension_score <= 0);
+        return std::numeric_limits<score_type>::lowest() - (gap_open_score + gap_extension_score);
+    }
 };
 } // namespace seqan3::detail
