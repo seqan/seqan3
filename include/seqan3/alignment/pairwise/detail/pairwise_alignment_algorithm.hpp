@@ -51,7 +51,7 @@ template <typename alignment_configuration_t, typename ...policies_t>
 //!\endcond
 class pairwise_alignment_algorithm : protected policies_t...
 {
-private:
+protected:
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
     //!\brief The type of the scoring scheme.
