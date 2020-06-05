@@ -90,6 +90,12 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## Notable Bug-fixes
 
+### Alignment
+
+* When invoking the alignment algorithm with a user defined thread count using the `seqan3::align_cfg::parallel`
+  configuration element, `std::thread::hardware_concurrency()` many threads were always spawned. This is now fixed and
+  only the specified number of threads will be spawned ([\#1854](https://github.com/seqan/seqan3/pull/1854)).
+
 ### Argument Parser
 
 * Long option identifiers and their value must be separated by a space or equal sign `=`.

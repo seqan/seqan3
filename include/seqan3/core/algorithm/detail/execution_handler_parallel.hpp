@@ -90,10 +90,10 @@ public:
     execution_handler_parallel() : execution_handler_parallel{std::thread::hardware_concurrency()}
     {}
 
-    execution_handler_parallel(execution_handler_parallel const &) = delete;                 //!< Deleted.
-    execution_handler_parallel(execution_handler_parallel &&) = default;                     //!< Defaulted.
-    execution_handler_parallel & operator=(execution_handler_parallel const &) = delete;     //!< Deleted.
-    execution_handler_parallel & operator=(execution_handler_parallel &&) = default;         //!< Defaulted.
+    execution_handler_parallel(execution_handler_parallel const &) = delete; //!< Deleted.
+    execution_handler_parallel(execution_handler_parallel &&) = default; //!< Defaulted.
+    execution_handler_parallel & operator=(execution_handler_parallel const &) = delete; //!< Deleted.
+    execution_handler_parallel & operator=(execution_handler_parallel &&) = default; //!< Defaulted.
 
     //!\brief Waits for threads to finish.
     ~execution_handler_parallel()

@@ -76,7 +76,7 @@ public:
      * Constructs a new alignment range by taking ownership over the passed alignment buffer.
      */
     explicit alignment_range(alignment_executor_type && alignment_executor) :
-        alignment_executor_ptr{new alignment_executor_type{std::move(alignment_executor)}}
+        alignment_executor_ptr{std::make_unique<alignment_executor_type>(std::move(alignment_executor))}
     {}
     //!\}
 
@@ -163,6 +163,9 @@ template <typename alignment_executor_type>
 class alignment_range<alignment_executor_type>::alignment_range_iterator
 {
 public:
+    /*!\name Associated types
+     * \{
+     */
     //!\brief Type for distances between iterators.
     using difference_type = std::ptrdiff_t;
     //!\brief Value type of container elements.
@@ -173,6 +176,7 @@ public:
     using pointer = std::add_pointer_t<value_type>;
     //!\brief Sets iterator category as input iterator.
     using iterator_category = std::input_iterator_tag;
+    //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -185,7 +189,7 @@ public:
     ~alignment_range_iterator() = default; //!< Defaulted.
 
     //!\brief Construct from alignment stream.
-    constexpr alignment_range_iterator(alignment_range & range) : range_ptr(std::addressof(range))
+    explicit constexpr alignment_range_iterator(alignment_range & range) : range_ptr(std::addressof(range))
     {
         ++(*this); // Fetch the next element.
     }
