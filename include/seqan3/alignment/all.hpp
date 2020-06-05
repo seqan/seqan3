@@ -78,18 +78,19 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
- * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::max_error "5: Max error"        |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::parallel "6: Parallel"          |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::result "7: Result"              |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"     |       |       |       |       |       |       |       |        |   ❌   |  ✅   |
- * | \ref seqan3::align_cfg::vectorise "9: Vectorise"        |       |       |       |       |       |       |       |        |        |  ❌   |
+ * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** | **10** |
+ * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|
+ * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::max_error "5: Max error"        |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::on_result "6: On result"        |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::parallel "7: Parallel"          |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::result "8: Result"              |       |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::scoring "9: Scoring scheme"     |       |       |       |       |       |       |       |       |        |  ❌    |  ✅   |
+ * | \ref seqan3::align_cfg::vectorise "10: Vectorise"       |       |       |       |       |       |       |       |       |        |        |  ❌   |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
