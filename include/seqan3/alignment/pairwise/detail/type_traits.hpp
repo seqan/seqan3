@@ -123,7 +123,7 @@ public:
     static constexpr bool is_global =
         configuration_t::template exists<align_cfg::mode<detail::global_alignment_type>>();
     //!\brief Flag indicating whether global alignment mode with free ends is enabled.
-    static constexpr bool is_aligned_ends = configuration_t::template exists<align_cfg::aligned_ends>();
+    static constexpr bool with_free_end_gaps = configuration_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.
     static constexpr bool is_local = configuration_t::template exists<align_cfg::mode<detail::local_alignment_type>>();
     //!\brief Flag indicating whether banded alignment mode is enabled.
