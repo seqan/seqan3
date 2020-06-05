@@ -19,6 +19,7 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
@@ -130,6 +131,8 @@ public:
     static constexpr bool is_banded = configuration_t::template exists<align_cfg::band_fixed_size>();
     //!\brief Flag indicating whether debug mode is enabled.
     static constexpr bool is_debug = configuration_t::template exists<detail::debug_mode>();
+    //!\brief Flag indicating whether a user provided callback was given.
+    static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
 
     //!\brief The configured alignment mode.
     using alignment_mode_type = decltype(get<align_cfg::mode>(std::declval<configuration_t>()).value);
