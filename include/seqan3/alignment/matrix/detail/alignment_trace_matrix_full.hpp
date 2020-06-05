@@ -143,13 +143,13 @@ public:
 
         using matrix_iter_t = std::ranges::iterator_t<typename matrix_base_t::pool_type>;
         using trace_iterator_t = trace_iterator<matrix_iter_t>;
-        using path_t = std::ranges::subrange<trace_iterator_t, std::ranges::default_sentinel_t>;
+        using path_t = std::ranges::subrange<trace_iterator_t, std::default_sentinel_t>;
 
         if (trace_begin.row >= matrix_base_t::num_rows || trace_begin.col >= matrix_base_t::num_cols)
             throw std::invalid_argument{"The given coordinate exceeds the matrix in vertical or horizontal direction."};
 
         return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin}},
-                      std::ranges::default_sentinel};
+                      std::default_sentinel};
     }
 
 private:

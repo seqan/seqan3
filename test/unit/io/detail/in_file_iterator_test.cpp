@@ -102,11 +102,11 @@ TEST(in_file_iterator, comparison)
     it_t it = f.begin();
 
     // not at end
-    EXPECT_FALSE(it == std::ranges::default_sentinel);
+    EXPECT_FALSE(it == std::default_sentinel);
 
     // consume the entire range
     ++it; ++it; ++it; ++it; ++it; ++it; ++it;
 
     // at end
-    EXPECT_TRUE(it == std::ranges::default_sentinel);
+    EXPECT_TRUE(it == std::default_sentinel);
 }

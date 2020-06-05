@@ -647,7 +647,7 @@ private:
 //!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::views::all.
 template <std::ranges::viewable_range other_range_t>
 pairwise_combine_view(other_range_t && range) ->
-    pairwise_combine_view<std::ranges::all_view<other_range_t>>;
+    pairwise_combine_view<std::views::all_t<other_range_t>>;
 //!\}
 
 } // namespace seqan3::detail

@@ -27,10 +27,10 @@ TEST(object_concepts, constructible_from)
     EXPECT_TRUE((!std::constructible_from<type_c, int>));
 }
 
-TEST(object_concepts, default_constructible)
+TEST(object_concepts, default_initializable)
 {
-    EXPECT_TRUE((std::default_constructible<type_a>));
-    EXPECT_TRUE((!std::default_constructible<type_d>));
+    EXPECT_TRUE((std::default_initializable<type_a>));
+    EXPECT_TRUE((!std::default_initializable<type_d>));
 }
 
 TEST(object_concepts, move_constructible)

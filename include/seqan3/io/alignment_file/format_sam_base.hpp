@@ -372,7 +372,7 @@ inline void format_sam_base::read_field(stream_view_type && stream_view, target_
 {
     if (!is_char<'*'>(*std::ranges::begin(stream_view)))
         std::ranges::copy(stream_view | views::char_to<std::ranges::range_value_t<target_range_type>>,
-                          std::ranges::back_inserter(target));
+                          std::cpp20::back_inserter(target));
     else
         std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
 }

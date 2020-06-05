@@ -77,7 +77,7 @@ void read_all(benchmark::State & state)
         {
             std::ifstream s{filename.get_path(), std::ios::binary};
             seqan3::detail::fast_istreambuf_iterator<char> it{*s.rdbuf()};
-            std::ranges::default_sentinel_t e{};
+            std::default_sentinel_t e{};
 
             for (; it != e; ++it)
                 c += *it;

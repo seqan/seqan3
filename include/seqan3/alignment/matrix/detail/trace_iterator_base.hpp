@@ -199,15 +199,15 @@ public:
     }
 
     //!\brief Returns `true` if the pointed-to-element is seqan3::detail::trace_directions::none.
-    constexpr friend bool operator==(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    constexpr friend bool operator==(derived_t const & lhs, std::default_sentinel_t const &) noexcept
     {
         return *lhs.matrix_iter == trace_directions::none;
     }
 
     //!\brief copydoc operator==()
-    constexpr friend bool operator==(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
+    constexpr friend bool operator==(std::default_sentinel_t const &, derived_t const & rhs) noexcept
     {
-        return rhs == std::ranges::default_sentinel;
+        return rhs == std::default_sentinel;
     }
 
     //!\brief Returns `true` if both iterators are not equal, `false` otherwise.
@@ -217,15 +217,15 @@ public:
     }
 
     //!\brief Returns `true` if the pointed-to-element is not seqan3::detail::trace_directions::none.
-    constexpr friend bool operator!=(derived_t const & lhs, std::ranges::default_sentinel_t const &) noexcept
+    constexpr friend bool operator!=(derived_t const & lhs, std::default_sentinel_t const &) noexcept
     {
-        return !(lhs == std::ranges::default_sentinel);
+        return !(lhs == std::default_sentinel);
     }
 
     //!\brief copydoc operator!=()
-    constexpr friend bool operator!=(std::ranges::default_sentinel_t const &, derived_t const & rhs) noexcept
+    constexpr friend bool operator!=(std::default_sentinel_t const &, derived_t const & rhs) noexcept
     {
-        return !(rhs == std::ranges::default_sentinel);
+        return !(rhs == std::default_sentinel);
     }
     //!\}
 

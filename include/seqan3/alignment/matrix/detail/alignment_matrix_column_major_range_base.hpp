@@ -368,26 +368,26 @@ private:
          * \{
          */
         //!\brief Returns `true` if the behind-the-end column was reached, `false` otherwise.
-        constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+        constexpr bool operator==(std::default_sentinel_t const &) const noexcept
         {
             return column_index == me_ptr->num_cols;
         }
 
         //!\copydoc operator==
-        friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs, iterator_type const & rhs)
+        friend constexpr bool operator==(std::default_sentinel_t const & lhs, iterator_type const & rhs)
             noexcept
         {
             return rhs == lhs;
         }
 
         //!\brief Returns `true` if the behind-the-end column was not reached, `false` otherwise.
-        constexpr bool operator!=(std::ranges::default_sentinel_t const & rhs) const noexcept
+        constexpr bool operator!=(std::default_sentinel_t const & rhs) const noexcept
         {
             return !(*this == rhs);
         }
 
         //!\copydoc operator!=
-        friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs, iterator_type const & rhs)
+        friend constexpr bool operator!=(std::default_sentinel_t const & lhs, iterator_type const & rhs)
             noexcept
         {
             return rhs != lhs;
@@ -488,7 +488,7 @@ private:
     //!\brief The type of the iterator.
     using iterator = iterator_type;
     //!\brief The type of sentinel.
-    using sentinel = std::ranges::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
 
 public:
     /*!\name Iterators
@@ -510,7 +510,7 @@ public:
     //!\brief Returns a sentinel marking the end of the matrix.
     constexpr sentinel end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief Deleted end for const-qualified alignment matrix.

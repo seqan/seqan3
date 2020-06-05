@@ -154,14 +154,14 @@ public:
 
         using matrix_iter_t = std::ranges::iterator_t<typename matrix_base_t::pool_type>;
         using trace_iterator_t = trace_iterator_banded<matrix_iter_t>;
-        using path_t = std::ranges::subrange<trace_iterator_t, std::ranges::default_sentinel_t>;
+        using path_t = std::ranges::subrange<trace_iterator_t, std::default_sentinel_t>;
 
         if (trace_begin.row >= static_cast<size_t>(band_size) || trace_begin.col >= matrix_base_t::num_cols)
             throw std::invalid_argument{"The given coordinate exceeds the trace matrix size."};
 
         return path_t{trace_iterator_t{matrix_base_t::data.begin() + matrix_offset{trace_begin},
                                        column_index_type{band_col_index}},
-                      std::ranges::default_sentinel};
+                      std::default_sentinel};
     }
 
     //!\brief The column index where the upper bound of the band passes through.

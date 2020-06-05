@@ -240,19 +240,3 @@ namespace views = ::std::ranges::views;
 } // namespace std::
 
 #endif // standard header
-
-// ==========================================
-// LEGACY wrong std:: and std::ranges:: usage
-// ==========================================
-
-namespace std::ranges
-{
-inline namespace deprecated
-{
-/*!\brief this should be in std::ranges::views and not std::ranges
- * \deprecated Use std::views::all_t instead.
- */
-template <typename range_t>
-using all_view = std::views::all_t<range_t>;
-} // namespace std::ranges::deprecated
-} // namespace std::ranges

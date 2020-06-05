@@ -107,13 +107,13 @@ public:
      * The alignment range is an input range and the end is reached when the internal buffer over the alignment
      * results has signaled end-of-stream.
      */
-    constexpr std::ranges::default_sentinel_t end() noexcept
+    constexpr std::default_sentinel_t end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\brief This range is not const-iterable.
-    constexpr std::ranges::default_sentinel_t end() const = delete;
+    constexpr std::default_sentinel_t end() const = delete;
     //!\}
 
 protected:
@@ -239,13 +239,13 @@ public:
      */
     //!\brief Checks whether lhs is equal to the sentinel.
     friend constexpr bool operator==(alignment_range_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const &) noexcept
+                                     std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end;
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    friend constexpr bool operator==(std::ranges::default_sentinel_t const & lhs,
+    friend constexpr bool operator==(std::default_sentinel_t const & lhs,
                                      alignment_range_iterator const & rhs) noexcept
     {
         return rhs == lhs;
@@ -253,13 +253,13 @@ public:
 
     //!\brief Checks whether `*this` is not equal to the sentinel.
     friend constexpr bool operator!=(alignment_range_iterator const & lhs,
-                                     std::ranges::default_sentinel_t const & rhs) noexcept
+                                     std::default_sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t const & lhs,
+    friend constexpr bool operator!=(std::default_sentinel_t const & lhs,
                                      alignment_range_iterator const & rhs) noexcept
     {
         return rhs != lhs;

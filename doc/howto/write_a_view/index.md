@@ -362,7 +362,7 @@ the same as of the underlying range, we just pass it through.
 
 For many more complex views you will have to define the sentinel type yourself or derive it from the underlying
 type in a similar manner to how we derived the iterator type.
-Often you can use `std::ranges::default_sentinel_t` as the type for your sentinel and implement the
+Often you can use `std::default_sentinel_t` as the type for your sentinel and implement the
 "end-condition" in the iterator's equality comparison operator against that type.
 
 \snippet doc/howto/write_a_view/solution_view.cpp view_constructors

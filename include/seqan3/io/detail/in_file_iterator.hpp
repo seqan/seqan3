@@ -36,7 +36,7 @@ namespace seqan3::detail
  * previous iterators are always invalid (all iterators point to the current position in single-pass
  * ranges).
  *
- * This iterator may be compared against std::ranges::default_sentinel_t, this check delegates to
+ * This iterator may be compared against std::default_sentinel_t, this check delegates to
  * calling the `eof()` member function on the file's stream.
  */
 template <typename file_type>
@@ -127,31 +127,31 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to the sentinel.
-    constexpr bool operator==(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr bool operator==(std::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return host->at_end;
     }
 
     //!\brief Checks whether `*this` is not equal to the sentinel.
-    constexpr bool operator!=(std::ranges::default_sentinel_t const &) const noexcept
+    constexpr bool operator!=(std::default_sentinel_t const &) const noexcept
     {
         assert(host != nullptr);
         return !host->at_end;
     }
 
     //!\brief Checks whether `it` is equal to the sentinel.
-    constexpr friend bool operator==(std::ranges::default_sentinel_t const &,
+    constexpr friend bool operator==(std::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
-        return (it == std::ranges::default_sentinel);
+        return (it == std::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
-    constexpr friend bool operator!=(std::ranges::default_sentinel_t const &,
+    constexpr friend bool operator!=(std::default_sentinel_t const &,
                                      in_file_iterator const & it) noexcept
     {
-        return (it != std::ranges::default_sentinel);
+        return (it != std::default_sentinel);
     }
     //!\}
 

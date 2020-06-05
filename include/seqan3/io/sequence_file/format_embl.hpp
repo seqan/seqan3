@@ -105,7 +105,7 @@ protected:
 
         std::string idbuffer;
         std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
-                          std::ranges::back_inserter(idbuffer));
+                          std::cpp20::back_inserter(idbuffer));
         if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
 
@@ -113,12 +113,12 @@ protected:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>, std::ranges::back_inserter(id));
+                std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>, std::cpp20::back_inserter(id));
                 do
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<'S'>)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::ranges::back_inserter(id));
+                                 std::cpp20::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
                 } while (*stream_it != 'Q');
@@ -135,13 +135,13 @@ protected:
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::ranges::back_inserter(id));
+                                 std::cpp20::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_char<';'>)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::ranges::back_inserter(id));
+                                 std::cpp20::back_inserter(id));
                 }
             }
         }
@@ -177,7 +177,7 @@ protected:
                                         return c;
                                     })
                                   | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
-                         std::ranges::back_inserter(sequence));
+                         std::cpp20::back_inserter(sequence));
         }
         else
         {

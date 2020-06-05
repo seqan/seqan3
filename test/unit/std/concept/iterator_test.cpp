@@ -11,26 +11,26 @@
 
 TEST(iterator_concepts, readable)
 {
-    EXPECT_TRUE((std::readable<input_iterator>));
-    EXPECT_TRUE((!std::readable<output_iterator>));
-    EXPECT_TRUE((std::readable<forward_iterator>));
-    EXPECT_TRUE((std::readable<bidirectional_iterator>));
-    EXPECT_TRUE((std::readable<random_access_iterator>));
-    EXPECT_TRUE((std::readable<forward_iterator_const>));
-    EXPECT_TRUE((std::readable<bidirectional_iterator_const>));
-    EXPECT_TRUE((std::readable<random_access_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<input_iterator>));
+    EXPECT_TRUE((!std::indirectly_readable<output_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<forward_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<random_access_iterator>));
+    EXPECT_TRUE((std::indirectly_readable<forward_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<bidirectional_iterator_const>));
+    EXPECT_TRUE((std::indirectly_readable<random_access_iterator_const>));
 }
 
 TEST(iterator_concepts, writable)
 {
-    EXPECT_TRUE((!std::writable<input_iterator, char>));
-    EXPECT_TRUE((std::writable<output_iterator, char>));
-    EXPECT_TRUE((std::writable<forward_iterator, char>));
-    EXPECT_TRUE((!std::writable<forward_iterator_const, char>));
-    EXPECT_TRUE((std::writable<bidirectional_iterator, char>));
-    EXPECT_TRUE((!std::writable<bidirectional_iterator_const, char>));
-    EXPECT_TRUE((std::writable<random_access_iterator, char>));
-    EXPECT_TRUE((!std::writable<random_access_iterator_const, char>));
+    EXPECT_TRUE((!std::indirectly_writable<input_iterator, char>));
+    EXPECT_TRUE((std::indirectly_writable<output_iterator, char>));
+    EXPECT_TRUE((std::indirectly_writable<forward_iterator, char>));
+    EXPECT_TRUE((!std::indirectly_writable<forward_iterator_const, char>));
+    EXPECT_TRUE((std::indirectly_writable<bidirectional_iterator, char>));
+    EXPECT_TRUE((!std::indirectly_writable<bidirectional_iterator_const, char>));
+    EXPECT_TRUE((std::indirectly_writable<random_access_iterator, char>));
+    EXPECT_TRUE((!std::indirectly_writable<random_access_iterator_const, char>));
 }
 
 TEST(iterator_concepts, weakly_incrementable)

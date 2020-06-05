@@ -136,7 +136,7 @@ void uncompressed(benchmark::State & state)
         s.seekg(0, std::ios::beg);
         seqan3::detail::fast_istreambuf_iterator<char> it{*s.rdbuf()};
 
-        for (; it != std::ranges::default_sentinel; ++it)
+        for (; it != std::default_sentinel; ++it)
             i += *it;
     }
 

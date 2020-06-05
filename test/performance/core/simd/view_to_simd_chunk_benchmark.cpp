@@ -39,7 +39,7 @@ void to_simd_naive_wo_condition(benchmark::State& state)
 
     for (size_t i = 0; i < simd_length; ++i)
         std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::ranges::back_inserter(sequences[i]));
+                          std::cpp20::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
@@ -100,7 +100,7 @@ void to_simd_naive_w_condition(benchmark::State& state)
 
     for (size_t i = 0; i < simd_length; ++i)
         std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::ranges::back_inserter(sequences[i]));
+                          std::cpp20::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)
@@ -149,7 +149,7 @@ void to_simd(benchmark::State& state)
 
     for (size_t i = 0; i < seqan3::simd::simd_traits<simd_t>::length; ++i)
         std::ranges::copy(seqan3::test::generate_sequence<seqan3::dna4>(500, 10),
-                          std::ranges::back_inserter(sequences[i]));
+                          std::cpp20::back_inserter(sequences[i]));
 
     size_t value = 0;
     for (auto _ : state)

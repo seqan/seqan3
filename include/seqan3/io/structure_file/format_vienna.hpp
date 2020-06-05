@@ -140,7 +140,7 @@ protected:
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_until_or_throw(is_cntrl || is_blank)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                      std::ranges::back_inserter(id));
+                                      std::cpp20::back_inserter(id));
                     detail::consume(stream_view | views::take_line_or_throw);
                 }
                 else
@@ -148,7 +148,7 @@ protected:
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
                                                   | views::take_line_or_throw
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                      std::ranges::back_inserter(id));
+                                      std::cpp20::back_inserter(id));
                 }
             }
             else
@@ -185,7 +185,7 @@ protected:
                                               return c;
                                             })
                                           | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
-                              std::ranges::back_inserter(seq));
+                              std::cpp20::back_inserter(seq));
         }
         else
         {
@@ -211,7 +211,7 @@ protected:
             else
             {
                 using alph_type = std::ranges::range_value_t<structure_type>;
-                std::ranges::copy(read_structure<alph_type>(stream_view), std::ranges::back_inserter(structure));
+                std::ranges::copy(read_structure<alph_type>(stream_view), std::cpp20::back_inserter(structure));
                 structure_length = std::ranges::distance(structure);
 
                 if constexpr (!detail::decays_to_ignore_v<bpp_type>)

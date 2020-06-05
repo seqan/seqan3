@@ -643,7 +643,7 @@ private:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng_t>
-kmer_hash_view(rng_t &&, shape const & shape_) -> kmer_hash_view<std::ranges::all_view<rng_t>>;
+kmer_hash_view(rng_t &&, shape const & shape_) -> kmer_hash_view<std::views::all_t<rng_t>>;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // kmer_hash_fn (adaptor definition)

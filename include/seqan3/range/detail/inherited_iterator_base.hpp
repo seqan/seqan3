@@ -322,7 +322,7 @@ public:
     //!\brief Dereference operator returns element currently pointed at.
     constexpr reference operator*() noexcept(noexcept(*std::declval<base_t &>()))
     //!\cond
-        requires std::readable<base_t>
+        requires std::indirectly_readable<base_t>
     //!\endcond
     {
         return **this_to_base();
@@ -331,7 +331,7 @@ public:
     //!\brief Dereference operator returns element currently pointed at.
     constexpr decltype(auto) operator*() const noexcept(noexcept(*std::declval<base_t const &>()))
     //!\cond
-        requires std::readable<base_t>
+        requires std::indirectly_readable<base_t>
     //!\endcond
     {
         return **this_to_base();

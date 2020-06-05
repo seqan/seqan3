@@ -154,7 +154,7 @@ public:
 //!\brief Deduces the single_pass_input_view from the underlying range if it is a std::ranges::viewable_range.
 template <std::ranges::viewable_range urng_t>
 single_pass_input_view(urng_t &&) ->
-    single_pass_input_view<std::ranges::all_view<urng_t>>;
+    single_pass_input_view<std::views::all_t<urng_t>>;
 //!\}
 } // seqan3::detail
 

@@ -138,7 +138,7 @@ public:
      */
     auto end() const
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     //!\copydoc end()
@@ -160,7 +160,7 @@ private:
     //!\brief The sentinel type of the underlying range.
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
     //!\brief The sentinel type of the minimiser_view.
-    using sentinel_type = std::ranges::default_sentinel_t;
+    using sentinel_type = std::default_sentinel_t;
 
     template <typename urng2_t>
     friend class window_iterator;
@@ -385,7 +385,7 @@ private:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng_t>
-minimiser_view(rng_t &&, uint32_t const & window_values_size) -> minimiser_view<std::ranges::all_view<rng_t>>;
+minimiser_view(rng_t &&, uint32_t const & window_values_size) -> minimiser_view<std::views::all_t<rng_t>>;
 
 
 // ---------------------------------------------------------------------------------------------------------------------

@@ -132,7 +132,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
  *  * call the parameter pack version of seqan3::detail::all_of with the instances of std::identity (as a pack).
  *
  * Note that wrapping the types in std::type_identity is a technical trick to make a type representable as a value.
- * Instantiating a type might not work because they might not be std::default_constructible.
+ * Instantiating a type might not work because they might not be std::default_initializable.
  * In addition it is possible, to invoke the predicate on incomplete types.
  *
  * ### Example
@@ -216,7 +216,7 @@ constexpr void for_each(unary_function_t && fn, pack_t && ...args)
  *  * call the parameter pack version of seqan3::detail::for_each with the instances of std::identity (as a pack).
  *
  * Note that wrapping the types in std::type_identity is a technical trick to make a type representable as a value.
- * Instantiating a type might not work because they might not be std::default_constructible.
+ * Instantiating a type might not work because they might not be std::default_initializable.
  * In addition, it is possible to invoke the unary function on incomplete types.
  *
  * ### Example

@@ -78,32 +78,32 @@ public:
         using base_t::operator==;
         using base_t::operator!=;
         using base_t::operator-;
-        bool operator==(std::ranges::default_sentinel_t const &) const
+        bool operator==(std::default_sentinel_t const &) const
         {
             return static_cast<u_iterator_t const &>(*this) == last;
         }
 
-        friend bool operator==(std::ranges::default_sentinel_t const &, test_iterator const & rhs)
+        friend bool operator==(std::default_sentinel_t const &, test_iterator const & rhs)
         {
-            return rhs == std::ranges::default_sentinel;
+            return rhs == std::default_sentinel;
         }
 
-        bool operator!=(std::ranges::default_sentinel_t const &) const
+        bool operator!=(std::default_sentinel_t const &) const
         {
-            return !(*this == std::ranges::default_sentinel);
+            return !(*this == std::default_sentinel);
         }
 
-        friend bool operator!=(std::ranges::default_sentinel_t const &, test_iterator const & rhs)
+        friend bool operator!=(std::default_sentinel_t const &, test_iterator const & rhs)
         {
-            return rhs != std::ranges::default_sentinel;
+            return rhs != std::default_sentinel;
         }
 
-        typename base_t::difference_type operator-(std::ranges::default_sentinel_t const &) const
+        typename base_t::difference_type operator-(std::default_sentinel_t const &) const
         {
             return static_cast<u_iterator_t const &>(*this) - this->last;
         }
 
-        friend typename base_t::difference_type operator-(std::ranges::default_sentinel_t const &,
+        friend typename base_t::difference_type operator-(std::default_sentinel_t const &,
                                                           test_iterator const & rhs)
         {
             return rhs.last - static_cast<u_iterator_t const &>(rhs);
@@ -124,12 +124,12 @@ public:
 
     auto end() noexcept
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 
     auto end() const
     {
-        return std::ranges::default_sentinel;
+        return std::default_sentinel;
     }
 };
 

@@ -33,23 +33,23 @@ struct istreambuf_fn
      * \param[in,out] s Reference to the stream buffer.
      * \tparam stream_char_t builtin_characteracter type of the stream device.
      * \tparam stream_traits_t Traits type of the stream device.
-     * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::ranges::default_sentinel_t.
+     * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::default_sentinel_t.
      */
     template <typename stream_char_t, typename stream_traits_t>
     constexpr auto operator()(std::basic_streambuf<stream_char_t, stream_traits_t> & s) const
     {
         return std::ranges::subrange<detail::fast_istreambuf_iterator<stream_char_t, stream_traits_t>,
-                                     std::ranges::default_sentinel_t>
+                                     std::default_sentinel_t>
         {
             detail::fast_istreambuf_iterator<stream_char_t, stream_traits_t>{s},
-            std::ranges::default_sentinel_t{}
+            std::default_sentinel_t{}
         };
     }
 
     /*!\brief Return the view object.
      * \tparam stream_t Type of the stream, must model seqan3::input_stream.
      * \param[in,out] s Reference to a stream object.
-     * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::ranges::default_sentinel_t.
+     * \returns A std::ranges::subrange over a detail::fast_istreambuf_iterator and std::default_sentinel_t.
      */
     template <input_stream stream_t>
     constexpr auto operator()(stream_t & s) const

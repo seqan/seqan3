@@ -375,7 +375,7 @@ protected:
         std::istringstream iss(text.c_str());
         std::vector<std::string> tokens;
         std::ranges::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(),
-                          std::ranges::back_inserter(tokens));
+                          std::cpp20::back_inserter(tokens));
 
         // Print the text.
         assert(pos <= tab);
