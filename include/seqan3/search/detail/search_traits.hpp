@@ -12,11 +12,13 @@
 
 #pragma once
 
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/max_error_rate.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
+#include <seqan3/search/configuration/result_type.hpp>
 
 namespace seqan3::detail
 {
@@ -33,6 +35,20 @@ template <typename search_configuration_t>
 //!\endcond
 struct search_traits
 {
+private:
+    //!\brief Maybe the result type configuration element or seqan3::detail::empty_type wrapped in std::type_identity.
+    static constexpr auto result_type_or_empty_type = [] ()
+    {
+        if constexpr (search_configuration_t::template exists<search_cfg::detail::result_type_tag>())
+            return get<search_cfg::detail::result_type_tag>(search_configuration_t{});
+        else
+            return std::type_identity<empty_type>{};
+    }();
+
+public:
+    //!\brief The configured search result type or seqan3::detail::empty_type if not configured yet.
+    using search_result_type = typename remove_cvref_t<decltype(result_type_or_empty_type)>::type;
+
     //!\brief A flag indicating whether search should be invoked with max error.
     static constexpr bool search_with_max_error = search_configuration_t::template exists<search_cfg::max_error>();
     //!\brief A flag indicating whether search should be invoked with max error rate.
@@ -50,10 +66,11 @@ struct search_traits
     //!\brief A flag indicating whether search should find strata hits.
     static constexpr bool search_strata_hits = search_configuration_t::template exists<search_cfg::hit_strata>();
     //!\brief A flag indicating whether hit configuration was set in the search configuration.
-    static constexpr bool has_hit_configuration = search_all_hits |
-                                                  search_single_best_hit |
-                                                  search_all_best_hits |
-                                                  search_strata_hits;
+    static constexpr bool has_hit_configuration = search_all_hits ||
+                                                  search_single_best_hit ||
+                                                  search_all_best_hits ||
+                                                  search_strata_hits ||
+                                                  search_configuration_t::template exists<search_cfg::hit>();
 
     //!\brief A flag indicating whether search should return the index cursor.
     static constexpr bool search_return_index_cursor =

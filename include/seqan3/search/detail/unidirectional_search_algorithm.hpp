@@ -97,7 +97,7 @@ public:
 
         perform_search_by_hit_strategy(internal_hits, query, error_state);
 
-        return this->make_results(std::move(internal_hits), config); // see policy_result_builder
+        return this->make_results(std::move(internal_hits)); // see policy_search_result_builder
     }
 
 private:
@@ -165,9 +165,6 @@ private:
             search_trivial<false>(index_ptr->cursor(), query, 0, error_state, error_type::none);
         }
     }
-
-    //!\brief Befriend seqan3::detail::test_accessor to grant access to layout.
-    friend struct ::seqan3::detail::test_accessor;
 };
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.

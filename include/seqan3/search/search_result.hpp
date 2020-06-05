@@ -19,13 +19,18 @@
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 
 namespace seqan3::detail
 {
 // forward declaration
-struct policy_result_builder;
-}
+template <typename search_configuration_t>
+#if !SEQAN3_WORKAROUND_GCC_93467
+    requires is_type_specialisation_of_v<search_configuration_t, configuration>
+#endif // !SEQAN3_WORKAROUND_GCC_93467
+struct policy_search_result_builder;
+} // namespace seqan3::detail
 
 namespace seqan3
 {
@@ -93,13 +98,17 @@ private:
         query_id_(q_id), reference_id_(std::move(ref_id)), reference_begin_pos_(std::move(ref_pos))
     {}
 
-    //!\cond
     // Grant the policy access to private constructors.
-    friend detail::policy_result_builder;
+    template <typename search_configuration_t>
+    #if !SEQAN3_WORKAROUND_GCC_93467
+    //!\cond
+        requires is_type_specialisation_of_v<search_configuration_t, configuration>
+    //!\endcond
+    #endif // !SEQAN3_WORKAROUND_GCC_93467
+    friend struct detail::policy_search_result_builder;
     // Currently, the query id is set within the search result range. This needs to be adapted.
     template <typename search_algorithm_t, typename query_range_t>
     friend class search_result_range;
-    //!\endcond
 
 public:
     /*!\name Constructors, destructor and assignment

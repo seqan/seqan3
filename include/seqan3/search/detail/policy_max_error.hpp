@@ -27,12 +27,12 @@ struct policy_max_error
 protected:
     /*!\brief Returns a detail::search_param object filled by the information from the configuration.
      * \tparam configuration_t The search configuration type.
-     * \tparam query_t Must model std::ranges::foward_range over the index's alphabet.
+     * \tparam query_t Must model std::ranges::forward_range over the index's alphabet.
      * \param[in] cfg The configuration object.
      * \param[in] query The current query sequence.
      *
      * \details
-     * 
+     *
      * If seqan3::max_error is set in the configuration, its value already is of type detail::search_param and
      * can be returned as is.
      * If seqan3::max_error_rate is set in the configuration, the error rates are converted to error counts
