@@ -212,10 +212,24 @@
  * by specifying the seqan3::align_cfg::parallel configuration element. This will enable the asynchronous execution
  * of the alignments in the backend. For the user interface nothing changes as the returned seqan3::alignment_range
  * will preserve the order of the computed alignment results, i.e. the first result corresponds to the first alignment
- * given by the input range. By default a thread pool with std::thread::hardware_concurrency many threads will be
+ * given by the input range. By default, a thread pool with std::thread::hardware_concurrency many threads will be
  * created on a call to seqan3::align_pairwise and destructed when all alignments have been processed and the
- * seqan3::alignment_range gets out of scope. The configuration element seqan3::align_cfg::parallel can be initialised
+ * seqan3::alignment_range goes out of scope. The configuration element seqan3::align_cfg::parallel can be initialised
  * with a custom thread count which determines the number of threads that will be spawned in the background.
+ *
+ * ## User callback
+ *
+ * In some cases, for example when executing the alignments in parallel, it can be beneficial for the performance to
+ * use a continuation interface rather than collecting the results first through the seqan3::alignment_range.
+ * To be more precise, if more work needs to be done after the alignment has been computed, it could be better to
+ * stay within the thread and continue the work rather than buffering the result and computing the next alignment.
+ * The alignment algorithm allows the user to specify their own callback function which will be invoked by the alignment
+ * algorithm when a seqan3::alignment_result has been computed. To do so, the seqan3::align_cfg::on_result configuration
+ * element can be used during the alignment configuration. Note that if seqan3::align_cfg::on_result is specified, the
+ * algorithm seqan3::align_pairwise does not return a seqan3::alignment_range anymore. In fact, the algorithm's return 
+ * type is `void`. The following code snippet illustrates this behavior:
+ *
+ * \include test/snippet/alignment/pairwise/parallel_align_pairwise_with_callback.cpp
  */
 
  #pragma once
