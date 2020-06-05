@@ -33,6 +33,11 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## New features
 
+#### Alignment
+
+* The alignment algorithm can now be invoked with a user defined callback function
+  ([\#1876](https://github.com/seqan/seqan3/pull/1876)).
+
 #### Argument Parser
 
 * The following functions accept a `seqan3::argument_parser::option_spec::ADVANCED` to control what is
