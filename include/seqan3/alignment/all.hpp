@@ -207,11 +207,14 @@
  *
  * # Parallel alignment execution
  *
- * SeqAn's alignment algorithm is internally accelerated using multi-threading. To compute the alignments in parallel
- * one can call seqan3::align_pairwise with a seqan3::par execution policy.
- * This will automatically spawn a thread for every CPU-(core) available and compute the alignments
- * concurrently. By default the algorithm is called with the seqan3::seq execution policy, which means
- * sequential execution of the alignments.
+ * SeqAn's alignment algorithm is internally accelerated using multi-threading. The parallel execution can be selected
+ * by specifying the seqan3::align_cfg::parallel configuration element. This will enable the asynchronous execution
+ * of the alignments in the backend. For the user interface nothing changes as the returned seqan3::alignment_range
+ * will preserve the order of the computed alignment results, i.e. the first result corresponds to the first alignment
+ * given by the input range. By default a thread pool with std::thread::hardware_concurrency many threads will be
+ * created on a call to seqan3::align_pairwise and destructed when all alignments have been processed and the
+ * seqan3::alignment_range gets out of scope. The configuration element seqan3::align_cfg::parallel can be initialised
+ * with a custom thread count which determines the number of threads that will be spawned in the background.
  */
 
  #pragma once
