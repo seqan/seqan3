@@ -62,7 +62,7 @@
  * `'U'` character, as well. See below for the details.
  *
  * Which alphabet to chose?
- *   1. in most cases, take seqan3::dna15
+ *   1. in most cases, take seqan3::dna15 (includes all IUPAC characters)
  *   2. if you are memory constrained and sequence data is actually the main memory consumer, use seqan3::dna5
  *   3. if you use specialised algorithms that profit from a 2-bit representation, use seqan3::dna4
  *   4. if you are doing only RNA input/output, use the respective seqan3::rna* type
@@ -98,6 +98,8 @@
  *
  * `char` values that are none of the IUPAC symbols, e.g. 'P', are always converted to the equivalent of assigning 'N',
  * i.e. they result in 'A' for seqan3::dna4 and seqan3::rna4, and in 'N' for the other alphabets.
+ * If the special char conversion of IUPAC characters to seqan3::dna4 is not your desired behavior, refer to our
+ * cookbook for an example of \ref cookbook_custom_dna4_alphabet to change the conversion behavior.
  *
  * ###Literals
  *
