@@ -16,6 +16,7 @@
 #include <optional>
 
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
@@ -293,7 +294,6 @@ public:
     }
     //!\endcond
 };
-
 } // namespace seqan3
 
 namespace seqan3::detail
@@ -316,3 +316,49 @@ struct alignment_result_value_type_accessor<alignment_result<result_value_t>>
 };
 
 } // namespace seqan3::detail
+
+namespace seqan3
+{
+/*!\brief Streams the seqan3::alignment_result to the seqan3::debug_stream.
+ *
+ * \tparam char_t The underlying character type of the seqan3::debug_stream_type.
+ * \tparam alignment_result_t A type specialisation of seqan3::alignment_result.
+ *
+ * \param[in,out] stream The output stream.
+ * \param[in] result The alignment result to print.
+ * \relates seqan3::debug_stream_type
+ */
+template <typename char_t, typename alignment_result_t>
+//!\cond
+    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_result_t>, alignment_result>
+//!\endcond
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_result_t && result)
+{
+    using result_data_t =
+        typename detail::alignment_result_value_type_accessor<remove_cvref_t<alignment_result_t>>::type;
+
+    constexpr bool has_id = !std::is_same_v<decltype(std::declval<result_data_t>().id), std::nullopt_t *>;
+    constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), std::nullopt_t *>;
+    constexpr bool has_back_coordinate = !std::is_same_v<decltype(std::declval<result_data_t>().back_coordinate),
+                                                         std::nullopt_t *>;
+    constexpr bool has_front_coordinate = !std::is_same_v<decltype(std::declval<result_data_t>().front_coordinate),
+                                                         std::nullopt_t *>;
+    constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment),
+                                                   std::nullopt_t *>;
+
+    stream << '{';
+    if constexpr (has_id)
+        stream << "id: " << result.id();
+    if constexpr (has_score)
+        stream << ", score: " << result.score();
+    if constexpr (has_front_coordinate)
+        stream << ", begin: " << result.front_coordinate();
+    if constexpr (has_back_coordinate)
+        stream << ", end: " << result.back_coordinate();
+    if constexpr (has_alignment)
+        stream << "\nalignment:\n" << result.alignment();
+    stream << '}';
+
+    return stream;
+}
+} // namespace seqan3
