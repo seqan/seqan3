@@ -55,6 +55,11 @@ protected:
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<index_cursor_t &>()})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with an index cursor.");
+
         for (size_t i = 0; i < internal_hits.size(); ++i)
             callback(search_result_type{std::move(idx), internal_hits[i]});
     }
@@ -77,6 +82,13 @@ protected:
     //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
+        using ref_location_pair_t = decltype(std::declval<index_cursor_t &>().lazy_locate().front());
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<ref_location_pair_t &>().first,
+                                                                    std::declval<ref_location_pair_t &>().second})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with text positions and single best hit strategy.");
+
         if (!internal_hits.empty())
         {
             // only one cursor is reported but it might contain more than one text position
@@ -108,6 +120,14 @@ protected:
     //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
+        using ref_location_pair_t = decltype(std::declval<index_cursor_t>().lazy_locate().front());
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<ref_location_pair_t &>().first,
+                                                                    std::declval<ref_location_pair_t &>().second})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with text positions with either all, all_best or "
+                      "strata hit strategy.");
+
         std::vector<search_result_type> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
