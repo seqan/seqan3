@@ -70,7 +70,7 @@ private:
                                            std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
     template <typename rng_t>
-    class iterator_type;
+    class basic_iterator;
 
     template <bool is_const_range>
     class basic_sentinel;
@@ -83,12 +83,12 @@ private:
      * \{
      */
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator          = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
-                                                 basic_consume_iterator<urng_t>,
-                                                 iterator_type<urng_t>>;
+    using iterator = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
+                                        basic_consume_iterator<urng_t>,
+                                        basic_iterator<urng_t>>;
 
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator    = iterator_type<urng_t const>;
+    using const_iterator = basic_iterator<urng_t const>;
     //!\}
 
 public:
@@ -208,14 +208,14 @@ view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, 
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <typename rng_t>
-class view_take_until<urng_t, fun_t, or_throw, and_consume>::iterator_type :
-public inherited_iterator_base<iterator_type<rng_t>, std::ranges::iterator_t<rng_t>>
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_iterator :
+    public inherited_iterator_base<basic_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
     using base_base_t = std::ranges::iterator_t<rng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+    using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
     //!\brief The sentinel type is identical to that of the underlying range.
     using sentinel_type = std::ranges::sentinel_t<rng_t>;
     //!\brief Auxiliary type.
@@ -223,29 +223,29 @@ private:
                                          std::remove_reference_t<fun_t> const &,
                                          std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
-    ranges::semiregular_t<fun_ref_t> fun;
+    ranges::semiregular_box_t<fun_ref_t> fun;
 
 public:
     /*!\name Constructors, destructor and assignment
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    constexpr iterator_type()                                      = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
-    constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
-    constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
-    ~iterator_type()                                               = default; //!< Defaulted.
+    constexpr basic_iterator() = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator && rhs) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator && rhs) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer.
-    iterator_type(base_base_t it) noexcept(noexcept(base_t{it})) :
+    basic_iterator(base_base_t it) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}
     {}
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    iterator_type(base_base_t it,
-                  fun_ref_t _fun,
-                  sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
+    basic_iterator(base_base_t it,
+                   fun_ref_t _fun,
+                   sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}, fun{_fun}
     {}
     //!\}
@@ -256,19 +256,22 @@ public:
      */
 
     //!\brief The difference type.
-    using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;
+    using difference_type = typename std::iterator_traits<base_base_t>::difference_type;
     //!\brief The value type.
-    using value_type            = typename std::iterator_traits<base_base_t>::value_type;
+    using value_type = typename std::iterator_traits<base_base_t>::value_type;
     //!\brief The reference type.
-    using reference             = typename std::iterator_traits<base_base_t>::reference;
+    using reference = typename std::iterator_traits<base_base_t>::reference;
     //!\brief The pointer type.
-    using pointer               = typename std::iterator_traits<base_base_t>::pointer;
+    using pointer = typename std::iterator_traits<base_base_t>::pointer;
     //!\brief The iterator category tag.
-    using iterator_category     = iterator_tag_t<base_base_t>;
+    using iterator_category = iterator_tag_t<base_base_t>;
     //!\}
 
-    //!\brief Delegate comparison to base_base_t.
+    //!\brief Returns a copy of the underlying iterator.
     base_base_t base() const
+    //!\cond
+        requires std::copy_constructible<base_base_t>
+    //!\endcond
     {
         return *this->this_to_base();
     }
@@ -279,20 +282,20 @@ public:
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <typename rng_t>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_iterator :
-public inherited_iterator_base<basic_consume_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
+    public inherited_iterator_base<basic_consume_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
     using base_base_t = std::ranges::iterator_t<rng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t      = inherited_iterator_base<basic_consume_iterator, std::ranges::iterator_t<rng_t>>;
+    using base_t = inherited_iterator_base<basic_consume_iterator, std::ranges::iterator_t<rng_t>>;
 
     //!\brief Auxiliary type.
     using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
                                          std::remove_reference_t<fun_t> const &,
                                          std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
-    ranges::semiregular_t<fun_ref_t> fun;
+    ranges::semiregular_box_t<fun_ref_t> fun;
 
     //!\brief The sentinel type is identical to that of the underlying range.
     using sentinel_type = std::ranges::sentinel_t<rng_t>;
@@ -308,17 +311,17 @@ public:
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    constexpr basic_consume_iterator()                                               = default; //!< Defaulted.
-    constexpr basic_consume_iterator(basic_consume_iterator const & rhs)             = default; //!< Defaulted.
-    constexpr basic_consume_iterator(basic_consume_iterator && rhs)                  = default; //!< Defaulted.
+    constexpr basic_consume_iterator() = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator && rhs) = default; //!< Defaulted.
     constexpr basic_consume_iterator & operator=(basic_consume_iterator const & rhs) = default; //!< Defaulted.
-    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs)      = default; //!< Defaulted.
-    ~basic_consume_iterator()                                                        = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs) = default; //!< Defaulted.
+    ~basic_consume_iterator() = default; //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
     basic_consume_iterator(base_base_t it,
-                                fun_ref_t _fun,
-                                sentinel_type sen) noexcept(noexcept(base_t{it})) :
+                           fun_ref_t _fun,
+                           sentinel_type sen) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
     {
         if ((*this->this_to_base() != stored_end) && fun(**this))
@@ -333,11 +336,11 @@ public:
      * \brief All are derived from the base_base_t.
      * \{
      */
-    using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;  //!< From base.
-    using value_type            = typename std::iterator_traits<base_base_t>::value_type;       //!< From base.
-    using reference             = typename std::iterator_traits<base_base_t>::reference;        //!< From base.
-    using pointer               = typename std::iterator_traits<base_base_t>::pointer;          //!< From base.
-    using iterator_category     = std::input_iterator_tag;                                      //!< Always input.
+    using difference_type = typename std::iterator_traits<base_base_t>::difference_type; //!< From base.
+    using value_type = typename std::iterator_traits<base_base_t>::value_type; //!< From base.
+    using reference = typename std::iterator_traits<base_base_t>::reference; //!< From base.
+    using pointer = typename std::iterator_traits<base_base_t>::pointer; //!< From base.
+    using iterator_category = std::input_iterator_tag; //!< Always input.
     //!\}
 
     /*!\name Arithmetic operators
@@ -437,18 +440,18 @@ private:
     urng_sentinel_type urng_sentinel{};
 
     //!\brief Reference to the predicate stored in the view.
-    ranges::semiregular_t<predicate_ref_t> predicate{};
+    ranges::semiregular_box_t<predicate_ref_t> predicate{};
 
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    basic_sentinel() = default;                                   //!< Defaulted.
-    basic_sentinel(basic_sentinel const &) = default;             //!< Defaulted.
-    basic_sentinel(basic_sentinel &&) = default;                  //!< Defaulted.
+    basic_sentinel() = default; //!< Defaulted.
+    basic_sentinel(basic_sentinel const &) = default; //!< Defaulted.
+    basic_sentinel(basic_sentinel &&) = default; //!< Defaulted.
     basic_sentinel & operator=(basic_sentinel const &) = default; //!< Defaulted.
-    basic_sentinel & operator=(basic_sentinel &&) = default;      //!< Defaulted.
-    ~basic_sentinel() = default;                                  //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel &&) = default; //!< Defaulted.
+    ~basic_sentinel() = default; //!< Defaulted.
 
     /*!\brief Construct from a sentinel and a predicate.
      * \param[in] urng_sentinel  The actual end of the underlying range.
@@ -468,13 +471,12 @@ public:
     //!\}
 
     /*!\name Comparison operators
-     * \brief We define comparison against the sentinel.
      * \{
      */
 
-    //!\brief Evaluate functor, possibly throw.
+    //!\brief Compares `lhs` with `rhs` for equality.
     template <typename rng_t>
-    friend bool operator==(iterator_type<rng_t> const & lhs, basic_sentinel const & rhs)
+    friend bool operator==(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
         if (lhs.base() == rhs.urng_sentinel)
@@ -488,26 +490,27 @@ public:
         return rhs.predicate(*lhs);
     }
 
-    //!\brief Switch lhs and rhs for comparison.
+    //!\brief Compares `lhs` with `rhs` for equality.
     template <typename rng_t>
-    friend bool operator==(basic_sentinel const & lhs, iterator_type<rng_t> const & rhs)
+    friend bool operator==(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
     {
         return rhs == lhs;
     }
 
-    //!\brief Delegate to ==-comparison.
+    //!\brief Compares `lhs` with `rhs` for inequality.
     template <typename rng_t>
-    friend bool operator!=(iterator_type<rng_t> const & lhs, basic_sentinel const & rhs)
+    friend bool operator!=(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Switch lhs and rhs for comparison.
+    //!\brief Compares `lhs` with `rhs` for inequality.
     template <typename rng_t>
-    friend bool operator!=(basic_sentinel const & lhs, iterator_type<rng_t> const & rhs)
+    friend bool operator!=(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
     {
         return rhs != lhs;
     }
+    //!\}
 };
 
 // ============================================================================
