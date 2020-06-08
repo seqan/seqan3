@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
 #include <cmath>
+#include <seqan3/std/concepts>
 #include <stdexcept>
 
 #include <seqan3/core/platform.hpp>
