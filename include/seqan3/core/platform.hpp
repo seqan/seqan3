@@ -239,6 +239,15 @@
 #   endif
 #endif
 
+//!\brief https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
+#ifndef SEQAN3_WORKAROUND_GCC_95578 // regressed in gcc10, fixed for gcc10.2
+#   if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ < 2)
+#       define SEQAN3_WORKAROUND_GCC_95578 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_95578 0
+#   endif
+#endif
+
 //!\brief Various concept problems only present in GCC7 and GCC8.
 #ifndef SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 #   if defined(__GNUC__) && ((__GNUC__ == 7) || (__GNUC__ == 8))
