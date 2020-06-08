@@ -166,7 +166,8 @@ public:
     constexpr void cend() const noexcept = delete;
     //!\}
 
-    constexpr size_t empty() const noexcept
+    //!\brief Checks whether the range is empty.
+    constexpr bool empty() const noexcept
     //!\cond
         requires std::ranges::forward_range<inner_range_type>
     //!\endcond
