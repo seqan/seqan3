@@ -73,7 +73,7 @@ private:
     class iterator_type;
 
     template <bool is_const_range>
-    class take_until_sentinel;
+    class basic_sentinel;
 
     template <typename rng_t>
     class iterator_type_consume_input;
@@ -177,7 +177,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
             return std::ranges::end(urange);
         else
-            return take_until_sentinel<false>{std::ranges::end(urange), fun};
+            return basic_sentinel<false>{std::ranges::end(urange), fun};
     }
 
     //!\copydoc end()
@@ -187,7 +187,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
             return std::ranges::cend(urange);
         else
-            return take_until_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
+            return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
     }
 
     //!\copydoc end()
@@ -427,7 +427,7 @@ public:
 //!\brief The sentinel type of take_until, provides the comparison operators.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <bool is_const_range>
-class view_take_until<urng_t, fun_t, or_throw, and_consume>::take_until_sentinel
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
 {
 private:
     //!\brief The base type of the underlying range.
@@ -449,24 +449,24 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    take_until_sentinel() = default;                                        //!< Defaulted.
-    take_until_sentinel(take_until_sentinel const &) = default;             //!< Defaulted.
-    take_until_sentinel(take_until_sentinel &&) = default;                  //!< Defaulted.
-    take_until_sentinel & operator=(take_until_sentinel const &) = default; //!< Defaulted.
-    take_until_sentinel & operator=(take_until_sentinel &&) = default;      //!< Defaulted.
-    ~take_until_sentinel() = default;                                       //!< Defaulted.
+    basic_sentinel() = default;                                   //!< Defaulted.
+    basic_sentinel(basic_sentinel const &) = default;             //!< Defaulted.
+    basic_sentinel(basic_sentinel &&) = default;                  //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel const &) = default; //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel &&) = default;      //!< Defaulted.
+    ~basic_sentinel() = default;                                  //!< Defaulted.
 
     /*!\brief Construct from a sentinel and a predicate.
      * \param[in] urng_sentinel  The actual end of the underlying range.
      * \param[in] predicate      Reference to the predicate stored in the view.
      */
-    explicit take_until_sentinel(urng_sentinel_type urng_sentinel, predicate_ref_t predicate) :
+    explicit basic_sentinel(urng_sentinel_type urng_sentinel, predicate_ref_t predicate) :
         urng_sentinel{std::move(urng_sentinel)},
         predicate{predicate}
     {}
 
     //!\brief Construct from a not const range a const range.
-    take_until_sentinel(take_until_sentinel<!is_const_range> other)
+    basic_sentinel(basic_sentinel<!is_const_range> other)
         requires is_const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, urng_sentinel_type>
         : urng_sentinel{std::move(other.urng_sentinel)},
           predicate{other.predicate}
@@ -480,7 +480,7 @@ public:
 
     //!\brief Evaluate functor, possibly throw.
     template <typename rng_t>
-    friend bool operator==(iterator_type<rng_t> const & lhs, take_until_sentinel const & rhs)
+    friend bool operator==(iterator_type<rng_t> const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
         if (lhs.base() == rhs.urng_sentinel)
@@ -496,21 +496,21 @@ public:
 
     //!\brief Switch lhs and rhs for comparison.
     template <typename rng_t>
-    friend bool operator==(take_until_sentinel const & lhs, iterator_type<rng_t> const & rhs)
+    friend bool operator==(basic_sentinel const & lhs, iterator_type<rng_t> const & rhs)
     {
         return rhs == lhs;
     }
 
     //!\brief Delegate to ==-comparison.
     template <typename rng_t>
-    friend bool operator!=(iterator_type<rng_t> const & lhs, take_until_sentinel const & rhs)
+    friend bool operator!=(iterator_type<rng_t> const & lhs, basic_sentinel const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Switch lhs and rhs for comparison.
     template <typename rng_t>
-    friend bool operator!=(take_until_sentinel const & lhs, iterator_type<rng_t> const & rhs)
+    friend bool operator!=(basic_sentinel const & lhs, iterator_type<rng_t> const & rhs)
     {
         return rhs != lhs;
     }
