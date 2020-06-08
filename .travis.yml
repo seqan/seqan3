@@ -18,6 +18,7 @@ addons:
       - g++-7
       - g++-8
       - g++-9
+      - g++-10
       - lcov
 
 # https://docs.travis-ci.com/user/languages/c
@@ -36,6 +37,13 @@ jobs:
         - BUILD=unit
         - BUILD_TYPE=Release
         - CXXFLAGS="-std=c++2a"
+    - name: "Unit gcc10 (c++17)"
+      env:
+        - CXX=g++-10
+        - CC=gcc-10
+        - BUILD=unit
+        - BUILD_TYPE=Release
+        - CXXFLAGS="-std=c++17 -fconcepts"
     - name: "Unit gcc8"
       env:
         - CXX=g++-8
