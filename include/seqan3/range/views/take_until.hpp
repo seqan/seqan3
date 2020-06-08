@@ -76,7 +76,7 @@ private:
     class basic_sentinel;
 
     template <typename rng_t>
-    class iterator_type_consume_input;
+    class basic_consume_iterator;
 
 private:
     /*!\name Associated types
@@ -84,7 +84,7 @@ private:
      */
     //!\brief The iterator type of this view (a random access iterator).
     using iterator          = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
-                                                 iterator_type_consume_input<urng_t>,
+                                                 basic_consume_iterator<urng_t>,
                                                  iterator_type<urng_t>>;
 
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
@@ -278,14 +278,14 @@ public:
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <typename rng_t>
-class view_take_until<urng_t, fun_t, or_throw, and_consume>::iterator_type_consume_input :
-public inherited_iterator_base<iterator_type_consume_input<rng_t>, std::ranges::iterator_t<rng_t>>
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_iterator :
+public inherited_iterator_base<basic_consume_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
     using base_base_t = std::ranges::iterator_t<rng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t      = inherited_iterator_base<iterator_type_consume_input, std::ranges::iterator_t<rng_t>>;
+    using base_t      = inherited_iterator_base<basic_consume_iterator, std::ranges::iterator_t<rng_t>>;
 
     //!\brief Auxiliary type.
     using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
@@ -308,21 +308,15 @@ public:
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    //!\brief Defaulted.
-    constexpr iterator_type_consume_input()                                                    = default;
-    //!\brief Defaulted.
-    constexpr iterator_type_consume_input(iterator_type_consume_input const & rhs)             = default;
-    //!\brief Defaulted.
-    constexpr iterator_type_consume_input(iterator_type_consume_input && rhs)                  = default;
-    //!\brief Defaulted.
-    constexpr iterator_type_consume_input & operator=(iterator_type_consume_input const & rhs) = default;
-    //!\brief Defaulted.
-    constexpr iterator_type_consume_input & operator=(iterator_type_consume_input && rhs)      = default;
-    //!\brief Defaulted.
-    ~iterator_type_consume_input()                                                             = default;
+    constexpr basic_consume_iterator()                                               = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator const & rhs)             = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator && rhs)                  = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs)      = default; //!< Defaulted.
+    ~basic_consume_iterator()                                                        = default; //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    iterator_type_consume_input(base_base_t it,
+    basic_consume_iterator(base_base_t it,
                                 fun_ref_t _fun,
                                 sentinel_type sen) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
@@ -351,7 +345,7 @@ public:
      * \{
      */
     //!\brief Override pre-increment to implement consuming behaviour.
-    iterator_type_consume_input & operator++()
+    basic_consume_iterator & operator++()
         noexcept(noexcept(++std::declval<base_t &>()) &&
                  noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
                  noexcept(fun(std::declval<reference>())))
@@ -368,11 +362,11 @@ public:
     }
 
     //!\brief Post-increment implemented via pre-increment.
-    iterator_type_consume_input operator++(int)
-        noexcept(noexcept(++std::declval<iterator_type_consume_input &>()) &&
-                 std::is_nothrow_copy_constructible_v<iterator_type_consume_input>)
+    basic_consume_iterator operator++(int)
+        noexcept(noexcept(++std::declval<basic_consume_iterator &>()) &&
+                 std::is_nothrow_copy_constructible_v<basic_consume_iterator>)
     {
-        iterator_type_consume_input cpy{*this};
+        basic_consume_iterator cpy{*this};
         ++(*this);
         return cpy;
     }
@@ -402,7 +396,7 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator==(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
+    friend bool operator==(sentinel_type const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
@@ -410,13 +404,13 @@ public:
 
     //!\brief Return the saved at_end state.
     bool operator!=(sentinel_type const & rhs) const
-        noexcept(noexcept(std::declval<iterator_type_consume_input &>() == rhs))
+        noexcept(noexcept(std::declval<basic_consume_iterator &>() == rhs))
     {
         return !(*this == rhs);
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator!=(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
+    friend bool operator!=(sentinel_type const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
