@@ -67,16 +67,16 @@ struct naive_minimiser_hash_fn
        if (shape.size() > window_size)
            throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
-       // Use random seed to randomise order on forward strand
+       // Use random seed to randomise order on forward strand.
        auto forward = std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
                                                    | std::views::transform([seed] (uint64_t const i)
                                                                            { return i ^ seed; });
-       // Create reverse complement strand and use random seed to randomise order on reverse complement strand
-       auto reverse = std::forward<urng_t>(urange) | seqan3::views::complement // Create complement
-                                                   | std::views::reverse       // Reverse order
-                                                   | seqan3::views::kmer_hash(shape) // Get hash values
+       // Create reverse complement strand and use random seed to randomise order on reverse complement strand.
+       auto reverse = std::forward<urng_t>(urange) | seqan3::views::complement // Create complement.
+                                                   | std::views::reverse       // Reverse order.
+                                                   | seqan3::views::kmer_hash(shape) // Get hash values.
                                                    | std::views::transform([seed] (uint64_t const i)
-                                                                           { return i ^ seed; }) // Randomise
+                                                                           { return i ^ seed; }) // Randomise.
                                                    | std::views::reverse; // Reverse again, so that the first hash value
                                                                           // is the reverse complement of the first
                                                                           // hash value in the forward strand.
