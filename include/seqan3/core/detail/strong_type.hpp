@@ -16,6 +16,7 @@
 #include <type_traits>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 
 namespace seqan3::detail
@@ -498,3 +499,35 @@ private:
     //!\brief The underlying value, which is wrapped as a strong type.
     value_t value;
 };
+
+//------------------------------------------------------------------------------
+// related functions
+//------------------------------------------------------------------------------
+
+/*!\name Formatted output
+ * \relates seqan3::detail::strong_type
+ * \{
+ */
+
+/*!\brief Formatted output to a seqan3::detail::debug_stream_type.
+ * \tparam char_t The char type of the seqan3::detail::debug_stream_type.
+ * \tparam strong_type_t The strong type to print; must model seqan3::detail::strong_type_specialisation.
+ *
+ * \param[in,out] stream The output stream.
+ * \param[in] value The strong typed value to print.
+ *
+ * \details
+ *
+ * Prints the stored value of the given strong type.
+ *
+ * \returns `stream_t &` A reference to the given stream.
+ */
+template <typename char_t, strong_type_specialisation strong_type_t>
+debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, strong_type_t && value)
+{
+    stream << value.get();
+    return stream;
+}
+//!\}
+
+} // namespace seqan3::detail
