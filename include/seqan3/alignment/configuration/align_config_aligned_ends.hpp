@@ -13,8 +13,9 @@
 
 #pragma once
 
-#include <type_traits>
+#include <cassert>
 #include <tuple>
+#include <type_traits>
 
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>

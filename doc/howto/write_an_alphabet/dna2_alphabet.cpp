@@ -6,6 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 //! [writable_alphabet]
+#include <cassert>
+
 #include <seqan3/alphabet/concept.hpp>                   // alphabet concept checks
 
 struct dna2

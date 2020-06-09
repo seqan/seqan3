@@ -13,6 +13,7 @@
 #pragma once
 
 #include <sstream>
+#include <unordered_map>
 #include <vector>
 
 #include <seqan3/core/detail/customisation_point.hpp>

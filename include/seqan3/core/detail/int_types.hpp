@@ -7,9 +7,10 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <type_traits>
 
-#include <seqan3/std/concepts>
+#include <seqan3/core/platform.hpp>
 
 /*!\file
  * \brief Provides metaprogramming utilities for integer types.

@@ -12,6 +12,8 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/std/ranges>
+
 #include <seqan3/range/views/type_reduce.hpp>
 
 // ============================================================================

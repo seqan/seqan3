@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <array>
+
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>

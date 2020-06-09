@@ -22,6 +22,8 @@
 #include <seqan3/std/iterator>
 #include <seqan3/std/concepts>
 
+#include <seqan3/core/platform.hpp>
+
 // TODO:
 // * remove is_basic_string
 // * remove #include <string> in this file
