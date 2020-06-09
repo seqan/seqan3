@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <deque>
 #include <seqan3/std/algorithm>
+#include <deque>
 
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
@@ -225,8 +225,8 @@ public:
     *
     */
     window_iterator(urng_iterator_t urng_iterator, urng_sentinel_t urng_sentinel, size_t window_values_size) :
-        urng_sentinel{urng_sentinel},
-        urng_iterator{urng_iterator}
+        urng_sentinel{std::move(urng_sentinel)},
+        urng_iterator{std::move(urng_iterator)}
     {
         size_t size = std::ranges::distance(urng_iterator, urng_sentinel);
         window_values_size = std::min<size_t>(window_values_size, size);
@@ -324,13 +324,13 @@ public:
 
 private:
     //!brief Iterator to last element in range.
-    urng_sentinel_t urng_sentinel;
+    urng_sentinel_t urng_sentinel{};
 
     //!\brief The minimiser value.
     value_type minimiser_value{};
 
     //!\brief Iterator to the rightmost value of one window.
-    urng_iterator_t urng_iterator;
+    urng_iterator_t urng_iterator{};
 
     //!\brief Stored values per window. It is necessary to store them, because a shift can remove the current minimiser.
     std::deque<value_type> window_values;
