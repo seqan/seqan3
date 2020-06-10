@@ -57,9 +57,9 @@ TEST(alignment_configuration_test, number_of_configs)
     EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 12);
 }
 
-TYPED_TEST(alignment_configuration_test, config_element)
+TYPED_TEST(alignment_configuration_test, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
 }
 
 TYPED_TEST(alignment_configuration_test, configuration_exists)
