@@ -179,7 +179,7 @@ private:
     template <typename alignment_configuration_t>
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
-        auto scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}, gap_open_score{-10}});
+        auto scheme = config.get_or(align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}}).value;
 
         alignment_state.gap_extension_score = static_cast<score_t>(scheme.get_gap_score());
         alignment_state.gap_open_score = static_cast<score_t>(scheme.get_gap_score() + scheme.get_gap_open_score());

@@ -78,8 +78,8 @@ protected:
     explicit policy_affine_gap_recursion(alignment_configuration_t const & config)
     {
         // Get the gap scheme from the config or choose -1 and -10 as default.
-        auto && selected_gap_scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1},
-                                                                                          seqan3::gap_open_score{-10}});
+        auto const & selected_gap_scheme = config.get_or(align_cfg::gap{gap_scheme{seqan3::gap_score{-1},
+                                                                                   seqan3::gap_open_score{-10}}}).value;
 
         if constexpr (simd::simd_concept<score_type>)
         {

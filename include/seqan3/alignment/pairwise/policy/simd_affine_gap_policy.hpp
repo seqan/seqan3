@@ -159,7 +159,7 @@ private:
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
         using scalar_t = typename simd_traits<score_t>::scalar_type;
-        auto scheme = config.template value_or<align_cfg::gap>(gap_scheme{gap_score{-1}, gap_open_score{-10}});
+        auto scheme = config.get_or(align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}}).value;
 
         alignment_state.gap_extension_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.get_gap_score()));
         alignment_state.gap_open_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.get_gap_score() +
