@@ -66,10 +66,11 @@
  * The get interface returns a reference to the stored configuration element. In some cases, e.g. the implementor
  * of the actual algorithm, one wants to have an easy access to the actual value of the setting. Since, the
  * configuration must not contain all possible configuration elements the seqan3::configuration provides a
- * seqan3::configuration::value_or interface, which provides direct access to the value of the respective
- * configuration element or uses a default value if the queried type is not contained in the configuration.
+ * seqan3::configuration::get_or interface. Using this interface one can call get with a specific configuration element.
+ * If this configuration element or a specialisation of it is already stored inside of the configuration, the respective
+ * element is returned. Otherwise, the passed argument will be returned as the alternative.
  *
- * \include test/snippet/core/algorithm/configuration_value_or.cpp
+ * \include test/snippet/core/algorithm/configuration_get_or.cpp
  */
  #include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/core/algorithm/concept.hpp>

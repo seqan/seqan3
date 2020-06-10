@@ -223,34 +223,6 @@ TEST(configuration, remove_by_type_template)
     }
 }
 
-TEST(configuration, value_or_by_type)
-{
-    seqan3::configuration cfg = bax{2.2} | bar{1};
-
-    { // l-value
-        EXPECT_FLOAT_EQ(cfg.value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
-    }
-
-    { // const l-value
-        seqan3::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_FLOAT_EQ(cfg_c.value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
-    }
-
-    { // r-value
-        seqan3::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
-    }
-
-    { // const r-value
-        seqan3::configuration<bax, bar> const cfg_cr{cfg};
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
-    }
-}
-
 TEST(configuration, get_or_by_type)
 {
     seqan3::configuration cfg = bax{2.2} | bar{1};
@@ -281,34 +253,6 @@ TEST(configuration, get_or_by_type)
         // EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&>));
         seqan3::configuration<bax, bar> const cfg_cr3{cfg};
         EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
-    }
-}
-
-TEST(configuration, value_or_by_type_template)
-{
-    seqan3::configuration cfg = bar{1} | foobar<>{std::vector<int>{0, 1, 2, 3}};
-
-    { // l-value
-        EXPECT_TRUE(ranges::equal(cfg.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
-    }
-
-    { // const l-value
-        seqan3::configuration<bar, foobar<>> const cfg_c{cfg};
-        EXPECT_TRUE(ranges::equal(cfg_c.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
-    }
-
-    { // r-value
-        seqan3::configuration<bar, foobar<>> cfg_r{cfg};
-        EXPECT_TRUE(ranges::equal(std::move(cfg_r).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
-    }
-
-    { // const r-value
-        seqan3::configuration<bar, foobar<>> const cfg_cr{cfg};
-        EXPECT_TRUE(ranges::equal(std::move(cfg_cr).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
     }
 }
 
