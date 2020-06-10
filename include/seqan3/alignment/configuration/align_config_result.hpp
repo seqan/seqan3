@@ -140,7 +140,10 @@ class result : public pipeable_config_element<result<alignment_result_tag_t, sco
 public:
     //!\brief The score type of the alignment result.
     using score_type = score_t;
-
+    static_assert(std::is_signed_v<score_type>,
+                  "The alignment algorithm cannot be computed with an unsigned type as the score type. If you "
+                  "explicitly want an unsigned type as the score type, please submit a feature request explaining the "
+                  "your specific use case on our github page: github.com/seqan/seqan3.git.");
     /*!\name Constructors, destructor and assignment
      * \{
      */
