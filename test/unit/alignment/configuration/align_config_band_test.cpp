@@ -12,9 +12,9 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-TEST(align_config_band, config_element)
+TEST(align_config_band, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::band<seqan3::static_band>>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::band<seqan3::static_band>>));
 }
 
 TEST(align_config_band, configuration)

@@ -23,9 +23,9 @@ using test_types = ::testing::Types<seqan3::detail::with_score_type,
 
 TYPED_TEST_SUITE(align_cfg_result_test, test_types, );
 
-TEST(align_config_max_error, config_element)
+TEST(align_config_max_error, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::result<seqan3::detail::with_score_type>>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::result<seqan3::detail::with_score_type>>));
 }
 
 template <typename type>

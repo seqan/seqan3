@@ -12,9 +12,9 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/std/concepts>
 
-TEST(align_config_gap, config_element)
+TEST(align_config_gap, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::gap<seqan3::gap_scheme<>>>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::gap<seqan3::gap_scheme<>>>));
 }
 
 TEST(align_config_gap, configuration)

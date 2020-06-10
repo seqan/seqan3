@@ -24,7 +24,7 @@ namespace seqan3
 {
 //!\cond
 // Forward declarations
-template <typename derived_t, typename value_t>
+template <typename derived_t, typename value_t = void>
 struct pipeable_config_element;
 //!\endcond
 }
@@ -33,7 +33,7 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
-// Concept config_element
+// Concept config_element_specialisation
 // ----------------------------------------------------------------------------
 
 //!\cond
@@ -41,7 +41,7 @@ template <typename derived_t>
 class config_element_base;
 //!\endcond
 
-/*!\interface seqan3::detail::config_element <>
+/*!\interface seqan3::detail::config_element_specialisation <>
  * \brief Concept for an algorithm configuration.
  * \ingroup algorithm
  *
@@ -49,27 +49,22 @@ class config_element_base;
  * \implements seqan3::pipeable_config_element
  */
 
-/*!\name Requirements for seqan3::detail::config_element
- * \relates seqan3::detail::config_element
- * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element.
+/*!\name Requirements for seqan3::detail::config_element_specialisation
+ * \relates seqan3::detail::config_element_specialisation
+ * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_specialisation.
  * \{
  */
 /*!\var id
  * \brief Algorithm specific static id used for internal validation checks.
  */
-/*!\var value
- * \brief Member storing the configuration value.
- */
 //!\}
 //!\cond
 template <typename config_t>
-SEQAN3_CONCEPT config_element = std::semiregular<std::remove_reference_t<config_t>> &&
+SEQAN3_CONCEPT config_element_specialisation = std::semiregular<std::remove_reference_t<config_t>> &&
 requires (config_t c)
 {
     { std::remove_reference_t<config_t>::id };
-    { c.value };
-    // Must inherit from the pipeable_config_element class.
-    requires std::is_base_of_v<pipeable_config_element<config_t, decltype(c.value)>, config_t>;
 };
 //!\endcond
+
 } // namespace seqan3::detail

@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides seqan3::pipeable_config_element.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
 
 #pragma once
@@ -24,8 +25,13 @@ namespace seqan3
 /*!\brief Adds pipe interface to configuration elements.
  * \ingroup algorithm
  * \tparam derived_t The type of the derived class.
- * \tparam value_t   The type of the wrapped value.
+ * \tparam value_t   The type of the wrapped value (defaults to void).
  */
+template <typename derived_t>
+struct pipeable_config_element<derived_t, void>
+{};
+
+//! \overload
 template <typename derived_t, typename value_t>
 struct pipeable_config_element
 {

@@ -38,7 +38,7 @@ constexpr ptrdiff_t find()
 /*!\brief Implementation for seqan3::pack_traits::find_if.
  * \tparam pred_t   The predicate that is being evaluated.
  * \tparam pack_t   The type pack.
- * \returns The position of the first type `t` in `pack_t` for whom `pred_t<t>::value` is true.
+ * \returns The position of the first type `t` in `pack_t` for whom ``pred_t<t>::%value`` is true.
  * \ingroup type_list
  */
 template <template <typename> typename pred_t, typename ...pack_t>
