@@ -439,7 +439,7 @@ private:
             advance_window();
         }
         window_values.push_back(window_value());
-        auto deque_it = std::ranges::min_element(window_values);
+        auto deque_it = std::ranges::min_element(window_values, std::less_equal<value_type>{});
         minimiser_value = *deque_it;
         minimiser_position_offset = std::distance(std::begin(window_values), deque_it);
     }
@@ -463,7 +463,7 @@ private:
 
         if (minimiser_position_offset == 0)
         {
-            auto deque_it = std::ranges::min_element(window_values);
+            auto deque_it = std::ranges::min_element(window_values, std::less_equal<value_type>{});
             minimiser_value = *deque_it;
             minimiser_position_offset = std::distance(std::begin(window_values), deque_it);
             return true;

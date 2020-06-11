@@ -67,7 +67,7 @@ TYPED_TEST_SUITE(minimiser_hash_properties_test, underlying_range_types, );
 class minimiser_hash_test : public ::testing::Test
 {
 protected:
-    std::vector<seqan3::dna4> text1{"AAAAAAAAAA"_dna4};
+    std::vector<seqan3::dna4> text1{"AAAAAAAAAAAAAAAAAAA"_dna4};
     std::vector<seqan3::dna4> text1_short{"AAAAAA"_dna4};
     result_t result1{0, 0, 0}; // Same for ungapped and gapped
     result_t result1_default_seed{0x8F3F73B5CF1C9ADE, 0x8F3F73B5CF1C9ADE, 0x8F3F73B5CF1C9ADE}; // Default seed used

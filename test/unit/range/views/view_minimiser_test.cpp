@@ -94,7 +94,7 @@ TYPED_TEST_SUITE(minimiser_view_properties_test, underlying_range_types, );
 class minimiser_test : public ::testing::Test
 {
 protected:
-    std::vector<seqan3::dna4> text1{"AAAAAAAAAA"_dna4};
+    std::vector<seqan3::dna4> text1{"AAAAAAAAAAAAAAAAAAA"_dna4};
     std::vector<seqan3::dna4> text1_short{"AAAAAA"_dna4};
     result_t result1{0, 0, 0}; // Same result for ungapped and gapped
     result_t result1_short{0}; // windows_size == text_size, same result for ungapped and gapped
@@ -131,7 +131,7 @@ void compare_types(adaptor_t v, adaptor2_t kmer_view, text_t text)
 TYPED_TEST(minimiser_view_properties_test, concepts)
 {
     TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4,
-                'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
+                   'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
 
     auto v = text | kmer_view | minimiser_no_rev_view;
     compare_types(v, kmer_view, text);
