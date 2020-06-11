@@ -88,6 +88,38 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 }
 
+TYPED_TEST(align_pairwise_test, single_pair_of_non_lvalues)
+{
+    auto const seq1 = "ACGTGATG"_dna4;
+    auto const seq2 = "AGTGATACT"_dna4;
+
+    auto p = std::make_pair(seq1, seq2);
+
+    {  // the score
+        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+
+        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        {
+            EXPECT_EQ(res.score(), -4.0);
+        }
+    }
+
+    {  // the alignment
+        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        unsigned idx = 0;
+        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        {
+            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.score(), -4);
+            EXPECT_EQ(res.back_coordinate().first, 8u);
+            EXPECT_EQ(res.back_coordinate().second, 9u);
+            auto && [gap1, gap2] = res.alignment();
+            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
+            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+        }
+    }
+}
+
 TYPED_TEST(align_pairwise_test, single_pair_double_score)
 {
     if constexpr (!TestFixture::is_vectorised)
