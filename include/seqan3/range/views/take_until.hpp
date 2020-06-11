@@ -69,293 +69,26 @@ private:
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
                                            std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
-    //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
-    //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
     template <typename rng_t>
-    class iterator_type : public inherited_iterator_base<iterator_type<rng_t>, std::ranges::iterator_t<rng_t>>
-    {
-    private:
-        //!\brief The iterator type of the underlying range.
-        using base_base_t = std::ranges::iterator_t<rng_t>;
-        //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+    class basic_iterator;
 
-        //!\brief The sentinel type is identical to that of the underlying range.
-        using sentinel_type = std::ranges::sentinel_t<rng_t>;
+    template <bool is_const_range>
+    class basic_sentinel;
 
-        //!\brief Auxiliary type.
-        using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
-                                             std::remove_reference_t<fun_t> const &,
-                                             std::remove_reference_t<fun_t> &>;
-        //!\brief Reference to the functor stored in the view.
-        ranges::semiregular_t<fun_ref_t> fun;
-
-    public:
-        /*!\name Constructors, destructor and assignment
-         * \brief Exceptions specification is implicitly inherited.
-         * \{
-         */
-        constexpr iterator_type()                                      = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
-        ~iterator_type()                                               = default; //!< Defaulted.
-
-        //!\brief Constructor that delegates to the CRTP layer.
-        iterator_type(base_base_t it) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}
-        {}
-
-        //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-        iterator_type(base_base_t it,
-                      fun_ref_t _fun,
-                      sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}, fun{_fun}
-        {}
-        //!\}
-
-        /*!\name Associated types
-         * \brief All are derived from the base_base_t.
-         * \{
-         */
-
-        //!\brief The difference type.
-        using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;
-        //!\brief The value type.
-        using value_type            = typename std::iterator_traits<base_base_t>::value_type;
-        //!\brief The reference type.
-        using reference             = typename std::iterator_traits<base_base_t>::reference;
-        //!\brief The pointer type.
-        using pointer               = typename std::iterator_traits<base_base_t>::pointer;
-        //!\brief The iterator category tag.
-        using iterator_category     = iterator_tag_t<base_base_t>;
-        //!\}
-
-        /*!\name Comparison operators
-         * \brief We define comparison against self and against the sentinel.
-         * \{
-         */
-        //!\brief Delegate comparison to base_base_t.
-        bool operator==(iterator_type const & rhs) const
-            noexcept(noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
-        //!\cond
-            requires std::forward_iterator<base_base_t>
-        //!\endcond
-        {
-            return *this->this_to_base() == *rhs.this_to_base();
-        }
-
-        //!\brief Evaluate functor, possibly throw.
-        bool operator==(sentinel_type const & rhs) const
-            noexcept(!or_throw &&
-                     noexcept(std::declval<base_base_t &>() == std::declval<sentinel_type &>()) &&
-                     noexcept(fun(std::declval<reference>())))
-        {
-            if (*this->this_to_base() == rhs) // [[unlikely]]
-            {
-                if constexpr (or_throw)
-                    throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
-                else
-                    return true;
-            }
-
-            return fun(**this);
-        }
-
-        //!\brief Switch lhs and rhs for comparison.
-        friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(rhs == lhs))
-        {
-            return rhs == lhs;
-        }
-
-        //!\brief Switch lhs and rhs for comparison.
-        bool operator!=(sentinel_type const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
-        {
-            return !(*this == rhs);
-        }
-
-        //!\brief Delegate comparison to base_base_t.
-        bool operator!=(iterator_type const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
-        //!\cond
-            requires std::forward_iterator<base_base_t>
-        //!\endcond
-        {
-            return !(*this == rhs);
-        }
-
-        //!\brief Switch lhs and rhs for comparison.
-        friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs)
-            noexcept(noexcept(rhs != lhs))
-        {
-            return rhs != lhs;
-        }
-        //!\}
-    }; // class iterator_type
-
-    //!\brief Special iterator type used when consuming behaviour is selected.
-    //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
     template <typename rng_t>
-    class iterator_type_consume_input : public inherited_iterator_base<iterator_type_consume_input<rng_t>, std::ranges::iterator_t<rng_t>>
-    {
-    private:
-        //!\brief The iterator type of the underlying range.
-        using base_base_t = std::ranges::iterator_t<rng_t>;
-        //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type_consume_input, std::ranges::iterator_t<rng_t>>;
-
-        //!\brief Auxiliary type.
-        using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
-                                             std::remove_reference_t<fun_t> const &,
-                                             std::remove_reference_t<fun_t> &>;
-        //!\brief Reference to the functor stored in the view.
-        ranges::semiregular_t<fun_ref_t> fun;
-
-        //!\brief The sentinel type is identical to that of the underlying range.
-        using sentinel_type = std::ranges::sentinel_t<rng_t>;
-
-        //!\brief Whether this iterator has reached the end (cache is only used on pure input ranges).
-        sentinel_type stored_end;
-
-        //!\brief Whether the end was reached by evaluating the functor.
-        bool at_end_gracefully = false;
-
-    public:
-        /*!\name Constructors, destructor and assignment
-         * \brief Exceptions specification is implicitly inherited.
-         * \{
-         */
-        //!\brief Defaulted.
-        constexpr iterator_type_consume_input()                                                    = default;
-        //!\brief Defaulted.
-        constexpr iterator_type_consume_input(iterator_type_consume_input const & rhs)             = default;
-        //!\brief Defaulted.
-        constexpr iterator_type_consume_input(iterator_type_consume_input && rhs)                  = default;
-        //!\brief Defaulted.
-        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input const & rhs) = default;
-        //!\brief Defaulted.
-        constexpr iterator_type_consume_input & operator=(iterator_type_consume_input && rhs)      = default;
-        //!\brief Defaulted.
-        ~iterator_type_consume_input()                                                             = default;
-
-        //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-        iterator_type_consume_input(base_base_t it,
-                                    fun_ref_t _fun,
-                                    sentinel_type sen) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
-        {
-            if ((*this->this_to_base() != stored_end) && fun(**this))
-            {
-                at_end_gracefully = true;
-                ++(*this);
-            }
-        }
-        //!\}
-
-        /*!\name Associated types
-         * \brief All are derived from the base_base_t.
-         * \{
-         */
-        using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;  //!< From base.
-        using value_type            = typename std::iterator_traits<base_base_t>::value_type;       //!< From base.
-        using reference             = typename std::iterator_traits<base_base_t>::reference;        //!< From base.
-        using pointer               = typename std::iterator_traits<base_base_t>::pointer;          //!< From base.
-        using iterator_category     = std::input_iterator_tag;                                      //!< Always input.
-        //!\}
-
-        /*!\name Arithmetic operators
-         * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
-         * \{
-         */
-        //!\brief Override pre-increment to implement consuming behaviour.
-        iterator_type_consume_input & operator++()
-            noexcept(noexcept(++std::declval<base_t &>()) &&
-                     noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
-                     noexcept(fun(std::declval<reference>())))
-        {
-            base_t::operator++();
-
-            while ((*this->this_to_base() != stored_end) && fun(**this))
-            {
-                at_end_gracefully = true;
-                base_t::operator++();
-            }
-
-            return *this;
-        }
-
-        //!\brief Post-increment implemented via pre-increment.
-        iterator_type_consume_input operator++(int)
-            noexcept(noexcept(++std::declval<iterator_type_consume_input &>()) &&
-                     std::is_nothrow_copy_constructible_v<iterator_type_consume_input>)
-        {
-            iterator_type_consume_input cpy{*this};
-            ++(*this);
-            return cpy;
-        }
-        //!\}
-
-        /*!\name Comparison operators
-         * \brief We define comparison against self and against the sentinel.
-         * \{
-         */
-        //!\brief Return the saved at_end state.
-        bool operator==(sentinel_type const & rhs) const
-            noexcept(!or_throw &&
-                     noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
-                     noexcept(fun(std::declval<reference>())))
-        {
-            if (at_end_gracefully)
-                return true;
-
-            if (*this->this_to_base() == rhs)
-            {
-                if constexpr (or_throw)
-                    throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
-                else
-                    return true;
-            }
-
-            return fun(**this);
-        }
-
-        //!\brief Return the saved at_end state.
-        friend bool operator==(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
-            noexcept(noexcept(rhs == lhs))
-        {
-            return rhs == lhs;
-        }
-
-        //!\brief Return the saved at_end state.
-        bool operator!=(sentinel_type const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type_consume_input &>() == rhs))
-        {
-            return !(*this == rhs);
-        }
-
-        //!\brief Return the saved at_end state.
-        friend bool operator!=(sentinel_type const & lhs, iterator_type_consume_input const & rhs)
-            noexcept(noexcept(rhs != lhs))
-        {
-            return rhs != lhs;
-        }
-        //!\}
-    }; // class iterator_type_consume_input
+    class basic_consume_iterator;
 
 private:
     /*!\name Associated types
      * \{
      */
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator          = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
-                                                 iterator_type_consume_input<urng_t>,
-                                                 iterator_type<urng_t>>;
+    using iterator = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
+                                        basic_consume_iterator<urng_t>,
+                                        basic_iterator<urng_t>>;
 
     //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator    = iterator_type<urng_t const>;
+    using const_iterator = basic_iterator<urng_t const>;
     //!\}
 
 public:
@@ -441,21 +174,27 @@ public:
      */
     auto end() noexcept
     {
-        return std::ranges::end(urange);
+        if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
+            return std::ranges::end(urange);
+        else
+            return basic_sentinel<false>{std::ranges::end(urange), fun};
     }
 
     //!\copydoc end()
     auto end() const noexcept
         requires const_iterable
     {
-        return std::ranges::cend(urange);
+        if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
+            return std::ranges::cend(urange);
+        else
+            return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
     }
 
     //!\copydoc end()
     auto cend() const noexcept
         requires const_iterable
     {
-        return std::ranges::cend(urange);
+        return end();
     }
     //!\}
 };
@@ -464,6 +203,315 @@ public:
 //!\relates seqan3::detail::view_take_until
 template <typename urng_t, typename fun_t, bool or_throw = false, bool and_consume = false>
 view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
+
+//!\brief The iterator type inherits from the underlying type, but overwrites several operators.
+//!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
+template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
+template <typename rng_t>
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_iterator :
+    public inherited_iterator_base<basic_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
+{
+private:
+    //!\brief The iterator type of the underlying range.
+    using base_base_t = std::ranges::iterator_t<rng_t>;
+    //!\brief The CRTP wrapper type.
+    using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
+    //!\brief The sentinel type is identical to that of the underlying range.
+    using sentinel_type = std::ranges::sentinel_t<rng_t>;
+    //!\brief Auxiliary type.
+    using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
+                                         std::remove_reference_t<fun_t> const &,
+                                         std::remove_reference_t<fun_t> &>;
+    //!\brief Reference to the functor stored in the view.
+    ranges::semiregular_box_t<fun_ref_t> fun;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \brief Exceptions specification is implicitly inherited.
+     * \{
+     */
+    constexpr basic_iterator() = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator && rhs) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator && rhs) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
+
+    //!\brief Constructor that delegates to the CRTP layer.
+    basic_iterator(base_base_t it) noexcept(noexcept(base_t{it})) :
+        base_t{std::move(it)}
+    {}
+
+    //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
+    basic_iterator(base_base_t it,
+                   fun_ref_t _fun,
+                   sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
+        base_t{std::move(it)}, fun{_fun}
+    {}
+    //!\}
+
+    /*!\name Associated types
+     * \brief All are derived from the base_base_t.
+     * \{
+     */
+
+    //!\brief The difference type.
+    using difference_type = typename std::iterator_traits<base_base_t>::difference_type;
+    //!\brief The value type.
+    using value_type = typename std::iterator_traits<base_base_t>::value_type;
+    //!\brief The reference type.
+    using reference = typename std::iterator_traits<base_base_t>::reference;
+    //!\brief The pointer type.
+    using pointer = typename std::iterator_traits<base_base_t>::pointer;
+    //!\brief The iterator category tag.
+    using iterator_category = iterator_tag_t<base_base_t>;
+    //!\}
+
+    //!\brief Returns a copy of the underlying iterator.
+    base_base_t base() const
+    //!\cond
+        requires std::copy_constructible<base_base_t>
+    //!\endcond
+    {
+        return *this->this_to_base();
+    }
+};
+
+//!\brief Special iterator type used when consuming behaviour is selected.
+//!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
+template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
+template <typename rng_t>
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_iterator :
+    public inherited_iterator_base<basic_consume_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
+{
+private:
+    //!\brief The iterator type of the underlying range.
+    using base_base_t = std::ranges::iterator_t<rng_t>;
+    //!\brief The CRTP wrapper type.
+    using base_t = inherited_iterator_base<basic_consume_iterator, std::ranges::iterator_t<rng_t>>;
+
+    //!\brief Auxiliary type.
+    using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
+                                         std::remove_reference_t<fun_t> const &,
+                                         std::remove_reference_t<fun_t> &>;
+    //!\brief Reference to the functor stored in the view.
+    ranges::semiregular_box_t<fun_ref_t> fun;
+
+    //!\brief The sentinel type is identical to that of the underlying range.
+    using sentinel_type = std::ranges::sentinel_t<rng_t>;
+
+    //!\brief Whether this iterator has reached the end (cache is only used on pure input ranges).
+    sentinel_type stored_end;
+
+    //!\brief Whether the end was reached by evaluating the functor.
+    bool at_end_gracefully = false;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \brief Exceptions specification is implicitly inherited.
+     * \{
+     */
+    constexpr basic_consume_iterator() = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator && rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator const & rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs) = default; //!< Defaulted.
+    ~basic_consume_iterator() = default; //!< Defaulted.
+
+    //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
+    basic_consume_iterator(base_base_t it,
+                           fun_ref_t _fun,
+                           sentinel_type sen) noexcept(noexcept(base_t{it})) :
+        base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
+    {
+        if ((*this->this_to_base() != stored_end) && fun(**this))
+        {
+            at_end_gracefully = true;
+            ++(*this);
+        }
+    }
+    //!\}
+
+    /*!\name Associated types
+     * \brief All are derived from the base_base_t.
+     * \{
+     */
+    using difference_type = typename std::iterator_traits<base_base_t>::difference_type; //!< From base.
+    using value_type = typename std::iterator_traits<base_base_t>::value_type; //!< From base.
+    using reference = typename std::iterator_traits<base_base_t>::reference; //!< From base.
+    using pointer = typename std::iterator_traits<base_base_t>::pointer; //!< From base.
+    using iterator_category = std::input_iterator_tag; //!< Always input.
+    //!\}
+
+    /*!\name Arithmetic operators
+     * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
+     * \{
+     */
+    //!\brief Override pre-increment to implement consuming behaviour.
+    basic_consume_iterator & operator++()
+        noexcept(noexcept(++std::declval<base_t &>()) &&
+                 noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                 noexcept(fun(std::declval<reference>())))
+    {
+        base_t::operator++();
+
+        while ((*this->this_to_base() != stored_end) && fun(**this))
+        {
+            at_end_gracefully = true;
+            base_t::operator++();
+        }
+
+        return *this;
+    }
+
+    //!\brief Post-increment implemented via pre-increment.
+    basic_consume_iterator operator++(int)
+        noexcept(noexcept(++std::declval<basic_consume_iterator &>()) &&
+                 std::is_nothrow_copy_constructible_v<basic_consume_iterator>)
+    {
+        basic_consume_iterator cpy{*this};
+        ++(*this);
+        return cpy;
+    }
+    //!\}
+    /*!\name Comparison operators
+     * \brief We define comparison against self and against the sentinel.
+     * \{
+     */
+    //!\brief Return the saved at_end state.
+    bool operator==(sentinel_type const & rhs) const
+        noexcept(!or_throw &&
+                 noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                 noexcept(fun(std::declval<reference>())))
+    {
+        if (at_end_gracefully)
+            return true;
+
+        if (*this->this_to_base() == rhs)
+        {
+            if constexpr (or_throw)
+                throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
+            else
+                return true;
+        }
+
+        return fun(**this);
+    }
+
+    //!\brief Return the saved at_end state.
+    friend bool operator==(sentinel_type const & lhs, basic_consume_iterator const & rhs)
+        noexcept(noexcept(rhs == lhs))
+    {
+        return rhs == lhs;
+    }
+
+    //!\brief Return the saved at_end state.
+    bool operator!=(sentinel_type const & rhs) const
+        noexcept(noexcept(std::declval<basic_consume_iterator &>() == rhs))
+    {
+        return !(*this == rhs);
+    }
+
+    //!\brief Return the saved at_end state.
+    friend bool operator!=(sentinel_type const & lhs, basic_consume_iterator const & rhs)
+        noexcept(noexcept(rhs != lhs))
+    {
+        return rhs != lhs;
+    }
+    //!\}
+};
+
+//!\brief The sentinel type of take_until, provides the comparison operators.
+template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
+template <bool is_const_range>
+class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
+{
+private:
+    //!\brief The base type of the underlying range.
+    using urng_base_type = std::conditional_t<is_const_range, std::add_const_t<urng_t>, urng_t>;
+    //!\brief The sentinel type of the underlying range.
+    using urng_sentinel_type = std::ranges::sentinel_t<urng_base_type>;
+    //!\brief Auxiliary type.
+    using predicate_ref_t = std::conditional_t<is_const_range,
+                                               std::remove_reference_t<fun_t> const &,
+                                               std::remove_reference_t<fun_t> &>;
+
+    //!\brief The actual end of the underlying range.
+    urng_sentinel_type urng_sentinel{};
+
+    //!\brief Reference to the predicate stored in the view.
+    ranges::semiregular_box_t<predicate_ref_t> predicate{};
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    basic_sentinel() = default; //!< Defaulted.
+    basic_sentinel(basic_sentinel const &) = default; //!< Defaulted.
+    basic_sentinel(basic_sentinel &&) = default; //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel const &) = default; //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel &&) = default; //!< Defaulted.
+    ~basic_sentinel() = default; //!< Defaulted.
+
+    /*!\brief Construct from a sentinel and a predicate.
+     * \param[in] urng_sentinel  The actual end of the underlying range.
+     * \param[in] predicate      Reference to the predicate stored in the view.
+     */
+    explicit basic_sentinel(urng_sentinel_type urng_sentinel, predicate_ref_t predicate) :
+        urng_sentinel{std::move(urng_sentinel)},
+        predicate{predicate}
+    {}
+
+    //!\brief Construct from a not const range a const range.
+    basic_sentinel(basic_sentinel<!is_const_range> other)
+        requires is_const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, urng_sentinel_type>
+        : urng_sentinel{std::move(other.urng_sentinel)},
+          predicate{other.predicate}
+    {}
+    //!\}
+
+    /*!\name Comparison operators
+     * \{
+     */
+
+    //!\brief Compares `lhs` with `rhs` for equality.
+    template <typename rng_t>
+    friend bool operator==(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
+    {
+        // Actual comparison delegated to lhs base
+        if (lhs.base() == rhs.urng_sentinel)
+        {
+            if constexpr (or_throw)
+                throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
+            else
+                return true;
+        }
+
+        return rhs.predicate(*lhs);
+    }
+
+    //!\brief Compares `lhs` with `rhs` for equality.
+    template <typename rng_t>
+    friend bool operator==(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
+    {
+        return rhs == lhs;
+    }
+
+    //!\brief Compares `lhs` with `rhs` for inequality.
+    template <typename rng_t>
+    friend bool operator!=(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    //!\brief Compares `lhs` with `rhs` for inequality.
+    template <typename rng_t>
+    friend bool operator!=(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
+    {
+        return rhs != lhs;
+    }
+    //!\}
+};
 
 // ============================================================================
 //  take_until_fn (adaptor definition)
