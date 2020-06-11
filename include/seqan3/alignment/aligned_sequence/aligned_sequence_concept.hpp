@@ -568,8 +568,11 @@ template <typename tuple_t, typename char_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t && alignment)
 {
-    static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> >= 2, "An alignment requires at least two sequences.");
-    detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>> - 1> {});
+    constexpr size_t number_of_sequences = std::tuple_size_v<remove_cvref_t<tuple_t>>;
+
+    static_assert(number_of_sequences >= 2, "An alignment requires at least two sequences.");
+
+    detail::stream_alignment(stream, alignment, std::make_index_sequence<number_of_sequences - 1>{});
     return stream;
 }
 
