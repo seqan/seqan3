@@ -64,6 +64,16 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 ## API changes
 
+### Alignment
+
+* The alignment configuration elements were refactored:
+  * The option `seqan3::align_cfg::band` is now renamed to `seqan3::align_cfg::band_fixed_size` and directly initialised
+    with a `seqan3::align_cfg::lower_diagonal` and `seqan3::align_cfg::upper_diagonal` instead of `seqan3::static_band`.
+    It also directly exposes the lower_diagonal and upper_diagonal as public members
+    ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
+
+### Core
+
 * In accordance with the standard, the following concepts are renamed:
   * `default_constructible` to `default_initializable`
   * `readable` to `indirectly_readable`

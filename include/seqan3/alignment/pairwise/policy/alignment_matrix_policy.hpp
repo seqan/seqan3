@@ -15,7 +15,7 @@
 #include <limits>
 #include <tuple>
 
-#include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/views/slice.hpp>
@@ -106,7 +106,7 @@ private:
     template <typename sequence1_t, typename sequence2_t, typename score_t>
     constexpr void allocate_matrix(sequence1_t && sequence1,
                                    sequence2_t && sequence2,
-                                   static_band const & band,
+                                   align_cfg::band_fixed_size const & band,
                                    alignment_algorithm_state<score_t> const & state)
     {
         assert(state.gap_extension_score <= 0); // We expect it to never be positive.
@@ -130,7 +130,7 @@ private:
     * \tparam sequence2_t The type of the second sequence to align; must model std::forward_ranges.
     * \param[in] sequence1 The first sequence to align.
     * \param[in] sequence2 The second sequence to align.
-    * \param[in] band The seqan3::static_band used to limit the alignment space.
+    * \param[in] band The seqan3::align_cfg::band_fixed_size used to limit the alignment space.
     *
     * \details
     *
@@ -140,22 +140,22 @@ private:
     template <typename sequence1_t, typename sequence2_t>
     constexpr auto slice_sequences(sequence1_t & sequence1,
                                    sequence2_t & sequence2,
-                                   static_band const & band) const noexcept
+                                   align_cfg::band_fixed_size const & band) const noexcept
     {
         size_t seq1_size = std::ranges::distance(sequence1);
         size_t seq2_size = std::ranges::distance(sequence2);
 
         auto trim_sequence1 = [&] () constexpr
         {
-            size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_bound - 1, 0);
-            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_bound + seq2_size, seq1_size);
+            size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_diagonal.get() - 1, 0);
+            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_diagonal.get() + seq2_size, seq1_size);
             return sequence1 | views::slice(begin_pos, end_pos);
         };
 
         auto trim_sequence2 = [&] () constexpr
         {
-            size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_bound + 1, 0));
-            size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_bound, seq2_size);
+            size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal.get() + 1, 0));
+            size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_diagonal.get(), seq2_size);
             return sequence2 | views::slice(begin_pos, end_pos);
         };
 

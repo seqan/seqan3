@@ -16,7 +16,6 @@
 #include <vector>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
-#include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>

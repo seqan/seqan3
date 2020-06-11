@@ -12,14 +12,18 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <type_traits>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
+//------------------------------------------------------------------------------
+// enum strong_type_skill
+//------------------------------------------------------------------------------
 
 /*!\brief Enum class for all supported operations that can be added to a seqan3::detail::strong_type.
  * \ingroup core
@@ -63,13 +67,70 @@ constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = t
 
 namespace seqan3::detail
 {
+//!\cond
+// forward declared for the concept
+template <typename, typename, strong_type_skill>
+class strong_type;
+//!\endcond
+
+//------------------------------------------------------------------------------
+// concept strong_type_specialisation
+//------------------------------------------------------------------------------
+
+/*!\interface seqan3::detail::strong_type_specialisation <>
+ * \brief Defines the requirements of a seqan::detail::strong_type specialisation.
+ * \tparam strong_type_t The type the concept check is performed on (the putative strong type).
+ * \ingroup core
+ */
+/*!\name Requirements for seqan3::detail::strong_type_specialisation
+ * \brief You can expect these members on all types that implement seqan3::detail::strong_type_specialisation.
+ * \relates seqan3::detail::strong_type_specialisation
+ *
+ * \details
+ *
+ * A type that implements strong_type_specialisation must be a derived class of seqan3::detail::strong_type.
+ * \{
+ */
+//!\cond
+template <typename strong_type_t>
+SEQAN3_CONCEPT strong_type_specialisation = requires (strong_type_t && obj)
+{
+//!\endcond
+
+    /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
+     * \brief The underlying type represented by this strong type.
+     */
+    typename std::remove_reference_t<strong_type_t>::value_type;
+
+    /*!\var static constexpr seqan3::detail::strong_type_skill skills;
+     * \brief The selected skills for this strong type.
+     */
+    { std::remove_reference_t<strong_type_t>::skills };
+    //!\cond
+    requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
+    //!\endcond
+
+    //!\cond
+    requires std::derived_from<remove_cvref_t<strong_type_t>,
+                               strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
+                                           remove_cvref_t<strong_type_t>,
+                                           std::remove_reference_t<strong_type_t>::skills>>;
+    //!\endcond
+//!\cond
+};
+//!\endcond
+//!\}
+
+//------------------------------------------------------------------------------
+// class strong_type
+//------------------------------------------------------------------------------
 
 /*!\brief CRTP base class to declare a strong typedef for a regular type to avoid ambiguous parameter settings in function
  *        calls.
  * \ingroup core
- * \tparam value_t   The underlying type to create a strong typedef for.
+ * \tparam value_t The underlying type to create a strong typedef for.
  * \tparam derived_t The derived class inheriting from this base class. [see CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern).
- * \tparam skills    A set of skills to be add to the expressive type.
+ * \tparam skills_ A set of skills to be added to the expressive type.
  *
  * \details
  *
@@ -112,11 +173,12 @@ namespace seqan3::detail
  *
  * \include test/snippet/core/detail/strong_type_adding_skills.cpp
  */
-template <typename value_t, typename derived_t, strong_type_skill skills = strong_type_skill::none>
+template <typename value_t, typename derived_t, strong_type_skill skills_ = strong_type_skill::none>
 class strong_type
 {
 public:
-
+    //!\brief The selected skills for this type.
+    static constexpr strong_type_skill skills = skills_;
     //!\brief The underlying value type.
     using value_type = value_t;
 
@@ -432,9 +494,40 @@ public:
         return get();
     }
     //!\}
+
 private:
     //!\brief The underlying value, which is wrapped as a strong type.
     value_t value;
 };
+
+//------------------------------------------------------------------------------
+// related functions
+//------------------------------------------------------------------------------
+
+/*!\name Formatted output
+ * \relates seqan3::detail::strong_type
+ * \{
+ */
+
+/*!\brief Formatted output to a seqan3::detail::debug_stream_type.
+ * \tparam char_t The char type of the seqan3::detail::debug_stream_type.
+ * \tparam strong_type_t The strong type to print; must model seqan3::detail::strong_type_specialisation.
+ *
+ * \param[in,out] stream The output stream.
+ * \param[in] value The strong typed value to print.
+ *
+ * \details
+ *
+ * Prints the stored value of the given strong type.
+ *
+ * \returns `stream_t &` A reference to the given stream.
+ */
+template <typename char_t, strong_type_specialisation strong_type_t>
+debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, strong_type_t && value)
+{
+    stream << value.get();
+    return stream;
+}
+//!\}
 
 } // namespace seqan3::detail

@@ -30,8 +30,8 @@ namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}} |
-                                     seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-4},
-                                                                                 seqan3::upper_bound{8}}};
+                                     seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
+                                                                        seqan3::align_cfg::upper_diagonal{8}};
 
 inline constexpr auto align_config_semi_seq1 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
 inline constexpr auto align_config_semi_seq2 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_proxy.hpp>
@@ -99,7 +99,7 @@ public:
      *
      * \param[in] first          The first range.
      * \param[in] second         The second range.
-     * \param[in] band           The seqan3::static_band in which to calculate the alignment.
+     * \param[in] band           The seqan3::align_cfg::band_fixed_size in which to calculate the alignment.
      * \param[in] initial_value  The value to initialise the matrix with. Default initialised if not specified.
      *
      * \details
@@ -111,14 +111,14 @@ public:
               std::ranges::forward_range second_sequence_t>
     constexpr alignment_score_matrix_one_column_banded(first_sequence_t && first,
                                                        second_sequence_t && second,
-                                                       static_band const & band,
+                                                       align_cfg::band_fixed_size const & band,
                                                        score_t const initial_value = score_t{})
     {
         matrix_base_t::num_cols = static_cast<size_type>(std::ranges::distance(first) + 1);
         matrix_base_t::num_rows = static_cast<size_type>(std::ranges::distance(second) + 1);
 
-        band_col_index = std::min<int32_t>(std::max<int32_t>(band.upper_bound, 0), matrix_base_t::num_cols - 1);
-        band_row_index = std::min<int32_t>(std::abs(std::min<int32_t>(band.lower_bound, 0)),
+        band_col_index = std::min<int32_t>(std::max<int32_t>(band.upper_diagonal.get(), 0), matrix_base_t::num_cols - 1);
+        band_row_index = std::min<int32_t>(std::abs(std::min<int32_t>(band.lower_diagonal.get(), 0)),
                                            matrix_base_t::num_rows - 1);
 
         band_size = band_col_index + band_row_index + 1;

@@ -30,8 +30,8 @@ namespace seqan3::test::alignment::fixture::global::affine::banded
 inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}} |
-                                     seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-3},
-                                                                                 seqan3::upper_bound{8}}};
+                                     seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                                                        seqan3::align_cfg::upper_diagonal{8}};
 
 static auto dna4_01 = []()
 {   //    AACCGGTTAACCGGTT

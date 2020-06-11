@@ -12,30 +12,66 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-TEST(align_config_band, config_element_specialisation)
+#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+
+using test_types = ::testing::Types<seqan3::align_cfg::band_fixed_size>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(band_elements, pipeable_config_element_test, test_types, );
+
+TEST(band_fixed_size, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::band<seqan3::static_band>>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::band_fixed_size>));
 }
 
-TEST(align_config_band, configuration)
+TEST(band_fixed_size, construct)
 {
-    {
-        seqan3::align_cfg::band elem{seqan3::static_band{seqan3::lower_bound{-5}, seqan3::upper_bound{5}}};
-        seqan3::configuration cfg{elem};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::band>(cfg).value)>,
-                                  seqan3::static_band>), true);
+    using seqan3::get;
 
-        EXPECT_EQ(seqan3::get<seqan3::align_cfg::band>(cfg).value.lower_bound, -5);
-        EXPECT_EQ(seqan3::get<seqan3::align_cfg::band>(cfg).value.upper_bound, 5);
+    constexpr int32_t minus_infinity = std::numeric_limits<int32_t>::lowest();
+    constexpr int32_t plus_infinity = std::numeric_limits<int32_t>::max();
+
+    { // Default construct
+        seqan3::align_cfg::band_fixed_size band_config{};
+        EXPECT_EQ(band_config.lower_diagonal.get(), minus_infinity);
+        EXPECT_EQ(band_config.upper_diagonal.get(), plus_infinity);
     }
 
-    {
-        seqan3::configuration cfg{seqan3::align_cfg::band{seqan3::static_band{seqan3::lower_bound{-5},
-                                                                              seqan3::upper_bound{5}}}};
-        EXPECT_EQ((std::is_same_v<std::remove_reference_t<decltype(seqan3::get<seqan3::align_cfg::band>(cfg).value)>,
-                                  seqan3::static_band>), true);
+    { // Construct with parameter
+        seqan3::align_cfg::band_fixed_size band_config{seqan3::align_cfg::lower_diagonal{-5},
+                                                       seqan3::align_cfg::upper_diagonal{5}};
 
-        EXPECT_EQ(seqan3::get<seqan3::align_cfg::band>(cfg).value.lower_bound, -5);
-        EXPECT_EQ(seqan3::get<seqan3::align_cfg::band>(cfg).value.upper_bound, 5);
+        EXPECT_EQ(band_config.lower_diagonal.get(), -5);
+        EXPECT_EQ(band_config.upper_diagonal.get(), 5);
     }
+}
+
+TEST(band_fixed_size, assign)
+{
+    seqan3::align_cfg::band_fixed_size band_config{};
+
+    band_config.lower_diagonal = seqan3::align_cfg::lower_diagonal{-5};
+    band_config.upper_diagonal = seqan3::align_cfg::upper_diagonal{5};
+
+    EXPECT_EQ(band_config.lower_diagonal.get(), -5);
+    EXPECT_EQ(band_config.upper_diagonal.get(), 5);
+}
+
+TEST(band_fixed_size, get_and_assign)
+{
+    using seqan3::get;
+
+    seqan3::align_cfg::band_fixed_size band_config{seqan3::align_cfg::lower_diagonal{-5},
+                                                   seqan3::align_cfg::upper_diagonal{5}};
+    seqan3::configuration config{band_config};
+
+    auto & selected_band_config = get<seqan3::align_cfg::band_fixed_size>(config);
+
+    EXPECT_EQ(selected_band_config.lower_diagonal.get(), -5);
+    EXPECT_EQ(selected_band_config.upper_diagonal.get(), 5);
+
+    selected_band_config.lower_diagonal = seqan3::align_cfg::lower_diagonal{-4};
+    selected_band_config.upper_diagonal = seqan3::align_cfg::upper_diagonal{8};
+
+    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).lower_diagonal.get(), -4);
+    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).upper_diagonal.get(), 8);
 }

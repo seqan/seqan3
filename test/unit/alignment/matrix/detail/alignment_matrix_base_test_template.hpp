@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/band/static_band.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/std/ranges>
 
 template <typename t>
@@ -19,7 +19,10 @@ struct alignment_matrix_base_test : public ::testing::Test
     alignment_matrix_base_test()
     {
         if constexpr (is_banded)
-            test_range = matrix_t{first, second, seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}}};
+            test_range = matrix_t{first,
+                                  second,
+                                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                                     seqan3::align_cfg::upper_diagonal{2}}};
         else
             test_range = matrix_t{first, second};
     }
@@ -90,7 +93,8 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_row)
 
     if constexpr (TestFixture::is_banded)
     {
-        seqan3::static_band band{seqan3::lower_bound{-2}, seqan3::upper_bound{4}};
+        seqan3::align_cfg::band_fixed_size band{seqan3::align_cfg::lower_diagonal{-2},
+                                                seqan3::align_cfg::upper_diagonal{4}};
         test_matrix_iteration(matrix_type{this->first, std::string{""}, band}, 5, 5);
     }
     else
@@ -105,7 +109,8 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col)
 
     if constexpr (TestFixture::is_banded)
     {
-        seqan3::static_band band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}};
+        seqan3::align_cfg::band_fixed_size band{seqan3::align_cfg::lower_diagonal{-2},
+                                                seqan3::align_cfg::upper_diagonal{2}};
         test_matrix_iteration(matrix_type{std::string{""}, this->second, band}, 1, 3);
     }
     else
@@ -120,7 +125,8 @@ TYPED_TEST_P(alignment_matrix_base_test, empty_col_row)
 
     if constexpr (TestFixture::is_banded)
     {
-        seqan3::static_band band{seqan3::lower_bound{0}, seqan3::upper_bound{2}};
+        seqan3::align_cfg::band_fixed_size band{seqan3::align_cfg::lower_diagonal{0},
+                                                seqan3::align_cfg::upper_diagonal{2}};
         test_matrix_iteration(matrix_type{std::string{""}, std::string{""}, band}, 1, 1);
     }
     else

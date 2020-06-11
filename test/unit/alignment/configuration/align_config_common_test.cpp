@@ -10,7 +10,6 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/all.hpp>
-#include <seqan3/alignment/band/static_band.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 
 template <typename T>
@@ -20,7 +19,7 @@ class alignment_configuration_test : public ::testing::Test
 using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int>>;
 
 using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
-                                    seqan3::align_cfg::band<seqan3::static_band>,
+                                    seqan3::align_cfg::band_fixed_size,
                                     seqan3::align_cfg::gap<seqan3::gap_scheme<>>,
                                     seqan3::align_cfg::max_error,
                                     seqan3::align_cfg::mode<seqan3::detail::global_alignment_type>,

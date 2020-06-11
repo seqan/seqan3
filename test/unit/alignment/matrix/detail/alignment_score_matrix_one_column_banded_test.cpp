@@ -24,7 +24,11 @@ struct alignment_score_matrix_one_column_banded_test
 
     alignment_score_matrix_one_column_banded_test() = default;
     alignment_score_matrix_one_column_banded_test(std::string f, std::string s) :
-        matrix{matrix_t{f, s, seqan3::static_band{seqan3::lower_bound{-2}, seqan3::upper_bound{2}}, -100}}
+        matrix{matrix_t{f,
+                        s,
+                        seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                           seqan3::align_cfg::upper_diagonal{2}},
+                        -100}}
     {}
 
     // Banded matrix. We write only partial columns to the result.

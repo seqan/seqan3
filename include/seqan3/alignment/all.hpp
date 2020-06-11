@@ -81,7 +81,7 @@
  * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
  * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
  * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::band "1: Band"                  |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
  * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
  * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
  * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
@@ -171,12 +171,12 @@
  *
  * SeqAn offers the computation of banded alignments to reduce the running time of the algorithm. This can be
  * helpful if the region in which the optimal alignment exists is known a priori. To specify the banded alignment
- * the developer can use the seqan3::align_cfg::band option initialised with a seqan3::static_band.
- * The seqan3::static_band is constructed with a lower bound and an upper bound. The upper bound must always be greater
- * than or equal to the lower bound. To position the band, imagine a rectangle where the first sequence is written on
- * top and the second sequence along the left vertical side. A negative bound implies a start of the band within the
- * vertical part while a positive bound implies a start within the top part of this rectangle at the respective
- * position.
+ * the developer can use the seqan3::align_cfg::band_fixed_size option.
+ * This band configuration is initialised with a seqan3::align_cfg::lower_diagonal and an
+ * seqan3::align_cfg::upper_diagonal. The upper diagonal must always be greater than or equal to the lower diagonal.
+ * To choose the correct band parameters, imagine a matrix with the first sequence written on top and the second sequence
+ * along the left vertical side. A negative value reflects a start of the diagonal within the vertical part while a
+ * positive value implies a start within the top part of this matrix at the respective position.
  *
  * ## Global and local alignments
  *

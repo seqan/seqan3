@@ -99,6 +99,14 @@ struct multi_skill_type : seqan3::detail::strong_type<int,
                                                              seqan3::detail::strong_type_skill::convert>::strong_type;
 };
 
+TEST(strong_type, concept)
+{
+    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &>);
+    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &>);
+    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &&>);
+    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &&>);
+}
+
 TEST(strong_type, pure_type)
 {
     {
