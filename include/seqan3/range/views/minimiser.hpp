@@ -391,6 +391,9 @@ private:
     //!\brief The minimiser value.
     value_type minimiser_value{};
 
+    //!\brief The offset relative to the beginning of the window where the minimizer value is found.
+    uint32_t minimiser_position_offset{};
+
     //!\brief Iterator to the rightmost value of one window.
     urng1_iterator_t urng1_iterator{};
     //!brief Iterator to last element in range.
@@ -436,7 +439,9 @@ private:
             advance_window();
         }
         window_values.push_back(window_value());
-        minimiser_value = *std::ranges::min_element(window_values);
+        auto deque_it = std::ranges::min_element(window_values);
+        minimiser_value = *deque_it;
+        minimiser_position_offset = std::distance(std::begin(window_values), deque_it);
     }
 
     /*!\brief Calculates the next minimiser value.
@@ -452,23 +457,26 @@ private:
             return true;
 
         value_type const new_value = window_value();
-        value_type const first_window_value = window_values.front();
 
         window_values.pop_front();
         window_values.push_back(new_value);
 
-        if (minimiser_value == first_window_value)
+        if (minimiser_position_offset == 0)
         {
-            minimiser_value = *std::ranges::min_element(window_values);
+            auto deque_it = std::ranges::min_element(window_values);
+            minimiser_value = *deque_it;
+            minimiser_position_offset = std::distance(std::begin(window_values), deque_it);
             return true;
         }
 
         if (new_value < minimiser_value)
         {
             minimiser_value = new_value;
+            minimiser_position_offset = window_values.size() - 1;
             return true;
         }
 
+        --minimiser_position_offset;
         return false;
     }
 };
