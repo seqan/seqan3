@@ -148,6 +148,23 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
     return align_pairwise(std::views::single(std::forward<sequence_t>(seq)), config);
 }
 
+//!\overload
+template <typename sequence_t, typename alignment_config_t>
+//!\cond
+    requires tuple_like<sequence_t> && !detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>>
+//!\endcond
+constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
+{
+    static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
+                  "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
+
+    static_assert(std::is_lvalue_reference_v<sequence_t>,
+                  "Alignment configuration error: The given tuple/pair must be an lvalue reference.");
+
+    auto tied_pair = std::tie(get<0>(seq), get<1>(seq));
+    return align_pairwise(tied_pair, config);
+}
+
 //!\cond
 template <typename sequence_t, typename alignment_config_t>
     requires detail::align_pairwise_range_input<sequence_t> &&
