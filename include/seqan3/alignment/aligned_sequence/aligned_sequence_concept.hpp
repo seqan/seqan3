@@ -476,8 +476,9 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
     return rng.erase_gap(first, last);
 }
 //!\}
+} // namespace seqan3
 
-namespace detail
+namespace seqan3::detail
 {
 
 /*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
@@ -547,8 +548,10 @@ inline bool constexpr all_satisfy_aligned_seq = false;
 template <typename ...elems>
 inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_sequence<elems> && ...);
 
-} // namespace detail
+} // namespace seqan3::detail
 
+namespace seqan3
+{
 /*!\brief Stream operator for alignments, which are represented as tuples of aligned sequences.
  * \ingroup         aligned_sequence
  * \tparam tuple_t  The alignment type, must satisfy tuple_like and its size must be at least 2.
