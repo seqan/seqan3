@@ -276,7 +276,7 @@ public:
      *
      * No-throw guarantee.
      */
-    fwd_cursor_type fwd_begin() const noexcept
+    fwd_cursor_type fwd_cursor() const noexcept
     {
        return {fwd_fm};
     }
@@ -296,7 +296,7 @@ public:
      *
      * No-throw guarantee.
      */
-    rev_cursor_type rev_begin() const noexcept
+    rev_cursor_type rev_cursor() const noexcept
     {
        return {rev_fm};
     }

@@ -28,8 +28,8 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, cursor)
     seqan3::bi_fm_index fm_rev{this->rev_text1};
 
     TypeParam bi_it = bi_fm.cursor();
-    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_begin().locate()));
-    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.rev_begin().locate()));
+    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_cursor().locate()));
+    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.rev_cursor().locate()));
 }
 
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend)
