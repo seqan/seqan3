@@ -60,6 +60,7 @@ write_file_dummy_struct go{};
 
 int main()
 {
+#if !SEQAN3_WORKAROUND_GCC_93983
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
     seqan3::sequence_file_input fin{tmp_dir/"my.fastq"};
@@ -86,5 +87,6 @@ int main()
     // Note that you need to know the type of id (std::string)
 
     seqan3::debug_stream << ids << '\n';
+#endif // !SEQAN3_WORKAROUND_GCC_93983
 }
 //![solution]

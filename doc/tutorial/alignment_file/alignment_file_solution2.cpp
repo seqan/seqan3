@@ -91,9 +91,15 @@ int main()
 
     seqan3::alignment_file_input mapping_file{tmp_dir/"mapping.sam", ref_ids, ref_seqs, field_type{}};
 
+#if !SEQAN3_WORKAROUND_GCC_93983
     auto mapq_filter = std::views::filter([] (auto & rec) { return seqan3::get<seqan3::field::mapq>(rec) >= 30; });
+#endif // !SEQAN3_WORKAROUND_GCC_93983
 
+#if SEQAN3_WORKAROUND_GCC_93983
+    for (auto & [id, ref_id, mapq, alignment] : mapping_file /*| mapq_filter*/)
+#else // ^^^ workaround / no workaround vvv
     for (auto & [id, ref_id, mapq, alignment] : mapping_file | mapq_filter)
+#endif // SEQAN3_WORKAROUND_GCC_93983
     {
         using seqan3::get;
         size_t sum_ref{};
