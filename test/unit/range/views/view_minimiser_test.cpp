@@ -215,7 +215,6 @@ TEST_F(minimiser_test, combinability)
     EXPECT_RANGE_EQ(result3_ungapped_stop, text3 | stop_at_t | kmer_view | minimiser_no_rev_view);
     EXPECT_RANGE_EQ(result3_gapped_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_no_rev_view);
 
-    std::vector<seqan3::dna4> textt{"ACGGCGACGTTTAG"_dna4};
 #if SEQAN3_WORKAROUND_ISSUE_1754
     /*
     EXPECT_RANGE_EQ(result3_ungapped_stop, text3 | stop_at_t
