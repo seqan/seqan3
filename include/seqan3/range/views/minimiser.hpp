@@ -320,6 +320,7 @@ public:
     friend bool operator==(basic_iterator const & lhs, basic_iterator const & rhs)
     {
         return (lhs.urng1_iterator == rhs.urng1_iterator) &&
+               (rhs.urng2_iterator == rhs.urng2_iterator) &&
                (lhs.window_values.size() == rhs.window_values.size());
     }
 
@@ -555,6 +556,10 @@ struct minimiser_fn
                       "The range1 parameter to views::minimiser must model std::ranges::forward_range.");
         static_assert(std::ranges::forward_range<urng2_t>,
                       "The range2 parameter to views::minimiser must model std::ranges::forward_range.");
+        static_assert(std::ranges::sized_range<urng1_t>,
+                      "The range1 parameter to views::minimiser must model std::ranges::sized_range.");
+        static_assert(std::ranges::sized_range<urng2_t>,
+                      "The range2 parameter to views::minimiser must model std::ranges::sized_range.");
 
         if (std::ranges::size(urange1) != std::ranges::size(urange2))
             throw std::invalid_argument{"The two ranges do not have the same size."};
