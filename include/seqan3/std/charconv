@@ -23,679 +23,44 @@
 #include <charconv>
 #else // else include our own implementation below
 
-#include <algorithm>
-#include <cerrno>
-#include <cmath>
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <limits>
-#include <sstream>
-#include <type_traits>
-
 #include <seqan3/std/concepts>
+#include <sstream>
+
+#include <seqan3/contrib/charconv/charconv>
+#include <seqan3/contrib/charconv/charconv.cpp>
 
 /*!\defgroup charconv charconv
  * \ingroup std
  * \brief The \<charconv\> header from C++17's standard library.
  */
-
-// -----------------------------------------------------------------------------
-// structs: to_chars_result, from_chars_result and chars_format
-// -----------------------------------------------------------------------------
-
-namespace std
+namespace seqan3::contrib::charconv
 {
 
-//!\brief Result type of std::to_chars
-//!\ingroup charconv
-struct to_chars_result
+//!\brief std::to_chars implementation for floating point via a std::stringstream for default base = 10.
+template <std::floating_point value_type>
+inline to_chars_result to_chars_floating_point(char * first, char * last, value_type value) noexcept
 {
-    char * ptr;  //!< A pointer to the output string.
-    errc ec;    //!< The error code.
-};
+    assert(first != nullptr);
+    assert(last != nullptr);
 
-//!\brief Result type of std::from_chars
-//!\ingroup charconv
-struct from_chars_result
-{
-    char const * ptr;  //!< A pointer to the input string.
-    errc ec;          //!< The error code.
-};
+    std::ostringstream ss;
+    ss << value;
+    auto str = ss.str();
 
-//!\brief A BitmaskType used to specify floating-point formatting for std::to_chars and std::from_chars.
-//!\ingroup charconv
-enum class chars_format
-{
-    scientific = 0x1,             //!< Scientific notation, e.g. 3.991E-0003.
-    fixed = 0x2,                  //!< Fixed number of digits for precision.
-    hex = 0x4,                    //!< Hexadecimal notation. Ff specified in from_chars, prefix 0x,0X,x is not allowed.
-    general = fixed | scientific  //!< General use case.
-};
-
-} // namespace std
-
-namespace seqan3::detail
-{
-
-//!\cond
-// implementation detail taken from LLVM
-static constexpr uint64_t pow10_64[] =
-{
-    UINT64_C(0),
-    UINT64_C(10),
-    UINT64_C(100),
-    UINT64_C(1000),
-    UINT64_C(10000),
-    UINT64_C(100000),
-    UINT64_C(1000000),
-    UINT64_C(10000000),
-    UINT64_C(100000000),
-    UINT64_C(1000000000),
-    UINT64_C(10000000000),
-    UINT64_C(100000000000),
-    UINT64_C(1000000000000),
-    UINT64_C(10000000000000),
-    UINT64_C(100000000000000),
-    UINT64_C(1000000000000000),
-    UINT64_C(10000000000000000),
-    UINT64_C(100000000000000000),
-    UINT64_C(1000000000000000000),
-    UINT64_C(10000000000000000000),
-};
-
-static constexpr uint32_t pow10_32[] =
-{
-    UINT32_C(0),          UINT32_C(10),       UINT32_C(100),
-    UINT32_C(1000),       UINT32_C(10000),    UINT32_C(100000),
-    UINT32_C(1000000),    UINT32_C(10000000), UINT32_C(100000000),
-    UINT32_C(1000000000),
-};
-
-static constexpr char cDigitsLut[200] = {
-    '0', '0', '0', '1', '0', '2', '0', '3', '0', '4', '0', '5', '0', '6', '0',
-    '7', '0', '8', '0', '9', '1', '0', '1', '1', '1', '2', '1', '3', '1', '4',
-    '1', '5', '1', '6', '1', '7', '1', '8', '1', '9', '2', '0', '2', '1', '2',
-    '2', '2', '3', '2', '4', '2', '5', '2', '6', '2', '7', '2', '8', '2', '9',
-    '3', '0', '3', '1', '3', '2', '3', '3', '3', '4', '3', '5', '3', '6', '3',
-    '7', '3', '8', '3', '9', '4', '0', '4', '1', '4', '2', '4', '3', '4', '4',
-    '4', '5', '4', '6', '4', '7', '4', '8', '4', '9', '5', '0', '5', '1', '5',
-    '2', '5', '3', '5', '4', '5', '5', '5', '6', '5', '7', '5', '8', '5', '9',
-    '6', '0', '6', '1', '6', '2', '6', '3', '6', '4', '6', '5', '6', '6', '6',
-    '7', '6', '8', '6', '9', '7', '0', '7', '1', '7', '2', '7', '3', '7', '4',
-    '7', '5', '7', '6', '7', '7', '7', '8', '7', '9', '8', '0', '8', '1', '8',
-    '2', '8', '3', '8', '4', '8', '5', '8', '6', '8', '7', '8', '8', '8', '9',
-    '9', '0', '9', '1', '9', '2', '9', '3', '9', '4', '9', '5', '9', '6', '9',
-    '7', '9', '8', '9', '9'};
-
-template <typename T>
-inline char* append1(char* buffer, T i) noexcept
-{
-    *buffer = '0' + static_cast<char>(i);
-    return buffer + 1;
-}
-
-template <typename T>
-inline char* append2(char* buffer, T i) noexcept
-{
-    memcpy(buffer, &cDigitsLut[(i)*2], 2);
-    return buffer + 2;
-}
-
-template <typename T>
-inline char* append3(char* buffer, T i) noexcept
-{
-    return append2(append1(buffer, (i) / 100), (i) % 100);
-}
-
-template <typename T>
-inline char* append4(char* buffer, T i) noexcept
-{
-    return append2(append2(buffer, (i) / 100), (i) % 100);
-}
-
-inline char* u32toa(uint32_t value, char* buffer) noexcept
-{
-    if (value < 10000)
-    {
-        if (value < 100)
-        {
-            if (value < 10)
-                buffer = append1(buffer, value);
-            else
-                buffer = append2(buffer, value);
-        }
-        else
-        {
-            if (value < 1000)
-                buffer = append3(buffer, value);
-            else
-                buffer = append4(buffer, value);
-        }
-    }
-    else if (value < 100000000)
-    {
-        // value = bbbbcccc
-        const uint32_t b = value / 10000;
-        const uint32_t c = value % 10000;
-
-        if (value < 1000000)
-        {
-            if (value < 100000)
-                buffer = append1(buffer, b);
-            else
-                buffer = append2(buffer, b);
-        }
-        else
-        {
-            if (value < 10000000)
-                buffer = append3(buffer, b);
-            else
-                buffer = append4(buffer, b);
-        }
-
-        buffer = append4(buffer, c);
-    }
-    else
-    {
-        // value = aabbbbcccc in decimal
-        const uint32_t a = value / 100000000;  // 1 to 42
-        value %= 100000000;
-
-        if (a < 10)
-            buffer = append1(buffer, a);
-        else
-            buffer = append2(buffer, a);
-
-        buffer = append4(buffer, value / 10000);
-        buffer = append4(buffer, value % 10000);
-    }
-
-    return buffer;
-}
-
-inline char* u64toa(uint64_t value, char* buffer) noexcept
-{
-    if (value < 100000000)
-    {
-        uint32_t v = static_cast<uint32_t>(value);
-        if (v < 10000)
-        {
-            if (v < 100)
-            {
-                if (v < 10)
-                    buffer = append1(buffer, v);
-                else
-                    buffer = append2(buffer, v);
-            }
-            else
-            {
-                if (v < 1000)
-                    buffer = append3(buffer, v);
-                else
-                    buffer = append4(buffer, v);
-            }
-        }
-        else
-        {
-            // value = bbbbcccc
-            const uint32_t b = v / 10000;
-            const uint32_t c = v % 10000;
-
-            if (v < 1000000)
-            {
-                if (v < 100000)
-                    buffer = append1(buffer, b);
-                else
-                    buffer = append2(buffer, b);
-            }
-            else
-            {
-                if (v < 10000000)
-                    buffer = append3(buffer, b);
-                else
-                    buffer = append4(buffer, b);
-            }
-
-            buffer = append4(buffer, c);
-        }
-    }
-    else if (value < 10000000000000000)
-    {
-        const uint32_t v0 = static_cast<uint32_t>(value / 100000000);
-        const uint32_t v1 = static_cast<uint32_t>(value % 100000000);
-
-        const uint32_t b0 = v0 / 10000;
-        const uint32_t c0 = v0 % 10000;
-
-        if (v0 < 1000000)
-        {
-            if (v0 < 100000)
-                buffer = append1(buffer, b0);
-            else
-                buffer = append2(buffer, b0);
-        }
-        else
-        {
-            if (v0 < 10000000)
-                buffer = append3(buffer, b0);
-            else
-                buffer = append4(buffer, b0);
-        }
-
-        buffer = append4(buffer, c0);
-        buffer = append4(buffer, v1 / 10000);
-        buffer = append4(buffer, v1 % 10000);
-    }
-    else
-    {
-        const uint32_t a =
-            static_cast<uint32_t>(value / 10000000000000000);  // 1 to 1844
-        value %= 10000000000000000;
-
-        if (a < 100)
-        {
-            if (a < 10)
-                buffer = append1(buffer, a);
-            else
-                buffer = append2(buffer, a);
-        }
-        else
-        {
-            if (a < 1000)
-                buffer = append3(buffer, a);
-            else
-                buffer = append4(buffer, a);
-        }
-
-        const uint32_t v0 = static_cast<uint32_t>(value / 100000000);
-        const uint32_t v1 = static_cast<uint32_t>(value % 100000000);
-        buffer = append4(buffer, v0 / 10000);
-        buffer = append4(buffer, v0 % 10000);
-        buffer = append4(buffer, v1 / 10000);
-        buffer = append4(buffer, v1 % 10000);
-    }
-
-    return buffer;
-}
-
-template <typename value_type, typename = void>
-struct traits_base
-{
-    using type = uint64_t;
-
-    static int width(value_type v) noexcept
-    {
-        auto t = (64 - __builtin_clzll(v | 1)) * 1233 >> 12;
-        return t - (v < pow10_64[t]) + 1;
-    }
-
-    static char* convert(value_type v, char* p) noexcept
-    {
-        return u64toa(v, p);
-    }
-
-    static auto& pow() { return pow10_64; }
-};
-
-template <typename value_type>
-struct traits_base<value_type, decltype(void(uint32_t{std::declval<value_type>()}))>
-{
-    using type = uint32_t;
-
-    static int width(value_type v) noexcept
-    {
-        auto t = (32 - __builtin_clz(v | 1)) * 1233 >> 12;
-        return t - (v < pow10_32[t]) + 1;
-    }
-
-    static char* convert(value_type v, char* p) noexcept
-    {
-        return u32toa(v, p);
-    }
-
-    static auto& pow() noexcept { return pow10_32; }
-};
-
-template <typename value_type>
-inline bool mul_overflowed(unsigned char a, value_type b, unsigned char& r) noexcept
-{
-    auto c = a * b;
-    r = c;
-    return c > (std::numeric_limits<unsigned char>::max)();
-}
-
-template <typename value_type>
-inline bool mul_overflowed(unsigned short a, value_type b, unsigned short& r) noexcept
-{
-    auto c = a * b;
-    r = c;
-    return c > (std::numeric_limits<unsigned short>::max)();
-}
-
-template <typename value_type>
-inline bool mul_overflowed(value_type a, value_type b, value_type & r) noexcept
-{
-    static_assert(std::is_unsigned<value_type>::value, "");
-    return __builtin_mul_overflow(a, b, &r);
-}
-
-template <typename value_type, typename _Up>
-inline bool mul_overflowed(value_type a, _Up b, value_type & r) noexcept
-{
-    return mul_overflowed(a, static_cast<value_type>(b), r);
-}
-
-template <typename value_type>
-struct traits : traits_base<value_type>
-{
-    static constexpr int digits = std::numeric_limits<value_type>::digits10 + 1;
-    using traits_base<value_type>::pow;
-    using typename traits_base<value_type>::type;
-
-    // precondition: at least one non-zero character available
-    static char const*
-    read(char const* p, char const* ep, type& a, type& b) noexcept
-    {
-        type cprod[digits];
-        int j = digits - 1;
-        int i = digits;
-        do
-        {
-            if (!('0' <= *p && *p <= '9'))
-                break;
-            cprod[--i] = *p++ - '0';
-        } while (p != ep && i != 0);
-
-        a = inner_product(cprod + i + 1, cprod + j, pow() + 1,
-                              cprod[i]);
-        if (mul_overflowed(cprod[j], pow()[j - i], b))
-            --p;
-        return p;
-    }
-
-    template <typename _It1, typename _It2, class _Up>
-    static _Up
-    inner_product(_It1 first1, _It1 last1, _It2 first2, _Up init) noexcept
-    {
-        for (; first1 < last1; ++first1, ++first2)
-            init = init + *first1 * *first2;
-        return init;
-    }
-};
-
-template <typename value_type>
-inline value_type complement_(value_type x) noexcept
-{
-    static_assert(std::unsigned_integral<value_type>, "cast to unsigned first");
-    return value_type(~x + 1);
-}
-
-template <typename value_type>
-inline auto to_unsigned(value_type x) noexcept
-{
-    return static_cast<std::make_unsigned_t<value_type>>(x);
-}
-
-template <typename value_type>
-inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::false_type) noexcept
-{
-    using tx = traits<value_type>;
-    auto diff = last - first;
-
-    if (tx::digits <= diff || tx::width(value) <= diff)
-        return {tx::convert(value, first), {}};
-    else
+    if (last - first < static_cast<std::ptrdiff_t>(str.size()))
         return {last, std::errc::value_too_large};
+
+    std::copy(str.begin(), str.end(), first);
+
+    return {first + str.size(), std::errc{}};
 }
-
-template <typename value_type>
-inline std::to_chars_result to_chars_itoa(char* first, char* last, value_type value, std::true_type) noexcept
-{
-    auto x = to_unsigned(value);
-    if (value < 0 && first != last)
-    {
-        *first++ = '-';
-        x = complement_(x);
-    }
-
-    return to_chars_itoa(first, last, x, std::false_type());
-}
-
-template <typename value_type>
-inline std::to_chars_result to_chars_integral(char* first, char* last, value_type value, int base,
-                    std::true_type) noexcept
-{
-    auto x = to_unsigned(value);
-    if (value < 0 && first != last)
-    {
-        *first++ = '-';
-        x = complement_(x);
-    }
-
-    return to_chars_integral(first, last, x, base, std::false_type());
-}
-
-template <typename value_type>
-inline std::to_chars_result to_chars_integral(char* first, char* last, value_type value, int base,
-                    std::false_type) noexcept
-{
-    if (base == 10)
-        return to_chars_itoa(first, last, value, std::false_type());
-
-    auto p = last;
-    while (p != first)
-    {
-        auto c = value % base;
-        value /= base;
-        *--p = "0123456789abcdefghijklmnopqrstuvwxyz"[c];
-        if (value == 0)
-            break;
-    }
-
-    auto len = last - p;
-    if (value != 0 || !len)
-        return {last, std::errc::value_too_large};
-    else
-    {
-        memmove(first, p, len);
-        return {first + len, {}};
-    }
-}
-
-template <typename _It, typename value_type, typename _Fn, typename... _Ts>
-inline std::from_chars_result sign_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args) noexcept
-{
-    using tl = std::numeric_limits<value_type>;
-    decltype(to_unsigned(value)) x;
-
-    bool neg = (first != last && *first == '-');
-    auto r = f(neg ? first + 1 : first, last, x, args...);
-
-    switch (r.ec)
-    {
-    case std::errc::invalid_argument:
-        return {first, r.ec};
-    case std::errc::result_out_of_range:
-        return r;
-    default:
-        break;
-    }
-
-    if (neg)
-    {
-        if (x <= complement_(to_unsigned(tl::min())))
-        {
-            x = complement_(x);
-            memcpy(&value, &x, sizeof(x));
-            return r;
-        }
-    }
-    else
-    {
-        if (x <= to_unsigned(tl::max()))
-        {
-            value = x;
-            return r;
-        }
-    }
-
-    return {r.ptr, std::errc::result_out_of_range};
-}
-
-template <typename value_type>
-inline bool in_pattern(value_type c) noexcept
-{
-    return '0' <= c && c <= '9';
-}
-
-struct in_pattern_result
-{
-    bool ok;
-    int val;
-
-    explicit operator bool() const noexcept { return ok; }
-};
-
-template <typename value_type>
-inline in_pattern_result in_pattern(value_type c, int base) noexcept
-{
-    if (base <= 10)
-        return {'0' <= c && c < '0' + base, c - '0'};
-    else if (in_pattern(c))
-        return {true, c - '0'};
-    else if ('a' <= c && c < 'a' + base - 10)
-        return {true, c - 'a' + 10};
-    else
-        return {'A' <= c && c < 'A' + base - 10, c - 'A' + 10};
-}
-
-template <typename _It, typename value_type, typename _Fn, typename... _Ts>
-inline std::from_chars_result subject_seq_combinator(_It first, _It last, value_type & value, _Fn f, _Ts... args) noexcept
-{
-    auto find_non_zero = [](_It first, _It last)
-    {
-        for (; first != last; ++first)
-            if (*first != '0')
-                break;
-        return first;
-    };
-
-    auto p = find_non_zero(first, last);
-    if (p == last || !in_pattern(*p, args...))
-    {
-        if (p == first)
-            return {first, std::errc::invalid_argument};
-        else
-        {
-            value = 0;
-            return {p, {}};
-        }
-    }
-
-    auto r = f(p, last, value, args...);
-    if (r.ec == std::errc::result_out_of_range)
-    {
-        for (; r.ptr != last; ++r.ptr)
-        {
-            if (!in_pattern(*r.ptr, args...))
-                break;
-        }
-    }
-
-    return r;
-}
-
-template <typename value_type, std::enable_if_t<std::is_unsigned<value_type>::value, int> = 0>
-inline std::from_chars_result
-from_chars_atoi(char const * first, char const * last, value_type & value) noexcept
-{
-    using tx = traits<value_type>;
-    using output_type = typename tx::type;
-
-    return subject_seq_combinator(first, last, value,
-                                  [](char const * first, char const * last, value_type & value) -> std::from_chars_result
-                                  {
-                                      output_type a, b;
-                                      auto p = tx::read(first, last, a, b);
-                                      if (p == last || !in_pattern(*p))
-                                      {
-                                          output_type m = (std::numeric_limits<value_type>::max)();
-                                          if (m >= a && m - a >= b)
-                                          {
-                                              value = a + b;
-                                              return {p, {}};
-                                          }
-                                      }
-                                      return {p, std::errc::result_out_of_range};
-                                  });
-}
-
-template <std::signed_integral value_type>
-inline std::from_chars_result from_chars_atoi(char const * first, char const * last, value_type & value) noexcept
-{
-    using t = decltype(to_unsigned(value));
-    return sign_combinator(first, last, value, from_chars_atoi<t>);
-}
-
-template <std::unsigned_integral value_type>
-inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
-{
-    if (base == 10)
-        return from_chars_atoi(first, last, value);
-
-    return subject_seq_combinator(first, last, value,
-                                  [] (char const * p, char const * last, value_type & value, int base) -> std::from_chars_result
-                                  {
-                                      using tl = std::numeric_limits<value_type>;
-                                      auto digits = tl::digits / log2f(float(base));
-                                      value_type a = in_pattern(*p++, base).val, b = 0;
-
-                                      for (int i = 1; p != last; ++i, ++p)
-                                      {
-                                          if (auto c = in_pattern(*p, base))
-                                          {
-                                              if (i < digits - 1)
-                                                  a = a * base + c.val;
-                                              else
-                                              {
-                                                  if (!mul_overflowed(a, base, a))
-                                                      ++p;
-                                                  b = c.val;
-                                                  break;
-                                              }
-                                          }
-                                          else
-                                              break;
-                                      }
-
-                                      if (p == last || !in_pattern(*p, base))
-                                      {
-                                          if ((tl::max)() - a >= b)
-                                          {
-                                              value = a + b;
-                                              return {p, {}};
-                                          }
-                                      }
-                                      return {p, std::errc::result_out_of_range};
-                                  },
-                                  base);
-}
-
-template <std::signed_integral value_type>
-inline std::from_chars_result from_chars_integral(char const * first, char const * last, value_type & value, int base) noexcept
-{
-    using t = decltype(to_unsigned(value));
-    return sign_combinator(first, last, value, from_chars_integral<t>, base);
-}
-//!\endcond
 
 //!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
 template <std::floating_point value_type>
-inline std::from_chars_result from_chars_floating_point(char const * first,
-                                                        char const * last,
-                                                        value_type & value,
-                                                        std::chars_format fmt = std::chars_format::general) noexcept
+inline from_chars_result from_chars_floating_point(char const * first,
+                                                   char const * last,
+                                                   value_type & value,
+                                                   chars_format fmt = chars_format::general) noexcept
 {
     // The locale issue:
     // std::from_chars is documented to be locale independent. The accepted patterns
@@ -711,7 +76,7 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
     ptrdiff_t constexpr buffer_size = 100;
     char buffer[buffer_size];
 
-    if (fmt != std::chars_format::general)
+    if (fmt != chars_format::general)
     {
         bool exponent_is_present{false};
         for (auto it = first; it != last; ++it)
@@ -723,11 +88,11 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
             }
         }
 
-        if (fmt == std::chars_format::scientific &&
+        if (fmt == chars_format::scientific &&
             !exponent_is_present)
             return {last, std::errc::invalid_argument};
 
-        if (fmt == std::chars_format::fixed      &&
+        if (fmt == chars_format::fixed      &&
             exponent_is_present)
             return {last, std::errc::invalid_argument};
     }
@@ -740,7 +105,7 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
     // represent the truncated sequence and ensure correct from_chars functionality.
     char * start;
 
-    if ((*last != '\0' ) || fmt == std::chars_format::hex)
+    if ((*last != '\0' ) || fmt == chars_format::hex)
     {
         // If hex format is explicitly expected, the 0x prefix is not allowed in the
         // the original sequence according to the std::from_chars cppreference
@@ -750,7 +115,7 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
         // original sequence did contain a 0x prefix and thus reflect the correct
         // requirements of std::from_chars.
         ptrdiff_t offset{0};
-        if (fmt == std::chars_format::hex)
+        if (fmt == chars_format::hex)
         {
             buffer[0] = '0';
             buffer[1] = 'x';
@@ -798,151 +163,20 @@ inline std::from_chars_result from_chars_floating_point(char const * first,
     return {last, {}};
 }
 
-} // namespace seqan3::detail
+} // namespace seqan3::contrib::charconv
 
-namespace std
+namespace seqan3::contrib::charconv
 {
-//!\cond
-// implementation detail taken from LLVM
-void to_chars(char *, char *, bool, int = 10) = delete;
-void from_chars(char const *, char const *, bool, int = 10) = delete;
-//!\endcond
-
 // -----------------------------------------------------------------------------
-// to_chars for integral types
+// to_chars for floating point types
 // -----------------------------------------------------------------------------
-
-/*!\brief Convert an integral into a char sequence.
- * \ingroup charconv
- * \tparam value_type The type to convert to a char sequence; Must model std::integral.
- * \param[in]      first The start of the range to fill.
- * \param[in]      last  The end of the range to fill.
- * \param[in, out] value The value to store the parsed result in.
- * \param[in]      base  The integer base of the format of the string to parse.
- *                       Must be a value between 2 and 36 (inclusive).
- * \returns A std::to_char_result. See detail section return value for more information.
- *
- * \details
- *
- * Converts value into a character string by successively filling the range
- * [first, last), where [first, last) is required to be a valid range.
- *
- * value is converted to a string of digits in the given base (with no redundant
- * leading zeroes). Digits in the range 10..35 (inclusive) are represented as
- * lowercase characters a..z. If value is less than zero, the representation
- * starts with a minus sign. The library provides overloads for all signed and
- * unsigned integer types and for the type char as the type of the parameter value.
- *
- * ### Return value
- * On success, returns a value of type to_chars_result such that ec equals
- * value-initialized std::errc and ptr is the one-past-the-end pointer of the
- * characters written. Note that the string is not NUL-terminated.
- *
- * On error, returns a value of type to_chars_result holding
- * std::errc::value_too_large in ec, a copy of the value last in ptr, and leaves
- * the contents of the range [first, last) in unspecified state.
- *
- * \sa https://en.cppreference.com/w/cpp/utility/to_chars
- */
-template <std::integral value_type>
-inline std::to_chars_result to_chars(char * first, char * last, value_type value, int base) noexcept
-{
-    assert(first != nullptr);
-    assert(last != nullptr);
-    assert(2 <= base && base <= 36);
-    return seqan3::detail::to_chars_integral(first, last, value, base, is_signed<value_type>());
-}
-
-//!\brief std::to_chars overload with default base = 10.
-//!\ingroup charconv
-template <std::integral value_type>
-inline std::to_chars_result to_chars(char * first, char * last, value_type value) noexcept
-{
-    assert(first != nullptr);
-    assert(last != nullptr);
-    return seqan3::detail::to_chars_itoa(first, last, value, is_signed<value_type>());
-}
 
 //!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
 //!\ingroup charconv
 template <std::floating_point floating_point_type>
-inline std::to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
+inline to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
 {
-    assert(first != nullptr);
-    assert(last != nullptr);
-
-    std::ostringstream ss;
-    ss << value;
-    auto str = ss.str();
-
-    if (last - first < static_cast<std::ptrdiff_t>(str.size()))
-        return {last, std::errc::value_too_large};
-
-    std::copy(str.begin(), str.end(), first);
-
-    return {first + str.size(), std::errc{}};
-}
-
-// -----------------------------------------------------------------------------
-// from_chars for integral types
-// -----------------------------------------------------------------------------
-
-/*!\brief Parse a char sequence into an integral.
- * \ingroup charconv
- * \tparam value_type The type to parse the string into; Must model std::integral.
- * \param[in]      first The start of the string to parse.
- * \param[in]      last  The end of the string to parse.
- * \param[in, out] value The value to store the parsed result in.
- * \param[in]      base  The integer base of the format of the string to parse.
- *                       Must be a value between 2 and 36 (inclusive).
- * \returns A std::from_char_result. See detail section return value for more information.
- *
- * \details
- *
- * Analyzes the character sequence [first,last) for a pattern described below.
- * If no characters match the pattern or if the value obtained by parsing the
- * matched characters is not representable in the type of value, value is
- * unmodified, otherwise the characters matching the pattern are interpreted as
- * a text representation of an arithmetic value, which is stored in value.
- *
- * Expects the pattern identical to the one used by std::strtol in the default
- * ("C") locale and the given non-zero numeric base, except that "0x" or "0X"
- * prefixes are not recognized for base 16, and that only the minus sign is
- * recognized (not the plus sign), and only for signed integer types of value.
- * Digits in the range 10..35 (inclusive) are represented as lowercase or
- * uppercase characters a..z/A...Z. The library provides overloads for all
- * signed and unsigned integer types and char as the referenced type of the
- * parameter value.
- *
- * ### Return value
- * On success, returns a value of type from_chars_result such that ptr points at
- * the first character not matching the pattern, or has the value equal to last
- * if all characters match and ec is value-initialized.
- *
- * If there is no pattern match, returns a value of type from_chars_result such
- * that ptr equals first and ec equals std::errc::invalid_argument. value is
- * unmodified.
- *
- * If the pattern was matched, but the parsed value is not in the range
- * representable by the type of value, returns value of type from_chars_result
- * such that ec equals std::errc::result_out_of_range and ptr points at the first
- * character not matching the pattern. value is unmodified.
- *
- * \sa https://en.cppreference.com/w/cpp/utility/from_chars
- */
-template <std::integral value_type>
-inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value, int base) noexcept
-{
-    assert(2 <= base && base <= 36);
-    return seqan3::detail::from_chars_integral(first, last, value, base);
-}
-
-//!\brief std::from_chars overload for integrals with default base = 10.
-//!\ingroup charconv
-template <std::integral value_type>
-inline std::from_chars_result from_chars(char const * first, char const * last, value_type & value) noexcept // base 10 default
-{
-    return seqan3::detail::from_chars_atoi(first, last, value);
+    return to_chars_floating_point(first, last, value);
 }
 
 // -----------------------------------------------------------------------------
@@ -1005,14 +239,25 @@ inline std::from_chars_result from_chars(char const * first, char const * last, 
  * \sa https://en.cppreference.com/w/cpp/utility/from_chars
  */
 template <std::floating_point floating_point_type>
-inline std::from_chars_result from_chars(char const * first,
-                                         char const * last,
-                                         floating_point_type & value,
-                                         std::chars_format fmt = std::chars_format::general) noexcept
+inline from_chars_result from_chars(char const * first,
+                                    char const * last,
+                                    floating_point_type & value,
+                                    chars_format fmt = chars_format::general) noexcept
 {
-    return seqan3::detail::from_chars_floating_point(first, last, value, fmt);
+    return from_chars_floating_point(first, last, value, fmt);
 }
+} // namespace seqan3::contrib::charconv
 
+namespace std
+{
+namespace
+{
+using seqan3::contrib::charconv::to_chars;
+using seqan3::contrib::charconv::to_chars_result;
+using seqan3::contrib::charconv::from_chars;
+using seqan3::contrib::charconv::from_chars_result;
+using seqan3::contrib::charconv::chars_format;
+} // anonymous namespace
 } // namespace std
 
 #endif // __cpp_lib_to_chars >= 201611
