@@ -527,7 +527,7 @@ public:
     /*!\brief Return the i-th element as a view.
      * \param i The element to retrieve.
      * \throws std::out_of_range If you access an element behind the last.
-     * \returns A ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
+     * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * ###Complexity
      *
@@ -556,7 +556,7 @@ public:
 
     /*!\brief Return the i-th element as a view.
      * \param i The element to retrieve.
-     * \returns A ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
+     * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * Accessing an element behind the last causes undefined behaviour. In debug mode an assertion checks the size of
      * the container.
@@ -582,7 +582,7 @@ public:
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
-     * \returns A ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
+     * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * Calling front on an empty container is undefined. In debug mode an assertion checks the size of the container.
      * ###Complexity
@@ -607,7 +607,7 @@ public:
     }
 
     /*!\brief Return the last element as a view.
-     * \returns A ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
+     * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * Calling back on an empty container is undefined. In debug mode an assertion checks the size of the container.
      * ###Complexity
@@ -632,7 +632,7 @@ public:
     }
 
     /*!\brief Return the concatenation of all members.
-     * \returns A ranges::view proxy on the concatenation of underlying sequences.
+     * \returns A std::ranges::view proxy on the concatenation of underlying sequences.
      *
      * This is a safe way of accessing the internal concatenated representation, i.e. you cannot do operations
      * that would invalidate this container (like insert or resize), but you can write to the individual positions.
@@ -969,11 +969,11 @@ public:
             return begin() + pos_as_num;
 
         /* TODO implement views::flat_repeat_n that is like
-         *  views::repeat_n(value, count) | views::join | ranges::view::bounded;
+         *  views::repeat_n(value, count) | views::join | ranges::views::bounded;
          * but preserves random access and size.
          *
          * then do
-         *  auto concatenated = ranges::view::flat_repeat_n(value, count);
+         *  auto concatenated = ranges::views::flat_repeat_n(value, count);
          *  insert(pos, concatenated.cbegin(), concatenated.cend())
          */
 

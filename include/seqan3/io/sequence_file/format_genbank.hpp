@@ -230,7 +230,7 @@ protected:
         else
         {
             std::ranges::copy(std::string_view{"ORIGIN\n"}, stream_it);
-            auto seq = sequence | ranges::view::chunk(60);
+            auto seq = sequence | ranges::views::chunk(60);
             size_t i = 0;
             size_t bp = 1;
 

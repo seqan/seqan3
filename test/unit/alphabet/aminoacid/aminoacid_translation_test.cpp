@@ -49,8 +49,8 @@ TEST(translate_triplets, random_access_range)
     seqan3::dna15 n3{'A'_dna15};
     seqan3::aa27 c{'L'_aa27};
 
-    auto range_triplet = ranges::view::concat(std::views::single(n1), std::views::single(n2),
-                                              std::views::single(n3));
+    auto range_triplet = ranges::views::concat(std::views::single(n1), std::views::single(n2),
+                                               std::views::single(n3));
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     seqan3::aa27 t2{seqan3::translate_triplet(range_triplet)};
 

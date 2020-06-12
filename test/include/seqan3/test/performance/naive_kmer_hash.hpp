@@ -46,8 +46,7 @@ struct naive_kmer_hash_fn
     //!\endcond
     constexpr auto operator()(urng_t && urange, size_t const k) const noexcept
     {
-        return std::forward<urng_t>(urange) | ranges::view::sliding(k) | std::views::transform(
-        [] (auto const in)
+        return std::forward<urng_t>(urange) | ranges::views::sliding(k) | std::views::transform([] (auto const in)
         {
             std::hash<decltype(in)> h{};
             return h(in);

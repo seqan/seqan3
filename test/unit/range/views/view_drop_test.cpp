@@ -40,9 +40,9 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("bar", v2);
 
     // combinability
-    auto v3 = vec | adaptor(1) | adaptor(1) | ranges::view::unique;
+    auto v3 = vec | adaptor(1) | adaptor(1) | ranges::views::unique;
     EXPECT_EQ("obar", v3 | seqan3::views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::view::unique | seqan3::views::to<std::string>;
+    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::views::unique | seqan3::views::to<std::string>;
     EXPECT_EQ("of", v3b);
 
     // store arg
@@ -51,7 +51,7 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("bar", v4 | seqan3::views::to<std::string>);
 
     // store combined
-    auto a1 = adaptor(1) | adaptor(1) | ranges::view::unique;
+    auto a1 = adaptor(1) | adaptor(1) | ranges::views::unique;
     auto v5 = vec | a1;
     EXPECT_EQ("obar", v5 | seqan3::views::to<std::string>);
 }

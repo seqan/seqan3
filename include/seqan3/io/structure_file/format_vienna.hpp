@@ -356,7 +356,7 @@ private:
      * \tparam alph_type        The alphabet type the structure is converted to.
      * \tparam stream_view_type The type of the input stream.
      * \param stream_view       The input stream to be read.
-     * \return                  A ranges::view containing the structure annotation string.
+     * \return                  A std::ranges::view containing the structure annotation string.
      */
     template <typename alph_type, typename stream_view_type>
     auto read_structure(stream_view_type & stream_view)
