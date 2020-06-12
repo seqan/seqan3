@@ -74,9 +74,9 @@ public:
                                                 index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
     //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<fm_index<typename index_type::alphabet_type,
-                                                index_type::text_layout_mode,
-                                                typename index_type::sdsl_index_type>>;
+    using rev_cursor = fm_index_cursor<detail::reverse_fm_index<typename index_type::alphabet_type,
+                                                                index_type::text_layout_mode,
+                                                                typename index_type::rev_sdsl_index_type>>;
     //!\}
 
 private:
@@ -149,7 +149,12 @@ private:
     }
 
     //!\brief Optimized bidirectional search without alphabet mapping
-    bool bidirectional_search(sdsl_index_type const & csa, sdsl_char_type const c,
+    template <typename csa_t>
+    //!\cond
+        requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
+                  std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
+    //!\endcond
+    bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
     {
@@ -202,7 +207,12 @@ private:
     }
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
-    bool bidirectional_search_cycle(sdsl_index_type const & csa, sdsl_char_type const c,
+    template <typename csa_t>
+    //!\cond
+        requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
+                  std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
+    //!\endcond
+    bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
                                     size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -856,6 +866,7 @@ public:
      * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor.cpp
      *
      * \attention When the index is built for text collections, the returned text IDs will be reversed.
+     * \attention Because of sparser sampling, the reverse cursor might be slower than the forward cursor.
      *
      * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor_collection.cpp
      * ### Complexity

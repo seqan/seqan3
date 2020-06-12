@@ -87,6 +87,14 @@ class fm_index_cursor;
 
 template <typename index_t>
 class bi_fm_index_cursor;
+
+namespace detail
+{
+template <semialphabet alphabet_t,
+          text_layout text_layout_mode_,
+          detail::sdsl_index sdsl_index_type_>
+class reverse_fm_index;
+}
 //!\endcond
 
 /*!\addtogroup submodule_fm_index
@@ -125,15 +133,15 @@ class bi_fm_index_cursor;
  *
  */
 using sdsl_wt_index_type =
-    sdsl::csa_wt<sdsl::wt_blcd<sdsl::bit_vector,
+    sdsl::csa_wt<sdsl::wt_blcd<sdsl::bit_vector, // Wavelet tree type
                                sdsl::rank_support_v<>,
                                sdsl::select_support_scan<>,
                                sdsl::select_support_scan<0>>,
-                 16,
-                 10'000'000,
-                 sdsl::sa_order_sa_sampling<>,
-                 sdsl::isa_sampling<>,
-                 sdsl::plain_byte_alphabet>;
+                 16, // Sampling rate of the suffix array
+                 10'000'000, // Sampling rate of the inverse suffix array
+                 sdsl::sa_order_sa_sampling<>, // How to sample positions in the suffix array (text VS SA sampling)
+                 sdsl::isa_sampling<>, // How to sample positons in the inverse suffix array
+                 sdsl::plain_byte_alphabet>; // How to represent the alphabet
 
 /*!\brief The default FM Index Configuration.
  * \attention The default might be changed in a future release. If you rely on a stable API and on-disk-format,
@@ -197,6 +205,8 @@ private:
     //!\brief The type of the alphabet size of the underlying SDSL index.
     using sdsl_sigma_type = typename sdsl_index_type::alphabet_type::sigma_type;
     //!\}
+
+    friend class detail::reverse_fm_index<alphabet_t, text_layout_mode_, sdsl_index_type_>;
 
     //!\brief Underlying index from the SDSL.
     sdsl_index_type index;
@@ -273,25 +283,21 @@ private:
     //!\cond
         requires (text_layout_mode_ == text_layout::collection)
     //!\endcond
-    void construct(text_t && text)
+    void construct(text_t && text, bool reverse = false)
     {
         detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
-        size_t text_size{0}; // text size including delimiters
-
-        // there must be at least one non-empty text in the collection
-        bool all_empty = true;
+        std::vector<size_t> text_sizes;
 
         for (auto && t : text)
-        {
-            if (std::ranges::begin(t) != std::ranges::end(t))
-            {
-                all_empty = false;
-            }
-            text_size += 1 + std::ranges::distance(t); // text size and delimiter (sum will be 1 for empty texts)
-        }
+            text_sizes.push_back(std::ranges::distance(t));
 
-        if (all_empty)
+        size_t const number_of_texts{text_sizes.size()};
+
+        // text size including delimiters
+        size_t const text_size = std::accumulate(text_sizes.begin(), text_sizes.end(), 0) + number_of_texts;
+
+        if (number_of_texts == text_size)
             throw std::invalid_argument("A text collection that only contains empty texts cannot be indexed.");
 
         constexpr auto sigma = alphabet_size<alphabet_t>;
@@ -299,13 +305,13 @@ private:
         // Instead of creating a bitvector of size `text_size`, setting the bits to 1 and then compressing it, we can
         // use the `sd_vector_builder(text_size, number_of_ones)` because we know the parameters and the 1s we want to
         // set are in a strictly increasing order. This inplace construction of the compressed vector saves memory.
-        sdsl::sd_vector_builder builder(text_size, std::ranges::distance(text));
+        sdsl::sd_vector_builder builder(text_size, number_of_texts);
         size_t prefix_sum{0};
 
-        for (auto && t : text)
+        for (auto && size : text_sizes)
         {
             builder.set(prefix_sum);
-            prefix_sum += std::ranges::distance(t) + 1;
+            prefix_sum += size + 1;
         }
 
         text_begin    = sdsl::sd_vector<>(builder);
@@ -313,10 +319,9 @@ private:
         text_begin_rs = sdsl::rank_support_sd<1>(&text_begin);
 
         // last text in collection needs no delimiter if we have more than one text in the collection
-        sdsl::int_vector<8> tmp_text(text_size - (std::ranges::distance(text) > 1));
+        sdsl::int_vector<8> tmp_text(text_size - (number_of_texts > 1));
 
         constexpr uint8_t delimiter = sigma >= 255 ? 255 : sigma + 1;
-
 
         std::ranges::move(text
                           | views::deep{views::to_rank}
@@ -338,12 +343,29 @@ private:
                           | views::join(delimiter),
                           std::ranges::begin(tmp_text));
 
+        if (!reverse)
+        {
+            // we need at least one delimiter
+            if (number_of_texts == 1)
+                tmp_text.back() = delimiter;
 
-        // we need at least one delimiter
-        if (std::ranges::distance(text) == 1)
-            tmp_text.back() = delimiter;
-
-        std::ranges::reverse(tmp_text);
+            std::ranges::reverse(tmp_text);
+        }
+        else
+        {
+            // If only one text is in the text collection, we still need one delimiter at the end to be able to
+            // conduct rank and select queries when locating hits in the index.
+            // Also, tmp_text looks like [text|0], but after reversing we need [txet|0] to be able to add the delimiter.
+            if (number_of_texts == 1)
+            {
+                std::ranges::reverse(tmp_text.begin(), tmp_text.end() - 1);
+                tmp_text.back() = delimiter;
+            }
+            else
+            {
+                std::ranges::reverse(tmp_text);
+            }
+        }
 
         sdsl::construct_im(index, tmp_text, 0);
     }
@@ -559,3 +581,55 @@ fm_index(text_t &&) -> fm_index<range_innermost_value_t<text_t>, text_layout{ran
 
 //!\}
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+
+/*!\brief An FM Index specialisation that handles reversing the given text.
+ * \implements seqan3::fm_index_specialisation
+ * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
+ * \tparam text_layout_mode  Indicates whether this index works on a text collection or a single text.
+ *                           See seqan3::text_layout.
+ * \tparam sdsl_index_type   The type of the underlying SDSL index, must model seqan3::sdsl_index.
+ * \implements seqan3::cerealisable
+ *
+ * \details
+ *
+ *  This FM Index reverses the given text before constructing the seqan3::fm_index.
+ *  This type is used by the seqan3::bi_fm_index.
+ */
+template <semialphabet alphabet_t,
+          text_layout text_layout_mode,
+          detail::sdsl_index sdsl_index_type = default_sdsl_index_type>
+class reverse_fm_index : public fm_index<alphabet_t, text_layout_mode, sdsl_index_type>
+{
+private:
+    //!\copydoc fm_index::construct()
+    template <std::ranges::range text_t>
+    void construct_(text_t && text)
+    {
+        if constexpr (text_layout_mode == text_layout::single)
+        {
+            auto reverse_text = text | std::views::reverse;
+            this->construct(reverse_text);
+        }
+        else
+        {
+            auto reverse_text = text | views::deep{std::views::reverse} | std::views::reverse;
+            this->construct(reverse_text, true);
+        }
+    }
+
+public:
+    using fm_index<alphabet_t, text_layout_mode, sdsl_index_type>::fm_index;
+
+    //!\copydoc fm_index::fm_index(text_t && text)
+    template <std::ranges::bidirectional_range text_t>
+    explicit reverse_fm_index(text_t && text)
+    {
+        construct_(std::forward<text_t>(text));
+    }
+
+};
+
+} // namespace seqan3::detail

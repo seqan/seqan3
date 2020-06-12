@@ -143,17 +143,18 @@ TYPED_TEST(search_test, convertible_query)
     EXPECT_RANGE_EQ(search(query, this->index) | ref_id_and_position, expected_hits);
 }
 
+// https://github.com/seqan/seqan3/issues/1542
 TYPED_TEST(search_test, single_element_collection)
 {
-    std::vector<seqan3::dna4_vector> text{"ACGATACG"_dna4};
+    std::vector<seqan3::dna4_vector> text{"GGTGTGTCGGCCCTATCCCTTGCG"_dna4};
     TypeParam index{text};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{3}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{3}} |
                                       seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
                                       seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}};
     typename TestFixture::hits_result_t expected_hits{{0, 0}};
-    EXPECT_RANGE_EQ(search("ACGACACG"_dna4, index, cfg) | ref_id_and_position, expected_hits);
+    EXPECT_RANGE_EQ(search("GGTGTGTCG"_dna4, index, cfg) | ref_id_and_position, expected_hits);
 }
 
 TYPED_TEST(search_test, multiple_queries)

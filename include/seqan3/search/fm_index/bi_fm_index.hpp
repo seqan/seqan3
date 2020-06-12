@@ -72,7 +72,12 @@ private:
     using sdsl_index_type = sdsl_index_type_;
 
     //!\brief The type of the underlying SDSL index for the reversed text.
-    using rev_sdsl_index_type = sdsl_index_type_;
+    using rev_sdsl_index_type = sdsl::csa_wt<sdsl_wt_index_type::wavelet_tree_type, // Wavelet tree type
+                                             10'000'000, // Sampling rate of the suffix array
+                                             10'000'000, // Sampling rate of the inverse suffix array
+                                             sdsl::sa_order_sa_sampling<>, // Text or SA based sampling for SA
+                                             sdsl::isa_sampling<>, // Text or ISA based sampling for ISA
+                                             sdsl_wt_index_type::alphabet_type>; // How to represent the alphabet
 
     /*!\brief The type of the reduced alphabet type. (The reduced alphabet might be smaller than the original alphabet
      *        in case not all possible characters occur in the indexed text.)
@@ -85,8 +90,8 @@ private:
     //!\brief The type of the underlying FM index for the original text.
     using fm_index_type = fm_index<alphabet_t, text_layout_mode_, sdsl_index_type>;
 
-    //!\brief The type of the underlying FM index for the reversed text.\if DEV \todo Change sampling behaviour. \endif
-    using rev_fm_index_type = fm_index<alphabet_t, text_layout_mode_, sdsl_index_type>;
+    //!\brief The type of the underlying FM index for the reversed text.
+    using rev_fm_index_type = detail::reverse_fm_index<alphabet_t, text_layout_mode_, rev_sdsl_index_type>;
     //!\}
 
     //!\brief Underlying FM index for the original text.
@@ -115,30 +120,12 @@ private:
      * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
     template <std::ranges::range text_t>
-    //!\cond
-        requires (text_layout_mode_ == text_layout::single)
-    //!\endcond
     void construct(text_t && text)
     {
         detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
-        auto rev_text = std::views::reverse(text);
         fwd_fm = fm_index_type{text};
-        rev_fm = fm_index_type{rev_text};
-    }
-
-    //!\overload
-    template <std::ranges::range text_t>
-    //!\cond
-        requires (text_layout_mode_ == text_layout::collection)
-    //!\endcond
-    void construct(text_t && text)
-    {
-        detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
-        auto rev_text = text | views::deep{std::views::reverse} | std::views::reverse;
-
-        fwd_fm = fm_index_type{text};
-        rev_fm = fm_index_type{rev_text};
+        rev_fm = rev_fm_index_type{text};
     }
 
 public:
@@ -298,6 +285,7 @@ public:
      *        can be used for searching. Note that because of the text being reversed, extend_right() resp. cycle_back()
      *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
      * \attention For text collections the text IDs are also reversed.
+     * \attention Because of sparser sampling, the reverse cursor might be slower than the forward cursor.
      * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
      *
      * ### Complexity
