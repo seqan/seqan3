@@ -25,6 +25,58 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
+namespace seqan3::detail
+{
+/*!\brief Class used to validate the requirements on the input text of the fm_index.
+ * \ingroup search
+ */
+struct fm_index_validator
+{
+    /*!\brief Validates the fm_index template parameters and text.
+     *
+     * \tparam alphabet_t The alphabet type of the fm_index; must model seqan3::semialphabet.
+     * \tparam text_layout_mode_ The text layout of the fm_index (single/collection).
+     * \tparam text_t The text type used to construct the fm_index.
+     *
+     * \param[in] text The text used to construct the fm_index.
+     *
+     * \throws std::invalid_argument if `text` is empty.
+     *
+     * \details
+     *
+     * Checks if the given types are compatible and the text is not empty.
+     */
+    template <semialphabet alphabet_t, text_layout text_layout_mode_, std::ranges::range text_t>
+    static void validate(text_t && text)
+    {
+        if constexpr (text_layout_mode_ == text_layout::single)
+        {
+            static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
+            static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
+                        "The alphabet of the text collection must be convertible to the alphabet of the index.");
+            static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
+
+            if (std::ranges::empty(text))
+                throw std::invalid_argument("The text to index cannot be empty.");
+        }
+        else
+        {
+            static_assert(std::ranges::bidirectional_range<text_t>,
+                          "The text collection must model bidirectional_range.");
+            static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
+                          "The elements of the text collection must model bidirectional_range.");
+            static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
+                          "The alphabet of the text collection must be convertible to the alphabet of the index.");
+            static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
+
+            if (std::ranges::empty(text))
+                throw std::invalid_argument("The text collection to index cannot be empty.");
+        }
+        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
+    }
+};
+} // namespace seqan3::detail
+
 namespace seqan3
 {
 
@@ -181,15 +233,7 @@ private:
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
-                     "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
-
-        // text must not be empty
-        if (std::ranges::empty(text))
-            throw std::invalid_argument("The text that is indexed cannot be empty.");
+        detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
         constexpr auto sigma = alphabet_size<alphabet_t>;
 
@@ -231,17 +275,7 @@ private:
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::bidirectional_range<text_t>, "The text collection must model bidirectional_range.");
-        static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
-                      "The elements of the text collection must model bidirectional_range.");
-        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
-                     "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
-
-        // text collection must not be empty
-        if (std::ranges::begin(text) == std::ranges::end(text))
-            throw std::invalid_argument("The text that is indexed cannot be empty.");
+        detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
         size_t text_size{0}; // text size including delimiters
 

@@ -120,15 +120,7 @@ private:
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
-                     "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
-
-        // text must not be empty
-        if (std::ranges::begin(text) == std::ranges::end(text))
-            throw std::invalid_argument("The text that is indexed cannot be empty.");
+        detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
         auto rev_text = std::views::reverse(text);
         fwd_fm = fm_index_type{text};
@@ -142,18 +134,7 @@ private:
     //!\endcond
     void construct(text_t && text)
     {
-        static_assert(std::ranges::bidirectional_range<text_t>, "The text must model bidirectional_range.");
-        static_assert(std::ranges::bidirectional_range<std::ranges::range_reference_t<text_t>>,
-                      "The elements of the text collection must model bidirectional_range.");
-        static_assert(alphabet_size<range_innermost_value_t<text_t>> <= 256, "The alphabet is too big.");
-        static_assert(std::convertible_to<range_innermost_value_t<text_t>, alphabet_t>,
-                     "The alphabet of the text collection must be convertible to the alphabet of the index.");
-        static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
-
-        // text must not be empty
-        if (std::ranges::begin(text) == std::ranges::end(text))
-            throw std::invalid_argument("The text that is indexed cannot be empty.");
-
+        detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
         auto rev_text = text | views::deep{std::views::reverse} | std::views::reverse;
 
         fwd_fm = fm_index_type{text};
