@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/aligned_sequence/debug_stream_alignment.hpp>
 
 /*!\defgroup aligned_sequence Aligned Sequence
  * \ingroup alignment
