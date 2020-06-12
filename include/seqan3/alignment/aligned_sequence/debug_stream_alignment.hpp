@@ -97,10 +97,8 @@ namespace seqan3
  */
 template <typename char_t, typename alignment_t>
 //!\cond
-    requires (!std::ranges::input_range<alignment_t>) &&
-             (!alphabet<alignment_t>) &&  // exclude alphabet_tuple_base
-              tuple_like<alignment_t> &&
-              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<alignment_t>>>
+    requires (detail::debug_streamable_tuple<alignment_t> &&
+              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<alignment_t>>>)
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_t && alignment)
 {
