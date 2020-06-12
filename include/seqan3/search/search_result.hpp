@@ -58,9 +58,9 @@ namespace seqan3
  * * seqan3::search_result::reference_id()
  * * seqan3::search_result::reference_begin_pos()
  *
- * Note that the index cursor is not included in a hit by default. If you are trying to access that information,
- * an exception will be thrown. You con configure the result of the search with the output configuration
- * (see seqan3::search_cfg::output).
+ * Note that the index cursor is not included in a hit by default. If you are trying to use the respective member
+ * function, a static_assert will prevent you from doing so. You con configure the result of the search with the output
+ * configuration (see seqan3::search_cfg::output).
  */
 template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
 //!\cond
@@ -127,8 +127,12 @@ public:
      * \{
      */
     //!\brief Returns the id of the query which produced this search result.
-    constexpr query_id_type query_id() const noexcept
+    constexpr auto query_id() const noexcept
     {
+        static_assert(!std::same_as<query_id_type, detail::empty_type>,
+                      "You tried to access the query_id but it was not selected in the output "
+                      "configuration of the search.");
+
         return query_id_;
     }
 
@@ -136,13 +140,12 @@ public:
      * \sa seqan3::fm_index_cursor
      * \sa seqan3::bi_fm_index_cursor
      */
-    constexpr cursor_type index_cursor() const noexcept(!(std::same_as<cursor_type, detail::empty_type>))
+    constexpr auto index_cursor() const noexcept(!(std::same_as<cursor_type, detail::empty_type>))
     {
-        if constexpr (std::same_as<cursor_type, detail::empty_type>)
-        {
-            throw std::logic_error{"You tried to access the index cursor but it was not selected in the output "
-                                   "configuration of the search."};
-        }
+        static_assert(!std::same_as<cursor_type, detail::empty_type>,
+                      "You tried to access the index cursor but it was not selected in the output "
+                      "configuration of the search.");
+
         return cursor_;
     }
 
@@ -152,25 +155,23 @@ public:
      * The reference id is an arithmetic value that corresponds to the index of the reference text in the index.
      * The order is determined on construction of the index.
      */
-    constexpr reference_id_type reference_id() const noexcept(!(std::same_as<reference_id_type, detail::empty_type>))
+    constexpr auto reference_id() const noexcept(!(std::same_as<reference_id_type, detail::empty_type>))
     {
-        if constexpr (std::same_as<reference_id_type, detail::empty_type>)
-        {
-            throw std::logic_error{"You tried to access the reference id but it was not selected in the output "
-                                   "configuration of the search."};
-        }
+        static_assert(!std::same_as<reference_id_type, detail::empty_type>,
+                      "You tried to access the reference id but it was not selected in the output "
+                      "configuration of the search.");
+
         return reference_id_;
     }
 
     //!\brief Returns the reference begin positions where the query was found in the reference text (at `reference id`).
-    constexpr reference_begin_pos_type reference_begin_pos() const
+    constexpr auto reference_begin_pos() const
         noexcept(!(std::same_as<reference_begin_pos_type, detail::empty_type>))
     {
-        if constexpr (std::same_as<reference_begin_pos_type, detail::empty_type>)
-        {
-            throw std::logic_error{"You tried to access the reference begin position but it was not selected in the "
-                                   "output configuration of the search."};
-        }
+        static_assert(!std::same_as<reference_begin_pos_type, detail::empty_type>,
+                      "You tried to access the reference begin position but it was not selected in the "
+                      "output configuration of the search.");
+
         return reference_begin_pos_;
     }
     //!\}
@@ -213,14 +214,16 @@ template <typename char_t, typename search_result_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, search_result_t && result)
 {
+    using result_type_list = detail::transfer_template_args_onto_t<remove_cvref_t<search_result_t>, type_list>;
+
     stream << "<";
-    if constexpr (!std::same_as<decltype(result.query_id()), detail::empty_type>)
+    if constexpr (!std::same_as<list_traits::at<0, result_type_list>, detail::empty_type>)
         stream << "query_id:" << result.query_id();
-    if constexpr (!std::same_as<decltype(result.index_cursor()), detail::empty_type>)
+    if constexpr (!std::same_as<list_traits::at<1, result_type_list>, detail::empty_type>)
         stream << ", index cursor is present";
-    if constexpr (!std::same_as<decltype(result.reference_id()), detail::empty_type>)
+    if constexpr (!std::same_as<list_traits::at<2, result_type_list>, detail::empty_type>)
         stream << ", reference_id:" << result.reference_id();
-    if constexpr (!std::same_as<decltype(result.reference_begin_pos()), detail::empty_type>)
+    if constexpr (!std::same_as<list_traits::at<3, result_type_list>, detail::empty_type>)
         stream << ", reference_pos:" << result.reference_begin_pos();
     stream << ">";
 
