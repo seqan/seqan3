@@ -14,7 +14,7 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/concept.hpp>
 
 namespace seqan3
 {
@@ -133,6 +133,25 @@ template <typename rng_t>
 SEQAN3_CONCEPT pseudo_random_access_range =
     std::ranges::forward_range<rng_t> &&
     pseudo_random_access_iterator<std::ranges::iterator_t<rng_t>>;
+//!\endcond
+
+/*!\interface seqan3::sequence <>
+ * \brief The generic concept for a sequence.
+ * \ingroup range
+ * \extends std::ranges::input_range
+ *
+ * We define a range over an seqan3::alphabet as a *sequence*.
+ * A type models seqan3::sequence if it is at least an std::ranges::input_range
+ * and its references type models seqan3::alphabet.
+ *
+ * ### Concepts and doxygen
+ *
+ * The requirements for this concept are given as related functions and type traits.
+ * Types that model this concept are shown as "implementing this interface".
+ */
+//!\cond
+template <typename rng_t>
+SEQAN3_CONCEPT sequence = std::ranges::input_range<rng_t> && alphabet<std::ranges::range_reference_t<rng_t>>;
 //!\endcond
 
 } // namespace seqan3

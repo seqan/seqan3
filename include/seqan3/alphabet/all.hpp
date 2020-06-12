@@ -166,6 +166,7 @@
  *
  * We provide specialised containers with certain properties in the \ref range module.
  *
+ * A container over an seqan3::alphabet automatically models the seqan3::sequence concept.
  */
 
 #pragma once
