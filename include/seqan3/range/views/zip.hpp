@@ -33,7 +33,7 @@ struct common_difference
 {
     using type = std::conditional_t<sizeof...(t) == 0,
                                     int,
-                                    std::common_type_t<std::ranges::iter_difference_t<t>...>>;
+                                    std::common_type_t<std::iter_difference_t<t>...>>;
 };
 
 template <std::weakly_incrementable ...t>
@@ -228,7 +228,7 @@ public:
         else if constexpr(all_forward && all_forward_const)
             return zip_sentinel<all_simple, indices>{*this};
         else
-            return std::ranges::default_sentinel;
+            return std::default_sentinel;
     }
 
     //!\copydoc end()
@@ -272,7 +272,7 @@ public:
 
 //!\brief Template argument type deduction guide that wraps ranges in std::views::all.
 template <std::ranges::viewable_range ...rng_t>
-zip_view(rng_t&&...) -> zip_view<std::ranges::all_view<rng_t>...>;
+zip_view(rng_t&&...) -> zip_view<std::views::all_t<rng_t>...>;
 
 /*!\brief The iterator type of seqan3::views::zip.
  * \tparam constness Indicates whether the iterator is const.
@@ -330,11 +330,11 @@ public:
     //!\brief Type for distances between iterators.
     using difference_type = common_difference_t<std::ranges::iterator_t<maybe_const<urng_t>>...>;
     //!\brief Value type of this iterator.
-    using value_type = std::tuple<std::ranges::iter_value_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>;
+    using value_type = std::tuple<std::iter_value_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>;
     //!\brief The pointer type.
     using pointer = void;
     //!\brief Reference to `value_type`.
-    using reference = common_tuple<std::ranges::iter_reference_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>;
+    using reference = common_tuple<std::iter_reference_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>;
     //!\brief Tag this class depending on which concept are modelled by `urng_t`.
     using iterator_category = std::conditional_t<all_random_access, std::random_access_iterator_tag,
                                 std::conditional_t<all_bidi, std::bidirectional_iterator_tag,
@@ -522,7 +522,7 @@ public:
     }
 
     //!\brief Checks whether any iterator of `lhs` is equal to the respective end().
-    friend constexpr bool operator==(zip_iterator const & lhs, std::ranges::default_sentinel_t) noexcept
+    friend constexpr bool operator==(zip_iterator const & lhs, std::default_sentinel_t) noexcept
     //!\cond
         requires !all_forward
     //!\endcond
@@ -531,7 +531,7 @@ public:
     }
 
     //!\brief Checks whether any iterator of `rhs` is equal to the respective end().
-    friend constexpr bool operator==(std::ranges::default_sentinel_t lhs, zip_iterator const & rhs) noexcept
+    friend constexpr bool operator==(std::default_sentinel_t lhs, zip_iterator const & rhs) noexcept
     //!\cond
         requires !all_forward
     //!\endcond
@@ -540,7 +540,7 @@ public:
     }
 
     //!\brief Checks whether `lhs` is unequal to `rhs`.
-    friend constexpr bool operator!=(zip_iterator const & lhs, std::ranges::default_sentinel_t rhs) noexcept
+    friend constexpr bool operator!=(zip_iterator const & lhs, std::default_sentinel_t rhs) noexcept
     //!\cond
         requires !all_forward
     //!\endcond
@@ -549,7 +549,7 @@ public:
     }
 
     //!\brief Checks whether `lhs` is unequal to `rhs`.
-    friend constexpr bool operator!=(std::ranges::default_sentinel_t lhs, zip_iterator const & rhs) noexcept
+    friend constexpr bool operator!=(std::default_sentinel_t lhs, zip_iterator const & rhs) noexcept
     //!\cond
         requires !all_forward
     //!\endcond
