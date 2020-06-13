@@ -46,9 +46,9 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("foo", v2);
 
     // combinability
-    auto v3 = vec | adaptor(3) | adaptor(3) | ranges::view::unique;
+    auto v3 = vec | adaptor(3) | adaptor(3) | ranges::views::unique;
     EXPECT_EQ("fo", v3 | seqan3::views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::view::unique | seqan3::views::to<std::string>;
+    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::views::unique | seqan3::views::to<std::string>;
     EXPECT_EQ("rab", v3b);
 
     // comparability against self

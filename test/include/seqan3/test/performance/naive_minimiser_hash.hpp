@@ -67,7 +67,7 @@ struct naive_minimiser_hash_fn
 
        return std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
                                            | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
-                                           | ranges::view::sliding(window_size - shape.size() + 1)
+                                           | ranges::views::sliding(window_size - shape.size() + 1)
                                            | std::views::transform([] (auto const in)
                                                                    {
                                                                        return *std::min_element(in.begin(), in.end());

@@ -577,7 +577,7 @@ public:
         return occ;
     }
 
-    /*!\brief Locates the occurrences of the searched query in the text on demand, i.e. a ranges::view is returned and
+    /*!\brief Locates the occurrences of the searched query in the text on demand, i.e. a std::ranges::view is returned and
      *        every position is located once it is accessed.
      * \returns Positions in the text.
      *

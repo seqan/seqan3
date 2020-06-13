@@ -1,5 +1,5 @@
 #include <fstream>
-#include <numeric> // std::accumulate 
+#include <numeric> // std::accumulate
 //![include_ranges_chunk]
 #include <range/v3/view/chunk.hpp>
 //![include_ranges_chunk]
@@ -137,8 +137,9 @@ for (auto && [rec1, rec2] : seqan3::views::zip(fin1, fin2)) // && is important!
 //![read_in_batches]
 seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq"};
 
-for (auto && records : fin | ranges::view::chunk(10))   // && is important!
-{                                                       // because seqan3::views::chunk returns temporaries
+// `&&` is important because seqan3::views::chunk returns temporaries!
+for (auto && records : fin | ranges::views::chunk(10))
+{
     // `records` contains 10 elements (or less at the end)
     seqan3::debug_stream << "Taking the next 10 sequences:\n";
     seqan3::debug_stream << "ID:  " << seqan3::get<seqan3::field::id>(*records.begin()) << '\n';

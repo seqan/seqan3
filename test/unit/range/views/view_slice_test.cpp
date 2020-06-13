@@ -40,9 +40,9 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("oob", v2);
 
     // combinability
-    auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
+    auto v3 = vec | adaptor(0, 4) | adaptor(1, 3) | ranges::views::unique;
     EXPECT_EQ("o", v3 | seqan3::views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::view::unique | seqan3::views::to<std::string>;
+    std::string v3b = vec | std::views::reverse | adaptor(1, 4) | ranges::views::unique | seqan3::views::to<std::string>;
     EXPECT_EQ("abo", v3b);
 
     // store arg
@@ -51,12 +51,12 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_EQ("oob", v4 | seqan3::views::to<std::string>);
 
     // store combined
-    auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::view::unique;
+    auto a1 = adaptor(0, 4) | adaptor(1, 3) | ranges::views::unique;
     auto v5 = vec | a1;
     EXPECT_EQ("o", v5 | seqan3::views::to<std::string>);
 
     // store combined in middle
-    auto a2 = std::views::reverse | adaptor(1, 4) | ranges::view::unique;
+    auto a2 = std::views::reverse | adaptor(1, 4) | ranges::views::unique;
     auto v6 = vec | a2;
     EXPECT_EQ("abo", v6 | seqan3::views::to<std::string>);
 }

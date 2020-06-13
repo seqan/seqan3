@@ -302,7 +302,7 @@ This enables us to create solutions for lot of use cases using only a few lines 
 
 A common use case is to read chunks from a file instead of the whole file at once or line by line.
 
-You can do so easily on a file range by using the ranges::view::chunk.
+You can do so easily on a file range by using the ranges::views::chunk.
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp read_in_batches
 

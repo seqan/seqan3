@@ -36,17 +36,17 @@ TEST(view_persist, delegate_to_view_all)
     EXPECT_EQ("foo", v2);
 
     // combinability
-    auto v3 = vec | seqan3::views::persist | ranges::view::unique;
+    auto v3 = vec | seqan3::views::persist | ranges::views::unique;
     EXPECT_EQ("fo", v3 | seqan3::views::to<std::string>);
     std::string v3b = vec
                     | std::views::reverse
                     | seqan3::views::persist
-                    | ranges::view::unique
+                    | ranges::views::unique
                     | seqan3::views::to<std::string>;
     EXPECT_EQ("of", v3b);
 
     // store combined
-    auto a1 = seqan3::views::persist | ranges::view::unique;
+    auto a1 = seqan3::views::persist | ranges::views::unique;
     auto v5 = vec | a1;
     EXPECT_EQ("fo", v5 | seqan3::views::to<std::string>);
 }
@@ -62,12 +62,12 @@ TEST(view_persist, wrap_temporary)
     EXPECT_EQ("foo", v2);
 
     // combinability
-    auto v3 = std::string{"foo"} | seqan3::views::persist | ranges::view::unique;
+    auto v3 = std::string{"foo"} | seqan3::views::persist | ranges::views::unique;
     EXPECT_EQ("fo", v3 | seqan3::views::to<std::string>);
     std::string v3b = std::string{"foo"}
                     | seqan3::views::persist
                     | std::views::filter(seqan3::is_char<'o'>)
-                    | ranges::view::unique
+                    | ranges::views::unique
                     | seqan3::views::to<std::string>;
     EXPECT_EQ("o", v3b);
 }

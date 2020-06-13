@@ -364,7 +364,7 @@ namespace seqan3::views
  *
  *
  * If above requirements are not met, this adaptor forwards to
- * `| ranges::view::chunk(step_size) | views::join(inserted_range)`
+ * `| seqan3::views::chunk(step_size) | std::views::join(inserted_range)`
  * which returns a view with the following properties:
  *
  * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)       |
