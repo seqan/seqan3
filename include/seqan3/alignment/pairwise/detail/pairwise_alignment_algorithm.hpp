@@ -139,15 +139,15 @@ public:
     //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
-        using result_value_t = typename alignment_result_value_type_accessor<alignment_result_type>::type;
         using std::get;
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            result_value_t res{};
-            res.id = idx;
-            res.score = compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
-            callback(alignment_result_type{res});
+            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
+            this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
+                                         std::move(idx),
+                                         this->tracked_optimum(),
+                                         callback);
         }
     }
 
@@ -160,7 +160,7 @@ protected:
      * \param[in] sequence2 The second sequence to compute the alignment for.
      */
     template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    int32_t compute_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    void compute_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
     {
         // ---------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
@@ -205,8 +205,6 @@ protected:
             this->track_last_column_cell(*++alignment_column_it, *++cell_index_column_it);
 
         this->track_final_cell(*alignment_column_it, *cell_index_column_it);
-
-        return this->tracked_optimum();
     }
 
     /*!\brief Initialise the first column of the alignment matrix.

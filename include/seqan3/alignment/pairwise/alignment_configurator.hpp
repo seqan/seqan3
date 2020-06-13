@@ -22,6 +22,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
@@ -513,8 +514,12 @@ private:
         {
             using optimum_tracker_policy_t = policy_optimum_tracker<config_t>;
             using gap_cost_policy_t = policy_affine_gap_recursion<config_t>;
+            using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
-            return pairwise_alignment_algorithm<config_t, gap_cost_policy_t, optimum_tracker_policy_t>{cfg};
+            return pairwise_alignment_algorithm<config_t,
+                                                gap_cost_policy_t,
+                                                optimum_tracker_policy_t,
+                                                result_builder_policy_t>{cfg};
         }
     }
 };
