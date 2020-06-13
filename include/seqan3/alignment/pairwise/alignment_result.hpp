@@ -15,10 +15,20 @@
 
 #include <optional>
 
+#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {
+
+// forward declaration for friend declaraion in alignment_result.
+template <typename>
+#if !SEQAN3_WORKAROUND_GCC_93467
+//!\cond
+    requires is_type_specialisation_of_v<configuration_t, configuration>
+//!\endcond
+#endif // !SEQAN3_WORKAROUND_GCC_93467
+class policy_alignment_result_builder;
 
 /*!\brief A struct that contains the actual alignment result data.
  * \ingroup pairwise_alignment
@@ -114,6 +124,8 @@ namespace seqan3
  * \if DEV
  * To access the type of the passed alignment result value use the seqan3::detail::alignment_result_value_type_accessor
  * transformation trait.
+ * The seqan3::detail::policy_alignment_result_builder is used to set the respective
+ * values. This class is befriended with this class to allow access to the private data member.
  * \endif
  */
 template <typename alignment_result_value_t>
@@ -131,16 +143,25 @@ private:
      * \{
      */
     //! \brief The type for the alignment identifier.
-    using id_t          = decltype(data.id);
+    using id_t = decltype(data.id);
     //! \brief The type for the resulting score.
-    using score_t       = decltype(data.score);
+    using score_t = decltype(data.score);
     //! \brief The type for the back coordinate.
-    using back_coord_t   = decltype(data.back_coordinate);
+    using back_coord_t = decltype(data.back_coordinate);
     //! \brief The type for the front coordinate.
     using front_coord_t = decltype(data.front_coordinate);
     //! \brief The type for the alignment.
-    using alignment_t   = decltype(data.alignment);
+    using alignment_t = decltype(data.alignment);
     //!\}
+
+    //!\brief Befriend alignment result builder.
+    template <typename configuration_t>
+    #if !SEQAN3_WORKAROUND_GCC_93467
+    //!\cond
+        requires is_type_specialisation_of_v<configuration_t, configuration>
+    //!\endcond
+    #endif // !SEQAN3_WORKAROUND_GCC_93467
+    friend class detail::policy_alignment_result_builder;
 
 public:
     /*!\name Constructors, destructor and assignment
