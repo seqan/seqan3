@@ -21,6 +21,9 @@
 namespace seqan3::detail
 {
 
+template <typename t>
+SEQAN3_CONCEPT dereferenceable = requires (t itter) { *itter;};
+
 // TODO Remove? Replace? Important at all?
 template <typename t>
 SEQAN3_CONCEPT simple_view = std::ranges::view<t> &&
@@ -112,7 +115,7 @@ public:
     //!\brief The underlying ranges.
     std::tuple<urng_t...> urange{};
     //!\brief The iterators of the underlying ranges.
-    std::tuple<std::ranges::iterator_t<urng_t>...> iterators{};
+    common_tuple<std::ranges::iterator_t<urng_t>...> iterators{};
     /*!\name Associated types
      * \{
      */
@@ -121,15 +124,15 @@ public:
     //!\brief The const iterator type.
     using const_iterator    = zip_iterator<true, indices>;
     //!\brief The reference_type.
-    using reference         = typename iterator::reference;
+    using reference         = std::iter_reference_t<iterator>;
     //!\brief The const_reference type.
-    using const_reference   = typename const_iterator::reference;
+    using const_reference   = std::iter_reference_t<iterator>;
     //!\brief The value_type.
-    using value_type        = typename iterator::value_type;
+    using value_type        = std::iter_value_t<iterator>;
     //!\brief The size type.
     using size_type         = size_t;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = typename iterator::difference_type;
+    using difference_type   = std::iter_difference_t<iterator>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -178,7 +181,7 @@ public:
     //!\copydoc begin()
     constexpr auto begin() const noexcept
     //!\cond
-        requires all_forward_const && (const_iterable_range<urng_t> && ...)
+        requires all_forward_const// && (const_iterable_range<urng_t> && ...)
     //!\endcond
     {
         return zip_iterator<true, indices>{*this};
@@ -187,7 +190,7 @@ public:
     //!\copydoc begin()
     constexpr auto cbegin() const noexcept
     //!\cond
-        requires all_forward_const && (const_iterable_range<urng_t> && ...)
+        requires all_forward_const// && (const_iterable_range<urng_t> && ...)
     //!\endcond
     {
         return begin();
@@ -220,13 +223,13 @@ public:
     //!\copydoc end()
     constexpr auto end() const noexcept
     //!\cond
-        requires all_forward && (const_iterable_range<urng_t> && ...)
+        // requires all_forward && (const_iterable_range<urng_t> && ...) // constraining all ends ??!
     //!\endcond
     {
         if constexpr((std::ranges::random_access_range<urng_t const> && ...) && all_sized_const)
             return zip_iterator<true, indices>{*this, size_impl(indices{})};
         else if constexpr(all_forward && all_forward_const)
-            return zip_sentinel<all_simple, indices>{*this};
+            return zip_sentinel<true , indices>{*this};
         else
             return std::default_sentinel;
     }
@@ -303,13 +306,13 @@ private:
     //!\brief Indicates whether all types in `maybe_const<urng_t>` model std::ranges::input_range.
     static constexpr bool all_input = (std::ranges::input_range<maybe_const<urng_t>> && ...);
 
-    static_assert(!constness || all_forward,
-                  "The zip_iterator must either be not const or all ranges must model std::ranges::forward_range.");
-    static_assert(std::same_as<std::index_sequence_for<urng_t...>, std::index_sequence<N...>>,
-                  "The number of ranges differes from the passed template parameter.");
+    // static_assert(!constness || all_forward,
+    //               "The zip_iterator must either be not const or all ranges must model std::ranges::forward_range.");
+    // static_assert(std::same_as<std::index_sequence_for<urng_t...>, std::index_sequence<N...>>,
+    //               "The number of ranges differes from the passed template parameter.");
 
     //!\brief A pointer to the parent view.
-    parent_t * parent = nullptr;
+    maybe_const<zip_view<urng_t...>> * parent = nullptr;
 
 
     auto& current() noexcept requires all_forward
@@ -323,7 +326,7 @@ private:
 
 public:
     //!\brief The iterators of each range in `urng_t`.
-    std::tuple<std::ranges::iterator_t<maybe_const<urng_t>>...> iterators{};
+    common_tuple<std::ranges::iterator_t<maybe_const<urng_t>>...> iterators{};
     /*!\name Associated types
      * \{
      */
@@ -379,7 +382,15 @@ public:
         return reference{*std::get<N>(current())...};
     }
 
+    // constexpr auto operator*() const
+    //     requires (detail::dereferenceable<const std::ranges::iterator_t<maybe_const<urng_t>>> && ...)
+    // {
+        // The const here is apparently evil incarnate when called upon std::views::iota ...
+    //     return common_tuple<const std::iter_reference_t<std::ranges::iterator_t<maybe_const<urng_t>>>...>{*std::get<N>(current())...};
+    // }
+
     /*!\name Arithmetic operators
+     *
      * \{
      */
 
@@ -527,7 +538,7 @@ public:
         requires !all_forward
     //!\endcond
     {
-        return ((std::get<N>(lhs.iterators) == std::ranges::end(std::get<N>(lhs.parent->uranges))) || ...);
+        return ((std::get<N>(lhs.iterators) == std::ranges::end(std::get<N>(lhs.parent->urange))) || ...);
     }
 
     //!\brief Checks whether any iterator of `rhs` is equal to the respective end().
@@ -641,7 +652,7 @@ class zip_view<urng_t...>::zip_sentinel<constness, std::index_sequence<N...>>
 private:
     //!\brief Helper function that returns `t` or `t const` depending on `constness`.
     template <typename t>
-    using maybe_const = std::conditional_t<constness, t const, t>;
+    using maybe_const = std::conditional_t<constness, const t, t>;
 
     //!\brief The iterator type of the zip_view.
     using iterator = typename zip_view<urng_t...>::template
@@ -650,7 +661,7 @@ private:
     friend iterator;
 
     //!\brief The type of the parent view.
-    using parent_t = zip_view<urng_t...>;
+    using parent_t = maybe_const<zip_view<urng_t...>>;
 
     //!\brief Indicates whether all types in `maybe_const<urng_t>` model std::ranges::forward_range.
     static constexpr bool all_forward = (std::ranges::forward_range<maybe_const<urng_t>> && ...);
@@ -662,7 +673,7 @@ private:
 
 public:
     //!\brief The sentinels of each range in `urng_t`.
-    common_tuple<std::ranges::sentinel_t<urng_t const>...> iterators{}; // TODO make private, see https://github.com/seqan/seqan3/pull/1756
+    common_tuple<std::ranges::sentinel_t<maybe_const<urng_t>>...> iterators{}; // TODO make private, see https://github.com/seqan/seqan3/pull/1756
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -674,7 +685,7 @@ public:
     ~zip_sentinel()                                          = default; //!< Defaulted.
 
     //!\brief Construct from reference to view. Sets all iterators to respective `end`.
-    explicit constexpr zip_sentinel(parent_t const & parent)
+    explicit constexpr zip_sentinel(parent_t & parent)
         : iterators{std::ranges::end(std::get<N>(parent.urange)) ...}
     {}
 };
