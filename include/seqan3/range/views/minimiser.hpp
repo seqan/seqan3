@@ -77,7 +77,7 @@ public:
     template <typename rng_t>
     //!\cond
      requires std::ranges::viewable_range<rng_t> &&
-              std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
+              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     minimiser_view(rng_t && urange_, size_t const w_) :
     urange{std::views::all(std::forward<rng_t>(urange_))}, window_values_size{w_} {}

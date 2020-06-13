@@ -119,7 +119,7 @@ public:
     //!\cond
     requires (!std::same_as<remove_cvref_t<other_urng_t>, async_input_buffer_view>) && // prevent recursive instantiation
              std::ranges::viewable_range<other_urng_t> &&
-             std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<other_urng_t>>>
+             std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<other_urng_t>>>
     //!\endcond
     async_input_buffer_view(other_urng_t && _urng, size_t const buffer_size) :
         async_input_buffer_view{std::views::all(_urng), buffer_size}
