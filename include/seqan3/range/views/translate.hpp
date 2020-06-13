@@ -154,7 +154,7 @@ template <std::ranges::view urng_t>
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
-class view_translate_single : public ranges::view_base
+class view_translate_single : public std::ranges::view_base
 {
 private:
     //!\brief The input range (of ranges).
@@ -526,7 +526,7 @@ template <std::ranges::view urng_t>
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
-class view_translate : public ranges::view_base
+class view_translate : public std::ranges::view_base
 {
 private:
     //!\brief The data members of view_translate_single.
