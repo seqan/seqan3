@@ -17,6 +17,8 @@
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
+#include <seqan3/alignment/matrix/detail/pairwise_alignment_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/trace_cell_proxy.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
@@ -51,6 +53,9 @@ protected:
     using score_type = typename traits_type::score_type;
     //!\brief The affine cell type returned by the functions.
     using affine_cell_type = affine_cell_proxy<std::tuple<score_type, score_type, score_type>>;
+
+    using trace_cell_type = trace_cell_proxy<std::tuple<trace_directions, trace_directions, trace_directions>>;
+    using combined_cell_type = pairwise_alignment_cell_proxy<std::pair<affine_cell_type, trace_cell_type>>;
 
     //!\brief The score for a gap extension.
     score_type gap_extension_score{};
@@ -150,6 +155,46 @@ protected:
         return {diagonal_score, horizontal_score, vertical_score};
     }
 
+    //!\overload
+    template <typename affine_cell_t>
+    //!\cond
+        requires is_type_specialisation_of_v<affine_cell_t, pairwise_alignment_cell_proxy>
+    //!\endcond
+    combined_cell_type compute_inner_cell(score_type diagonal_score,
+                                          affine_cell_t previous_cell,
+                                          score_type const sequence_score) const noexcept
+    {
+        diagonal_score += sequence_score;
+        score_type horizontal_score = previous_cell.horizontal_score();
+        score_type vertical_score = previous_cell.vertical_score();
+        trace_directions best_trace = trace_directions::diagonal;
+
+        diagonal_score = (diagonal_score < vertical_score)
+                       ? (best_trace = previous_cell.vertical_trace(), vertical_score)
+                       : (best_trace |= previous_cell.vertical_trace() ,diagonal_score);
+        diagonal_score = (diagonal_score < horizontal_score)
+                       ? (best_trace = previous_cell.horizontal_trace(), horizontal_score)
+                       : (best_trace |= previous_cell.horizontal_trace(), diagonal_score);
+
+        score_type tmp = diagonal_score + gap_open_score;
+        vertical_score += gap_extension_score;
+        horizontal_score += gap_extension_score;
+
+        // store the vertical_score and horizontal_score value in the next path
+        trace_directions next_vertical_trace = trace_directions::up;
+        trace_directions next_horizontal_trace = trace_directions::left;
+
+        vertical_score = (vertical_score < tmp)
+                       ? (next_vertical_trace = trace_directions::up_open, tmp)
+                       : vertical_score;
+        horizontal_score = (horizontal_score < tmp)
+                         ? (next_horizontal_trace = trace_directions::left_open, tmp)
+                         : horizontal_score;
+
+        return {affine_cell_type{diagonal_score, horizontal_score, vertical_score},
+                trace_cell_type{best_trace, next_horizontal_trace, next_vertical_trace}};
+    }
+
     /*!\brief Initialises the first cell of the alignment matrix in the top left corner of the matrix.
      *
      * \returns The computed affine cell.
@@ -160,12 +205,22 @@ protected:
      * initialised to 0, while the value of the horizontal and vertical matrix are initialised as:
      * \f$V[0, 0] = H[0, 0] = g_o\f$.
      */
-    affine_cell_type initialise_origin_cell() const noexcept
+    // affine_cell_type initialise_origin_cell() const noexcept
+    // {
+    //         return {score_type{},
+    //                 first_row_is_free ? score_type{} : gap_open_score,
+    //                 first_column_is_free ? score_type{} : gap_open_score};
+    // }
+
+    //!\overload
+    combined_cell_type initialise_origin_cell() const noexcept
     {
-        return {score_type{},
-                first_row_is_free ? score_type{} : gap_open_score,
-                first_column_is_free ? score_type{} : gap_open_score};
+        return {affine_cell_type{score_type{},
+                                 first_row_is_free ? score_type{} : gap_open_score,
+                                 first_column_is_free ? score_type{} : gap_open_score},
+                trace_cell_type{trace_directions::none, trace_directions::left_open, trace_directions::up_open}};
     }
+
 
     /*!\brief Initialises a cell of the first alignment matrix column.
      *
@@ -193,6 +248,18 @@ protected:
                 first_column_is_free ? previous_cell.vertical_score() : new_vertical};
                }
 
+    //!\overload
+    template <typename affine_cell_t>
+    //!\cond
+        requires is_type_specialisation_of_v<affine_cell_t, pairwise_alignment_cell_proxy>
+    //!\endcond
+    combined_cell_type initialise_first_column_cell(affine_cell_t previous_cell) const noexcept
+    {
+        score_type new_vertical = previous_cell.vertical_score() + gap_extension_score;
+        return {affine_cell_type{previous_cell.vertical_score(), previous_cell.vertical_score() + gap_open_score, new_vertical},
+                trace_cell_type{previous_cell.vertical_trace(), trace_directions::left_open, trace_directions::up}};
+    }
+
     /*!\brief Initialises the first cell of a alignment matrix column.
      *
      * \tparam affine_cell_t The type of the affine cell; must be an instance of seqan3::detail::affine_cell_proxy.
@@ -217,6 +284,20 @@ protected:
         return {previous_cell.horizontal_score(),
                 first_row_is_free ? previous_cell.horizontal_score() : new_horizontal_score,
                 previous_cell.horizontal_score() + gap_open_score};
+    }
+
+    //!\overload
+    template <typename affine_cell_t>
+    //!\cond
+        requires is_type_specialisation_of_v<affine_cell_t, pairwise_alignment_cell_proxy>
+    //!\endcond
+    combined_cell_type initialise_first_row_cell(affine_cell_t previous_cell) const noexcept
+    {
+        score_type new_horizontal_score = previous_cell.horizontal_score() + gap_extension_score;
+        return {affine_cell_type{previous_cell.horizontal_score(),
+                                 new_horizontal_score,
+                                 previous_cell.horizontal_score() + gap_open_score},
+                trace_cell_type{previous_cell.horizontal_trace(), trace_directions::left, trace_directions::up_open}};
     }
 
     /*!\brief Returns the lowest viable score.

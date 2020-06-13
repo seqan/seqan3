@@ -47,7 +47,7 @@ template <typename alignment_configuration_t>
 //!\endcond
 class policy_optimum_tracker
 {
-private:
+protected:
     //!\brief The configuration traits type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
     //!\brief The configured score type.
@@ -85,7 +85,6 @@ private:
         optimal_coordinate = is_better_score ? std::move(coordinate) : optimal_coordinate;
     }
 
-protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */

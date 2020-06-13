@@ -83,13 +83,20 @@ protected:
      * work is done to generate the requested result. For example computing the associated alignment from the traceback
      * matrix.
      */
-    template <typename sequence_pair_t, typename index_t, typename score_t, typename callback_t>
+    template <typename sequence_pair_t,
+              typename index_t,
+              typename score_t,
+              typename coordinate_t,
+              typename alignment_matrix_t,
+              typename callback_t>
     //!\cond
         requires std::invocable<callback_t, result_type>
     //!\endcond
     void make_result_and_invoke([[maybe_unused]] sequence_pair_t && sequence_pair,
                                 [[maybe_unused]] index_t && id,
                                 [[maybe_unused]] score_t score,
+                                [[maybe_unused]] coordinate_t end_coordinate,
+                                [[maybe_unused]] alignment_matrix_t alignment_matrix,
                                 callback_t && callback)
     {
         using std::get;
@@ -108,7 +115,25 @@ protected:
             result.data.score = std::move(score);
         }
 
-       // TODO: Add other result.data like sequence1_begin_position, sequence1_end_position, and so on.
+        if constexpr (traits_type::compute_back_coordinate)
+        {
+            result.data.back_coordinate.first = end_coordinate.col;
+            result.data.back_coordinate.second = end_coordinate.row;
+        }
+
+        if constexpr (traits_type::compute_front_coordinate)
+        {
+            using std::get;
+            // Get a aligned sequence builder for banded or un-banded case.
+            aligned_sequence_builder builder{get<0>(sequence_pair), get<1>(sequence_pair)};
+
+            auto trace_res = builder(alignment_matrix.trace_path(end_coordinate));
+            result.data.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
+            result.data.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
+
+            if constexpr (traits_type::compute_sequence_alignment)
+                result.data.alignment = std::move(trace_res.alignment);
+        }
 
         callback(std::move(result));
     }

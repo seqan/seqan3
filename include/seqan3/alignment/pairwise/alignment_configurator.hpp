@@ -509,8 +509,7 @@ private:
         if constexpr (traits_t::is_local ||                                    // it is a local alignment,
                       (traits_t::is_banded && traits_t::with_free_end_gaps) || // banded and with free end gaps,
                       traits_t::is_vectorised ||                               // it is vectorised,
-                      traits_t::is_debug ||                                    // it runs in debug mode,
-                      traits_t::result_type_rank > 0)                          // it computes more than the score.
+                      traits_t::is_debug)                                      // it runs in debug mode
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;

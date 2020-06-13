@@ -229,6 +229,18 @@ public:
         return (*this)[coordinate];
     }
 
+    /*!\brief Resizes the underlying matrix storage to the given matrix dimensions.
+     *
+     * \param row_dim The row dimension (row count).
+     * \param col_dim The column dimension (column count).
+     */
+    void resize(number_rows const row_dim, number_cols const col_dim)
+    {
+        this->row_dim = row_dim.get();
+        this->col_dim = col_dim.get();
+        storage.resize(this->row_dim * this->col_dim);
+    }
+
     //!\copydoc seqan3::detail::matrix::rows
     size_t rows() const noexcept
     {
