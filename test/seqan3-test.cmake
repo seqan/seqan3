@@ -21,6 +21,11 @@ include (FindPackageMessage)
 
 option (SEQAN3_TEST_BUILD_OFFLINE "Skip the update step of external projects." OFF)
 
+# Force alignment of benchmarked loops so that numbers are reliable.
+# For large loops and erratic seeming bench results the value might
+# have to be adapted or the option deactivated.
+option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark builds." ON)
+
 # ----------------------------------------------------------------------------
 # Paths to folders.
 # ----------------------------------------------------------------------------
@@ -53,6 +58,10 @@ add_library (seqan3::test ALIAS seqan3_test)
 # needed for performance test cases in seqan3/test/performance
 add_library (seqan3_test_performance INTERFACE)
 target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+
+if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
+    target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
+endif ()
 
 target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 add_library (seqan3::test::performance ALIAS seqan3_test_performance)
