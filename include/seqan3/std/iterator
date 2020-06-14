@@ -27,8 +27,8 @@ using ::std::back_inserter;
 // using ::std::insert_iterator;
 // using ::std::istream_iterator;
 // using ::std::istreambuf_iterator;
-// using ::std::ostream_iterator;
-// using ::std::ostreambuf_iterator;
+using ::std::ostream_iterator;
+using ::std::ostreambuf_iterator;
 } // namespace cpp20
 } // namespace std
 #endif // __cpp_lib_ranges
@@ -192,8 +192,8 @@ using ::ranges::cpp20::back_inserter;
 // using ::ranges::cpp20::insert_iterator;
 // using ::ranges::cpp20::istream_iterator;
 // using ::ranges::cpp20::istreambuf_iterator;
-// using ::ranges::cpp20::ostream_iterator;
-// using ::ranges::cpp20::ostreambuf_iterator;
+using ::ranges::cpp20::ostream_iterator;
+using ::ranges::cpp20::ostreambuf_iterator;
 } // namespace cpp20
 
 // [iterators.common], common iterators

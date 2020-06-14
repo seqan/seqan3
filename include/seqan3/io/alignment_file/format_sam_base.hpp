@@ -665,7 +665,7 @@ inline void format_sam_base::write_header(stream_t & stream,
     // -----------------------------------------------------------------
     // Write Header
     // -----------------------------------------------------------------
-    seqan3::ostreambuf_iterator stream_it{stream};
+    std::cpp20::ostreambuf_iterator stream_it{stream};
 
     // (@HD) Write header line [required].
     stream << "@HD\tVN:";

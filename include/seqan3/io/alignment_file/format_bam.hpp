@@ -694,7 +694,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
             throw format_error{detail::to_string("The ref_offset object must be >= -1 but is: ", ref_offset)};
 
-        seqan3::ostreambuf_iterator stream_it{stream};
+        std::cpp20::ostreambuf_iterator stream_it{stream};
 
         // ---------------------------------------------------------------------
         // Writing the BAM Header on first call
