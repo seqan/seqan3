@@ -16,7 +16,7 @@
 
 //![third_party_type]
 #include <cstddef>                      // for size_t
-#include <seqan3/alphabet/concept.hpp>  // for seqan3::Alphabet
+#include <seqan3/alphabet/concept.hpp>  // for seqan3::alphabet
 
 // this is from some other library:
 namespace third_party_ns

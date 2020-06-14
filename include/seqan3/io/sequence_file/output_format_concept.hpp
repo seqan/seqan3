@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::SequenceFileFormatOut and auxiliary classes.
+ * \brief Provides seqan3::sequence_file_output_format and auxiliary classes.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -145,7 +145,8 @@ template <typename ...ts>
 constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> =
     (sequence_file_output_format<ts> && ...);
 
-/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet seqan3::SequenceFileFormat.
+/*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
+ *        seqan3::sequence_file_output_format.
  * \ingroup core
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
