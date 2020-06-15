@@ -166,6 +166,18 @@ public:
     constexpr void cend() const noexcept = delete;
     //!\}
 
+    //!\brief Checks whether the range is empty.
+    constexpr bool empty() const noexcept
+    //!\cond
+        requires std::ranges::forward_range<inner_range_type>
+    //!\endcond
+    {
+        return std::ranges::all_of(urng, [] (auto & rng)
+        {
+            return std::ranges::empty(rng);
+        });
+    }
+
     /*!\brief Returns the size of this range.
      *
      * \details
