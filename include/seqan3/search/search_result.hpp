@@ -59,7 +59,7 @@ namespace seqan3
  * * seqan3::search_result::reference_begin_pos()
  *
  * Note that the index cursor is not included in a hit by default. If you are trying to use the respective member
- * function, a static_assert will prevent you from doing so. You con configure the result of the search with the output
+ * function, a static_assert will prevent you from doing so. You can configure the result of the search with the output
  * configuration (see seqan3::search_cfg::output).
  */
 template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
