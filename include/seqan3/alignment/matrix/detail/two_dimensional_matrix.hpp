@@ -72,7 +72,7 @@ private:
 
     // Forward declaration. For definition see below.
     template <typename matrix_t>
-    class iterator_type;
+    class basic_iterator;
 
 public:
 
@@ -86,8 +86,8 @@ public:
     using const_pointer = typename storage_type::const_pointer;  //!< The pointer type.
     using difference_type = typename storage_type::difference_type; //!< The difference type.
     using size_type = typename storage_type::size_type;  //!< The difference type.
-    using iterator = iterator_type<two_dimensional_matrix>; //!< The iterator type.
-    using const_iterator = iterator_type<two_dimensional_matrix const>; //!< The const iterator type.
+    using iterator = basic_iterator<two_dimensional_matrix>; //!< The iterator type.
+    using const_iterator = basic_iterator<two_dimensional_matrix const>; //!< The const iterator type.
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -322,17 +322,17 @@ private:
  */
 template <typename value_t, typename allocator_t, matrix_major_order order>
 template <typename matrix_t>
-class two_dimensional_matrix<value_t, allocator_t, order>::iterator_type :
-    public two_dimensional_matrix_iterator_base<iterator_type<matrix_t>, order>
+class two_dimensional_matrix<value_t, allocator_t, order>::basic_iterator :
+    public two_dimensional_matrix_iterator_base<basic_iterator<matrix_t>, order>
 {
 private:
     //!\brief The base class type.
-    using base_t = two_dimensional_matrix_iterator_base<iterator_type<matrix_t>, order>;
+    using base_t = two_dimensional_matrix_iterator_base<basic_iterator<matrix_t>, order>;
 
     //!\brief Befriend the base crtp class.
     template <typename derived_t, matrix_major_order other_order>
     //!\cond
-        requires is_type_specialisation_of_v<derived_t, iterator_type> && (other_order == order)
+        requires is_type_specialisation_of_v<derived_t, basic_iterator> && (other_order == order)
     //!\endcond
     friend class two_dimensional_matrix_iterator_base;
 
@@ -340,7 +340,7 @@ private:
     template <typename other_matrix_t>
         requires std::same_as<other_matrix_t, std::remove_const_t<matrix_t>> &&
                     std::is_const_v<matrix_t>
-    friend class iterator_type;
+    friend class basic_iterator;
 
     //!\brief The iterator of the underlying storage.
     using storage_iterator = std::ranges::iterator_t<
@@ -369,18 +369,18 @@ public:
     /*!\name Constructors, destructor and assignment
     * \{
     */
-    constexpr iterator_type() = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type const &) = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type &&) = default; //!< Defaulted.
-    constexpr iterator_type & operator=(iterator_type const &) = default; //!< Defaulted.
-    constexpr iterator_type & operator=(iterator_type &&) = default; //!< Defaulted.
-    ~iterator_type() = default; //!< Defaulted.
+    constexpr basic_iterator() = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const &) = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator &&) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
 
     /*!\brief Construction from the underlying matrix and the iterator over actual storage.
     * \param[in] matrix The underlying matrix to access the corresponding dimensions.
     * \param[in] iter   The underlying iterator over the actual storage; must model std::random_access_iterator.
     */
-    constexpr iterator_type(matrix_t & matrix, storage_iterator iter) :
+    constexpr basic_iterator(matrix_t & matrix, storage_iterator iter) :
         matrix_ptr{&matrix},
         host_iter{iter}
     {}
@@ -390,8 +390,8 @@ public:
     //!\cond
         requires std::same_as<other_matrix_t, std::remove_const_t<matrix_t>> && std::is_const_v<matrix_t>
     //!\endcond
-    constexpr iterator_type(
-        iterator_type<other_matrix_t> other) noexcept :
+    constexpr basic_iterator(
+        basic_iterator<other_matrix_t> other) noexcept :
         matrix_ptr{other.matrix_ptr},
         host_iter{other.host_iter}
     {}
@@ -401,7 +401,7 @@ public:
     using base_t::operator+=;
 
     //!\brief Advances the iterator by the given `offset`.
-    constexpr iterator_type & operator+=(matrix_offset const & offset) noexcept
+    constexpr basic_iterator & operator+=(matrix_offset const & offset) noexcept
     {
         assert(matrix_ptr != nullptr);
 
