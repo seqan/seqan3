@@ -59,6 +59,8 @@ auto call_alignment(seq_t && seq, cfg_t && cfg)
 
 TYPED_TEST(align_pairwise_test, single_pair)
 {
+    // use std::tie
+
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -77,6 +79,34 @@ TYPED_TEST(align_pairwise_test, single_pair)
         seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p, cfg))
+        {
+            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.score(), -4);
+            EXPECT_EQ(res.back_coordinate().first, 8u);
+            EXPECT_EQ(res.back_coordinate().second, 9u);
+            auto && [gap1, gap2] = res.alignment();
+            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
+            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+        }
+    }
+
+    // use std::pair
+
+    std::pair sequences{"ACGTGATG"_dna4,"AGTGATACT"_dna4};
+
+    {  // the score
+        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+
+        for (auto && res : call_alignment<TypeParam>(sequences, cfg))
+        {
+            EXPECT_EQ(res.score(), -4.0);
+        }
+    }
+
+    {  // the alignment
+        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        unsigned idx = 0;
+        for (auto && res : call_alignment<TypeParam>(sequences, cfg))
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
