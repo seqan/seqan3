@@ -72,7 +72,7 @@ public:
      * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
      */
     template <typename query_t>
-    auto operator()(query_t && query) noexcept
+    auto operator()(query_t && query)
     {
         auto error_state = this->max_error_counts(config, query); // see policy_max_error
 

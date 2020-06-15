@@ -58,7 +58,8 @@ void map_reads(std::filesystem::path const & query_path,
                                                                    seqan3::field::mapq>{}};
 //! [alignment_file_output]
 
-    seqan3::configuration const search_config = seqan3::search_cfg::max_error{seqan3::search_cfg::total{errors}} |
+    seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{
+                                                    seqan3::search_cfg::error_count{errors}} |
                                                 seqan3::search_cfg::hit_all_best;
 
     seqan3::configuration const align_config = seqan3::align_cfg::edit |

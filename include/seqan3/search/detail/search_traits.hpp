@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides seqan3::detail::search_traits.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -15,7 +16,6 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
-#include <seqan3/search/configuration/max_error_rate.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/result_type.hpp>
@@ -30,9 +30,6 @@ namespace seqan3::detail
  *                                seqan3::configuration.
  */
 template <typename search_configuration_t>
-//!\cond
-    requires is_type_specialisation_of_v<remove_cvref_t<search_configuration_t>, configuration>
-//!\endcond
 struct search_traits
 {
 private:
@@ -49,13 +46,24 @@ public:
     //!\brief The configured search result type or seqan3::detail::empty_type if not configured yet.
     using search_result_type = typename remove_cvref_t<decltype(result_type_or_empty_type)>::type;
 
-    //!\brief A flag indicating whether search should be invoked with max error.
-    static constexpr bool search_with_max_error = search_configuration_t::template exists<search_cfg::max_error>();
-    //!\brief A flag indicating whether search should be invoked with max error rate.
-    static constexpr bool search_with_max_error_rate =
-        search_configuration_t::template exists<search_cfg::max_error_rate>();
-    //!\brief A flag indicating whether error configuration was set in the search configuration.
-    static constexpr bool has_error_configuration = search_with_max_error | search_with_max_error_rate;
+    //!\brief A flag indicating whether search should be invoked with total errors.
+    static constexpr bool has_max_error_total =
+                                        search_configuration_t::template exists<search_cfg::max_error_total>();
+    //!\brief A flag indicating whether search should be invoked with substitution errors.
+    static constexpr bool has_max_error_substitution =
+                                        search_configuration_t::template exists<search_cfg::max_error_substitution>();
+    //!\brief A flag indicating whether search should be invoked with insertion errors.
+    static constexpr bool has_max_error_insertion =
+                                        search_configuration_t::template exists<search_cfg::max_error_insertion>();
+    //!\brief A flag indicating whether search should be invoked with deletion errors.
+    static constexpr bool has_max_error_deletion =
+                                        search_configuration_t::template exists<search_cfg::max_error_deletion>();
+
+    //!\brief A flag that indicates whether the search should be invoked with only specified total errors.
+    static constexpr bool only_max_error_total = has_max_error_total &&
+                                                 !has_max_error_substitution &&
+                                                 !has_max_error_insertion &&
+                                                 !has_max_error_deletion;
 
     //!\brief A flag indicating whether search should find all hits.
     static constexpr bool search_all_hits = search_configuration_t::template exists<hit_all_tag>();

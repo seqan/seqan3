@@ -159,17 +159,14 @@ The following hits were found:
 ## Searching for approximate hits
 
 If you want to allow for errors in your query, you need to configure the approximate search with a
-seqan3::search_cfg::max_error or seqan3::search_cfg::max_error_rate object.
-These are constructed with four parameters:
+seqan3::search_cfg::max_error_total, seqan3::search_cfg::max_error_substitution,
+seqan3::search_cfg::max_error_insertion or seqan3::search_cfg::max_error_deletion object.
+These are constructed with absolute numbers or rates:
 
-With absolute numbers (seqan3::search_cfg::max_error):
+- seqan3::search_cfg::error_count: Absolute number of errors
+- seqan3::search_cfg::error_rate: Rate of errors \f$\in[0,1]\f$
 
-- seqan3::search_cfg::total: Maximum number of total errors
-- seqan3::search_cfg::substitution: Maximum number of substitutions
-- seqan3::search_cfg::insertion: Maximum number of insertions
-- seqan3::search_cfg::deletion: Maximum number of deletions
-
-Use seqan3::search_cfg::max_error_rate with the same elements to define error rates \f$\in[0,1]\f$.
+When you want to use more than one error type, append it to the error configuration by using the `|`-operator.
 
 \note When using >= 2 errors it is advisable to use a Bi-FM-Index since searches will be faster.
 

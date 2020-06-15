@@ -116,10 +116,17 @@ positions in an ascending ordering.
 
 \include doc/tutorial/search/search_solution2.cpp
 
-If you want to allow for errors in your query, you need to configure the approximate search with a
-seqan3::search_cfg::max_error or seqan3::search_cfg::max_error_rate object.
+If you want to allow errors in your query, you need to configure the approximate search with the following search
+configuration objects:
+- seqan3::search_cfg::max_error_total: Maximum number of total errors
+- seqan3::search_cfg::max_error_substitution: Maximum number of substitutions
+- seqan3::search_cfg::max_error_insertion: Maximum number of insertions
+- seqan3::search_cfg::max_error_deletion: Maximum number of deletions
+These are constructed with absolute numbers or rates:
+- seqan3::search_cfg::error_count: Absolute number of errors
+- seqan3::search_cfg::error_rate: Rate of errors \f$\in[0,1]\f$
 
-To search for either 1 insertion or 1 deletion you can use the seqan3::search_cfg::max_error:
+To search for either 1 insertion or 1 deletion you can use the seqan3::search_cfg::error_count:
 
 \snippet doc/tutorial/search/search_small_snippets.cpp error_search
 

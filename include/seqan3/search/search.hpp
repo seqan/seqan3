@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
  * \brief Provides the public interface for search algorithms.
+ * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
  */
 
 #pragma once
@@ -30,50 +30,6 @@ namespace seqan3::detail
  */
 struct search_configuration_validator
 {
-    /*!\brief Validates the error configuration.
-     *
-     * \tparam configuration_t The type of the search configuration.
-     *
-     * \param[in] cfg The configuration to validate.
-     *
-     * \throws std::invalid_argument
-     *
-     * \details
-     *
-     * Checks if the given thresholds for the configured errors are valid. Otherwise throws std::invalid_argument.
-     */
-    template <typename configuration_t>
-    static void validate_error_configuration(configuration_t const & cfg)
-    {
-        static_assert(detail::is_type_specialisation_of_v<configuration_t, configuration>,
-                      "cfg must be a specialisation of seqan3::configuration.");
-
-        using search_traits_t = detail::search_traits<configuration_t>;
-
-        if constexpr (search_traits_t::search_with_max_error)
-        {
-            auto const & [total, subs, ins, del] = get<search_cfg::max_error>(cfg).value;
-            if (subs > total)
-                throw std::invalid_argument{"The substitution error threshold is higher than the total error "
-                                            "threshold."};
-            if (ins > total)
-                throw std::invalid_argument{"The insertion error threshold is higher than the total error threshold."};
-            if (del > total)
-                throw std::invalid_argument{"The deletion error threshold is higher than the total error threshold."};
-        }
-        else if constexpr (search_traits_t::search_with_max_error_rate)
-        {
-            auto const & [total, subs, ins, del] = get<search_cfg::max_error_rate>(cfg).value;
-            if (subs > total)
-                throw std::invalid_argument{"The substitution error threshold is higher than the total error "
-                                            "threshold."};
-            if (ins > total)
-                throw std::invalid_argument{"The insertion error threshold is higher than the total error threshold."};
-            if (del > total)
-                throw std::invalid_argument{"The deletion error threshold is higher than the total error threshold."};
-        }
-    }
-
     /*!\brief Validates the query type to model std::ranges::random_access_range and std::ranges::sized_range.
      *
      * \tparam query_t The type of the query or range of queries.
@@ -150,7 +106,6 @@ inline auto search(queries_t && queries,
     auto updated_cfg = detail::search_configurator::add_defaults(cfg);
 
     detail::search_configuration_validator::validate_query_type<queries_t>();
-    detail::search_configuration_validator::validate_error_configuration(updated_cfg);
 
     using query_t = std::ranges::range_reference_t<queries_t>;
     auto algorithm = detail::search_configurator::configure_algorithm<query_t>(updated_cfg, index);

@@ -11,9 +11,11 @@
 #include <type_traits>
 
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/search/all.hpp>
+#include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/search.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include "helper.hpp"
 
@@ -65,17 +67,17 @@ TYPED_TEST(search_test, error_free)
     }
 
     {
-        // successful and unsuccesful exact search using empty max_total_error
-        // default max_error{} sets all error to 0
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{};
+        // successful and unsuccesful exact search using empty error_count
+        // default max_error_total{error_count{}} sets all error to 0
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 4, 8}));
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | position, (std::vector<int>{}));
     }
 
     {
-        // successful and unsuccesful exact search using empty max_total_error_rate
-        // default max_error_rate{} sets all error to 0.0
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{};
+        // successful and unsuccesful exact search using empty error_rate
+        // default max_error_total{error_rate{}} sets all error to 0.0
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 4, 8}));
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | position, (std::vector<int>{}));
     }
@@ -95,10 +97,10 @@ TYPED_TEST(search_test, multiple_queries)
 {
     std::vector<std::vector<seqan3::dna4>> const queries{{"GG"_dna4, "ACGTACGTACGT"_dna4, "ACGTA"_dna4}};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::total{.0},
-                                                                         seqan3::search_cfg::substitution{.0},
-                                                                         seqan3::search_cfg::insertion{.0},
-                                                                         seqan3::search_cfg::deletion{.0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}};
 
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | query_id, (std::vector{1, 2, 2}));
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | position, (std::vector{0, 0, 4}));
@@ -106,14 +108,28 @@ TYPED_TEST(search_test, multiple_queries)
 
 TYPED_TEST(search_test, invalid_error_configuration)
 {
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{0},
-                                                                    seqan3::search_cfg::substitution{1}};
-    EXPECT_THROW(search("A"_dna4, this->index, cfg), std::invalid_argument);
+    seqan3::configuration const cfg1 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{-0.5}};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg1).begin(), std::invalid_argument);
+
+    seqan3::configuration const cfg2 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{2.0}};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg2).begin(), std::invalid_argument);
+
+    seqan3::configuration const cfg3 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}} |
+                                       seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg3).begin(), std::invalid_argument);
+
+    seqan3::configuration const cfg4 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}} |
+                                       seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg4).begin(), std::invalid_argument);
+
+    seqan3::configuration const cfg5 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}} |
+                                       seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}};
+    EXPECT_THROW(search("A"_dna4, this->index, cfg5).begin(), std::invalid_argument);
 }
 
 TYPED_TEST(search_test, invalid_dynamic_hit_configuration)
 {
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                       seqan3::search_cfg::hit{};
     EXPECT_THROW(search("A"_dna4, this->index, cfg), std::invalid_argument);
 }
@@ -121,7 +137,8 @@ TYPED_TEST(search_test, invalid_dynamic_hit_configuration)
 TYPED_TEST(search_test, error_substitution)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::substitution{.25}};
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.25}};
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 4, 8})); // exact match
         EXPECT_RANGE_EQ(search("CGG"_dna4     , this->index, cfg) | position, (std::vector<int>{}));   // not enough mismatches
@@ -131,7 +148,8 @@ TYPED_TEST(search_test, error_substitution)
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1}};
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}};
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 4, 8})); // exact match
         EXPECT_RANGE_EQ(search("CGTTT"_dna4   , this->index, cfg) | position, (std::vector<int>{}));   // not enough mismatches
@@ -143,14 +161,14 @@ TYPED_TEST(search_test, error_substitution)
 
 TYPED_TEST(search_test, error_configuration_types)
 {
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}};
     EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 4, 8}));
 }
 
 TYPED_TEST(search_test, error_insertion)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::insertion{.25}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.25}};
 
         // exact match and insertion at the beginning of the query
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
@@ -165,7 +183,7 @@ TYPED_TEST(search_test, error_insertion)
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::insertion{1}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}};
 
         // exact match and insertion at the beginning of the query
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
@@ -181,7 +199,7 @@ TYPED_TEST(search_test, error_insertion)
 TYPED_TEST(search_test, error_deletion)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_rate{seqan3::search_cfg::deletion{.25}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.25}};
 
         // exact match, no deletion
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 4, 8}));
@@ -196,7 +214,7 @@ TYPED_TEST(search_test, error_deletion)
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{1}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}};
 
         // exact match, no deletion
         EXPECT_RANGE_EQ(search("ACGT"_dna4    , this->index, cfg) | position, (std::vector{0, 4, 8}));
@@ -212,12 +230,12 @@ TYPED_TEST(search_test, error_deletion)
 TYPED_TEST(search_test, error_levenshtein)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
         EXPECT_RANGE_EQ(search("CCGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}};
         EXPECT_RANGE_EQ(search("CCGT"_dna4, this->index, cfg) | position,
                         (std::vector{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}));
     }
@@ -227,17 +245,17 @@ TYPED_TEST(search_test, error_indel_no_substitution)
 {
     {
         // Match one mismatch with 1 insertion and deletion since mismatches are not allowed.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{2},
-                                                                        seqan3::search_cfg::deletion{2},
-                                                                        seqan3::search_cfg::insertion{2}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}} |
+                                          seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{2}} |
+                                          seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{2}};
         EXPECT_RANGE_EQ(search("GTACCTAC"_dna4, this->index, cfg) | position, (std::vector{2}));
     }
 
     {
         // Enumerate a deletion and match one mismatch with 1 insertion and deletion since mismatches are not allowed.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{3},
-                                                                        seqan3::search_cfg::deletion{3},
-                                                                        seqan3::search_cfg::insertion{3}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{3}} |
+                                          seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{3}} |
+                                          seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{3}};
         EXPECT_RANGE_EQ(search("GTATCCTAC"_dna4, this->index, cfg) | position, (std::vector{2}));
     }
 }
@@ -245,18 +263,18 @@ TYPED_TEST(search_test, error_indel_no_substitution)
 TYPED_TEST(search_test, search_strategy_all)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}};
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_all;
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit{seqan3::search_cfg::hit_all};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
@@ -267,7 +285,7 @@ TYPED_TEST(search_test, search_strategy_best)
     std::vector possible_hits{0, 4, 8}; // any of 0, 4, 8 ... 1, 5, 9 are not best hits
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -278,7 +296,7 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     { // Find best match with 1 insertion at the end.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::insertion{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGTT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -287,7 +305,7 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     {  // Find best match with a match at the end, allowing a insertion.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::insertion{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -296,7 +314,7 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     {  // Find best match with a deletion.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("AGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -305,7 +323,7 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     { // Find best match with a match at the end, allowing a deletion.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -314,8 +332,9 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     {  // Find best match with a substitution at the end.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1}} |
-                                          seqan3::search_cfg::hit_single_best;
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+            seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGC"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
         ASSERT_EQ(result.size(), 1u);
@@ -323,8 +342,9 @@ TYPED_TEST(search_test, search_strategy_best)
     }
 
     {  // Find best match with a match at the end, allowing a substitution.
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::substitution{1}} |
-                                          seqan3::search_cfg::hit_single_best;
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+            seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("ACGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
         ASSERT_EQ(result.size(), 1u);
@@ -333,7 +353,7 @@ TYPED_TEST(search_test, search_strategy_best)
 
     {  // Find best match with 2 deletions.
         std::vector possible_hits2d{0, 4}; // any of 0, 4 ... 1, 5 are not best hits
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{2}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{2}} |
                                           seqan3::search_cfg::hit_single_best;
 
         std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -343,7 +363,7 @@ TYPED_TEST(search_test, search_strategy_best)
 
     {  // Find best match with 2 deletions.
         std::vector possible_hits2d{0, 4}; // any of 0, 4 ... 1, 5 are not best hits
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::deletion{2}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{2}} |
                                           seqan3::search_cfg::hit{seqan3::search_cfg::hit_single_best};
 
         std::vector result = search("AGTAGT"_dna4, this->index, cfg) | position | seqan3::views::to<std::vector>;
@@ -355,7 +375,7 @@ TYPED_TEST(search_test, search_strategy_best)
 TYPED_TEST(search_test, search_strategy_all_best)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_all_best;
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position,
@@ -365,7 +385,7 @@ TYPED_TEST(search_test, search_strategy_all_best)
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit{seqan3::search_cfg::hit_all_best};
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position,
@@ -378,25 +398,25 @@ TYPED_TEST(search_test, search_strategy_all_best)
 TYPED_TEST(search_test, search_strategy_strata)
 {
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_strata{0};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 4, 8}));
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_strata{1};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit_strata{1};
         EXPECT_RANGE_EQ(search("AAAA"_dna4, this->index, cfg) | position, (std::vector<int>{})); // no hit
     }
 
     {
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{1}} |
+        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                           seqan3::search_cfg::hit{seqan3::search_cfg::hit_strata{1}};
         EXPECT_RANGE_EQ(search("AAAA"_dna4, this->index, cfg) | position, (std::vector<int>{})); // no hit
     }

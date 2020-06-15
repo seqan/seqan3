@@ -37,12 +37,12 @@ static void search_trivial(index_t const & index,
     using namespace seqan3::detail;
 
     // Configure the algorithm according to the given specifications.
-    auto cfg = seqan3::search_cfg::max_error{seqan3::search_cfg::total{error_left.total},
-                                             seqan3::search_cfg::substitution{error_left.substitution},
-                                             seqan3::search_cfg::insertion{error_left.insertion},
-                                             seqan3::search_cfg::deletion{error_left.deletion}} |
-                seqan3::search_cfg::hit_all |
-                seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
+    auto cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{error_left.total}} |
+               seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{error_left.substitution}} |
+               seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{error_left.insertion}} |
+               seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{error_left.deletion}} |
+               seqan3::search_cfg::hit_all |
+               seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
 
     auto algo = seqan3::detail::search_configurator::configure_algorithm<decltype(query)>(cfg, index);
 

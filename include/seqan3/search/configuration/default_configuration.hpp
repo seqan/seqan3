@@ -6,8 +6,9 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
  * \brief Provides the default configuration for the seqan3::search() interface.
+ * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -15,7 +16,6 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
-#include <seqan3/search/configuration/max_error_rate.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/output.hpp>
 
@@ -24,9 +24,17 @@ namespace seqan3::search_cfg
 
 /*!\brief The default configuration.
  * \ingroup search_configuration
+ *
+ * \if DEV
+ * \todo Make constexpr after GCC7 support is dropped.
+ * \endif
  */
-inline constexpr configuration default_configuration = max_error{total{0}, substitution{0}, insertion{0}, deletion{0}} |
-                                                       output{text_position} |
-                                                       hit_all;
+
+inline const configuration default_configuration = max_error_total{error_count{0}} |
+                                                   max_error_substitution{error_count{0}} |
+                                                   max_error_insertion{error_count{0}} |
+                                                   max_error_deletion{error_count{0}} |
+                                                   output{text_position} |
+                                                   hit_all;
 
 } // namespace seqan3::search_cfg
