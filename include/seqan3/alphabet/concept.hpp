@@ -455,7 +455,7 @@ public:
         {
             { impl(priority_tag<3>{}, a, dummy{}) };
             requires noexcept(impl(priority_tag<3>{}, a));
-            requires std::convertible_to<decltype(impl(priority_tag<3>{}, a)), bool>;
+            SEQAN3_RETURN_TYPE_CONTRAINT(impl(priority_tag<3>{}, a), std::convertible_to, bool);
         }
     //!\endcond
     constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
@@ -539,8 +539,8 @@ struct assign_char_strictly_to_fn
     //!\cond
         requires requires (alph_t a, seqan3::alphabet_char_t<alph_t> r)
         {
-            { seqan3::assign_char_to(r, a) } -> alph_t;
-            { seqan3::char_is_valid_for<alph_t>(r) } -> bool;
+            SEQAN3_RETURN_TYPE_CONTRAINT(seqan3::assign_char_to(r, a), std::convertible_to, alph_t);
+            SEQAN3_RETURN_TYPE_CONTRAINT(seqan3::char_is_valid_for<alph_t>(r), std::same_as, bool);
         }
     //!\endcond
     decltype(auto) operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const
@@ -556,8 +556,8 @@ struct assign_char_strictly_to_fn
     //!\cond
         requires requires (alph_t a, seqan3::alphabet_char_t<alph_t> r)
         {
-            { seqan3::assign_char_to(r, a) } -> alph_t;
-            { seqan3::char_is_valid_for<alph_t>(r) } -> bool;
+            SEQAN3_RETURN_TYPE_CONTRAINT(seqan3::assign_char_to(r, a), std::convertible_to, alph_t);
+            SEQAN3_RETURN_TYPE_CONTRAINT(seqan3::char_is_valid_for<alph_t>(r), std::same_as, bool);
         }
     //!\endcond
     auto operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t && a) const

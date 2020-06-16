@@ -207,7 +207,7 @@ public:
     constexpr derived_t operator++(int) noexcept(noexcept(std::declval<base_t &>()++) &&
                                                  noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires requires (base_t_ i) { i++; requires std::same_as<decltype(i++), base_t_>; } &&
+        requires requires (base_t_ i) { i++; SEQAN3_RETURN_TYPE_CONTRAINT(i++, std::same_as, base_t_); } &&
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {

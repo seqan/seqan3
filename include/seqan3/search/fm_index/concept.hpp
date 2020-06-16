@@ -40,10 +40,10 @@ SEQAN3_CONCEPT sdsl_index = requires (t sdsl_index)
 {
     typename t::size_type;
 
-    { sdsl_index.size() } -> typename t::size_type;
+    SEQAN3_RETURN_TYPE_CONTRAINT(sdsl_index.size(), std::same_as, typename t::size_type);
     { sdsl_index[0] }; // suffix array access
-    { sdsl_index.comp2char[0] } -> uint8_t;
-    { sdsl_index.char2comp[0] } -> uint8_t;
+    SEQAN3_RETURN_TYPE_CONTRAINT(sdsl_index.comp2char[0], std::same_as, uint8_t);
+    SEQAN3_RETURN_TYPE_CONTRAINT(sdsl_index.char2comp[0], std::same_as, uint8_t);
     { sdsl_index.sigma };
     { sdsl_index.C[0] };
 
@@ -112,10 +112,10 @@ SEQAN3_CONCEPT fm_index_specialisation = std::semiregular<t> && requires (t inde
         { t(text) };
     };
 
-    { index.cursor() } -> typename t::cursor_type;
+    SEQAN3_RETURN_TYPE_CONTRAINT(index.cursor(), std::same_as, typename t::cursor_type);
 
-    { index.size()  } -> typename t::size_type;
-    { index.empty() } -> bool;
+    SEQAN3_RETURN_TYPE_CONTRAINT(index.size(), std::same_as, typename t::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(index.empty(), std::same_as, bool);
 };
 //!\endcond
 /*!\name Requirements for seqan3::fm_index_specialisation
@@ -164,18 +164,19 @@ SEQAN3_CONCEPT fm_index_cursor_specialisation = std::semiregular<t> && requires 
                                           std::vector<std::vector<typename t::index_type::alphabet_type>>,
                                           std::vector<typename t::index_type::alphabet_type>> const text)
     {
-        { cur.extend_right()    } -> bool;
-        { cur.extend_right(c)   } -> bool;
-        { cur.extend_right(seq) } -> bool;
-        { cur.cycle_back()      } -> bool;
-        { cur.path_label(text)  } -> auto;
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_right(), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_right(c), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_right(seq), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.cycle_back(), std::same_as, bool);
+        { cur.path_label(text) };
     };
 
-    { cur.last_rank()    } -> typename t::size_type;
-    { cur.query_length() } -> typename t::size_type;
-    { cur.count()        } -> typename t::size_type;
-    { cur.locate()       } -> std::vector<std::pair<typename t::size_type, typename t::size_type>>;
-    { cur.lazy_locate()  } -> auto;
+    SEQAN3_RETURN_TYPE_CONTRAINT(cur.last_rank(), std::same_as, typename t::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cur.query_length(), std::same_as, typename t::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cur.count(), std::same_as, typename t::size_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(cur.locate(),
+                                 std::same_as, std::vector<std::pair<typename t::size_type, typename t::size_type>>);
+    { cur.lazy_locate() };
 };
 //!\endcond
 /*!\name Requirements for seqan3::fm_index_cursor_specialisation
@@ -211,8 +212,8 @@ SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requir
     // NOTE: circular dependency
     // requires bi_fm_index_cursor_specialisation<typename t::cursor_type>;
 
-    { index.fwd_begin() } -> typename t::fwd_cursor_type;
-    { index.rev_begin() } -> typename t::rev_cursor_type;
+    SEQAN3_RETURN_TYPE_CONTRAINT(index.fwd_begin(), std::same_as, typename t::fwd_cursor_type);
+    SEQAN3_RETURN_TYPE_CONTRAINT(index.rev_begin(), std::same_as, typename t::rev_cursor_type);
 };
 //!\endcond
 /*!\name Requirements for seqan3::bi_fm_index_specialisation
@@ -252,10 +253,10 @@ SEQAN3_CONCEPT bi_fm_index_cursor_specialisation = fm_index_cursor_specialisatio
                        typename t::index_type::alphabet_type const c,
                        std::vector<typename t::index_type::alphabet_type> const seq)
     {
-        { cur.extend_left()    } -> bool;
-        { cur.extend_left(c)   } -> bool;
-        { cur.extend_left(seq) } -> bool;
-        { cur.cycle_front()    } -> bool;
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_left(), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_left(c), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.extend_left(seq), std::same_as, bool);
+        SEQAN3_RETURN_TYPE_CONTRAINT(cur.cycle_front(), std::same_as, bool);
     };
 
 };

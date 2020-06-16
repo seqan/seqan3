@@ -49,6 +49,15 @@
 #   error "SeqAn3 requires C++ Concepts, either vie the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
 
+//!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
+#if defined(__GNUC__) && (__GNUC__ < 10)
+#   define SEQAN3_RETURN_TYPE_CONTRAINT(expression, concept_name, ...) \
+       {expression}; requires concept_name<decltype(expression), __VA_ARGS__>
+#else
+#   define SEQAN3_RETURN_TYPE_CONTRAINT(expression, concept_name, ...) \
+       {expression} -> concept_name<__VA_ARGS__>
+#endif
+
 // filesystem [required]
 #if !__has_include(<filesystem>)
 #   if !__has_include(<experimental/filesystem>)
