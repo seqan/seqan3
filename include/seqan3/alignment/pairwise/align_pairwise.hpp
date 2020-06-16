@@ -187,7 +187,7 @@ constexpr auto align_pairwise(sequence_t && sequences,
     auto select_execution_handler = [&] ()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
-            return execution_handler_t{get<align_cfg::parallel>(complete_config).value};
+            return execution_handler_t{get<align_cfg::parallel>(complete_config).thread_count};
         else
             return execution_handler_t{};
     };
