@@ -106,14 +106,14 @@ SEQAN3_CONCEPT two_dimensional_matrix_iterator =
         { it.coordinate() };
         { cit.coordinate() };
 
-        SEQAN3_RETURN_TYPE_CONTRAINT(it += offset, std::same_as, std::remove_reference_t<iter_t> &);
-        SEQAN3_RETURN_TYPE_CONTRAINT(it + offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(offset + it, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(it -= offset, std::same_as, std::remove_reference_t<iter_t> &);
-        SEQAN3_RETURN_TYPE_CONTRAINT(it - offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(cit - offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(it.coordinate(), std::same_as, matrix_coordinate);
-        SEQAN3_RETURN_TYPE_CONTRAINT(cit.coordinate(), std::same_as, matrix_coordinate);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(it += offset, std::same_as, std::remove_reference_t<iter_t> &);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(it + offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(offset + it, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(it -= offset, std::same_as, std::remove_reference_t<iter_t> &);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(it - offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(cit - offset, std::same_as, std::remove_reference_t<iter_t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(it.coordinate(), std::same_as, matrix_coordinate);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(cit.coordinate(), std::same_as, matrix_coordinate);
     };
 //!\endcond
 } // namespace seqan3::detail

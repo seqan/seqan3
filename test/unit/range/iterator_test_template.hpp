@@ -47,9 +47,9 @@ struct iterator_fixture : public ::testing::Test
 template <typename t>
 SEQAN3_CONCEPT has_expect_equal_member_function = requires(t & a)
 {
-    SEQAN3_RETURN_TYPE_CONTRAINT(t::expect_eq(*std::ranges::begin(a.test_range),
-                                              *std::ranges::begin(a.expected_range)),
-                                 std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(t::expect_eq(*std::ranges::begin(a.test_range),
+                                               *std::ranges::begin(a.expected_range)),
+                                  std::same_as, void);
 };
 
 // Delegates to the test fixture member function `expect_eq` if available and falls back to EXPECT_EQ otherwise.

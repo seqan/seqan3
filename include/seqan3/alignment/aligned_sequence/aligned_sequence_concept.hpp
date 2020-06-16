@@ -209,12 +209,13 @@ SEQAN3_CONCEPT aligned_sequence =
     requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
         // global functions for generic usability
-        SEQAN3_RETURN_TYPE_CONTRAINT(insert_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(insert_gap(v, std::ranges::begin(v), 2), std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(erase_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(erase_gap(v, std::ranges::begin(v), std::ranges::end(v)),
-                                     std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONTRAINT(assign_unaligned(v, unaligned), std::same_as, void);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(insert_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(insert_gap(v, std::ranges::begin(v), 2),
+                                      std::same_as, std::ranges::iterator_t<t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(erase_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(erase_gap(v, std::ranges::begin(v), std::ranges::end(v)),
+                                      std::same_as, std::ranges::iterator_t<t>);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(assign_unaligned(v, unaligned), std::same_as, void);
     };
 //!\endcond
 

@@ -85,8 +85,8 @@ SEQAN3_CONCEPT validator = std::copyable<remove_cvref_t<validator_type>> &&
 {
     typename std::remove_reference_t<validator_type>::option_value_type;
 
-    SEQAN3_RETURN_TYPE_CONTRAINT(validator(value), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONTRAINT(validator.get_help_page_message(), std::same_as, std::string);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(validator(value), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(validator.get_help_page_message(), std::same_as, std::string);
 };
 //!\endcond
 

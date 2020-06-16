@@ -39,10 +39,10 @@ SEQAN3_CONCEPT output_stream_over = std::is_base_of_v<std::ios_base, std::remove
     typename std::remove_reference_t<stream_type>::pos_type;
     typename std::remove_reference_t<stream_type>::off_type;
 
-    SEQAN3_RETURN_TYPE_CONTRAINT(os << val,
-                                 std::same_as,
-                                 std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
-                                                    typename std::remove_reference_t<stream_type>::traits_type> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(os << val,
+                                  std::same_as,
+                                  std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
+                                                     typename std::remove_reference_t<stream_type>::traits_type> &);
 };
 
 template <typename stream_type>
@@ -109,10 +109,10 @@ SEQAN3_CONCEPT input_stream_over = std::is_base_of_v<std::ios_base, std::remove_
     typename std::remove_reference_t<stream_type>::off_type;
 
 
-    SEQAN3_RETURN_TYPE_CONTRAINT(is >> val,
-                                 std::same_as,
-                                 std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
-                                                    typename std::remove_reference_t<stream_type>::traits_type> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(is >> val,
+                                  std::same_as,
+                                  std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
+                                                     typename std::remove_reference_t<stream_type>::traits_type> &);
 };
 
 template <typename stream_type>
