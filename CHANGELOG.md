@@ -120,6 +120,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * When invoking the alignment algorithm with a user defined thread count using the `seqan3::align_cfg::parallel`
   configuration element, `std::thread::hardware_concurrency()` many threads were always spawned. This is now fixed and
   only the specified number of threads will be spawned ([\#1854](https://github.com/seqan/seqan3/pull/1854)).
+* Using an unsigned `score_type` is prevented with a static assert, since gaps and mismatches have negative scores and
+  thus need a signed score type ([\#1891](https://github.com/seqan/seqan3/pull/1891)).
 
 ### Argument Parser
 

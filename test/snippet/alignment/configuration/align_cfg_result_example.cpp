@@ -19,7 +19,7 @@ int main()
     // You can also change the score type:
 
     // Compute only the score given a specific score_type.
-    seqan3::align_cfg::result cfg_score_uint16{seqan3::with_score, seqan3::using_score_type<uint16_t>};
+    seqan3::align_cfg::result cfg_score_uint16{seqan3::with_score, seqan3::using_score_type<int16_t>};
 
     // Compute the score given a specific score_type and the back coordinate.
     seqan3::align_cfg::result cfg_end_double{seqan3::with_back_coordinate, seqan3::using_score_type<double>};
