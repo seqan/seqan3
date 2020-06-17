@@ -64,12 +64,12 @@ TYPED_TEST(align_pairwise_test, single_pair)
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
-    auto p = std::tie(seq1, seq2);
+    auto p1 = std::tie(seq1, seq2);
 
     {  // the score
         seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
 
-        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
             EXPECT_EQ(res.score(), -4.0);
         }
@@ -78,7 +78,7 @@ TYPED_TEST(align_pairwise_test, single_pair)
     {  // the alignment
         seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
-        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
@@ -117,19 +117,15 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
         }
     }
-}
 
-TYPED_TEST(align_pairwise_test, single_pair_of_non_lvalues)
-{
-    auto const seq1 = "ACGTGATG"_dna4;
-    auto const seq2 = "AGTGATACT"_dna4;
+    // use make_pair
 
-    auto p = std::make_pair(seq1, seq2);
+    auto p2 = std::make_pair(seq1, seq2);
 
     {  // the score
         seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
 
-        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
             EXPECT_EQ(res.score(), -4.0);
         }
@@ -138,7 +134,7 @@ TYPED_TEST(align_pairwise_test, single_pair_of_non_lvalues)
     {  // the alignment
         seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
-        for (auto && res : call_alignment<TypeParam>(p, cfg))
+        for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);

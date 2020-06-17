@@ -55,27 +55,10 @@ namespace seqan3
  * In cases where only a single alignment is to be computed, the two sequences can be passed as a pair.
  * The pair can be any class template that models the seqan3::tuple_like concept. The tuple elements must model
  * std::ranges::viewable_range and std::copy_constructible.
- * The following examples would compile:
- * ```cpp
- * std::pair p{"ACGTAGC", "AGTACGACG"};
- * auto result = align_pairwise(p, config);
- * ```
- * or you can use std::tie instead as shown in the example below:
- *
- * ```cpp
- * std::vector vec{"ACCA"_dna4, "ATTA"_dna4};
- * using pair_t = decltype(std::tie(vec[0], vec[0]));
- * std::vector<pair_t> source;
- * for (unsigned i = 0; i < vec.size(); ++i)
- * {
- *     for (unsigned j = i + 1; j < vec.size(); ++j)
- *     {
- *         source.push_back(std::tie(vec[i], vec[j]));
- *     }
- * }
- *
- * auto result = seqan3::align_pairwise(source, config);
- * ```
+ * The following example demonstrates how an alignment is computed from a std::pair of sequences.
+ * \snippet test/snippet/alignment/pairwise/align_pairwise.cpp example1
+ * Alternatively, you can use std::tie as shown in the example below:
+ * \snippet test/snippet/alignment/pairwise/align_pairwise.cpp example2
  *
  * ### Compute multiple alignments
  *
@@ -95,7 +78,9 @@ namespace seqan3
  *
  * The following snippets demonstrate the single element and the range based interface.
  *
- * \include test/snippet/alignment/pairwise/align_pairwise.cpp
+ * \snippet test/snippet/alignment/pairwise/align_pairwise.cpp start
+ * \snippet test/snippet/alignment/pairwise/align_pairwise.cpp example3
+ * \snippet test/snippet/alignment/pairwise/align_pairwise.cpp end
  *
  * ### Exception
  *
