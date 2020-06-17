@@ -9,9 +9,11 @@ int main()
     ibf.emplace(237, seqan3::bin_index{9u});
 
     ibf.increase_bin_number_to(seqan3::bin_count{18u});
+    // Be sure to get the agent after `increase_bin_number_to` as it invalidates all agents!
+    auto agent = ibf.membership_agent();
 
     // The content of the bins which were already present before the resize does not change
-    seqan3::debug_stream << ibf.bulk_contains(126) << '\n'; // prints [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    seqan3::debug_stream << ibf.bulk_contains(712) << '\n'; // prints [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    seqan3::debug_stream << ibf.bulk_contains(237) << '\n'; // prints [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+    seqan3::debug_stream << agent.bulk_contains(126) << '\n'; // prints [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    seqan3::debug_stream << agent.bulk_contains(712) << '\n'; // prints [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    seqan3::debug_stream << agent.bulk_contains(237) << '\n'; // prints [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
 }

@@ -72,10 +72,11 @@ void bulk_contains_benchmark(::benchmark::State & state)
                                                                  state.range(3));
     (void) bin_indices;
 
+    auto agent = ibf.membership_agent();
     for (auto _ : state)
     {
         for (auto hash : hash_values)
-            [[maybe_unused]] auto & res = ibf.bulk_contains(hash);
+            [[maybe_unused]] auto & res = agent.bulk_contains(hash);
     }
 
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));

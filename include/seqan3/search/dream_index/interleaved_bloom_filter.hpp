@@ -101,6 +101,10 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
  * length `b` starting at the positions indicated by the hash functions. The bitwise AND of these sub-bitvectors yields
  * the binningvector, a bitvector of length `b` where the `i`'th bit indicates set membership in the `i`'th bin.
  *
+ * ### Querying
+ * To query the Interleaved Bloom Filter for a value, call seqan3::interleaved_bloom_filter::membership_agent() and use
+ * the returned seqan3::interleaved_bloom_filter::membership_agent.
+ *
  * ### Compression
  *
  * The Interleaved Bloom Filter can be compressed by passing `data_layout::compressed` as template argument.
@@ -114,66 +118,19 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
  * calls to `const` member functions are safe from multiple threads (as long as no thread calls
  * a non-`const` member function at the same time).
  *
- * Additionally, concurrent calls to `set` are safe iff each thread handles a multiple of wordsize (=64) many bins.
- * For example, calls to `set` from multiple threads are safe if `thread_1` accesses bins 0-63, `thread_2` bins 64-127,
- * and so on.
+ * Additionally, concurrent calls to `emplace` are safe iff each thread handles a multiple of wordsize (=64) many bins.
+ * For example, calls to `emplace` from multiple threads are safe if `thread_1` accesses bins 0-63, `thread_2` bins
+ * 64-127, and so on.
  */
 template <data_layout data_layout_mode_ = data_layout::uncompressed>
 class interleaved_bloom_filter
 {
-public:
-    //!\brief A bitvector representing the result of a call to `bulk_contains` of the seqan3::interleaved_bloom_filter.
-    class binning_bitvector : private sdsl::bit_vector
-    {
-    public:
-        /*!\name Constructors, destructor and assignment
-         * \{
-         */
-        binning_bitvector() = default; //!< Defaulted.
-        binning_bitvector(binning_bitvector const &) = default; //!< Defaulted.
-        binning_bitvector & operator=(binning_bitvector const &) = default; //!< Defaulted.
-        binning_bitvector(binning_bitvector &&) = default; //!< Defaulted.
-        binning_bitvector & operator=(binning_bitvector &&) = default; //!< Defaulted.
-        ~binning_bitvector() = default; //!< Defaulted.
-        //!\}
-
-        using sdsl::bit_vector::begin;
-        using sdsl::bit_vector::end;
-        using sdsl::bit_vector::operator==;
-        using sdsl::bit_vector::operator[];
-        using sdsl::bit_vector::size;
-
-#if SEQAN3_DOXYGEN_ONLY(1)0
-        //!\brief The iterator type of the `binning_bitvector`;
-        using iterator_t = IMPLEMENTATION_DEFINED;
-        //!\brief The reference type of the `binning_bitvector`;
-        using reference_t = IMPLEMENTATION_DEFINED;
-        //!\brief The const_reference type of the `binning_bitvector`;
-        using const_reference_t = IMPLEMENTATION_DEFINED;
-        //!\brief Returns an iterator to the begin of the bitvector.
-        iterator_t begin() noexcept;
-        //!\brief Returns an iterator to the end of the bitvector.
-        iterator_t end() noexcept;
-        //!\brief Compares two bitvectors.
-        bool operator==(bit_vector const & other) const noexcept;
-        //!\brief Returns a reference to position `idx` of the bitvector.
-        reference_t operator[](size_t const & idx) noexcept;
-        //!\brief Returns a const_reference to position `idx` of the bitvector.
-        const_reference_t operator[](size_t const & idx) const noexcept;
-        //!\brief Returns the size of the bitvector.
-        size_t size() noexcept;
-#endif
-
-    private:
-        friend class interleaved_bloom_filter;
-        using sdsl::bit_vector::resize;
-        using sdsl::bit_vector::set_int;
-    };
-
 private:
     //!\cond
     template <data_layout data_layout_mode>
     friend class interleaved_bloom_filter;
+
+    class membership_agent;
     //!\endcond
 
     //!\brief The underlying datatype to use.
@@ -201,8 +158,6 @@ private:
                                                       10650232656628343401ULL, // 2**64 / sqrt(3)
                                                       16499269484942379435ULL, // 2**64 / (sqrt(5)/2)
                                                       4893150838803335377ULL}; // 2**64 / (3*pi/5)
-    //!\brief The result buffer for a `bulk_contains()` query.
-    mutable binning_bitvector result_buffer{};
 
     /*!\brief Perturbs a value and fits it into the vector.
      * \param h The value to process.
@@ -276,8 +231,6 @@ public:
         bin_words = (bins + 63) >> 6; // = ceil(bins/64)
         technical_bins  = bin_words << 6; // = bin_words * 64
         data = sdsl::bit_vector(technical_bins * bin_size_);
-
-        result_buffer.resize(bins);
     }
 
     /*!\brief Construct a compressed Interleaved Bloom Filter.
@@ -300,7 +253,6 @@ public:
             std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
 
         data = sdsl::sd_vector<>{ibf.data};
-        result_buffer.resize(bins);
     }
     //!\}
 
@@ -340,6 +292,8 @@ public:
      *
      * \attention This function is only available for **uncompressed** Interleaved Bloom Filters.
      * \attention The new number of bins must be greater or equal to the current number of bins.
+     * \attention This function invalidates all seqan3::interleaved_bloom_filter::membership_agent constructed for this
+     * Interleaved Bloom Filter.
      *
      * \details
      *
@@ -369,7 +323,6 @@ public:
         size_t new_bin_words = (new_bins + 63) >> 6;
 
         bins = new_bins;
-        result_buffer.resize(bins);
 
         if (new_bin_words == bin_words) // No need for internal resize if bin_words does not change.
             return;
@@ -402,46 +355,21 @@ public:
     /*!\name Lookup
      * \{
      */
-    /*!\brief Determines set membership of a given value.
-     * \param[in] value The raw value to process.
-     *
-     * \attention The result of this function must always be bound via reference, e.g. `auto &` to prevent copying.
+    /*!\brief Returns seqan3::interleaved_bloom_filter::membership_agent to be used for lookup.
+     * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to invalidates all
+     * seqan3::interleaved_bloom_filter::membership_agent constructed for this Interleaved Bloom Filter.
      *
      * \details
      *
      * ### Example
      *
-     * \include test/snippet/search/dream_index/interleaved_bloom_filter_bulk_contains.cpp
+     * \include test/snippet/search/dream_index/membership_agent_construction.cpp
+     * \sa seqan3::interleaved_bloom_filter::membership_agent::bulk_contains
      */
-    [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) const & noexcept
+    membership_agent membership_agent() const
     {
-        assert(result_buffer.size() == bin_count());
-
-        std::array<size_t, 5> bloom_filter_indices;
-        std::memcpy(&bloom_filter_indices, &hash_seeds, sizeof(size_t) * hash_funs);
-
-        for (size_t i = 0; i < hash_funs; ++i)
-            bloom_filter_indices[i] = hash_and_fit(value, bloom_filter_indices[i]);
-
-        for (size_t batch = 0; batch < bin_words; ++batch)
-        {
-           size_t tmp{-1ULL};
-           for (size_t i = 0; i < hash_funs; ++i)
-           {
-               assert(bloom_filter_indices[i] < data.size());
-               tmp &= data.get_int(bloom_filter_indices[i]);
-               bloom_filter_indices[i] += 64;
-           }
-
-           result_buffer.set_int(batch << 6, tmp);
-        }
-
-        return result_buffer;
+        return typename interleaved_bloom_filter<data_layout_mode>::membership_agent{*this};
     }
-
-    // `bulk_contains` cannot be called on a temporary, since the object the returned reference points to
-    // is immediately destroyed.
-    [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) const && noexcept = delete;
     //!\}
 
     /*!\name Capacity
@@ -493,8 +421,7 @@ public:
         return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.hash_shift, lhs.bin_words, lhs.hash_funs,
                         lhs.data) ==
                std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.hash_shift, rhs.bin_words, rhs.hash_funs,
-                        rhs.data) &&
-               lhs.result_buffer.size() == rhs.result_buffer.size() ;
+                        rhs.data);
     }
 
     /*!\brief Test for inequality.
@@ -525,9 +452,157 @@ public:
         archive(bin_words);
         archive(hash_funs);
         archive(data);
-        result_buffer.resize(bins);
     }
     //!\endcond
+};
+
+/*!\brief Manages membership queries for the seqan3::interleaved_bloom_filter.
+ * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to on `ibf` invalidates the
+ * membership_agent.
+ *
+ * \details
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/dream_index/membership_agent_construction.cpp
+ */
+template <data_layout data_layout_mode>
+class interleaved_bloom_filter<data_layout_mode>::membership_agent
+{
+private:
+    //!\brief The type of the augmented seqan3::interleaved_bloom_filter.
+    using ibf_t = interleaved_bloom_filter<data_layout_mode>;
+
+    //!\brief A pointer to the augmented seqan3::interleaved_bloom_filter.
+    ibf_t const * ibf_ptr{nullptr};
+
+public:
+    class binning_bitvector;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    membership_agent() = default; //!< Defaulted.
+    membership_agent(membership_agent const &) = default; //!< Defaulted.
+    membership_agent & operator=(membership_agent const &) = default; //!< Defaulted.
+    membership_agent(membership_agent &&) = default; //!< Defaulted.
+    membership_agent & operator=(membership_agent &&) = default; //!< Defaulted.
+    ~membership_agent() = default; //!< Defaulted.
+
+    /*!\brief Construct a membership_agent from a seqan3::interleaved_bloom_filter.
+     * \private
+     * \param ibf The seqan3::interleaved_bloom_filter.
+     */
+    membership_agent(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf))
+    {
+        result_buffer.resize(ibf_ptr->bin_count());
+    };
+    //!\}
+
+    //!\brief Stores the result of bulk_contains().
+    binning_bitvector result_buffer;
+
+    /*!\name Lookup
+     * \{
+     */
+    /*!\brief Determines set membership of a given value.
+     * \param[in] value The raw value to process.
+     *
+     * \attention The result of this function must always be bound via reference, e.g. `auto &` to prevent copying.
+     * \attention Sequential calls to this function invalidate the previously returned reference.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/membership_agent_bulk_contains.cpp
+     *
+     * ### Thread safety
+     *
+     * Concurrent invocations of this function are not thread safe, please create a seqan3::membership_agent for each
+     * thread.
+     */
+    [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) & noexcept
+    {
+        assert(ibf_ptr != nullptr);
+        assert(result_buffer.size() == ibf_ptr->bin_count());
+
+        std::array<size_t, 5> bloom_filter_indices;
+        std::memcpy(&bloom_filter_indices, &ibf_ptr->hash_seeds, sizeof(size_t) * ibf_ptr->hash_funs);
+
+        for (size_t i = 0; i < ibf_ptr->hash_funs; ++i)
+            bloom_filter_indices[i] = ibf_ptr->hash_and_fit(value, bloom_filter_indices[i]);
+
+        for (size_t batch = 0; batch < ibf_ptr->bin_words; ++batch)
+        {
+           size_t tmp{-1ULL};
+           for (size_t i = 0; i < ibf_ptr->hash_funs; ++i)
+           {
+               assert(bloom_filter_indices[i] < ibf_ptr->data.size());
+               tmp &= ibf_ptr->data.get_int(bloom_filter_indices[i]);
+               bloom_filter_indices[i] += 64;
+           }
+
+           result_buffer.set_int(batch << 6, tmp);
+        }
+
+        return result_buffer;
+    }
+
+    // `bulk_contains` cannot be called on a temporary, since the object the returned reference points to
+    // is immediately destroyed.
+    [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) && noexcept = delete;
+    //!\}
+
+};
+
+//!\brief A bitvector representing the result of a call to `bulk_contains` of the seqan3::interleaved_bloom_filter.
+template <data_layout data_layout_mode>
+class interleaved_bloom_filter<data_layout_mode>::membership_agent::binning_bitvector : private sdsl::bit_vector
+{
+public:
+    /*!\name Constructors, destructor and assignment
+        * \{
+        */
+    binning_bitvector() = default; //!< Defaulted.
+    binning_bitvector(binning_bitvector const &) = default; //!< Defaulted.
+    binning_bitvector & operator=(binning_bitvector const &) = default; //!< Defaulted.
+    binning_bitvector(binning_bitvector &&) = default; //!< Defaulted.
+    binning_bitvector & operator=(binning_bitvector &&) = default; //!< Defaulted.
+    ~binning_bitvector() = default; //!< Defaulted.
+    //!\}
+
+    using sdsl::bit_vector::begin;
+    using sdsl::bit_vector::end;
+    using sdsl::bit_vector::operator==;
+    using sdsl::bit_vector::operator[];
+    using sdsl::bit_vector::size;
+
+#if SEQAN3_DOXYGEN_ONLY(1)0
+    //!\brief The iterator type of the `binning_bitvector`;
+    using iterator_t = IMPLEMENTATION_DEFINED;
+    //!\brief The reference type of the `binning_bitvector`;
+    using reference_t = IMPLEMENTATION_DEFINED;
+    //!\brief The const_reference type of the `binning_bitvector`;
+    using const_reference_t = IMPLEMENTATION_DEFINED;
+    //!\brief Returns an iterator to the begin of the bitvector.
+    iterator_t begin() noexcept;
+    //!\brief Returns an iterator to the end of the bitvector.
+    iterator_t end() noexcept;
+    //!\brief Compares two bitvectors.
+    bool operator==(bit_vector const & other) const noexcept;
+    //!\brief Returns a reference to position `idx` of the bitvector.
+    reference_t operator[](size_t const & idx) noexcept;
+    //!\brief Returns a const_reference to position `idx` of the bitvector.
+    const_reference_t operator[](size_t const & idx) const noexcept;
+    //!\brief Returns the size of the bitvector.
+    size_t size() noexcept;
+#endif
+
+private:
+    friend class membership_agent;
+    using sdsl::bit_vector::resize;
+    using sdsl::bit_vector::set_int;
 };
 
 //!\}
