@@ -13,13 +13,12 @@
 
 #pragma once
 
-#include <range/v3/algorithm/copy.hpp>
+#include <seqan3/std/algorithm>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/std/algorithm>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/array.hpp>

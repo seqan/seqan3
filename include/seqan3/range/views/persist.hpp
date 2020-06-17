@@ -12,7 +12,9 @@
 
 #pragma once
 
-#include <range/v3/algorithm/copy.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 
 #include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/core/type_traits/range.hpp>
@@ -21,9 +23,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -58,7 +57,7 @@ private:
     //!\brief The const_iterator type is equal to the iterator type.
     using const_iterator    = iterator;
     //!\}
-    
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{

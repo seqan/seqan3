@@ -13,12 +13,9 @@
 #pragma once
 
 #include <cassert>
-
-#include <range/v3/range_fwd.hpp>
+#include <seqan3/std/ranges>
 
 #include <seqan3/core/platform.hpp>
-
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
