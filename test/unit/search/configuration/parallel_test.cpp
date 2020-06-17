@@ -7,10 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <functional>
-#include <type_traits>
-
-#include <seqan3/alignment/configuration/align_config_parallel.hpp>
+#include <seqan3/search/configuration/parallel.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
 
@@ -18,7 +15,7 @@
 // test template : pipeable_config_element_test
 // ---------------------------------------------------------------------------------------------------------------------
 
-using test_types = ::testing::Types<seqan3::align_cfg::parallel>;
+using test_types = ::testing::Types<seqan3::search_cfg::parallel>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test, test_types, );
 
@@ -26,27 +23,46 @@ INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test, 
 // individual tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-TEST(align_config_parallel, config_element_specialisation)
+TEST(search_config_parallel, member_variable)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::parallel>));
+    {   // default construction
+        seqan3::search_cfg::parallel cfg{};
+        EXPECT_EQ(cfg.thread_count, 1u);
+    }
+
+    {   // construct with value
+        seqan3::search_cfg::parallel cfg{4};
+        EXPECT_EQ(cfg.thread_count, 4u);
+    }
+
+    {   // assign value
+        seqan3::search_cfg::parallel cfg{};
+        cfg.thread_count = 4;
+        EXPECT_EQ(cfg.thread_count, 4u);
+    }
 }
 
-TEST(align_config_parallel, configuration)
+TEST(search_config_parallel, config_element_specialisation)
+{
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::search_cfg::parallel>));
+}
+
+TEST(search_config_parallel, configuration)
 {
     { // from lvalue.
-        seqan3::align_cfg::parallel elem{2};
+        seqan3::search_cfg::parallel elem{4};
         seqan3::configuration cfg{elem};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::parallel>(cfg).thread_count)>,
-                                    uint32_t>));
+        using ret_type = decltype(std::get<seqan3::search_cfg::parallel>(cfg).thread_count);
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<ret_type>, uint32_t>));
 
-        EXPECT_EQ(std::get<seqan3::align_cfg::parallel>(cfg).thread_count, 2u);
+        EXPECT_EQ(std::get<seqan3::search_cfg::parallel>(cfg).thread_count, 4u);
     }
 
     { // from rvalue.
-        seqan3::configuration cfg{seqan3::align_cfg::parallel{2}};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::parallel>(cfg).thread_count)>,
-                                    uint32_t>));
+        seqan3::configuration cfg{seqan3::search_cfg::parallel{4}};
+        using ret_type = decltype(std::get<seqan3::search_cfg::parallel>(cfg).thread_count);
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<ret_type>, uint32_t>));
 
-        EXPECT_EQ(std::get<seqan3::align_cfg::parallel>(cfg).thread_count, 2u);
+        EXPECT_EQ(std::get<seqan3::search_cfg::parallel>(cfg).thread_count, 4u);
     }
 }
