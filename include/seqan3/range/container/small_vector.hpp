@@ -920,7 +920,7 @@ public:
     }
     //!\}
 
-protected:
+public:
     //!\privatesection
 
     //!\brief Stores the actual data_.
