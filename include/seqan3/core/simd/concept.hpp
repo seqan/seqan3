@@ -40,31 +40,32 @@ SEQAN3_CONCEPT simd_concept = requires (simd_t a, simd_t b)
     requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::max_length)>;
 
     // assume array access that returns a scalar_type type
-    SEQAN3_RETURN_TYPE_CONTRAINT(a[0], std::convertible_to, typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a[0], std::convertible_to,
+                                  typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type);
 
     // require comparison operators
-    SEQAN3_RETURN_TYPE_CONTRAINT(a == b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a != b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a <  b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a >  b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a <= b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a >= b,
-                                 std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a == b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a != b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a < b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a > b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a <= b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a >= b,
+                                  std::same_as, typename simd_traits<std::remove_reference_t<simd_t>>::mask_type);
 
     // require arithmetic operators
-    SEQAN3_RETURN_TYPE_CONTRAINT(a + b, std::same_as, std::remove_reference_t<simd_t>);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a - b, std::same_as, std::remove_reference_t<simd_t>);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a * b, std::same_as, std::remove_reference_t<simd_t>);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a / b, std::same_as, std::remove_reference_t<simd_t>);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a += b, std::same_as, std::remove_reference_t<simd_t> &);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a -= b, std::same_as, std::remove_reference_t<simd_t> &);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a *= b, std::same_as, std::remove_reference_t<simd_t> &);
-    SEQAN3_RETURN_TYPE_CONTRAINT(a /= b, std::same_as, std::remove_reference_t<simd_t> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a + b, std::same_as, std::remove_reference_t<simd_t>);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a - b, std::same_as, std::remove_reference_t<simd_t>);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a * b, std::same_as, std::remove_reference_t<simd_t>);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a / b, std::same_as, std::remove_reference_t<simd_t>);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a += b, std::same_as, std::remove_reference_t<simd_t> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a -= b, std::same_as, std::remove_reference_t<simd_t> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a *= b, std::same_as, std::remove_reference_t<simd_t> &);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(a /= b, std::same_as, std::remove_reference_t<simd_t> &);
 };
 //!\endcond
 

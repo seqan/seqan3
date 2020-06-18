@@ -77,10 +77,11 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
 {
     t::file_extensions;
 
-    SEQAN3_RETURN_TYPE_CONTRAINT(v.write_sequence_record(f, options, seq, id, qual), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONTRAINT(v.write_sequence_record(f, options, std::ignore, id, std::ignore), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONTRAINT(v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore),
-                                 std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.write_sequence_record(f, options, seq, id, qual), std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.write_sequence_record(f, options, std::ignore, id, std::ignore),
+                                  std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore),
+                                  std::same_as, void);
     // the last is required to be compile time valid, but should always throw at run-time.
 };
 //!\endcond
