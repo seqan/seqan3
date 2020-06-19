@@ -50,6 +50,9 @@ private:
     //!\brief The sentinel type is set to std::default_sentinel_t.
     using sentinel_type = std::default_sentinel_t;
 
+    //!\brief The view which wraps the single value to repeat.
+    using single_value_t = decltype(std::views::single(std::declval<value_t>()));
+
     /*!\name Associated types
      * These associated types are needed in seqan3::detail::random_access_iterator.
      * \{
@@ -175,11 +178,11 @@ public:
     ~repeat_view() = default;                                         //!< Defaulted.
 
     //!\brief Construct from any type (Note: the value will be copied into views::single).
-    constexpr explicit repeat_view(value_t const & value) : single_value{ranges::single_view{value}}
+    constexpr explicit repeat_view(value_t const & value) : single_value{value}
     {}
 
     //!\overload
-    constexpr explicit repeat_view(value_t && value) : single_value{ranges::single_view{std::move(value)}}
+    constexpr explicit repeat_view(value_t && value) : single_value{std::move(value)}
     {}
     //!\}
 
@@ -284,7 +287,7 @@ public:
 
 private:
     //!\brief A std::views::single over the input.
-    decltype(std::views::single(std::declval<value_t &>())) single_value;
+    single_value_t single_value;
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
