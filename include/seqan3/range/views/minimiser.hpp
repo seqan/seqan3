@@ -71,7 +71,7 @@ private:
     urng2_t urange2{};
 
     //!\brief The number of values in one window.
-    size_t window_values_size;
+    size_t window_size;
 
     template <typename rng1_t, typename rng2_t>
     class basic_iterator;
@@ -112,7 +112,7 @@ public:
     minimiser_view(other_urng1_t && urange1, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{default_urng2_t{}},
-        window_values_size{window_size}
+        window_size{window_size}
     {}
 
     /*!\brief Construct from two views and a given number of values in one window.
@@ -125,7 +125,7 @@ public:
     minimiser_view(urng1_t urange1, urng2_t urange2, size_t const window_size) :
         urange1{std::move(urange1)},
         urange2{std::move(urange2)},
-        window_values_size{window_size}
+        window_size{window_size}
     {}
 
     /*!\brief Construct from two non-views that can be view-wrapped and a given number of values in one window.
@@ -145,7 +145,7 @@ public:
     minimiser_view(other_urng1_t && urange1, other_urng2_t && urange2, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{std::views::all(std::forward<other_urng2_t>(urange2))},
-        window_values_size{window_size}
+        window_size{window_size}
     {}
     //!\}
 
@@ -170,7 +170,7 @@ public:
         return {std::ranges::end(urange1),
                 std::ranges::begin(urange1),
                 std::ranges::begin(urange2),
-                window_values_size};
+                window_size};
     }
 
     //!\copydoc begin()
@@ -182,7 +182,7 @@ public:
         return {std::ranges::cend(urange1),
                 std::ranges::cbegin(urange1),
                 std::ranges::cbegin(urange2),
-                window_values_size};
+                window_size};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -270,27 +270,26 @@ public:
     * \param[in] urng1_iterator Iterator pointing to the first position of the first std::totally_ordered range.
     * \param[in] urng1_sentinel Iterator pointing to the last position of the first std::totally_ordered range.
     * \param[in] urng2_iterator Iterator pointing to the first position of the second std::totally_ordered range.
-    * \param[in] window_values_size The number of values in one window.
+    * \param[in] window_size The number of values in one window.
     *
     * \details
     *
     * Looks at the number of values per window in two ranges, returns the smallest between both as minimiser and
     * shifts then by one to repeat this action. If a minimiser in consecutive windows is the same, it is returned only
     * once.
-    *
     */
     basic_iterator(urng1_sentinel_t urng1_sentinel,
                    urng1_iterator_t urng1_iterator,
                    urng2_iterator_t urng2_iterator,
-                   size_t window_values_size) :
+                   size_t window_size) :
         urng1_sentinel{std::move(urng1_sentinel)},
         urng1_iterator{std::move(urng1_iterator)},
         urng2_iterator{std::move(urng2_iterator)}
     {
         size_t size = std::ranges::distance(urng1_iterator, urng1_sentinel);
-        window_values_size = std::min<size_t>(window_values_size, size);
+        window_size = std::min<size_t>(window_size, size);
 
-        window_first(window_values_size);
+        window_first(window_size);
     }
     //!\}
 
@@ -418,12 +417,12 @@ private:
     }
 
     //!\brief Calculates minimisers for the first window.
-    void window_first(size_t const window_values_size)
+    void window_first(size_t const window_size)
     {
-        if (window_values_size == 0u)
+        if (window_size == 0u)
             return;
 
-        for (size_t i = 0u; i < window_values_size - 1u; ++i)
+        for (size_t i = 0u; i < window_size - 1u; ++i)
         {
             window_values.push_back(window_value());
             advance_window();
@@ -468,11 +467,11 @@ private:
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng1_t>
-minimiser_view(rng1_t &&, size_t const window_values_size) -> minimiser_view<std::views::all_t<rng1_t>>;
+minimiser_view(rng1_t &&, size_t const window_size) -> minimiser_view<std::views::all_t<rng1_t>>;
 
 //!\brief A deduction guide for the view class template.
 template <std::ranges::viewable_range rng1_t, std::ranges::viewable_range rng2_t>
-minimiser_view(rng1_t &&, rng2_t &&, size_t const window_values_size) -> minimiser_view<std::views::all_t<rng1_t>,
+minimiser_view(rng1_t &&, rng2_t &&, size_t const window_size) -> minimiser_view<std::views::all_t<rng1_t>,
                                                                                         std::views::all_t<rng2_t>>;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -484,51 +483,51 @@ minimiser_view(rng1_t &&, rng2_t &&, size_t const window_values_size) -> minimis
 struct minimiser_fn
 {
     //!\brief Store the number of values in one window and return a range adaptor closure object.
-    constexpr auto operator()(size_t const window_values_size) const
+    constexpr auto operator()(size_t const window_size) const
     {
-        return adaptor_from_functor{*this, window_values_size};
+        return adaptor_from_functor{*this, window_size};
     }
 
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
      * \param[in] urange1 The input range to process. Must model std::ranges::viewable_range and
      *                    std::ranges::forward_range.
-     * \param[in] window_values_size The number of values in one window.
+     * \param[in] window_size The number of values in one window.
      * \returns  A range of converted values.
      */
     template <std::ranges::range urng1_t>
-    constexpr auto operator()(urng1_t && urange1, size_t const window_values_size) const
+    constexpr auto operator()(urng1_t && urange1, size_t const window_size) const
     {
         static_assert(std::ranges::viewable_range<urng1_t>,
                       "The range parameter to views::minimiser cannot be a temporary of a non-view range.");
         static_assert(std::ranges::forward_range<urng1_t>,
                       "The range parameter to views::minimiser must model std::ranges::forward_range.");
 
-        if (window_values_size == 1) // Would just return urange1 without any changes
-            throw std::invalid_argument{"The chosen window_values_size is not valid. "
+        if (window_size == 1) // Would just return urange1 without any changes
+            throw std::invalid_argument{"The chosen window_size is not valid. "
                                         "Please choose a value greater than 1 or use two ranges."};
 
-        return minimiser_view{urange1, window_values_size};
+        return minimiser_view{urange1, window_size};
     }
 
     //!\brief Store the number of values in one window and the second range and return a range adaptor closure object.
     template <std::ranges::range urng2_t>
-    constexpr auto operator()(size_t const window_values_size, urng2_t && urange2) const
+    constexpr auto operator()(size_t const window_size, urng2_t && urange2) const
     {
-        return adaptor_from_functor{*this, window_values_size, urange2};
+        return adaptor_from_functor{*this, window_size, urange2};
     }
 
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
      * \param[in] urange1 The input range to process. Must model std::ranges::viewable_range and
      *                    std::ranges::forward_range.
-     * \param[in] window_values_size The number of values in one window.
+     * \param[in] window_size The number of values in one window.
      * \param[in] urange2 The second input range to process. Must model std::ranges::viewable_range and
      *                    std::ranges::forward_range.
      * \returns A range of converted values.
      */
     template <std::ranges::range urng1_t, std::ranges::range urng2_t>
-    constexpr auto operator()(urng1_t && urange1, size_t const window_values_size, urng2_t && urange2) const
+    constexpr auto operator()(urng1_t && urange1, size_t const window_size, urng2_t && urange2) const
     {
         static_assert(std::ranges::viewable_range<urng1_t>,
                       "The range1 parameter to views::minimiser cannot be a temporary of a non-view range.");
@@ -546,7 +545,7 @@ struct minimiser_fn
         if (std::ranges::size(urange1) != std::ranges::size(urange2))
             throw std::invalid_argument{"The two ranges do not have the same size."};
 
-        return minimiser_view{urange1, urange2, window_values_size};
+        return minimiser_view{urange1, urange2, window_size};
     }
 };
 //![adaptor_def]
@@ -566,7 +565,7 @@ namespace seqan3::views
  * \tparam urng2_t The type of the range second being processed. See below for requirements. [template
  *                 parameter is omitted in pipe notation]
  * \param[in] urange1 The range being processed. [parameter is omitted in pipe notation]
- * \param[in] window_values_size The number of values in one window.
+ * \param[in] window_size The number of values in one window.
  * \returns A range of std::totally_ordered where each value is the minimal value for one window. See below for the
  *          properties of the returned range.
  * \ingroup views
@@ -574,10 +573,10 @@ namespace seqan3::views
  * \details
  *
  * A minimiser is the smallest value in a window. For example for the following list of hash values
- * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 as `window_values_size`, the minimiser values are [9,4,1]. The minimiser can
+ * [28, 100, 9, 23, 4, 1, 72, 37, 8] and 4 as `window_size`, the minimiser values are [9,4,1]. The minimiser can
  * be calculated for one given range or for two given ranges, where the minimizer is the smallest value in both windows.
  * For example for the following list of hash values [28, 100, 9, 23, 4, 1, 72, 37, 8] and
- * [30, 2, 11, 101, 199, 73, 34, 900] and 4 as `window_values_size`, the minimiser values are [2,4,1].
+ * [30, 2, 11, 101, 199, 73, 34, 900] and 4 as `window_size`, the minimiser values are [2,4,1].
  *
  *
  * ### View properties
