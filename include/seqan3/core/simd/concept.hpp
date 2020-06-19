@@ -95,6 +95,22 @@ template <typename simd_t>
 SEQAN3_CONCEPT simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
 //!\endcond
 
+/*!\interface seqan3::simd::simd_index <>
+ * \brief Refines the seqan3::simd::simd_concept requiring the underlying scalar type to model std::integral.
+ * \ingroup alignment_matrix
+ *
+ * \details
+ *
+ * seqan3::simd::simd_index checks whether a given type is a simd type and can be used to represent an index.
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT simd_index = simd::simd_concept<t> && requires ()
+{
+    requires std::integral<typename simd_traits<std::remove_reference_t<t>>::scalar_type>;
+};
+//!\endcond
+
 } // inline namespace simd
 
 } // namespace seqan3

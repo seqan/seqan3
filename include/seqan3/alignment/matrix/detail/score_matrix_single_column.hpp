@@ -18,6 +18,8 @@
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/zip.hpp>
 
@@ -28,7 +30,7 @@ namespace seqan3::detail
  * \ingroup alignment_matrix
  * \implements std::ranges::input_range
  *
- * \tparam score_t The type of the score; must model seqan3::arithmetic.
+ * \tparam score_t The type of the score; must model seqan3::arithmetic or seqan3::simd::simd_concept.
  *
  * \details
  *
@@ -46,12 +48,15 @@ namespace seqan3::detail
  * view is the seqan3::detail::affine_cell_proxy, which offers a practical interface to access the value of the
  * optimal, horizontal and vertical value of the underlying matrices.
  */
-template <arithmetic score_t>
+template <typename score_t>
+//!\cond
+    requires (arithmetic<score_t> || simd_concept<score_t>)
+//!\endcond
 class score_matrix_single_column
 {
 private:
     //!\brief The type of the score column which allocates memory for the entire column.
-    using physical_column_t = std::vector<score_t>;
+    using physical_column_t = std::vector<score_t, aligned_allocator<score_t, alignof(score_t)>>;
     //!\brief The type of the virtual score column which only stores one value.
     using virtual_column_t = decltype(views::repeat_n(score_t{}, 1));
 

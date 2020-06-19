@@ -22,13 +22,13 @@
 
 namespace seqan3::detail
 {
-/*!\brief A strong type for designated initialisation of the column index of a marix.
+/*!\brief A strong type for designated initialisation of the column index of a matrix.
  * \ingroup alignment_matrix
- * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_concept.
+ * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_index.
  */
 template <typename index_type>
 //!\cond
-    requires (std::integral<index_type> || simd_concept<index_type>)
+    requires (std::integral<index_type> || simd_index<index_type>)
 //!\endcond
 struct column_index_type : detail::strong_type<index_type, column_index_type<index_type>>
 {
@@ -49,17 +49,17 @@ template <std::unsigned_integral index_type>
 column_index_type(index_type) -> column_index_type<size_t>;
 
 //!\brief Deduces the template argument from a simd vector index type.
-template <simd_concept index_type>
+template <simd_index index_type>
 column_index_type(index_type) -> column_index_type<index_type>;
 //!\}
 
-/*!\brief A strong type for designated initialisation of the row index of a marix.
+/*!\brief A strong type for designated initialisation of the row index of a matrix.
  * \ingroup alignment_matrix
- * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_concept
+ * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_index
  */
 template <typename index_type>
 //!\cond
-    requires (std::integral<index_type> || simd_concept<index_type>)
+    requires (std::integral<index_type> || simd_index<index_type>)
 //!\endcond
 struct row_index_type : detail::strong_type<index_type, row_index_type<index_type>>
 {
@@ -80,17 +80,17 @@ template <std::unsigned_integral index_type>
 row_index_type(index_type) -> row_index_type<size_t>;
 
 //!\brief Deduces the template argument from a simd vector index type.
-template <simd_concept index_type>
+template <simd_index index_type>
 row_index_type(index_type) -> row_index_type<index_type>;
 //!\}
 
 /*!\brief A representation of a location or offset within a two-dimensional matrix.
  * \ingroup alignment_matrix
- * \tparam index_t The underlying index type; must model seqan3::arithmetic or seqan3::simd::simd_concept.
+ * \tparam index_t The underlying index type; must model seqan3::arithmetic or seqan3::simd::simd_index.
  */
 template <typename index_t>
 //!\cond
-    requires (std::integral<index_t> || simd_concept<index_t>)
+    requires (std::integral<index_t> || simd_index<index_t>)
 //!\endcond
 struct matrix_index
 {
@@ -133,11 +133,7 @@ struct matrix_index
     constexpr matrix_index(row_index_type<scalar_index_t> const row_idx,
                            column_index_type<scalar_index_t> const col_idx) noexcept
     //!\cond
-        requires (simd_concept<index_t> &&
-                  requires ()
-                  {
-                     requires std::convertible_to<scalar_index_t, typename simd_traits<scalar_index_t>::scalar_type>;
-                  })
+        requires simd_index<index_t>
     //!\endcond
     // Note the explicit type conversion is necessary since the scalar type might be of smaller bit size.
         : row{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(row_idx.get()))},
@@ -183,7 +179,7 @@ matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>) ->
     matrix_index<std::common_type_t<row_index_t, col_index_t>>;
 
 //!\brief Deduces the index type from the simd vector index type.
-template <simd_concept index_t>
+template <simd_index index_t>
 matrix_index(row_index_type<index_t>, column_index_type<index_t>) -> matrix_index<index_t>;
 //!\}
 
@@ -193,9 +189,9 @@ using matrix_coordinate = matrix_index<size_t>;
 
 /*!\brief A coordinate type to access an element inside of a two-dimensional simd vector matrix.
  * \ingroup alignment_matrix
- * \tparam index_t The underlying index type; must model seqan3::simd::simd_concept.
+ * \tparam index_t The underlying index type; must model seqan3::simd::simd_index.
  */
-template <simd_concept index_t>
+template <simd_index index_t>
 using simd_matrix_coordinate = matrix_index<index_t>;
 
 //!\brief An offset type to move a matrix iterator in two-dimensional space.
