@@ -25,27 +25,26 @@
 using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
+
+inline static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
+inline static constexpr auto rev_kmer_view = seqan3::views::complement | std::views::reverse
+                                                                       | kmer_view
+                                                                       | std::views::reverse;
+inline static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
+inline static constexpr auto rev_gapped_kmer_view = seqan3::views::complement | std::views::reverse
+                                                                              | seqan3::views::kmer_hash(0b1001_shape)
+                                                                              | std::views::reverse;
+inline static constexpr auto minimiser_view1 = seqan3::views::minimiser(1); // kmer_size == window_size
+inline static constexpr auto minimiser_no_rev_view = seqan3::views::minimiser(5);
+
 using iterator_type = std::ranges::iterator_t< decltype(std::declval<seqan3::dna4_vector&>()
-                                                        | seqan3::views::kmer_hash(seqan3::ungapped{4})
-                                                        | seqan3::views::minimiser(5))>;
+                                                        | kmer_view
+                                                        | minimiser_no_rev_view)>;
 using two_ranges_iterator_type = std::ranges::iterator_t< decltype(std::declval<seqan3::dna4_vector&>()
-                                                                   | seqan3::views::kmer_hash(seqan3::ungapped{4})
+                                                                   | kmer_view
                                                                    | seqan3::views::minimiser(5,
                                                                        std::declval<seqan3::dna4_vector&>()
-                                                                       | seqan3::views::complement | std::views::reverse
-                                                                       | seqan3::views::kmer_hash(seqan3::ungapped{4})
-                                                                       | std::views::reverse))>;
-
-static constexpr auto kmer_view = seqan3::views::kmer_hash(seqan3::ungapped{4});
-static constexpr auto rev_kmer_view = seqan3::views::complement | std::views::reverse
-                                                                | seqan3::views::kmer_hash(seqan3::ungapped{4})
-                                                                | std::views::reverse;
-static constexpr auto gapped_kmer_view = seqan3::views::kmer_hash(0b1001_shape);
-static constexpr auto rev_gapped_kmer_view = seqan3::views::complement | std::views::reverse
-                                                                       | seqan3::views::kmer_hash(0b1001_shape)
-                                                                       | std::views::reverse;
-static constexpr auto minimiser_view1 = seqan3::views::minimiser(1); // kmer_size == window_size
-static constexpr auto minimiser_no_rev_view = seqan3::views::minimiser(5);
+                                                                       | rev_kmer_view))>;
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -73,9 +72,7 @@ struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
 
     decltype(seqan3::views::minimiser(seqan3::views::kmer_hash(text, seqan3::ungapped{4}), 5, text | rev_kmer_view))
     test_range = seqan3::views::minimiser(vec, 5, text | rev_kmer_view);
-
 };
-
 
 using test_types = ::testing::Types<iterator_type, two_ranges_iterator_type>;
 INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_types, );
@@ -120,12 +117,9 @@ protected:
     result_t result3_gapped_no_rev_start{3};      // For start at second A
 };
 
-TYPED_TEST(minimiser_view_properties_test, concepts)
+template <typename adaptor_t, typename adaptor2_t, typename text_t>
+void compare_types(adaptor_t v, adaptor2_t kmer_view, text_t text)
 {
-    TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4,
-                'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
-
-    auto v = text | kmer_view | minimiser_no_rev_view;
     EXPECT_TRUE(std::ranges::input_range<decltype(v)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
     EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v)>);
@@ -136,20 +130,20 @@ TYPED_TEST(minimiser_view_properties_test, concepts)
     EXPECT_EQ(seqan3::const_iterable_range<decltype((text | kmer_view))>,
               seqan3::const_iterable_range<decltype(v)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v), size_t>));
+}
+
+TYPED_TEST(minimiser_view_properties_test, concepts)
+{
+    TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4,
+                'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
+
+    auto v = text | kmer_view | minimiser_no_rev_view;
+    compare_types(v, kmer_view, text);
 
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
         auto v2 = text | kmer_view | seqan3::views::minimiser(5, text | rev_kmer_view);
-        EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
-        EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
-        EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2)>);
-        EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
-        EXPECT_TRUE(std::ranges::view<decltype(v2)>);
-        EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
-        EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
-        EXPECT_EQ(seqan3::const_iterable_range<decltype((text | rev_kmer_view))>,
-                  seqan3::const_iterable_range<decltype(v2)>);
-        EXPECT_FALSE((std::ranges::output_range<decltype(v2), size_t>));
+        compare_types(v2, rev_kmer_view, text);
     }
 }
 
