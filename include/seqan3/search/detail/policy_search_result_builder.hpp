@@ -39,73 +39,101 @@ protected:
     static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
 
     /*!\brief Returns all hits (index cursors) without calling locate on each cursor.
+     *
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
+     * \tparam query_index_t The index type of the query.
+     * \tparam callback_t The callback which is called for every hit.
+     *
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over seqan3::search_result.
+     * \param[in] idx The index associated with the current query.
+     * \param[in] callback The callback to invoke for every hit.
      *
      * \details
      *
      * The result is independent from the search modus (all, single_best, all_best, strata).
      */
-    template <typename index_cursor_t>
-    auto make_results(std::vector<index_cursor_t> internal_hits)
+    template <typename index_cursor_t, typename query_index_t, typename callback_t>
+    void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
-        std::vector<search_result_type> results(internal_hits.size());
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<index_cursor_t &>()})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with an index cursor.");
 
         for (size_t i = 0; i < internal_hits.size(); ++i)
-            results[i] = search_result_type{0, internal_hits[i]};
-
-        return results;
+            callback(search_result_type{std::move(idx), internal_hits[i]});
     }
 
     /*!\brief If `internal_hits` is not empty, calls lazy_locate on the first cursor and returns a
     *         seqan3::search_result with the first text position.
-     * \tparam index_cursor_t The type of index cursor used in the search algorithm.
-     * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over a seqan3::search_result.
-     */
-    template <typename index_cursor_t>
+    *
+    * \tparam index_cursor_t The type of index cursor used in the search algorithm.
+    * \tparam query_index_t The index type of the query.
+    * \tparam callback_t The callback which is called for every hit.
+    *
+    * \param[in] internal_hits internal_hits A range over internal cursor results.
+    * \param[in] idx The index associated with the current query.
+    * \param[in] callback The callback to invoke for every hit.
+    */
+    template <typename index_cursor_t, typename query_index_t, typename callback_t>
     //!\cond
         requires search_traits_type::search_return_text_position &&
                  search_traits_type::search_single_best_hit
     //!\endcond
-    auto make_results(std::vector<index_cursor_t> internal_hits)
+    void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
-        std::vector<search_result_type> results{};
+        using ref_location_pair_t = decltype(std::declval<index_cursor_t &>().lazy_locate().front());
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<ref_location_pair_t &>().first,
+                                                                    std::declval<ref_location_pair_t &>().second})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with text positions and single best hit strategy.");
 
         if (!internal_hits.empty())
         {
             // only one cursor is reported but it might contain more than one text position
             auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
-            results.push_back(search_result_type{0, ref_id, ref_pos});
+            callback(search_result_type{std::move(idx), ref_id, ref_pos});
         }
-        return results;
     }
 
     /*!\brief Returns a range over seqan3::search_result by calling locate on each cursor.
+     *
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
+     * \tparam query_index_t The index type of the query.
+     * \tparam callback_t The callback which is called for every hit.
+     *
      * \param[in] internal_hits internal_hits A range over internal cursor results.
-     * \returns a range over seqan3::search_result.
+     * \param[in] idx The index associated with the current query.
+     * \param[in] callback The callback to invoke for every hit.
      *
      * \details
      *
      * This function is used for all search modi except single_best (which are all, all_best, and strata).
      *
-     * The text positions are sorted and made unique by position before returning them.
+     * The text positions are sorted and made unique by position before invoking the callback on them.
      */
-    template <typename index_cursor_t>
+    template <typename index_cursor_t, typename query_index_t, typename callback_t>
     //!\cond
         requires search_traits_type::search_return_text_position &&
                  (!search_traits_type::search_single_best_hit)
     //!\endcond
-    auto make_results(std::vector<index_cursor_t> internal_hits)
+    void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
+        using ref_location_pair_t = decltype(std::declval<index_cursor_t>().lazy_locate().front());
+        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
+                                                                    std::declval<ref_location_pair_t &>().first,
+                                                                    std::declval<ref_location_pair_t &>().second})>,
+                      "The configured search result type is not compatible with the requested search output. "
+                      "Note trying to instantiate search result with text positions with either all, all_best or "
+                      "strata hit strategy.");
+
         std::vector<search_result_type> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
         for (auto const & cursor : internal_hits)
             for (auto && [ref_id, ref_pos] : cursor.locate())
-                results.push_back(search_result_type{0, ref_id, ref_pos});
+                results.push_back(search_result_type{std::move(idx), ref_id, ref_pos});
 
         // sort by reference id or by reference position if both have the same reference id.
         auto compare = [] (auto const & r1, auto const & r2)
@@ -117,7 +145,8 @@ protected:
         std::sort(results.begin(), results.end(), compare);
         results.erase(std::unique(results.begin(), results.end()), results.end());
 
-        return results;
+        for (auto && search_result : results)
+            callback(std::move(search_result));
     }
 };
 
