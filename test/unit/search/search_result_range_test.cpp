@@ -97,6 +97,12 @@ TEST_F(search_result_range_test, type_deduction)
     EXPECT_TRUE((std::is_same_v<decltype(rng), search_result_range_t>));
 }
 
+TEST_F(search_result_range_test, invoke_begin_on_default_result_range)
+{
+    seqan3::search_result_range<executor_t> rng{};
+    EXPECT_THROW(rng.begin(), std::runtime_error);
+}
+
 TEST_F(search_result_range_test, empty_query_range)
 {
     indexed_queries.clear();
