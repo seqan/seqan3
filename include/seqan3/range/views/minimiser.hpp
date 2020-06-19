@@ -220,7 +220,7 @@ private:
     //!\brief The iterator type of the second underlying range.
     using urng2_iterator_t = std::ranges::iterator_t<rng2_t>;
 
-    template <typename rng1_t_, typename rng2_t_>
+    template <typename, typename>
     friend class basic_iterator;
 
 public:
@@ -252,12 +252,12 @@ public:
     ~basic_iterator() = default; //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
-    template <typename rng1_t_, typename rng2_t_>
+    template <typename non_const_rng1_t, typename non_const_rng2_t>
     //!\cond
-        requires (std::same_as<std::remove_const_t<urng1_t>, rng1_t_> &&
-                  std::same_as<std::remove_const_t<urng2_t>, rng2_t_>)
+        requires ((std::is_const_v<rng1_t> && std::same_as<std::remove_const_t<rng1_t>, non_const_rng1_t>) &&
+                  (std::is_const_v<rng1_t> && std::same_as<std::remove_const_t<rng2_t>, non_const_rng2_t>))
      //!\endcond
-    basic_iterator(basic_iterator<rng1_t_, rng2_t_> it) :
+    basic_iterator(basic_iterator<non_const_rng1_t, non_const_rng2_t> it) :
         minimiser_value{std::move(it.minimiser_value)},
         urng1_sentinel{std::move(it.urng1_sentinel)},
         urng1_iterator{std::move(it.urng1_iterator)},
