@@ -71,9 +71,9 @@ private:
         //!\brief Alias type for the iterator over the passed range type.
         using underlying_iterator_type = std::ranges::iterator_t<range_type>;
         //!\brief Alias for the value type of the underlying iterator type.
-        using underlying_val_t = typename std::iterator_traits<underlying_iterator_type>::value_type;
+        using underlying_val_t = std::iter_value_t<underlying_iterator_type>;
         //!\brief Alias for the reference type of the underlying iterator type.
-        using underlying_ref_t = typename std::iterator_traits<underlying_iterator_type>::reference;
+        using underlying_ref_t = std::iter_reference_t<underlying_iterator_type>;
 
     public:
         /*!\name Associated types
@@ -154,14 +154,13 @@ private:
         /*!\brief Access the element at the given index
          * \param[in] index The index of the element to be returned.
          */
-        constexpr reference operator[](size_t const index)
+        constexpr reference operator[](size_t const index) const
             noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
         //!\cond
             requires std::random_access_iterator<underlying_iterator_type>
         //!\endcond
         {
-            from_index(index);
-            return **this;
+            return *(*this + index);
         }
         //!\}
 
@@ -232,7 +231,7 @@ private:
 
         //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
         //!\      std::random_access_iterator.
-        constexpr iterator_type operator+(difference_type const offset)
+        constexpr iterator_type operator+(difference_type const offset) const
             noexcept(noexcept(std::declval<iterator_type &>() += 1))
         //!\cond
             requires std::random_access_iterator<underlying_iterator_type>
@@ -268,7 +267,7 @@ private:
 
         //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
         //!\      std::random_access_iterator.
-        constexpr iterator_type operator-(difference_type const offset)
+        constexpr iterator_type operator-(difference_type const offset) const
             noexcept(noexcept(std::declval<iterator_type &>() -= 1))
         //!\cond
             requires std::random_access_iterator<underlying_iterator_type>
@@ -446,7 +445,7 @@ private:
     using const_iterator    = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
                                                         void>;
     //!\}
-    
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
