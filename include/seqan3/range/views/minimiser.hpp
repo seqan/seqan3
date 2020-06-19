@@ -126,7 +126,13 @@ public:
         urange1{std::move(urange1)},
         urange2{std::move(urange2)},
         window_size{window_size}
-    {}
+    {
+        if constexpr (second_range_is_given)
+        {
+            if (std::ranges::distance(urange1) != std::ranges::distance(urange2))
+                throw std::invalid_argument{"The two ranges do not have the same size."};
+        }
+    }
 
     /*!\brief Construct from two non-views that can be view-wrapped and a given number of values in one window.
     * \tparam[in] urange1     The input range to process. Must model std::ranges::viewable_range and
@@ -146,7 +152,13 @@ public:
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{std::views::all(std::forward<other_urng2_t>(urange2))},
         window_size{window_size}
-    {}
+    {
+        if constexpr (second_range_is_given)
+        {
+            if (std::ranges::distance(urange1) != std::ranges::distance(urange2))
+                throw std::invalid_argument{"The two ranges do not have the same size."};
+        }
+    }
     //!\}
 
     /*!\name Iterators
@@ -521,9 +533,6 @@ struct minimiser_fn
                       "The range1 parameter to views::minimiser must model std::ranges::sized_range.");
         static_assert(std::ranges::sized_range<urng2_t>,
                       "The range2 parameter to views::minimiser must model std::ranges::sized_range.");
-
-        if (std::ranges::size(urange1) != std::ranges::size(urange2))
-            throw std::invalid_argument{"The two ranges do not have the same size."};
 
         return minimiser_view{urange1, urange2, window_size};
     }
