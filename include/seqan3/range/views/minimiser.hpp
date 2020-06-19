@@ -362,13 +362,13 @@ private:
     value_type minimiser_value{};
 
     //!brief Iterator to last element in range.
-    urng1_sentinel_t urng1_sentinel;
+    urng1_sentinel_t urng1_sentinel{};
 
     //!\brief Iterator to the rightmost value of one window.
-    urng1_iterator_t urng1_iterator;
+    urng1_iterator_t urng1_iterator{};
 
     //!\brief Iterator to the rightmost value of one window of the second range.
-    urng2_iterator_t urng2_iterator;
+    urng2_iterator_t urng2_iterator{};
 
     //!\brief Stored values per window. It is necessary to store them, because a shift can remove the current minimiser.
     std::deque<value_type> window_values{};
@@ -379,41 +379,21 @@ private:
         while (!next_minimiser()) {}
     }
 
-    //!\brief Returns new window value, when only one range is given.
+    //!\brief Returns new window value.
     auto window_value()
-    //!\cond
-        requires (!second_range_is_given)
-    //!\endcond
     {
-        return *urng1_iterator;
+        if constexpr (!second_range_is_given)
+            return *urng1_iterator;
+        else
+            return std::min(*urng1_iterator, *urng2_iterator);
     }
 
-    //!\brief Returns new window value, when two ranges are given.
-    auto window_value()
-    //!\cond
-        requires second_range_is_given
-    //!\endcond
-    {
-        return std::min(*urng1_iterator, *urng2_iterator);
-    }
-
-    //!\brief Advance first range.
+    //!\brief Advances the window to the next position.
     void advance_window()
-    //!\cond
-        requires (!second_range_is_given)
-    //!\endcond
     {
         ++urng1_iterator;
-    }
-
-    //!\brief Advance both ranges.
-    void advance_window()
-    //!\cond
-        requires second_range_is_given
-    //!\endcond
-    {
-        ++urng1_iterator;
-        ++urng2_iterator;
+        if constexpr (second_range_is_given)
+            ++urng2_iterator;
     }
 
     //!\brief Calculates minimisers for the first window.
@@ -432,7 +412,7 @@ private:
     }
 
     /*!\brief Calculates the next minimiser value.
-     *
+     * \returns True, if new minimiser is found or end is reached. Otherwise returns false.
      * \details
      * For the following windows, we remove the first window value (is now not in window_values) and add the new
      * value that results from the window shifting.
@@ -490,9 +470,9 @@ struct minimiser_fn
 
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
-     * \param[in] urange1 The input range to process. Must model std::ranges::viewable_range and
-     *                    std::ranges::forward_range.
-     * \param[in] window_size The number of values in one window.
+     * \tparam[in] urange1 The input range to process. Must model std::ranges::viewable_range and
+     *                     std::ranges::forward_range.
+     * \tparam[in] window_size The number of values in one window.
      * \returns  A range of converted values.
      */
     template <std::ranges::range urng1_t>
@@ -519,11 +499,11 @@ struct minimiser_fn
 
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
-     * \param[in] urange1 The input range to process. Must model std::ranges::viewable_range and
-     *                    std::ranges::forward_range.
-     * \param[in] window_size The number of values in one window.
-     * \param[in] urange2 The second input range to process. Must model std::ranges::viewable_range and
-     *                    std::ranges::forward_range.
+     * \tparam[in] urange1 The input range to process. Must model std::ranges::viewable_range and
+     *                     std::ranges::forward_range.
+     * \tparam[in] window_size The number of values in one window.
+     * \tparam[in] urange2 The type of the second range being processed. See below for requirements. Note, this range
+     *                     is optional.
      * \returns A range of converted values.
      */
     template <std::ranges::range urng1_t, std::ranges::range urng2_t>
@@ -594,14 +574,14 @@ namespace seqan3::views
  * | std::ranges::sized_range         |                                    | *lost*                           |
  * | std::ranges::common_range        |                                    | *lost*                           |
  * | std::ranges::output_range        |                                    | *lost*                           |
- * | seqan3::const_iterable_range     |                                    | *preserved*¹                     |
+ * | seqan3::const_iterable_range     |                                    | <i>preserved</i>¹                |
  * |                                  |                                    |                                  |
  * | std::ranges::range_reference_t   | std::totally_ordered               | std::totally_ordered             |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * ¹ The marked properties are only *preserved* if only one range is given or both ranges are of type
- * seqan3::const_iterable_range.
+ * ¹ In the interface with the second underlying range the const-iterable property will only be preserved if both
+ * underlying ranges are const-iterable.
  *
  * ### Example
  *
