@@ -59,11 +59,10 @@ auto call_alignment(seq_t && seq, cfg_t && cfg)
 
 TYPED_TEST(align_pairwise_test, single_pair)
 {
-    // use std::tie
-
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
+    // use std::tie
     auto p1 = std::tie(seq1, seq2);
 
     {  // the score
@@ -91,7 +90,6 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 
     // use std::pair
-
     std::pair sequences{"ACGTGATG"_dna4,"AGTGATACT"_dna4};
 
     {  // the score
@@ -119,7 +117,6 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 
     // use make_pair
-
     auto p2 = std::make_pair(seq1, seq2);
 
     {  // the score

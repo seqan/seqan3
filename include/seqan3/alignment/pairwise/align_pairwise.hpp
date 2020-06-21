@@ -132,37 +132,29 @@ namespace seqan3
  */
 template <typename sequence_t, typename alignment_config_t>
 //!\cond
-    requires detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>> &&
+    requires detail::align_pairwise_single_input<sequence_t> &&
              std::copy_constructible<std::remove_reference_t<sequence_t>> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 //!\endcond
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
-    static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
-                  "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
+    using std::get;
 
-    static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
-                  std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
-                  "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
+    if constexpr (std::is_lvalue_reference_v<sequence_t>)  // Forward tuple elements as references.
+    {
+        return align_pairwise(std::tie(get<0>(seq), get<1>(seq)), config);
+    }
+    else
+    {
+        static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
+                      "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
 
-    return align_pairwise(std::views::single(std::forward<sequence_t>(seq)), config);
-}
+        static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
+                      std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
+                      "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
-//!\overload
-template <typename sequence_t, typename alignment_config_t>
-//!\cond
-    requires tuple_like<sequence_t> && !detail::align_pairwise_single_input<std::remove_reference_t<sequence_t>>
-//!\endcond
-constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
-{
-    static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
-                  "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
-
-    static_assert(std::is_lvalue_reference_v<sequence_t>,
-                  "Alignment configuration error: The given tuple/pair must be an lvalue reference.");
-
-    auto tied_pair = std::tie(get<0>(seq), get<1>(seq));
-    return align_pairwise(tied_pair, config);
+        return align_pairwise(std::views::single(std::forward<sequence_t>(seq)), config);
+    }
 }
 
 //!\cond
