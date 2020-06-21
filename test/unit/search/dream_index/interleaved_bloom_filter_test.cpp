@@ -136,6 +136,55 @@ TYPED_TEST(interleaved_bloom_filter_test, emplace)
     }
 }
 
+TYPED_TEST(interleaved_bloom_filter_test, counting)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{128u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::views::iota(0, 128))
+        for (size_t hash : std::views::iota(0, 128))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
+    TypeParam ibf2{ibf};
+    seqan3::counting_vector<size_t> counting(128, 0);
+    auto agent = ibf2.membership_agent();
+    for (size_t hash : std::views::iota(0, 128)) // test correct resize for each bin individually
+    {
+        counting += agent.bulk_contains(hash);
+    }
+    std::vector<size_t> expected(128, 128);
+    EXPECT_EQ(counting, expected);
+}
+
+// Check special case where there is only one `1` in the bitvector.
+TYPED_TEST(interleaved_bloom_filter_test, counting_no_ub)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{128u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::array<size_t, 2>{63, 127})
+        for (size_t hash : std::views::iota(0, 128))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
+    TypeParam ibf2{ibf};
+    seqan3::counting_vector<size_t> counting(128, 0);
+    auto agent = ibf2.membership_agent();
+    for (size_t hash : std::views::iota(0, 128)) // test correct resize for each bin individually
+    {
+        counting += agent.bulk_contains(hash);
+    }
+    std::vector<size_t> expected(128, 0);
+    expected[63] = 128;
+    expected[127] = 128;
+    EXPECT_EQ(counting, expected);
+}
+
 TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)
 {
     seqan3::interleaved_bloom_filter ibf1{seqan3::bin_count{73u}, seqan3::bin_size{1024u}};
@@ -179,3 +228,4 @@ TYPED_TEST(interleaved_bloom_filter_test, serialisation)
     TypeParam ibf{TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1024u})};
     seqan3::test::do_serialisation(ibf);
 }
+
