@@ -191,11 +191,11 @@ public:
             std::pair<size_t, size_t>{trace_it.coordinate()};
 
         assign_unaligned(std::get<0>(res.alignment),
-                         fst_rng | views::slice(res.first_sequence_slice_positions.first,
-                                                res.first_sequence_slice_positions.second));
+                         std::views::all(fst_rng) | views::slice(res.first_sequence_slice_positions.first,
+                                                                 res.first_sequence_slice_positions.second));
         assign_unaligned(std::get<1>(res.alignment),
-                         sec_rng | views::slice(res.second_sequence_slice_positions.first,
-                                                res.second_sequence_slice_positions.second));
+                         std::views::all(sec_rng) | views::slice(res.second_sequence_slice_positions.first,
+                                                                 res.second_sequence_slice_positions.second));
 
         // Now we need to insert the values.
         fill_aligned_sequence(trace_segments | std::views::reverse,
