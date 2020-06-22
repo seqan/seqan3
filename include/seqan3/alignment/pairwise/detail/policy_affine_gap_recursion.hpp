@@ -107,7 +107,7 @@ protected:
     }
     //!\}
 
-    /*!\brief Initialises the first cell of the alignment matrix in the top left corner of the matrix.
+    /*!\brief Computes an inner cell of the alignment matrix.
      *
      * \tparam affine_cell_t The type of the affine cell; must be an instance of seqan3::detail::affine_cell_proxy.
      *
