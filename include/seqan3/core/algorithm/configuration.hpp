@@ -131,19 +131,23 @@ public:
      * \{
      */
 
-    /*!\brief Returns the contained value if `*this` has a value, otherwise returns `default_value`.
-     * \tparam    query_t       The type to get the value from.
-     * \param[in] default_value The default value if `query_t` is not contained in the configuration.
+    /*!\brief Returns the stored configuration element if present otherwise the given alternative.
+     * \tparam alternative_t The type of the configuration element that is queried.
+     *
+     * \param[in] alternative The alternative whose type is used to check for an existing configuration element.
      *
      * \details
      *
-     * Returns a reference to the stored configuration value by passing through the `.value` member of
-     * the respective configuration element. If it does not exists than the default value is returned.
-     * The existence check of a type is done at compile time.
+     * Uses the type `alternative_t` of the given alternative to check if such an configuration element was already
+     * stored inside of the configuration. If no suitable candidate can be found the passed value `alternative` will
+     * be returned. If `alternative_t` is a class template, then any specialisation of this alternative type will be
+     * searched and returned if present.
+     *
+     * \returns The stored configuration element identified by `alternative_t` or the alternative if not present.
      *
      * ### Example
      *
-     * \include test/snippet/core/algorithm/configuration_value_or.cpp
+     * \include test/snippet/core/algorithm/configuration_get_or.cpp
      *
      * ### Exception
      *
@@ -153,123 +157,31 @@ public:
      *
      * Constant time.
      */
-    template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) & noexcept
+    template <typename alternative_t>
+    constexpr decltype(auto) get_or(alternative_t && alternative) & noexcept
     {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(*this).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
+        return get_or_impl(*this, alternative, std::forward<alternative_t>(alternative));
     }
 
-    //!\copydoc value_or
-    template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
+    //!\overload
+    template <typename alternative_t>
+    constexpr decltype(auto) get_or(alternative_t && alternative) const & noexcept
     {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(*this).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
+        return get_or_impl(*this, alternative, std::forward<alternative_t>(alternative));
     }
 
-    //!\copydoc value_or
-    template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) && noexcept
+    //!\overload
+    template <typename alternative_t>
+    constexpr decltype(auto) get_or(alternative_t && alternative) && noexcept
     {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(std::move(*this)).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
+        return get_or_impl(std::move(*this), alternative, std::forward<alternative_t>(alternative));
     }
 
-    //!\copydoc value_or
-    template <typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
+    //!\overload
+    template <typename alternative_t>
+    constexpr decltype(auto) get_or(alternative_t && alternative) const && noexcept
     {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(std::move(*this)).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
-    }
-
-    //!\copydoc value_or
-    template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) & noexcept
-    {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(*this).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
-    }
-
-    //!\copydoc value_or
-    template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const & noexcept
-    {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(*this).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
-    }
-
-    //!\copydoc value_or
-    template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) && noexcept
-    {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(std::move(*this)).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
-    }
-
-    //!\copydoc value_or
-    template <template <typename ...> typename query_t, typename default_t>
-    constexpr decltype(auto) value_or(default_t && default_value) const && noexcept
-    {
-        if constexpr (exists<query_t>())
-        {
-            return get<query_t>(std::move(*this)).value;
-        }
-        else
-        {
-            using ret_type = remove_rvalue_reference_t<decltype(default_value)>;
-            return static_cast<ret_type>(default_value);
-        }
+        return get_or_impl(std::move(*this), alternative, std::forward<alternative_t>(alternative));
     }
 
     //!\brief Checks if the given type exists in the tuple.
@@ -561,6 +473,58 @@ private:
         return make_configuration(std::tuple_cat(head, tail));
     }
     //!\}
+
+    /*!\brief Internal implementation of the get_or interace.
+     *
+     * \tparam this_t The type of this.
+     * \tparam query_t The type of the configuration element to query.
+     * \tparam alternative_t The type of the alternative.
+     *
+     * \param[in] me The perfectly forwarded instance of `*this`.
+     * \param[in] query The queried configuration element [only the type is needed].
+     * \param[in] alternative The alternative configuration element to return if the query_t is not present.
+     *
+     * \details
+     *
+     * Use the type `query_t` to check if such a configuration element is stored in `me`. If this is `true` then
+     * the stored configuration element is returned using perfect forwarding. If this evaluates to `false` the
+     * given alternative is returned. If `query_t` is a class template then it is checked if any
+     * specialisation of this class template is stored.
+     */
+    template <typename this_t, typename query_t, typename alternative_t>
+    static constexpr decltype(auto) get_or_impl(this_t && me,
+                                                query_t const & SEQAN3_DOXYGEN_ONLY(query),
+                                                alternative_t && alternative) noexcept
+    {
+        if constexpr (exists<query_t>())
+        {
+            return get<query_t>(std::forward<this_t>(me));
+        }
+        else
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(alternative)>;
+            return static_cast<ret_type>(alternative);
+        }
+    }
+
+    //!\overload
+    template <typename this_t,
+              template <typename ...> typename query_template_t, typename ...parameters_t,
+              typename alternative_t>
+    static constexpr decltype(auto) get_or_impl(this_t && me,
+                                                query_template_t<parameters_t...> const &,
+                                                alternative_t && alternative) noexcept
+    {
+        if constexpr (exists<query_template_t>())
+        {
+            return get<query_template_t>(std::forward<this_t>(me));
+        }
+        else
+        {
+            using ret_type = remove_rvalue_reference_t<decltype(alternative)>;
+            return static_cast<ret_type>(alternative);
+        }
+    }
 };
 
 /*!\name Type deduction guides

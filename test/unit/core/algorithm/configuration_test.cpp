@@ -12,6 +12,7 @@
 #include "configuration_mock.hpp"
 
 #include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 TEST(configuration, concept_check)
 {
@@ -222,58 +223,148 @@ TEST(configuration, remove_by_type_template)
     }
 }
 
-TEST(configuration, value_or_by_type)
+TEST(configuration, get_or_by_type)
 {
     seqan3::configuration cfg = bax{2.2} | bar{1};
 
     { // l-value
-        EXPECT_FLOAT_EQ(cfg.value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
+        EXPECT_FLOAT_EQ(cfg.get_or(bax{1.3}).value, 2.2);
+        EXPECT_TRUE((std::same_as<decltype(cfg.get_or(bax{1.3})), bax &>));
+        EXPECT_EQ(cfg.get_or(foo{"test"}).value, "test");
     }
 
     { // const l-value
-        seqan3::configuration<bax, bar> const cfg_c{cfg};
-        EXPECT_FLOAT_EQ(cfg_c.value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
+        EXPECT_FLOAT_EQ(std::as_const(cfg).get_or(bax{1.3}).value, 2.2);
+        EXPECT_TRUE((std::same_as<decltype(std::as_const(cfg).get_or(bax{1.3})), bax const &>));
+        EXPECT_EQ(std::as_const(cfg).get_or(foo{"test"}).value, "test");
     }
 
     { // r-value
-        seqan3::configuration<bax, bar> cfg_r{cfg};
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
+        EXPECT_FLOAT_EQ(std::move(seqan3::configuration<bax, bar>{cfg}).get_or(bax{1.3}).value, 2.2);
+        EXPECT_TRUE((std::same_as<decltype(seqan3::configuration<bax, bar>{cfg}.get_or(bax{1.3})), bax &&>));
+        EXPECT_EQ(std::move(seqan3::configuration<bax, bar>{cfg}).get_or(foo{"test"}).value, "test");
     }
 
     { // const r-value
         seqan3::configuration<bax, bar> const cfg_cr{cfg};
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<bax>(1.3), 2.2);
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
+        EXPECT_FLOAT_EQ(std::move(cfg_cr).get_or(bax{1.3}).value, 2.2);
+        // TODO: Enable when gcc7 support is dropped or seqan3::get is implemented as CPO.
+        // seqan3::configuration<bax, bar> const cfg_cr2{cfg};
+        // EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&>));
+        seqan3::configuration<bax, bar> const cfg_cr3{cfg};
+        EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
     }
 }
 
-TEST(configuration, value_or_by_type_template)
+TEST(configuration, get_or_by_type_constexpr)
 {
-    seqan3::configuration cfg = bar{1} | foobar<>{std::vector<int>{0, 1, 2, 3}};
+    constexpr seqan3::configuration cfg = bax{2.2} | bar{1};
 
     { // l-value
-        EXPECT_TRUE(ranges::equal(cfg.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(cfg.value_or<foo>(1.3), 1.3);
+        constexpr auto element = cfg.get_or(bax{1.3});
+        EXPECT_FLOAT_EQ(element.value, 2.2);
     }
 
     { // const l-value
-        seqan3::configuration<bar, foobar<>> const cfg_c{cfg};
-        EXPECT_TRUE(ranges::equal(cfg_c.value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(cfg_c.value_or<foo>(1.3), 1.3);
+        constexpr auto element = std::as_const(cfg).get_or(bax{1.3});
+        EXPECT_FLOAT_EQ(element.value, 2.2);
     }
 
     { // r-value
-        seqan3::configuration<bar, foobar<>> cfg_r{cfg};
-        EXPECT_TRUE(ranges::equal(std::move(cfg_r).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(std::move(cfg_r).value_or<foo>(1.3), 1.3);
+        constexpr auto element = seqan3::configuration{cfg}.get_or(bax{1.3});
+        EXPECT_FLOAT_EQ(element.value, 2.2);
+    }
+
+    { // const r-value
+        constexpr seqan3::configuration const cfg_c{cfg};
+        constexpr auto element = std::move(cfg_c).get_or(bax{1.3});
+        EXPECT_FLOAT_EQ(element.value, 2.2);
+    }
+}
+
+TEST(configuration, get_or_by_type_template)
+{
+    seqan3::configuration cfg = bar{1} | foobar<>{std::vector{0, 1, 2, 3}};
+
+    using double_vec_t = std::vector<double>;
+    using alternative_t = foobar<double_vec_t>;
+    alternative_t alternative{double_vec_t{3.3}};
+
+    { // l-value
+        EXPECT_RANGE_EQ(cfg.get_or(alternative_t{double_vec_t{3.3}}).value, (std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(cfg.get_or(alternative).value, (std::vector{0, 1, 2, 3}));
+        EXPECT_EQ(cfg.get_or(foo{"test"}).value, "test");
+        EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative)), foobar<std::vector<int>> &>));
+    }
+
+    { // const l-value
+        EXPECT_RANGE_EQ(std::as_const(cfg).get_or(alternative_t{double_vec_t{3.3}}).value, (std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(std::as_const(cfg).get_or(alternative).value, (std::vector{0, 1, 2, 3}));
+        EXPECT_EQ(std::as_const(cfg).get_or(foo{"test"}).value, "test");
+        EXPECT_TRUE((std::same_as<decltype(std::as_const(cfg).get_or(alternative)), foobar<std::vector<int>> const &>));
+    }
+
+    { // r-value;
+        EXPECT_RANGE_EQ((seqan3::configuration<bar, foobar<>>{cfg}.get_or(alternative_t{double_vec_t{3.3}}).value),
+                        (std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ((seqan3::configuration<bar, foobar<>>{cfg}.get_or(alternative).value),
+                        (std::vector{0, 1, 2, 3}));
+        EXPECT_EQ((seqan3::configuration<bar, foobar<>>{cfg}.get_or(foo{"test"}).value), "test");
+        EXPECT_TRUE((std::same_as<decltype(seqan3::configuration<bar, foobar<>>{cfg}.get_or(alternative)),
+                    foobar<std::vector<int>> &&>));
     }
 
     { // const r-value
         seqan3::configuration<bar, foobar<>> const cfg_cr{cfg};
-        EXPECT_TRUE(ranges::equal(std::move(cfg_cr).value_or<foobar>(3.3), std::vector{0, 1, 2, 3}));
-        EXPECT_FLOAT_EQ(std::move(cfg_cr).value_or<foo>(1.3), 1.3);
+        EXPECT_RANGE_EQ(std::move(cfg_cr).get_or(alternative_t{double_vec_t{3.3}}).value, (std::vector{0, 1, 2, 3}));
+        seqan3::configuration<bar, foobar<>> const cfg_cr2{cfg};
+        EXPECT_RANGE_EQ(std::move(cfg_cr2).get_or(alternative).value, (std::vector{0, 1, 2, 3}));
+        seqan3::configuration<bar, foobar<>> const cfg_cr3{cfg};
+        EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
+        // TODO: Enable when gcc7 support is dropped or seqan3::get is implemented as CPO.
+        // seqan3::configuration<bar, foobar<>> const cfg_cr4{cfg};
+        // EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr4).get_or(alternative)),
+        //             foobar<std::vector<int>> const &&>));
     }
+}
+
+TEST(configuration, get_or_by_template_type_constexpr)
+{
+    constexpr seqan3::configuration cfg = bar{1} | foobar<bool>{true};
+
+    { // l-value
+        constexpr auto element = cfg.get_or(foobar<int>{1});
+        EXPECT_EQ(element.value, true);
+    }
+
+    { // const l-value
+        constexpr auto element = std::as_const(cfg).get_or(foobar<int>{1});
+        EXPECT_EQ(element.value, true);
+    }
+
+    { // r-value
+        constexpr auto element = seqan3::configuration{cfg}.get_or(foobar<int>{1});
+        EXPECT_EQ(element.value, true);
+    }
+
+    { // const r-value
+        constexpr seqan3::configuration const cfg_c{cfg};
+        constexpr auto element = std::move(cfg_c).get_or(foobar<int>{1});
+        EXPECT_EQ(element.value, true);
+    }
+}
+
+TEST(configuration, get_or_perfectly_forwarded_alternative)
+{
+    seqan3::configuration<bar, foo> cfg{};
+
+    using alternative_t = foobar<std::vector<double>>;
+    alternative_t alternative{std::vector<double>{3.3}};
+    alternative_t const const_alternative{alternative};
+
+    EXPECT_RANGE_EQ(cfg.get_or(alternative_t{std::vector<double>{3.3}}).value, (std::vector<double>{3.3}));
+    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative)), alternative_t &>));
+    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(const_alternative)), alternative_t const &>));
+    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative_t{std::vector<double>{3.3}})), alternative_t>));
+    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(std::move(const_alternative))), alternative_t const>));
 }

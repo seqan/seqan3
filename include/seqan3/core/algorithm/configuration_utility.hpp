@@ -79,7 +79,7 @@ inline constexpr bool is_configuration_valid_v = is_configuration_valid<query_t,
  *
  * \details
  *
- * This helper meta function is used to provide the `get` and `value_or` interface for template template types.
+ * This helper meta function is used to provide the `get` and `get_or` interface for template template types.
  */
 template <template <typename ...> typename query_t>
 struct is_same_configuration_f

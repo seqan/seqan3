@@ -25,7 +25,7 @@ foo(t) -> foo<t>;
 
 int main()
 {
-    seqan3::configuration my_cfg{bar{1.3}};
-    seqan3::debug_stream << my_cfg.value_or<bar>("not there") << '\n';  // prints: 1.3
-    seqan3::debug_stream << my_cfg.value_or<foo>("not there") << '\n';  // prints: not there
+    seqan3::configuration my_cfg{foo{1}}; // Only foo<int> is present.
+    seqan3::debug_stream << my_cfg.get_or(foo{std::string{"hello"}}).value << '\n';  // finds foo<int> -> prints: 1
+    seqan3::debug_stream << my_cfg.get_or(bar{2.4}).value << '\n';  // bar not present -> prints: 2.4
 }
