@@ -124,7 +124,7 @@ using ::ranges::cpp20::sized_range;
 
 // [range.view], views
 using ::ranges::cpp20::enable_view;
-// using ::ranges::cpp20::view_base;
+using ::ranges::view_base;
 using ::ranges::cpp20::view;
 
 // [range.refinements], other range refinements

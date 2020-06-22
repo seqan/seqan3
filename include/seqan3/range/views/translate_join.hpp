@@ -38,7 +38,7 @@ namespace seqan3::detail
  * \ingroup views
  */
 template <std::ranges::view urng_t>
-class view_translate_join : public ranges::view_base
+class view_translate_join : public std::ranges::view_base
 {
 private:
     //!\brief The data members of view_translate_join.
