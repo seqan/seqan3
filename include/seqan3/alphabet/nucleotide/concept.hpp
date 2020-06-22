@@ -43,10 +43,12 @@ public:
         {
             { impl(priority_tag<2>{}, nucl) };
             requires noexcept(impl(priority_tag<2>{}, nucl));
-            requires std::same_as<nucleotide_t, decltype(impl(priority_tag<2>{}, nucl))>;
+            // requires std::common_with<decltype(impl(priority_tag<2>{}, nucl)), nucleotide_t>; // triggers an ICE
+            requires alphabet<decltype(impl(priority_tag<2>{}, nucl))>;
+            { impl(priority_tag<2>{}, impl(priority_tag<2>{}, nucl)) }; // you can take the complement again
         }
     //!\endcond
-    constexpr nucleotide_t operator()(nucleotide_t const nucl) const noexcept
+    constexpr auto operator()(nucleotide_t const nucl) const noexcept
     {
         return impl(priority_tag<2>{}, nucl);
     }
