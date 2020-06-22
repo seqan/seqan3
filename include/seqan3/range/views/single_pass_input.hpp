@@ -51,7 +51,7 @@ private:
     struct state
     {
         //!\brief The underlying range.
-        urng_t             urng;
+        urng_t urng;
         //!\brief The cached iterator of the underlying range.
         urng_iterator_type cached_urng_iter = std::ranges::begin(urng);
     };
@@ -59,24 +59,16 @@ private:
     //!\brief Manages the internal state.
     std::shared_ptr<state> state_ptr{};
 
-public:
     /*!\name Member types
      * \{
      */
     //!\brief Iterator type.
-    using iterator          = single_pass_input_iterator<single_pass_input_view>;
-    //!\brief Const iterator type is `void`, as iterating over this view as `const` is explicitly forbidden.
-    using const_iterator    = void;
+    using iterator = single_pass_input_iterator<single_pass_input_view>;
     //!\brief The sentinel type.
-    using sentinel          = std::ranges::sentinel_t<urng_t>;
-    //!\brief Value type.
-    using value_type        = typename iterator::value_type;
-    //!\brief Always returns immutable reference type, since single_pass_input cannot change the underlying values.
-    using reference         = typename iterator::reference;
-    //!\brief The const_reference type is `void`, as iterating over this view as `const` is explicitly forbidden.
-    using const_reference   = void;
+    using sentinel = std::ranges::sentinel_t<urng_t>;
     //\}
 
+public:
     /*!\name Constructor, destructor, and assignment.
      * \{
      * \brief All standard functions are explicitly defaulted.
@@ -123,14 +115,14 @@ public:
      */
     iterator begin()
     {
-        return iterator{*this};
+        return {*this};
     }
 
     //!\brief Const version of begin is deleted, since the underlying view_state must be mutable.
-    const_iterator begin() const = delete;
+    iterator begin() const = delete;
 
     //!\copydoc single_pass_input_view::begin() const
-    const_iterator cbegin() const = delete;
+    iterator cbegin() const = delete;
 
     //!\brief Returns a sentinel.
     sentinel end()
@@ -177,7 +169,7 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
     //!\brief The pointer to the associated view.
     using base_iterator_type = typename single_pass_input_view<view_type>::urng_iterator_type;
     //!\brief The sentinel type to compare to.
-    using sentinel_type      = typename single_pass_input_view<view_type>::sentinel;
+    using sentinel_type = typename single_pass_input_view<view_type>::sentinel;
 
     //!\brief The pointer to the associated view.
     single_pass_input_view<view_type> * view_ptr{};
@@ -195,13 +187,13 @@ public:
      * \{
      */
     //!\brief Difference type.
-    using difference_type   = std::iter_difference_t<base_iterator_type>;
+    using difference_type = std::iter_difference_t<base_iterator_type>;
     //!\brief Value type.
-    using value_type        = std::iter_value_t<base_iterator_type>;
+    using value_type = std::iter_value_t<base_iterator_type>;
     //!\brief Pointer type.
-    using pointer           = typename std::iterator_traits<base_iterator_type>::pointer;
+    using pointer = detail::iter_pointer_t<base_iterator_type>;
     //!\brief Reference type.
-    using reference         = std::iter_reference_t<base_iterator_type>;
+    using reference = std::iter_reference_t<base_iterator_type>;
     //!\brief Iterator category.
     using iterator_category = std::input_iterator_tag;
     //!\}
@@ -284,8 +276,7 @@ public:
 
     //!\copydoc operator==
     friend constexpr bool
-    operator==(sentinel_type const & s,
-               single_pass_input_iterator<single_pass_input_view<view_type>> const & rhs) noexcept
+    operator==(sentinel_type const & s, single_pass_input_iterator const & rhs) noexcept
     {
         return rhs == s;
     }
@@ -298,8 +289,7 @@ public:
 
     //!\copydoc operator!=
     friend constexpr bool
-    operator!=(sentinel_type const & s,
-               single_pass_input_iterator<single_pass_input_view<view_type>> const & rhs) noexcept
+    operator!=(sentinel_type const & s, single_pass_input_iterator const & rhs) noexcept
     {
         return rhs != s;
     }

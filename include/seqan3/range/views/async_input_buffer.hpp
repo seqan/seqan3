@@ -33,7 +33,7 @@ namespace seqan3::detail
 
 /*!\brief The type returned by seqan3::views::async_input_buffer.
  * \tparam urng_t The underlying range type.
- * \implements std::ranges::InputRange
+ * \implements std::ranges::input_range
  * \ingroup views
  */
 template <std::ranges::range urng_t>
@@ -41,11 +41,11 @@ class async_input_buffer_view : public std::ranges::view_interface<async_input_b
 {
 private:
     static_assert(std::ranges::input_range<urng_t>,
-        "The range parameter to async_input_buffer_view must be at least an std::ranges::InputRange.");
+        "The range parameter to async_input_buffer_view must be at least an std::ranges::input_range.");
     static_assert(std::ranges::view<urng_t>,
-        "The range parameter to async_input_buffer_view must model std::ranges::View.");
+        "The range parameter to async_input_buffer_view must model std::ranges::view.");
     static_assert(std::movable<std::ranges::range_value_t<urng_t>>,
-        "The range parameter to async_input_buffer_view must have a value_type that is std::Movable.");
+        "The range parameter to async_input_buffer_view must have a value_type that is std::movable.");
     static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>,
                                           std::remove_reference_t<std::ranges::range_reference_t<urng_t>> &&>,
         "The range parameter to async_input_buffer_view must have a value_type that is constructible by a moved "
@@ -77,12 +77,12 @@ public:
     /*!\name Constructor, destructor, and assignment.
      * \{
      */
-    async_input_buffer_view()                                         = default; //!< Defaulted.
-    async_input_buffer_view(async_input_buffer_view const &)                = default; //!< Defaulted.
-    async_input_buffer_view(async_input_buffer_view &&)                     = default; //!< Defaulted.
-    async_input_buffer_view & operator=(async_input_buffer_view const &)    = default; //!< Defaulted.
-    async_input_buffer_view & operator=(async_input_buffer_view &&)         = default; //!< Defaulted.
-    ~async_input_buffer_view()                                        = default; //!< Defaulted.
+    async_input_buffer_view() = default; //!< Defaulted.
+    async_input_buffer_view(async_input_buffer_view const &) = default; //!< Defaulted.
+    async_input_buffer_view(async_input_buffer_view &&) = default; //!< Defaulted.
+    async_input_buffer_view & operator=(async_input_buffer_view const &) = default; //!< Defaulted.
+    async_input_buffer_view & operator=(async_input_buffer_view &&) = default; //!< Defaulted.
+    ~async_input_buffer_view() = default; //!< Defaulted.
 
     //!\brief Construction from the underlying view.
     async_input_buffer_view(urng_t _urng, size_t const buffer_size)
@@ -114,7 +114,7 @@ public:
         state_ptr->producer = std::thread{runner};
     }
 
-    //!\brief Construction from std::ranges::ViewableRange.
+    //!\brief Construction from std::ranges::viewable_range.
     template <typename other_urng_t>
     //!\cond
     requires (!std::same_as<remove_cvref_t<other_urng_t>, async_input_buffer_view>) && // prevent recursive instantiation
@@ -188,31 +188,31 @@ public:
     * \{
     */
     //!\brief Difference type.
-    using difference_type   = std::iter_difference_t<urng_iterator_type>;
+    using difference_type = std::iter_difference_t<urng_iterator_type>;
     //!\brief Value type.
-    using value_type        = std::iter_value_t<urng_iterator_type>;
+    using value_type = std::iter_value_t<urng_iterator_type>;
     //!\brief Pointer type.
-    using pointer           = value_type *;
+    using pointer = detail::iter_pointer_t<urng_iterator_type>;
     //!\brief Reference type.
-    using reference         = value_type &;
+    using reference = std::iter_reference_t<urng_iterator_type>;
     //!\brief Iterator category.
     using iterator_category = std::input_iterator_tag;
     //!\brief Iterator concept.
-    using iterator_concept  = iterator_category;
+    using iterator_concept = iterator_category;
     //!\}
 
     /*!\name Construction, destruction and assignment
      * \brief Not explicitly `noexcept` because this depends on construction/copy/... of value_type.
      * \{
      */
-    async_input_buffer_iterator()                                                    = default; //!< Defaulted.
+    async_input_buffer_iterator() = default; //!< Defaulted.
     //TODO: delete:
-    async_input_buffer_iterator(async_input_buffer_iterator const & rhs)             = default; //!< Defaulted.
-    async_input_buffer_iterator(async_input_buffer_iterator && rhs)                  = default; //!< Defaulted.
+    async_input_buffer_iterator(async_input_buffer_iterator const & rhs) = default; //!< Defaulted.
+    async_input_buffer_iterator(async_input_buffer_iterator && rhs) = default; //!< Defaulted.
     //TODO: delete:
     async_input_buffer_iterator & operator=(async_input_buffer_iterator const & rhs) = default; //!< Defaulted.
-    async_input_buffer_iterator & operator=(async_input_buffer_iterator && rhs)      = default; //!< Defaulted.
-    ~async_input_buffer_iterator()                                          noexcept = default; //!< Defaulted.
+    async_input_buffer_iterator & operator=(async_input_buffer_iterator && rhs) = default; //!< Defaulted.
+    ~async_input_buffer_iterator() noexcept = default; //!< Defaulted.
 
     //!\brief Constructing from the underlying seqan3::async_input_buffer_view.
     async_input_buffer_iterator(contrib::fixed_buffer_queue<std::ranges::range_value_t<urng_t>> & buffer) noexcept :
@@ -300,7 +300,7 @@ public:
  * \{
  */
 
-//!\brief Deduces the async_input_buffer_view from the underlying range if it is a std::ranges::ViewableRange.
+//!\brief Deduces the async_input_buffer_view from the underlying range if it is a std::ranges::viewable_range.
 template <std::ranges::viewable_range urng_t>
 async_input_buffer_view(urng_t &&, size_t const buffer_size) -> async_input_buffer_view<std::views::all_t<urng_t>>;
 //!\}
@@ -327,11 +327,11 @@ struct async_input_buffer_fn
     constexpr auto operator()(urng_t && urange, size_t const buffer_size) const
     {
         static_assert(std::ranges::input_range<urng_t>,
-            "The range parameter to views::async_input_buffer must be at least an std::ranges::InputRange.");
+            "The range parameter to views::async_input_buffer must be at least an std::ranges::input_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to views::async_input_buffer cannot be a temporary of a non-view range.");
         static_assert(std::movable<std::ranges::range_value_t<urng_t>>,
-            "The range parameter to views::async_input_buffer must have a value_type that is std::Movable.");
+            "The range parameter to views::async_input_buffer must have a value_type that is std::movable.");
         static_assert(std::constructible_from<std::ranges::range_value_t<urng_t>,
                                               std::remove_reference_t<std::ranges::range_reference_t<urng_t>> &&>,
             "The range parameter to views::async_input_buffer must have a value_type that is constructible by a moved "

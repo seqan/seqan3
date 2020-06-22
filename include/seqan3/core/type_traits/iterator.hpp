@@ -167,10 +167,10 @@ struct size_type<it_t>
 template <typename it_t>
 struct iterator_tag
 {
-SEQAN3_DOXYGEN_ONLY(
+#if SEQAN3_DOXYGEN_ONLY(1)0
     //!\brief The [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags).
     using type = iterator_category;
-)
+#endif
 };
 
 //!\cond
@@ -231,3 +231,45 @@ using iterator_tag_t = typename iterator_tag<it_t>::type;
 //!\}
 
 } // namespace seqan3
+
+namespace seqan3::detail
+{
+// ----------------------------------------------------------------------------
+// iter_pointer
+// ----------------------------------------------------------------------------
+
+/*!\brief This is like std::iter_value_t, but for the pointer type.
+ * \implements seqan3::transformation_trait
+ * \tparam it_t The type to operate on.
+ * \see seqan3::detail::iter_pointer_t
+ *
+ * \attention
+ * C++20 does not provide a `std::iter_pointer_t`, because the new C++20 iterators do not need to provide a pointer
+ * type.
+ */
+template <typename it_t>
+struct iter_pointer
+{
+    //!\brief The pointer type of std::iterator_traits or void.
+    using type = void;
+};
+
+//!\cond
+template <typename it_t>
+    requires requires { typename std::iterator_traits<it_t>::pointer; }
+struct iter_pointer<it_t>
+{
+    //!\brief This is defined for every legacy input-iterator.
+    //!\sa https://en.cppreference.com/w/cpp/iterator/iterator_traits
+    using type = typename std::iterator_traits<it_t>::pointer;
+};
+//!\endcond
+
+/*!\brief Return the `pointer` type of the input type (transformation_trait shortcut).
+ * \tparam it_t The type to operate on.
+ * \see seqan3::detail::iter_pointer
+ */
+template <typename it_t>
+using iter_pointer_t = typename iter_pointer<it_t>::type;
+
+} // namespace seqan3::detail

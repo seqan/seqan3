@@ -48,7 +48,7 @@ namespace seqan3::detail
  *
  * Depending on the types of the input ranges a more efficient transformation using simd instructions is used.
  * The following requirements must be fulfilled by the inner range type of the underlying range:
- *  * they must model std::ranges::ContigiousRange
+ *  * they must model std::ranges::contiguous_range
  *  * the iterator and sentinel types must model std::sized_sentinel_for
  *  * the size of the rank type of the underlying alphabet must be 1.
  *
