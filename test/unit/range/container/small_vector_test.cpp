@@ -15,6 +15,11 @@
 #include <seqan3/std/ranges>
 #include <seqan3/test/cereal.hpp>
 
+#include "container_test_template.hpp"
+
+using small_vector_over_dna4_t = seqan3::small_vector<seqan3::dna4, 1000>;
+INSTANTIATE_TYPED_TEST_SUITE_P(small_vector, container_over_dna4_test, small_vector_over_dna4_t, );
+
 // standard construction.
 TEST(small_vector, standard_construction)
 {
