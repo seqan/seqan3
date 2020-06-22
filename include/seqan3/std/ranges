@@ -30,6 +30,22 @@ template<class T>
     requires ::std::derived_from<T, ::std::ranges::view_base>
 //!\endcond
 inline constexpr bool enable_view<T> = true;
+
+// std::ranges::borrowed_range's are valid range-v3 borrowed_range's
+//!\cond
+template <::std::input_or_output_iterator I, ::std::sentinel_for<I> S, ::std::ranges::subrange_kind K>
+inline constexpr bool enable_borrowed_range<::std::ranges::subrange<I, S, K>> = true;
+
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::empty_view<T>> = true;
+
+template <::std::weakly_incrementable W, ::std::semiregular Bound>
+inline constexpr bool enable_borrowed_range<::std::ranges::iota_view<W, Bound>> = true;
+
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::ref_view<T>> = true;
+//!\endcond
+
 } // namespace ranges
 
 namespace std::ranges
@@ -40,6 +56,13 @@ template<class T>
     requires ::std::derived_from<T, ::ranges::view_base>
 //!\endcond
 inline constexpr bool enable_view<T> = true;
+
+//!\brief std::ranges::borrowed_range's are valid range-v3 borrowed_range's
+template<class T>
+//!\cond
+    requires ::ranges::enable_borrowed_range<T>
+//!\endcond
+inline constexpr bool enable_borrowed_range<T> = true;
 } // namespace std::ranges
 
 #else // implement via range-v3
