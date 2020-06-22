@@ -14,6 +14,7 @@
 #pragma once
 
 #include <iomanip>
+#include <seqan3/std/ranges>
 #include <tuple>
 
 #include <range/v3/algorithm/for_each.hpp>
@@ -22,11 +23,11 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
 
 // ---------------------------------------------------------------------------------------------------------------------
 // unaligned_seq transformation trait
@@ -202,8 +203,8 @@ namespace seqan3
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT aligned_sequence =
+    sequence<t> &&
     std::ranges::forward_range<t> &&
-    alphabet<std::ranges::range_reference_t<t>> &&
     weakly_assignable_from<std::ranges::range_reference_t<t>, gap const &> &&
     requires { typename detail::unaligned_seq_t<t>; } &&
     requires (t v, detail::unaligned_seq_t<t> unaligned)
