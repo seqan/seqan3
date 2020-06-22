@@ -168,6 +168,8 @@ public:
 
     //!\brief The new iterator category.
     using iterator_category = std::random_access_iterator_tag;
+    //!\brief The new iterator concept.
+    using iterator_concept = iterator_category;
 
     /*!\name Constructors, destructor and assignment
      * \{

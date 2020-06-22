@@ -196,9 +196,9 @@ public:
     //!\brief Reference type.
     using reference         = value_type &;
     //!\brief Iterator category.
-    using iterator_category = void;
+    using iterator_category = std::input_iterator_tag;
     //!\brief Iterator concept.
-    using iterator_concept  = std::input_iterator_tag;
+    using iterator_concept  = iterator_category;
     //!\}
 
     /*!\name Construction, destruction and assignment
