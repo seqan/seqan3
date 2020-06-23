@@ -47,12 +47,11 @@ protected:
 
         search_cfg::error_count const zero_error = search_cfg::error_count{0};
 
-        errors.total = to_error_count(cfg.template value_or<search_cfg::max_error_total>(zero_error), query_size);
-        errors.substitution = to_error_count(cfg.template value_or<search_cfg::max_error_substitution>(zero_error),
+        errors.total = to_error_count(cfg.get_or(search_cfg::max_error_total{zero_error}).value, query_size);
+        errors.substitution = to_error_count(cfg.get_or(search_cfg::max_error_substitution{zero_error}).value,
                                              query_size);
-        errors.insertion = to_error_count(cfg.template value_or<search_cfg::max_error_insertion>(zero_error),
-                                          query_size);
-        errors.deletion = to_error_count(cfg.template value_or<search_cfg::max_error_deletion>(zero_error), query_size);
+        errors.insertion = to_error_count(cfg.get_or(search_cfg::max_error_insertion{zero_error}).value, query_size);
+        errors.deletion = to_error_count(cfg.get_or(search_cfg::max_error_deletion{zero_error}).value, query_size);
 
         // If only total is set, we set all other errors to the total limit.
         if constexpr (search_traits_t::only_max_error_total)
