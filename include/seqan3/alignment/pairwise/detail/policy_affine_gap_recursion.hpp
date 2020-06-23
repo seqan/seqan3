@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides seqan3::detail::policy_affine_gap_recursion.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -56,6 +57,11 @@ protected:
     //!\brief The score for a gap opening including the gap extension.
     score_type gap_open_score{};
 
+    //!\brief Initialisation state of the first row of the alignment.
+    bool first_row_is_free{};
+    //!\brief Initialisation state of the first column of the alignment.
+    bool first_column_is_free{};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -90,6 +96,13 @@ protected:
         {
             gap_extension_score = static_cast<score_type>(selected_gap_scheme.get_gap_score());
             gap_open_score = static_cast<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
+        }
+        if constexpr (traits_type::with_free_end_gaps)
+        {
+            // front_end_first, back_end_first, front_end_second, back_end_second
+            auto align_ends_config = get<align_cfg::aligned_ends>(config).value;
+            first_row_is_free = align_ends_config[0];
+            first_column_is_free = align_ends_config[2];
         }
     }
     //!\}
@@ -149,7 +162,9 @@ protected:
      */
     affine_cell_type initialise_origin_cell() const noexcept
     {
-        return {score_type{}, gap_open_score, gap_open_score};
+        return {score_type{},
+                first_row_is_free ? score_type{} : gap_open_score,
+                first_column_is_free ? score_type{} : gap_open_score};
     }
 
     /*!\brief Initialises a cell of the first alignment matrix column.
@@ -173,8 +188,10 @@ protected:
     affine_cell_type initialise_first_column_cell(affine_cell_t previous_cell) const noexcept
     {
         score_type new_vertical = previous_cell.vertical_score() + gap_extension_score;
-        return {previous_cell.vertical_score(), previous_cell.vertical_score() + gap_open_score, new_vertical};
-    }
+        return {previous_cell.vertical_score(),
+                previous_cell.vertical_score() + gap_open_score,
+                first_column_is_free ? previous_cell.vertical_score() : new_vertical};
+               }
 
     /*!\brief Initialises the first cell of a alignment matrix column.
      *
@@ -198,7 +215,7 @@ protected:
     {
         score_type new_horizontal_score = previous_cell.horizontal_score() + gap_extension_score;
         return {previous_cell.horizontal_score(),
-                new_horizontal_score,
+                first_row_is_free ? previous_cell.horizontal_score() : new_horizontal_score,
                 previous_cell.horizontal_score() + gap_open_score};
     }
 };

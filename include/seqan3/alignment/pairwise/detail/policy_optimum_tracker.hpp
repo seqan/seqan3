@@ -8,6 +8,7 @@
 /*!\file
  * \brief Provides seqan3::detail::policy_optimum_tracker.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -57,6 +58,33 @@ private:
     //!\brief The matrix coordinate of the tracked optimum.
     matrix_coordinate optimal_coordinate{};
 
+    //!\brief Flag to handle the free end gaps in the last row of the alignment.
+    bool last_row_is_free{};
+    //!\brief Flag to handle the free end gaps in the last column of the alignment.
+    bool last_column_is_free{};
+
+    /*!\brief Find the new maximum for a given cell of the alignment matrix.
+     *
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     *
+     * \param[in] cell The current cell to be tracked.
+     * \param[in] coordinate The matrix coordinate of the current cell.
+     *
+     * \returns The forwarded cell.
+     *
+     * \details
+     *
+     * A call to this function only tracks the optimal score of the given cell if the configuration of the alignment
+     * algorithm requires it.
+     */
+    template <typename cell_t>
+    void find_new_optimum(cell_t && cell, matrix_coordinate coordinate) noexcept
+    {
+        bool const is_better_score = cell.optimal_score() >= optimal_score;
+        optimal_score = is_better_score ? cell.optimal_score() : optimal_score;
+        optimal_coordinate = is_better_score ? std::move(coordinate) : optimal_coordinate;
+    }
+
 protected:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -75,8 +103,15 @@ protected:
      *
      * Resets the optimum on construction.
      */
-    policy_optimum_tracker(alignment_configuration_t const & SEQAN3_DOXYGEN_ONLY(config))
+    policy_optimum_tracker(alignment_configuration_t const & config)
     {
+        if constexpr (traits_type::with_free_end_gaps)
+        {
+            // front_end_first, back_end_first, front_end_second, back_end_second
+            auto align_ends_config = get<align_cfg::aligned_ends>(config).value;
+            last_row_is_free = align_ends_config[1];
+            last_column_is_free = align_ends_config[3];
+        }
         reset_optimum();
     }
     //!\}
@@ -116,8 +151,11 @@ protected:
      * algorithm requires it, for example when a semi-global alignment shall be computed.
      */
     template <typename cell_t>
-    decltype(auto) track_last_row_cell(cell_t && cell, matrix_coordinate SEQAN3_DOXYGEN_ONLY(coordinate)) noexcept
+    decltype(auto) track_last_row_cell(cell_t && cell, matrix_coordinate coordinate) noexcept
     {
+        if (last_row_is_free)
+            find_new_optimum(cell, std::move(coordinate));
+
         return std::forward<cell_t>(cell);
     }
 
@@ -136,8 +174,11 @@ protected:
      * algorithm requires it, for example when a semi-global alignment shall be computed.
      */
     template <typename cell_t>
-    decltype(auto) track_last_column_cell(cell_t && cell, matrix_coordinate SEQAN3_DOXYGEN_ONLY(coordinate)) noexcept
+    decltype(auto) track_last_column_cell(cell_t && cell, matrix_coordinate coordinate) noexcept
     {
+        if (last_column_is_free)
+            find_new_optimum(cell, std::move(coordinate));
+
         return std::forward<cell_t>(cell);
     }
 
@@ -158,9 +199,8 @@ protected:
     template <typename cell_t>
     decltype(auto) track_final_cell(cell_t && cell, matrix_coordinate coordinate) noexcept
     {
-        bool const is_better_score = cell.optimal_score() >= optimal_score;
-        optimal_score = (is_better_score) ? cell.optimal_score() : optimal_score;
-        optimal_coordinate = (is_better_score) ? std::move(coordinate) : optimal_coordinate;
+        if (!(last_column_is_free || last_row_is_free))
+            find_new_optimum(cell, std::move(coordinate));
 
         return std::forward<cell_t>(cell);
     }

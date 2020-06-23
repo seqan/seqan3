@@ -199,7 +199,7 @@ private:
         //!\brief The score type for the alignment computation.
         using score_t = typename traits_t::score_type;
         //!\brief A bool constant to disambiguate true global alignments.
-        static constexpr bool is_global_alignment = traits_t::is_global && !traits_t::is_aligned_ends;
+        static constexpr bool is_global_alignment = traits_t::is_global && !traits_t::with_free_end_gaps;
 
     public:
         //!\brief The find optimum policy for either scalar or vectorised alignment.
@@ -499,7 +499,6 @@ private:
 
         // Use old alignment implementation if...
         if constexpr (traits_t::is_local ||            // it is a local alignment,
-                      traits_t::is_aligned_ends ||     // it has aligned ends configured,
                       traits_t::is_vectorised ||       // it is vectorised,
                       traits_t::is_banded ||           // it is banded,
                       traits_t::is_debug ||            // it runs in debug mode,
