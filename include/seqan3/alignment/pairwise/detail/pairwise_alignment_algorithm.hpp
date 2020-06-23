@@ -51,7 +51,7 @@ template <typename alignment_configuration_t, typename ...policies_t>
 //!\endcond
 class pairwise_alignment_algorithm : protected policies_t...
 {
-private:
+protected:
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
     //!\brief The type of the scoring scheme.
@@ -95,7 +95,7 @@ public:
      * \tparam indexed_sequence_pairs_t The type of indexed_sequence_pairs; must model
      *                                  seqan3::detail::indexed_sequence_pair_range.
      * \tparam callback_t The type of the callback function that is called with the alignment result; must model
-    *                    std::invocable with seqan3::alignment_result as argument.
+     *                    std::invocable with seqan3::alignment_result as argument.
      *
      * \param[in] indexed_sequence_pairs A range over indexed sequence pairs to be aligned.
      * \param[in] callback The callback function to be invoked with each computed alignment result.
@@ -150,6 +150,7 @@ public:
                                          callback);
         }
     }
+    //!\}
 
 protected:
     /*!\brief Compute the actual alignment.

@@ -29,9 +29,7 @@ namespace seqan3::test::alignment::fixture::global::affine::banded
 
 inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                               seqan3::gap_open_score{-10}}} |
-                                     seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
-                                                                        seqan3::align_cfg::upper_diagonal{8}};
+                                                                               seqan3::gap_open_score{-10}}};
 
 static auto dna4_01 = []()
 {   //    AACCGGTTAACCGGTT
@@ -50,7 +48,9 @@ static auto dna4_01 = []()
     {
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        align_config | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                                          seqan3::align_cfg::upper_diagonal{8}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         -18,
         "A---ACCGGTTAACCGGTT",
@@ -59,8 +59,8 @@ static auto dna4_01 = []()
         seqan3::alignment_coordinate{seqan3::detail::column_index_type{16u}, seqan3::detail::row_index_type{9u}},
         std::vector<std::optional<int32_t>>
         {
-        //       A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
-             0  ,-11,-12,-13,-14,-15,-16,-17,-18,INF,INF,INF,INF,INF,INF,INF,INF,
+        //   e  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
+        /*e*/0  ,-11,-12,-13,-14,-15,-16,-17,-18,INF,INF,INF,INF,INF,INF,INF,INF,
         /*A*/-11,4  ,-7 ,-8 ,-9 ,-10,-11,-12,-13,-14,INF,INF,INF,INF,INF,INF,INF,
         /*C*/-12,-7 ,-1 ,-3 ,-4 ,-14,-15,-16,-17,-18,-19,INF,INF,INF,INF,INF,INF,
         /*G*/-13,-8 ,-12,-6 ,-8 ,0  ,-10,-12,-13,-14,-15,-16,INF,INF,INF,INF,INF,
@@ -73,8 +73,8 @@ static auto dna4_01 = []()
         },
         std::vector<std::optional<seqan3::detail::trace_directions>>
         {
-        //       A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
-             N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        //   e  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
+        /*e*/N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,INF,INF,INF,INF,INF,
         /*A*/U  ,DUL,DUL,l  ,l  ,l  ,l  ,l  ,l  ,D  ,INF,INF,INF,INF,INF,INF,INF,
         /*C*/u  ,UL ,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,D  ,INF,INF,INF,INF,INF,INF,
         /*G*/u  ,uL ,DUL,DUl,DUL,Dul,DuL,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,INF,INF,
@@ -88,4 +88,266 @@ static auto dna4_01 = []()
     };
 }();
 
+static auto dna4_same_sequence_upper_diagonal_0 = []()
+{
+    //   0123456789|
+    //  0x         |
+    //  1 x        |
+    //  2  x       |
+    //  3x  x      |
+    //  4 x  x     |
+    //  5  x  x    |
+    //  6   x  x   |
+    //  7    x  x  |
+    //  8     x  x |
+    //  9      x  x|
+    return alignment_fixture
+    {
+        "ACGTACGTA"_dna4,
+        "ACGTACGTA"_dna4,
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                                          seqan3::align_cfg::upper_diagonal{0}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
+        36,
+        "ACGTACGTA",
+        "ACGTACGTA",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{9u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
+        /*e*/0  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/-11,4  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/-12,-7 ,8  ,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/-13,-8 ,-3 ,12 ,INF,INF,INF,INF,INF,INF,
+        /*T*/INF,-9 ,-4 ,1  ,16 ,INF,INF,INF,INF,INF,
+        /*A*/INF,INF,-5 ,0  ,5  ,20 ,INF,INF,INF,INF,
+        /*C*/INF,INF,INF,-1 ,4  ,9  ,24 ,INF,INF,INF,
+        /*G*/INF,INF,INF,INF,3  ,8  ,13 ,28 ,INF,INF,
+        /*T*/INF,INF,INF,INF,INF,7  ,12 ,17 ,32 ,INF,
+        /*A*/INF,INF,INF,INF,INF,INF,11 ,16 ,21 ,36
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
+        /*e*/N  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/U  ,D  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/u  ,UL ,D  ,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/u  ,uL ,UL ,D  ,INF,INF,INF,INF,INF,INF,
+        /*T*/INF,u  ,uL ,UL ,D  ,INF,INF,INF,INF,INF,
+        /*A*/INF,INF,u  ,uL ,UL ,D  ,INF,INF,INF,INF,
+        /*C*/INF,INF,INF,u  ,uL ,UL ,D  ,INF,INF,INF,
+        /*G*/INF,INF,INF,INF,u  ,uL ,UL ,D  ,INF,INF,
+        /*T*/INF,INF,INF,INF,INF,u  ,uL ,UL ,D  ,INF,
+        /*A*/INF,INF,INF,INF,INF,INF,u  ,uL ,UL ,D
+        }
+    };
+}();
+
+static auto dna4_same_sequence_lower_diagonal_0 = []()
+{
+    //   0123456789|
+    //  0x       x |
+    //  1 x       x|
+    //  2  x       |
+    //  3   x      |
+    //  4    x     |
+    //  5     x    |
+    //  6      x   |
+    //  7       x  |
+    //  8        x |
+    //  9         x|
+    return alignment_fixture
+    {
+        "ACGTACGTA"_dna4,
+        "ACGTACGTA"_dna4,
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
+                                                          seqan3::align_cfg::upper_diagonal{8}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
+        36,
+        "ACGTACGTA",
+        "ACGTACGTA",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{9u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
+        /*e*/0  ,-11,-12,-13,-14,-15,-16,-17,-18,INF,
+        /*A*/INF,4  ,-7 ,-8 ,-9 ,-10,-11,-12,-13,-14,
+        /*C*/INF,INF,8  ,-3 ,-4 ,-5 ,-6 ,-7 ,-8 ,-9 ,
+        /*G*/INF,INF,INF,12 ,1  ,0  ,-1 ,-2 ,-3 ,-4 ,
+        /*T*/INF,INF,INF,INF,16 ,5  ,4  ,3  ,2  ,1  ,
+        /*A*/INF,INF,INF,INF,INF,20 ,9  ,8  ,7  ,6  ,
+        /*C*/INF,INF,INF,INF,INF,INF,24 ,13 ,12 ,11 ,
+        /*G*/INF,INF,INF,INF,INF,INF,INF,28 ,17 ,16 ,
+        /*T*/INF,INF,INF,INF,INF,INF,INF,INF,32 ,21 ,
+        /*A*/INF,INF,INF,INF,INF,INF,INF,INF,INF,36
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
+        /*e*/N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,
+        /*A*/INF,DU ,L  ,l  ,l  ,DUl,l  ,l  ,l  ,D  ,
+        /*C*/INF,INF,DU ,L  ,l  ,l  ,DUl,l  ,l  ,l  ,
+        /*G*/INF,INF,INF,DU ,L  ,l  ,l  ,DUl,l  ,l  ,
+        /*T*/INF,INF,INF,INF,DU ,L  ,l  ,l  ,DUl,l  ,
+        /*A*/INF,INF,INF,INF,INF,DU ,L  ,l  ,l  ,DUl,
+        /*C*/INF,INF,INF,INF,INF,INF,DU ,L  ,l  ,l  ,
+        /*G*/INF,INF,INF,INF,INF,INF,INF,DU ,L  ,l  ,
+        /*T*/INF,INF,INF,INF,INF,INF,INF,INF,DU ,L  ,
+        /*A*/INF,INF,INF,INF,INF,INF,INF,INF,INF,DU
+        }
+    };
+}();
+
+static auto dna4_small_band = []()
+{
+    //   01234567890|
+    // 0   x        |
+    // 1    x       |
+    // 2x    x      |
+    // 3 x    x     |
+    // 4  x    x    |
+    // 5   x    x   |
+    // 6    x    x  |
+    // 7     x    x |
+    // 8      x    x|
+    // 9       x    |
+    return alignment_fixture
+    {
+        "ATCGACGATA"_dna4,
+        "ACGACTAGC"_dna4,
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
+                                                          seqan3::align_cfg::upper_diagonal{2}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
+        -2,
+        "ATCGACGATA",
+        "A-CGACTAGC",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{9u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //   e  ,A  ,T  ,C  ,G  ,A  ,C  ,G  ,A  ,T  ,A  ,
+        /*e*/0  ,-11,-12,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/-11,4  ,-7 ,-8 ,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/-12,-7 ,-1 ,-3 ,-13,INF,INF,INF,INF,INF,INF,
+        /*G*/INF,-8 ,-12,-6 ,1  ,-10,INF,INF,INF,INF,INF,
+        /*A*/INF,INF,-13,-15,-10,5  ,-6 ,INF,INF,INF,INF,
+        /*C*/INF,INF,INF,-9 ,-11,-6 ,9  ,-2 ,INF,INF,INF,
+        /*T*/INF,INF,INF,INF,-12,-7 ,-2 ,4  ,-7 ,INF,INF,
+        /*A*/INF,INF,INF,INF,INF,-8 ,-3 ,-7 ,8  ,-3 ,INF,
+        /*G*/INF,INF,INF,INF,INF,INF,-4 ,1  ,-3 ,3  ,-8 ,
+        /*C*/INF,INF,INF,INF,INF,INF,INF,-9 ,-4 ,-8 ,-2
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //   e  ,A  ,T  ,C  ,G  ,A  ,C  ,G  ,A  ,T  ,A  ,
+        /*e*/N  ,L  ,l  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/U  ,DUL,L  ,l  ,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/u  ,UL ,DUL,DUL,D  ,INF,INF,INF,INF,INF,INF,
+        /*G*/INF,u  ,DUL,DUl,DUL,L  ,INF,INF,INF,INF,INF,
+        /*A*/INF,INF,Du ,uL ,Ul ,DUL,L  ,INF,INF,INF,INF,
+        /*C*/INF,INF,INF,Du ,uL ,Ul ,DUL,L  ,INF,INF,INF,
+        /*T*/INF,INF,INF,INF,u  ,uL ,UL ,DUL,D  ,INF,INF,
+        /*A*/INF,INF,INF,INF,INF,Du ,uL ,DUL,DUl,L  ,INF,
+        /*G*/INF,INF,INF,INF,INF,INF,u  ,DuL,UL ,DUl,D  ,
+        /*C*/INF,INF,INF,INF,INF,INF,INF,Du ,DuL,DUL,DUl
+        }
+    };
+}();
+
+static auto dna4_single_diagonal = []()
+{
+    //   012345|
+    // 0 x     |
+    // 1  x    |
+    // 2   x   |
+    // 3    x  |
+    // 4     x |
+    // 5      x|
+
+    return alignment_fixture
+    {
+        "ATCGA"_dna4,
+        "ACGAC"_dna4,
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
+                                                          seqan3::align_cfg::upper_diagonal{0}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
+        -16,
+        "ATCGA",
+        "ACGAC",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{5u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //     e,  A,  T,  C,  G,  A,
+        /*e*/  0,INF,INF,INF,INF,INF,
+        /*A*/INF,  4,INF,INF,INF,INF,
+        /*C*/INF,INF, -1,INF,INF,INF,
+        /*G*/INF,INF,INF, -6,INF,INF,
+        /*A*/INF,INF,INF,INF,-11,INF,
+        /*C*/INF,INF,INF,INF,INF,-16
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //      e,  A,  T,  C,  G,  A,
+        /*e*/   N,INF,INF,INF,INF,INF,
+        /*A*/ INF,  D,INF,INF,INF,INF,
+        /*C*/ INF,INF,  D,INF,INF,INF,
+        /*G*/ INF,INF,INF,  D,INF,INF,
+        /*A*/ INF,INF,INF,INF,  D,INF,
+        /*C*/ INF,INF,INF,INF,INF,  D
+        }
+    };
+}();
+
+static auto dna4_large_band = []()
+{
+    //   012345|
+    // 0       |
+    // 1       |
+    // 2       |
+    // 3       |
+    // 4       |
+    // 5       |
+
+    return alignment_fixture
+    {
+        "ATCGA"_dna4,
+        "ACGAC"_dna4,
+        align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10},
+                                                          seqan3::align_cfg::upper_diagonal{10}} |
+                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                    seqan3::mismatch_score{-5}}},
+        -6,
+        "ATCGA-",
+        "A-CGAC",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{5u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //   e   ,A  ,T  ,C  ,G  ,A  ,
+        /*e*/0  ,-11,-12,-13,-14,-15,
+        /*A*/-11,4  ,-7 ,-8 ,-9 ,-10,
+        /*C*/-12,-7 ,-1 ,-3 ,-13,-14,
+        /*G*/-13,-8 ,-12,-6 ,1  ,-10,
+        /*A*/-14,-9 ,-13,-15,-10,5  ,
+        /*C*/-15,-10,-14,-9 ,-11,-6
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //   e  ,A  ,T  ,C  ,G  ,A  ,
+        /*e*/N  ,L  ,l  ,l  ,l  ,l  ,
+        /*A*/U  ,DUL,L  ,l  ,l  ,DUl,
+        /*C*/u  ,UL ,DUL,DUL,DUl,DUl,
+        /*G*/u  ,uL ,DUL,DUl,DuL,L  ,
+        /*A*/u  ,DuL,DuL,ul ,Ul ,DUL,
+        /*C*/u  ,uL ,DuL,Dul,uL ,Ul
+        }
+    };
+}();
 } // namespace seqan3::test::alignment::fixture::global::affine::banded
