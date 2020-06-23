@@ -522,7 +522,7 @@ private:
         }
         else  // Use new alignment algorithm implementation.
         {
-            using optimum_tracker_policy_t = policy_optimum_tracker<config_t>;
+            using optimum_tracker_policy_t = policy_optimum_tracker<config_t, max_score_updater>;
             using gap_cost_policy_t = std::conditional_t<traits_t::is_banded,
                                                          policy_affine_gap_recursion_banded<config_t>,
                                                          policy_affine_gap_recursion<config_t>>;
