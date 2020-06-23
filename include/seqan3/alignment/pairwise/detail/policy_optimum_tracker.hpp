@@ -133,7 +133,8 @@ protected:
      *
      * \details
      *
-     * Resets the optimum on construction.
+     * Reads the state of seqan3::align_cfg::aligned_ends and enables the tracking of the last row or column if
+     * requested. Otherwise, only the last cell will be tracked.
      */
     policy_optimum_tracker(alignment_configuration_t const & config)
     {
@@ -144,7 +145,6 @@ protected:
             test_last_row_cell = align_ends_config[1];
             test_last_column_cell = align_ends_config[3];
         }
-        reset_optimum();
     }
     //!\}
 
