@@ -181,9 +181,12 @@ public:
         {
             original_score_t score = this->optimal_score[index] -
                                      (this->padding_offsets[index] * this->scoring_scheme.padding_match_score());
+            matrix_coordinate coordinate{row_index_type{size_t{this->optimal_coordinate.row[index]}},
+                                         column_index_type{size_t{this->optimal_coordinate.col[index]}}};
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          std::move(score),
+                                         std::move(coordinate),
                                          callback);
             ++index;
         }
