@@ -42,7 +42,6 @@ protected:
 
     // import types from base class.
     using typename base_algorithm_t::traits_type;
-    using typename base_algorithm_t::scoring_scheme_type;
     using typename base_algorithm_t::alignment_result_type;
     using typename base_algorithm_t::score_type;
 
@@ -298,8 +297,8 @@ protected:
         cell = this->track_cell(
                 this->initialise_band_first_cell(cell.best_score(),
                                                  *++alignment_column_it,
-                                                 this->m_scoring_scheme.score(sequence1_value,
-                                                                              *std::ranges::begin(sequence2))),
+                                                 this->scoring_scheme.score(sequence1_value,
+                                                                            *std::ranges::begin(sequence2))),
                 *cell_index_column_it);
 
         // ---------------------------------------------------------------------
@@ -312,7 +311,7 @@ protected:
             cell = this->track_cell(
                 this->compute_inner_cell(cell.best_score(),
                                          *++alignment_column_it,
-                                         this->m_scoring_scheme.score(sequence1_value, sequence2_value)),
+                                         this->scoring_scheme.score(sequence1_value, sequence2_value)),
                 *++cell_index_column_it);
         }
 

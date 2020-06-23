@@ -27,6 +27,7 @@
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion_banded.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_scoring_scheme.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
@@ -528,11 +529,14 @@ private:
                                                          policy_affine_gap_recursion<config_t>>;
             using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
+            using scoring_scheme_policy_t = policy_scoring_scheme<config_t, typename traits_t::scoring_scheme_type>;
+
             using algorithm_t = select_alignment_algorithm_t<traits_t,
                                                              config_t,
                                                              gap_cost_policy_t,
                                                              optimum_tracker_policy_t,
-                                                             result_builder_policy_t>;
+                                                             result_builder_policy_t,
+                                                             scoring_scheme_policy_t>;
             return algorithm_t{cfg};
         }
     }
