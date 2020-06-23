@@ -204,15 +204,6 @@ protected:
         return std::forward<cell_t>(cell);
     }
 
-    /*!\brief Returns the stored optimum.
-     *
-     * \returns The stored optimum.
-     */
-    score_type tracked_optimum() const noexcept
-    {
-        return optimal_score;
-    }
-
     //!\brief Resets the optimum such that a new alignment can be computed.
     void reset_optimum() noexcept
     {
