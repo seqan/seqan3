@@ -5,17 +5,23 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-/*!\file
- * \brief Meta-header for the aligned sequence in the \link alignment alignment module \endlink.
- * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- */
+#include <gtest/gtest.h>
 
-#pragma once
+#include <sstream>
+#include <vector>
 
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alignment/aligned_sequence/debug_stream_alignment.hpp>
+#include <seqan3/core/detail/debug_stream_tuple.hpp>
 
-/*!\defgroup aligned_sequence Aligned Sequence
- * \ingroup alignment
- * \brief Provides seqan3::aligned_sequence, as well as various ranges that model it.
- */
+// https://github.com/seqan/product_backlog/issues/125
+TEST(debug_stream_type, issue_125)
+{
+    using aligned_sequence_t = std::vector<seqan3::gapped<char>>;
+    using alignment_t = std::pair<aligned_sequence_t, aligned_sequence_t>;
+
+    std::ostringstream oss;
+    seqan3::debug_stream_type stream{oss};
+    stream << alignment_t{};
+    EXPECT_EQ(oss.str(), "");
+}

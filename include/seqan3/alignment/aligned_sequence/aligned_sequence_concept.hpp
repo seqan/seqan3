@@ -13,21 +13,13 @@
 
 #pragma once
 
-#include <iomanip>
+#include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
-#include <tuple>
-
-#include <range/v3/algorithm/for_each.hpp>
 
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/views/slice.hpp>
-#include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/zip.hpp>
 
 // ---------------------------------------------------------------------------------------------------------------------
 // unaligned_seq transformation trait
@@ -476,65 +468,10 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
     return rng.erase_gap(first, last);
 }
 //!\}
+} // namespace seqan3
 
-namespace detail
+namespace seqan3::detail
 {
-
-/*!\brief               Create the formatted alignment output and add it to the provided debug_stream.
- * \ingroup             aligned_sequence
- * \tparam alignment_t  The type of the alignment, must satisfy tuple_like.
- * \tparam idx          An index sequence.
- * \param[in] stream    The output stream that receives the formatted alignment.
- * \param[in] align     The alignment that shall be streamed.
- */
-template <typename char_t, tuple_like alignment_t, size_t ...idx>
-void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
-{
-    using std::get;
-    size_t const alignment_size = get<0>(align).size();
-
-    // split alignment into blocks of length 50 and loop over parts
-    for (size_t begin_pos = 0; begin_pos < alignment_size; begin_pos += 50)
-    {
-        size_t const end_pos = std::min(begin_pos + 50, alignment_size);
-
-        // write header line
-        if (begin_pos != 0)
-            stream << '\n';
-
-        stream << std::setw(7) << begin_pos << ' ';
-        for (size_t pos = begin_pos + 1; pos <= end_pos; ++pos)
-        {
-            if (pos % 10 == 0)
-                stream << ':';
-            else if (pos % 5 == 0)
-                stream << '.';
-            else
-                stream << ' ';
-        }
-
-        // write first sequence
-        stream << '\n' << std::setw(8) << "";
-        std::ranges::for_each(get<0>(align) | views::slice(begin_pos, end_pos) | views::to_char,
-                         [&stream] (char ch) { stream << ch; });
-
-        auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
-        {
-            // write alignment bars
-            stream << '\n' << std::setw(8) << "";
-            std::ranges::for_each(views::zip(previous_seq, aligned_seq) | views::slice(begin_pos, end_pos),
-                                  [&stream] (auto && ch) { stream << (get<0>(ch) == get<1>(ch) ? '|' : ' '); });
-
-            // write next sequence
-            stream << '\n' << std::setw(8) << "";
-            std::ranges::for_each(aligned_seq | views::slice(begin_pos, end_pos) | views::to_char,
-                                  [&stream] (char ch) { stream << ch; });
-        };
-        (stream_f(get<idx>(align), get<idx + 1>(align)), ...);
-        stream << '\n';
-    }
-}
-
 /*!\brief True, if each type satisfies aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
@@ -547,27 +484,4 @@ inline bool constexpr all_satisfy_aligned_seq = false;
 template <typename ...elems>
 inline bool constexpr all_satisfy_aligned_seq<type_list<elems...>> = (aligned_sequence<elems> && ...);
 
-} // namespace detail
-
-/*!\brief Stream operator for alignments, which are represented as tuples of aligned sequences.
- * \ingroup         aligned_sequence
- * \tparam tuple_t  The alignment type, must satisfy tuple_like and its size must be at least 2.
- * \param stream    The target stream for the formatted output.
- * \param alignment The alignment that shall be formatted. All sequences must be equally long.
- * \return          The given stream to which the alignment representation is appended.
- */
-template <typename tuple_t, typename char_t>
-//!\cond
-    requires (!std::ranges::input_range<tuple_t>) &&
-             (!alphabet<tuple_t>) && // exclude alphabet_tuple_base
-             tuple_like<remove_cvref_t<tuple_t>> &&
-             detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<tuple_t>>>
-//!\endcond
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, tuple_t && alignment)
-{
-    static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> >= 2, "An alignment requires at least two sequences.");
-    detail::stream_alignment(stream, alignment, std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>> - 1> {});
-    return stream;
-}
-
-} // namespace seqan
+} // namespace seqan3::detail

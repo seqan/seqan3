@@ -12,10 +12,12 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
+
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -37,6 +39,22 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
     s << ')';
 }
 
+/*!\interface seqan3::detail::debug_streamable_tuple <>
+ * \brief A helper concept to avoid ambiguous overloads with the debug stream operator for alignments.
+ * \ingroup core
+ * \tparam tuple_t The tuple type to print to the seqan3::detail::debug_stream_type.
+ *
+ * \details
+ *
+ * This concept requires that the given type is a seqan3::tuple_like type but neither an std::ranges::input_range nor
+ * an alphabet (see seqan3::alphabet_tuple_base).
+ */
+//!\cond
+template <typename tuple_t>
+SEQAN3_CONCEPT debug_streamable_tuple = !std::ranges::input_range<tuple_t> &&
+                                        !alphabet<tuple_t> &&  // exclude alphabet_tuple_base
+                                        tuple_like<remove_cvref_t<tuple_t>>;
+//!\endcond
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -48,11 +66,9 @@ namespace seqan3
  * \param t The tuple.
  * \relates seqan3::debug_stream_type
  */
-template <typename tuple_t, typename char_t>
+template <typename char_t, typename tuple_t>
 //!\cond
-    requires (!std::ranges::input_range<tuple_t>) &&
-             (!alphabet<tuple_t>) && // exclude alphabet_tuple_base
-             tuple_like<remove_cvref_t<tuple_t>>
+    requires (detail::debug_streamable_tuple<tuple_t>)
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
 {
