@@ -12,6 +12,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/std/iterator>
@@ -88,4 +89,24 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
     this->check_result(buffer);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(execution_handler, execute_as_indexed_sequence_pairs);
+TYPED_TEST_P(execution_handler, bulk_execute)
+{
+    std::vector<std::pair<size_t, size_t>> buffer{};
+    buffer.resize(this->total_size);
+
+    TypeParam exec_handler{};
+
+    size_t chunk_size = 4;
+    auto indexed_sequence_pairs = seqan3::views::zip(seqan3::views::zip(this->sequence_collection1,
+                                                                        this->sequence_collection2),
+                                                     std::views::iota(0))
+                                | seqan3::views::chunk(chunk_size);
+
+    exec_handler.bulk_execute(simulate_alignment_with_range, indexed_sequence_pairs, [&] (auto && result_pair)
+    {
+        buffer[result_pair.first] = result_pair;
+    });
+    this->check_result(buffer);
+}
+
+REGISTER_TYPED_TEST_SUITE_P(execution_handler, execute_as_indexed_sequence_pairs, bulk_execute);

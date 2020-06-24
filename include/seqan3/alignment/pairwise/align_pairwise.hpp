@@ -192,11 +192,15 @@ constexpr auto align_pairwise(sequence_t && sequences,
             return execution_handler_t{};
     };
 
-    // Return the range over the alignments.
-    return alignment_range{executor_t{std::move(indexed_sequence_chunk_view),
-                                      std::move(algorithm),
-                                      alignment_result_t{},
-                                      select_execution_handler()}};
+    if constexpr (traits_t::is_one_way_execution) // Just compute alignment and wait until all alignments are computed.
+        select_execution_handler().bulk_execute(algorithm,
+                                                indexed_sequence_chunk_view,
+                                                get<align_cfg::on_result>(complete_config).callback);
+    else  // Require two way execution: return the range over the alignments.
+        return alignment_range{executor_t{std::move(indexed_sequence_chunk_view),
+                                          std::move(algorithm),
+                                          alignment_result_t{},
+                                          select_execution_handler()}};
 }
 //!\endcond
 

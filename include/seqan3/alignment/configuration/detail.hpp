@@ -31,6 +31,7 @@ enum struct align_config_id : uint8_t
     global,       //!< ID for the \ref seqan3::global_alignment "global alignment" option.
     local,        //!< ID for the \ref seqan3::local_alignment "local alignment" option.
     max_error,    //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
+    on_result,    //!< ID for the \ref seqan3::align_cfg::on_result "on_result" option.
     parallel,     //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.
     result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring,      //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
@@ -51,19 +52,20 @@ template <>
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
                             static_cast<uint8_t>(align_config_id::SIZE)> compatibility_table<align_config_id>
 {
-    {   //0  1  2  3  4  5  6  7  8  9 10 11
-        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: alignment_result_capture
-        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, //  1: aligned_ends
-        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  2: band
-        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: debug
-        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1}, //  4: gap
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1}, //  5: global
-        { 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1}, //  6: local
-        { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, //  7: max_error
-        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, //  8: parallel
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, //  9: result
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 10: scoring
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 11: vectorise
+    {   //0  1  2  3  4  5  6  7  8  9 10 11 12
+        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: alignment_result_capture
+        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, //  1: aligned_ends
+        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  2: band
+        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: debug
+        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: gap
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1}, //  5: global
+        { 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1}, //  6: local
+        { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1}, //  7: max_error
+        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, //  8: on_result
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, //  9: parallel
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 10: result
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 11: scoring
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 12: vectorise
     }
 };
 

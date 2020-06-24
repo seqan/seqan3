@@ -78,18 +78,19 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
- * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::max_error "5: Max error"        |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::parallel "6: Parallel"          |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::result "7: Result"              |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"     |       |       |       |       |       |       |       |        |   ❌   |  ✅   |
- * | \ref seqan3::align_cfg::vectorise "9: Vectorise"        |       |       |       |       |       |       |       |        |        |  ❌   |
+ * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** | **10** |
+ * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|
+ * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::max_error "5: Max error"        |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::on_result "6: On result"        |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::parallel "7: Parallel"          |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::result "8: Result"              |       |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |
+ * | \ref seqan3::align_cfg::scoring "9: Scoring scheme"     |       |       |       |       |       |       |       |       |        |  ❌    |  ✅   |
+ * | \ref seqan3::align_cfg::vectorise "10: Vectorise"       |       |       |       |       |       |       |       |       |        |        |  ❌   |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
@@ -207,11 +208,28 @@
  *
  * # Parallel alignment execution
  *
- * SeqAn's alignment algorithm is internally accelerated using multi-threading. To compute the alignments in parallel
- * one can call seqan3::align_pairwise with a seqan3::par execution policy.
- * This will automatically spawn a thread for every CPU-(core) available and compute the alignments
- * concurrently. By default the algorithm is called with the seqan3::seq execution policy, which means
- * sequential execution of the alignments.
+ * SeqAn's alignment algorithm is internally accelerated using multi-threading. The parallel execution can be selected
+ * by specifying the seqan3::align_cfg::parallel configuration element. This will enable the asynchronous execution
+ * of the alignments in the backend. For the user interface nothing changes as the returned seqan3::alignment_range
+ * will preserve the order of the computed alignment results, i.e. the first result corresponds to the first alignment
+ * given by the input range. By default, a thread pool with std::thread::hardware_concurrency many threads will be
+ * created on a call to seqan3::align_pairwise and destructed when all alignments have been processed and the
+ * seqan3::alignment_range goes out of scope. The configuration element seqan3::align_cfg::parallel can be initialised
+ * with a custom thread count which determines the number of threads that will be spawned in the background.
+ *
+ * ## User callback
+ *
+ * In some cases, for example when executing the alignments in parallel, it can be beneficial for the performance to
+ * use a continuation interface rather than collecting the results first through the seqan3::alignment_range.
+ * To be more precise, if more work needs to be done after the alignment has been computed, it could be better to
+ * stay within the thread and continue the work rather than buffering the result and computing the next alignment.
+ * The alignment algorithm allows the user to specify their own callback function which will be invoked by the alignment
+ * algorithm when a seqan3::alignment_result has been computed. To do so, the seqan3::align_cfg::on_result configuration
+ * element can be used during the alignment configuration. Note that if seqan3::align_cfg::on_result is specified, the
+ * algorithm seqan3::align_pairwise does not return a seqan3::alignment_range anymore. In fact, the algorithm's return 
+ * type is `void`. The following code snippet illustrates this behavior:
+ *
+ * \include test/snippet/alignment/pairwise/parallel_align_pairwise_with_callback.cpp
  */
 
  #pragma once
