@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <functional>
+#include <optional>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
@@ -38,7 +39,7 @@ TEST(align_config_parallel, configuration)
         seqan3::configuration cfg{elem};
         auto cfg_value = std::get<seqan3::align_cfg::parallel>(cfg).thread_count;
 
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, uint32_t>));
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, std::optional<uint32_t>>));
         EXPECT_EQ(cfg_value, 2u);
     }
 
@@ -46,7 +47,7 @@ TEST(align_config_parallel, configuration)
         seqan3::configuration cfg{seqan3::align_cfg::parallel{2}};
         auto cfg_value = std::get<seqan3::align_cfg::parallel>(cfg).thread_count;
 
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, uint32_t>));
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, std::optional<uint32_t>>));
         EXPECT_EQ(cfg_value, 2u);
     }
 }

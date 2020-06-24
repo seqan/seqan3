@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <optional>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 namespace seqan3::detail
@@ -47,7 +48,7 @@ public:
     //!\}
 
     //!\brief The maximum number of threads the algorithm can use.
-    uint32_t thread_count{1u};
+    std::optional<uint32_t> thread_count{std::nullopt};
 
     /*!\privatesection
      * \brief Internal id to check for consistent configuration settings.
