@@ -173,7 +173,7 @@ using ::ranges::cpp20::views::all;
 template<viewable_range R>
 using all_t = ::ranges::cpp20::all_view<R>;
 } // namespace views
-// using ::ranges::cpp20::ref_view;
+using ::ranges::cpp20::ref_view;
 
 // [range.filter], filter view
 // using ::ranges::cpp20::filter_view;

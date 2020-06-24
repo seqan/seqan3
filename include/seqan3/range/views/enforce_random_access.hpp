@@ -69,7 +69,7 @@ public:
     //!\cond
      requires (!std::same_as<remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
               std::ranges::viewable_range<viewable_rng_t> &&
-              std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
+              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
     //!\endcond
     explicit constexpr view_enforce_random_access(viewable_rng_t range) :
         view_enforce_random_access{std::views::all(range)}

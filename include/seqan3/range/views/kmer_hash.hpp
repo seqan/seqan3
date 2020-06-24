@@ -84,7 +84,7 @@ public:
     //!\cond
      requires (!std::same_as<remove_cvref_t<rng_t>, kmer_hash_view>) &&
               std::ranges::viewable_range<rng_t> &&
-              std::constructible_from<urng_t, ranges::ref_view<std::remove_reference_t<rng_t>>>
+              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     kmer_hash_view(rng_t && urange_, shape const & s_) :
         urange{std::views::all(std::forward<rng_t>(urange_))}, shape_{s_}
