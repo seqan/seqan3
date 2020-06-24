@@ -60,225 +60,9 @@ private:
     //!\brief The desired target_size.
     size_t target_size;
 
-    //!\brief The iterator type inherits from the underlying type, but overwrites several operators.
-    //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
+    //!\brief The forward declared iterator type.
     template <typename rng_t>
-    class iterator_type : public inherited_iterator_base<iterator_type<rng_t>, std::ranges::iterator_t<rng_t>>
-    {
-    private:
-        //!\brief The iterator type of the underlying range.
-        using base_base_t = std::ranges::iterator_t<rng_t>;
-        //!\brief The CRTP wrapper type.
-        using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
-
-        //!\brief The sentinel type is identical to that of the underlying range.
-        using sentinel_type = std::ranges::sentinel_t<urng_t>;
-
-        //!\brief The current position.
-        size_t pos{};
-
-        //!\brief The size parameter to the view.
-        size_t max_pos{};
-
-        //!\brief A pointer to host, s.t. the size of the view can shrink on pure input ranges.
-        std::conditional_t<exactly && !std::forward_iterator<base_base_t>, view_take *, detail::ignore_t> host_ptr;
-
-    public:
-        /*!\name Constructors, destructor and assignment
-         * \brief Exceptions specification is implicitly inherited.
-         * \{
-         */
-        constexpr iterator_type()                                      = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
-        ~iterator_type()                                               = default; //!< Defaulted.
-
-        //!\brief Constructor that delegates to the CRTP layer.
-        constexpr iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}
-        {}
-
-        //!\brief Constructor that delegates to the CRTP layer and initialises the members.
-        constexpr iterator_type(base_base_t it, size_t const _pos, size_t const _max_pos, view_take * host = nullptr) noexcept(noexcept(base_t{it})) :
-            base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
-        {
-            host_ptr = host;
-        }
-        //!\}
-
-        /*!\name Associated types
-         * \brief All are derived from the base_base_t.
-         * \{
-         */
-
-        //!\brief The difference type.
-        using difference_type = std::iter_difference_t<base_base_t>;
-        //!\brief The value type.
-        using value_type = std::iter_value_t<base_base_t>;
-        //!\brief The reference type.
-        using reference = std::iter_reference_t<base_base_t>;
-        //!\brief The pointer type.
-        using pointer = detail::iter_pointer_t<base_base_t>;
-        //!\brief The iterator category tag.
-        using iterator_category = iterator_tag_t<base_base_t>;
-        //!\}
-
-        /*!\name Arithmetic operators
-         * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
-         * \{
-         */
-
-        //!\brief Increments the iterator by one.
-        constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
-        {
-            base_t::operator++();
-            ++pos;
-            if constexpr (exactly && !std::forward_iterator<base_base_t>)
-                --host_ptr->target_size;
-            return *this;
-        }
-
-        //!\brief Returns an iterator incremented by one.
-        constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
-                                               std::is_nothrow_copy_constructible_v<iterator_type>)
-        {
-            iterator_type cpy{*this};
-            ++(*this);
-            return cpy;
-        }
-
-        //!\brief Decrements the iterator by one.
-        constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
-        //!\cond
-            requires std::bidirectional_iterator<base_base_t>
-        //!\endcond
-        {
-            base_t::operator--();
-            --pos;
-            return *this;
-        }
-
-        //!\brief Returns an iterator decremented by one.
-        constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
-                                               std::is_nothrow_copy_constructible_v<iterator_type>)
-        //!\cond
-            requires std::bidirectional_iterator<base_base_t>
-        //!\endcond
-        {
-            iterator_type cpy{*this};
-            --(*this);
-            return cpy;
-        }
-
-        //!\brief Advances the iterator by skip positions.
-        constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
-        //!\cond
-            requires std::random_access_iterator<base_base_t>
-        //!\endcond
-        {
-            base_t::operator+=(skip);
-            pos += skip;
-            return *this;
-        }
-
-        //!\brief Advances the iterator by -skip positions.
-        constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
-        //!\cond
-            requires std::random_access_iterator<base_base_t>
-        //!\endcond
-        {
-            base_t::operator-=(skip);
-            pos -= skip;
-            return *this;
-        }
-        //!\}
-
-        /*!\name Comparison operators
-         * \brief We define comparison against self and against the sentinel.
-         * \{
-         */
-
-        //!\brief Checks whether `*this` is equal to `rhs`.
-        constexpr bool operator==(iterator_type const & rhs) const
-            noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
-        //!\cond
-            requires std::forward_iterator<base_base_t>
-        //!\endcond
-        {
-            return *base_t::this_to_base() == *rhs.this_to_base();
-        }
-
-        //!\copydoc operator==()
-        constexpr bool operator==(sentinel_type const & rhs) const
-            noexcept(!or_throw && noexcept(std::declval<base_base_t const &>() == std::declval<sentinel_type const &>()))
-        {
-            if (pos >= max_pos)
-                return true;
-
-            if (*base_t::this_to_base() == rhs)
-            {
-                if constexpr (or_throw)
-                    throw unexpected_end_of_input{"Reached end of input before designated size."};
-
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        //!\brief Checks whether `lhs` is equal to `rhs`.
-        constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
-        {
-            return rhs == lhs;
-        }
-
-        //!\brief Checks whether `*this` is not equal to `rhs`.
-        constexpr bool operator!=(sentinel_type const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
-        {
-            return !(*this == rhs);
-        }
-
-        //!\copydoc operator!=()
-        constexpr bool operator!=(iterator_type const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type &>() == rhs))
-        //!\cond
-            requires std::forward_iterator<base_base_t>
-        //!\endcond
-        {
-            return !(*this == rhs);
-        }
-
-        //!\brief Checks whether `lhs` is not equal to `rhs`.
-        constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
-        {
-            return rhs != lhs;
-        }
-        //!\}
-
-        /*!\name Reference/Dereference operators
-         * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
-         * \{
-         */
-
-        /*!\brief Accesses an element by index.
-         * \param n Position relative to current location.
-         * \return A reference to the element at relative location.
-         */
-        constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
-            noexcept(noexcept(std::declval<base_base_t &>()[0]))
-        //!\cond
-            requires std::random_access_iterator<base_base_t>
-        //!\endcond
-        {
-            return base_base_t::operator[](n);
-        }
-        //!\}
-    }; // class iterator_type
+    class iterator_type;
 
 private:
     /*!\name Associated types
@@ -454,7 +238,235 @@ public:
     {
         return target_size;
     }
-};
+}; // class view_take
+
+//!\brief The iterator for the view_take. It inherits from the underlying type, but overwrites several operators.
+//!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
+template <std::ranges::view urng_t, bool exactly, bool or_throw>
+template <typename rng_t>
+class view_take<urng_t,
+                exactly,
+                or_throw>::iterator_type : public inherited_iterator_base<iterator_type<rng_t>,
+                                                                          std::ranges::iterator_t<rng_t>>
+{
+private:
+    //!\brief The iterator type of the underlying range.
+    using base_base_t = std::ranges::iterator_t<rng_t>;
+    //!\brief The CRTP wrapper type.
+    using base_t      = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+
+    //!\brief The sentinel type is identical to that of the underlying range.
+    using sentinel_type = std::ranges::sentinel_t<urng_t>;
+
+    //!\brief The current position.
+    size_t pos{};
+
+    //!\brief The size parameter to the view.
+    size_t max_pos{};
+
+    //!\brief A pointer to host, s.t. the size of the view can shrink on pure input ranges.
+    std::conditional_t<exactly && !std::forward_iterator<base_base_t>, view_take *, detail::ignore_t> host_ptr;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \brief Exceptions specification is implicitly inherited.
+     * \{
+     */
+    constexpr iterator_type()                                      = default; //!< Defaulted.
+    constexpr iterator_type(iterator_type const & rhs)             = default; //!< Defaulted.
+    constexpr iterator_type(iterator_type && rhs)                  = default; //!< Defaulted.
+    constexpr iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
+    constexpr iterator_type & operator=(iterator_type && rhs)      = default; //!< Defaulted.
+    ~iterator_type()                                               = default; //!< Defaulted.
+
+    //!\brief Constructor that delegates to the CRTP layer.
+    constexpr iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
+        base_t{std::move(it)}
+    {}
+
+    //!\brief Constructor that delegates to the CRTP layer and initialises the members.
+    constexpr iterator_type(base_base_t it,
+                            size_t const _pos,
+                            size_t const _max_pos,
+                            view_take * host = nullptr) noexcept(noexcept(base_t{it})) : base_t{std::move(it)},
+                                                                                                pos{_pos},
+                                                                                                max_pos(_max_pos)
+    {
+        host_ptr = host;
+    }
+    //!\}
+
+    /*!\name Associated types
+     * \brief All are derived from the base_base_t.
+     * \{
+     */
+
+    //!\brief The difference type.
+    using difference_type = std::iter_difference_t<base_base_t>;
+    //!\brief The value type.
+    using value_type = std::iter_value_t<base_base_t>;
+    //!\brief The reference type.
+    using reference = std::iter_reference_t<base_base_t>;
+    //!\brief The pointer type.
+    using pointer = detail::iter_pointer_t<base_base_t>;
+    //!\brief The iterator category tag.
+    using iterator_category = iterator_tag_t<base_base_t>;
+    //!\}
+
+    /*!\name Arithmetic operators
+     * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
+     * \{
+     */
+
+    //!\brief Increments the iterator by one.
+    constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
+    {
+        base_t::operator++();
+        ++pos;
+        if constexpr (exactly && !std::forward_iterator<base_base_t>)
+            --host_ptr->target_size;
+        return *this;
+    }
+
+    //!\brief Returns an iterator incremented by one.
+    constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
+                                           std::is_nothrow_copy_constructible_v<iterator_type>)
+    {
+        iterator_type cpy{*this};
+        ++(*this);
+        return cpy;
+    }
+
+    //!\brief Decrements the iterator by one.
+    constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
+    //!\cond
+        requires std::bidirectional_iterator<base_base_t>
+    //!\endcond
+    {
+        base_t::operator--();
+        --pos;
+        return *this;
+    }
+
+    //!\brief Returns an iterator decremented by one.
+    constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
+                                           std::is_nothrow_copy_constructible_v<iterator_type>)
+    //!\cond
+        requires std::bidirectional_iterator<base_base_t>
+    //!\endcond
+    {
+        iterator_type cpy{*this};
+        --(*this);
+        return cpy;
+    }
+
+    //!\brief Advances the iterator by skip positions.
+    constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
+    //!\cond
+        requires std::random_access_iterator<base_base_t>
+    //!\endcond
+    {
+        base_t::operator+=(skip);
+        pos += skip;
+        return *this;
+    }
+
+    //!\brief Advances the iterator by -skip positions.
+    constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
+    //!\cond
+        requires std::random_access_iterator<base_base_t>
+    //!\endcond
+    {
+        base_t::operator-=(skip);
+        pos -= skip;
+        return *this;
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \brief We define comparison against self and against the sentinel.
+     * \{
+     */
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
+    constexpr bool operator==(iterator_type const & rhs) const
+        noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
+    //!\cond
+        requires std::forward_iterator<base_base_t>
+    //!\endcond
+    {
+        return *base_t::this_to_base() == *rhs.this_to_base();
+    }
+
+    //!\copydoc operator==()
+    constexpr bool operator==(sentinel_type const & rhs) const
+        noexcept(!or_throw && noexcept(std::declval<base_base_t const &>() == std::declval<sentinel_type const &>()))
+    {
+        if (pos >= max_pos)
+            return true;
+
+        if (*base_t::this_to_base() == rhs)
+        {
+            if constexpr (or_throw)
+                throw unexpected_end_of_input{"Reached end of input before designated size."};
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //!\brief Checks whether `lhs` is equal to `rhs`.
+    constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
+    {
+        return rhs == lhs;
+    }
+
+    //!\brief Checks whether `*this` is not equal to `rhs`.
+    constexpr bool operator!=(sentinel_type const & rhs) const
+        noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+    {
+        return !(*this == rhs);
+    }
+
+    //!\copydoc operator!=()
+    constexpr bool operator!=(iterator_type const & rhs) const
+        noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+    //!\cond
+        requires std::forward_iterator<base_base_t>
+    //!\endcond
+    {
+        return !(*this == rhs);
+    }
+
+    //!\brief Checks whether `lhs` is not equal to `rhs`.
+    constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
+    {
+        return rhs != lhs;
+    }
+    //!\}
+
+    /*!\name Reference/Dereference operators
+     * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.
+     * \{
+     */
+
+    /*!\brief Accesses an element by index.
+     * \param n Position relative to current location.
+     * \return A reference to the element at relative location.
+     */
+    constexpr reference operator[](std::make_unsigned_t<difference_type> const n) const
+        noexcept(noexcept(std::declval<base_base_t &>()[0]))
+    //!\cond
+        requires std::random_access_iterator<base_base_t>
+    //!\endcond
+    {
+        return base_base_t::operator[](n);
+    }
+    //!\}
+}; // class view_take::iterator_type
 
 //!\brief Template argument type deduction guide that strips references.
 //!\relates seqan3::detail::view_take

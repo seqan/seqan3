@@ -67,91 +67,9 @@ private:
     using difference_type = ptrdiff_t;
     //!\}
 
-    //!\brief The iterator type for views::repeat (a random access iterator).
+    //!\brief The forward declared iterator type for views::repeat (a random access iterator).
     template <typename parent_type>
-    class repeat_view_iterator : public detail::random_access_iterator_base<parent_type, repeat_view_iterator>
-    {
-        //!\brief The CRTP base type.
-        using base_t = detail::random_access_iterator_base<parent_type, repeat_view_iterator>;
-
-        //!\brief The base position type.
-        using typename base_t::position_type;
-
-    public:
-        //!\brief Type for distances between iterators.
-        using typename base_t::difference_type;
-        //!\brief Value type of container elements.
-        using typename base_t::value_type;
-        //!\brief Use reference type defined by container.
-        using typename base_t::reference;
-        //!\brief Pointer type is pointer of container element type.
-        using typename base_t::pointer;
-        //!\brief Tag this class as a random access iterator.
-        using typename base_t::iterator_category;
-
-        /*!\name Constructors, destructor and assignment
-         * \{
-         */
-        constexpr repeat_view_iterator() = default;                                         //!< Defaulted.
-        constexpr repeat_view_iterator(repeat_view_iterator const &) = default;             //!< Defaulted.
-        constexpr repeat_view_iterator & operator=(repeat_view_iterator const &) = default; //!< Defaulted.
-        constexpr repeat_view_iterator (repeat_view_iterator &&) = default;                 //!< Defaulted.
-        constexpr repeat_view_iterator & operator=(repeat_view_iterator &&) = default;      //!< Defaulted.
-        ~repeat_view_iterator() = default;                                                  //!< Defaulted.
-
-        /*!\brief Construct by host range.
-         * \param host The host range.
-         */
-        explicit constexpr repeat_view_iterator(parent_type & host) noexcept : base_t{host} {}
-
-        /*!\brief Constructor for const version from non-const version.
-         * \param rhs a non-const version of repeat_view_iterator to construct from.
-         */
-        template <typename parent_type2>
-        //!\cond
-            requires std::is_const_v<parent_type> && (!std::is_const_v<parent_type2>) &&
-                     std::is_same_v<std::remove_const_t<parent_type>, parent_type2>
-        //!\endcond
-        constexpr repeat_view_iterator(repeat_view_iterator<parent_type2> const & rhs) noexcept :
-            base_t{rhs}
-        {}
-        //!\}
-
-        /*!\name Comparison operators
-         * \{
-         */
-        //!\brief Inherit the equality comparison (same type) from base type.
-        using base_t::operator==;
-        //!\brief Inherit the inequality comparison (same type) from base type.
-        using base_t::operator!=;
-
-        //!\brief Equality comparison to the sentinel always returns false on an infinite view.
-        constexpr bool operator==(std::default_sentinel_t const &) const noexcept
-        {
-            return false;
-        }
-
-        //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
-        constexpr bool operator!=(std::default_sentinel_t const &) const noexcept
-        {
-            return true;
-        }
-
-        //!\brief Equality comparison to the sentinel always returns false on an infinite view.
-        friend constexpr bool operator==(std::default_sentinel_t const &,
-                                         repeat_view_iterator const &) noexcept
-        {
-            return false;
-        }
-
-        //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
-        friend constexpr bool operator!=(std::default_sentinel_t const &,
-                                         repeat_view_iterator const &) noexcept
-        {
-            return true;
-        }
-        //!\}
-    };
+    class repeat_view_iterator;
 
     /*!\name Associated types
     * \{
@@ -287,8 +205,96 @@ public:
 
 private:
     //!\brief A std::views::single over the input.
-    single_value_t single_value;
-};
+    decltype(std::views::single(std::declval<value_t &>())) single_value;
+}; //class repeat_view
+
+//!\brief The iterator type for views::repeat (a random access iterator).
+template <std::copy_constructible value_t>
+template <typename parent_type>
+class repeat_view<value_t>::repeat_view_iterator : public detail::random_access_iterator_base<parent_type,
+                                                                                              repeat_view_iterator>
+{
+    //!\brief The CRTP base type.
+    using base_t = detail::random_access_iterator_base<parent_type, repeat_view_iterator>;
+
+    //!\brief The base position type.
+    using typename base_t::position_type;
+
+public:
+    //!\brief Type for distances between iterators.
+    using typename base_t::difference_type;
+    //!\brief Value type of container elements.
+    using typename base_t::value_type;
+    //!\brief Use reference type defined by container.
+    using typename base_t::reference;
+    //!\brief Pointer type is pointer of container element type.
+    using typename base_t::pointer;
+    //!\brief Tag this class as a random access iterator.
+    using typename base_t::iterator_category;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr repeat_view_iterator() = default;                                         //!< Defaulted.
+    constexpr repeat_view_iterator(repeat_view_iterator const &) = default;             //!< Defaulted.
+    constexpr repeat_view_iterator & operator=(repeat_view_iterator const &) = default; //!< Defaulted.
+    constexpr repeat_view_iterator (repeat_view_iterator &&) = default;                 //!< Defaulted.
+    constexpr repeat_view_iterator & operator=(repeat_view_iterator &&) = default;      //!< Defaulted.
+    ~repeat_view_iterator() = default;                                                  //!< Defaulted.
+
+    /*!\brief Construct by host range.
+     * \param host The host range.
+     */
+    explicit constexpr repeat_view_iterator(parent_type & host) noexcept : base_t{host} {}
+
+    /*!\brief Constructor for const version from non-const version.
+     * \param rhs a non-const version of repeat_view_iterator to construct from.
+     */
+    template <typename parent_type2>
+    //!\cond
+        requires std::is_const_v<parent_type> && (!std::is_const_v<parent_type2>) &&
+                 std::is_same_v<std::remove_const_t<parent_type>, parent_type2>
+    //!\endcond
+    constexpr repeat_view_iterator(repeat_view_iterator<parent_type2> const & rhs) noexcept :
+        base_t{rhs}
+    {}
+    //!\}
+
+    /*!\name Comparison operators
+     * \{
+     */
+    //!\brief Inherit the equality comparison (same type) from base type.
+    using base_t::operator==;
+    //!\brief Inherit the inequality comparison (same type) from base type.
+    using base_t::operator!=;
+
+    //!\brief Equality comparison to the sentinel always returns false on an infinite view.
+    constexpr bool operator==(std::default_sentinel_t const &) const noexcept
+    {
+        return false;
+    }
+
+    //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
+    constexpr bool operator!=(std::default_sentinel_t const &) const noexcept
+    {
+        return true;
+    }
+
+    //!\brief Equality comparison to the sentinel always returns false on an infinite view.
+    friend constexpr bool operator==(std::default_sentinel_t const &,
+                                     repeat_view_iterator const &) noexcept
+    {
+        return false;
+    }
+
+    //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
+    friend constexpr bool operator!=(std::default_sentinel_t const &,
+                                     repeat_view_iterator const &) noexcept
+    {
+        return true;
+    }
+    //!\}
+}; // class repeat_view::repeat_view_iterator
 
 // ---------------------------------------------------------------------------------------------------------------------
 // repeat (factory)
