@@ -793,7 +793,7 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     // ---------------------------------------------------------------------
     // Writing the Record
     // ---------------------------------------------------------------------
-    seqan3::ostreambuf_iterator stream_it{stream};
+    std::cpp20::ostreambuf_iterator stream_it{stream};
     char const separator{'\t'};
 
     write_range(stream_it, std::forward<id_type>(id));

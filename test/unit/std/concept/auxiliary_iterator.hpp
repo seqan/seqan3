@@ -16,12 +16,12 @@
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 
-using input_iterator               = std::istream_iterator<char>;
-using output_iterator              = seqan3::ostream_iterator<char>;
-using forward_iterator             = std::forward_list<char>::iterator;
-using bidirectional_iterator       = std::list<char>::iterator;
-using random_access_iterator       = std::vector<char>::iterator;
-using forward_iterator_const       = std::forward_list<char>::const_iterator;
+using input_iterator = std::istream_iterator<char>;
+using output_iterator = std::cpp20::ostream_iterator<char>;
+using forward_iterator = std::forward_list<char>::iterator;
+using bidirectional_iterator = std::list<char>::iterator;
+using random_access_iterator = std::vector<char>::iterator;
+using forward_iterator_const = std::forward_list<char>::const_iterator;
 using bidirectional_iterator_const = std::list<char>::const_iterator;
 using random_access_iterator_const = std::vector<char>::const_iterator;
 
@@ -64,22 +64,23 @@ inline bool operator!=(test_sentinel<value_t> const & s,
 }
 
 template <typename iterator_type>
-struct value
+struct input_or_output_iter_value
 {
-    using type = typename std::iterator_traits<iterator_type>::value_type;
+    using type = std::iter_value_t<iterator_type>;
 };
 
+// ostream has std::iter_value_t void, but we want the output value type here.
 template <typename value_t, typename ...ts>
-struct value<seqan3::ostream_iterator<value_t, ts...>>
+struct input_or_output_iter_value<std::cpp20::ostream_iterator<value_t, ts...>>
 {
     using type = value_t;
 };
 
 template <typename iterator_type>
-using value_type_t = typename value<iterator_type>::type;
+using input_or_output_iter_value_t = typename input_or_output_iter_value<iterator_type>::type;
 
 template <typename iterator_type>
-struct test_sized_sentinel : public test_sentinel<value_type_t<iterator_type>>
+struct test_sized_sentinel : public test_sentinel<input_or_output_iter_value_t<iterator_type>>
 {
     using difference_type = typename iterator_type::difference_type;
 

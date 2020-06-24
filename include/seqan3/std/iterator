@@ -19,13 +19,17 @@
 #ifdef __cpp_lib_ranges
 namespace std
 {
-inline namespace cpp20
+namespace cpp20
 {
 // see https://github.com/orgs/seqan/projects/4#card-37029069
 using ::std::back_inserter;
 // using ::std::front_inserter;
 // using ::std::insert_iterator;
-} // inline namespace cpp20
+// using ::std::istream_iterator;
+// using ::std::istreambuf_iterator;
+using ::std::ostream_iterator;
+using ::std::ostreambuf_iterator;
+} // namespace cpp20
 } // namespace std
 #endif // __cpp_lib_ranges
 
@@ -180,13 +184,17 @@ using ::ranges::cpp20::sortable;
 // ======================================================
 
 // [insert.iterators], insert iterators
-inline namespace cpp20
+namespace cpp20
 {
 // see https://github.com/orgs/seqan/projects/4#card-37029069
 using ::ranges::cpp20::back_inserter;
 // using ::ranges::cpp20::front_inserter;
 // using ::ranges::cpp20::insert_iterator;
-} // inline namespace cpp20
+// using ::ranges::cpp20::istream_iterator;
+// using ::ranges::cpp20::istreambuf_iterator;
+using ::ranges::cpp20::ostream_iterator;
+using ::ranges::cpp20::ostreambuf_iterator;
+} // namespace cpp20
 
 // [iterators.common], common iterators
 // using ::ranges::cpp20::common_iterator;

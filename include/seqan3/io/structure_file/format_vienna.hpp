@@ -280,7 +280,7 @@ protected:
                                 comment_type && SEQAN3_DOXYGEN_ONLY(comment),
                                 offset_type && SEQAN3_DOXYGEN_ONLY(offset))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
+        std::cpp20::ostreambuf_iterator stream_it{stream};
 
         // WRITE ID (optional)
         if constexpr (!detail::decays_to_ignore_v<id_type>)

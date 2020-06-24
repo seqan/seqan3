@@ -189,7 +189,7 @@ protected:
                                id_type                            && id,
                                qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        seqan3::ostreambuf_iterator stream_it{stream};
+        std::cpp20::ostreambuf_iterator stream_it{stream};
         size_t sequence_size{0};
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)

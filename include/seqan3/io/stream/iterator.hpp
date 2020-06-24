@@ -14,19 +14,15 @@
 
 #pragma once
 
-#include <iterator>
-
-#ifndef __cpp_lib_ranges
-#include <range/v3/iterator/stream_iterators.hpp>
-#endif // __cpp_lib_ranges
+#include <seqan3/std/algorithm>
+#include <seqan3/std/charconv>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/charconv>
-#include <seqan3/std/ranges>
+#include <seqan3/range/views/take.hpp>
 
 namespace seqan3::detail
 {
@@ -381,42 +377,3 @@ public:
 };
 
 } // namespace seqan3::detail
-
-namespace seqan3
-{
-
-/*!\addtogroup stream
- * \{
- */
-
-#ifdef __cpp_lib_ranges
-
-/*!\typedef seqan3::ostream_iterator
-* \brief Alias for std::ostream_iterator. Writes successive elements onto the output stream from which it was
-*        constructed.
-*/
-using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::std::ostream_iterator;
-
-/*!\typedef seqan3::ostreambuf_iterator
- * \brief Alias for std::ostreambuf_iterator. Writes successive characters onto the output stream from which it
- *        was constructed.
- */
-using SEQAN3_DOXYGEN_ONLY(ostreambuf_iterator =) ::std::ostreambuf_iterator;
-
-#else
-
-/*!\typedef seqan3::ostream_iterator
- * \brief Alias for ranges::ostream_iterator. Writes successive elements onto the output stream from which it was
- *        constructed.
- */
-using SEQAN3_DOXYGEN_ONLY(ostream_iterator =) ::ranges::ostream_iterator;
-
-/*!\typedef seqan3::ostreambuf_iterator
- * \brief Alias for ranges::ostreambuf_iterator. Writes successive characters onto the output stream from which it
- *        was constructed.
- */
-using SEQAN3_DOXYGEN_ONLY(ostreambuf_iterator =) ::ranges::ostreambuf_iterator;
-
-#endif // __cpp_lib_ranges
-//!\}
-} // namespace seqan3
