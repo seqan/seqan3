@@ -45,407 +45,20 @@ class pairwise_combine_view : public std::ranges::view_interface<pairwise_combin
 {
 private:
 
-    /*!\brief The internal iterator type.
-     * \tparam range_type The type of the range this iterator is operating on.
-     *
-     * \details
-     *
-     * This iterator models the iterator category of the `underlying_iterator_type`. It maintains a pair of iterators on
-     * the underlying range that move over all pairwise combinations of elements. The end is reached, when the second
-     * iterator points to the end of the underlying range and the first iterator to the last element of the range.
-     * Also note that this iterator does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator),
-     * since it does not return a reference to the represented type but a prvalue.
-     * Thus this iterator might not be usable with some legacy algorithms of the STL. But it is guaranteed to work with
-     * the ranges algorithms.
-     */
+    //!\brief The forward declared iterator type for pairwise_combine_view.
     template <typename range_type>
-    class iterator_type
-    {
-    private:
 
-        //!\brief Friend declaration for iterator with different range const-ness.
-        template <typename other_range_type>
-            requires std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        friend class iterator_type;
-
-        //!\brief Alias type for the iterator over the passed range type.
-        using underlying_iterator_type = std::ranges::iterator_t<range_type>;
-        //!\brief Alias for the value type of the underlying iterator type.
-        using underlying_val_t = std::iter_value_t<underlying_iterator_type>;
-        //!\brief Alias for the reference type of the underlying iterator type.
-        using underlying_ref_t = std::iter_reference_t<underlying_iterator_type>;
-
-    public:
-        /*!\name Associated types
-         * \{
-         */
-
-        //!\brief The difference type.
-        using difference_type   = std::ptrdiff_t;
-        //!\brief The value type.
-        using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
-        //!\brief The reference type.
-        using reference         = common_tuple<underlying_ref_t, underlying_ref_t>;
-        //!\brief The pointer type.
-        using pointer           = void;
-        //!\brief The iterator category tag.
-        using iterator_category = iterator_tag_t<underlying_iterator_type>;
-        //!\brief The iterator concept.
-        using iterator_concept = iterator_category;
-        //!\}
-
-        /*!\name Constructors, destructor and assignment
-         * \{
-         */
-        constexpr iterator_type()                                  noexcept = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type const &)             noexcept = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type &&)                  noexcept = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type const &) noexcept = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type &&)      noexcept = default; //!< Defaulted.
-        ~iterator_type()                                           noexcept = default; //!< Defaulted.
-
-        /*!\brief Constructs the iterator from the current underlying iterator and the end iterator of the underlying
-         *        range.
-         * \param[in] iter     The iterator pointing to current element within the underlying range.
-         * \param[in] begin_it The iterator pointing to begin of the underlying range. Only needed if
-         *                     `underlying_iterator_type` models std::random_access_iterator.
-         * \param[in] end_it   The iterator pointing to end of the underlying range.
-         *
-         * \details
-         *
-         * Constructs the iterator by caching the end of the underlying range and setting the first iterator to the
-         * given position and the second to the first incremented by one.
-         */
-        constexpr iterator_type(underlying_iterator_type iter,
-                                underlying_iterator_type begin_it,
-                                underlying_iterator_type end_it) noexcept :
-            first_it{iter},
-            second_it{++iter},
-            begin_it{begin_it},
-            end_it{end_it}
-        {}
-
-        /*!\brief Constructs const iterator from non-const iterator.
-         * \param[in] other The non-const iterator to construct from.
-         *
-         * \details
-         *
-         * Allows construction of a const iterator (operating on a const range) from a non-const iterator.
-         * This special constructor is needed as it is not covered by the standard copy and move constructors.
-         */
-        template <typename other_range_type>
-        //!\cond
-            requires std::convertible_to<other_range_type, range_type &> &&
-                     std::same_as<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
-        //!\endcond
-        constexpr iterator_type(iterator_type<other_range_type> other) noexcept :
-            iterator_type{std::move(other.first_it), std::move(other.begin_it), std::move(other.end_it)}
-        {}
-        //!\}
-
-        /*!\name Accessors
-         * \{
-         */
-         //!\brief Accesses the pointed-to element
-        constexpr reference operator*() const
-            noexcept(noexcept(*std::declval<underlying_iterator_type>()))
-        {
-            return reference{*first_it, *second_it};
-        }
-
-        /*!\brief Access the element at the given index
-         * \param[in] index The index of the element to be returned.
-         */
-        constexpr reference operator[](size_t const index) const
-            noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            return *(*this + index);
-        }
-        //!\}
-
-        /*!\name Arithmetic operators
-         * \{
-         */
-        //!\brief Pre-increment operator.
-        constexpr iterator_type & operator++(/*pre-increment*/)
-            noexcept(noexcept(++std::declval<underlying_iterator_type &>()))
-        {
-            if (++second_it == end_it)
-            {
-                ++first_it;
-                second_it = first_it;
-                ++second_it;
-            }
-            return *this;
-        }
-
-        //!\brief Post-increment operator.
-        constexpr iterator_type operator++(int /*post-increment*/)
-            noexcept(noexcept(std::declval<underlying_iterator_type &>()++))
-        {
-            iterator_type tmp{*this};
-            ++*this;
-            return tmp;
-        }
-
-        //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
-        constexpr iterator_type & operator--(/*pre-decrement*/)
-            noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::bidirectional_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            if (--second_it == first_it)
-            {
-                --first_it;
-                second_it = end_it;
-                --second_it;
-            }
-            return *this;
-        }
-
-        //!\brief Post-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
-        constexpr iterator_type operator--(int /*post-decrement*/)
-            noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
-        //!\cond
-            requires std::bidirectional_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            iterator_type tmp{*this};
-            --*this;
-            return tmp;
-        }
-
-        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        constexpr iterator_type & operator+=(difference_type const offset)
-            noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            from_index(to_index() + offset);
-            return *this;
-        }
-
-        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        constexpr iterator_type operator+(difference_type const offset) const
-            noexcept(noexcept(std::declval<iterator_type &>() += 1))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            iterator_type tmp{*this};
-            return (tmp += offset);
-        }
-
-        //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        constexpr friend iterator_type operator+(difference_type const offset, iterator_type iter)
-            noexcept(noexcept(std::declval<iterator_type<range_type> &>().from_index(1)))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            iter.from_index(iter.to_index() + offset);
-            return iter;
-        }
-
-        //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        constexpr iterator_type & operator-=(difference_type const offset)
-            noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            from_index(to_index() - offset);
-            return *this;
-        }
-
-        //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        constexpr iterator_type operator-(difference_type const offset) const
-            noexcept(noexcept(std::declval<iterator_type &>() -= 1))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            iterator_type tmp{*this};
-            return (tmp -= offset);
-        }
-
-        //!\brief Computes the distance between two iterators; `underlying_iterator_type` must model
-        //!\      std::random_access_iterator.
-        template <typename other_range_type>
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr difference_type operator-(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<iterator_type &>().to_index()))
-        {
-            return static_cast<difference_type>(to_index() - rhs.to_index());
-        }
-        //!\}
-
-        /*!\name Comparison operators
-         * \brief These operators are available if the `underlying_iterator_type` models std::equality_comparable or
-         *        std::totally_ordered respectively.
-         * \{
-         */
-        //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
-        // cannot yet be constrained. To avoid unexpected errors with the comparison all operators are implemented as
-        // direct members and not as friends.
-
-        //!\brief Checks whether `*this` is equal to `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator==(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
-        {
-            return std::tie(first_it, second_it) == std::tie(rhs.first_it, rhs.second_it);
-        }
-
-        //!\brief Checks whether `*this` is not equal to `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator!=(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
-        {
-            return !(*this == rhs);
-        }
-
-        //!\brief Checks whether `*this` is less than `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::totally_ordered_with<underlying_iterator_type,
-                                                   std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator<(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
-        {
-            return std::tie(first_it, second_it) < std::tie(rhs.first_it, rhs.second_it);
-        }
-
-        //!\brief Checks whether `*this` is greater than `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::totally_ordered_with<underlying_iterator_type,
-                                                   std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator>(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
-
-        {
-            return std::tie(first_it, second_it) > std::tie(rhs.first_it, rhs.second_it);
-        }
-
-        //!\brief Checks whether `*this` is less than or equal to `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::totally_ordered_with<underlying_iterator_type,
-                                                   std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator<=(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
-        {
-            return std::tie(first_it, second_it) <= std::tie(rhs.first_it, rhs.second_it);
-        }
-
-        //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-        template <typename other_range_type>
-        //!\cond
-            requires std::totally_ordered_with<underlying_iterator_type,
-                                                   std::ranges::iterator_t<other_range_type>> &&
-                     std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
-        //!\endcond
-        constexpr bool operator>=(iterator_type<other_range_type> const & rhs) const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
-        {
-            return std::tie(first_it, second_it) >= std::tie(rhs.first_it, rhs.second_it);
-        }
-        //!\}
-
-    private:
-
-        /*!\brief Returns the index for the current iterator position.
-         *
-         * \details
-         *
-         * The pairwise combination can also be seen as a triangular matrix, where given a size n the corresponding
-         * matrix has values in [0, 1], [0, 2], ... , [0, n - 1], [1, 2], ..., [1, n - 1], ... [n - 2, n - 1] and all
-         * other entries are empty. Using this scheme one can use the properties of triangular numbers, where the
-         * diagonal index of this matrix can be computed using triangular roots
-         * (see https://stackoverflow.com/questions/27086195/linear-index-upper-triangular-matrix).
-         * Given these properties, one can compute the matrix index (i, j) from the linearised matrix index and vice
-         * versa.
-         */
-        constexpr size_t to_index() const
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            size_t src_size = end_it - begin_it;
-            size_t index_i = first_it - begin_it;
-            size_t index_j = second_it - begin_it;
-            return (src_size * (src_size - 1)/2) - (src_size - index_i) * ((src_size - index_i) - 1)/2 +
-                   index_j - index_i - 1;
-        }
-
-        /*!\brief Sets the iterator to the given index.
-         * \param[in] index The index to set the iterator to.
-         * \copydetails to_index()
-         */
-        constexpr void from_index(size_t const index)
-            noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()) &&
-                     noexcept(std::declval<underlying_iterator_type &>() + 1))
-        //!\cond
-            requires std::random_access_iterator<underlying_iterator_type>
-        //!\endcond
-        {
-            size_t src_size = end_it - begin_it;
-            size_t index_i = src_size - 2 -
-                             std::floor(std::sqrt(-8 * index + 4 * src_size * (src_size - 1) - 7)/2.0 - 0.5);
-            size_t index_j = index + index_i + 1 - src_size * (src_size - 1)/2 + (src_size - index_i) *
-                             ((src_size - index_i) - 1)/2;
-            first_it = begin_it + index_i;
-            second_it = begin_it + index_j;
-        }
-
-        //!\brief The iterator pointing to the first element of the pairwise combination.
-        underlying_iterator_type first_it{};
-        //!\brief The iterator pointing to the second element of the pairwise combination.
-        underlying_iterator_type second_it{};
-        //!\brief The begin of the underlying range.
-        underlying_iterator_type begin_it{};
-        //!\brief The end of the underlying range.
-        underlying_iterator_type end_it{};
-    };
+    class iterator_type;
 
     /*!\name Associated types
      * \{
      */
 
     //!\brief The iterator type.
-    using iterator          = iterator_type<underlying_range_type>;
+    using iterator = iterator_type<underlying_range_type>;
     //!\brief The const iterator type. Evaluates to void if the underlying range is not const iterable.
-    using const_iterator    = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
-                                                        void>;
+    using const_iterator = transformation_trait_or_t<std::type_identity<iterator_type<underlying_range_type const>>,
+                                                     void>;
     //!\}
 
 public:
@@ -471,8 +84,8 @@ public:
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will be
-     * linear in the number of elements of the underlying range.
+     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will
+     * be linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
      *            take forever to reach the last element of the view.
@@ -522,8 +135,8 @@ public:
      * \details
      *
      * During construction the iterator pointing to the last element of the view is cached (not the end of the range).
-     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will be
-     * linear in the number of elements of the underlying range.
+     * This optimises the call to end if the underlying range models only forward_range. Otherwise the call to end will
+     * be linear in the number of elements of the underlying range.
      *
      * \attention This view cannot be chained immediately after an infinite range, because upon construction it will
      *            take forever to reach the last element of the view.
@@ -640,7 +253,404 @@ private:
     underlying_range_type u_range{};
     //!\brief The cached iterator pointing to the last element of the underlying range.
     std::ranges::iterator_t<underlying_range_type> back_iterator{};
-};
+}; // class pairwise_combine_view
+
+/*!\brief The internal iterator type for pairwise_combine_view.
+ * \tparam range_type The type of the range this iterator is operating on.
+ *
+ * \details
+ *
+ * This iterator models the iterator category of the `underlying_iterator_type`. It maintains a pair of iterators on
+ * the underlying range that move over all pairwise combinations of elements. The end is reached, when the second
+ * iterator points to the end of the underlying range and the first iterator to the last element of the range.
+ * Also note that this iterator does not model [Cpp17Iterator](https://en.cppreference.com/w/cpp/named_req/Iterator),
+ * since it does not return a reference to the represented type but a prvalue.
+ * Thus this iterator might not be usable with some legacy algorithms of the STL. But it is guaranteed to work with
+ * the ranges algorithms.
+ */
+ template <std::ranges::view underlying_range_type>
+ //!\cond
+     requires std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
+ // !\endcond
+template <typename range_type>
+class pairwise_combine_view<underlying_range_type>::iterator_type
+{
+private:
+
+    //!\brief Friend declaration for iterator with different range const-ness.
+    template <typename other_range_type>
+        requires std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    friend class iterator_type;
+
+    //!\brief Alias type for the iterator over the passed range type.
+    using underlying_iterator_type = std::ranges::iterator_t<range_type>;
+    //!\brief Alias for the value type of the underlying iterator type.
+    using underlying_val_t = typename std::iterator_traits<underlying_iterator_type>::value_type;
+    //!\brief Alias for the reference type of the underlying iterator type.
+    using underlying_ref_t = typename std::iterator_traits<underlying_iterator_type>::reference;
+
+public:
+    /*!\name Associated types
+     * \{
+     */
+
+    //!\brief The difference type.
+    using difference_type   = std::ptrdiff_t;
+    //!\brief The value type.
+    using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
+    //!\brief The reference type.
+    using reference         = common_tuple<underlying_ref_t, underlying_ref_t>;
+    //!\brief The pointer type.
+    using pointer           = void;
+    //!\brief The iterator category tag.
+    using iterator_category = iterator_tag_t<underlying_iterator_type>;
+    //!\brief The iterator concept.
+    using iterator_concept = iterator_category;
+    //!\}
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    iterator_type() = default; //!< Defaulted.
+    iterator_type(iterator_type const &) = default; //!< Defaulted.
+    iterator_type(iterator_type &&) = default; //!< Defaulted.
+    iterator_type & operator=(iterator_type const &) = default; //!< Defaulted.
+    iterator_type & operator=(iterator_type &&) = default; //!< Defaulted.
+    ~iterator_type() = default; //!< Defaulted.
+
+    /*!\brief Constructs the iterator from the current underlying iterator and the end iterator of the underlying
+     *        range.
+     * \param[in] iter     The iterator pointing to current element within the underlying range.
+     * \param[in] begin_it The iterator pointing to begin of the underlying range. Only needed if
+     *                     `underlying_iterator_type` models std::random_access_iterator.
+     * \param[in] end_it   The iterator pointing to end of the underlying range.
+     *
+     * \details
+     *
+     * Constructs the iterator by caching the end of the underlying range and setting the first iterator to the
+     * given position and the second to the first incremented by one.
+     */
+    constexpr iterator_type(underlying_iterator_type iter,
+                            underlying_iterator_type begin_it,
+                            underlying_iterator_type end_it) noexcept :
+        first_it{iter},
+        second_it{++iter},
+        begin_it{begin_it},
+        end_it{end_it}
+    {}
+
+    /*!\brief Constructs const iterator from non-const iterator.
+     * \param[in] other The non-const iterator to construct from.
+     *
+     * \details
+     *
+     * Allows construction of a const iterator (operating on a const range) from a non-const iterator.
+     * This special constructor is needed as it is not covered by the standard copy and move constructors.
+     */
+    template <typename other_range_type>
+    //!\cond
+        requires std::convertible_to<other_range_type, range_type &> &&
+                 std::same_as<std::remove_const_t<other_range_type>, std::remove_const_t<range_type>>
+    //!\endcond
+    constexpr iterator_type(iterator_type<other_range_type> other) noexcept :
+        iterator_type{std::move(other.first_it), std::move(other.begin_it), std::move(other.end_it)}
+    {}
+    //!\}
+
+    /*!\name Accessors
+     * \{
+     */
+     //!\brief Accesses the pointed-to element
+    constexpr reference operator*() const
+        noexcept(noexcept(*std::declval<underlying_iterator_type>()))
+    {
+        return reference{*first_it, *second_it};
+    }
+
+    /*!\brief Access the element at the given index
+     * \param[in] index The index of the element to be returned.
+     */
+    constexpr reference operator[](size_t const index)
+        noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        from_index(index);
+        return **this;
+    }
+    //!\}
+
+    /*!\name Arithmetic operators
+     * \{
+     */
+    //!\brief Pre-increment operator.
+    constexpr iterator_type & operator++(/*pre-increment*/)
+        noexcept(noexcept(++std::declval<underlying_iterator_type &>()))
+    {
+        if (++second_it == end_it)
+        {
+            ++first_it;
+            second_it = first_it;
+            ++second_it;
+        }
+        return *this;
+    }
+
+    //!\brief Post-increment operator.
+    constexpr iterator_type operator++(int /*post-increment*/)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>()++))
+    {
+        iterator_type tmp{*this};
+        ++*this;
+        return tmp;
+    }
+
+    //!\brief Pre-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
+    constexpr iterator_type & operator--(/*pre-decrement*/)
+        noexcept(noexcept(--std::declval<underlying_iterator_type &>()))
+    //!\cond
+        requires std::bidirectional_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        if (--second_it == first_it)
+        {
+            --first_it;
+            second_it = end_it;
+            --second_it;
+        }
+        return *this;
+    }
+
+    //!\brief Post-decrement operator; `underlying_iterator_type` must model std::bidirectional_iterator.
+    constexpr iterator_type operator--(int /*post-decrement*/)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>()--))
+    //!\cond
+        requires std::bidirectional_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        iterator_type tmp{*this};
+        --*this;
+        return tmp;
+    }
+
+    //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    constexpr iterator_type & operator+=(difference_type const offset)
+        noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        from_index(to_index() + offset);
+        return *this;
+    }
+
+    //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    constexpr iterator_type operator+(difference_type const offset)
+        noexcept(noexcept(std::declval<iterator_type &>() += 1))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        iterator_type tmp{*this};
+        return (tmp += offset);
+    }
+
+    //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    constexpr friend iterator_type operator+(difference_type const offset, iterator_type iter)
+        noexcept(noexcept(std::declval<iterator_type<range_type> &>().from_index(1)))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        iter.from_index(iter.to_index() + offset);
+        return iter;
+    }
+
+    //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    constexpr iterator_type & operator-=(difference_type const offset)
+        noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        from_index(to_index() - offset);
+        return *this;
+    }
+
+    //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    constexpr iterator_type operator-(difference_type const offset)
+        noexcept(noexcept(std::declval<iterator_type &>() -= 1))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        iterator_type tmp{*this};
+        return (tmp -= offset);
+    }
+
+    //!\brief Computes the distance between two iterators; `underlying_iterator_type` must model
+    //!\      std::random_access_iterator.
+    template <typename other_range_type>
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr difference_type operator-(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<iterator_type &>().to_index()))
+    {
+        return static_cast<difference_type>(to_index() - rhs.to_index());
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \brief These operators are available if the `underlying_iterator_type` models std::equality_comparable or
+     *        std::totally_ordered respectively.
+     * \{
+     */
+    //NOTE: The comparison operators should be implemented as friends, but due to a bug in gcc friend function
+    // cannot yet be constrained. To avoid unexpected errors with the comparison all operators are implemented as
+    // direct members and not as friends.
+
+    //!\brief Checks whether `*this` is equal to `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator==(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() == std::declval<underlying_iterator_type &>()))
+    {
+        return std::tie(first_it, second_it) == std::tie(rhs.first_it, rhs.second_it);
+    }
+
+    //!\brief Checks whether `*this` is not equal to `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::equality_comparable_with<underlying_iterator_type, std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator!=(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() != std::declval<underlying_iterator_type &>()))
+    {
+        return !(*this == rhs);
+    }
+
+    //!\brief Checks whether `*this` is less than `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::totally_ordered_with<underlying_iterator_type,
+                                               std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator<(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() < std::declval<underlying_iterator_type &>()))
+    {
+        return std::tie(first_it, second_it) < std::tie(rhs.first_it, rhs.second_it);
+    }
+
+    //!\brief Checks whether `*this` is greater than `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::totally_ordered_with<underlying_iterator_type,
+                                               std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator>(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() > std::declval<underlying_iterator_type &>()))
+
+    {
+        return std::tie(first_it, second_it) > std::tie(rhs.first_it, rhs.second_it);
+    }
+
+    //!\brief Checks whether `*this` is less than or equal to `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::totally_ordered_with<underlying_iterator_type,
+                                               std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator<=(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() <= std::declval<underlying_iterator_type &>()))
+    {
+        return std::tie(first_it, second_it) <= std::tie(rhs.first_it, rhs.second_it);
+    }
+
+    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
+    template <typename other_range_type>
+    //!\cond
+        requires std::totally_ordered_with<underlying_iterator_type,
+                                               std::ranges::iterator_t<other_range_type>> &&
+                 std::same_as<std::remove_const_t<range_type>, std::remove_const_t<other_range_type>>
+    //!\endcond
+    constexpr bool operator>=(iterator_type<other_range_type> const & rhs) const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() >= std::declval<underlying_iterator_type &>()))
+    {
+        return std::tie(first_it, second_it) >= std::tie(rhs.first_it, rhs.second_it);
+    }
+    //!\}
+
+private:
+
+    /*!\brief Returns the index for the current iterator position.
+     *
+     * \details
+     *
+     * The pairwise combination can also be seen as a triangular matrix, where given a size n the corresponding
+     * matrix has values in [0, 1], [0, 2], ... , [0, n - 1], [1, 2], ..., [1, n - 1], ... [n - 2, n - 1] and all
+     * other entries are empty. Using this scheme one can use the properties of triangular numbers, where the
+     * diagonal index of this matrix can be computed using triangular roots
+     * (see https://stackoverflow.com/questions/27086195/linear-index-upper-triangular-matrix).
+     * Given these properties, one can compute the matrix index (i, j) from the linearised matrix index and vice
+     * versa.
+     */
+    constexpr size_t to_index() const
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        size_t src_size = end_it - begin_it;
+        size_t index_i = first_it - begin_it;
+        size_t index_j = second_it - begin_it;
+        return (src_size * (src_size - 1)/2) - (src_size - index_i) * ((src_size - index_i) - 1)/2 +
+               index_j - index_i - 1;
+    }
+
+    /*!\brief Sets the iterator to the given index.
+     * \param[in] index The index to set the iterator to.
+     * \copydetails to_index()
+     */
+    constexpr void from_index(size_t const index)
+        noexcept(noexcept(std::declval<underlying_iterator_type &>() - std::declval<underlying_iterator_type &>()) &&
+                 noexcept(std::declval<underlying_iterator_type &>() + 1))
+    //!\cond
+        requires std::random_access_iterator<underlying_iterator_type>
+    //!\endcond
+    {
+        size_t src_size = end_it - begin_it;
+        size_t index_i = src_size - 2 -
+                         std::floor(std::sqrt(-8 * index + 4 * src_size * (src_size - 1) - 7)/2.0 - 0.5);
+        size_t index_j = index + index_i + 1 - src_size * (src_size - 1)/2 + (src_size - index_i) *
+                         ((src_size - index_i) - 1)/2;
+        first_it = begin_it + index_i;
+        second_it = begin_it + index_j;
+    }
+
+    //!\brief The iterator pointing to the first element of the pairwise combination.
+    underlying_iterator_type first_it{};
+    //!\brief The iterator pointing to the second element of the pairwise combination.
+    underlying_iterator_type second_it{};
+    //!\brief The begin of the underlying range.
+    underlying_iterator_type begin_it{};
+    //!\brief The end of the underlying range.
+    underlying_iterator_type end_it{};
+}; // class pairwise_combine_view::iterator_type
 
 /*!\name Type deduction guides
  * \{
