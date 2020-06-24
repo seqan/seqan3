@@ -34,15 +34,15 @@ public:
      */
     parallel_mode() = default; //!< Defaulted.
     parallel_mode(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode(parallel_mode &&) noexcept = default; //!< Defaulted.
+    parallel_mode(parallel_mode &&) = default; //!< Defaulted.
     parallel_mode & operator=(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode & operator=(parallel_mode &&) noexcept = default; //!< Defaulted.
+    parallel_mode & operator=(parallel_mode &&) = default; //!< Defaulted.
     ~parallel_mode() = default; //!< Defaulted.
 
     /*!\brief Sets the number of threads for the parallel configuration element.
-     * \param[in] thread_c The maximum number of threads to be used by the algorithm.
+     * \param[in] thread_count_ The maximum number of threads to be used by the algorithm.
      */
-    explicit parallel_mode(uint32_t thread_c) noexcept : thread_count{thread_c}
+    explicit parallel_mode(uint32_t thread_count_) noexcept : thread_count{thread_count_}
     {}
     //!\}
 
