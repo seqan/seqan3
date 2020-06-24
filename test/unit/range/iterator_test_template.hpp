@@ -200,7 +200,8 @@ inline void move_forward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_en
 {
     // pre-increment
     auto rng_it = std::ranges::begin(rng);
-    for (auto it = it_begin; it != it_end; ++it, ++rng_it)
+    auto rng_it_end = std::ranges::end(rng);
+    for (auto it = it_begin; it != it_end && rng_it != rng_it_end; ++it, ++rng_it)
         expext_eq<test_type>(*it, *rng_it);
 }
 
@@ -209,7 +210,8 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
 {
     // post-increment
     auto rng_it = std::ranges::begin(rng);
-    for (auto it = it_begin; it != it_end; it++, ++rng_it)
+    auto rng_it_end = std::ranges::end(rng);
+    for (auto it = it_begin; it != it_end && rng_it != rng_it_end; it++, ++rng_it)
         expext_eq<test_type>(*it, *rng_it);
 }
 
@@ -251,38 +253,83 @@ TYPED_TEST_P(iterator_fixture, move_forward_post)
 // Bidirectional Iterator
 // ---------------------------------------------------------------------------------------------------------------------
 
-template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
-inline void move_backward_test(it_begin_t && it_begin, it_sentinel_t && it_end, rng_t && rng)
+template <typename it_begin_t, typename it_sentinel_t, typename rng_t>
+inline auto last_iterators(it_begin_t const & it_begin, it_sentinel_t const & it_end, rng_t && rng)
 {
-    // move to last position
-    auto pre_end_it = it_begin;
-    auto rng_pre_end_it = std::ranges::begin(rng);
+    it_begin_t it = it_begin;
+    auto rng_it = std::ranges::begin(rng);
 
-    for (; std::ranges::next(pre_end_it) != it_end; ++pre_end_it, ++rng_pre_end_it);
+    for (auto const rng_it_end = std::ranges::end(rng);
+         std::ranges::next(it) != it_end && std::ranges::next(rng_it) != rng_it_end;
+         ++it, ++rng_it);
 
-    // pre-decrement
-    auto rng_it = rng_pre_end_it;
-    for (auto it = pre_end_it; it != it_begin; --it, --rng_it)
-        expext_eq<test_type>(*it, *rng_it);
-
-    // post-decrement
-    rng_it = rng_pre_end_it;
-    for (auto it = pre_end_it; it != it_begin; --rng_it)
-        expext_eq<test_type>(*(it--), *rng_it);
+    return std::pair{it, rng_it};
 }
 
-TYPED_TEST_P(iterator_fixture, move_backward)
+template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
+inline void move_backward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_end, rng_t && rng)
+{
+    // move to last position
+    auto && [last_it, rng_last_it] = last_iterators(it_begin, it_end, rng);
+    auto const rng_it_begin = std::ranges::begin(rng);
+
+    // pre-decrement
+    for (auto it = last_it, rng_it = rng_last_it;
+         it != it_begin && rng_it != rng_it_begin;
+         --rng_it)
+    {
+       expext_eq<test_type>(*it, *rng_it);
+       --it;
+    }
+
+    expext_eq<test_type>(*it_begin, *rng_it_begin);
+}
+
+template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
+inline void move_backward_post_test(it_begin_t && it_begin, it_sentinel_t && it_end, rng_t && rng)
+{
+    // move to last position
+    auto && [last_it, rng_last_it] = last_iterators(it_begin, it_end, rng);
+    auto const rng_it_begin = std::ranges::begin(rng);
+
+    // post-decrement
+    for (auto it = last_it, rng_it = rng_last_it;
+         it != it_begin && rng_it != rng_it_begin;
+         --rng_it)
+    {
+       expext_eq<test_type>(*(it--), *rng_it);
+    }
+
+    expext_eq<test_type>(*it_begin, *rng_it_begin);
+}
+
+TYPED_TEST_P(iterator_fixture, move_backward_pre)
 {
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>)
     {
-        move_backward_test<TypeParam>(std::ranges::begin(this->test_range),
-                                      std::ranges::end(this->test_range),
-                                      this->expected_range);
+        move_backward_pre_test<TypeParam>(std::ranges::begin(this->test_range),
+                                          std::ranges::end(this->test_range),
+                                          this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            move_backward_test<TypeParam>(std::ranges::cbegin(this->test_range),
-                                          std::ranges::cend(this->test_range),
-                                          this->expected_range);
+            move_backward_pre_test<TypeParam>(std::ranges::cbegin(this->test_range),
+                                              std::ranges::cend(this->test_range),
+                                              this->expected_range);
+    }
+}
+
+TYPED_TEST_P(iterator_fixture, move_backward_post)
+{
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>)
+    {
+        move_backward_post_test<TypeParam>(std::ranges::begin(this->test_range),
+                                           std::ranges::end(this->test_range),
+                                           this->expected_range);
+
+        if constexpr (TestFixture::const_iterable)
+            move_backward_post_test<TypeParam>(std::ranges::cbegin(this->test_range),
+                                               std::ranges::cend(this->test_range),
+                                               this->expected_range);
     }
 }
 
@@ -334,7 +381,7 @@ inline void jump_backward_test(it_begin_t && it_begin, rng_t && rng)
 {
     size_t sz = std::ranges::distance(rng);
 
-    auto pre_end_it = it_begin + sz - 1;
+    auto pre_end_it = it_begin + (sz - 1);
 
     // Backward
     for (size_t n = 0; n < sz; ++n)
@@ -394,13 +441,13 @@ template <typename it_begin_t, typename rng_t>
 inline void difference_test(it_begin_t && it_begin, rng_t && rng)
 {
     size_t sz = std::ranges::distance(rng);
-    using difference_t = typename std::iterator_traits<std::remove_reference_t<decltype(it_begin)>>::difference_type;
+    using difference_t = std::iter_difference_t<it_begin_t>;
 
     for (size_t n = 0; n < sz; ++n)
         EXPECT_EQ(static_cast<difference_t>(n), ((it_begin + n) - it_begin));
 }
 
-TYPED_TEST_P(iterator_fixture, difference)
+TYPED_TEST_P(iterator_fixture, difference_common)
 {
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
@@ -408,6 +455,36 @@ TYPED_TEST_P(iterator_fixture, difference)
 
         if constexpr (TestFixture::const_iterable)
             difference_test(std::ranges::cbegin(this->test_range), this->expected_range);
+    }
+}
+
+TYPED_TEST_P(iterator_fixture, difference_sentinel)
+{
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
+    {
+        using difference_t = std::ranges::range_difference_t<decltype(this->test_range)>;
+
+        auto && begin = std::ranges::begin(this->test_range);
+        auto && end = std::ranges::end(this->test_range);
+        difference_t size = std::ranges::distance(this->expected_range);
+
+        EXPECT_EQ(size, end - begin);
+        EXPECT_EQ(-size, begin - end);
+
+        if constexpr (TestFixture::const_iterable)
+        {
+            auto && cbegin = std::ranges::cbegin(this->test_range);
+            auto && cend = std::ranges::cend(this->test_range);
+
+            EXPECT_EQ(size, cend - cbegin);
+            EXPECT_EQ(-size, cbegin - cend);
+
+            EXPECT_EQ(size, end - cbegin);
+            EXPECT_EQ(-size, cbegin - end);
+
+            EXPECT_EQ(size, cend - begin);
+            EXPECT_EQ(-size, begin - cend);
+        }
     }
 }
 
@@ -506,11 +583,13 @@ REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
                             compare,
                             move_forward_pre,
                             move_forward_post,
-                            move_backward,
+                            move_backward_pre,
+                            move_backward_post,
                             jump_forward,
                             jump_backward,
                             jump_random,
-                            difference,
+                            difference_common,
+                            difference_sentinel,
                             compare_less,
                             compare_greater,
                             compare_leq,
