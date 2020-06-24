@@ -18,9 +18,11 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
+#include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
 {
@@ -65,13 +67,27 @@ struct naive_minimiser_hash_fn
        if (shape.size() > window_size)
            throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
-       return std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
-                                           | std::views::transform([seed] (uint64_t i) { return i ^ seed; })
-                                           | ranges::views::sliding(window_size - shape.size() + 1)
-                                           | std::views::transform([] (auto const in)
-                                                                   {
-                                                                       return *std::min_element(in.begin(), in.end());
-                                                                   });
+       // Use random seed to randomise order on forward strand.
+       auto forward = std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
+                                                   | std::views::transform([seed] (uint64_t const i)
+                                                                           { return i ^ seed; });
+       // Create reverse complement strand and use random seed to randomise order on reverse complement strand.
+       auto reverse = std::forward<urng_t>(urange) | seqan3::views::complement // Create complement.
+                                                   | std::views::reverse       // Reverse order.
+                                                   | seqan3::views::kmer_hash(shape) // Get hash values.
+                                                   | std::views::transform([seed] (uint64_t const i)
+                                                                           { return i ^ seed; }) // Randomise.
+                                                   | std::views::reverse; // Reverse again, so that the first hash value
+                                                                          // is the reverse complement of the first
+                                                                          // hash value in the forward strand.
+       // Get minimum between forward and reverse strand for each value.
+       auto both = seqan3::views::zip(forward, reverse)
+                 | std::views::transform([] (auto && fwd_rev_hash_pair) {return std::min(std::get<0>(fwd_rev_hash_pair),
+                                                                                         std::get<1>(fwd_rev_hash_pair));
+                                                                         });
+       // Slide over the minimums from forward and reverse and find for every window the minimiser.
+       return both | ranges::views::sliding(window_size - shape.size() + 1)
+                   | std::views::transform([] (auto const in) { return *std::min_element(in.begin(), in.end()); });
    }
 };
 
