@@ -28,8 +28,9 @@ struct non_writeable_alphabet
 };
 
 
+// see issue https://github.com/seqan/seqan3/issues/1518
 TEST(non_writeable_alphabet_test, issue1518)
-{ // see issue https://github.com/seqan/seqan3/issues/1518
+{
     EXPECT_TRUE(seqan3::semialphabet<non_writeable_alphabet>);
     EXPECT_TRUE(seqan3::alphabet<non_writeable_alphabet>);
 
