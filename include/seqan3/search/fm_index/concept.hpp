@@ -207,13 +207,11 @@ SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requir
 {
     typename t::cursor_type; // already required by fm_index_specialisation but has a different documentation
     typename t::fwd_cursor_type;
-    typename t::rev_cursor_type;
 
     // NOTE: circular dependency
     // requires bi_fm_index_cursor_specialisation<typename t::cursor_type>;
 
     SEQAN3_RETURN_TYPE_CONSTRAINT(index.fwd_cursor(), std::same_as, typename t::fwd_cursor_type);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(index.rev_cursor(), std::same_as, typename t::rev_cursor_type);
 };
 //!\endcond
 /*!\name Requirements for seqan3::bi_fm_index_specialisation
@@ -226,9 +224,6 @@ SEQAN3_CONCEPT bi_fm_index_specialisation = fm_index_specialisation<t> && requir
  *
  * \typedef typename t::fwd_cursor_type fwd_cursor_type
  * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the original text.
- *
- * \typedef typename t::rev_cursor_type rev_cursor_type
- * \brief Type of the unidirectional FM index cursor based on the unidirectional FM index on the reversed text.
  * \}
  */
 

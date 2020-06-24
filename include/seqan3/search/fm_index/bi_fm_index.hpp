@@ -148,8 +148,6 @@ public:
     using cursor_type = bi_fm_index_cursor<bi_fm_index>;
     //!\brief The type of the unidirectional cursor on the original text.
     using fwd_cursor_type = fm_index_cursor<fm_index_type>;
-    //!\brief The type of the unidirectional cursor on the reversed text.
-    using rev_cursor_type = fm_index_cursor<rev_fm_index_type>;
 
     //!\}
 
@@ -279,26 +277,6 @@ public:
     fwd_cursor_type fwd_cursor() const noexcept
     {
        return {fwd_fm};
-    }
-
-    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text of the bidirectional index that
-     *        can be used for searching. Note that because of the text being reversed, extend_right() resp. cycle_back()
-     *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
-     * \attention For text collections the text IDs are also reversed.
-     * \attention Because of sparser sampling, the reverse cursor might be slower than the forward cursor.
-     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
-     *
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * No-throw guarantee.
-     */
-    rev_cursor_type rev_cursor() const noexcept
-    {
-       return {rev_fm};
     }
 
     /*!\cond DEV

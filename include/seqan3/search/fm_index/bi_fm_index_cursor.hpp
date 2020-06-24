@@ -73,10 +73,6 @@ public:
     using fwd_cursor = fm_index_cursor<fm_index<typename index_type::alphabet_type,
                                                 index_type::text_layout_mode,
                                                 typename index_type::sdsl_index_type>>;
-    //!\brief Type for the unidirectional cursor on the reversed text.
-    using rev_cursor = fm_index_cursor<detail::reverse_fm_index<typename index_type::alphabet_type,
-                                                                index_type::text_layout_mode,
-                                                                typename index_type::rev_sdsl_index_type>>;
     //!\}
 
 private:
@@ -842,52 +838,6 @@ public:
 
     #ifndef NDEBUG
         if (!fwd_cursor_last_used)
-        {
-            // invalidate parent interval
-            cur.parent_lb = 1;
-            cur.parent_rb = 0;
-        }
-    #endif
-
-        return cur;
-    }
-
-    /*!\brief Returns a unidirectional seqan3::fm_index_cursor on the reversed text. path_label() on the returned
-     *        unidirectional index cursor will be equal to reversing path_label() on the bidirectional index cursor.
-     *        Note that because of the text being reversed, extend_right() resp. cycle_back()
-     *        correspond to extend_left() resp. cycle_front() on the bidirectional index cursor.
-     *        Furthermore cycle_back() and last_char() will be undefined behavior if the last extension on the
-     *        bidirectional FM index has been to the left. The behavior will be well-defined after the first
-     *        extension to the right on the unidirectional index.
-     * \returns Returns a unidirectional seqan3::fm_index_cursor on the index of the reversed text.
-     *
-     * Example:
-     *
-     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor.cpp
-     *
-     * \attention When the index is built for text collections, the returned text IDs will be reversed.
-     * \attention Because of sparser sampling, the reverse cursor might be slower than the forward cursor.
-     *
-     * \include test/snippet/search/bi_fm_index_cursor_to_rev_cursor_collection.cpp
-     * ### Complexity
-     *
-     * Constant.
-     *
-     * ### Exceptions
-     *
-     * No-throw guarantee.
-     */
-    rev_cursor to_rev_cursor() const noexcept
-    {
-        assert(index != nullptr);
-
-        rev_cursor cur{index->rev_fm};
-        cur.parent_lb = parent_lb;
-        cur.parent_rb = parent_rb;
-        cur.node = {rev_lb, rev_rb, depth, _last_char};
-
-    #ifndef NDEBUG
-        if (fwd_cursor_last_used)
         {
             // invalidate parent interval
             cur.parent_lb = 1;
