@@ -38,11 +38,12 @@ class single_pass_input : public ::testing::Test
         {
             return rng_type{1, 2, 3, 4, 5};
         }
-        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>, std::ranges::basic_istream_view<char>>)
+        else if constexpr (std::is_same_v<std::remove_cv_t<rng_type>,
+                                          std::ranges::basic_istream_view<char, char, std::char_traits<char>>>)
         {
             return std::istringstream{"12345"};
         }
-        else if constexpr (std::is_same_v<rng_type, std::ranges::basic_istream_view<int>>)
+        else if constexpr (std::is_same_v<rng_type, std::ranges::basic_istream_view<int, char, std::char_traits<char>>>)
         {
             return std::istringstream{"1 2 3 4 5"};
         }
@@ -58,8 +59,8 @@ public:
 using underlying_range_types = ::testing::Types<std::vector<char>,
                                                 std::vector<int>,
                                                 std::vector<char> const,
-                                                std::ranges::basic_istream_view<char>,
-                                                std::ranges::basic_istream_view<int>>;
+                                                std::ranges::basic_istream_view<char, char, std::char_traits<char>>,
+                                                std::ranges::basic_istream_view<int, char, std::char_traits<char>>>;
 
 TYPED_TEST_SUITE(single_pass_input, underlying_range_types, );
 
@@ -67,7 +68,7 @@ TYPED_TEST(single_pass_input, view_concept)
 {
     using rng_t = decltype(std::declval<TypeParam &>() | std::views::all);
     using view_t = seqan3::detail::single_pass_input_view<rng_t>;
-    EXPECT_TRUE((std::is_base_of_v<ranges::view_base, view_t>));
+    EXPECT_TRUE((std::derived_from<view_t, std::ranges::view_base>));
     EXPECT_TRUE((std::sentinel_for<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::range<view_t>);
     EXPECT_TRUE(std::ranges::view<view_t>);
@@ -103,6 +104,7 @@ TYPED_TEST(single_pass_input, view_construction)
 
 TYPED_TEST(single_pass_input, view_begin)
 {
+    using value_t = std::ranges::range_value_t<TypeParam>;
     TypeParam p{this->data};
 
     seqan3::detail::single_pass_input_view view{p};
@@ -110,7 +112,9 @@ TYPED_TEST(single_pass_input, view_begin)
     using iterator_type = std::ranges::iterator_t<decltype(view)>;
 
     EXPECT_TRUE((std::is_same_v<decltype(view.begin()), iterator_type>));
-    EXPECT_EQ(*view.begin(), *p.begin());
+
+    value_t first_value = std::is_same_v<value_t, char> ? '1' : 1;
+    EXPECT_EQ(*view.begin(), first_value);
 }
 
 TYPED_TEST(single_pass_input, view_end)
