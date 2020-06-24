@@ -18,7 +18,7 @@
 #include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
@@ -120,22 +120,19 @@ public:
         configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorise)>>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
-    //!\brief Flag indicating whether global alignment mode is enabled.
+    //!\brief Flag indicating whether global alignment method is enabled.
     static constexpr bool is_global =
-        configuration_t::template exists<align_cfg::mode<detail::global_alignment_type>>();
+        configuration_t::template exists<seqan3::detail::method_global_tag>();
     //!\brief Flag indicating whether global alignment mode with free ends is enabled.
     static constexpr bool with_free_end_gaps = configuration_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.
-    static constexpr bool is_local = configuration_t::template exists<align_cfg::mode<detail::local_alignment_type>>();
+    static constexpr bool is_local = configuration_t::template exists<seqan3::detail::method_local_tag>();
     //!\brief Flag indicating whether banded alignment mode is enabled.
     static constexpr bool is_banded = configuration_t::template exists<align_cfg::band_fixed_size>();
     //!\brief Flag indicating whether debug mode is enabled.
     static constexpr bool is_debug = configuration_t::template exists<detail::debug_mode>();
     //!\brief Flag indicating whether a user provided callback was given.
     static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
-
-    //!\brief The configured alignment mode.
-    using alignment_mode_type = decltype(get<align_cfg::mode>(std::declval<configuration_t>()).value);
     //!\brief The selected scoring scheme.
     using scoring_scheme_type = decltype(get<align_cfg::scoring>(std::declval<configuration_t>()).value);
     //!\brief The alphabet of the selected scoring scheme.

@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -26,7 +26,7 @@ using seqan3::operator""_rna5;
 namespace seqan3::test::alignment::fixture::local::affine::unbanded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::local_alignment} |
+inline constexpr auto align_config = seqan3::align_cfg::method_local |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}};
 
@@ -161,7 +161,7 @@ static auto dna4_03 = []()
     {
         "ataagcgtctcg"_dna4,
         "tcatagagttgc"_dna4,
-        seqan3::align_cfg::mode{seqan3::local_alignment}
+        seqan3::align_cfg::method_local
             | seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-1}}}
             | seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{2},
                                                                            seqan3::mismatch_score{-1}}},

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -36,7 +36,7 @@ namespace seqan3::align_cfg
  *
  * Under the hood SeqAn uses a [fast bit-vector algorithm](https://dl.acm.org/citation.cfm?id=316550) to compute the
  * edit distance whenever possible. This depends on the final alignment configuration. Currently, the fast
- * edit distance algorithm is only triggered for \ref seqan3::global_alignment "global alignments" and
+ * edit distance algorithm is only triggered for \ref seqan3::align_cfg::method_global "global alignments" and
  * \ref seqan3::end_gaps::free_ends_first "semi-global alignments" with free ends in the first sequence.
  *
  * The performance of the algorithm can further be improved if the number of maximal errors (edits) is known by using
@@ -49,7 +49,7 @@ namespace seqan3::align_cfg
  * trigger the slower algorithm which can handle the case if the ends are free in the second sequence instead of the
  * first sequence.
  */
-inline constexpr configuration edit = mode{global_alignment} | scoring{nucleotide_scoring_scheme{}} |
+inline constexpr configuration edit = method_global | scoring{nucleotide_scoring_scheme{}} |
                                       gap{gap_scheme{gap_score{-1}}};
 
 } // namespace seqan3

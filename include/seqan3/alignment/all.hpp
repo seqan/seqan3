@@ -68,7 +68,7 @@
  * namespace called seqan3::align_cfg. This namespace is used to disambiguate configurations for the
  * alignment algorithm with configurations from other algorithms in SeqAn.
  * To compute a pairwise alignment at least two configuration elements must be provided, namely the
- * the seqan3::align_cfg::mode and the seqan3::align_cfg::scoring.
+ * the alignment method and the seqan3::align_cfg::scoring.
  *
  * ### Combining configuration elements
  *
@@ -78,19 +78,18 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                              | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** | **10** |
- * | --------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|--------|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"  |   ❌   |   ✅   |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"             |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::global_alignment "3: Global alignment"     |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::local_alignment "4: Local alignment"       |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::max_error "5: Max error"        |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::on_result "6: On result"        |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::parallel "7: Parallel"          |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::result "8: Result"              |       |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |
- * | \ref seqan3::align_cfg::scoring "9: Scoring scheme"     |       |       |       |       |       |       |       |       |        |  ❌    |  ✅   |
- * | \ref seqan3::align_cfg::vectorise "10: Vectorise"       |       |       |       |       |       |       |       |       |        |        |  ❌   |
+ * | **Config**                                               | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
+ * | ---------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
+ * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"   |   ❌   |   ✅   |  ✅    |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"        |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::gap "2: Gap scheme"              |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::max_error "3: Max error"         |       |       |       |  ❌    |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::method_global "4: Method global" |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::method_local "5: Method local"   |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::parallel "6: Parallel"           |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::result "7: Result"               |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅     |
+ * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |       |       |       |       |       |       |       |       |  ❌    |  ✅     |
+ * | \ref seqan3::align_cfg::vectorise "9: Vectorise"         |       |       |       |       |       |       |       |       |        |  ❌     |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
@@ -181,7 +180,8 @@
  *
  * ## Global and local alignments
  *
- * The standard global and local alignments can be configured using the configuration seqan3::align_cfg::mode.
+ * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and .
+ * seqan3::align_cfg::method_local, respectively.
  * The global alignment can be further refined using the seqan3::align_cfg::sequence_ends configuration.
  * This configuration allows to enable, respectively disable the scoring of leading and trailing gaps at the respective
  * sequence ends. This option is not available for the local alignment where scoring gaps at the ends of the sequences
@@ -194,7 +194,7 @@
  * It is automatically selected if all of the following requirements are satisfied:
  *  * Edit distance gaps, i.e. seqan3::align_cfg::gap is initialised with default initialised seqan3::gap_scheme
  *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring is initialised with default initialised seqan3::nucleotide_scoring_scheme.
- *  * Global alignment, i.e. seqan3::align_cfg::mode is initialised with seqan3::global_alignment.
+ *  * Global alignment, i.e. seqan3::align_cfg::method_global.
  *
  * There is a special shortcut for the above required configs called seqan3::align_cfg::edit, which can be used to
  * safe some typing.
@@ -226,7 +226,7 @@
  * The alignment algorithm allows the user to specify their own callback function which will be invoked by the alignment
  * algorithm when a seqan3::alignment_result has been computed. To do so, the seqan3::align_cfg::on_result configuration
  * element can be used during the alignment configuration. Note that if seqan3::align_cfg::on_result is specified, the
- * algorithm seqan3::align_pairwise does not return a seqan3::alignment_range anymore. In fact, the algorithm's return 
+ * algorithm seqan3::align_pairwise does not return a seqan3::alignment_range anymore. In fact, the algorithm's return
  * type is `void`. The following code snippet illustrates this behavior:
  *
  * \include test/snippet/alignment/pairwise/parallel_align_pairwise_with_callback.cpp

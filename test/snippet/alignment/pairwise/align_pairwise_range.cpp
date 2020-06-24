@@ -14,7 +14,7 @@ int main()
     std::vector data2{"ACGTGCGACTAG"_dna4, "ACGTACGACACG"_dna4, "AGTAGCGATCG"_dna4};
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+    auto config = seqan3::align_cfg::method_global |
                   seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
 
     // Compute the alignment over a range of pairs.

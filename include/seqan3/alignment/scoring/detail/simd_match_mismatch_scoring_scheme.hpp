@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>
@@ -28,8 +28,8 @@ namespace seqan3::detail
  * \tparam simd_score_t The type of the simd vector; must model seqan3::detail::simd_concept.
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet
  *                    and must have an alphabet size of at least 2.
- * \tparam alignment_t The type of the alignment to compute; must be either seqan3::detail::global_alignment_type or
- *                     seqan3::detail::local_alignment_type.
+ * \tparam alignment_t The type of the alignment to compute; must be either seqan3::detail::method_global_tag or
+ *                     seqan3::detail::method_local_tag.
  *
  * \details
  *
@@ -63,8 +63,8 @@ namespace seqan3::detail
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t>
 //!\cond
     requires (seqan3::alphabet_size<alphabet_t> > 1) &&
-             (std::same_as<alignment_t, detail::local_alignment_type> ||
-              std::same_as<alignment_t, detail::global_alignment_type>)
+             (std::same_as<alignment_t, detail::method_local_tag> ||
+              std::same_as<alignment_t, detail::method_global_tag>)
 //!\endcond
 class simd_match_mismatch_scoring_scheme
 {
@@ -141,7 +141,7 @@ public:
         typename simd_traits<simd_score_t>::mask_type mask;
         // For global and local alignment there are slightly different formulas because
         // in global alignment padded characters always match
-        if constexpr (std::same_as<alignment_t, detail::global_alignment_type>)
+        if constexpr (std::same_as<alignment_t, detail::method_global_tag>)
             mask = (lhs ^ rhs) <= simd::fill<simd_score_t>(0);
         else // and in local alignment type padded characters always mismatch.
             mask = (lhs ^ rhs) == simd::fill<simd_score_t>(0);

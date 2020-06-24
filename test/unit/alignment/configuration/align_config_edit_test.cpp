@@ -11,8 +11,8 @@
 
 TEST(align_cfg_edit, is_global)
 {
-    using type_of_cfg = decltype(seqan3::get<seqan3::align_cfg::mode>(seqan3::align_cfg::edit).value);
-    EXPECT_TRUE((std::is_same_v<std::remove_reference_t<type_of_cfg>, seqan3::detail::global_alignment_type>));
+    auto config = seqan3::align_cfg::edit;
+    EXPECT_TRUE(config.template exists<seqan3::detail::method_global_tag>());
 }
 
 TEST(align_cfg_edit, is_hamming)

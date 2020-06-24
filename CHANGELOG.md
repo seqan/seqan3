@@ -76,6 +76,9 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
     with a `seqan3::align_cfg::lower_diagonal` and `seqan3::align_cfg::upper_diagonal` instead of `seqan3::static_band`.
     It also directly exposes the lower_diagonal and upper_diagonal as public members
     ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
+* The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
+  pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
+  ([\#1918](https://github.com/seqan/seqan3/pull/1918).
 
 ### Core
 

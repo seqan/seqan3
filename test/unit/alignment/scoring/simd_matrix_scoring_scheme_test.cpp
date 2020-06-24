@@ -33,7 +33,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::global_alignment_type,
+                                                                seqan3::detail::method_global_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     EXPECT_TRUE(std::is_nothrow_default_constructible_v<scheme_t>);
@@ -50,7 +50,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothro
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::global_alignment_type,
+                                                                seqan3::detail::method_global_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
@@ -68,7 +68,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_
     using scalar_t = typename seqan3::simd_traits<TypeParam>::scalar_type;
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::global_alignment_type,
+                                                                seqan3::detail::method_global_tag,
                                                                 seqan3::aminoacid_scoring_scheme<int64_t>>;
 
     int64_t too_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
@@ -98,7 +98,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::global_alignment_type,
+                                                                seqan3::detail::method_global_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
@@ -131,7 +131,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::global_alignment_type,
+                                                                seqan3::detail::method_global_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
@@ -161,7 +161,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
     // In local alignment we always want to mismatch.
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::local_alignment_type,
+                                                                seqan3::detail::method_local_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
@@ -195,7 +195,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
     // In local alignment we always want to mismatch.
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::detail::local_alignment_type,
+                                                                seqan3::detail::method_local_tag,
                                                                 seqan3::aminoacid_scoring_scheme<>>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
