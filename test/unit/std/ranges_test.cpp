@@ -19,3 +19,19 @@ TEST(ranges_test, combine_std_with_range_v3)
 
     EXPECT_EQ(*std::ranges::begin(take_first), 'f');
 }
+
+// https://github.com/ericniebler/range-v3/issues/1514
+TEST(ranges_test, gcc10bug_rangev3_1514)
+{
+    {
+        auto iota = std::views::iota(0, 5);
+        EXPECT_EQ(*ranges::begin(iota), 0);
+        EXPECT_EQ(*std::ranges::begin(iota), 0);
+    }
+    {
+        // https://github.com/ericniebler/range-v3/issues/1514
+        auto iota = std::views::iota(size_t{0u}, size_t{5u});
+        EXPECT_EQ(*ranges::begin(iota), 0u);
+        EXPECT_EQ(*std::ranges::begin(iota), 0u);
+    }
+}
