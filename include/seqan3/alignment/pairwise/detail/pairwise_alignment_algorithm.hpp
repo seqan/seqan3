@@ -137,19 +137,14 @@ public:
     //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
-        using matrix_index_t = typename traits_type::matrix_index_type;
         using std::get;
-
-        thread_local score_matrix_single_column<score_type> alignment_matrix{};
-        coordinate_matrix<matrix_index_t> index_matrix{};
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            size_t number_of_columns = std::ranges::distance(get<0>(sequence_pair)) + 1;
-            size_t number_of_rows = std::ranges::distance(get<1>(sequence_pair)) + 1;
+            size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
+            size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
 
-            alignment_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-            index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+            auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size, sequence2_size);
 
             compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),

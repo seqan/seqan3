@@ -22,7 +22,9 @@
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
+#include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm_banded.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_matrix.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion_banded.hpp>
@@ -540,22 +542,25 @@ private:
                                                                    seqan3::detail::method_global_tag,
                                                                    seqan3::detail::method_local_tag>;
 
+            using score_t = typename traits_t::score_type;
             using alignment_scoring_scheme_t =
                 lazy_conditional_t<traits_t::is_vectorised,
                                    lazy<simd_match_mismatch_scoring_scheme,
-                                        typename traits_t::score_type,
+                                        score_t,
                                         typename traits_t::scoring_scheme_alphabet_type,
                                         alignment_method_t>,
                                    typename traits_t::scoring_scheme_type>;
 
             using scoring_scheme_policy_t = policy_scoring_scheme<config_t, alignment_scoring_scheme_t>;
+            using alignment_matrix_policy_t = policy_alignment_matrix<traits_t, score_matrix_single_column<score_t>>;
 
             using algorithm_t = select_alignment_algorithm_t<traits_t,
                                                              config_t,
                                                              gap_cost_policy_t,
                                                              optimum_tracker_policy_t,
                                                              result_builder_policy_t,
-                                                             scoring_scheme_policy_t>;
+                                                             scoring_scheme_policy_t,
+                                                             alignment_matrix_policy_t>;
             return algorithm_t{cfg};
         }
     }
