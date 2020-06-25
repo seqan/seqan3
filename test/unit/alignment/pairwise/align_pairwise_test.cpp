@@ -203,7 +203,7 @@ TYPED_TEST(align_pairwise_test, bug_1598)
     auto s2 = g | std::views::drop(2);
 
     // Configure the alignment kernel.
-    seqan3::configuration cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
+    seqan3::configuration cfg = seqan3::align_cfg::method_global |
                                 seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                                 seqan3::align_cfg::result{seqan3::with_alignment};
 

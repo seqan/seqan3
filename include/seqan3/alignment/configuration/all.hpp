@@ -19,7 +19,7 @@
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>

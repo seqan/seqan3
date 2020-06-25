@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -27,7 +27,7 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::global::affine::banded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+inline constexpr auto align_config = seqan3::align_cfg::method_global |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}};
 

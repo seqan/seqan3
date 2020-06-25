@@ -46,7 +46,7 @@ In line 16-17 we configure the alignment job with the most simplistic configurat
 In this case it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
-The minimum requirement for computing a pairwise alignment is to specify the seqan3::align_cfg::mode and the
+The minimum requirement for computing a pairwise alignment is to specify the alignment method (seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
 seqan3::align_cfg::scoring configuration elements. The first one selects the internal algorithm and the second one
 provides the scoring scheme that should be used to score a pair of sequence characters.
 
@@ -104,10 +104,10 @@ for the alignment are defined in the special namespace seqan3::align_cfg.
 
 ## Global and semi-global alignment
 
-The most straightforward algorithm is the global alignment which can be configured using the seqan3::align_cfg::mode
- with seqan3::global_alignment as the constructor argument.
+The most straightforward algorithm is the global alignment which can be configured using the
+seqan3::align_cfg::method_global.
 
-\remark The mode configuration must be given by the user as it strongly depends on the application context.
+\remark The method configuration must be given by the user as it strongly depends on the application context.
 It would be wrong for us to assume what the intended default behaviour should be.
 
 The global alignment can be further refined by setting the seqan3::align_cfg::aligned_ends option.
@@ -204,7 +204,7 @@ positive value and the score for mismatch and gaps must be negative in order to 
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
 seqan3::align_cfg::scoring and the seqan3::align_cfg::gap configurations. The
-seqan3::align_cfg::scoring is mandatory - similarly to the seqan3::align_cfg::mode configuration. It would be
+seqan3::align_cfg::scoring is mandatory - similarly to the alignment method configuration. It would be
 wrong to assume what the default scoring scheme should be. If you do not provide these configurations, the compilation
 will fail with a corresponding error message. Not providing the gap scheme is ok. In this case the default initialised
 gap scheme will be used for the alignment computation.

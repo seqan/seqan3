@@ -13,7 +13,7 @@ int main()
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+    auto config = seqan3::align_cfg::method_global |
                   seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |

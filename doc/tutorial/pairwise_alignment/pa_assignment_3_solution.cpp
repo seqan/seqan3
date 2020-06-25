@@ -27,7 +27,7 @@ int main()
     }
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::mode{seqan3::global_alignment} |
+    auto config = seqan3::align_cfg::method_global |
                   seqan3::align_cfg::scoring{seqan3::aminoacid_scoring_scheme{
                       seqan3::aminoacid_similarity_matrix::BLOSUM62}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};

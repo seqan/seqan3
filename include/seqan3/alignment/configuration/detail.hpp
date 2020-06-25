@@ -28,8 +28,8 @@ enum struct align_config_id : uint8_t
     band,         //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
     debug,        //!< ID for the \ref seqan3::align_cfg::debug "debug" option.
     gap,          //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
-    global,       //!< ID for the \ref seqan3::global_alignment "global alignment" option.
-    local,        //!< ID for the \ref seqan3::local_alignment "local alignment" option.
+    global,       //!< ID for the \ref seqan3::align_cfg::method_global "global alignment" option.
+    local,        //!< ID for the \ref seqan3::align_cfg::method_local "local alignment" option.
     max_error,    //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
     on_result,    //!< ID for the \ref seqan3::align_cfg::on_result "on_result" option.
     parallel,     //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.

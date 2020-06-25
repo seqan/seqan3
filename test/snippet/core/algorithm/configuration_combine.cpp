@@ -1,12 +1,12 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_mode.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
 int main()
 {
     // Here we use the global and banded alignment configurations to show how they can be combined.
-    seqan3::configuration my_cfg = seqan3::align_cfg::mode{seqan3::global_alignment} |
+    seqan3::configuration my_cfg = seqan3::align_cfg::method_global |
                                    seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
                                                                       seqan3::align_cfg::upper_diagonal{4}};
 }

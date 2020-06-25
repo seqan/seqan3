@@ -131,7 +131,10 @@ public:
     //!\brief Expects alignment configurations.
     constexpr static bool expects_alignment_configuration()
     {
-        return alignment_config_type::template exists<align_cfg::mode>();
+        const bool is_global = alignment_config_type::template exists<seqan3::detail::method_global_tag>();
+        const bool is_local = alignment_config_type::template exists<seqan3::detail::method_local_tag>();
+
+        return (is_global || is_local);
     }
 };
 
@@ -314,7 +317,7 @@ public:
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
             auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
-            if constexpr (config_t::template exists<align_cfg::mode<detail::global_alignment_type>>())
+            if constexpr (config_t::template exists<seqan3::detail::method_global_tag>())
             {
                 // Only use edit distance if ...
                 if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
@@ -546,8 +549,10 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                            lazy<simd_match_mismatch_scoring_scheme,
                                 typename traits_t::score_type,
                                 typename traits_t::scoring_scheme_alphabet_type,
-                                typename traits_t::alignment_mode_type>,
-                                typename traits_t::scoring_scheme_type>;
+                                typename std::conditional_t<traits_t::is_global,
+                                                            seqan3::detail::method_global_tag,
+                                                            seqan3::detail::method_local_tag>>,
+                            typename traits_t::scoring_scheme_type>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;
     return configure_free_ends_initialisation<function_wrapper_t, scoring_scheme_policy_t>(cfg);
