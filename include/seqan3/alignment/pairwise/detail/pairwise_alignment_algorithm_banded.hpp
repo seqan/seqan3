@@ -111,8 +111,6 @@ public:
             size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
             size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
 
-            check_valid_band_configuration(sequence1_size, sequence2_size);
-
             auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
                                                                               sequence2_size,
                                                                               this->lowest_viable_score());
@@ -128,27 +126,6 @@ public:
     //!\}
 
 protected:
-    /*!\brief Checks whether the band is valid for the given sequence sizes.
-     *
-     * \param[in] sequence1_size The size of the first sequence.
-     * \param[in] sequence2_size The size of the second sequence.
-     *
-     * \throws seqan3::invalid_alignment_configuration if the band is invalid for the given sequence sizes and the
-     *         alignment configuration.
-     */
-    void check_valid_band_configuration(size_t const sequence1_size, size_t const sequence2_size) const
-    {
-        bool const upper_diagonal_ends_before_last_cell = (upper_diagonal + sequence2_size) < sequence1_size;
-        bool const lower_diagonal_ends_behind_last_cell = (-lower_diagonal + sequence1_size) < sequence2_size;
-
-        bool const invalid_band = (lower_diagonal_ends_behind_last_cell && !this->test_last_column_cell) || // band ends in last column but does not use free ends,
-                                  (upper_diagonal_ends_before_last_cell && !this->test_last_row_cell); // band ends in last row but does not use free ends.
-
-        if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] does not cover the last cell."};
-    }
-
     /*!\brief Compute the actual banded alignment.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.

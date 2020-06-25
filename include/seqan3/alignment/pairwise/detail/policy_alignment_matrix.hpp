@@ -57,6 +57,10 @@ protected:
     int32_t lower_diagonal{};
     //!\brief The selected upper diagonal.
     int32_t upper_diagonal{};
+    //!\brief A flag indicating whether the final gaps in the last column are free.
+    bool last_column_is_free{};
+    //!\brief A flag indicating whether the final gaps in the last row are free.
+    bool last_row_is_free{};
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -94,10 +98,27 @@ protected:
         lower_diagonal = band.lower_diagonal.get();
         upper_diagonal = band.upper_diagonal.get();
 
-        if (upper_diagonal < lower_diagonal || upper_diagonal < 0 || lower_diagonal > 0)
+        bool invalid_band = upper_diagonal < lower_diagonal;
+        if constexpr (traits_t::with_free_end_gaps)
+        {
+            auto aligned_ends_config = seqan3::get<align_cfg::aligned_ends>(config).value;
+            bool first_row_is_free = aligned_ends_config[0];
+            bool first_column_is_free = aligned_ends_config[2];
+
+            last_row_is_free = aligned_ends_config[1];
+            last_column_is_free = aligned_ends_config[3];
+            // band starts in first column without free gaps or band starts in first row without free gaps.
+            invalid_band |= (upper_diagonal < 0 && !first_column_is_free) || (lower_diagonal > 0 && !first_row_is_free);
+        }
+        else if constexpr (traits_t::is_global)
+        {
+            invalid_band |= (upper_diagonal < 0 || lower_diagonal > 0);
+        }
+
+        if (invalid_band)
             throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] is not supported because it "
-                                                  "does not completely encloses both sequences."};
+                                                  std::to_string(upper_diagonal) + "] cannot be used with the current "
+                                                  "alignment configuration."};
     }
     //!\}
 
@@ -117,9 +138,11 @@ protected:
      *
      * ### Exception
      *
-     * Might throw std::bad_alloc if the requested matrix size exceeds the available memory.
+     * Might throw std::bad_alloc if the requested matrix size exceeds the available memory or
+     * seqan3::invalid_alignment_configuration if the band does not allow a valid computation of the
+     * configured alignment.
      *
-     * \throws std::bad_alloc
+     * \throws std::bad_alloc or seqan3::invalid_alignment_configuration
      */
     auto acquire_matrices(size_t const sequence1_size,
                           size_t const sequence2_size,
@@ -127,6 +150,9 @@ protected:
     {
         assert(sequence1_size < static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
         assert(sequence2_size < static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+
+        if constexpr (traits_t::is_banded)
+            check_valid_band_configuration(sequence1_size, sequence2_size);
 
         static thread_local alignment_matrix_t alignment_matrix{};
         static thread_local coordinate_matrix<matrix_index_type> index_matrix{};
@@ -147,6 +173,37 @@ protected:
         alignment_matrix.resize(column_index_type{column_count}, row_index_type{row_count}, initial_score);
 
         return std::tie(alignment_matrix, index_matrix);
+    }
+
+    /*!\brief Checks whether the band is valid for the given sequence sizes.
+     *
+     * \param[in] sequence1_size The size of the first sequence.
+     * \param[in] sequence2_size The size of the second sequence.
+     *
+     * \throws seqan3::invalid_alignment_configuration if the band is invalid for the given sequence sizes and the
+     *         alignment configuration.
+     */
+    void check_valid_band_configuration(size_t const sequence1_size, size_t const sequence2_size) const
+    {
+        bool const upper_diagonal_ends_before_last_cell = (upper_diagonal + sequence2_size) < sequence1_size;
+        bool const lower_diagonal_ends_behind_last_cell = (-lower_diagonal + sequence1_size) < sequence2_size;
+
+        bool invalid_band = false;
+        if constexpr (traits_t::with_free_end_gaps)
+        {
+            // band ends in last column without free gaps or band ends in last row without free gaps.
+            invalid_band |= (lower_diagonal_ends_behind_last_cell && !last_column_is_free) ||
+                            (upper_diagonal_ends_before_last_cell && !last_row_is_free);
+        }
+        else if constexpr (traits_t::is_global)
+        {
+            invalid_band |= (upper_diagonal_ends_before_last_cell || lower_diagonal_ends_behind_last_cell);
+        }
+
+        if (invalid_band)
+            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
+                                                  std::to_string(upper_diagonal) + "] cannot be used with the current "
+                                                  "alignment configuration."};
     }
 };
 } // namespace seqan3::detail
