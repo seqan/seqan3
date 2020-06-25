@@ -22,3 +22,88 @@ using pairwise_semiglobal_affine_banded_testing_types = ::testing::Types<
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_semiglobal_affine_banded,
                                pairwise_alignment_test,
                                pairwise_semiglobal_affine_banded_testing_types, );
+
+using seqan3::operator""_dna4;
+
+struct pairwise_semiglobal_affine_banded : public ::testing::Test
+{
+    seqan3::dna4_vector sequence1 = "TTTTTACGTATGTCCCCC"_dna4;
+    seqan3::dna4_vector sequence2 = "ACGTAAAACGTAGTAGAT"_dna4;
+
+    auto base_config() const
+    {
+        return seqan3::align_cfg::method_global |
+               seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                         seqan3::gap_open_score{-10}}} |
+               seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                            seqan3::mismatch_score{-5}}};
+    }
+};
+
+TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_greater_0)
+{
+    auto config = base_config() |
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{1},
+                                                     seqan3::align_cfg::upper_diagonal{8}} |
+                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::false_type{}},
+                                                                   seqan3::back_end_first{std::true_type{}},
+                                                                   seqan3::front_end_second{std::true_type{}},
+                                                                   seqan3::back_end_second{std::true_type{}}}};
+
+    EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config)),
+                 seqan3::invalid_alignment_configuration);
+}
+
+TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_0)
+{
+    auto config = base_config() |
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
+                                                     seqan3::align_cfg::upper_diagonal{-1}} |
+                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
+                                                                   seqan3::back_end_first{std::true_type{}},
+                                                                   seqan3::front_end_second{std::false_type{}},
+                                                                   seqan3::back_end_second{std::true_type{}}}};
+
+    EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config)),
+                 seqan3::invalid_alignment_configuration);
+}
+
+TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_lower_diagonal)
+{
+    auto config = base_config() |
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{3},
+                                                     seqan3::align_cfg::upper_diagonal{-3}} |
+                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
+
+    EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config)),
+                 seqan3::invalid_alignment_configuration);
+}
+
+TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_ends_in_last_column)
+{
+    auto config = base_config() |
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{4},
+                                                     seqan3::align_cfg::upper_diagonal{8}} |
+                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
+                                                                   seqan3::back_end_first{std::true_type{}},
+                                                                   seqan3::front_end_second{std::true_type{}},
+                                                                   seqan3::back_end_second{std::false_type{}}}};
+    auto alignment_range = align_pairwise(std::tie(sequence1, sequence2), config);
+    EXPECT_THROW((alignment_range.begin()),
+                 seqan3::invalid_alignment_configuration);
+}
+
+TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_ends_in_last_row)
+{
+    auto config = base_config() |
+                  seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
+                                                     seqan3::align_cfg::upper_diagonal{-4}} |
+                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
+                                                                   seqan3::back_end_first{std::false_type{}},
+                                                                   seqan3::front_end_second{std::true_type{}},
+                                                                   seqan3::back_end_second{std::true_type{}}}};
+
+    auto alignment_range = align_pairwise(std::tie(sequence1, sequence2), config);
+    EXPECT_THROW((alignment_range.begin()),
+                 seqan3::invalid_alignment_configuration);
+}
