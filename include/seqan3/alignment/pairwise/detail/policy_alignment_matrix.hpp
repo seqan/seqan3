@@ -14,6 +14,7 @@
 
 #include <tuple>
 
+#include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
@@ -52,6 +53,11 @@ protected:
     //!\brief The configured matrix index type to store the coordinates.
     using matrix_index_type = typename traits_t::matrix_index_type;
 
+    //!\brief The selected lower diagonal.
+    int32_t lower_diagonal{};
+    //!\brief The selected upper diagonal.
+    int32_t upper_diagonal{};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -62,15 +68,37 @@ protected:
     policy_alignment_matrix & operator=(policy_alignment_matrix &&) = default; //!< Defaulted.
     ~policy_alignment_matrix() = default; //!< Defaulted.
 
-    /*!\brief Construction and initialisation using the alignment configuration.
-     * \param[in] config The alignment configuration [not used in this context].
+    /*!\brief Constructs and initialises the algorithm using the alignment configuration.
+     * \tparam alignment_configuration_t The type of the alignment configuration; must be an instance of
+     *                                   seqan3::configuration.
+     *
+     * \param[in] config The configuration passed into the algorithm.
+     *
+     * \details
+     *
+     * Initialises the members for the lower and upper diagonal. These members are only used if the banded alignment
+     * is computed.
+     *
+     * \throws seqan3::invalid_alignment_configuration if the given band settings are invalid.
      */
     template <typename alignment_configuration_t>
     //!\cond
         requires (is_type_specialisation_of_v<alignment_configuration_t, configuration>)
     //!\endcond
-    policy_alignment_matrix(alignment_configuration_t const & SEQAN3_DOXYGEN_ONLY(config))
-    {}
+    policy_alignment_matrix(alignment_configuration_t const & config)
+    {
+        using seqan3::get;
+
+        auto band = config.get_or(seqan3::align_cfg::band_fixed_size{});
+
+        lower_diagonal = band.lower_diagonal.get();
+        upper_diagonal = band.upper_diagonal.get();
+
+        if (upper_diagonal < lower_diagonal || upper_diagonal < 0 || lower_diagonal > 0)
+            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
+                                                  std::to_string(upper_diagonal) + "] is not supported because it "
+                                                  "does not completely encloses both sequences."};
+    }
     //!\}
 
     /*!\brief Acquires a new thread local alignment and index matrix for the given sequence sizes.
@@ -84,7 +112,8 @@ protected:
      * \details
      *
      * Acquires a thread local alignment and index matrix. Initialises the matrices with the given
-     * sequence sizes and the initial score value.
+     * sequence sizes and the initial score value. In the banded alignment, the alignment matrix is reduced to
+     * the column count times the band size.
      *
      * ### Exception
      *
@@ -96,15 +125,26 @@ protected:
                           size_t const sequence2_size,
                           score_type initial_score = score_type{}) const
     {
+        assert(sequence1_size < static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+        assert(sequence2_size < static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+
         static thread_local alignment_matrix_t alignment_matrix{};
         static thread_local coordinate_matrix<matrix_index_type> index_matrix{};
 
         // Increase dimension by one for the initialisation of the matrix.
         size_t const column_count = sequence1_size + 1;
-        size_t const row_count = sequence2_size + 1;
+        size_t row_count = sequence2_size + 1;
+
+        index_matrix.resize(column_index_type{column_count}, row_index_type{row_count});
+
+        if constexpr (traits_t::is_banded)
+        {
+            assert(upper_diagonal - lower_diagonal + 1 > 0); // Band size is a positive integer.
+            // Allocate one more cell to compute the last cell of the band with standard recursion function.
+            row_count = std::min<int64_t>(upper_diagonal - lower_diagonal + 2, row_count);
+        }
 
         alignment_matrix.resize(column_index_type{column_count}, row_index_type{row_count}, initial_score);
-        index_matrix.resize(column_index_type{column_count}, row_index_type{row_count});
 
         return std::tie(alignment_matrix, index_matrix);
     }
