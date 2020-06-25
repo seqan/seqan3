@@ -163,3 +163,18 @@ For a full recipe on creating your own readmapper, see the very end of the tutor
 #  Serialise data structures with cereal
 
 \include doc/howto/use_cereal/load.hpp
+
+\section cookbook_custom_dna4_alphabet A custom dna4 alphabet that converts all unknown characters to `A`
+
+When assigning from `char` or converting from a larger nucleotide alphabet to a smaller one, *loss of information*
+can occur since obviously some bases are not available. When converting to seqan3::dna5 or seqan3::rna5,
+non-canonical bases (letters other than A, C, G, T, U) are converted to `'N'` to preserve ambiguity at that position.
+For seqan3::dna4 and seqan3::rna4 there is no letter `'N'` to represent ambiguity, so the conversion from `char` for
+IUPAC characters tries to choose the best fitting alternative (see seqan3::dna4 for more details).
+
+If you would like to always convert unknown characters to `A` instead, you can create your own alphabet with a
+respective char conversion table very easily like this:
+
+\include doc/cookbook/custom_dna4.cpp
+
+If you are interested in custom alphabets, also take a look at our tutorial \ref howto_write_an_alphabet.

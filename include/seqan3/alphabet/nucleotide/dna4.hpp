@@ -43,6 +43,9 @@ class rna4;
  * function seqan3::dna4::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna4.cpp
+ *
+ * If the special char conversion of IUPAC characters is not your desired behavior, refer to our cookbook for an
+ * example of \ref cookbook_custom_dna4_alphabet to change the conversion behavior.
  */
 class dna4 : public nucleotide_base<dna4, 4>
 {
