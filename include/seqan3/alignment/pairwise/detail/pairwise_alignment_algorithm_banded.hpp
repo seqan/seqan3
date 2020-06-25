@@ -99,17 +99,15 @@ public:
     //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
-        using result_value_t = typename alignment_result_value_type_accessor<alignment_result_type>::type;
         using std::get;
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            result_value_t res{};
-            res.id = idx;
-
             compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
-            res.score = this->tracked_optimum();
-            callback(alignment_result_type{res});
+            this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
+                                         std::move(idx),
+                                         this->tracked_optimum(),
+                                         callback);
         }
     }
     //!\}
