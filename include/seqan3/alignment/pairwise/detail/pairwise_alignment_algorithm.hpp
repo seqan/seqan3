@@ -137,11 +137,21 @@ public:
     //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
+        using matrix_index_t = typename traits_type::matrix_index_type;
         using std::get;
+
+        thread_local score_matrix_single_column<score_type> alignment_matrix{};
+        coordinate_matrix<matrix_index_t> index_matrix{};
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
+            size_t number_of_columns = std::ranges::distance(get<0>(sequence_pair)) + 1;
+            size_t number_of_rows = std::ranges::distance(get<1>(sequence_pair)) + 1;
+
+            alignment_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+            index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+
+            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          this->optimal_score,
@@ -160,6 +170,7 @@ public:
     {
         using simd_collection_t = std::vector<score_type, aligned_allocator<score_type, alignof(score_type)>>;
         using original_score_t = typename traits_type::original_score_type;
+        using matrix_index_t = typename traits_type::matrix_index_type;
 
         // Extract the batch of sequences for the first and the second sequence.
         auto seq1_collection = indexed_sequence_pairs | views::get<0> | views::get<0>;
@@ -174,7 +185,16 @@ public:
         convert_batch_of_sequences_to_simd_vector(simd_seq1_collection, seq1_collection, traits_type::padding_symbol);
         convert_batch_of_sequences_to_simd_vector(simd_seq2_collection, seq2_collection, traits_type::padding_symbol);
 
-        compute_matrix(simd_seq1_collection, simd_seq2_collection);
+        thread_local score_matrix_single_column<score_type> alignment_matrix{};
+        coordinate_matrix<matrix_index_t> index_matrix{};
+
+        size_t const number_of_columns = std::ranges::distance(simd_seq1_collection) + 1;
+        size_t const number_of_rows = std::ranges::distance(simd_seq2_collection) + 1;
+
+        alignment_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+        index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+
+        compute_matrix(simd_seq1_collection, simd_seq2_collection, alignment_matrix, index_matrix);
 
         size_t index = 0;
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
@@ -232,31 +252,37 @@ protected:
     /*!\brief Compute the actual alignment.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+     * \tparam alignment_matrix_t The type of the alignment matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
+     * \tparam index_matrix_t The type of the index matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
      *
      * \param[in] sequence1 The first sequence to compute the alignment for.
      * \param[in] sequence2 The second sequence to compute the alignment for.
+     * \param[in] alignment_matrix The alignment matrix to compute.
+     * \param[in] index_matrix The index matrix corresponding to the alignment matrix.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    void compute_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::ranges::forward_range sequence1_t,
+              std::ranges::forward_range sequence2_t,
+              std::ranges::input_range alignment_matrix_t,
+              std::ranges::input_range index_matrix_t>
+    //!\cond
+        requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>> &&
+                 std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
+    //!\endcond
+    void compute_matrix(sequence1_t && sequence1,
+                        sequence2_t && sequence2,
+                        alignment_matrix_t && alignment_matrix,
+                        index_matrix_t && index_matrix)
     {
         // ---------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
         // ---------------------------------------------------------------------
-        using matrix_index_t = typename traits_type::matrix_index_type;
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<score_type> local_score_matrix{};
-        coordinate_matrix<matrix_index_t> local_index_matrix{};
-
-        size_t number_of_columns = std::ranges::distance(sequence1) + 1;
-        size_t number_of_rows = std::ranges::distance(sequence2) + 1;
-
-        local_score_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-        local_index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-
-        auto alignment_matrix_it = local_score_matrix.begin();
-        auto indexed_matrix_it = local_index_matrix.begin();
+        auto alignment_matrix_it = alignment_matrix.begin();
+        auto indexed_matrix_it = index_matrix.begin();
 
         initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2);
 
