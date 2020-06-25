@@ -106,24 +106,16 @@ public:
     {
         using std::get;
 
-        thread_local score_matrix_single_column<score_type> alignment_matrix{};
-        coordinate_matrix<uint32_t> index_matrix{};
-        size_t const band_size = upper_diagonal - lower_diagonal + 1;
-
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            size_t sequence1_size = std::ranges::distance(get<0>(sequence_pair));
-            size_t sequence2_size = std::ranges::distance(get<1>(sequence_pair));
+            size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
+            size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
 
             check_valid_band_configuration(sequence1_size, sequence2_size);
 
-            size_t const number_of_columns = sequence1_size + 1;
-            size_t const number_of_rows = sequence2_size + 1;
-
-            alignment_matrix.resize(column_index_type{number_of_columns},
-                                    row_index_type{band_size + 1},
-                                    this->lowest_viable_score());
-            index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+            auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
+                                                                              sequence2_size,
+                                                                              this->lowest_viable_score());
 
             compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
