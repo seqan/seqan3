@@ -69,11 +69,13 @@ protected:
      * \tparam sequence_pair_t The type of the sequence pair.
      * \tparam id_t The type of the id.
      * \tparam score_t The type of the score.
+     * \tparam matrix_coordinate_t The type of the matrix coordinate.
      * \tparam callback_t The type of the callback to invoke.
      *
      * \param[in] sequence_pair The indexed sequence pair.
      * \param[in] id The associated id.
      * \param[in] score The best alignment score.
+     * \param[in] end_positions The matrix coordinate of the best alignment score.
      * \param[in] callback The callback to invoke with the generated result.
      *
      * \details
@@ -83,13 +85,18 @@ protected:
      * work is done to generate the requested result. For example computing the associated alignment from the traceback
      * matrix.
      */
-    template <typename sequence_pair_t, typename index_t, typename score_t, typename callback_t>
+    template <typename sequence_pair_t,
+              typename index_t,
+              typename score_t,
+              typename matrix_coordinate_t,
+              typename callback_t>
     //!\cond
         requires std::invocable<callback_t, result_type>
     //!\endcond
     void make_result_and_invoke([[maybe_unused]] sequence_pair_t && sequence_pair,
                                 [[maybe_unused]] index_t && id,
                                 [[maybe_unused]] score_t score,
+                                [[maybe_unused]] matrix_coordinate_t end_positions,
                                 callback_t && callback)
     {
         using std::get;
@@ -106,6 +113,15 @@ protected:
             static_assert(!std::same_as<decltype(result.data.score), invalid_t>,
                           "Invalid configuration. Expected result with score!");
             result.data.score = std::move(score);
+        }
+
+        if constexpr (traits_type::compute_back_coordinate)
+        {
+            static_assert(!std::same_as<decltype(result.data.back_coordinate), invalid_t>,
+                          "Invalid configuration. Expected result with end positions!");
+
+            result.data.back_coordinate.first = end_positions.col;
+            result.data.back_coordinate.second = end_positions.row;
         }
 
        // TODO: Add other result.data like sequence1_begin_position, sequence1_end_position, and so on.
