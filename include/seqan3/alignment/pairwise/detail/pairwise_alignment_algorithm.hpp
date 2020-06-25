@@ -15,18 +15,12 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
-#include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
-#include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/get.hpp>
-#include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
 {

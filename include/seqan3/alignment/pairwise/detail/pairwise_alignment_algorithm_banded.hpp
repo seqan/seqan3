@@ -15,7 +15,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/take.hpp>
