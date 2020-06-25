@@ -97,13 +97,10 @@ protected:
             gap_extension_score = static_cast<score_type>(selected_gap_scheme.get_gap_score());
             gap_open_score = static_cast<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
         }
-        if constexpr (traits_type::with_free_end_gaps)
-        {
-            // front_end_first, back_end_first, front_end_second, back_end_second
-            auto align_ends_config = get<align_cfg::aligned_ends>(config).value;
-            first_row_is_free = align_ends_config[0];
-            first_column_is_free = align_ends_config[2];
-        }
+
+        auto align_ends_config = config.get_or(align_cfg::aligned_ends{free_ends_none}).value;
+        first_row_is_free = align_ends_config[0];
+        first_column_is_free = align_ends_config[2];
     }
     //!\}
 
