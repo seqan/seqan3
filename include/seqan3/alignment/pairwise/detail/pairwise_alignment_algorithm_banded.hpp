@@ -48,11 +48,6 @@ protected:
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
     static_assert(traits_type::is_banded, "Alignment configuration must have band configured.");
 
-    //!\brief The selected lower diagonal.
-    int32_t lower_diagonal{};
-    //!\brief The selected upper diagonal.
-    int32_t upper_diagonal{};
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -71,27 +66,10 @@ public:
      *
      * Initialises the algorithm given the user settings from the alignment configuration object.
      *
-     * \throws seqan3::invalid_alignment_configuration if the given band settings are invalid.
+     * \throws seqan3::invalid_alignment_configuration.
      */
     pairwise_alignment_algorithm_banded(alignment_configuration_t const & config) : base_algorithm_t(config)
-    {
-        using seqan3::get;
-
-        auto band = get<seqan3::align_cfg::band_fixed_size>(config);
-
-        lower_diagonal = band.lower_diagonal.get();
-        upper_diagonal = band.upper_diagonal.get();
-
-        // Band is invalid if ...
-        bool const invalid_band = upper_diagonal < lower_diagonal || // upper diagonal is smaller than lower diagonal,
-                                  (upper_diagonal < 0 && !this->first_column_is_free) || // band starts in first column but does not use free ends,
-                                  (lower_diagonal > 0 && !this->first_row_is_free); // band starts in first row but does not use free ends.
-
-        if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] is not valid for the "
-                                                  "configured alignment because the optimum cannot be computed."};
-    }
+    {}
     //!\}
 
     /*!\name Invocation
@@ -200,8 +178,8 @@ protected:
         auto alignment_matrix_it = alignment_matrix.begin();
         auto indexed_matrix_it = index_matrix.begin();
 
-        size_t row_size = std::max<int32_t>(0, -lower_diagonal);
-        size_t const column_size = std::max<int32_t>(0, upper_diagonal);
+        size_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
+        size_t const column_size = std::max<int32_t>(0, this->upper_diagonal);
         this->initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2 | views::take(row_size));
 
         // ---------------------------------------------------------------------
