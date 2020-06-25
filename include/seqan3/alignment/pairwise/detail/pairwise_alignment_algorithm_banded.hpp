@@ -106,9 +106,26 @@ public:
     {
         using std::get;
 
+        thread_local score_matrix_single_column<score_type> alignment_matrix{};
+        coordinate_matrix<uint32_t> index_matrix{};
+        size_t const band_size = upper_diagonal - lower_diagonal + 1;
+
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
+            size_t sequence1_size = std::ranges::distance(get<0>(sequence_pair));
+            size_t sequence2_size = std::ranges::distance(get<1>(sequence_pair));
+
+            check_valid_band_configuration(sequence1_size, sequence2_size);
+
+            size_t const number_of_columns = sequence1_size + 1;
+            size_t const number_of_rows = sequence2_size + 1;
+
+            alignment_matrix.resize(column_index_type{number_of_columns},
+                                    row_index_type{band_size + 1},
+                                    this->lowest_viable_score());
+            index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+
+            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          this->optimal_score,
@@ -143,9 +160,15 @@ protected:
     /*!\brief Compute the actual banded alignment.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+     * \tparam alignment_matrix_t The type of the alignment matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
+     * \tparam index_matrix_t The type of the index matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
      *
      * \param[in] sequence1 The first sequence to compute the alignment for.
      * \param[in] sequence2 The second sequence to compute the alignment for.
+     * \param[in] alignment_matrix The alignment matrix to compute.
+     * \param[in] index_matrix The index matrix corresponding to the alignment matrix.
      *
      * \details
      *
@@ -185,38 +208,28 @@ protected:
      * G 3|     |     |(3,2)|(3,3)|(3,4)|(3,5)|(3,6)|
      * T 4|     |     |     |(4,3)|(4,4)|(4,5)|(4,6)|
      *```
-     *
-     * \throws seqan3::invalid_alignment_configuration if the band is not valid for the given sequences or
-     *         std::bad_alloc if too much memory is allocated.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    void compute_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::ranges::forward_range sequence1_t,
+              std::ranges::forward_range sequence2_t,
+              std::ranges::input_range alignment_matrix_t,
+              std::ranges::input_range index_matrix_t>
+    //!\cond
+        requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>> &&
+                 std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
+    //!\endcond
+    void compute_matrix(sequence1_t && sequence1,
+                        sequence2_t && sequence2,
+                        alignment_matrix_t && alignment_matrix,
+                        index_matrix_t && index_matrix)
     {
-        size_t sequence1_size = std::ranges::distance(sequence1);
-        size_t sequence2_size = std::ranges::distance(sequence2);
-
-        check_valid_band_configuration(sequence1_size, sequence2_size);
-
         // ---------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
         // ---------------------------------------------------------------------
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<score_type> local_score_matrix{};
-        coordinate_matrix<uint32_t> local_index_matrix{};
-
-        size_t const number_of_columns = sequence1_size + 1;
-        size_t const number_of_rows = sequence2_size + 1;
-        size_t const band_size = upper_diagonal - lower_diagonal + 1;
-
-        local_score_matrix.resize(column_index_type{number_of_columns},
-                                  row_index_type{band_size + 1},
-                                  this->lowest_viable_score());
-        local_index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-
-        auto alignment_matrix_it = local_score_matrix.begin();
-        auto indexed_matrix_it = local_index_matrix.begin();
+        auto alignment_matrix_it = alignment_matrix.begin();
+        auto indexed_matrix_it = index_matrix.begin();
 
         size_t row_size = std::max<int32_t>(0, -lower_diagonal);
         size_t const column_size = std::max<int32_t>(0, upper_diagonal);
@@ -260,7 +273,9 @@ protected:
 
         this->track_last_column_cell(*alignment_column_it, *cell_index_column_it);
 
-        for (size_t last_row = std::min(sequence2_size, row_size); first_row_index < last_row; ++first_row_index)
+        for (size_t last_row = std::min<size_t>(std::ranges::distance(sequence2), row_size);
+             first_row_index < last_row;
+             ++first_row_index)
             this->track_last_column_cell(*++alignment_column_it, *++cell_index_column_it);
 
         this->track_final_cell(*alignment_column_it, *cell_index_column_it);
