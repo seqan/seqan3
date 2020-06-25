@@ -88,7 +88,7 @@ namespace seqan3
  *
  * Might throw std::bad_alloc if it fails to allocate the alignment matrix or seqan3::invalid_alignment_configuration
  * if the configuration is invalid.
- * Throws std::bad_optional_access if seqan3::align_cfg::parallel has been specified without a `thread_count` value.
+ * Throws std::runtime_error if seqan3::align_cfg::parallel has been specified without a `thread_count` value.
  *
  * ### Complexity
  *
@@ -188,9 +188,17 @@ constexpr auto align_pairwise(sequence_t && sequences,
     auto select_execution_handler = [&] ()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
-            return execution_handler_t{get<align_cfg::parallel>(complete_config).thread_count.value()};
+        {
+            auto thread_count = get<align_cfg::parallel>(complete_config).thread_count;
+            if (!thread_count)
+                throw std::runtime_error{"You must configure the number of threads in seqan3::align_cfg::parallel."};
+
+            return execution_handler_t{*thread_count};
+        }
         else
+        {
             return execution_handler_t{};
+        }
     };
 
     // Return the range over the alignments.

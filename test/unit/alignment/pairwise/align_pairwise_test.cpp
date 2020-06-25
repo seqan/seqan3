@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <optional>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -220,5 +220,5 @@ TEST(align_pairwise_test, parallel_without_parameter)
                                 seqan3::align_cfg::result{seqan3::with_score} |
                                 seqan3::align_cfg::parallel{};
 
-    EXPECT_THROW(seqan3::align_pairwise(std::tie(seq1, seq2), cfg), std::bad_optional_access);
+    EXPECT_THROW(seqan3::align_pairwise(std::tie(seq1, seq2), cfg), std::runtime_error);
 }
