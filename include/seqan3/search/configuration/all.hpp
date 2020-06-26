@@ -128,4 +128,12 @@
  * The following example demonstrates the usage of the dynamic configuration:
  *
  * \include test/snippet/search/dynamic_hit_configuration_example.cpp
+ *
+ * \subsection search_configuration_subsection_parallel 6: Parallel Configuration
+ *
+ * This configuration determines the maximal number of threads the search algorithm can use.
+ *
+ * The seqan3::search_cfg::parallel configuration element can be combined with any other search configuration.
+ *
+ * \include test/snippet/search/configuration_parallel.cpp
  */

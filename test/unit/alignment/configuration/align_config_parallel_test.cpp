@@ -8,10 +8,24 @@
 #include <gtest/gtest.h>
 
 #include <functional>
+#include <optional>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+
+#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+
+// ---------------------------------------------------------------------------------------------------------------------
+// test template : pipeable_config_element_test
+// ---------------------------------------------------------------------------------------------------------------------
+
+using test_types = ::testing::Types<seqan3::align_cfg::parallel>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test, test_types, );
+
+// ---------------------------------------------------------------------------------------------------------------------
+// individual tests
+// ---------------------------------------------------------------------------------------------------------------------
 
 TEST(align_config_parallel, config_element_specialisation)
 {
@@ -23,17 +37,17 @@ TEST(align_config_parallel, configuration)
     { // from lvalue.
         seqan3::align_cfg::parallel elem{2};
         seqan3::configuration cfg{elem};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::parallel>(cfg).value)>,
-                                    uint32_t>));
+        auto cfg_value = std::get<seqan3::align_cfg::parallel>(cfg).thread_count;
 
-        EXPECT_EQ(std::get<seqan3::align_cfg::parallel>(cfg).value, 2u);
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, std::optional<uint32_t>>));
+        EXPECT_EQ(cfg_value, 2u);
     }
 
     { // from rvalue.
         seqan3::configuration cfg{seqan3::align_cfg::parallel{2}};
-        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(std::get<seqan3::align_cfg::parallel>(cfg).value)>,
-                                    uint32_t>));
+        auto cfg_value = std::get<seqan3::align_cfg::parallel>(cfg).thread_count;
 
-        EXPECT_EQ(std::get<seqan3::align_cfg::parallel>(cfg).value, 2u);
+        EXPECT_TRUE((std::is_same_v<std::remove_reference_t<decltype(cfg_value)>, std::optional<uint32_t>>));
+        EXPECT_EQ(cfg_value, 2u);
     }
 }

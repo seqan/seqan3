@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 
@@ -49,9 +50,9 @@ auto call_alignment(seq_t && seq, cfg_t && cfg)
     {
         return seqan3::align_pairwise(std::forward<seq_t>(seq), std::forward<cfg_t>(cfg));
     }
-    else
+    else if constexpr (std::same_as<type_param_t, seqan3::align_cfg::parallel>)
     {
-        auto && config = cfg | type_param_t{};
+        auto && config = cfg | seqan3::align_cfg::parallel{4};
         return seqan3::align_pairwise(std::forward<seq_t>(seq), std::forward<decltype(config)>(config));
     }
 }
@@ -209,4 +210,15 @@ TYPED_TEST(align_pairwise_test, bug_1598)
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.
     auto results = seqan3::align_pairwise(std::tie(s1, s2), cfg);
+}
+
+TEST(align_pairwise_test, parallel_without_parameter)
+{
+    auto seq1 = "ACGTGATG"_dna4;
+    auto seq2 = "AGTGATACT"_dna4;
+    seqan3::configuration cfg = seqan3::align_cfg::edit |
+                                seqan3::align_cfg::result{seqan3::with_score} |
+                                seqan3::align_cfg::parallel{};
+
+    EXPECT_THROW(seqan3::align_pairwise(std::tie(seq1, seq2), cfg), std::runtime_error);
 }
