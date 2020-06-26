@@ -18,6 +18,7 @@
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
+#include <seqan3/core/detail/strong_type.hpp>
 
 namespace seqan3::detail
 {
@@ -62,6 +63,46 @@ namespace seqan3::align_cfg
  * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
 inline constexpr seqan3::detail::method_local_tag method_local{};
+
+/*!\brief A strong type representing free_end_gaps_sequence1_leading of the seqan3::align_cfg::method_global.
+ * \ingroup alignment_configuration
+ */
+struct free_end_gaps_sequence1_leading : public seqan3::detail::strong_type<bool, free_end_gaps_sequence1_leading>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<bool, free_end_gaps_sequence1_leading>;
+    using base_t::base_t; // Import the base class constructors
+};
+
+/*!\brief A strong type representing free_end_gaps_sequence2_leading of the seqan3::align_cfg::method_global.
+ * \ingroup alignment_configuration
+ */
+struct free_end_gaps_sequence2_leading : public seqan3::detail::strong_type<bool, free_end_gaps_sequence2_leading>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<bool, free_end_gaps_sequence2_leading>;
+    using base_t::base_t; // Import the base class constructors
+};
+
+/*!\brief A strong type representing free_end_gaps_sequence1_trailing of the seqan3::align_cfg::method_global.
+ * \ingroup alignment_configuration
+ */
+struct free_end_gaps_sequence1_trailing : public seqan3::detail::strong_type<bool, free_end_gaps_sequence1_trailing>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<bool, free_end_gaps_sequence1_trailing>;
+    using base_t::base_t; // Import the base class constructors
+};
+
+/*!\brief A strong type representing free_end_gaps_sequence2_trailing of the seqan3::align_cfg::method_global.
+ * \ingroup alignment_configuration
+ */
+struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<bool, free_end_gaps_sequence2_trailing>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<bool, free_end_gaps_sequence2_trailing>;
+    using base_t::base_t; // Import the base class constructors
+};
 
 /*!\brief Sets the global alignment method.
  * \ingroup alignment_configuration
