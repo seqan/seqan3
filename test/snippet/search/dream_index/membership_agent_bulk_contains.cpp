@@ -11,6 +11,13 @@ int main()
     // Query the Interleaved Bloom Filter. Note that there may be false positive results!
     // A `1` at position `i` indicates the (probable) presence of the query in bin `i`.
     // Capture the result by reference to avoid copies.
-    auto & result = ibf.bulk_contains(712);
+    auto agent = ibf.membership_agent();
+    auto & result = agent.bulk_contains(712);
     seqan3::debug_stream << result << '\n'; // prints [0,0,0,1,0,0,0,0,0,0,0,0]
+
+    // Calling `increase_bin_number_to` invalidates the agent.
+    ibf.increase_bin_number_to(seqan3::bin_count{60u});
+
+    // So make sure to construct a new membership_agent.
+    agent = ibf.membership_agent();
 }
