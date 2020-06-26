@@ -22,7 +22,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::align_cfg::band_fixed_size,
                                     seqan3::align_cfg::gap<seqan3::gap_scheme<>>,
                                     seqan3::align_cfg::max_error,
-                                    seqan3::detail::method_global_tag,
+                                    seqan3::align_cfg::method_global,
                                     seqan3::detail::method_local_tag,
                                     seqan3::align_cfg::parallel,
                                     seqan3::align_cfg::result<>,

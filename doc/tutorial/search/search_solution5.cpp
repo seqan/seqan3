@@ -19,7 +19,7 @@ void run_text_single()
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                                 seqan3::search_cfg::hit_all_best;
-    seqan3::configuration const align_config = seqan3::align_cfg::method_global |
+    seqan3::configuration const align_config = seqan3::align_cfg::method_global{} |
                                                seqan3::align_cfg::edit_scheme |
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
@@ -56,7 +56,7 @@ void run_text_collection()
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                                 seqan3::search_cfg::hit_all_best;
-    seqan3::configuration const align_config = seqan3::align_cfg::method_global |
+    seqan3::configuration const align_config = seqan3::align_cfg::method_global{} |
                                                seqan3::align_cfg::edit_scheme |
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};

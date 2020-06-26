@@ -27,7 +27,7 @@
 #include <seqan/sequence.h>
 #endif
 
-constexpr auto edit_distance_cfg = seqan3::align_cfg::method_global |
+constexpr auto edit_distance_cfg = seqan3::align_cfg::method_global{} |
                                    seqan3::align_cfg::edit_scheme |
                                    seqan3::align_cfg::result{seqan3::with_score};
 

@@ -122,7 +122,7 @@ public:
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
     //!\brief Flag indicating whether global alignment method is enabled.
     static constexpr bool is_global =
-        configuration_t::template exists<seqan3::detail::method_global_tag>();
+        configuration_t::template exists<seqan3::align_cfg::method_global>();
     //!\brief Flag indicating whether global alignment mode with free ends is enabled.
     static constexpr bool with_free_end_gaps = configuration_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.

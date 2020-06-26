@@ -28,7 +28,7 @@ TEST(alignment_selector, align_result_selector_with_list)
     using seq2_t = std::list<seqan3::dna4>;
 
     {
-        auto cfg = seqan3::align_cfg::method_global |
+        auto cfg = seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::edit_scheme |
                    seqan3::align_cfg::result{seqan3::with_score};
         using _t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
@@ -40,7 +40,7 @@ TEST(alignment_selector, align_result_selector_with_list)
     }
 
     {
-        auto cfg = seqan3::align_cfg::method_global |
+        auto cfg = seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::edit_scheme |
                    seqan3::align_cfg::result{seqan3::with_alignment};
         using _t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
@@ -66,7 +66,7 @@ TEST(alignment_selector, align_result_selector_using_score_type)
     using seq1_t = std::vector<seqan3::dna4>;
     using seq2_t = std::list<seqan3::dna4>;
 
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<double>};
     using _t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
@@ -82,7 +82,7 @@ TEST(alignment_selector, align_result_selector_with_vector)
 {
     using seq_t = std::vector<seqan3::dna4>;
 
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::result{seqan3::with_alignment};
     using _t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,

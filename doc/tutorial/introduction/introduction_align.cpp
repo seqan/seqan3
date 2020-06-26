@@ -36,7 +36,7 @@ int main()
 
     // Call a global pairwise alignment with edit distance and traceback.
     for (auto && res : align_pairwise(std::tie(sequences[0], sequences[1]),
-                                      seqan3::align_cfg::method_global |
+                                      seqan3::align_cfg::method_global{} |
                                       seqan3::align_cfg::edit_scheme | seqan3::align_cfg::result{seqan3::with_alignment}))
     {
         // Print the resulting score and the alignment.

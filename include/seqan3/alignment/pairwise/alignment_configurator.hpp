@@ -135,7 +135,7 @@ public:
     //!\brief Expects alignment configurations.
     constexpr static bool expects_alignment_configuration()
     {
-        const bool is_global = alignment_config_type::template exists<seqan3::detail::method_global_tag>();
+        const bool is_global = alignment_config_type::template exists<seqan3::align_cfg::method_global>();
         const bool is_local = alignment_config_type::template exists<seqan3::detail::method_local_tag>();
 
         return (is_global || is_local);
@@ -321,7 +321,7 @@ public:
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
             auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
-            if constexpr (config_t::template exists<seqan3::detail::method_global_tag>())
+            if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
             {
                 // Only use edit distance if ...
                 if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
@@ -538,7 +538,7 @@ private:
             using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
             using alignment_method_t = typename std::conditional_t<traits_t::is_global,
-                                                                   seqan3::detail::method_global_tag,
+                                                                   seqan3::align_cfg::method_global,
                                                                    seqan3::detail::method_local_tag>;
 
             using score_t = typename traits_t::score_type;
@@ -577,7 +577,7 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                                 typename traits_t::score_type,
                                 typename traits_t::scoring_scheme_alphabet_type,
                                 typename std::conditional_t<traits_t::is_global,
-                                                            seqan3::detail::method_global_tag,
+                                                            seqan3::align_cfg::method_global,
                                                             seqan3::detail::method_local_tag>>,
                             typename traits_t::scoring_scheme_type>;
 

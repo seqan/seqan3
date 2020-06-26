@@ -23,15 +23,6 @@
 namespace seqan3::detail
 {
 
-//!\brief A strong type to select the global alignment method.
-//!\ingroup alignment_configuration
-struct method_global_tag : public pipeable_config_element<method_global_tag>
-{
-    //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration.
-    static constexpr detail::align_config_id id{detail::align_config_id::global};
-};
-
 //!\brief A strong type to select the local alignment method.
 //!\ingroup alignment_configuration
 struct method_local_tag : public pipeable_config_element<method_local_tag>
@@ -108,6 +99,51 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
  * \ingroup alignment_configuration
  * \copydetails seqan3::align_cfg::method_local
  */
-inline constexpr seqan3::detail::method_global_tag method_global{};
+struct method_global : public pipeable_config_element<method_global>
+{
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    method_global() = default; //!< Defaulted.
+    method_global(method_global const &) = default; //!< Defaulted.
+    method_global(method_global &&) = default; //!< Defaulted.
+    method_global & operator=(method_global const &) = default; //!< Defaulted.
+    method_global & operator=(method_global &&) = default; //!< Defaulted.
+    ~method_global() = default; //!< Defaulted.
+
+    /*!\brief Construct method_global with a specific free end gap configuration.
+     * \param[in] free_sequence1_leading An instance of seqan3::align_cfg::free_end_gaps_sequence1_leading that
+     *                                   indicates whether leading gaps in sequence1 should be free (not penalised).
+     * \param[in] free_sequence2_leading An instance of seqan3::align_cfg::free_end_gaps_sequence2_leading that
+     *                                   indicates whether leading gaps in sequence2 should be free (not penalised).
+     * \param[in] free_sequence1_trailing An instance of seqan3::align_cfg::free_end_gaps_sequence1_trailing that
+     *                                   indicates whether trailing gaps in sequence1 should be free (not penalised).
+     * \param[in] free_sequence2_trailing An instance of seqan3::align_cfg::free_end_gaps_sequence2_trailing that
+     *                                   indicates whether trailing gaps in sequence2 should be free (not penalised).
+     */
+    constexpr method_global(seqan3::align_cfg::free_end_gaps_sequence1_leading free_sequence1_leading,
+                            seqan3::align_cfg::free_end_gaps_sequence2_leading free_sequence2_leading,
+                            seqan3::align_cfg::free_end_gaps_sequence1_trailing free_sequence1_trailing,
+                            seqan3::align_cfg::free_end_gaps_sequence2_trailing free_sequence2_trailing) noexcept :
+        free_end_gaps_sequence1_leading{free_sequence1_leading.get()},
+        free_end_gaps_sequence2_leading{free_sequence2_leading.get()},
+        free_end_gaps_sequence1_trailing{free_sequence1_trailing.get()},
+        free_end_gaps_sequence2_trailing{free_sequence2_trailing.get()}
+    {}
+    //!\}
+
+    //!\brief If set to `true`, leading gaps in sequence1 are not penalized when computing the optimal alignment.
+    seqan3::align_cfg::free_end_gaps_sequence1_leading free_end_gaps_sequence1_leading{false};
+    //!\brief If set to `true`, leading gaps in sequence2 are not penalized when computing the optimal alignment.
+    seqan3::align_cfg::free_end_gaps_sequence2_leading free_end_gaps_sequence2_leading{false};
+    //!\brief If set to `true`, trailing gaps in sequence1 are not penalized when computing the optimal alignment.
+    seqan3::align_cfg::free_end_gaps_sequence1_trailing free_end_gaps_sequence1_trailing{false};
+    //!\brief If set to `true`, trailing gaps in sequence2 are not penalized when computing the optimal alignment.
+    seqan3::align_cfg::free_end_gaps_sequence2_trailing free_end_gaps_sequence2_trailing{false};
+
+    //!\privatesection
+    //!\brief An internal id used to check for a valid alignment configuration.
+    static constexpr detail::align_config_id id{detail::align_config_id::global};
+};
 
 } // namespace seqan3::align_cfg

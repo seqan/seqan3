@@ -27,7 +27,7 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::method_global |
+inline constexpr auto align_config = seqan3::align_cfg::method_global{} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}} |
                                      seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
