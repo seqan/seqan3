@@ -50,56 +50,69 @@ public:
     using tuple_t::operator=;
     //!\}
 
-    /*!\name Optimal score
+    /*!\name Score value accessor
+     * \brief Specific accessor function to get the respective score value from an affine matrix cell.
      * \{
      */
-    //!\brief Access the optimal score of the wrapped score matrix cell.
-    decltype(auto) best_score() & { using std::get; return get<0>(*this); }
+    //!\brief Access the best score of the wrapped score matrix cell.
+    decltype(auto) best_score() & noexcept { return get_score_impl<0>(*this); }
     //!\overload
-    decltype(auto) best_score() const & { using std::get; return get<0>(*this); }
+    decltype(auto) best_score() const & noexcept { return get_score_impl<0>(*this); }
     //!\overload
-    decltype(auto) best_score() && { using std::get; return get<0>(std::move(*this)); }
+    decltype(auto) best_score() && noexcept { return get_score_impl<0>(std::move(*this)); }
     //!\overload
-    decltype(auto) best_score() const &&
+    decltype(auto) best_score() const && noexcept
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-        using std::get;
-        return static_cast<std::tuple_element_t<0, tuple_t> const &&>(get<0>(std::move(*this)));
+        using return_t = std::tuple_element_t<0, tuple_t>;
+        return static_cast<return_t const &&>(get_score_impl<0>(std::move(*this)));
     }
-    //!\}
 
-    /*!\name Horizontal score
-     * \{
-     */
     //!\brief Access the horizontal score of the wrapped score matrix cell.
-    decltype(auto) horizontal_score() & { using std::get; return get<1>(*this); }
+    decltype(auto) horizontal_score() & noexcept { return get_score_impl<1>(*this); }
     //!\overload
-    decltype(auto) horizontal_score() const & { using std::get; return get<1>(*this); }
+    decltype(auto) horizontal_score() const & noexcept { return get_score_impl<1>(*this); }
     //!\overload
-    decltype(auto) horizontal_score() && { using std::get; return get<1>(std::move(*this)); }
+    decltype(auto) horizontal_score() && noexcept { return get_score_impl<1>(std::move(*this)); }
     //!\overload
-     decltype(auto) horizontal_score() const &&
+     decltype(auto) horizontal_score() const && noexcept
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-        using std::get;
-        return static_cast<std::tuple_element_t<1, tuple_t> const &&>(get<1>(std::move(*this)));
+        using return_t = std::tuple_element_t<1, tuple_t>;
+        return static_cast<return_t const &&>(get_score_impl<1>(std::move(*this)));
+    }
+
+    //!\brief Access the vertical score of the wrapped score matrix cell.
+    decltype(auto) vertical_score() & noexcept { return get_score_impl<2>(*this); }
+    //!\overload
+    decltype(auto) vertical_score() const & noexcept { return get_score_impl<2>(*this); }
+    //!\overload
+    decltype(auto) vertical_score() && noexcept { return get_score_impl<2>(std::move(*this)); }
+    //!\overload
+    decltype(auto) vertical_score() const && noexcept
+    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+        using return_t = std::tuple_element_t<2, tuple_t>;
+        return static_cast<return_t const &&>(get_score_impl<2>(std::move(*this)));
     }
     //!\}
 
-    /*!\name Vertical score
-     * \{
+private:
+    /*!\brief Implements the get interface for the various calls to receive the score value.
+     * \tparam index The index of the tuple element to get; must be smaller than 3.
+     * \tparam this_t The perfectly forwarded type of `*this`.
+     *
+     * \param[in] me The instance of `*this`.
+     *
+     * \returns The score value from the given tuple index.
      */
-    //!\brief Access the vertical score of the wrapped score matrix cell.
-    decltype(auto) vertical_score() & { using std::get; return get<2>(*this); }
-    //!\overload
-    decltype(auto) vertical_score() const & { using std::get; return get<2>(*this); }
-    //!\overload
-    decltype(auto) vertical_score() && { using std::get; return get<2>(std::move(*this)); }
-    //!\overload
-    decltype(auto) vertical_score() const &&
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    template <size_t index, typename this_t>
+    //!\cond
+        requires (index < 3)
+    //!\endcond
+    static constexpr decltype(auto) get_score_impl(this_t && me) noexcept
+    {
         using std::get;
-        return static_cast<std::tuple_element_t<2, tuple_t> const &&>(get<2>(std::move(*this)));
+
+        return get<index>(std::forward<this_t>(me));
     }
-    //!\}
 };
 } // namespace seqan3::detail
 
