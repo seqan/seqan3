@@ -54,13 +54,13 @@ public:
      * \{
      */
     //!\brief Access the optimal score of the wrapped score matrix cell.
-    decltype(auto) optimal_score() & { using std::get; return get<0>(*this); }
+    decltype(auto) best_score() & { using std::get; return get<0>(*this); }
     //!\overload
-    decltype(auto) optimal_score() const & { using std::get; return get<0>(*this); }
+    decltype(auto) best_score() const & { using std::get; return get<0>(*this); }
     //!\overload
-    decltype(auto) optimal_score() && { using std::get; return get<0>(std::move(*this)); }
+    decltype(auto) best_score() && { using std::get; return get<0>(std::move(*this)); }
     //!\overload
-    decltype(auto) optimal_score() const &&
+    decltype(auto) best_score() const &&
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using std::get;
         return static_cast<std::tuple_element_t<0, tuple_t> const &&>(get<0>(std::move(*this)));

@@ -48,7 +48,7 @@ struct iterator_fixture<matrix_iterator_t> : public ::testing::Test
             auto actual_cell = *actual_it;
             auto expected_cell = *expected_it;
 
-            SIMD_EQ(actual_cell.optimal_score(), std::get<0>(expected_cell));
+            SIMD_EQ(actual_cell.best_score(), std::get<0>(expected_cell));
             SIMD_EQ(actual_cell.horizontal_score(), std::get<1>(expected_cell));
             SIMD_EQ(actual_cell.vertical_score(), std::get<2>(expected_cell));
         }
