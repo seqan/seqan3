@@ -45,7 +45,7 @@ struct method_local_tag : public pipeable_config_element<method_local_tag>
 namespace seqan3::align_cfg
 {
 
-/*!\brief Sets the global alignment method.
+/*!\brief Sets the local alignment method.
  * \ingroup alignment_configuration
  *
  * \details
@@ -61,12 +61,12 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
-inline constexpr seqan3::detail::method_global_tag method_global{};
-
-/*!\brief Sets the local alignment method.
- * \ingroup alignment_configuration
- * \copydetails seqan3::align_cfg::method_global
- */
 inline constexpr seqan3::detail::method_local_tag method_local{};
+
+/*!\brief Sets the global alignment method.
+ * \ingroup alignment_configuration
+ * \copydetails seqan3::align_cfg::method_local
+ */
+inline constexpr seqan3::detail::method_global_tag method_global{};
 
 } // namespace seqan3::align_cfg
