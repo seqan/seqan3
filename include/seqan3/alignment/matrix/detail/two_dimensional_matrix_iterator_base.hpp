@@ -287,9 +287,9 @@ public:
 
     //!\brief Returns the distance between two iterators.
     template <typename dummy_t = derived_t>
-    constexpr std::iter_difference_t<dummy_t> operator-(derived_t const rhs) const noexcept
+    friend constexpr std::iter_difference_t<dummy_t> operator-(derived_t const lhs, derived_t const rhs) noexcept
     {
-        return as_derived().host_iter - rhs.host_iter;
+        return lhs.as_host_iter() - rhs.as_host_iter();
     }
     //!\}
 
@@ -359,6 +359,12 @@ public:
     }
     //!\}
 private:
+
+    //!\brief Return the host_iter of the derived type.
+    constexpr auto const & as_host_iter() const
+    {
+        return as_derived().host_iter;
+    }
 
     //!\brief Cast this to derived type.
     constexpr derived_t & as_derived()
