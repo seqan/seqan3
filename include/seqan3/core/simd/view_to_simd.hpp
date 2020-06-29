@@ -220,7 +220,7 @@ public:
      * \{
      */
     using reference = std::span<std::ranges::range_value_t<chunk_type>>; //!< The reference type.
-    using value_type = chunk_type; //!< The value type.
+    using value_type = reference; //!< The value type.
     using pointer = void; //!< The pointer type.
     using difference_type = ptrdiff_t; //!< The difference type.
     using iterator_category = std::input_iterator_tag; //!< The iterator category.
