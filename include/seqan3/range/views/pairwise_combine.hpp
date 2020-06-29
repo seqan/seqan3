@@ -40,14 +40,13 @@ namespace seqan3::detail
 template <std::ranges::view underlying_range_type>
 //!\cond
     requires  std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
-// !\endcond
+//!\endcond
 class pairwise_combine_view : public std::ranges::view_interface<pairwise_combine_view<underlying_range_type>>
 {
 private:
 
     //!\brief The forward declared iterator type for pairwise_combine_view.
     template <typename range_type>
-
     class iterator_type;
 
     /*!\name Associated types
@@ -65,18 +64,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief Default Default-Constructor.
-    constexpr pairwise_combine_view() = default;
-    //!\brief Default Copy-Constructor.
-    constexpr pairwise_combine_view(pairwise_combine_view const &) = default;
-    //!\brief Default Move-Constructor.
-    constexpr pairwise_combine_view(pairwise_combine_view &&) = default;
-    //!\brief Default Copy-Assignment.
-    constexpr pairwise_combine_view & operator=(pairwise_combine_view const &) = default;
-    //!\brief Default Move-Assignment.
-    constexpr pairwise_combine_view & operator=(pairwise_combine_view &&) = default;
-    //!\brief Default Destructor.
-    ~pairwise_combine_view() = default;
+    pairwise_combine_view() = default; //!< Defaulted.
+    pairwise_combine_view(pairwise_combine_view const &) = default; //!< Defaulted.
+    pairwise_combine_view(pairwise_combine_view &&) = default; //!< Defaulted.
+    pairwise_combine_view & operator=(pairwise_combine_view const &) = default; //!< Defaulted.
+    pairwise_combine_view & operator=(pairwise_combine_view &&) = default; //!< Defaulted.
+    ~pairwise_combine_view() = default; //!< Defaulted.
 
     /*!\brief Constructs from a view.
      * \param[in] range The underlying range to be wrapped. Of type `underlying_range_type`.
@@ -254,7 +247,17 @@ private:
     underlying_range_type u_range{};
     //!\brief The cached iterator pointing to the last element of the underlying range.
     std::ranges::iterator_t<underlying_range_type> back_iterator{};
-}; // class pairwise_combine_view
+};
+
+/*!\name Type deduction guides
+ * \{
+ */
+
+//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::views::all.
+template <std::ranges::viewable_range other_range_t>
+pairwise_combine_view(other_range_t && range) ->
+    pairwise_combine_view<std::views::all_t<other_range_t>>;
+//!\}
 
 /*!\brief The internal iterator type for pairwise_combine_view.
  * \tparam range_type The type of the range this iterator is operating on.
@@ -269,10 +272,10 @@ private:
  * Thus this iterator might not be usable with some legacy algorithms of the STL. But it is guaranteed to work with
  * the ranges algorithms.
  */
- template <std::ranges::view underlying_range_type>
- //!\cond
-     requires std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
- // !\endcond
+template <std::ranges::view underlying_range_type>
+//!\cond
+    requires std::ranges::forward_range<underlying_range_type> && std::ranges::common_range<underlying_range_type>
+//!\endcond
 template <typename range_type>
 class pairwise_combine_view<underlying_range_type>::iterator_type
 {
@@ -286,9 +289,9 @@ private:
     //!\brief Alias type for the iterator over the passed range type.
     using underlying_iterator_type = std::ranges::iterator_t<range_type>;
     //!\brief Alias for the value type of the underlying iterator type.
-    using underlying_val_t = typename std::iterator_traits<underlying_iterator_type>::value_type;
+    using underlying_val_t = std::iter_value_t<underlying_iterator_type>;
     //!\brief Alias for the reference type of the underlying iterator type.
-    using underlying_ref_t = typename std::iterator_traits<underlying_iterator_type>::reference;
+    using underlying_ref_t = std::iter_reference_t<underlying_iterator_type>;
 
 public:
     /*!\name Associated types
@@ -296,13 +299,13 @@ public:
      */
 
     //!\brief The difference type.
-    using difference_type   = std::ptrdiff_t;
+    using difference_type = std::ptrdiff_t;
     //!\brief The value type.
-    using value_type        = std::tuple<underlying_val_t, underlying_val_t>;
+    using value_type = std::tuple<underlying_val_t, underlying_val_t>;
     //!\brief The reference type.
-    using reference         = common_tuple<underlying_ref_t, underlying_ref_t>;
+    using reference = common_tuple<underlying_ref_t, underlying_ref_t>;
     //!\brief The pointer type.
-    using pointer           = void;
+    using pointer = void;
     //!\brief The iterator category tag.
     using iterator_category = iterator_tag_t<underlying_iterator_type>;
     //!\brief The iterator concept.
@@ -371,14 +374,13 @@ public:
     /*!\brief Access the element at the given index
      * \param[in] index The index of the element to be returned.
      */
-    constexpr reference operator[](size_t const index)
+    constexpr reference operator[](size_t const index) const
         noexcept(noexcept(std::declval<iterator_type &>().from_index(1)))
     //!\cond
         requires std::random_access_iterator<underlying_iterator_type>
     //!\endcond
     {
-        from_index(index);
-        return **this;
+        return *(*this + index);
     }
     //!\}
 
@@ -449,7 +451,7 @@ public:
 
     //!\brief Advances the iterator by the given offset; `underlying_iterator_type` must model
     //!\      std::random_access_iterator.
-    constexpr iterator_type operator+(difference_type const offset)
+    constexpr iterator_type operator+(difference_type const offset) const
         noexcept(noexcept(std::declval<iterator_type &>() += 1))
     //!\cond
         requires std::random_access_iterator<underlying_iterator_type>
@@ -485,7 +487,7 @@ public:
 
     //!\brief Decrements the iterator by the given offset; `underlying_iterator_type` must model
     //!\      std::random_access_iterator.
-    constexpr iterator_type operator-(difference_type const offset)
+    constexpr iterator_type operator-(difference_type const offset) const
         noexcept(noexcept(std::declval<iterator_type &>() -= 1))
     //!\cond
         requires std::random_access_iterator<underlying_iterator_type>
@@ -651,17 +653,7 @@ private:
     underlying_iterator_type begin_it{};
     //!\brief The end of the underlying range.
     underlying_iterator_type end_it{};
-}; // class pairwise_combine_view::iterator_type
-
-/*!\name Type deduction guides
- * \{
- */
-
-//!\brief Deduces the correct template type from a non-view lvalue range by wrapping the range in std::views::all.
-template <std::ranges::viewable_range other_range_t>
-pairwise_combine_view(other_range_t && range) ->
-    pairwise_combine_view<std::views::all_t<other_range_t>>;
-//!\}
+};
 
 } // namespace seqan3::detail
 
