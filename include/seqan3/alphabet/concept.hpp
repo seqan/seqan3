@@ -454,8 +454,8 @@ public:
         requires requires (alphabet_char_t<alph_t> const a)
         {
             { impl(priority_tag<3>{}, a, dummy{}) };
-            requires noexcept(impl(priority_tag<3>{}, a));
-            SEQAN3_RETURN_TYPE_CONSTRAINT(impl(priority_tag<3>{}, a), std::convertible_to, bool);
+            requires noexcept(impl(priority_tag<3>{}, a, dummy{}));
+            SEQAN3_RETURN_TYPE_CONSTRAINT(impl(priority_tag<3>{}, a, dummy{}), std::convertible_to, bool);
         }
     //!\endcond
     constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
