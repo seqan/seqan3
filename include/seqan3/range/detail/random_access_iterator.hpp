@@ -251,9 +251,9 @@ public:
     }
 
     //!\brief Return offset between this and remote iterator's position.
-    constexpr difference_type operator-(derived_t const lhs) const noexcept
+    constexpr friend difference_type operator-(derived_t const & lhs, derived_t const & rhs) noexcept
     {
-        return static_cast<difference_type>(pos - lhs.pos);
+        return static_cast<difference_type>(lhs.pos - rhs.pos);
     }
     //!\}
 
