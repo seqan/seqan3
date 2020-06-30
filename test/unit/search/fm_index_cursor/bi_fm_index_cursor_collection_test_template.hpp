@@ -28,8 +28,7 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, cursor)
     seqan3::bi_fm_index fm_rev{this->rev_text1};
 
     TypeParam bi_it = bi_fm.cursor();
-    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_begin().locate()));
-    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.rev_begin().locate()));
+    EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_cursor().locate()));
 }
 
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend)
@@ -185,42 +184,6 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_fwd_cursor)
     }
 }
 
-TYPED_TEST_P(bi_fm_index_cursor_collection_test, to_rev_cursor)
-{
-    typename TypeParam::index_type bi_fm{this->text_col4};  // {"ACGGTAGGACGTAGC", "TGCTACGATCC"}
-
-    {
-        auto it = bi_fm.cursor();
-        EXPECT_TRUE(it.extend_left(seqan3::views::slice(this->text, 9, 14))); // "CGTAG"
-        EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 9}}));
-
-        auto rev_it = it.to_rev_cursor(); // text_col4 "CCTAGCATCGT|CGATGCAGGATGGCA"
-        EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{1, 1}}));
-        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text2), this->pattern3);   //ATGCA
-        EXPECT_TRUE(rev_it.cycle_back()); // "GATGG"
-        EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{1, 8}}));
-        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text2), this->pattern4);  // "GATGG"
-        EXPECT_FALSE(rev_it.cycle_back());
-    }
-
-    {
-        auto it = bi_fm.cursor();
-        EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text, 3, 7))); // "GTAG"
-        EXPECT_EQ(seqan3::uniquify(it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{0, 3}, {0, 10}}));
-
-        auto rev_it = it.to_rev_cursor(); // text_col4 "CCTAGCATCGT|CGATGCAGGATGGCA"
-    #ifndef NDEBUG
-        EXPECT_DEATH(rev_it.cycle_back(), "");
-    #endif
-        EXPECT_TRUE(rev_it.extend_right()); // "CGTAG" resp. "GATGC"
-        EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{1, 1}}));
-        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text2), this->pattern3);  // "GATGC"
-        EXPECT_TRUE(rev_it.cycle_back()); // "GGTAG" resp. "GATGG"
-        EXPECT_EQ(seqan3::uniquify(rev_it.locate()), (std::vector<std::pair<uint64_t, uint64_t>>{{1, 8}}));
-        EXPECT_RANGE_EQ(rev_it.path_label(this->rev_text2), this->pattern4);  // "GATGG"
-    }
-}
-
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_const_char_pointer)
 {
     using alphabet_type = typename TestFixture::alphabet_type;
@@ -255,4 +218,4 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_const_char_pointer)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, cursor, extend, extend_char, extend_range,
-                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, to_rev_cursor, extend_const_char_pointer);
+                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, extend_const_char_pointer);
