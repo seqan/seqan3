@@ -88,12 +88,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr repeat_view() = default;                                //!< Defaulted.
-    constexpr repeat_view(repeat_view const &) = default;             //!< Defaulted.
-    constexpr repeat_view & operator=(repeat_view const &) = default; //!< Defaulted.
-    constexpr repeat_view(repeat_view &&) = default;                  //!< Defaulted.
-    constexpr repeat_view & operator=(repeat_view &&) = default;      //!< Defaulted.
-    ~repeat_view() = default;                                         //!< Defaulted.
+    repeat_view() = default; //!< Defaulted.
+    repeat_view(repeat_view const &) = default; //!< Defaulted.
+    repeat_view & operator=(repeat_view const &) = default; //!< Defaulted.
+    repeat_view(repeat_view &&) = default; //!< Defaulted.
+    repeat_view & operator=(repeat_view &&) = default; //!< Defaulted.
+    ~repeat_view() = default; //!< Defaulted.
 
     //!\brief Construct from any type (Note: the value will be copied into views::single).
     constexpr explicit repeat_view(value_t const & value) : single_value{value}
@@ -205,14 +205,14 @@ public:
 
 private:
     //!\brief A std::views::single over the input.
-    decltype(std::views::single(std::declval<value_t &>())) single_value;
-}; //class repeat_view
+    single_value_t single_value;
+};
 
 //!\brief The iterator type for views::repeat (a random access iterator).
 template <std::copy_constructible value_t>
 template <typename parent_type>
-class repeat_view<value_t>::repeat_view_iterator : public detail::random_access_iterator_base<parent_type,
-                                                                                              repeat_view_iterator>
+class repeat_view<value_t>::repeat_view_iterator :
+    public detail::random_access_iterator_base<parent_type, repeat_view_iterator>
 {
     //!\brief The CRTP base type.
     using base_t = detail::random_access_iterator_base<parent_type, repeat_view_iterator>;
@@ -235,12 +235,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr repeat_view_iterator() = default;                                         //!< Defaulted.
-    constexpr repeat_view_iterator(repeat_view_iterator const &) = default;             //!< Defaulted.
-    constexpr repeat_view_iterator & operator=(repeat_view_iterator const &) = default; //!< Defaulted.
-    constexpr repeat_view_iterator (repeat_view_iterator &&) = default;                 //!< Defaulted.
-    constexpr repeat_view_iterator & operator=(repeat_view_iterator &&) = default;      //!< Defaulted.
-    ~repeat_view_iterator() = default;                                                  //!< Defaulted.
+    repeat_view_iterator() = default; //!< Defaulted.
+    repeat_view_iterator(repeat_view_iterator const &) = default; //!< Defaulted.
+    repeat_view_iterator & operator=(repeat_view_iterator const &) = default; //!< Defaulted.
+    repeat_view_iterator (repeat_view_iterator &&) = default; //!< Defaulted.
+    repeat_view_iterator & operator=(repeat_view_iterator &&) = default; //!< Defaulted.
+    ~repeat_view_iterator() = default; //!< Defaulted.
 
     /*!\brief Construct by host range.
      * \param host The host range.
@@ -294,7 +294,7 @@ public:
         return true;
     }
     //!\}
-}; // class repeat_view::repeat_view_iterator
+};
 
 // ---------------------------------------------------------------------------------------------------------------------
 // repeat (factory)
