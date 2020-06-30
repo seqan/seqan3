@@ -429,6 +429,14 @@ TYPED_TEST(pairwise_combine_test, iterate_reverse)
     }
 }
 
+// https://github.com/seqan/seqan3/issues/1945
+TYPED_TEST(pairwise_combine_test, issue_1945)
+{
+    TypeParam container{};
+    seqan3::detail::pairwise_combine_view view{std::views::all(container)};
+    EXPECT_TRUE(std::ranges::empty(view));
+}
+
 TYPED_TEST(pairwise_combine_test, size)
 {
     auto v = this->create_view();
