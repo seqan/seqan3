@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/algorithm>
 #include <list>
 #include <vector>
 
@@ -18,7 +19,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/algorithm>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator|;
 
@@ -286,4 +287,22 @@ TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"ACG"});
     EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"---"});
+}
+
+// https://github.com/seqan/seqan3/issues/1921
+TYPED_TEST(aligned_sequence_builder_fixture, issue1921)
+{
+    auto && sequence1 = this->fst;
+    auto && sequence2 = this->sec | std::views::drop(0);
+
+    seqan3::detail::aligned_sequence_builder builder{sequence1, sequence2};
+    auto trace_path = this->path({seqan3::detail::row_index_type{2},
+                                  seqan3::detail::column_index_type{3}});
+
+    auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(trace_path);
+
+    EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0, 3}));
+    EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0, 2}));
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"--ACG"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"AG---"});
 }
