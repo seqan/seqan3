@@ -544,8 +544,8 @@ namespace seqan3::views
 /*!\brief Computes minimisers for a range of comparable values. A minimiser is the smallest value in a window.
  * \tparam urng1_t The type of the first range being processed. See below for requirements. [template
  *                 parameter is omitted in pipe notation]
- * \tparam urng2_t The type of the range second being processed. See below for requirements. [template
- *                 parameter is omitted in pipe notation]
+ * \tparam urng2_t The type of the range second being processed. The second range is optional and has the same
+ *                 requirements as the first range.
  * \param[in] urange1 The range being processed. [parameter is omitted in pipe notation]
  * \param[in] window_size The number of values in one window.
  * \returns A range of std::totally_ordered where each value is the minimal value for one window. See below for the
