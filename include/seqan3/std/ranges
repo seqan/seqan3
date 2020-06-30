@@ -72,6 +72,7 @@ constexpr bool _is_integer_like_<int128_t, Enable> = true;
 #include <range/v3/view/common.hpp>
 #include <range/v3/view/drop.hpp>
 #include <range/v3/view/drop_while.hpp>
+#include <range/v3/view/empty.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/istream.hpp>
@@ -165,8 +166,8 @@ using ::ranges::cpp20::subrange;
 // using ::ranges::cpp20::borrowed_subrange_t;
 
 // [range.empty], empty view
-// using ::ranges::cpp20::empty_view;
-// namespace views { template<class T> inline constexpr empty_view<T> empty{}; }
+using ::ranges::cpp20::empty_view;
+namespace views { template<class T> inline constexpr empty_view<T> empty{}; }
 
 // [range.single], single view
 // using ::ranges::cpp20::single_view;
