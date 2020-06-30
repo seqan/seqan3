@@ -502,13 +502,6 @@ struct minimiser_fn
         return minimiser_view{urange1, window_size};
     }
 
-    //!\brief Store the number of values in one window and the second range and return a range adaptor closure object.
-    template <std::ranges::range urng2_t>
-    constexpr auto operator()(size_t const window_size, urng2_t && urange2) const
-    {
-        return adaptor_from_functor{*this, window_size, urange2};
-    }
-
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
      * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
@@ -519,7 +512,7 @@ struct minimiser_fn
      * \returns A range of converted values.
      */
     template <std::ranges::range urng1_t, std::ranges::range urng2_t>
-    constexpr auto operator()(urng1_t && urange1, size_t const window_size, urng2_t && urange2) const
+    constexpr auto operator()(urng1_t && urange1, urng2_t && urange2, size_t const window_size) const
     {
         static_assert(std::ranges::viewable_range<urng1_t>,
                       "The range1 parameter to views::minimiser cannot be a temporary of a non-view range.");
