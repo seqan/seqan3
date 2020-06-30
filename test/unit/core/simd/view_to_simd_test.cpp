@@ -349,3 +349,15 @@ TYPED_TEST(view_to_simd_test, issue_1813)
         this->compare(v, this->transformed_simd_vec | std::views::take(10));
     }
 }
+
+// https://github.com/seqan/seqan3/issues/1941
+TYPED_TEST(view_to_simd_test, issue_1941)
+{
+    using simd_t = typename TestFixture::simd_t;
+    using view_t = decltype(this->sequences | seqan3::views::to_simd<simd_t>);
+
+    using value_t = std::ranges::range_value_t<view_t>;
+    using reference_t = std::ranges::range_reference_t<view_t>;
+
+    EXPECT_TRUE((std::common_with<value_t, reference_t>));
+}
