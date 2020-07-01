@@ -338,7 +338,7 @@ public:
                             underlying_iterator_type begin_it,
                             underlying_iterator_type end_it) noexcept :
         first_it{iter},
-        second_it{++iter},
+        second_it{std::ranges::next(iter, 1, end_it)},
         begin_it{begin_it},
         end_it{end_it}
     {}
