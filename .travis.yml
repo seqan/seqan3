@@ -44,6 +44,12 @@ jobs:
         - BUILD=unit
         - BUILD_TYPE=Release
         - CXXFLAGS="-std=c++17 -fconcepts"
+    - name: "Unit gcc10 (c++20)"
+      env:
+        - CXX=g++-10
+        - CC=gcc-10
+        - BUILD=unit
+        - BUILD_TYPE=Release
     - name: "Unit gcc8"
       env:
         - CXX=g++-8

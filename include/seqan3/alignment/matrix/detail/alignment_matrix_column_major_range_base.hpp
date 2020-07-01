@@ -248,7 +248,7 @@ private:
          * \{
          */
         //!\brief Returns an iterator to the begin of the column.
-        constexpr auto begin() noexcept
+        constexpr iterator_type begin() noexcept
         {
             assert(me_ptr != nullptr);
             return iterator_type{*this};
