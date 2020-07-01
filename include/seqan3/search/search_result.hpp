@@ -81,54 +81,6 @@ private:
     //!\brief Stores the reference_begin_pos of the search result.
     reference_begin_pos_type reference_begin_pos_{};
 
-    /*!\brief A generic constructor from all parameters.
-     * \tparam query_id_t Must be equal to query_id_t, if query_id_t is not empty_type.
-     * \tparam cursor_t Must be equal to cursor_t, if cursor_t is not empty_type.
-     * \tparam reference_id_t Must be equal to reference_id_t, if reference_id_t is not empty_type.
-     * \tparam reference_begin_pos_t Must be equal to reference_begin_pos_t, if reference_begin_pos_t is not empty_type.
-     * \param[in] query_id The query id of the search result.
-     * \param[in] cursor The cursor of the search result.
-     * \param[in] ref_id The reference id of the search result.
-     * \param[in] ref_pos The reference begin position of the search result.
-     *
-     * Each member (the order matters!) will only be initialized if the respective type is not seqan3::detail::empty_type.
-     * That way, the constructor call is independent of the output configuration and the search result
-     * will handle the initialisation.
-     */
-    template <typename query_id_t, typename cursor_t, typename reference_id_t, typename reference_begin_pos_t>
-    search_result(query_id_t query_id,
-                  [[maybe_unused]] cursor_t cursor,
-                  [[maybe_unused]] reference_id_t ref_id,
-                  [[maybe_unused]] reference_begin_pos_t ref_pos)
-    {
-        if constexpr (!std::same_as<query_id_type, detail::empty_type>)
-        {
-            static_assert(std::assignable_from<query_id_type &, query_id_t &&>,
-                          "The member variable query_id_ must be assignable from parameter query_id!");
-            query_id_ = std::move(query_id);
-        }
-        if constexpr (!std::same_as<cursor_type, detail::empty_type>)
-        {
-            static_assert(std::assignable_from<cursor_type &, cursor_t &&>,
-                          "The member variable cursor_ must be assignable from parameter cursor!");
-            cursor_ = std::move(cursor);
-        }
-        if constexpr (!std::same_as<reference_id_type, detail::empty_type>)
-        {
-            static_assert(std::assignable_from<reference_id_type &, reference_id_t &&>,
-                          "The member variable passed reference_id_ must be assignable from parameter ref_id!");
-            reference_id_ = std::move(ref_id);
-        }
-        if constexpr (!std::same_as<reference_begin_pos_type, detail::empty_type>)
-        {
-            static_assert(std::assignable_from<reference_begin_pos_type &, reference_begin_pos_t &&>,
-                          "The member variable passed to reference_begin_pos_ must be assignable from parameter "
-                          "ref_pos!");
-            reference_begin_pos_ = std::move(ref_pos);
-        }
-        (void) query_id; // [[maybe_unused]] bug for gcc < 9.3 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81429)
-    }
-
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
     #if !SEQAN3_WORKAROUND_GCC_93467
