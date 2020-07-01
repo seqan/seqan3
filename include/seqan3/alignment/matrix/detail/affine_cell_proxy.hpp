@@ -13,11 +13,42 @@
 #pragma once
 
 #include <tuple>
+#include <type_traits>
 
+#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 
 namespace seqan3::detail
 {
+
+/*!\interface seqan3::detail::arithmetic_or_simd <>
+ * \brief The concept for an type that models either seqan3::arithmetic or seqan3::simd::simd_concept.
+ * \ingroup alignment_matrix
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
+//!\endcond
+
+/*!\interface seqan3::detail::affine_score_cell <>
+ * \extends seqan3::tuple_like
+ * \brief The concept for an type that models an affine cell of the score matrix.
+ * \ingroup alignment_matrix
+ *
+ * \details
+ *
+ * This concept describes the requirements an alignment matrix cell must fulfil to represent an affine score
+ * matrix entry.
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
+                                   std::tuple_size_v<t> == 3 &&
+                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+//!\endcond
 
 /*!\brief A wrapper for an affine score matrix cell.
  * \implements seqan3::tuple_like
@@ -28,7 +59,7 @@ namespace seqan3::detail
  * This wrapper provides a uniform access to the different elements of the cell within an affine score matrix. This
  * includes the optimal score, the horizontal gap score and the vertical gap score.
  */
-template <tuple_like tuple_t>
+template <affine_score_cell tuple_t>
 //!\cond
     requires (std::tuple_size_v<tuple_t> == 3)
 //!\endcond

@@ -102,4 +102,5 @@ TEST_F(affine_cell_proxy_test, tuple_element)
 TEST_F(affine_cell_proxy_test, tuple_like_concept)
 {
     EXPECT_TRUE(seqan3::tuple_like<cell_t>);
+    EXPECT_TRUE(seqan3::detail::affine_score_cell<cell_t>);
 }
