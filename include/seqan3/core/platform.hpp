@@ -208,9 +208,9 @@
 #   define SEQAN3_WORKAROUND_ISSUE_1743 1
 #endif
 
-//!\brief See https://github.com/seqan/seqan3/issues/1754
-#ifndef SEQAN3_WORKAROUND_ISSUE_1754
-#   define SEQAN3_WORKAROUND_ISSUE_1754 1
+//!\brief See https://github.com/seqan/seqan3/issues/1953
+#ifndef SEQAN3_WORKAROUND_ISSUE_1953
+#   define SEQAN3_WORKAROUND_ISSUE_1953 1
 #endif
 
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113

@@ -84,7 +84,7 @@ private:
     urng2_t urange2{};
 
     //!\brief The number of values in one window.
-    size_t window_size;
+    size_t window_size{};
 
     template <typename rng1_t, typename rng2_t>
     class basic_iterator;
@@ -192,8 +192,8 @@ public:
      */
     basic_iterator<urng1_t, urng2_t> begin()
     {
-        return {std::ranges::end(urange1),
-                std::ranges::begin(urange1),
+        return {std::ranges::begin(urange1),
+                std::ranges::end(urange1),
                 std::ranges::begin(urange2),
                 window_size};
     }
@@ -204,8 +204,8 @@ public:
         requires const_iterable
     //!\endcond
     {
-        return {std::ranges::cend(urange1),
-                std::ranges::cbegin(urange1),
+        return {std::ranges::cbegin(urange1),
+                std::ranges::cend(urange1),
                 std::ranges::cbegin(urange2),
                 window_size};
     }
@@ -284,8 +284,8 @@ public:
      //!\endcond
     basic_iterator(basic_iterator<non_const_rng1_t, non_const_rng2_t> it) :
         minimiser_value{std::move(it.minimiser_value)},
-        urng1_sentinel{std::move(it.urng1_sentinel)},
         urng1_iterator{std::move(it.urng1_iterator)},
+        urng1_sentinel{std::move(it.urng1_sentinel)},
         urng2_iterator{std::move(it.urng2_iterator)},
         window_values{std::move(it.window_values)}
     {}
@@ -303,12 +303,12 @@ public:
     * shifts then by one to repeat this action. If a minimiser in consecutive windows is the same, it is returned only
     * once.
     */
-    basic_iterator(urng1_sentinel_t urng1_sentinel,
-                   urng1_iterator_t urng1_iterator,
+    basic_iterator(urng1_iterator_t urng1_iterator,
+                   urng1_sentinel_t urng1_sentinel,
                    urng2_iterator_t urng2_iterator,
                    size_t window_size) :
-        urng1_sentinel{std::move(urng1_sentinel)},
         urng1_iterator{std::move(urng1_iterator)},
+        urng1_sentinel{std::move(urng1_sentinel)},
         urng2_iterator{std::move(urng2_iterator)}
     {
         size_t size = std::ranges::distance(urng1_iterator, urng1_sentinel);
@@ -386,11 +386,11 @@ private:
     //!\brief The minimiser value.
     value_type minimiser_value{};
 
-    //!brief Iterator to last element in range.
-    urng1_sentinel_t urng1_sentinel{};
-
     //!\brief Iterator to the rightmost value of one window.
     urng1_iterator_t urng1_iterator{};
+
+    //!brief Iterator to last element in range.
+    urng1_sentinel_t urng1_sentinel{};
 
     //!\brief Iterator to the rightmost value of one window of the second range.
     urng2_iterator_t urng2_iterator{};
@@ -514,34 +514,6 @@ struct minimiser_fn
 
         return minimiser_view{urange1, window_size};
     }
-
-    /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
-     *        values one window contains.
-     * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
-     *                     std::ranges::forward_range.
-     * \tparam window_size The number of values in one window.
-     * \tparam urange2 The type of the second range being processed. See below for requirements. Note, this range
-     *                     is optional.
-     * \returns A range of converted values.
-     */
-    template <std::ranges::range urng1_t, std::ranges::range urng2_t>
-    constexpr auto operator()(urng1_t && urange1, urng2_t && urange2, size_t const window_size) const
-    {
-        static_assert(std::ranges::viewable_range<urng1_t>,
-                      "The range1 parameter to views::minimiser cannot be a temporary of a non-view range.");
-        static_assert(std::ranges::viewable_range<urng2_t>,
-                      "The range2 parameter to views::minimiser cannot be a temporary of a non-view range.");
-        static_assert(std::ranges::forward_range<urng1_t>,
-                      "The range1 parameter to views::minimiser must model std::ranges::forward_range.");
-        static_assert(std::ranges::forward_range<urng2_t>,
-                      "The range2 parameter to views::minimiser must model std::ranges::forward_range.");
-        static_assert(std::ranges::sized_range<urng1_t>,
-                      "The range1 parameter to views::minimiser must model std::ranges::sized_range.");
-        static_assert(std::ranges::sized_range<urng2_t>,
-                      "The range2 parameter to views::minimiser must model std::ranges::sized_range.");
-
-        return minimiser_view{urange1, urange2, window_size};
-    }
 };
 //![adaptor_def]
 
@@ -555,7 +527,7 @@ namespace seqan3::views
  */
 
 /*!\brief Computes minimisers for a range of comparable values. A minimiser is the smallest value in a window.
- * \tparam urng1_t The type of the first range being processed. See below for requirements. [template
+ * \tparam urng_t The type of the first range being processed. See below for requirements. [template
  *                 parameter is omitted in pipe notation]
  * \param[in] urange1 The range being processed. [parameter is omitted in pipe notation]
  * \param[in] window_size The number of values in one window.
@@ -571,7 +543,7 @@ namespace seqan3::views
  *
  * ### View properties
  *
- * | Concepts and traits              | `urng1_t` (underlying range type)  | `rrng_t` (returned range type)   |
+ * | Concepts and traits              | `urng_t` (underlying range type)   | `rrng_t` (returned range type)   |
  * |----------------------------------|:----------------------------------:|:--------------------------------:|
  * | std::ranges::input_range         | *required*                         | *preserved*                      |
  * | std::ranges::forward_range       | *required*                         | *preserved*                      |
@@ -589,8 +561,6 @@ namespace seqan3::views
  * | std::ranges::range_reference_t   | std::totally_ordered               | std::totally_ordered             |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
- *
- *
  *
  * \hideinitializer
  */

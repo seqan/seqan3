@@ -35,6 +35,6 @@ int main()
                         | seqan3::views::kmer_hash(seqan3::ungapped{3}) | std::views::reverse;
     seqan3::debug_stream << hashes2 << '\n'; // [27,6,49,28,39]
 
-    auto minimiser2 = seqan3::views::minimiser(hashes, hashes2, 4);
+    auto minimiser2 = seqan3::detail::minimiser_view{hashes, hashes2, 4};
     seqan3::debug_stream << minimiser2 << '\n'; // [6,6]
 }
