@@ -184,6 +184,20 @@ TYPED_TEST(two_dimensional_matrix_test, rows)
     EXPECT_EQ(matrix.rows(), 3u);
 }
 
+TYPED_TEST(two_dimensional_matrix_test, resize)
+{
+    using matrix_type = typename TestFixture::matrix_type;
+
+    matrix_type matrix{};
+
+    EXPECT_EQ(matrix.cols(), 0u);
+    EXPECT_EQ(matrix.rows(), 0u);
+
+    matrix.resize(seqan3::detail::number_rows{3}, seqan3::detail::number_cols{4});
+    EXPECT_EQ(matrix.cols(), 4u);
+    EXPECT_EQ(matrix.rows(), 3u);
+}
+
 TYPED_TEST(two_dimensional_matrix_test, range)
 {
     // For an explanation how this works see iterator_fixture further below in this file.
