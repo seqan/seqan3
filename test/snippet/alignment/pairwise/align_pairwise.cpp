@@ -1,6 +1,7 @@
+//![start]
 #include <vector>
 
-#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
@@ -8,7 +9,26 @@
 int main()
 {
     using seqan3::operator""_dna4;
+//![start]
 
+    // Configure the alignment kernel.
+    auto config = seqan3::align_cfg::edit;
+
+    {
+    //![example1]
+    std::pair p{"ACGTAGC"_dna4, "AGTACGACG"_dna4};
+    auto result = seqan3::align_pairwise(p, config);
+    //![example1]
+    }
+
+    {
+    //![example2]
+    std::vector vec{"ACCA"_dna4, "ATTA"_dna4};
+    auto result = seqan3::align_pairwise(std::tie(vec[0], vec[1]), config);
+    //![example2]
+    }
+
+    //![example3]
     std::vector vec{std::pair{"AGTGCTACG"_dna4, "ACGTGCGACTAG"_dna4},
                     std::pair{"AGTAGACTACG"_dna4, "ACGTACGACACG"_dna4},
                     std::pair{"AGTTACGAC"_dna4, "AGTAGCGATCG"_dna4}};
@@ -20,4 +40,7 @@ int main()
     // Compute the alignment over a range of pairs.
     for (auto const & res : seqan3::align_pairwise(vec, seqan3::align_cfg::edit))
         seqan3::debug_stream << "The score: " << res.score() << "\n";
+    //![example3]
+//![end]
 }
+//![end]

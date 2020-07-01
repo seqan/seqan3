@@ -107,9 +107,10 @@ SEQAN3_CONCEPT indexed_sequence_pair_range = std::ranges::forward_range<t> &&
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT align_pairwise_single_input =
-    sequence_pair<t> &&
-    std::ranges::viewable_range<std::tuple_element_t<0, t>> &&
-    std::ranges::viewable_range<std::tuple_element_t<1, t>>;
+    sequence_pair<std::remove_reference_t<t>> &&
+    std::is_lvalue_reference_v<t> ||
+    (std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<t>>> &&
+     std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<t>>>);
 //!\endcond
 
 /*!\interface seqan3::detail::align_pairwise_range_input <>

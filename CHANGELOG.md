@@ -37,6 +37,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 * The alignment algorithm can now be invoked with a user defined callback function
   ([\#1876](https://github.com/seqan/seqan3/pull/1876)).
+* The function `seqan3::align_pairwise` accepts a std::pair of sequences as input
+  ([\#1913](https://github.com/seqan/seqan3/pull/1913)).
 
 #### Argument Parser
 
