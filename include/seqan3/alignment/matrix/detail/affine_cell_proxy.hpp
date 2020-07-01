@@ -23,7 +23,7 @@ namespace seqan3::detail
 {
 
 /*!\interface seqan3::detail::arithmetic_or_simd <>
- * \brief The concept for an type that models either seqan3::arithmetic or seqan3::simd::simd_concept.
+ * \brief The concept for a type that models either seqan3::arithmetic or seqan3::simd::simd_concept.
  * \ingroup alignment_matrix
  */
 //!\cond
@@ -33,7 +33,7 @@ SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
 
 /*!\interface seqan3::detail::affine_score_cell <>
  * \extends seqan3::tuple_like
- * \brief The concept for an type that models an affine cell of the score matrix.
+ * \brief The concept for a type that models an affine cell of the score matrix.
  * \ingroup alignment_matrix
  *
  * \details
@@ -52,7 +52,10 @@ SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
 
 /*!\brief A wrapper for an affine score matrix cell.
  * \implements seqan3::tuple_like
- * \ingroup pairwise_alignment
+ * \ingroup alignment_matrix
+ *
+ * \tparam tuple_t The underlying cell type of the affine alignment matrix; must model
+ *                 seqan3::detail::affine_score_cell.
  *
  * \details
  *
