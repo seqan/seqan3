@@ -166,7 +166,7 @@ protected:
     decltype(auto) track_cell(cell_t && cell, matrix_coordinate_type coordinate) noexcept
     {
         if (test_every_cell)
-            compare_and_set_optimum(optimal_score, optimal_coordinate, cell.best_score(), std::move(coordinate));
+            invoke_comparator(cell, std::move(coordinate));
 
         return std::forward<cell_t>(cell);
     }
@@ -189,11 +189,8 @@ protected:
     decltype(auto) track_last_row_cell(cell_t && cell, matrix_coordinate_type coordinate) noexcept
     {
         if (test_last_row_cell && !test_every_cell)
-            compare_and_set_optimum(optimal_score, optimal_coordinate, cell.best_score(), std::move(coordinate));
-
-        return std::forward<cell_t>(cell);
+            invoke_comparator(cell, std::move(coordinate));
     }
-
     /*!\brief Tracks the last cell of a column within the alignment matrix.
      *
      * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
@@ -212,7 +209,7 @@ protected:
     decltype(auto) track_last_column_cell(cell_t && cell, matrix_coordinate_type coordinate) noexcept
     {
         if (test_last_column_cell && !test_every_cell)
-            compare_and_set_optimum(optimal_score, optimal_coordinate, cell.best_score(), std::move(coordinate));
+            invoke_comparator(cell, std::move(coordinate));
 
         return std::forward<cell_t>(cell);
     }
@@ -235,16 +232,30 @@ protected:
     decltype(auto) track_final_cell(cell_t && cell, matrix_coordinate_type coordinate) noexcept
     {
         if (!(test_every_cell || test_last_row_cell || test_last_column_cell))
-            compare_and_set_optimum(optimal_score, optimal_coordinate, cell.best_score(), std::move(coordinate));
-
-        return std::forward<cell_t>(cell);
+            invoke_comparator(cell, std::move(coordinate));
     }
-
     //!\brief Resets the optimum such that a new alignment can be computed.
     void reset_optimum() noexcept
     {
         optimal_score = std::numeric_limits<score_type>::lowest();
         optimal_coordinate = {};
+    }
+
+    /*!\brief Handles the invocation of the optimum comparator and updater.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
+     *
+     * \param[in] cell The current cell to be tracked.
+     * \param[in] coordinate The matrix coordinate of the current cell.
+     *
+     * \details
+     *
+     * Forwards the score and coordinate pair as a tuple and invokes the compare and set operation with the
+     * so far best score/coordinate pair and the current score/coordinate pair.
+     */
+    template <typename cell_t>
+    void invoke_comparator(cell_t && cell, matrix_coordinate_type coordinate) noexcept
+    {
+        compare_and_set_optimum(optimal_score, optimal_coordinate, cell.best_score(), std::move(coordinate));
     }
 };
 } // namespace seqan3::detail
