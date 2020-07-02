@@ -372,7 +372,7 @@ TYPED_TEST_P(iterator_fixture, jump_forward)
         jump_forward_test<TypeParam>(std::ranges::begin(this->test_range), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_forward_test<TypeParam>(std::ranges::cbegin(this->test_range), this->expected_range);
+            jump_forward_test<TypeParam>(std::ranges::cbegin(this->test_range), std::as_const(this->expected_range));
     }
 }
 
@@ -413,7 +413,7 @@ TYPED_TEST_P(iterator_fixture, jump_backward)
         jump_backward_test<TypeParam>(std::ranges::begin(this->test_range), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_backward_test<TypeParam>(std::ranges::cbegin(this->test_range), this->expected_range);
+            jump_backward_test<TypeParam>(std::ranges::cbegin(this->test_range), std::as_const(this->expected_range));
     }
 }
 
@@ -433,7 +433,7 @@ TYPED_TEST_P(iterator_fixture, jump_random)
         jump_random_test<TypeParam>(std::ranges::begin(this->test_range), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            jump_random_test<TypeParam>(std::ranges::cbegin(this->test_range), this->expected_range);
+            jump_random_test<TypeParam>(std::ranges::cbegin(this->test_range), std::as_const(this->expected_range));
     }
 }
 
@@ -454,7 +454,7 @@ TYPED_TEST_P(iterator_fixture, difference_common)
         difference_test(std::ranges::begin(this->test_range), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            difference_test(std::ranges::cbegin(this->test_range), this->expected_range);
+            difference_test(std::ranges::cbegin(this->test_range), std::as_const(this->expected_range));
     }
 }
 
