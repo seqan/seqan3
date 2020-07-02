@@ -35,9 +35,11 @@ using ::std::ostreambuf_iterator;
 
 #ifndef __cpp_lib_ranges // implement C++20 iterators via range-v3
 
+//!\cond
 #ifndef RANGES_DEEP_STL_INTEGRATION
 #define RANGES_DEEP_STL_INTEGRATION 1
 #endif
+//!\endcond
 
 #include <range/v3/iterator/access.hpp>
 #include <range/v3/iterator/concepts.hpp>
