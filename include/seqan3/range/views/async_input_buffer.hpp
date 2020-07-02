@@ -149,9 +149,6 @@ public:
     //!\brief Const-qualified async_input_buffer_view::begin() is deleted, because iterating changes the view.
     async_input_buffer_iterator begin() const = delete;
 
-    //!\copydoc async_input_buffer_view::begin() const
-    async_input_buffer_iterator cbegin() const = delete;
-
     //!\brief Returns a sentinel.
     std::default_sentinel_t end()
     {
@@ -160,9 +157,6 @@ public:
 
     //!\brief Const-qualified async_input_buffer_view::end() is deleted, because iterating changes the view.
     std::default_sentinel_t end() const = delete;
-
-    //!\copydoc async_input_buffer_view::end() const
-    std::default_sentinel_t cend() const = delete;
     //!\}
 };
 

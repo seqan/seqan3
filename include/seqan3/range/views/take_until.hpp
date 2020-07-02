@@ -152,13 +152,6 @@ public:
         return {std::ranges::begin(urange), static_cast<fun_t const &>(fun), std::ranges::end(urange)};
     }
 
-    //!\copydoc begin()
-    const_iterator cbegin() const noexcept
-        requires const_iterable
-    {
-        return {std::ranges::begin(urange), static_cast<fun_t const &>(fun), std::ranges::end(urange)};
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the range.
      * \returns Iterator to the end.
      *
@@ -188,13 +181,6 @@ public:
             return std::ranges::cend(urange);
         else
             return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
-    }
-
-    //!\copydoc end()
-    auto cend() const noexcept
-        requires const_iterable
-    {
-        return end();
     }
     //!\}
 };

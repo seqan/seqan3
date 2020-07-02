@@ -151,8 +151,6 @@ public:
 
     //!\brief Const iteration is disabled.
     constexpr void begin() const noexcept = delete;
-    //!\brief Const iteration is disabled.
-    constexpr void cbegin() const noexcept = delete;
 
     //!\brief A sentinel representing the end of this range.
     constexpr std::default_sentinel_t end() noexcept
@@ -162,8 +160,6 @@ public:
 
     //!\brief Const iteration is disabled.
     constexpr void end() const noexcept = delete;
-    //!\brief Const iteration is disabled.
-    constexpr void cend() const noexcept = delete;
     //!\}
 
     //!\brief Checks whether the range is empty.

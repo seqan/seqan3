@@ -94,15 +94,6 @@ public:
         return enforced_random_access_iterator<decltype(std::ranges::cbegin(urng))>{std::ranges::cbegin(urng)};
     }
 
-    //!\copydoc seqan3::detail::view_enforce_random_access::begin
-    constexpr auto cbegin() const noexcept
-    //!\cond
-        requires const_iterable_range<urng_t>
-    //!\endcond
-    {
-        return begin();
-    }
-
     /*!\brief Returns the sentinel to the end of the range.
      *
      * \details
@@ -129,15 +120,6 @@ public:
             return enforced_random_access_iterator<decltype(std::ranges::cend(urng))>{std::ranges::cend(urng)};
         else
             return std::ranges::cend(urng);
-    }
-
-    //!\copydoc seqan3::detail::view_enforce_random_access::end
-    constexpr auto cend() const noexcept
-    //!\cond
-        requires const_iterable_range<urng_t>
-    //!\endcond
-    {
-        return end();
     }
     //!\}
 
