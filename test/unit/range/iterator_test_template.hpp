@@ -88,43 +88,28 @@ TYPED_TEST_P(iterator_fixture, concept_check)
                   "the returned iterator must model std::input_iterator.");
     EXPECT_TRUE(std::input_iterator<iterator_type>);
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
+    EXPECT_EQ(std::forward_iterator<iterator_type>,
+              (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>));
+
+    EXPECT_EQ(std::bidirectional_iterator<iterator_type>,
+              (std::derived_from<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>));
+
+    EXPECT_EQ(std::random_access_iterator<iterator_type>,
+              (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>));
+
+    if constexpr (TestFixture::const_iterable)
     {
-        static_assert(std::forward_iterator<decltype(std::ranges::begin(this->expected_range))>,
-                      "expected_range must have a begin member function and "
-                      "the returned iterator must model std::forward_iterator.");
-        EXPECT_TRUE(std::forward_iterator<iterator_type>);
+        using const_iterator_type = decltype(std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::input_iterator<const_iterator_type>);
 
-        if constexpr (TestFixture::const_iterable)
-        {
-            EXPECT_TRUE(std::forward_iterator<decltype(std::ranges::cbegin(this->test_range))>);
-        }
-    }
+        EXPECT_EQ(std::forward_iterator<const_iterator_type>,
+                  (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>));
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>)
-    {
-        static_assert(std::bidirectional_iterator<decltype(std::ranges::begin(this->expected_range))>,
-                      "expected_range must have a begin member function and "
-                      "the returned iterator must model std::bidirectional_iterator.");
-        EXPECT_TRUE(std::bidirectional_iterator<iterator_type>);
+        EXPECT_EQ(std::bidirectional_iterator<const_iterator_type>,
+                  (std::derived_from<typename TestFixture::iterator_tag, std::bidirectional_iterator_tag>));
 
-        if constexpr (TestFixture::const_iterable)
-        {
-            EXPECT_TRUE(std::bidirectional_iterator<decltype(std::ranges::cbegin(this->test_range))>);
-        }
-    }
-
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
-    {
-        static_assert(std::random_access_iterator<decltype(std::ranges::begin(this->expected_range))>,
-                      "expected_range must have a begin member function and "
-                      "the returned iterator must model std::random_access_iterator.");
-        EXPECT_TRUE(std::random_access_iterator<iterator_type>);
-
-        if constexpr (TestFixture::const_iterable)
-        {
-            EXPECT_TRUE(std::random_access_iterator<decltype(std::ranges::cbegin(this->test_range))>);
-        }
+        EXPECT_EQ(std::random_access_iterator<const_iterator_type>,
+                  (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>));
     }
 
     if (!std::derived_from<typename TestFixture::iterator_tag, std::input_iterator_tag>)
