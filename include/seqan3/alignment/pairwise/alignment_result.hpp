@@ -56,9 +56,9 @@ struct alignment_result_value_type
     //! \brief The alignment score.
     score_t score{};
     //! \brief The back coordinate of the alignment.
-    back_coord_t back_coordinate{};
+    back_coord_t end_positions{};
     //! \brief The front coordinate of the alignment.
-    front_coord_t front_coordinate{};
+    front_coord_t begin_positions{};
     //! \brief The alignment, i.e. the actual base pair matching.
     alignment_t alignment{};
 
@@ -148,9 +148,9 @@ private:
     //! \brief The type for the resulting score.
     using score_t = decltype(data.score);
     //! \brief The type for the back coordinate.
-    using back_coord_t = decltype(data.back_coordinate);
+    using back_coord_t = decltype(data.end_positions);
     //! \brief The type for the front coordinate.
-    using front_coord_t = decltype(data.front_coordinate);
+    using front_coord_t = decltype(data.begin_positions);
     //! \brief The type for the alignment.
     using alignment_t = decltype(data.alignment);
     //!\}
@@ -211,7 +211,7 @@ public:
     }
 
     /*!\brief Returns the end position of the first sequence of the alignment.
-     * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
+     * \return The calculated alignment end of sequence 1 (inclusive).
      *
      * \note This function is only available if the end position of the first sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::result).
@@ -221,7 +221,7 @@ public:
         static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
                       "Trying to access the end position of the first sequence, although it was not requested in the"
                       " alignment configuration.");
-        return data.back_coordinate.first;
+        return data.end_positions.first;
     }
 
     /*!\brief Returns the end position of the second sequence of the alignment.
@@ -235,7 +235,7 @@ public:
         static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
                       "Trying to access the end position of the second sequence, although it was not requested in the"
                       " alignment configuration.");
-        return data.back_coordinate.second;
+        return data.end_positions.second;
     }
 
     /*!\brief Returns the begin position of the first sequence of the alignment.
@@ -253,7 +253,7 @@ public:
         static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
                       "Trying to access the begin position of the first sequence, although it was not requested in the"
                       " alignment configuration.");
-        return data.front_coordinate.first;
+        return data.begin_positions.first;
     }
 
     /*!\brief Returns the begin position of the second sequence of the alignment.
@@ -271,7 +271,7 @@ public:
         static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
                       "Trying to access the begin position of the second sequence, although it was not requested in the"
                       " alignment configuration.");
-        return data.front_coordinate.second;
+        return data.begin_positions.second;
     }
 
     /*!\brief Returns the actual alignment, i.e. the base pair matching.
@@ -371,9 +371,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
 
     constexpr bool has_id = !std::is_same_v<decltype(std::declval<result_data_t>().id), std::nullopt_t *>;
     constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), std::nullopt_t *>;
-    constexpr bool has_back_coordinate = !std::is_same_v<decltype(std::declval<result_data_t>().back_coordinate),
-                                                         std::nullopt_t *>;
-    constexpr bool has_front_coordinate = !std::is_same_v<decltype(std::declval<result_data_t>().front_coordinate),
+    constexpr bool has_end_positions = !std::is_same_v<decltype(std::declval<result_data_t>().end_positions),
+                                                       std::nullopt_t *>;
+    constexpr bool has_begin_positions = !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions),
                                                          std::nullopt_t *>;
     constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment),
                                                    std::nullopt_t *>;
@@ -383,9 +383,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
         stream << "id: " << result.id();
     if constexpr (has_score)
         stream << ", score: " << result.score();
-    if constexpr (has_front_coordinate)
+    if constexpr (has_begin_positions)
         stream << ", begin: (" << result.sequence1_begin_position() << "," << result.sequence2_begin_position() << ")";
-    if constexpr (has_back_coordinate)
+    if constexpr (has_end_positions)
         stream << ", end: (" << result.sequence1_end_position() << "," << result.sequence2_end_position() << ")";
     if constexpr (has_alignment)
         stream << "\nalignment:\n" << result.alignment();

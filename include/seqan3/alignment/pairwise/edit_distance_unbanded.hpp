@@ -282,8 +282,8 @@ protected:
         _best_score = self->_score;
     }
 
-    //!\brief Returns the first component of the #back_coordinate.
-    size_t back_coordinate_first() const noexcept
+    //!\brief Returns the first component of the #end_positions.
+    size_t end_positions_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         return std::ranges::size(self->database);
@@ -309,16 +309,16 @@ public:
     }
 
     //!\brief Return the end position of the alignment
-    //!       Only available if default_edit_distance_trait_type::compute_back_coordinate is true.
-    alignment_coordinate back_coordinate() const noexcept
+    //!       Only available if default_edit_distance_trait_type::compute_end_positions is true.
+    alignment_coordinate end_positions() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        static_assert(edit_traits::compute_back_coordinate, "back_coordinate() can only be computed if you specify the"
-                                                            "result type within your alignment config.");
+        static_assert(edit_traits::compute_end_positions, "end_positions() can only be computed if you specify the "
+                                                          "result type within your alignment config.");
         if (!self->is_valid())
             return self->invalid_coordinate();
 
-        column_index_type const first{self->back_coordinate_first()};
+        column_index_type const first{self->end_positions_first()};
         row_index_type const second{std::ranges::size(self->query)};
         return {first, second};
     }
@@ -398,8 +398,8 @@ protected:
         _best_score     = (self->_score <= _best_score) ? self->_score : _best_score;
     }
 
-    //!\copydoc edit_distance_unbanded_global_policy::back_coordinate_first
-    size_t back_coordinate_first() const noexcept
+    //!\copydoc edit_distance_unbanded_global_policy::end_positions_first
+    size_t end_positions_first() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         // offset == 0u is a special case if database sequence is empty, because in this case the best column is zero.
@@ -574,17 +574,17 @@ public:
     }
 
     //!\brief Return the begin position of the alignment.
-    //!       Only available if default_edit_distance_trait_type::compute_front_coordinate is true.
-    alignment_coordinate front_coordinate() const noexcept
+    //!       Only available if default_edit_distance_trait_type::compute_begin_positions is true.
+    alignment_coordinate begin_positions() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
-        static_assert(edit_traits::compute_front_coordinate, "front_coordinate() can only be computed if you specify "
-                                                             "the result type within your alignment config.");
+        static_assert(edit_traits::compute_begin_positions, "begin_positions() can only be computed if you specify the "
+                                                            "result type within your alignment config.");
         if (!self->is_valid())
             return self->invalid_coordinate();
 
-        alignment_coordinate const back = self->back_coordinate();
-        return alignment_front_coordinate(trace_matrix(), back);
+        alignment_coordinate const back = self->end_positions();
+        return alignment_begin_positions(trace_matrix(), back);
     }
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
@@ -603,8 +603,8 @@ public:
         return alignment_trace<alignment_t>(self->database,
                                             self->query,
                                             trace_matrix(),
-                                            self->back_coordinate(),
-                                            front_coordinate());
+                                            self->end_positions(),
+                                            begin_positions());
     }
     //!\}
 };
@@ -740,8 +740,8 @@ private:
     using edit_traits::is_semi_global;
     using edit_traits::is_global;
     using edit_traits::compute_score;
-    using edit_traits::compute_back_coordinate;
-    using edit_traits::compute_front_coordinate;
+    using edit_traits::compute_end_positions;
+    using edit_traits::compute_begin_positions;
     using edit_traits::compute_sequence_alignment;
     using edit_traits::compute_score_matrix;
     using edit_traits::compute_trace_matrix;
@@ -1051,17 +1051,17 @@ public:
             res_vt.score = this->score().value_or(matrix_inf<score_type>);
         }
 
-        if constexpr (compute_back_coordinate)
+        if constexpr (compute_end_positions)
         {
-            res_vt.back_coordinate = this->back_coordinate();
+            res_vt.end_positions = this->end_positions();
         }
 
-        if constexpr (compute_front_coordinate)
+        if constexpr (compute_begin_positions)
         {
             if (this->is_valid())
-                res_vt.front_coordinate = alignment_front_coordinate(this->trace_matrix(), res_vt.back_coordinate);
+                res_vt.begin_positions = alignment_begin_positions(this->trace_matrix(), res_vt.end_positions);
             else
-                res_vt.front_coordinate = this->invalid_coordinate();
+                res_vt.begin_positions = this->invalid_coordinate();
         }
 
         if constexpr (compute_sequence_alignment)
@@ -1072,8 +1072,8 @@ public:
                 res_vt.alignment = alignment_trace<alignment_t>(database,
                                                                 query,
                                                                 this->trace_matrix(),
-                                                                res_vt.back_coordinate,
-                                                                res_vt.front_coordinate);
+                                                                res_vt.end_positions,
+                                                                res_vt.begin_positions);
             }
         }
         callback(alignment_result_type{std::move(res_vt)});

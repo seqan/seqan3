@@ -30,8 +30,8 @@ namespace seqan3::detail
 /*!\brief Compute the front coordinate.
  * \ingroup alignment_matrix
  * \tparam    trace_matrix_t The type of the trace matrix.
- * \param[in] matrix          The trace matrix.
- * \param[in] back_coordinate Where the trace in the matrix ends.
+ * \param[in] matrix         The trace matrix.
+ * \param[in] end_positions  Where the trace in the matrix ends.
  * \returns Returns the front coordinate.
  */
  template <typename trace_matrix_t>
@@ -39,14 +39,14 @@ namespace seqan3::detail
      requires matrix<remove_cvref_t<trace_matrix_t>> &&
               std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
  //!\endcond
-inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
-                                                       alignment_coordinate const back_coordinate)
+inline alignment_coordinate alignment_begin_positions(trace_matrix_t && matrix,
+                                                      alignment_coordinate const end_positions)
 {
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
 
-    matrix_coordinate coordinate{row_index_type{back_coordinate.second}, column_index_type{back_coordinate.first}};
+    matrix_coordinate coordinate{row_index_type{end_positions.second}, column_index_type{end_positions.first}};
 
     assert(coordinate.row < matrix.rows());
     assert(coordinate.col < matrix.cols());
@@ -89,8 +89,8 @@ inline alignment_coordinate alignment_front_coordinate(trace_matrix_t && matrix,
  * \param[in] database                   The database sequence.
  * \param[in] query                      The query sequence.
  * \param[in] matrix                     The trace matrix.
- * \param[in] back_coordinate            Where the trace in the matrix ends.
- * \param[in] front_coordinate           Where the trace in the matrix starts.
+ * \param[in] end_positions              Where the trace in the matrix ends.
+ * \param[in] begin_positions            Where the trace in the matrix starts.
  * \returns Returns a seqan3::aligned_sequence.
  */
 template <
@@ -106,15 +106,15 @@ template <
 inline alignment_t alignment_trace(database_t && database,
                                    query_t && query,
                                    trace_matrix_t && matrix,
-                                   alignment_coordinate const back_coordinate,
-                                   alignment_coordinate const front_coordinate)
+                                   alignment_coordinate const end_positions,
+                                   alignment_coordinate const begin_positions)
 {
     constexpr auto N = trace_directions::none;
     constexpr auto D = trace_directions::diagonal;
     constexpr auto L = trace_directions::left;
     constexpr auto U = trace_directions::up;
 
-    matrix_coordinate coordinate{row_index_type{back_coordinate.second}, column_index_type{back_coordinate.first}};
+    matrix_coordinate coordinate{row_index_type{end_positions.second}, column_index_type{end_positions.first}};
 
     assert(coordinate.row <= query.size());
     assert(coordinate.col <= database.size());
@@ -123,9 +123,9 @@ inline alignment_t alignment_trace(database_t && database,
 
     alignment_t aligned_seq{};
     assign_unaligned(std::get<0>(aligned_seq), database | views::type_reduce
-                                                        | views::slice(front_coordinate.first, coordinate.col));
+                                                        | views::slice(begin_positions.first, coordinate.col));
     assign_unaligned(std::get<1>(aligned_seq), query | views::type_reduce
-                                                     | views::slice(front_coordinate.second, coordinate.row));
+                                                     | views::slice(begin_positions.second, coordinate.row));
     auto end_aligned_db = std::ranges::cend(std::get<0>(aligned_seq));
     auto end_aligned_qy = std::ranges::cend(std::get<1>(aligned_seq));
 

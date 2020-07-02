@@ -17,8 +17,8 @@ struct align_cfg_result_test : public ::testing::Test
 {};
 
 using test_types = ::testing::Types<seqan3::detail::with_score_type,
-                                    seqan3::detail::with_back_coordinate_type,
-                                    seqan3::detail::with_front_coordinate_type,
+                                    seqan3::detail::with_end_positions_type,
+                                    seqan3::detail::with_begin_positions_type,
                                     seqan3::detail::with_alignment_type>;
 
 TYPED_TEST_SUITE(align_cfg_result_test, test_types, );
@@ -35,13 +35,13 @@ auto type_to_variable()
     {
         return seqan3::with_score;
     }
-    else if constexpr (std::is_same_v<type, seqan3::detail::with_back_coordinate_type>)
+    else if constexpr (std::is_same_v<type, seqan3::detail::with_end_positions_type>)
     {
-        return seqan3::with_back_coordinate;
+        return seqan3::with_end_positions;
     }
-    else if constexpr (std::is_same_v<type, seqan3::detail::with_front_coordinate_type>)
+    else if constexpr (std::is_same_v<type, seqan3::detail::with_begin_positions_type>)
     {
-        return seqan3::with_front_coordinate;
+        return seqan3::with_begin_positions;
     }
     else
     {

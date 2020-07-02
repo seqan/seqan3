@@ -152,32 +152,32 @@ TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
     EXPECT_EQ(trace_matrix, fixture.trace_matrix());
 }
 
-TYPED_TEST_P(edit_distance_unbanded_test, back_coordinate)
+TYPED_TEST_P(edit_distance_unbanded_test, end_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_back_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_end_positions};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
-    auto back_coordinate = alignment.back_coordinate();
+    auto end_positions = alignment.end_positions();
 
-    EXPECT_EQ(back_coordinate, fixture.back_coordinate);
+    EXPECT_EQ(end_positions, fixture.end_positions);
 }
 
-TYPED_TEST_P(edit_distance_unbanded_test, front_coordinate)
+TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_begin_positions};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
 
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
-    auto front_coordinate = alignment.front_coordinate();
+    auto begin_positions = alignment.begin_positions();
 
-    EXPECT_EQ(front_coordinate, fixture.front_coordinate);
+    EXPECT_EQ(begin_positions, fixture.begin_positions);
 }
 
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)
@@ -199,6 +199,6 @@ REGISTER_TYPED_TEST_SUITE_P(edit_distance_unbanded_test,
                             score,
                             score_matrix,
                             trace_matrix,
-                            back_coordinate,
-                            front_coordinate,
+                            end_positions,
+                            begin_positions,
                             alignment);

@@ -45,11 +45,11 @@ TYPED_TEST_P(pairwise_alignment_test, score)
     EXPECT_EQ(res.score(), fixture.score);
 }
 
-TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
+TYPED_TEST_P(pairwise_alignment_test, end_positions)
 {
     auto const & fixture = this->fixture();
 
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_back_coordinate,
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_end_positions,
                                                                                  seqan3::using_score_type<double>};
 
     std::vector database = fixture.sequence1;
@@ -60,14 +60,14 @@ TYPED_TEST_P(pairwise_alignment_test, back_coordinate)
 
     EXPECT_EQ(res.score(), fixture.score);
     EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
-    EXPECT_EQ(res.sequence1_end_position(), fixture.back_coordinate.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.back_coordinate.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
 }
 
-TYPED_TEST_P(pairwise_alignment_test, front_coordinate)
+TYPED_TEST_P(pairwise_alignment_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_begin_positions};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -76,10 +76,10 @@ TYPED_TEST_P(pairwise_alignment_test, front_coordinate)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.sequence1_end_position(), fixture.back_coordinate.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.back_coordinate.second);
-    EXPECT_EQ(res.sequence1_begin_position(), fixture.front_coordinate.first);
-    EXPECT_EQ(res.sequence2_begin_position(), fixture.front_coordinate.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
+    EXPECT_EQ(res.sequence1_begin_position(), fixture.begin_positions.first);
+    EXPECT_EQ(res.sequence2_begin_position(), fixture.begin_positions.second);
 }
 
 TYPED_TEST_P(pairwise_alignment_test, alignment)
@@ -95,10 +95,10 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.sequence1_end_position(), fixture.back_coordinate.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.back_coordinate.second);
-    EXPECT_EQ(res.sequence1_begin_position(), fixture.front_coordinate.first);
-    EXPECT_EQ(res.sequence2_begin_position(), fixture.front_coordinate.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
+    EXPECT_EQ(res.sequence1_begin_position(), fixture.begin_positions.first);
+    EXPECT_EQ(res.sequence2_begin_position(), fixture.begin_positions.second);
 
     auto && [gapped_database, gapped_query] = res.alignment();
     EXPECT_EQ(gapped_database | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence1);
@@ -111,8 +111,4 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     EXPECT_RANGE_EQ(static_cast<trace_matrix_t>(res.trace_matrix()), fixture.trace_vector);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test,
-                            score,
-                            back_coordinate,
-                            front_coordinate,
-                            alignment);
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_test, score, end_positions, begin_positions, alignment);

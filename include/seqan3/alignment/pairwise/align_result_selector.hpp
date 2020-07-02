@@ -60,13 +60,13 @@ private:
     {
         static_assert(configuration_t::template exists<align_cfg::result>());
 
-        if constexpr (configuration_t::template exists<align_cfg::result<with_back_coordinate_type, score_type>>())
+        if constexpr (configuration_t::template exists<align_cfg::result<with_end_positions_type, score_type>>())
         {
             return alignment_result_value_type<uint32_t,
                                                score_type,
                                                alignment_coordinate>{};
         }
-        else if constexpr (configuration_t::template exists<align_cfg::result<with_front_coordinate_type, score_type>>())
+        else if constexpr (configuration_t::template exists<align_cfg::result<with_begin_positions_type, score_type>>())
         {
             return alignment_result_value_type<uint32_t,
                                                score_type,

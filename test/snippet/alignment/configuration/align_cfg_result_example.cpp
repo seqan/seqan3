@@ -8,10 +8,10 @@ int main()
     seqan3::align_cfg::result cfg_score{seqan3::with_score};
 
     // Compute the score and the back coordinate.
-    seqan3::align_cfg::result cfg_end{seqan3::with_back_coordinate};
+    seqan3::align_cfg::result cfg_end{seqan3::with_end_positions};
 
     // Compute the score, the back coordinate and the front coordinate.
-    seqan3::align_cfg::result cfg_begin{seqan3::with_front_coordinate};
+    seqan3::align_cfg::result cfg_begin{seqan3::with_begin_positions};
 
     // Compute the score, the back coordinate, the front coordinate and the alignment.
     seqan3::align_cfg::result cfg_alignment{seqan3::with_alignment};
@@ -22,7 +22,7 @@ int main()
     seqan3::align_cfg::result cfg_score_uint16{seqan3::with_score, seqan3::using_score_type<int16_t>};
 
     // Compute the score given a specific score_type and the back coordinate.
-    seqan3::align_cfg::result cfg_end_double{seqan3::with_back_coordinate, seqan3::using_score_type<double>};
+    seqan3::align_cfg::result cfg_end_double{seqan3::with_end_positions, seqan3::using_score_type<double>};
 
     // ...
 }

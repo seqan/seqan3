@@ -108,12 +108,12 @@
  * in the alignment algorithm. The following table shows the parts that are computed depending on the
  * seqan3::align_cfg::result configuration:
  *
- * | **Entity**                                                                     | **Available result**                                  |
- * | -------------------------------------------------------------------------------|------------------------------------------------------ |
- * | \ref seqan3::align_cfg::result::with_score  "with_score"                       | alignment score                                       |
- * | \ref seqan3::align_cfg::result::with_back_coordinate  "with_back_coordinate"   | alignment score; back coordinate                      |
- * | \ref seqan3::align_cfg::result::with_front_coordinate  "with_front_coordinate" | alignment score; back and front coordinate            |
- * | \ref seqan3::align_cfg::result::with_alignment  "with_alignment"               | alignment score; back and front coordinate; alignment |
+ * | **Entity**                                                                   | **Available result**                                  |
+ * | -----------------------------------------------------------------------------|------------------------------------------------------ |
+ * | \ref seqan3::align_cfg::result::with_score  "with_score"                     | alignment score                                       |
+ * | \ref seqan3::align_cfg::result::with_end_positions  "with_end_positions"     | alignment score; back coordinate                      |
+ * | \ref seqan3::align_cfg::result::with_begin_positions  "with_begin_positions" | alignment score; back and front coordinate            |
+ * | \ref seqan3::align_cfg::result::with_alignment  "with_alignment"             | alignment score; back and front coordinate; alignment |
  *
  * The back coordinate stores the end of the alignment within both sequences. Note that theses positions are
  * inclusive. The front coordinate stores the begin of the alignment part in both sequences.

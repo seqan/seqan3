@@ -62,7 +62,7 @@ TEST(alignment_selector, align_result_selector_using_score_type)
     using seq1_t = std::vector<seqan3::dna4>;
     using seq2_t = std::list<seqan3::dna4>;
 
-    auto cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_back_coordinate,
+    auto cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_end_positions,
                                                                    seqan3::using_score_type<double>};
     using _t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
                                                                                        seq2_t,

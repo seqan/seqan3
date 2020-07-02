@@ -108,7 +108,7 @@ TYPED_TEST(alignment_result_test, get_score)
 
 }
 
-TYPED_TEST(alignment_result_test, back_coordinate)
+TYPED_TEST(alignment_result_test, end_positions)
 {
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
@@ -133,7 +133,7 @@ TYPED_TEST(alignment_result_test, back_coordinate)
     }
 }
 
-TYPED_TEST(alignment_result_test, front_coordinate)
+TYPED_TEST(alignment_result_test, begin_positions)
 {
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 

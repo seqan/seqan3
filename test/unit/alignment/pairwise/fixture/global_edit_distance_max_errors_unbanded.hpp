@@ -43,8 +43,8 @@ static auto dna4_01_e255 = []()
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
-        dna4_01.front_coordinate,
-        dna4_01.back_coordinate,
+        dna4_01.begin_positions,
+        dna4_01.end_positions,
         dna4_01.score_vector,
         dna4_01.trace_vector
     };
@@ -60,8 +60,8 @@ static auto dna4_01T_e255 = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        dna4_01T.front_coordinate,
-        dna4_01T.back_coordinate,
+        dna4_01T.begin_positions,
+        dna4_01T.end_positions,
         dna4_01T.score_vector,
         dna4_01T.trace_vector
     };
@@ -93,8 +93,8 @@ static auto dna4_01_e8 = []()
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
-        dna4_01.front_coordinate,
-        dna4_01.back_coordinate,
+        dna4_01.begin_positions,
+        dna4_01.end_positions,
         dna4_01.score_matrix().mask_matrix(masking_matrix),
         dna4_01.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -176,8 +176,8 @@ static auto dna4_02_e255 = []()
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
-        dna4_02.front_coordinate,
-        dna4_02.back_coordinate,
+        dna4_02.begin_positions,
+        dna4_02.end_positions,
         dna4_02.score_vector,
         dna4_02.trace_vector
     };
@@ -208,8 +208,8 @@ static auto dna4_02_e8 = []()
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
-        dna4_02.front_coordinate,
-        dna4_02.back_coordinate,
+        dna4_02.begin_positions,
+        dna4_02.end_positions,
         dna4_02.score_matrix().mask_matrix(masking_matrix),
         dna4_02.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -295,8 +295,8 @@ static auto dna4_02_s1u_15u_e255 = []()
         -14,
         "AACCGGTAAACCGG",
         "--------------",
-        dna4_02_s1u_15u.front_coordinate,
-        dna4_02_s1u_15u.back_coordinate,
+        dna4_02_s1u_15u.begin_positions,
+        dna4_02_s1u_15u.end_positions,
         dna4_02_s1u_15u.score_vector,
         dna4_02_s1u_15u.trace_vector
     };
@@ -341,8 +341,8 @@ static auto dna4_02T_s15u_1u_e255 = []()
         -14,
         "--------------",
         "AACCGGTAAACCGG",
-        dna4_02T_s15u_1u.front_coordinate,
-        dna4_02T_s15u_1u.back_coordinate,
+        dna4_02T_s15u_1u.begin_positions,
+        dna4_02T_s15u_1u.end_positions,
         dna4_02T_s15u_1u.score_vector,
         dna4_02T_s15u_1u.trace_vector
     };
@@ -397,8 +397,8 @@ static auto dna4_03_e255 = []()
         -0,
         "",
         "",
-        dna4_03.front_coordinate,
-        dna4_03.back_coordinate,
+        dna4_03.begin_positions,
+        dna4_03.end_positions,
         dna4_03.score_vector,
         dna4_03.trace_vector
     };
@@ -414,8 +414,8 @@ static auto aa27_01_e255 = []()
         -8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
-        aa27_01.front_coordinate,
-        aa27_01.back_coordinate,
+        aa27_01.begin_positions,
+        aa27_01.end_positions,
         aa27_01.score_vector,
         aa27_01.trace_vector
     };
@@ -431,8 +431,8 @@ static auto aa27_01T_e255 = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
-        aa27_01T.front_coordinate,
-        aa27_01T.back_coordinate,
+        aa27_01T.begin_positions,
+        aa27_01T.end_positions,
         aa27_01T.score_vector,
         aa27_01T.trace_vector
     };
