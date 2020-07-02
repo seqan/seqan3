@@ -178,7 +178,7 @@ public:
     /*!\brief Returns the size of the range, if the underlying range is a std::ranges::sized_range.
      * \returns Size of range.
      */
-    auto size() const
+    auto size()
     //!\cond
         requires std::ranges::sized_range<urng_t>
     //!\endcond
