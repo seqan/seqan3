@@ -58,7 +58,15 @@ TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
+    EXPECT_TRUE((std::ranges::equal(res_vec |
+                                    std::views::transform([] (auto res)
+                                                          {
+                                                            return seqan3::alignment_coordinate{
+                                                                seqan3::detail::column_index_type{
+                                                                    res.sequence1_end_position()},
+                                                                seqan3::detail::row_index_type{
+                                                                    res.sequence2_end_position()}};
+                                                          }),
                                     fixture.get_back_coordinates())));
 }
 
@@ -77,9 +85,25 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                                              {
+                                                                return seqan3::alignment_coordinate{
+                                                                    seqan3::detail::column_index_type{
+                                                                        res.sequence1_end_position()},
+                                                                    seqan3::detail::row_index_type{
+                                                                        res.sequence2_end_position()}};
+                                                              }),
                                         fixture.get_back_coordinates())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                                              {
+                                                                return seqan3::alignment_coordinate{
+                                                                    seqan3::detail::column_index_type{
+                                                                        res.sequence1_begin_position()},
+                                                                    seqan3::detail::row_index_type{
+                                                                        res.sequence2_begin_position()}};
+                                                              }),
                                         fixture.get_front_coordinates())));
     }
 }
@@ -99,9 +123,25 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                                              {
+                                                                return seqan3::alignment_coordinate{
+                                                                    seqan3::detail::column_index_type{
+                                                                        res.sequence1_end_position()},
+                                                                    seqan3::detail::row_index_type{
+                                                                        res.sequence2_end_position()}};
+                                                              }),
                                         fixture.get_back_coordinates())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                                              {
+                                                                return seqan3::alignment_coordinate{
+                                                                    seqan3::detail::column_index_type{
+                                                                        res.sequence1_begin_position()},
+                                                                    seqan3::detail::row_index_type{
+                                                                        res.sequence2_begin_position()}};
+                                                              }),
                                         fixture.get_front_coordinates())));
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
                                                 {

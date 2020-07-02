@@ -48,10 +48,10 @@ TEST(alignment_selector, align_result_selector_with_list)
 
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()),
-                                    seqan3::alignment_coordinate const &>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().front_coordinate()),
-                                    seqan3::alignment_coordinate const &>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence1_end_position()), size_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence2_end_position()), size_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence1_begin_position()), size_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence2_begin_position()), size_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
                                     std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
     }
@@ -69,7 +69,8 @@ TEST(alignment_selector, align_result_selector_using_score_type)
                                                                                        decltype(cfg)>::type>;
 
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), double>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()), seqan3::alignment_coordinate const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence1_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence2_end_position()), size_t>));
 }
 
 TEST(alignment_selector, align_result_selector_with_vector)
@@ -85,10 +86,10 @@ TEST(alignment_selector, align_result_selector_with_vector)
 
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().id()), uint32_t>));
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().score()), int32_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().back_coordinate()),
-                                seqan3::alignment_coordinate const &>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().front_coordinate()),
-                                seqan3::alignment_coordinate const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence1_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence2_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence1_begin_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().sequence2_begin_position()), size_t>));
     EXPECT_TRUE((std::is_same_v<decltype(std::declval<_t>().alignment()),
                                 std::tuple<gapped_seq_t, gapped_seq_t> const &>));
 }

@@ -70,16 +70,16 @@ static std::string create_sam_file_string(size_t const n_queries)
             auto align_result = *(seqan3::align_pairwise(std::tie(query, reference), config).begin());
             std::string const current_query_id = default_query_id + std::to_string(i);
 
-            sam_out.emplace_back(query,                                  // field::seq
-                                 current_query_id,                       // field::id
-                                 align_result.front_coordinate().first,  // field::offset
-                                 reference,                              // field::ref_seq
-                                 reference_id,                           // field::ref_id
-                                 align_result.front_coordinate().second, // field::ref_offset
-                                 align_result.alignment(),               // field::alignment
-                                 align_result.score(),                   // field::mapq
-                                 qualities,                              // field::qual
-                                 seqan3::sam_flag::none);                // field::flag
+            sam_out.emplace_back(query,                                   // field::seq
+                                 current_query_id,                        // field::id
+                                 align_result.sequence1_begin_position(), // field::offset
+                                 reference,                               // field::ref_seq
+                                 reference_id,                            // field::ref_id
+                                 align_result.sequence2_begin_position(), // field::ref_offset
+                                 align_result.alignment(),                // field::alignment
+                                 align_result.score(),                    // field::mapq
+                                 qualities,                               // field::qual
+                                 seqan3::sam_flag::none);                 // field::flag
         }
 
         file_dict[n_queries] = stream.str();

@@ -229,8 +229,7 @@ TEST(alignment_configurator, configure_result_score_type)
     auto result = run_test(cfg);
 
     EXPECT_DOUBLE_EQ(result.score(), 0.0);
-    EXPECT_EQ(result.back_coordinate(),
-              (seqan3::alignment_coordinate{seqan3::detail::column_index_type{4u},
-                                            seqan3::detail::row_index_type{4u}}));
+    EXPECT_EQ(result.sequence1_end_position(), 4u);
+    EXPECT_EQ(result.sequence2_end_position(), 4u);
     EXPECT_TRUE((std::same_as<decltype(result.score()), double>));
 }
