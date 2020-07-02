@@ -437,24 +437,31 @@ TYPED_TEST_P(iterator_fixture, jump_random)
     }
 }
 
-template <typename it_begin_t, typename rng_t>
-inline void difference_test(it_begin_t && it_begin, rng_t && rng)
+template <typename it_begin_t, typename it_sentinel_t, typename rng_t>
+inline void difference_test(it_begin_t && it_begin, it_sentinel_t && it_end, rng_t && rng)
 {
-    size_t sz = std::ranges::distance(rng);
     using difference_t = std::iter_difference_t<it_begin_t>;
+    difference_t sz = std::ranges::distance(rng);
 
-    for (size_t n = 0; n < sz; ++n)
-        EXPECT_EQ(static_cast<difference_t>(n), ((it_begin + n) - it_begin));
+    it_begin_t last_it = std::get<0>(last_iterators(it_begin, it_end, rng));
+
+    for (difference_t n = 0; n < sz; ++n)
+        EXPECT_EQ(n, (it_begin + n) - it_begin);
+
+    for (difference_t n = 0; n < sz; ++n)
+        EXPECT_EQ(n, last_it - (last_it - n));
 }
 
 TYPED_TEST_P(iterator_fixture, difference_common)
 {
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        difference_test(std::ranges::begin(this->test_range), this->expected_range);
+        difference_test(std::ranges::begin(this->test_range), std::ranges::end(this->test_range), this->expected_range);
 
         if constexpr (TestFixture::const_iterable)
-            difference_test(std::ranges::cbegin(this->test_range), std::as_const(this->expected_range));
+            difference_test(std::ranges::cbegin(this->test_range),
+                            std::ranges::cend(this->test_range),
+                            std::as_const(this->expected_range));
     }
 }
 
