@@ -210,36 +210,68 @@ public:
         return data.score;
     }
 
-    /*!\brief Returns the back coordinate of the alignment.
+    /*!\brief Returns the end position of the first sequence of the alignment.
      * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
      *
-     * \note This function is only available if the back coordinate was requested via the alignment configuration
-     * (see seqan3::align_cfg::result).
+     * \note This function is only available if the end position of the first sequence was requested via the
+     * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr back_coord_t const & back_coordinate() const noexcept
+    constexpr size_t sequence1_end_position() const noexcept
     {
-        static_assert(!std::is_same_v<back_coord_t, std::nullopt_t *>,
-                      "Trying to access the back coordinate, although it was not requested in the alignment "
-                      "configuration.");
-        return data.back_coordinate;
+        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+                      "Trying to access the end position of the first sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.back_coordinate.first;
     }
 
-    /*!\brief Returns the front coordinate of the alignment.
+    /*!\brief Returns the end position of the second sequence of the alignment.
+     * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
+     *
+     * \note This function is only available if the end position of the second sequence was requested via the
+     * alignment configuration (see seqan3::align_cfg::result).
+     */
+    constexpr size_t sequence2_end_position() const noexcept
+    {
+        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+                      "Trying to access the end position of the second sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.back_coordinate.second;
+    }
+
+    /*!\brief Returns the begin position of the first sequence of the alignment.
      * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
      *
      * \details
      *
-     * Guaranteed to be smaller than or equal to `back_coordinate()`.
+     * Guaranteed to be smaller than or equal to `sequence1_end_position()`.
      *
-     * \note This function is only available if the front coordinate was requested via the alignment configuration
-     * (see seqan3::align_cfg::result).
+     * \note This function is only available if the begin position of the first sequence was requested via the
+     * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr front_coord_t const & front_coordinate() const noexcept
+    constexpr size_t sequence1_begin_position() const noexcept
     {
-        static_assert(!std::is_same_v<front_coord_t, std::nullopt_t *>,
-                      "Trying to access the front coordinate, although it was not requested in the alignment "
-                      "configuration.");
-        return data.front_coordinate;
+        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+                      "Trying to access the begin position of the first sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.front_coordinate.first;
+    }
+
+    /*!\brief Returns the begin position of the second sequence of the alignment.
+     * \return  A pair of positions in the respective sequences, where the calculated alignment starts.
+     *
+     * \details
+     *
+     * Guaranteed to be smaller than or equal to `sequence2_end_position()`.
+     *
+     * \note This function is only available if the begin position of the second sequence was requested via the
+     * alignment configuration (see seqan3::align_cfg::result).
+     */
+    constexpr size_t sequence2_begin_position() const noexcept
+    {
+        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+                      "Trying to access the begin position of the second sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.front_coordinate.second;
     }
 
     /*!\brief Returns the actual alignment, i.e. the base pair matching.
@@ -352,9 +384,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
     if constexpr (has_score)
         stream << ", score: " << result.score();
     if constexpr (has_front_coordinate)
-        stream << ", begin: " << result.front_coordinate();
+        stream << ", begin: (" << result.sequence1_begin_position() << "," << result.sequence2_begin_position() << ")";
     if constexpr (has_back_coordinate)
-        stream << ", end: " << result.back_coordinate();
+        stream << ", end: (" << result.sequence1_end_position() << "," << result.sequence2_end_position() << ")";
     if constexpr (has_alignment)
         stream << "\nalignment:\n" << result.alignment();
     stream << '}';
