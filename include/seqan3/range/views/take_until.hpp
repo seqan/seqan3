@@ -149,7 +149,7 @@ public:
     const_iterator begin() const noexcept
         requires const_iterable
     {
-        return {std::ranges::begin(urange), static_cast<fun_t const &>(fun), std::ranges::end(urange)};
+        return {std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.

@@ -179,7 +179,7 @@ public:
         requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
-        return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
+        return {std::ranges::cbegin(u_range), std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -206,7 +206,7 @@ public:
         requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
-        return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
+        return {back_iterator, std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
     }
     //!\}
 
