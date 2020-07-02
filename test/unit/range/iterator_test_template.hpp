@@ -54,7 +54,7 @@ SEQAN3_CONCEPT has_expect_equal_member_function = requires(t & a)
 
 // Delegates to the test fixture member function `expect_eq` if available and falls back to EXPECT_EQ otherwise.
 template <typename T, typename A, typename B>
-void expext_eq(A && a, B && b)
+void expect_iter_value_equal(A && a, B && b)
 {
     if constexpr (has_expect_equal_member_function<iterator_fixture<T>>)
         iterator_fixture<std::remove_reference_t<T>>::expect_eq(a, b);
@@ -149,10 +149,10 @@ TYPED_TEST_P(iterator_fixture, const_non_const_compatibility)
 
 TYPED_TEST_P(iterator_fixture, dereference)
 {
-    expext_eq<TypeParam>(*std::ranges::begin(this->test_range), *std::ranges::begin(this->expected_range));
+    expect_iter_value_equal<TypeParam>(*std::ranges::begin(this->test_range), *std::ranges::begin(this->expected_range));
 
     if constexpr (TestFixture::const_iterable)
-        expext_eq<TypeParam>(*std::ranges::cbegin(this->test_range), *std::ranges::begin(this->expected_range));
+        expect_iter_value_equal<TypeParam>(*std::ranges::cbegin(this->test_range), *std::ranges::begin(this->expected_range));
 }
 
 TYPED_TEST_P(iterator_fixture, compare)
@@ -202,7 +202,7 @@ inline void move_forward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_en
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
     for (auto it = it_begin; it != it_end && rng_it != rng_it_end; ++it, ++rng_it)
-        expext_eq<test_type>(*it, *rng_it);
+        expect_iter_value_equal<test_type>(*it, *rng_it);
 }
 
 template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
@@ -212,7 +212,7 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
     for (auto it = it_begin; it != it_end && rng_it != rng_it_end; it++, ++rng_it)
-        expext_eq<test_type>(*it, *rng_it);
+        expect_iter_value_equal<test_type>(*it, *rng_it);
 }
 
 TYPED_TEST_P(iterator_fixture, move_forward_pre)
@@ -278,11 +278,11 @@ inline void move_backward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_e
          it != it_begin && rng_it != rng_it_begin;
          --rng_it)
     {
-       expext_eq<test_type>(*it, *rng_it);
+       expect_iter_value_equal<test_type>(*it, *rng_it);
        --it;
     }
 
-    expext_eq<test_type>(*it_begin, *rng_it_begin);
+    expect_iter_value_equal<test_type>(*it_begin, *rng_it_begin);
 }
 
 template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
@@ -297,10 +297,10 @@ inline void move_backward_post_test(it_begin_t && it_begin, it_sentinel_t && it_
          it != it_begin && rng_it != rng_it_begin;
          --rng_it)
     {
-       expext_eq<test_type>(*(it--), *rng_it);
+       expect_iter_value_equal<test_type>(*(it--), *rng_it);
     }
 
-    expext_eq<test_type>(*it_begin, *rng_it_begin);
+    expect_iter_value_equal<test_type>(*it_begin, *rng_it_begin);
 }
 
 TYPED_TEST_P(iterator_fixture, move_backward_pre)
@@ -346,22 +346,22 @@ inline void jump_forward_test(it_begin_t && it_begin, rng_t && rng)
     for (size_t n = 0; n < sz; ++n)
     {
         auto it = it_begin;
-        expext_eq<test_type>(rng[n], *(it += n));
-        expext_eq<test_type>(rng[n], *(it));
+        expect_iter_value_equal<test_type>(rng[n], *(it += n));
+        expect_iter_value_equal<test_type>(rng[n], *(it));
     }
 
     // Forward copy
     for (size_t n = 0; n < sz; ++n)
     {
-        expext_eq<test_type>(rng[n], *(it_begin + n));
-        expext_eq<test_type>(rng[0], *it_begin);
+        expect_iter_value_equal<test_type>(rng[n], *(it_begin + n));
+        expect_iter_value_equal<test_type>(rng[0], *it_begin);
     }
 
     // Forward copy friend
     for (size_t n = 0; n < sz; ++n)
     {
-        expext_eq<test_type>(rng[n], *(n + it_begin));
-        expext_eq<test_type>(rng[0], *it_begin);
+        expect_iter_value_equal<test_type>(rng[n], *(n + it_begin));
+        expect_iter_value_equal<test_type>(rng[0], *it_begin);
     }
 }
 
@@ -387,22 +387,22 @@ inline void jump_backward_test(it_begin_t && it_begin, rng_t && rng)
     for (size_t n = 0; n < sz; ++n)
     {
         auto it = pre_end_it;
-        expext_eq<test_type>(rng[sz - 1 - n], *(it -= n));
-        expext_eq<test_type>(rng[sz - 1 - n], *it);
+        expect_iter_value_equal<test_type>(rng[sz - 1 - n], *(it -= n));
+        expect_iter_value_equal<test_type>(rng[sz - 1 - n], *it);
     }
 
     // Backward copy
     for (size_t n = 0; n < sz; ++n)
     {
-        expext_eq<test_type>(rng[sz - n - 1], *(pre_end_it - n));
-        expext_eq<test_type>(rng[sz - 1], *pre_end_it);
+        expect_iter_value_equal<test_type>(rng[sz - n - 1], *(pre_end_it - n));
+        expect_iter_value_equal<test_type>(rng[sz - 1], *pre_end_it);
     }
 
     // Backward copy friend through (-n) + it
     for (size_t n = 0; n < sz; ++n)
     {
-        expext_eq<test_type>(rng[sz - n - 1], *((-1 * n) + pre_end_it));
-        expext_eq<test_type>(rng[sz - 1], *pre_end_it);
+        expect_iter_value_equal<test_type>(rng[sz - n - 1], *((-1 * n) + pre_end_it));
+        expect_iter_value_equal<test_type>(rng[sz - 1], *pre_end_it);
     }
 }
 
@@ -423,7 +423,7 @@ inline void jump_random_test(it_begin_t && it_begin, rng_t && rng)
     size_t sz = std::ranges::distance(rng);
 
     for (size_t n = 0; n < sz; ++n)
-        expext_eq<test_type>(rng[n], it_begin[n]);
+        expect_iter_value_equal<test_type>(rng[n], it_begin[n]);
 }
 
 TYPED_TEST_P(iterator_fixture, jump_random)
