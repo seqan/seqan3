@@ -59,7 +59,7 @@
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
  * | **Configuration group**                                                     | **0** | **1** | **2** | **3** | **4** | **5** | **6** |
- * | ----------------------------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|
+ * |:----------------------------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
  * | \ref seqan3::search_cfg::max_error_total  "0: Max error total"              |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::search_cfg::max_error_substitution "1: Max error substitution" |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::search_cfg::max_error_insertion "2: Max error insertion"       |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |

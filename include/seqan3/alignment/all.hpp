@@ -79,17 +79,17 @@
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
  * | **Config**                                               | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
- * | ---------------------------------------------------------|-------|-------|-------|-------|-------|-------|-------|-------|-------|-------|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"   |   ❌   |   ✅   |  ✅    |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"        |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"              |       |       |   ❌   |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::max_error "3: Max error"         |       |       |       |  ❌    |  ✅    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::method_global "4: Method global" |       |       |       |       |  ❌    |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::method_local "5: Method local"   |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::parallel "6: Parallel"           |       |       |       |       |       |       |  ❌    |  ✅    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::result "7: Result"               |       |       |       |       |       |       |       |  ❌    |  ✅    |  ✅     |
- * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |       |       |       |       |       |       |       |       |  ❌    |  ✅     |
- * | \ref seqan3::align_cfg::vectorise "9: Vectorise"         |       |       |       |       |       |       |       |       |        |  ❌     |
+ * |:---------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+ * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"   |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"        |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::gap "2: Gap scheme"              |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::max_error "3: Max error"         |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_global "4: Method global" |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_local "5: Method local"   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::parallel "6: Parallel"           |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::result "7: Result"               |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
+ * | \ref seqan3::align_cfg::vectorise "9: Vectorise"         |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
