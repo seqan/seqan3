@@ -20,21 +20,17 @@
 using seqan3::operator""_dna4;
 
 template <typename T>
-class container_ : public ::testing::Test
+class container_over_dna4_test : public ::testing::Test
 {};
 
-using container_types = ::testing::Types<std::vector<seqan3::dna4>,
-                                         seqan3::bitcompressed_vector<seqan3::dna4>,
-                                         seqan3::small_vector<seqan3::dna4, 1000>>;
+TYPED_TEST_SUITE_P(container_over_dna4_test);
 
-TYPED_TEST_SUITE(container_, container_types, );
-
-TYPED_TEST(container_, concepts)
+TYPED_TEST_P(container_over_dna4_test, concepts)
 {
     EXPECT_TRUE(seqan3::reservible_container<TypeParam>);
 }
 
-TYPED_TEST(container_, construction)
+TYPED_TEST_P(container_over_dna4_test, construction)
 {
     TypeParam t1;
     TypeParam t2{};
@@ -57,7 +53,7 @@ TYPED_TEST(container_, construction)
     EXPECT_EQ(t3, t7);
 }
 
-TYPED_TEST(container_, swap)
+TYPED_TEST_P(container_over_dna4_test, swapping)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -71,7 +67,7 @@ TYPED_TEST(container_, swap)
     EXPECT_EQ(t1, (TypeParam{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4}));
 }
 
-TYPED_TEST(container_, assign)
+TYPED_TEST_P(container_over_dna4_test, assign)
 {
     TypeParam t0{'C'_dna4, 'C'_dna4};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -102,7 +98,7 @@ TYPED_TEST(container_, assign)
     }
 }
 
-TYPED_TEST(container_, iterators)
+TYPED_TEST_P(container_over_dna4_test, iterators)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -127,7 +123,7 @@ TYPED_TEST(container_, iterators)
     EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
 }
 
-TYPED_TEST(container_, element_access)
+TYPED_TEST_P(container_over_dna4_test, element_access)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     TypeParam const t2{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -161,7 +157,7 @@ TYPED_TEST(container_, element_access)
     EXPECT_TRUE((std::ranges::equal(t1, "CCCGG"_dna4)));
 }
 
-TYPED_TEST(container_, capacity)
+TYPED_TEST_P(container_over_dna4_test, capacity)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -215,7 +211,7 @@ TYPED_TEST(container_, capacity)
     }
 }
 
-TYPED_TEST(container_, clear)
+TYPED_TEST_P(container_over_dna4_test, clear)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -224,7 +220,7 @@ TYPED_TEST(container_, clear)
     EXPECT_EQ(t0, t1);
 }
 
-TYPED_TEST(container_, insert)
+TYPED_TEST_P(container_over_dna4_test, insert)
 {
     TypeParam t0{};
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
@@ -260,7 +256,7 @@ TYPED_TEST(container_, insert)
     EXPECT_EQ(t0, t1);
 }
 
-TYPED_TEST(container_, erase)
+TYPED_TEST_P(container_over_dna4_test, erase)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
 
@@ -277,7 +273,7 @@ TYPED_TEST(container_, erase)
     EXPECT_EQ(t1, (TypeParam{'C'_dna4, 'T'_dna4}));
 }
 
-TYPED_TEST(container_, push_pop)
+TYPED_TEST_P(container_over_dna4_test, push_pop)
 {
     TypeParam t0{};
 
@@ -294,7 +290,7 @@ TYPED_TEST(container_, push_pop)
     EXPECT_EQ(t0, (TypeParam{}));
 }
 
-TYPED_TEST(container_, resize)
+TYPED_TEST_P(container_over_dna4_test, resize)
 {
     TypeParam t0{};
 
@@ -315,8 +311,23 @@ TYPED_TEST(container_, resize)
     EXPECT_EQ(t0, (TypeParam{'A'_dna4, 'A'_dna4}));
 }
 
-TYPED_TEST(container_, serialisation)
+TYPED_TEST_P(container_over_dna4_test, serialisation)
 {
     TypeParam t1{'A'_dna4, 'C'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     seqan3::test::do_serialisation(t1);
 }
+
+REGISTER_TYPED_TEST_SUITE_P(container_over_dna4_test,
+                            concepts,
+                            construction,
+                            swapping,
+                            assign,
+                            iterators,
+                            element_access,
+                            capacity,
+                            clear,
+                            insert,
+                            erase,
+                            push_pop,
+                            resize,
+                            serialisation);
