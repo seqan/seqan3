@@ -223,7 +223,7 @@ TYPED_TEST(kmer_hash_ungapped_test, issue1754)
 // https://github.com/seqan/seqan3/issues/1754
 TYPED_TEST(kmer_hash_gapped_test, issue1754)
 {
-    std::vector<seqan3::dna4> text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
 
     auto stop_at_t = seqan3::views::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
