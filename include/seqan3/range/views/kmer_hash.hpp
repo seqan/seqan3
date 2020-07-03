@@ -241,9 +241,11 @@ public:
     //!\brief Tag this class as input iterator.
     using iterator_category = typename std::iterator_traits<it_t>::iterator_category;
     //!\brief Tag this class depending on which concept `it_t` models.
-    using iterator_concept = std::conditional_t<std::contiguous_iterator<it_t>,
+    using iterator_concept = std::conditional_t<std::random_access_iterator<it_t>,
                                                  typename std::random_access_iterator_tag,
-                                                 iterator_tag_t<it_t>>;
+                                                 std::conditional_t<std::bidirectional_iterator<it_t>, // solved #1963
+                                                    typename std::bidirectional_iterator_tag,
+                                                    iterator_tag_t<it_t>>>;
     //!\}
 
     /*!\name Constructors, destructor and assignment

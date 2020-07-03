@@ -12,6 +12,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
+#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/take_until.hpp>
@@ -228,5 +229,32 @@ TYPED_TEST(kmer_hash_gapped_test, issue1754)
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
         EXPECT_RANGE_EQ(result_t{8}, text1 | stop_at_t | std::views::reverse | gapped_view);
+    }
+}
+
+// https://github.com/seqan/seqan3/issues/1963
+TYPED_TEST(kmer_hash_ungapped_test, issue1963)
+{
+    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    result_t ungapped{57, 36, 19, 13, 54};
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        auto v = text1 | seqan3::views::complement | ungapped_view;
+        EXPECT_RANGE_EQ(ungapped, v);
+        EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
+    }
+
+}
+
+// https://github.com/seqan/seqan3/issues/1963
+TYPED_TEST(kmer_hash_gapped_test, issue1963)
+{
+    TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    result_t gapped{13, 8, 7, 1, 14};
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        auto v = text1 | seqan3::views::complement | gapped_view;
+        EXPECT_RANGE_EQ(gapped, v);
+        EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
     }
 }
