@@ -209,6 +209,13 @@ struct simd_traits<builtin_simd_t>
     using mask_type = decltype(std::declval<builtin_simd_t>() == std::declval<builtin_simd_t>());
     //!\copydoc seqan3::simd::simd_traits::swizzle_type
     using swizzle_type = typename detail::builtin_simd<uint8_t, max_length>::type;
+
+    //!\copydoc seqan3::simd::simd_traits::rebind
+    template <typename new_scalar_type>
+    // \cond
+        requires (sizeof(scalar_type) == sizeof(new_scalar_type))
+    // \endcond
+    using rebind = typename detail::builtin_simd<new_scalar_type, length>::type;
 };
 
 } // inline namespace simd

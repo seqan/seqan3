@@ -20,6 +20,8 @@
 namespace seqan3::detail
 {
 //!\cond
+template <template <typename> typename rebind>
+struct simd_traits_has_rebind : std::true_type {};
 // NOTE: this definition should be used for seqan3::simd, but gcc has a bug that it will not fail silently if
 // simd_t is a pointer to a incomplete type. Furthermore the is_pointer_v should prevent those cases by checking the type
 // beforehand, but for some reasons the short-circuit semantic of `&&` does not work in this case and gcc still evaluates
@@ -34,6 +36,7 @@ SEQAN3_CONCEPT simd_concept = requires (simd_t a, simd_t b)
     typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
     typename simd_traits<std::remove_reference_t<simd_t>>::mask_type;
     typename simd_traits<std::remove_reference_t<simd_t>>::swizzle_type;
+    requires simd_traits_has_rebind<simd_traits<std::remove_reference_t<simd_t>>::template rebind>::value;
 
     // require that static member variables are defined
     requires std::integral<decltype(simd_traits<std::remove_reference_t<simd_t>>::length)>;
