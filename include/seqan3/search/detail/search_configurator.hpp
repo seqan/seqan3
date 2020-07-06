@@ -60,8 +60,8 @@ private:
         using reference_id_t = std::conditional_t<traits_type::output_reference_id, index_size_type, empty_type>;
         //!\brief The reference_begin_position type of the search_result.
         using reference_begin_position_t = std::conditional_t<traits_type::output_reference_begin_position,
-                                                         index_size_type,
-                                                         empty_type>;
+                                                              index_size_type,
+                                                              empty_type>;
 
     public:
         //!\brief The result type depending on the output configuration.
