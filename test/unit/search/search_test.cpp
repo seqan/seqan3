@@ -24,7 +24,8 @@ using seqan3::operator""_phred42;
 
 using namespace std::string_literals;
 
-auto position = seqan3::views::persist | std::views::transform([] (auto && res) { return res.reference_begin_position(); });
+auto position = seqan3::views::persist |
+                std::views::transform([] (auto && res) { return res.reference_begin_position(); });
 auto query_id = seqan3::views::persist | std::views::transform([] (auto && res) { return res.query_id(); });
 
 template <typename index_t>
