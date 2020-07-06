@@ -249,11 +249,11 @@ public:
     //!\brief Reference to `value_type`.
     using reference = value_type;
     //!\brief Tag this class as input iterator.
-    using iterator_category = typename std::iterator_traits<it_t>::iterator_category;
+    using iterator_category = detail::iterator_category_tag_t<it_t>;
     //!\brief Tag this class depending on which concept `it_t` models.
     using iterator_concept = std::conditional_t<std::contiguous_iterator<it_t>,
-                                                 typename std::random_access_iterator_tag,
-                                                 iterator_tag_t<it_t>>;
+                                                typename std::random_access_iterator_tag,
+                                                detail::iterator_concept_tag_t<it_t>>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
