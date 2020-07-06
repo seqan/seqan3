@@ -19,7 +19,6 @@ struct affine_cell_proxy_test : public ::testing::Test
     int vertical{10};
 
     cell_t affine_cell{optimal, horizontal, vertical};
-    cell_t const const_affine_cell{affine_cell};
 };
 
 TEST_F(affine_cell_proxy_test, construction)
@@ -52,40 +51,40 @@ TEST_F(affine_cell_proxy_test, assignment)
     EXPECT_EQ(std::get<2>(other_cell), 10);
 }
 
-TEST_F(affine_cell_proxy_test, optimal_score)
+TEST_F(affine_cell_proxy_test, best_score)
 {
-    EXPECT_EQ(affine_cell.optimal_score(), 4);
-    EXPECT_EQ(const_affine_cell.optimal_score(), 4);
-    EXPECT_EQ(std::move(affine_cell).optimal_score(), 4);
-    EXPECT_EQ(std::move(const_affine_cell).optimal_score(), 4);
-    EXPECT_TRUE((std::same_as<decltype(affine_cell.optimal_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(const_affine_cell.optimal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).optimal_score()), int &&>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(const_affine_cell).optimal_score()), int const &&>));
+    EXPECT_EQ(affine_cell.best_score(), 4);
+    EXPECT_EQ(std::as_const(affine_cell).best_score(), 4);
+    EXPECT_EQ(std::move(affine_cell).best_score(), 4);
+    EXPECT_EQ(std::move(std::as_const(affine_cell)).best_score(), 4);
+    EXPECT_TRUE((std::same_as<decltype(affine_cell.best_score()), int &>));
+    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).best_score()), int const &>));
+    EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).best_score()), int &&>));
+    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).best_score()), int const &&>));
 }
 
 TEST_F(affine_cell_proxy_test, horizontal_score)
 {
     EXPECT_EQ(affine_cell.horizontal_score(), -1);
-    EXPECT_EQ(const_affine_cell.horizontal_score(), -1);
+    EXPECT_EQ(std::as_const(affine_cell).horizontal_score(), -1);
     EXPECT_EQ(std::move(affine_cell).horizontal_score(), -1);
-    EXPECT_EQ(std::move(const_affine_cell).horizontal_score(), -1);
+    EXPECT_EQ(std::move(std::as_const(affine_cell)).horizontal_score(), -1);
     EXPECT_TRUE((std::same_as<decltype(affine_cell.horizontal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(const_affine_cell.horizontal_score()), int const &>));
+    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).horizontal_score()), int const &>));
     EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).horizontal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(const_affine_cell).horizontal_score()), int const &>));
+    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).horizontal_score()), int const &>));
 }
 
 TEST_F(affine_cell_proxy_test, vertical_score)
 {
     EXPECT_EQ(affine_cell.vertical_score(), 10);
-    EXPECT_EQ(const_affine_cell.vertical_score(), 10);
+    EXPECT_EQ(std::as_const(affine_cell).vertical_score(), 10);
     EXPECT_EQ(std::move(affine_cell).vertical_score(), 10);
-    EXPECT_EQ(std::move(const_affine_cell).vertical_score(), 10);
+    EXPECT_EQ(std::move(std::as_const(affine_cell)).vertical_score(), 10);
     EXPECT_TRUE((std::same_as<decltype(affine_cell.vertical_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(const_affine_cell.vertical_score()), int &>));
+    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).vertical_score()), int &>));
     EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).vertical_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(const_affine_cell).vertical_score()), int &>));
+    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).vertical_score()), int &>));
 }
 
 TEST_F(affine_cell_proxy_test, tuple_size)
@@ -103,4 +102,5 @@ TEST_F(affine_cell_proxy_test, tuple_element)
 TEST_F(affine_cell_proxy_test, tuple_like_concept)
 {
     EXPECT_TRUE(seqan3::tuple_like<cell_t>);
+    EXPECT_TRUE(seqan3::detail::affine_score_cell<cell_t>);
 }

@@ -65,7 +65,7 @@ private:
 
     /*!\brief Find the new maximum for a given cell of the alignment matrix.
      *
-     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
      *
      * \param[in] cell The current cell to be tracked.
      * \param[in] coordinate The matrix coordinate of the current cell.
@@ -80,8 +80,8 @@ private:
     template <typename cell_t>
     void find_new_optimum(cell_t && cell, matrix_coordinate coordinate) noexcept
     {
-        bool const is_better_score = cell.optimal_score() >= optimal_score;
-        optimal_score = is_better_score ? cell.optimal_score() : optimal_score;
+        bool const is_better_score = cell.best_score() >= optimal_score;
+        optimal_score = is_better_score ? cell.best_score() : optimal_score;
         optimal_coordinate = is_better_score ? std::move(coordinate) : optimal_coordinate;
     }
 
@@ -118,7 +118,7 @@ protected:
 
     /*!\brief Tracks any cell within the alignment matrix.
      *
-     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
      *
      * \param[in] cell The current cell to be tracked.
      * \param[in] coordinate The matrix coordinate of the current cell.
@@ -138,7 +138,7 @@ protected:
 
     /*!\brief Tracks the last cell of a row within the alignment matrix.
      *
-     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
      *
      * \param[in] cell The current cell to be tracked.
      * \param[in] coordinate The matrix coordinate of the current cell.
@@ -161,7 +161,7 @@ protected:
 
     /*!\brief Tracks the last cell of a column within the alignment matrix.
      *
-     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
      *
      * \param[in] cell The current cell to be tracked.
      * \param[in] coordinate The matrix coordinate of the current cell.
@@ -184,7 +184,7 @@ protected:
 
     /*!\brief Tracks the final cell of the alignment matrix.
      *
-     * \tparam cell_t The cell type of the alignment matrix; must have a member function `optimal_score()`.
+     * \tparam cell_t The cell type of the alignment matrix; must have a member function `best_score()`.
      *
      * \param[in] cell The current cell to be tracked.
      * \param[in] coordinate The matrix coordinate of the current cell.

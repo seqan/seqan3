@@ -296,7 +296,7 @@ protected:
         auto cell_index_column_it = cell_index_column.begin();
 
         auto cell = *alignment_column_it;
-        score_type diagonal = cell.optimal_score();
+        score_type diagonal = cell.best_score();
         *alignment_column_it = this->track_cell(this->initialise_first_row_cell(cell), *cell_index_column_it);
 
         // ---------------------------------------------------------------------
@@ -306,7 +306,7 @@ protected:
         for (auto && sequence2_value : sequence2)
         {
             auto cell = *++alignment_column_it;
-            score_type next_diagonal = cell.optimal_score();
+            score_type next_diagonal = cell.best_score();
             *alignment_column_it = this->track_cell(
                 this->compute_inner_cell(diagonal, cell, m_scoring_scheme.score(sequence1_value, sequence2_value)),
                 *++cell_index_column_it);

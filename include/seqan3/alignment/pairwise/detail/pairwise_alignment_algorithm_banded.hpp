@@ -294,7 +294,7 @@ protected:
 
         auto cell = *alignment_column_it;
         cell = this->track_cell(
-                this->initialise_band_first_cell(cell.optimal_score(),
+                this->initialise_band_first_cell(cell.best_score(),
                                                  *++alignment_column_it,
                                                  this->m_scoring_scheme.score(sequence1_value,
                                                                               *std::ranges::begin(sequence2))),
@@ -308,7 +308,7 @@ protected:
         {
             auto cell = *alignment_column_it;
             cell = this->track_cell(
-                this->compute_inner_cell(cell.optimal_score(),
+                this->compute_inner_cell(cell.best_score(),
                                          *++alignment_column_it,
                                          this->m_scoring_scheme.score(sequence1_value, sequence2_value)),
                 *++cell_index_column_it);
