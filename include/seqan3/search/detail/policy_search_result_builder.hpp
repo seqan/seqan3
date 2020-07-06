@@ -92,7 +92,8 @@ protected:
         // sort by reference id or by reference position if both have the same reference id.
         std::sort(results.begin(), results.end(), [] (auto const & r1, auto const & r2)
         {
-            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos())
+            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_position() < 
+                                                               r2.reference_begin_position())
                                                             : (r1.reference_id() < r2.reference_id());
         });
 
@@ -145,8 +146,8 @@ private:
                     result.cursor_ = cursor;
                 if constexpr (search_traits_type::output_reference_id)
                     result.reference_id_ = std::move(ref_id);
-                if constexpr (search_traits_type::output_reference_begin_pos)
-                    result.reference_begin_pos_ = std::move(ref_pos);
+                if constexpr (search_traits_type::output_reference_begin_position)
+                    result.reference_begin_position_ = std::move(ref_pos);
 
                 callback(result);
 

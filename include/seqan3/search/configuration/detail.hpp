@@ -46,7 +46,7 @@ enum struct search_config_id : uint8_t
     max_error_deletion, //!< Identifier for the max_error_deletion configuration.
     output_query_id, //!< Identifier for the output configuration of the query_id.
     output_reference_id, //!< Identifier for the output configuration of the reference_id.
-    output_reference_begin_pos, //!< Identifier for the output configuration of the reference_begin_pos.
+    output_reference_begin_position, //!< Identifier for the output configuration of the reference_begin_position.
     output_index_cursor, //!< Identifier for the output configuration of the index_cursor.
     hit, //!< Identifier for the hit configuration (all, all_best, single_best, strata).
     parallel, //!< Identifier for the parallel execution configuration.
@@ -82,7 +82,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
        // |  |  |  max_error_deletion,
        // |  |  |  |  output_query_id,
        // |  |  |  |  |  output_reference_id,
-       // |  |  |  |  |  |  output_reference_begin_pos,
+       // |  |  |  |  |  |  output_reference_begin_position,
        // |  |  |  |  |  |  |  output_index_cursor,
        // |  |  |  |  |  |  |  |  hit,
        // |  |  |  |  |  |  |  |  |  parallel,
@@ -93,7 +93,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
         { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1}, // max_error_deletion
         { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, // output_query_id
         { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, // output_reference_id
-        { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // output_reference_begin_pos
+        { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // output_reference_begin_position
         { 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // output_index_cursor
         { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // hit
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // parallel

@@ -126,7 +126,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
     individual configuration elements
     * `seqan3::search_cfg::output_query_id`
     * `seqan3::search_cfg::output_reference_id`
-    * `seqan3::search_cfg::output_reference_begin_pos`
+    * `seqan3::search_cfg::output_reference_begin_position`
     * `seqan3::search_cfg::output_index_cursor`
     see the \ref search_configuration_subsection_output "output configuration" for further details.
 * Removed `seqan3::bi_fm_index_cursor::to_rev_cursor()` and `seqan3::bi_fm_index::rev_cursor()`

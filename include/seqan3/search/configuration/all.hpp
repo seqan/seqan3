@@ -106,7 +106,7 @@
  *
  * * seqan3::search_cfg::output_query_id
  * * seqan3::search_cfg::output_reference_id
- * * seqan3::search_cfg::output_reference_begin_pos
+ * * seqan3::search_cfg::output_reference_begin_position
  * * seqan3::search_cfg::output_index_cursor
  *
  * If you specify any of the above mentioned output configuration elements, then nothing else but the selected
