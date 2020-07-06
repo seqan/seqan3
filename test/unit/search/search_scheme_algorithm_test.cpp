@@ -42,7 +42,7 @@ static void search_trivial(index_t const & index,
                seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{error_left.insertion}} |
                seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{error_left.deletion}} |
                seqan3::search_cfg::hit_all |
-               seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
+               seqan3::search_cfg::output_index_cursor;
 
     auto indexed_query = std::pair{size_t{0}, query};
     auto algo = std::get<0>(seqan3::detail::search_configurator::configure_algorithm<decltype(indexed_query)>(cfg,

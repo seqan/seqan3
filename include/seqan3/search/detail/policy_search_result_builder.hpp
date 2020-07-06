@@ -38,7 +38,7 @@ protected:
 
     static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
 
-    /*!\brief Returns all hits (index cursors) without calling locate on each cursor.
+    /*!\brief Invoke the callback on all hits (index cursors) without calling locate on each cursor.
      *
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam query_index_t The index type of the query.
@@ -55,49 +55,10 @@ protected:
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
-        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
-                                                                    std::declval<index_cursor_t &>()})>,
-                      "The configured search result type is not compatible with the requested search output. "
-                      "Note trying to instantiate search result with an index cursor.");
-
-        for (size_t i = 0; i < internal_hits.size(); ++i)
-            callback(search_result_type{std::move(idx), internal_hits[i]});
+        return make_results_impl(std::move(internal_hits), idx, std::forward<callback_t>(callback));
     }
 
-    /*!\brief If `internal_hits` is not empty, calls lazy_locate on the first cursor and returns a
-    *         seqan3::search_result with the first text position.
-    *
-    * \tparam index_cursor_t The type of index cursor used in the search algorithm.
-    * \tparam query_index_t The index type of the query.
-    * \tparam callback_t The callback which is called for every hit.
-    *
-    * \param[in] internal_hits internal_hits A range over internal cursor results.
-    * \param[in] idx The index associated with the current query.
-    * \param[in] callback The callback to invoke for every hit.
-    */
-    template <typename index_cursor_t, typename query_index_t, typename callback_t>
-    //!\cond
-        requires search_traits_type::search_return_text_position &&
-                 search_traits_type::search_single_best_hit
-    //!\endcond
-    void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
-    {
-        using ref_location_pair_t = decltype(std::declval<index_cursor_t &>().lazy_locate().front());
-        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
-                                                                    std::declval<ref_location_pair_t &>().first,
-                                                                    std::declval<ref_location_pair_t &>().second})>,
-                      "The configured search result type is not compatible with the requested search output. "
-                      "Note trying to instantiate search result with text positions and single best hit strategy.");
-
-        if (!internal_hits.empty())
-        {
-            // only one cursor is reported but it might contain more than one text position
-            auto && [ref_id, ref_pos] = internal_hits[0].lazy_locate()[0];
-            callback(search_result_type{std::move(idx), ref_id, ref_pos});
-        }
-    }
-
-    /*!\brief Returns a range over seqan3::search_result by calling locate on each cursor.
+    /*!\brief Invokes the callback on each seqan3::search_result after calling locate on each cursor.
      *
      * \tparam index_cursor_t The type of index cursor used in the search algorithm.
      * \tparam query_index_t The index type of the query.
@@ -115,38 +76,84 @@ protected:
      */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
     //!\cond
-        requires search_traits_type::search_return_text_position &&
+        requires search_traits_type::output_requires_locate_call &&
                  (!search_traits_type::search_single_best_hit)
     //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
-        using ref_location_pair_t = decltype(std::declval<index_cursor_t>().lazy_locate().front());
-        static_assert(std::destructible<decltype(search_result_type{std::declval<query_index_t &&>(),
-                                                                    std::declval<ref_location_pair_t &>().first,
-                                                                    std::declval<ref_location_pair_t &>().second})>,
-                      "The configured search result type is not compatible with the requested search output. "
-                      "Note trying to instantiate search result with text positions with either all, all_best or "
-                      "strata hit strategy.");
-
         std::vector<search_result_type> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
-        for (auto const & cursor : internal_hits)
-            for (auto && [ref_id, ref_pos] : cursor.locate())
-                results.push_back(search_result_type{std::move(idx), ref_id, ref_pos});
+        make_results_impl(std::move(internal_hits), idx, [&results] (auto && search_result)
+        {
+            results.push_back(std::move(search_result));
+        });
 
         // sort by reference id or by reference position if both have the same reference id.
-        auto compare = [] (auto const & r1, auto const & r2)
+        std::sort(results.begin(), results.end(), [] (auto const & r1, auto const & r2)
         {
             return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_pos() < r2.reference_begin_pos())
                                                             : (r1.reference_id() < r2.reference_id());
-        };
+        });
 
-        std::sort(results.begin(), results.end(), compare);
         results.erase(std::unique(results.begin(), results.end()), results.end());
 
         for (auto && search_result : results)
             callback(std::move(search_result));
+    }
+
+private:
+    /*!\brief Invokes the callback on each seqan3::search_result and calls locate on the cursor depending on the config.
+     *
+     * \tparam index_cursor_t The type of index cursor used in the search algorithm.
+     * \tparam query_index_t The index type of the query.
+     * \tparam callback_t The callback which is called for every hit.
+     *
+     * \param[in] internal_hits internal_hits A range over internal cursor results.
+     * \param[in] idx The index associated with the current query.
+     * \param[in] callback The callback to invoke for every hit.
+     *
+     * \details
+     *
+     * For each cursor `in internal_hits`, this function calls `cursor.layz_locate()` if the search configuration
+     * requires it (search_traits_type::output_requires_locate_call) and then constructs a seqan3::search_result from
+     * the resulting data. The seqan3::search_result will be filled only with the data that was asked for by the user
+     * via the `search_traits_type::output_[...]` trait (e.g. `search_traits_type::output_query_id`).
+     */
+    template <typename index_cursor_t, typename query_index_t, typename callback_t>
+    void make_results_impl(std::vector<index_cursor_t> internal_hits,
+                           [[maybe_unused]] query_index_t idx,
+                           callback_t && callback)
+    {
+        auto maybe_locate = [] (auto const & cursor)
+        {
+            if constexpr (search_traits_type::output_requires_locate_call)
+                return cursor.lazy_locate();
+            else
+                return std::views::single(std::tuple{0, 0});
+        };
+
+        for (auto const & cursor : internal_hits)
+        {
+            for (auto && [ref_id, ref_pos] : maybe_locate(cursor))
+            {
+                search_result_type result{};
+
+                if constexpr (search_traits_type::output_query_id)
+                    result.query_id_ = std::move(idx);
+                if constexpr (search_traits_type::output_index_cursor)
+                    result.cursor_ = cursor;
+                if constexpr (search_traits_type::output_reference_id)
+                    result.reference_id_ = std::move(ref_id);
+                if constexpr (search_traits_type::output_reference_begin_pos)
+                    result.reference_begin_pos_ = std::move(ref_pos);
+
+                callback(result);
+
+                if constexpr (search_traits_type::search_single_best_hit)
+                    return;
+            }
+        }
     }
 };
 

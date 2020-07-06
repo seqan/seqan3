@@ -3,17 +3,15 @@
 
 int main()
 {
-    // Report hits as positions in the text.
-    seqan3::configuration const cfg1 = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                       seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
-                                       seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
-                                       seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
-                                       seqan3::search_cfg::output{seqan3::search_cfg::text_position};
+    // Only return the reference id where a query matched the reference:
+    seqan3::configuration const cfg1 = seqan3::search_cfg::output_reference_id;
 
-    // Return cursors of the index.
-    seqan3::configuration const cfg2 = seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
-                                       seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
-                                       seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
-                                       seqan3::search_cfg::output{seqan3::search_cfg::index_cursor};
+    // Same as the default:
+    seqan3::configuration const cfg2 = seqan3::search_cfg::output_query_id |
+                                       seqan3::search_cfg::output_reference_id |
+                                       seqan3::search_cfg::output_reference_begin_pos;
+
+    // Only return cursors of the index.
+    seqan3::configuration const cfg3 = seqan3::search_cfg::output_index_cursor;
     return 0;
 }

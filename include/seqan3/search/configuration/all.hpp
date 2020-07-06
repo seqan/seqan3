@@ -43,7 +43,7 @@
  * where all can be given as an \ref seqan3::search_cfg::error_count "absolute number"
  * or a \ref seqan3::search_cfg::error_rate "rate" of \ref search_configuration_subsection_error "errors".
  * Furthermore, it can be configured what hits are reported based on a \ref search_configuration_subsection_hit_strategy
- * "strategy", and how to \ref seqan3::search_cfg::output "output" the results.
+ * "strategy", and which information should the \ref search_configuration_subsection_output "result" contain.
  * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the
  * configuration of other algorithms.
  *
@@ -64,13 +64,9 @@
  * | \ref seqan3::search_cfg::max_error_substitution "1: Max error substitution" |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::search_cfg::max_error_insertion "2: Max error insertion"       |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::search_cfg::max_error_deletion "3: Max error deletion"         |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::search_cfg::output "4: Output"                                 |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref search_configuration_subsection_output "4: Output"                     |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
  * | \ref search_configuration_subsection_hit_strategy "5: Hit"                  |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
  * | \ref seqan3::search_cfg::parallel "6: Parallel"                             |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
- *
- * \subsection search_configuration_search_result Search result type
- *
- * \copydetails seqan3::search_result
  *
  * \subsection search_configuration_subsection_error 0 - 3: Max Error Configuration
  *
@@ -96,6 +92,37 @@
  * ### Example
  *
  * \include test/snippet/search/configuration_error.cpp
+ *
+ * \subsection search_configuration_subsection_output 2. Output Configuration
+ *
+ * The output configuration is closely tied to the seqan3::search_result:
+ *
+ * \copydetails seqan3::search_result
+ *
+ * #### Configuring the result type
+ *
+ * As mentioned above, we can configure which information are accessible in the seqan3::search_result.
+ * For each member function there is a respective configuration element:
+ *
+ * * seqan3::search_cfg::output_query_id
+ * * seqan3::search_cfg::output_reference_id
+ * * seqan3::search_cfg::output_reference_begin_pos
+ * * seqan3::search_cfg::output_index_cursor
+ *
+ * If you specify any of the above mentioned output configuration elements, then nothing else but the selected
+ * output information is included.
+ *
+ * \include test/snippet/search/configuration_output.cpp
+ *
+ * The index cursor is an advanced data structure that lets you navigate within the index.
+ * See seqan3::fm_index_cursor and seqan3::bi_fm_index_cursor for more information.
+ * If you don't need the reference id nor the position, returning only the cursor is faster.
+ * This is, because the operation to get the id and position of a hit can be computationally intensive
+ * depending on the underlying index structure.
+ *
+ * \note A single index cursor points to **a range of text positions**. Although the normal use case is to return
+ *       either the cursor or the positions, both can be returned simultaneously. In this case, the same cursor will
+ *       be copied into the seqan3::search_result for each of its associated positions.
  *
  * \subsection search_configuration_subsection_hit_strategy 5: Hit Configuration
  *

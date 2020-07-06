@@ -59,8 +59,8 @@ namespace seqan3
  * * seqan3::search_result::reference_begin_pos()
  *
  * Note that the index cursor is not included in a hit by default. If you are trying to use the respective member
- * function, a static_assert will prevent you from doing so. You can configure the result of the search with the output
- * configuration (see seqan3::search_cfg::output).
+ * function, a static_assert will prevent you from doing so. You can configure the result of the search with the
+ * \ref search_configuration_subsection_output "output configuration".
  */
 template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
 //!\cond
@@ -80,23 +80,6 @@ private:
     reference_id_type reference_id_{};
     //!\brief Stores the reference_begin_pos of the search result.
     reference_begin_pos_type reference_begin_pos_{};
-
-    /*!\brief Construct from a query id and an index cursor.
-     * \param[in] id The query id of the search result.
-     * \param[in] cursor The cursor of the search result.
-     */
-    search_result(query_id_type id, cursor_type cursor) :
-        query_id_(id), cursor_(std::move(cursor))
-    {}
-
-    /*!\brief Construct from a query id, a reference id and a begin position in the reference.
-     * \param[in] q_id The query id of the search result.
-     * \param[in] ref_id The reference id of the search result.
-     * \param[in] ref_pos The reference begin position of the search result.
-     */
-    search_result(query_id_type q_id, reference_id_type ref_id, reference_begin_pos_type ref_pos) :
-        query_id_(q_id), reference_id_(std::move(ref_id)), reference_begin_pos_(std::move(ref_pos))
-    {}
 
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
