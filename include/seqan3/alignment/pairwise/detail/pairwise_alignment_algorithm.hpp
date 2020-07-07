@@ -146,7 +146,8 @@ public:
             compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
-                                         this->tracked_optimum(),
+                                         this->optimal_score,
+                                         this->optimal_coordinate,
                                          callback);
         }
     }
