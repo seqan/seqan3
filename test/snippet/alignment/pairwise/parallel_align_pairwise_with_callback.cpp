@@ -14,7 +14,9 @@ int main()
     std::vector<sequence_pair_t> sequences{100, {"AGTGCTACG"_dna4, "ACGTGCGACTAG"_dna4}};
 
     // Use edit distance with 4 threads.
-    auto const alignment_config = seqan3::align_cfg::edit | seqan3::align_cfg::parallel{4};
+    auto const alignment_config = seqan3::align_cfg::method_global |
+                                  seqan3::align_cfg::edit_scheme |
+                                  seqan3::align_cfg::parallel{4};
 
     // Compute the alignments in parallel and output them in order based on the input.
     for (auto && result : seqan3::align_pairwise(sequences, alignment_config))

@@ -13,6 +13,7 @@
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
@@ -23,6 +24,10 @@ namespace seqan3::test::alignment::fixture::semi_global::edit_distance::unbanded
 
 using seqan3::detail::column_index_type;
 using seqan3::detail::row_index_type;
+
+static constexpr auto semi_global_edit_distance = seqan3::align_cfg::method_global |
+                                                  seqan3::align_cfg::edit_scheme |
+                                                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
 
 static auto dna4_01 = []()
 {
@@ -35,7 +40,7 @@ static auto dna4_01 = []()
         // ---------ACGTACG-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
@@ -83,7 +88,7 @@ static auto dna4_01T = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -145,7 +150,7 @@ static auto dna4_02 = []()
         // -ACGTACG-TA-----------
         "AACCGGTAAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
@@ -193,7 +198,7 @@ static auto dna4_02_s10u_15u = []()
         // -ACGTACG-TA-----------
         "AACCGGTAAACCGG"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
@@ -215,7 +220,7 @@ static auto dna4_02_s3u_15u = []()
         // ---------AC-----
         "AACCGGTAAACCGG"_dna4,
         "AC"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -0,
         "AC",
         "AC",
@@ -233,7 +238,7 @@ static auto dna4_02_s1u_15u = []()
         // score: 0 - empty alignment
         "AACCGGTAAACCGG"_dna4,
         ""_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -0,
         "",
         "",
@@ -255,7 +260,7 @@ static auto dna4_01T_s17u_1u = []()
         // AACCGGTTAACCGGTT
         ""_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -16,
         "----------------",
         "AACCGGTTAACCGGTT",
@@ -273,7 +278,7 @@ static auto dna4_03 = []()
         // score: 0
         ""_dna4,
         ""_dna4,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -0,
         "",
         "",
@@ -295,7 +300,7 @@ static auto aa27_01 = []()
         // ---------UWRIUWR-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
@@ -343,7 +348,7 @@ static auto aa27_01T = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        seqan3::align_cfg::edit | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first},
+        semi_global_edit_distance,
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",

@@ -34,7 +34,7 @@ static auto dna4_01 = []()
         // A-C-G-T-A-C-G-TA
         "AACCGGTTAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
@@ -82,7 +82,7 @@ static auto dna4_01T = []()
         // AACCGGTTAACCGGTT
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
@@ -104,7 +104,7 @@ static auto dna4_02 = []()
         // A-C-G-TA--C-G-TA
         "AACCGGTAAACCGGTT"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
@@ -152,7 +152,7 @@ static auto dna4_02_s10u_15u = []()
         // A-C-G-TA--C-GTA
         "AACCGGTAAACCGG"_dna4,
         "ACGTACGTA"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "AACCGGTAAACCGG-",
         "A-C-G-TA--C-GTA",
@@ -174,7 +174,7 @@ static auto dna4_02_s3u_15u = []()
         // A-C-----------
         "AACCGGTAAACCGG"_dna4,
         "AC"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -12,
         "AACCGGTAAACCGG",
         "A-C-----------",
@@ -196,7 +196,7 @@ static auto dna4_02_s1u_15u = []()
         // --------------
         "AACCGGTAAACCGG"_dna4,
         ""_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -14,
         "AACCGGTAAACCGG",
         "--------------",
@@ -218,7 +218,7 @@ static auto dna4_02T_s15u_1u = []()
         // AACCGGTAAACCGG
         ""_dna4,
         "AACCGGTAAACCGG"_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -14,
         "--------------",
         "AACCGGTAAACCGG",
@@ -236,7 +236,7 @@ static auto dna4_03 = []()
         // score: 0
         ""_dna4,
         ""_dna4,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -0,
         "",
         "",
@@ -258,7 +258,7 @@ static auto aa27_01 = []()
         // U-W-R-I-U-W-R-IU
         "UUWWRRIIUUWWRRII"_aa27,
         "UWRIUWRIU"_aa27,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
@@ -306,7 +306,7 @@ static auto aa27_01T = []()
         // UUWWRRIIUUWWRRII
         "UWRIUWRIU"_aa27,
         "UUWWRRIIUUWWRRII"_aa27,
-        seqan3::align_cfg::edit,
+        seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme,
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",

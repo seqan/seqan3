@@ -33,7 +33,7 @@ struct align_pairwise_test : ::testing::Test
     using dummy_cfg_t = std::conditional_t<std::is_same_v<void, t>,
                                            decltype(seqan3::align_cfg::max_error{1}),
                                            t>;
-    using config_t = decltype(seqan3::align_cfg::edit | dummy_cfg_t{});
+    using config_t = decltype(seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme | dummy_cfg_t{});
 
     static constexpr bool is_vectorised = config_t::template exists<seqan3::detail::vectorise_tag>();
 };
@@ -66,7 +66,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     auto p1 = std::tie(seq1, seq2);
 
     {  // the score
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_score};
 
         for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
@@ -75,7 +77,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 
     {  // the alignment
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
@@ -93,7 +97,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     std::pair sequences{"ACGTGATG"_dna4,"AGTGATACT"_dna4};
 
     {  // the score
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_score};
 
         for (auto && res : call_alignment<TypeParam>(sequences, cfg))
         {
@@ -102,7 +108,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 
     {  // the alignment
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(sequences, cfg))
         {
@@ -120,7 +128,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     auto p2 = std::make_pair(seq1, seq2);
 
     {  // the score
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_score};
 
         for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
@@ -129,7 +139,9 @@ TYPED_TEST(align_pairwise_test, single_pair)
     }
 
     {  // the alignment
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_alignment};
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
@@ -154,8 +166,9 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
         auto p = std::tie(seq1, seq2);
 
         {  // the score
-            seqan3::configuration cfg = seqan3::align_cfg::edit
-                                      | seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>};
+            seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                        seqan3::align_cfg::edit_scheme |
+                                        seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>};
 
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
@@ -165,7 +178,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
         }
 
         {  // the alignment
-            seqan3::configuration cfg = seqan3::align_cfg::edit |
+            seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                        seqan3::align_cfg::edit_scheme |
                                         seqan3::align_cfg::result{seqan3::with_alignment,
                                                                   seqan3::using_score_type<double>};
             unsigned idx = 0;
@@ -191,14 +205,18 @@ TYPED_TEST(align_pairwise_test, single_view)
     auto v = std::views::single(std::tie(seq1, seq2)) | std::views::common;
 
     {  // the score
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_score};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_score};
         for (auto && res : call_alignment<TypeParam>(v, cfg))
         {
              EXPECT_EQ(res.score(), -4);
         }
     }
     {  // the alignment
-        seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
+                                    seqan3::align_cfg::result{seqan3::with_alignment};
 
         for (auto && res : call_alignment<TypeParam>(v, cfg))
         {
@@ -218,7 +236,9 @@ TYPED_TEST(align_pairwise_test, collection)
     auto p = std::tie(seq1, seq2);
     std::vector<decltype(p)> vec{10, p};
 
-    seqan3::configuration cfg = seqan3::align_cfg::edit | seqan3::align_cfg::result{seqan3::with_alignment};
+    seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                seqan3::align_cfg::edit_scheme |
+                                seqan3::align_cfg::result{seqan3::with_alignment};
     for (auto && res : call_alignment<TypeParam>(vec, cfg))
     {
         EXPECT_EQ(res.score(), -4);
@@ -238,7 +258,8 @@ TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
         auto p = std::tie(seq1, seq2);
         std::vector<decltype(p)> vec{10, p};
 
-        seqan3::configuration cfg = seqan3::align_cfg::edit |
+        seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                    seqan3::align_cfg::edit_scheme |
                                     seqan3::align_cfg::result{seqan3::with_alignment, seqan3::using_score_type<double>};
         for (auto && res : call_alignment<TypeParam>(vec, cfg))
         {
@@ -271,7 +292,8 @@ TEST(align_pairwise_test, parallel_without_parameter)
 {
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
-    seqan3::configuration cfg = seqan3::align_cfg::edit |
+    seqan3::configuration cfg = seqan3::align_cfg::method_global |
+                                seqan3::align_cfg::edit_scheme |
                                 seqan3::align_cfg::result{seqan3::with_score} |
                                 seqan3::align_cfg::parallel{};
 

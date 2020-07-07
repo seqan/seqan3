@@ -92,7 +92,7 @@ namespace seqan3
  *
  * ### Complexity
  *
- * The complexity depends on the configured algorithm. For the \ref seqan3::align_cfg::edit "edit distance"
+ * The complexity depends on the configured algorithm. For the \ref seqan3::align_cfg::edit_scheme "edit distance"
  * the following worst case over two input sequences of size \f$ N \f$ can be assumed:
  *
  * | Computing        | Runtime           | Space            |

@@ -22,7 +22,7 @@ namespace seqan3::align_cfg
  *
  * \details
  *
- * This configuration can only be used for computing the \ref seqan3::align_cfg::edit "edit distance".
+ * This configuration can only be used for computing the \ref seqan3::align_cfg::edit_scheme "edit distance".
  * It restricts the number of substitutions, insertions, and deletions within the alignment to the given value and
  * can thereby speed up the edit distance computation.
  * A typical use case is to verify a candidate region during read mapping where the number of maximal errors is given
