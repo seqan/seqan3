@@ -12,7 +12,7 @@ int main()
                                               seqan3::search_cfg::max_error_deletion{zero_errors} |
                                               seqan3::search_cfg::output_query_id |
                                               seqan3::search_cfg::output_reference_id |
-                                              seqan3::search_cfg::output_reference_begin_pos |
+                                              seqan3::search_cfg::output_reference_begin_position |
                                               seqan3::search_cfg::hit_all;
     return 0;
 }

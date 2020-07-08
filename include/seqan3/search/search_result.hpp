@@ -40,7 +40,7 @@ namespace seqan3
  * \tparam query_id_type The type of the query_id; must model std::integral.
  * \tparam cursor_type The type of the cursor; must model seqan3::fm_index_cursor_specialisation.
  * \tparam reference_id_type The type of the reference_id; must model std::integral.
- * \tparam reference_begin_pos_type The type of the reference_begin_pos; must model std::integral.
+ * \tparam reference_begin_position_type The type of the reference_begin_position; must model std::integral.
  *
  * \if DEV
  * \note If the information is not available, the respective data type is seqan3::detail::empty_type.
@@ -56,18 +56,22 @@ namespace seqan3
  * * seqan3::search_result::query_id()
  * * seqan3::search_result::index_cursor()
  * * seqan3::search_result::reference_id()
- * * seqan3::search_result::reference_begin_pos()
+ * * seqan3::search_result::reference_begin_position()
  *
  * Note that the index cursor is not included in a hit by default. If you are trying to use the respective member
  * function, a static_assert will prevent you from doing so. You can configure the result of the search with the
  * \ref search_configuration_subsection_output "output configuration".
  */
-template <typename query_id_type, typename cursor_type, typename reference_id_type, typename reference_begin_pos_type>
+template <typename query_id_type,
+          typename cursor_type,
+          typename reference_id_type,
+          typename reference_begin_position_type>
 //!\cond
     requires (std::integral<query_id_type> || std::same_as<query_id_type, detail::empty_type>) &&
              (fm_index_cursor_specialisation<cursor_type> || std::same_as<cursor_type, detail::empty_type>) &&
              (std::integral<reference_id_type> || std::same_as<reference_id_type, detail::empty_type>) &&
-             (std::integral<reference_begin_pos_type> || std::same_as<reference_begin_pos_type, detail::empty_type>)
+             (std::integral<reference_begin_position_type> || std::same_as<reference_begin_position_type,
+                                                                           detail::empty_type>)
 //!\endcond
 class search_result
 {
@@ -78,8 +82,8 @@ private:
     cursor_type cursor_{};
     //!\brief Stores the reference_id of the search result.
     reference_id_type reference_id_{};
-    //!\brief Stores the reference_begin_pos of the search result.
-    reference_begin_pos_type reference_begin_pos_{};
+    //!\brief Stores the reference_begin_position of the search result.
+    reference_begin_position_type reference_begin_position_{};
 
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
@@ -145,14 +149,14 @@ public:
     }
 
     //!\brief Returns the reference begin positions where the query was found in the reference text (at `reference id`).
-    constexpr auto reference_begin_pos() const
-        noexcept(!(std::same_as<reference_begin_pos_type, detail::empty_type>))
+    constexpr auto reference_begin_position() const
+        noexcept(!(std::same_as<reference_begin_position_type, detail::empty_type>))
     {
-        static_assert(!std::same_as<reference_begin_pos_type, detail::empty_type>,
+        static_assert(!std::same_as<reference_begin_position_type, detail::empty_type>,
                       "You tried to access the reference begin position but it was not selected in the "
                       "output configuration of the search.");
 
-        return reference_begin_pos_;
+        return reference_begin_position_;
     }
     //!\}
 
@@ -167,8 +171,8 @@ public:
             equality &= lhs.cursor_ == rhs.cursor_;
         if constexpr (!std::is_same_v<reference_id_type, detail::empty_type>)
             equality &= lhs.reference_id_ == rhs.reference_id_;
-        if constexpr (!std::is_same_v<reference_begin_pos_type, detail::empty_type>)
-            equality &= lhs.reference_begin_pos_ == rhs.reference_begin_pos_;
+        if constexpr (!std::is_same_v<reference_begin_position_type, detail::empty_type>)
+            equality &= lhs.reference_begin_position_ == rhs.reference_begin_position_;
 
         return equality;
     }
@@ -204,7 +208,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
     if constexpr (!std::same_as<list_traits::at<2, result_type_list>, detail::empty_type>)
         stream << ", reference_id:" << result.reference_id();
     if constexpr (!std::same_as<list_traits::at<3, result_type_list>, detail::empty_type>)
-        stream << ", reference_pos:" << result.reference_begin_pos();
+        stream << ", reference_pos:" << result.reference_begin_position();
     stream << ">";
 
     return stream;

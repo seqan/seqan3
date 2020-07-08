@@ -29,7 +29,7 @@ void run_text_single()
 
     for (auto && hit : search_results)
     {
-        size_t start = hit.reference_begin_pos() ? hit.reference_begin_pos() - 1 : 0;
+        size_t start = hit.reference_begin_position() ? hit.reference_begin_position() - 1 : 0;
         std::span text_view{std::data(text) + start, query.size() + 1};
 
         for (auto && res : align_pairwise(std::tie(text_view, query), align_config))
@@ -63,7 +63,7 @@ void run_text_collection()
 
     for (auto && hit : search(query, index, search_config))
     {
-        size_t start = hit.reference_begin_pos() ? hit.reference_begin_pos() - 1 : 0;
+        size_t start = hit.reference_begin_position() ? hit.reference_begin_position() - 1 : 0;
         std::span text_view{std::data(text[hit.reference_id()]) + start, query.size() + 1};
 
         for (auto && res : align_pairwise(std::tie(text_view, query), align_config))

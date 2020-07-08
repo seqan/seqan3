@@ -58,14 +58,14 @@ private:
         using index_cursor_t = std::conditional_t<traits_type::output_index_cursor, index_cursor_type, empty_type>;
         //!\brief The reference_id type of the search_result.
         using reference_id_t = std::conditional_t<traits_type::output_reference_id, index_size_type, empty_type>;
-        //!\brief The reference_begin_pos type of the search_result.
-        using reference_begin_pos_t = std::conditional_t<traits_type::output_reference_begin_pos,
-                                                         index_size_type,
-                                                         empty_type>;
+        //!\brief The reference_begin_position type of the search_result.
+        using reference_begin_position_t = std::conditional_t<traits_type::output_reference_begin_position,
+                                                              index_size_type,
+                                                              empty_type>;
 
     public:
         //!\brief The result type depending on the output configuration.
-        using type = search_result<query_id_t, index_cursor_t, reference_id_t, reference_begin_pos_t>;
+        using type = search_result<query_id_t, index_cursor_t, reference_id_t, reference_begin_position_t>;
     };
 
     /*!\brief Selects the search algorithm based on the index type.
@@ -120,7 +120,7 @@ public:
             return cfg |
                    search_cfg::output_query_id |
                    search_cfg::output_reference_id |
-                   search_cfg::output_reference_begin_pos;
+                   search_cfg::output_reference_begin_position;
         else
             return cfg;
     }

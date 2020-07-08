@@ -84,19 +84,19 @@ public:
     //!\brief A flag indicating whether search should return the reference_id.
     static constexpr bool output_reference_id =
                               search_configuration_t::template exists<detail::output_reference_id_tag>();
-    //!\brief A flag indicating whether search should return the reference_begin_pos.
-    static constexpr bool output_reference_begin_pos =
-                              search_configuration_t::template exists<detail::output_reference_begin_pos_tag>();
+    //!\brief A flag indicating whether search should return the reference_begin_position.
+    static constexpr bool output_reference_begin_position =
+                              search_configuration_t::template exists<detail::output_reference_begin_position_tag>();
     //!\brief A flag indicating whether search should return the index_cursor.
     static constexpr bool output_index_cursor =
                               search_configuration_t::template exists<detail::output_index_cursor_tag>();
     //!\brief A flag indicating whether it is required to call cursor.locate() to retrieve the respective information.
-    static constexpr bool output_requires_locate_call = output_reference_id | output_reference_begin_pos;
+    static constexpr bool output_requires_locate_call = output_reference_id | output_reference_begin_position;
 
     //!\brief A flag indicating whether output configuration was set in the search configuration.
     static constexpr bool has_output_configuration = output_query_id |
                                                      output_reference_id |
-                                                     output_reference_begin_pos |
+                                                     output_reference_begin_position |
                                                      output_index_cursor;
 };
 
