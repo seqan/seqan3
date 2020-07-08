@@ -7,12 +7,14 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/charconv>
 #include <cmath>
+#include <seqan3/std/concepts>
 #include <iostream>
 #include <limits>
 
-#include <seqan3/std/charconv>
-#include <seqan3/std/concepts>
+#include <seqan3/core/math.hpp>
+
 
 // =============================================================================
 // std::from_chars for integral types
@@ -231,14 +233,19 @@ TYPED_TEST(integral_from_char_test, hexadicimal_number)
 
 TYPED_TEST(integral_from_char_test, to_chars)
 {
-    TypeParam val{120};
-    std::array<char, 10> buffer{};
+    uint8_t max_num_digits = static_cast<uint8_t>(std::log10(std::numeric_limits<TypeParam>::max())) + 1;
+    std::array<char, 20> buffer{};
 
-    auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+    for (uint8_t num_digits = 1; num_digits <= max_num_digits; ++num_digits)
+    {
+        TypeParam val = seqan3::pow(10, num_digits - 1);
 
-    EXPECT_EQ(res.ptr, &buffer[3]);
-    EXPECT_EQ(res.ec, std::errc{});
-    EXPECT_EQ((std::string_view{buffer.data(), 3}), std::string_view{"120"});
+        auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+
+        EXPECT_EQ(res.ptr, &buffer[num_digits]);
+        EXPECT_EQ(res.ec, std::errc{});
+        EXPECT_EQ((std::string_view{buffer.data(), num_digits}), std::string_view{std::to_string(val)});
+    }
 }
 
 TYPED_TEST(integral_from_char_test, to_chars_error)
