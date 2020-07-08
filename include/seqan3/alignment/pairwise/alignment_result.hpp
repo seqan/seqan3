@@ -36,16 +36,16 @@ class policy_alignment_result_builder;
  *
  * \tparam id_t                  The type for the alignment identifier.
  * \tparam score_t               The type for the resulting score.
- * \tparam back_coord_t          The type for the back coordinate, can be omitted.
- * \tparam front_coord_t         The type for the front coordinate, can be omitted.
+ * \tparam end_positions_t          The type for the end positions, can be omitted.
+ * \tparam begin_positions_t         The type for the begin positions, can be omitted.
  * \tparam alignment_t           The type for the alignment, can be omitted.
  * \tparam score_debug_matrix_t  The type for the score matrix. Only present if seqan3::align_cfg::debug is enabled.
  * \tparam trace_debug_matrix_t  The type for the trace matrix. Only present if seqan3::align_cfg::debug is enabled.
  */
 template <typename id_t,
           typename score_t,
-          typename back_coord_t = std::nullopt_t *,
-          typename front_coord_t = std::nullopt_t *,
+          typename end_positions_t = std::nullopt_t *,
+          typename begin_positions_t = std::nullopt_t *,
           typename alignment_t = std::nullopt_t *,
           typename score_debug_matrix_t = std::nullopt_t *,
           typename trace_debug_matrix_t = std::nullopt_t *>
@@ -55,10 +55,10 @@ struct alignment_result_value_type
     id_t id{};
     //! \brief The alignment score.
     score_t score{};
-    //! \brief The back coordinate of the alignment.
-    back_coord_t end_positions{};
-    //! \brief The front coordinate of the alignment.
-    front_coord_t begin_positions{};
+    //! \brief The end positions of the alignment.
+    end_positions_t end_positions{};
+    //! \brief The begin positions of the alignment.
+    begin_positions_t begin_positions{};
     //! \brief The alignment, i.e. the actual base pair matching.
     alignment_t alignment{};
 
@@ -81,20 +81,20 @@ template <typename id_t, typename score_t>
 alignment_result_value_type(id_t, score_t)
     -> alignment_result_value_type<id_t, score_t>;
 
-//! \brief Type deduction for id, score and back coordinate.
-template <typename id_t, typename score_t, typename back_coord_t>
-alignment_result_value_type(id_t, score_t, back_coord_t)
-    -> alignment_result_value_type<id_t, score_t, back_coord_t>;
+//! \brief Type deduction for id, score and end positions.
+template <typename id_t, typename score_t, typename end_positions_t>
+alignment_result_value_type(id_t, score_t, end_positions_t)
+    -> alignment_result_value_type<id_t, score_t, end_positions_t>;
 
-//! \brief Type deduction for id, score, back coordinate and front coordinate.
-template <typename id_t, typename score_t, typename back_coord_t, typename front_coord_t>
-alignment_result_value_type(id_t, score_t, back_coord_t, front_coord_t)
-    -> alignment_result_value_type<id_t, score_t, back_coord_t, front_coord_t>;
+//! \brief Type deduction for id, score, end positions and begin positions.
+template <typename id_t, typename score_t, typename end_positions_t, typename begin_positions_t>
+alignment_result_value_type(id_t, score_t, end_positions_t, begin_positions_t)
+    -> alignment_result_value_type<id_t, score_t, end_positions_t, begin_positions_t>;
 
-//! \brief Type deduction for id, score, back coordinate, front coordinate and alignment.
-template <typename id_t, typename score_t, typename back_coord_t, typename front_coord_t, typename alignment_t>
-alignment_result_value_type(id_t, score_t, back_coord_t, front_coord_t, alignment_t)
-    -> alignment_result_value_type<id_t, score_t, back_coord_t, front_coord_t, alignment_t>;
+//! \brief Type deduction for id, score, end positions, begin positions and alignment.
+template <typename id_t, typename score_t, typename end_positions_t, typename begin_positions_t, typename alignment_t>
+alignment_result_value_type(id_t, score_t, end_positions_t, begin_positions_t, alignment_t)
+    -> alignment_result_value_type<id_t, score_t, end_positions_t, begin_positions_t, alignment_t>;
 //!\}
 
 //!\cond
@@ -106,7 +106,7 @@ struct alignment_result_value_type_accessor;
 namespace seqan3
 {
 
-/*!\brief Stores the alignment results and gives access to score, alignment and the front and back coordinates.
+/*!\brief Stores the alignment results and gives access to score, alignment and the front and end positionss.
  * \ingroup pairwise_alignment
  * \tparam alignment_result_value_t The underlying value type containing the information from the alignment computation.
  *
@@ -147,10 +147,10 @@ private:
     using id_t = decltype(data.id);
     //! \brief The type for the resulting score.
     using score_t = decltype(data.score);
-    //! \brief The type for the back coordinate.
-    using back_coord_t = decltype(data.end_positions);
-    //! \brief The type for the front coordinate.
-    using front_coord_t = decltype(data.begin_positions);
+    //! \brief The type for the end positions.
+    using end_positions_t = decltype(data.end_positions);
+    //! \brief The type for the begin positions.
+    using begin_positions_t = decltype(data.begin_positions);
     //! \brief The type for the alignment.
     using alignment_t = decltype(data.alignment);
     //!\}
@@ -216,9 +216,9 @@ public:
      * \note This function is only available if the end position of the first sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr size_t sequence1_end_position() const noexcept
+    constexpr auto sequence1_end_position() const noexcept
     {
-        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+        static_assert(!std::is_same_v<end_positions_t, std::nullopt_t *>,
                       "Trying to access the end position of the first sequence, although it was not requested in the"
                       " alignment configuration.");
         return data.end_positions.first;
@@ -230,9 +230,9 @@ public:
      * \note This function is only available if the end position of the second sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr size_t sequence2_end_position() const noexcept
+    constexpr auto sequence2_end_position() const noexcept
     {
-        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+        static_assert(!std::is_same_v<end_positions_t, std::nullopt_t *>,
                       "Trying to access the end position of the second sequence, although it was not requested in the"
                       " alignment configuration.");
         return data.end_positions.second;
@@ -248,9 +248,9 @@ public:
      * \note This function is only available if the begin position of the first sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr size_t sequence1_begin_position() const noexcept
+    constexpr auto sequence1_begin_position() const noexcept
     {
-        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+        static_assert(!std::is_same_v<begin_positions_t, std::nullopt_t *>,
                       "Trying to access the begin position of the first sequence, although it was not requested in the"
                       " alignment configuration.");
         return data.begin_positions.first;
@@ -266,9 +266,9 @@ public:
      * \note This function is only available if the begin position of the second sequence was requested via the
      * alignment configuration (see seqan3::align_cfg::result).
      */
-    constexpr size_t sequence2_begin_position() const noexcept
+    constexpr auto sequence2_begin_position() const noexcept
     {
-        static_assert(!std::is_same_v<size_t, std::nullopt_t *>,
+        static_assert(!std::is_same_v<begin_positions_t, std::nullopt_t *>,
                       "Trying to access the begin position of the second sequence, although it was not requested in the"
                       " alignment configuration.");
         return data.begin_positions.second;
