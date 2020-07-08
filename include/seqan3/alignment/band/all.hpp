@@ -27,6 +27,8 @@
  * To choose the correct band parameters, imagine a matrix with the first sequence written on top and the second
  * sequence along the left vertical side. A negative value reflects a start of the diagonal within the vertical part,
  * while a positive value implies a start within the top part of this matrix at the respective position.
+ *
+ * \sa seqan3::align_cfg::band_fixed_size
  */
 
 #include <seqan3/alignment/band/static_band.hpp>
