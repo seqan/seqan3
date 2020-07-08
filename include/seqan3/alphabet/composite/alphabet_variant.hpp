@@ -433,7 +433,7 @@ public:
     }
     //!\}
 
-    //!\brief Validate whether a character is valid in the by any of the combined alphabet.
+    //!\brief Validate whether a character is valid in the combined alphabet.
     static constexpr bool char_is_valid(char_type const chr) noexcept
     {
         bool is_valid{false};
