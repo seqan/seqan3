@@ -433,6 +433,20 @@ public:
     }
     //!\}
 
+    //!\brief Validate whether a character is valid in the by any of the combined alphabet.
+    static constexpr bool char_is_valid(char_type const chr) noexcept
+    {
+        bool is_valid{false};
+
+        meta::for_each(alternatives{}, [&] (auto && alt)
+        {
+            if (char_is_valid_for<remove_cvref_t<decltype(alt)>>(chr))
+                is_valid = true;
+        });
+
+        return is_valid;
+    }
+
 protected:
     //!\privatesection
 
@@ -573,20 +587,6 @@ protected:
 
         return char_to_rank;
     }();
-
-    //!\brief Validate whether a character is valid in the by any of the combined alphabet.
-    static constexpr bool char_is_valid(char_type const chr) noexcept
-    {
-        bool is_valid{false};
-
-        meta::for_each(alternatives{}, [&] (auto && alt)
-        {
-            if (char_is_valid_for<remove_cvref_t<decltype(alt)>>(chr))
-                is_valid = true;
-        });
-
-        return is_valid;
-    }
 };
 
 } // namespace seqan3

@@ -13,6 +13,7 @@
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/core/char_operations/predicate.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
@@ -331,4 +332,42 @@ TEST(alphabet_variant_test, two_different_variants)
 
     seqan3::alphabet_variant<seqan3::rna4, seqan3::gap> r2{'A'_rna4};
     EXPECT_EQ(l, r2); // this works because rna4 and dna4 are implicitly convertible to each other
+}
+
+TEST(alphabet_variant_test, char_is_valid_for)
+{
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('C'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('G'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('U'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('T'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('N'));
+    EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('S'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('a'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('c'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('g'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('u'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('t'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('-'));
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('n'));
+    EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('s'));
+}
+
+TEST(alphabet_variant_test, is_in_alphabet)
+{ // see issue https://github.com/seqan/seqan3/issues/1972
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('C'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('G'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('U'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('T'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('N'));
+    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('c'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('g'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('u'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('t'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-'));
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('n'));
+    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('s'));
 }
