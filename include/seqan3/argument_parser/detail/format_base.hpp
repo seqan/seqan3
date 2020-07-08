@@ -231,12 +231,12 @@ public:
                     std::string const & long_id,
                     std::string const & desc,
                     option_spec const spec,
-                    validator_type && validator)
+                    validator_type && verificator)
     {
         std::string id = prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value);
         std::string info{desc};
         info += ((spec & option_spec::REQUIRED) ? std::string{" "} : detail::to_string(" Default: ", value, ". "));
-        info += validator.get_help_page_message();
+        info += verificator.get_help_page_message();
         store_help_page_element([this, id, info] () { derived_t().print_list_item(id, info); }, spec);
     }
 
@@ -259,9 +259,9 @@ public:
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
                                std::string const & desc,
-                               validator_type & validator)
+                               validator_type & verificator)
     {
-        std::string msg = validator.get_help_page_message();
+        std::string msg = verificator.get_help_page_message();
 
         positional_option_calls.push_back([this, &value, desc, msg] ()
         {
