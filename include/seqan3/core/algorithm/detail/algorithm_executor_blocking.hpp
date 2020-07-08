@@ -166,7 +166,7 @@ public:
         algorithm{std::move(algorithm)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            buffer_size = std::ranges::distance(resource);
+            buffer_size = static_cast<size_t>(std::ranges::distance(resource));
 
         buffer.resize(buffer_size);
         buffer_it = buffer.end();

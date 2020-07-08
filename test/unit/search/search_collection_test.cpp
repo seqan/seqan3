@@ -172,6 +172,41 @@ TYPED_TEST(search_test, multiple_queries)
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | query_id, expected_query_ids);
 }
 
+TYPED_TEST(search_test, parallel_queries)
+{
+    constexpr size_t num_queries{100u};
+    std::vector<std::vector<seqan3::dna4>> const queries{num_queries, {"ACGTACGTACGT"_dna4}};
+
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}} |
+                                      seqan3::search_cfg::parallel{
+                                          std::min<uint32_t>(2, std::thread::hardware_concurrency())};
+
+    typename TestFixture::hits_result_t expected_hits{}; // Expected hits are {0, 0} and {1, 0} for each of the queries.
+    std::vector<size_t> expected_query_ids{}; // Expected query ids are 0,0,1,1,...,num_queries-1,num_queries-1.
+    expected_hits.reserve(2 * num_queries);
+    expected_query_ids.reserve(2 * num_queries);
+    for (size_t i = 0; i < num_queries; ++i)
+    {
+        expected_hits.emplace_back(0, 0);
+        expected_hits.emplace_back(1, 0);
+        expected_query_ids.emplace_back(i);
+        expected_query_ids.emplace_back(i);
+    }
+
+    EXPECT_RANGE_EQ(search(queries, this->index, cfg) | ref_id_and_position, expected_hits);
+    EXPECT_RANGE_EQ(search(queries, this->index, cfg) | query_id, expected_query_ids);
+}
+
+TYPED_TEST(search_test, parallel_without_parameter)
+{
+    seqan3::configuration cfg = seqan3::search_cfg::parallel{};
+
+    EXPECT_THROW(search("AAAA"_dna4, this->index, cfg), std::runtime_error);
+}
+
 TYPED_TEST(search_string_test, error_free_string)
 {
     typename TestFixture::hits_result_t empty_result{};

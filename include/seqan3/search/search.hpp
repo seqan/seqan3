@@ -128,13 +128,21 @@ inline auto search(queries_t && queries,
                                                            algorithm_result_t,
                                                            execution_handler_t>;
 
-    // Select the execution handler for the alignment configuration.
+    // Select the execution handler for the search configuration.
     auto select_execution_handler = [&] ()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
-            return execution_handler_t{get<search_cfg::parallel>(complete_config).value};
+        {
+            auto thread_count = get<search_cfg::parallel>(complete_config).thread_count;
+            if (!thread_count)
+                throw std::runtime_error{"You must configure the number of threads in seqan3::search_cfg::parallel."};
+
+            return execution_handler_t{*thread_count};
+        }
         else
+        {
             return execution_handler_t{};
+        }
     };
 
     return search_result_range{executor_t{std::move(indexed_queries),
