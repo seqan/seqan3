@@ -213,8 +213,8 @@ TEST(alignment_result_test, reduced_type)
         seqan3::alignment_result tmp(tr);
         EXPECT_EQ(tmp.id(), 2);
         EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
-        EXPECT_EQ((tmp.sequence1_end_position()), (size_t) 1);
-        EXPECT_EQ((tmp.sequence2_end_position()), (size_t) -1);
+        EXPECT_EQ((tmp.sequence1_end_position()), 1);
+        EXPECT_EQ((tmp.sequence2_end_position()), -1);
     }
 
     {
@@ -223,10 +223,10 @@ TEST(alignment_result_test, reduced_type)
         seqan3::alignment_result tmp(tr);
         EXPECT_EQ(tmp.id(), 2);
         EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
-        EXPECT_EQ((tmp.sequence1_end_position()), (size_t) 1);
-        EXPECT_EQ((tmp.sequence2_end_position()), (size_t) -1);
-        EXPECT_EQ((tmp.sequence1_begin_position()), (size_t) 10);
-        EXPECT_EQ((tmp.sequence2_begin_position()), (size_t) -10);
+        EXPECT_EQ((tmp.sequence1_end_position()), 1);
+        EXPECT_EQ((tmp.sequence2_end_position()), -1);
+        EXPECT_EQ((tmp.sequence1_begin_position()), 10);
+        EXPECT_EQ((tmp.sequence2_begin_position()), -10);
     }
 }
 
@@ -246,18 +246,18 @@ TEST(alignment_result_test, type_deduction)
         seqan3::alignment_result tmp(tr);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_begin_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_begin_position()), size_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_begin_position()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_begin_position()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), std::vector<seqan3::gapped<seqan3::rna5>> const &>));
 
         EXPECT_EQ(tmp.id(), 2);
         EXPECT_DOUBLE_EQ(tmp.score(), 5.0);
-        EXPECT_EQ((tmp.sequence1_end_position()), (size_t) 1);
-        EXPECT_EQ((tmp.sequence2_end_position()), (size_t) -1);
-        EXPECT_EQ((tmp.sequence1_begin_position()), (size_t) 10);
-        EXPECT_EQ((tmp.sequence2_begin_position()), (size_t) -10);
+        EXPECT_EQ((tmp.sequence1_end_position()), 1);
+        EXPECT_EQ((tmp.sequence2_end_position()), -1);
+        EXPECT_EQ((tmp.sequence1_begin_position()), 10);
+        EXPECT_EQ((tmp.sequence2_begin_position()), -10);
         EXPECT_EQ(tmp.alignment(), seq);
     }
 
@@ -268,8 +268,8 @@ TEST(alignment_result_test, type_deduction)
         seqan3::alignment_result tmp(tr);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), size_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), int>));
     }
 
     {
