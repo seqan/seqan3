@@ -58,7 +58,7 @@ struct upper_diagonal : public seqan3::detail::strong_type<int32_t, upper_diagon
  * If this configuration is default constructed or not set during the algorithm configuration the full alignment
  * matrix will be computed.
  *
- * During the construction of this configuration element or before the execution of the alignment algorithm the
+ * Before the execution of the alignment algorithm the
  * band configuration is validated. If the user provided an invalid band, e.g. the upper diagonal is smaller than
  * the lower diagonal, the alignment matrix would be ill configured such that the requested alignment method cannot
  * be computed (because the global alignment requires the first cell and the last cell of the matrix to be reachable),

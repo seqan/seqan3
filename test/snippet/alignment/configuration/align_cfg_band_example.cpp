@@ -2,8 +2,6 @@
 
 int main()
 {
-try
-{
     // A symmetric band around the main diagonal.
     seqan3::align_cfg::band_fixed_size band_cfg{seqan3::align_cfg::lower_diagonal{-4},
                                                 seqan3::align_cfg::upper_diagonal{4}};
@@ -17,10 +15,7 @@ try
                                                    seqan3::align_cfg::upper_diagonal{-3}};
 
     // An invalid band configuration.
+    // Using this band as a configuration in seqan3::align_pairwise would cause the algorithm to throw an exception.
     seqan3::align_cfg::band_fixed_size band_cfg_invalid{seqan3::align_cfg::lower_diagonal{7},
                                                         seqan3::align_cfg::upper_diagonal{3}};
-}
-catch(...)
-{
-}
 }
