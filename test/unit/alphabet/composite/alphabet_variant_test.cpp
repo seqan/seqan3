@@ -336,12 +336,18 @@ TEST(alphabet_variant_test, two_different_variants)
 
 TEST(alphabet_variant_test, char_is_valid_for)
 {
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
+
     using char_t = seqan3::alphabet_char_t<seqan3::gapped<seqan3::rna5>>;
 
     char_t i = std::numeric_limits<char_t>::min();
-    char_t j = std::numeric_limits<char_t>::max();
+    char_t end = std::numeric_limits<char_t>::max();
 
-    for (; i < j; ++i)
+    // note that without the cast i <= end would result in an ininite loop
+    for (; static_cast<int64>(i) <= static_cast<int64>(end); ++i)
     {
         EXPECT_EQ(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>(i),
                   seqan3::char_is_valid_for<seqan3::gap>(i) || seqan3::char_is_valid_for<seqan3::rna5>(i));
@@ -350,12 +356,18 @@ TEST(alphabet_variant_test, char_is_valid_for)
 
 TEST(alphabet_variant_test, is_in_alphabet)
 { // see issue https://github.com/seqan/seqan3/issues/1972
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
+
     using char_t = seqan3::alphabet_char_t<seqan3::gapped<seqan3::rna5>>;
 
     char_t i = std::numeric_limits<char_t>::min();
     char_t j = std::numeric_limits<char_t>::max();
 
-    for (; i < j; ++i)
+    // note that without the cast i <= end would result in an ininite loop
+    for (; static_cast<int64>(i) <= static_cast<int64>(end); ++i)
     {
         EXPECT_EQ(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>(i),
                   seqan3::is_in_alphabet<seqan3::gap>(i) || seqan3::is_in_alphabet<seqan3::rna5>(i));
