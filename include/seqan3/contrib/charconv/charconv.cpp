@@ -176,25 +176,7 @@ __u64toa(uint64_t value, char* buffer)
         const uint32_t v0 = static_cast<uint32_t>(value / 100000000);
         const uint32_t v1 = static_cast<uint32_t>(value % 100000000);
 
-        const uint32_t b0 = v0 / 10000;
-        const uint32_t c0 = v0 % 10000;
-
-        if (v0 < 1000000)
-        {
-            if (v0 < 100000)
-                buffer = append1(buffer, b0);
-            else
-                buffer = append2(buffer, b0);
-        }
-        else
-        {
-            if (v0 < 10000000)
-                buffer = append3(buffer, b0);
-            else
-                buffer = append4(buffer, b0);
-        }
-
-        buffer = append4(buffer, c0);
+        buffer = __u32toa(v0, buffer);
         buffer = append4(buffer, v1 / 10000);
         buffer = append4(buffer, v1 % 10000);
     }
