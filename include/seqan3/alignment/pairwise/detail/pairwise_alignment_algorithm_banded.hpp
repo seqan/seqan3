@@ -44,6 +44,7 @@ protected:
     using typename base_algorithm_t::traits_type;
     using typename base_algorithm_t::scoring_scheme_type;
     using typename base_algorithm_t::alignment_result_type;
+    using typename base_algorithm_t::score_type;
 
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
     static_assert(traits_type::is_banded, "Alignment configuration must have band configured.");
@@ -195,7 +196,7 @@ protected:
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<int32_t> local_score_matrix{};
+        thread_local score_matrix_single_column<score_type> local_score_matrix{};
         coordinate_matrix<uint32_t> local_index_matrix{};
 
         size_t const number_of_columns = sequence1_size + 1;

@@ -58,6 +58,8 @@ protected:
     using scoring_scheme_type =  typename traits_type::scoring_scheme_type;
     //!\brief The configured alignment result type.
     using alignment_result_type = typename traits_type::alignment_result_type;
+    //!\brief The configured score type.
+    using score_type = typename traits_type::score_type;
 
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
 
@@ -170,7 +172,7 @@ protected:
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<int32_t> local_score_matrix{};
+        thread_local score_matrix_single_column<score_type> local_score_matrix{};
         coordinate_matrix<uint32_t> local_index_matrix{};
 
         size_t number_of_columns = std::ranges::distance(sequence1) + 1;
