@@ -149,40 +149,40 @@ TYPED_TEST_P(iterator_fixture, dereference)
 TYPED_TEST_P(iterator_fixture, compare)
 {
     EXPECT_FALSE(std::ranges::begin(this->test_range) == std::ranges::end(this->test_range));
-    EXPECT_TRUE(std::ranges::begin(this->test_range)  != std::ranges::end(this->test_range));
-    EXPECT_FALSE(std::ranges::end(this->test_range)   == std::ranges::begin(this->test_range));
-    EXPECT_TRUE(std::ranges::end(this->test_range)    != std::ranges::begin(this->test_range));
+    EXPECT_TRUE(std::ranges::begin(this->test_range) != std::ranges::end(this->test_range));
+    EXPECT_FALSE(std::ranges::end(this->test_range) == std::ranges::begin(this->test_range));
+    EXPECT_TRUE(std::ranges::end(this->test_range) != std::ranges::begin(this->test_range));
 
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>) // iterate over it again
     {
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  == std::ranges::begin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) == std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::begin(this->test_range) != std::ranges::begin(this->test_range));
     }
 
     if constexpr (TestFixture::const_iterable)
     {
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  == std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::cbegin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::cbegin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) == std::ranges::cend(this->test_range));
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  != std::ranges::cend(this->test_range));
-        EXPECT_FALSE(std::ranges::cend(this->test_range)   == std::ranges::cbegin(this->test_range));
-        EXPECT_TRUE(std::ranges::cend(this->test_range)    != std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) != std::ranges::cend(this->test_range));
+        EXPECT_FALSE(std::ranges::cend(this->test_range) == std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::cend(this->test_range) != std::ranges::cbegin(this->test_range));
 
         // (non-const lhs)
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  == std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) == std::ranges::cbegin(this->test_range));
         EXPECT_FALSE(std::ranges::begin(this->test_range) != std::ranges::cbegin(this->test_range));
         EXPECT_FALSE(std::ranges::begin(this->test_range) == std::ranges::cend(this->test_range));
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  != std::ranges::cend(this->test_range));
-        EXPECT_FALSE(std::ranges::end(this->test_range)   == std::ranges::cbegin(this->test_range));
-        EXPECT_TRUE(std::ranges::end(this->test_range)    != std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) != std::ranges::cend(this->test_range));
+        EXPECT_FALSE(std::ranges::end(this->test_range) == std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::end(this->test_range) != std::ranges::cbegin(this->test_range));
 
         // (non-const rhs)
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  == std::ranges::begin(this->test_range));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::begin(this->test_range));
-        EXPECT_FALSE(std::ranges::cend(this->test_range)   == std::ranges::begin(this->test_range));
-        EXPECT_TRUE(std::ranges::cend(this->test_range)    != std::ranges::begin(this->test_range));
+        EXPECT_FALSE(std::ranges::cend(this->test_range) == std::ranges::begin(this->test_range));
+        EXPECT_TRUE(std::ranges::cend(this->test_range) != std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) == std::ranges::end(this->test_range));
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  != std::ranges::end(this->test_range));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) != std::ranges::end(this->test_range));
     }
 }
 
@@ -352,7 +352,7 @@ inline void jump_forward_test(it_begin_t && it_begin, rng_t && rng)
     // Forward copy friend
     for (size_t n = 0; n < sz; ++n)
     {
-        expect_iter_equal<test_type>((n + it_begin), rng_it_begin + n);
+        expect_iter_equal<test_type>(n + it_begin, rng_it_begin + n);
         expect_iter_equal<test_type>(it_begin, rng_it_begin);
     }
 }
@@ -501,20 +501,20 @@ TYPED_TEST_P(iterator_fixture, compare_less)
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
         EXPECT_FALSE(std::ranges::begin(this->test_range) < std::ranges::begin(this->test_range));
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  < std::ranges::next(std::ranges::begin(this->test_range)));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) < std::ranges::next(std::ranges::begin(this->test_range)));
     }
 
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) < std::ranges::cbegin(this->test_range));
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  < std::ranges::next(std::ranges::cbegin(this->test_range)));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) < std::ranges::next(std::ranges::cbegin(this->test_range)));
 
         // mix
-        EXPECT_FALSE(std::ranges::begin(this->test_range)  < std::ranges::cbegin(this->test_range));
-        EXPECT_TRUE(std::ranges::begin(this->test_range)   < std::ranges::next(std::ranges::cbegin(this->test_range)));
+        EXPECT_FALSE(std::ranges::begin(this->test_range) < std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) < std::ranges::next(std::ranges::cbegin(this->test_range)));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) < std::ranges::begin(this->test_range));
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  < std::ranges::next(std::ranges::begin(this->test_range)));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) < std::ranges::next(std::ranges::begin(this->test_range)));
     }
 }
 
@@ -533,8 +533,8 @@ TYPED_TEST_P(iterator_fixture, compare_greater)
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) > std::ranges::next(std::ranges::cbegin(this->test_range)));
 
         // mix
-        EXPECT_FALSE(std::ranges::begin(this->test_range)  > std::ranges::cbegin(this->test_range));
-        EXPECT_FALSE(std::ranges::begin(this->test_range)  > std::ranges::next(std::ranges::cbegin(this->test_range)));
+        EXPECT_FALSE(std::ranges::begin(this->test_range) > std::ranges::cbegin(this->test_range));
+        EXPECT_FALSE(std::ranges::begin(this->test_range) > std::ranges::next(std::ranges::cbegin(this->test_range)));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) > std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) > std::ranges::next(std::ranges::begin(this->test_range)));
     }
@@ -555,8 +555,8 @@ TYPED_TEST_P(iterator_fixture, compare_leq)
         EXPECT_TRUE(std::ranges::cbegin(this->test_range) <= std::ranges::next(std::ranges::cbegin(this->test_range)));
 
         // mix
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  <= std::ranges::cbegin(this->test_range));
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  <= std::ranges::next(std::ranges::cbegin(this->test_range)));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) <= std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) <= std::ranges::next(std::ranges::cbegin(this->test_range)));
         EXPECT_TRUE(std::ranges::cbegin(this->test_range) <= std::ranges::begin(this->test_range));
         EXPECT_TRUE(std::ranges::cbegin(this->test_range) <= std::ranges::next(std::ranges::begin(this->test_range)));
     }
@@ -566,20 +566,20 @@ TYPED_TEST_P(iterator_fixture, compare_geq)
 {
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
     {
-        EXPECT_TRUE(std::ranges::begin(this->test_range)  >= std::ranges::begin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) >= std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::begin(this->test_range) >= std::ranges::next(std::ranges::begin(this->test_range)));
     }
 
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  >= std::ranges::cbegin(this->test_range));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) >= std::ranges::cbegin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) >= std::ranges::next(std::ranges::cbegin(this->test_range)));
 
         // mix
-        EXPECT_TRUE(std::ranges::begin(this->test_range)   >= std::ranges::cbegin(this->test_range));
-        EXPECT_FALSE(std::ranges::begin(this->test_range)  >= std::ranges::next(std::ranges::cbegin(this->test_range)));
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range)  >= std::ranges::begin(this->test_range));
+        EXPECT_TRUE(std::ranges::begin(this->test_range) >= std::ranges::cbegin(this->test_range));
+        EXPECT_FALSE(std::ranges::begin(this->test_range) >= std::ranges::next(std::ranges::cbegin(this->test_range)));
+        EXPECT_TRUE(std::ranges::cbegin(this->test_range) >= std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) >= std::ranges::next(std::ranges::begin(this->test_range)));
     }
 }
