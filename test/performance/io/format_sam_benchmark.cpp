@@ -197,18 +197,26 @@ void seqan2_sam_file_read_from_disk(benchmark::State &state)
 
 #endif // SEQAN3_HAS_SEQAN2
 
-BENCHMARK(sam_file_read_from_stream)->Arg(50);
-BENCHMARK(sam_file_read_from_stream)->Arg(500);
+#ifndef NDEBUG
+static constexpr size_t low_query_count{5u};
+static constexpr size_t high_query_count{10u};
+#else
+static constexpr size_t low_query_count{50u};
+static constexpr size_t high_query_count{500u};
+#endif // NDEBUG
 
-BENCHMARK(sam_file_read_from_disk)->Arg(50);
-BENCHMARK(sam_file_read_from_disk)->Arg(500);
+BENCHMARK(sam_file_read_from_stream)->Arg(low_query_count);
+BENCHMARK(sam_file_read_from_stream)->Arg(high_query_count);
+
+BENCHMARK(sam_file_read_from_disk)->Arg(low_query_count);
+BENCHMARK(sam_file_read_from_disk)->Arg(high_query_count);
 
 #if SEQAN3_HAS_SEQAN2
-BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(50);
-BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(500);
+BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(low_query_count);
+BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(high_query_count);
 
-BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(50);
-BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(500);
+BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(low_query_count);
+BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(high_query_count);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_MAIN();
