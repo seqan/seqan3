@@ -5,23 +5,12 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-//!\author Clemens Cords (clemens.cords@fu-berlin.de)
-
-#include <fstream>
-#include <sstream>
-#include <type_traits>
-
 #include <benchmark/benchmark.h>
 
-#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/test/seqan2.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
