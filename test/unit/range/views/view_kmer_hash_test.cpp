@@ -230,3 +230,19 @@ TYPED_TEST(kmer_hash_gapped_test, issue1754)
         EXPECT_RANGE_EQ(result_t{8}, text1 | stop_at_t | std::views::reverse | gapped_view);
     }
 }
+
+// https://github.com/seqan/seqan3/issues/1953
+TEST(kmer_hash_ungapped_test, issue1953)
+{
+    std::vector<seqan3::dna4> text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    auto v = text1 | prefix_until_first_thymine | std::views::reverse | ungapped_view;
+    EXPECT_EQ(1u, v.size());
+}
+
+// https://github.com/seqan/seqan3/issues/1953
+TEST(kmer_hash_gapped_test, issue1953)
+{
+    std::vector<seqan3::dna4> text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+    auto v = text1 | prefix_until_first_thymine | std::views::reverse | gapped_view;
+    EXPECT_EQ(1u, v.size());
+}

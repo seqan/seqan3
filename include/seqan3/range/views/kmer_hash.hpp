@@ -178,12 +178,22 @@ public:
     /*!\brief Returns the size of the range, if the underlying range is a std::ranges::sized_range.
      * \returns Size of range.
      */
-    auto size() const
+    auto size()
     //!\cond
         requires std::ranges::sized_range<urng_t>
+     //!\endcond
+    {
+        using size_type = std::ranges::range_size_t<urng_t>;
+        return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
+    }
+
+    //!\copydoc size()
+    auto size() const
+    //!\cond
+        requires std::ranges::sized_range<urng_t const>
     //!\endcond
     {
-        using size_type = decltype(std::ranges::size(urange));
+        using size_type = std::ranges::range_size_t<urng_t const>;
         return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
     }
 };
