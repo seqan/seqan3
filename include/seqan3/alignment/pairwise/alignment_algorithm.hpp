@@ -617,24 +617,24 @@ private:
         if constexpr (traits_t::compute_score)
             res.score = this->alignment_state.optimum.score;
 
-        if constexpr (traits_t::compute_back_coordinate)
+        if constexpr (traits_t::compute_end_positions)
         {
-            res.back_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
-                                                       row_index_type{this->alignment_state.optimum.row_index}};
+            res.end_positions = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
+                                                     row_index_type{this->alignment_state.optimum.row_index}};
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
             if constexpr (traits_t::is_banded)
-                res.back_coordinate.second += res.back_coordinate.first - this->trace_matrix.band_col_index;
+                res.end_positions.second += res.end_positions.first - this->trace_matrix.band_col_index;
         }
 
-        if constexpr (traits_t::compute_front_coordinate)
+        if constexpr (traits_t::compute_begin_positions)
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
             auto optimum_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
                                                            row_index_type{this->alignment_state.optimum.row_index}};
             auto trace_res = builder(this->trace_matrix.trace_path(optimum_coordinate));
-            res.front_coordinate.first = trace_res.first_sequence_slice_positions.first;
-            res.front_coordinate.second = trace_res.second_sequence_slice_positions.first;
+            res.begin_positions.first = trace_res.first_sequence_slice_positions.first;
+            res.begin_positions.second = trace_res.second_sequence_slice_positions.first;
 
             if constexpr (traits_t::compute_sequence_alignment)
                 res.alignment = std::move(trace_res.alignment);
@@ -695,10 +695,10 @@ private:
             if constexpr (traits_t::compute_score)
                 res.score = this->alignment_state.optimum.score[simd_index];  // Just take this
 
-            if constexpr (traits_t::compute_back_coordinate)
+            if constexpr (traits_t::compute_end_positions)
             {
-                res.back_coordinate.first = this->alignment_state.optimum.column_index[simd_index] ;
-                res.back_coordinate.second = this->alignment_state.optimum.row_index[simd_index];
+                res.end_positions.first = this->alignment_state.optimum.column_index[simd_index];
+                res.end_positions.second = this->alignment_state.optimum.row_index[simd_index];
             }
 
             callback(std::move(res));

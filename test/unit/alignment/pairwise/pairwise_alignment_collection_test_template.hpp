@@ -48,24 +48,30 @@ TYPED_TEST_P(pairwise_alignment_collection_test, score)
                     fixture.get_scores());
 }
 
-TYPED_TEST_P(pairwise_alignment_collection_test, back_coordinate)
+TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_back_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_end_positions};
     auto [database, query] = fixture.get_sequences();
     auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
                  | seqan3::views::to<std::vector>;
 
     EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                     fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
-                                    fixture.get_back_coordinates())));
+    EXPECT_TRUE((std::ranges::equal(res_vec |
+                                    std::views::transform([] (auto res)
+                                    {
+                                        return seqan3::alignment_coordinate{
+                                                   seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                                   seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                                    }),
+                                    fixture.get_end_positions())));
 }
 
-TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
+TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_front_coordinate};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_begin_positions};
 
     using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
@@ -77,10 +83,22 @@ TYPED_TEST_P(pairwise_alignment_collection_test, front_coordinate)
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
-                                        fixture.get_back_coordinates())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
-                                        fixture.get_front_coordinates())));
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return seqan3::alignment_coordinate{
+                                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                                        }),
+                                        fixture.get_end_positions())));
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return seqan3::alignment_coordinate{
+                                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
+                                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                                        }),
+                                        fixture.get_begin_positions())));
     }
 }
 
@@ -99,23 +117,37 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
 
         EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
                                         fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.back_coordinate(); }),
-                                        fixture.get_back_coordinates())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.front_coordinate(); }),
-                                        fixture.get_front_coordinates())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
-                                                {
-                                                    return std::get<0>(res.alignment()) | seqan3::views::to_char
-                                                                                        | seqan3::views::to<std::string>;
-                                                }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return seqan3::alignment_coordinate{
+                                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                                        }),
+                                        fixture.get_end_positions())));
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return seqan3::alignment_coordinate{
+                                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
+                                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                                        }),
+                                        fixture.get_begin_positions())));
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return std::get<0>(res.alignment()) | seqan3::views::to_char
+                                                                                | seqan3::views::to<std::string>;
+                                        }),
                                         fixture.get_aligned_sequences1())));
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res)
-                                                {
-                                                    return std::get<1>(res.alignment()) | seqan3::views::to_char
-                                                                                        | seqan3::views::to<std::string>;
-                                                }),
+        EXPECT_TRUE((std::ranges::equal(res_vec |
+                                        std::views::transform([] (auto res)
+                                        {
+                                            return std::get<1>(res.alignment()) | seqan3::views::to_char
+                                                                                | seqan3::views::to<std::string>;
+                                        }),
                                         fixture.get_aligned_sequences2())));
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_test, score, back_coordinate, front_coordinate, alignment);
+REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_test, score, end_positions, begin_positions, alignment);

@@ -100,15 +100,15 @@ struct default_edit_distance_trait_type
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
     static constexpr bool compute_score = true;
     //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
-    static constexpr bool compute_back_coordinate = alignment_traits_type::compute_back_coordinate;
+    static constexpr bool compute_end_positions = alignment_traits_type::compute_end_positions;
     //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
-    static constexpr bool compute_front_coordinate = alignment_traits_type::compute_front_coordinate;
+    static constexpr bool compute_begin_positions = alignment_traits_type::compute_begin_positions;
     //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
     static constexpr bool compute_sequence_alignment = alignment_traits_type::compute_sequence_alignment;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
     static constexpr bool compute_score_matrix = false;
     //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.
-    static constexpr bool compute_trace_matrix = compute_front_coordinate || compute_sequence_alignment;
+    static constexpr bool compute_trace_matrix = compute_begin_positions || compute_sequence_alignment;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score or trace matrix.
     static constexpr bool compute_matrix = compute_score_matrix || compute_trace_matrix;
 

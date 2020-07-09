@@ -154,7 +154,7 @@ private:
     {
     private:
         //!\brief Indicates whether only the coordinate is required to compute the alignment.
-        static constexpr bool only_coordinates = traits_t::result_type_rank < with_front_coordinate_type::rank;
+        static constexpr bool only_coordinates = traits_t::result_type_rank < with_begin_positions_type::rank;
 
         //!\brief The selected score matrix for either banded or unbanded alignments.
         using score_matrix_t = std::conditional_t<traits_t::is_banded,

@@ -50,32 +50,41 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, score)
     seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
 }
 
-TYPED_TEST_P(pairwise_alignment_collection_callback_test, back_coordinate)
+TYPED_TEST_P(pairwise_alignment_collection_callback_test, end_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::result{seqan3::with_back_coordinate} |
+                                      seqan3::align_cfg::result{seqan3::with_end_positions} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           auto id = result.id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
-                                          EXPECT_EQ(result.back_coordinate(), fixture.get_back_coordinates()[id]);
+                                          EXPECT_EQ(result.sequence1_end_position(),
+                                                    fixture.get_end_positions()[id].first);
+                                          EXPECT_EQ(result.sequence2_end_position(),
+                                                    fixture.get_end_positions()[id].second);
                                       }};
     auto [database, query] = fixture.get_sequences();
     seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
 }
 
-TYPED_TEST_P(pairwise_alignment_collection_callback_test, front_coordinate)
+TYPED_TEST_P(pairwise_alignment_collection_callback_test, begin_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::result{seqan3::with_front_coordinate} |
+                                      seqan3::align_cfg::result{seqan3::with_begin_positions} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           auto id = result.id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
-                                          EXPECT_EQ(result.back_coordinate(), fixture.get_back_coordinates()[id]);
-                                          EXPECT_EQ(result.front_coordinate(), fixture.get_front_coordinates()[id]);
+                                          EXPECT_EQ(result.sequence1_end_position(),
+                                                    fixture.get_end_positions()[id].first);
+                                          EXPECT_EQ(result.sequence2_end_position(),
+                                                    fixture.get_end_positions()[id].second);
+                                          EXPECT_EQ(result.sequence1_begin_position(),
+                                                    fixture.get_begin_positions()[id].first);
+                                          EXPECT_EQ(result.sequence2_begin_position(),
+                                                    fixture.get_begin_positions()[id].second);
                                       }};
     auto [database, query] = fixture.get_sequences();
     seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
@@ -90,8 +99,14 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, alignment)
                                       {
                                           auto id = result.id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
-                                          EXPECT_EQ(result.back_coordinate(), fixture.get_back_coordinates()[id]);
-                                          EXPECT_EQ(result.front_coordinate(), fixture.get_front_coordinates()[id]);
+                                          EXPECT_EQ(result.sequence1_end_position(),
+                                                    fixture.get_end_positions()[id].first);
+                                          EXPECT_EQ(result.sequence2_end_position(),
+                                                    fixture.get_end_positions()[id].second);
+                                          EXPECT_EQ(result.sequence1_begin_position(),
+                                                    fixture.get_begin_positions()[id].first);
+                                          EXPECT_EQ(result.sequence2_begin_position(),
+                                                    fixture.get_begin_positions()[id].second);
 
                                           auto [gapped_database, gapped_query] = result.alignment();
                                           EXPECT_RANGE_EQ(gapped_database | seqan3::views::to_char,
@@ -106,6 +121,6 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, alignment)
 
 REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_callback_test,
                             score,
-                            back_coordinate,
-                            front_coordinate,
+                            end_positions,
+                            begin_positions,
                             alignment);

@@ -33,7 +33,7 @@ struct with_score_type
 /*!\brief Triggers score computation and determines the end position of the sequence alignment.
  * \ingroup alignment_configuration
  */
-struct with_back_coordinate_type
+struct with_end_positions_type
 {
     //!\privatesection
     //!\brief An internal rank used for an ordered access of seqan3::align_cfg::result options.
@@ -43,7 +43,7 @@ struct with_back_coordinate_type
 /*!\brief Triggers score computation and determines begin and end position of the sequence alignment.
  * \ingroup alignment_configuration
  */
-struct with_front_coordinate_type
+struct with_begin_positions_type
 {
     //!\privatesection
     //!\brief An internal rank used for an ordered access of seqan3::align_cfg::result options.
@@ -78,10 +78,10 @@ namespace seqan3
 inline constexpr detail::with_score_type with_score{};
 //!\brief Helper variable used to select end-position computation.
 //!\relates seqan3::align_cfg::result
-inline constexpr detail::with_back_coordinate_type with_back_coordinate{};
+inline constexpr detail::with_end_positions_type with_end_positions{};
 //!\brief Helper variable used to select begin position computation.
 //!\relates seqan3::align_cfg::result
-inline constexpr detail::with_front_coordinate_type with_front_coordinate{};
+inline constexpr detail::with_begin_positions_type with_begin_positions{};
 //!\brief Helper Variable used to select trace computation.
 //!\relates seqan3::align_cfg::result
 inline constexpr detail::with_alignment_type with_alignment{};
@@ -109,8 +109,8 @@ namespace seqan3::align_cfg
  * Currently four different modes can be configured (first constructor parameter):
  *
  * 1. computing only the \ref seqan3::align_cfg::result::with_score "score",
- * 2. computing in addition the \ref seqan3::align_cfg::result::with_back_coordinate "end position",
- * 3. computing in addition the \ref seqan3::align_cfg::result::with_front_coordinate "begin position",
+ * 2. computing in addition the \ref seqan3::align_cfg::result::with_end_positions "end position",
+ * 3. computing in addition the \ref seqan3::align_cfg::result::with_begin_positions "begin position",
  * 4. and finally also computing the \ref seqan3::align_cfg::result::with_alignment "alignment".
  *
  * These settings will directly affect the contents of the seqan3::alignment_result object which is returned by the
@@ -129,8 +129,8 @@ namespace seqan3::align_cfg
 template <typename alignment_result_tag_t = detail::with_score_type, typename score_t = int32_t>
 //!\cond
     requires std::same_as<alignment_result_tag_t, detail::with_score_type> ||
-             std::same_as<alignment_result_tag_t, detail::with_back_coordinate_type> ||
-             std::same_as<alignment_result_tag_t, detail::with_front_coordinate_type> ||
+             std::same_as<alignment_result_tag_t, detail::with_end_positions_type> ||
+             std::same_as<alignment_result_tag_t, detail::with_begin_positions_type> ||
              std::same_as<alignment_result_tag_t, detail::with_alignment_type>
 //!\endcond
 class result : public pipeable_config_element<result<alignment_result_tag_t, score_t>, alignment_result_tag_t>

@@ -25,8 +25,10 @@ int main()
     for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))
     {
         seqan3::debug_stream << "Score: " << res.score() << '\n';
-        seqan3::debug_stream << "Begin: " << res.front_coordinate() << '\n';
-        seqan3::debug_stream << "End: " << res.back_coordinate() << '\n';
+        seqan3::debug_stream << "Begin: (" << res.sequence1_begin_position() << "," << res.sequence2_begin_position()
+                             << ")\n";
+        seqan3::debug_stream << "End: (" << res.sequence1_end_position() << "," << res.sequence2_end_position()
+                             << ")\n";
         seqan3::debug_stream << "Alignment: \n" << res.alignment() << '\n';
     }
 }

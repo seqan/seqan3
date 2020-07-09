@@ -170,9 +170,9 @@ public:
     //!\brief Flag indicating whether the score shall be computed.
     static constexpr bool compute_score = result_type_rank >= 0;
     //!\brief Flag indicating whether the back coordintate shall be computed.
-    static constexpr bool compute_back_coordinate = result_type_rank >= 1;
+    static constexpr bool compute_end_positions = result_type_rank >= 1;
     //!\brief Flag indicating whether the front coordintate shall be computed.
-    static constexpr bool compute_front_coordinate = result_type_rank >= 2;
+    static constexpr bool compute_begin_positions = result_type_rank >= 2;
     //!\brief Flag indicating whether the sequence alignment shall be computed.
     static constexpr bool compute_sequence_alignment = result_type_rank >= 3;
     //!\brief The padding symbol to use for the computation of the alignment.

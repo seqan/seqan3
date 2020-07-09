@@ -83,7 +83,7 @@ BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
 
 BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
                   simd_with_end_position,
-                  seqan3::align_cfg::result{seqan3::with_back_coordinate, seqan3::using_score_type<int16_t>},
+                  seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<int16_t>},
                   seqan3::align_cfg::vectorise)
                         ->UseRealTime()
                         ->DenseRange(deviation_begin, deviation_end, deviation_step);
@@ -98,7 +98,7 @@ BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
 
 BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
                   simd_parallel_with_end_position,
-                  seqan3::align_cfg::result{seqan3::with_back_coordinate, seqan3::using_score_type<int16_t>},
+                  seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<int16_t>},
                   seqan3::align_cfg::vectorise,
                   seqan3::align_cfg::parallel{get_number_of_threads()})
                         ->UseRealTime()

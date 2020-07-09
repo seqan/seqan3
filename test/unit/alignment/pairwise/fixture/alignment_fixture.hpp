@@ -62,8 +62,8 @@ struct alignment_fixture
     std::string aligned_sequence1;
     std::string aligned_sequence2;
 
-    seqan3::alignment_coordinate front_coordinate;
-    seqan3::alignment_coordinate back_coordinate;
+    seqan3::alignment_coordinate begin_positions;
+    seqan3::alignment_coordinate end_positions;
 
     score_vector_or_matrix_t score_vector{};
     trace_vector_or_matrix_t trace_vector{};
@@ -106,8 +106,8 @@ alignment_fixture(
     score_t score,
     std::string aligned_sequence1,
     std::string aligned_sequence2,
-    seqan3::alignment_coordinate front_coordinate,
-    seqan3::alignment_coordinate back_coordinate,
+    seqan3::alignment_coordinate begin_positions,
+    seqan3::alignment_coordinate end_positions,
     score_vector_or_matrix_t score_vector,
     trace_vector_or_matrix_t trace_vector
 )
@@ -121,8 +121,8 @@ alignment_fixture(
     score_t score,
     std::string aligned_sequence1,
     std::string aligned_sequence2,
-    seqan3::alignment_coordinate front_coordinate,
-    seqan3::alignment_coordinate back_coordinate
+    seqan3::alignment_coordinate begin_positions,
+    seqan3::alignment_coordinate end_positions
 )
 -> alignment_fixture<sequence1_t, sequence2_t, config_t, score_t,
                      std::vector<score_t>, std::vector<seqan3::detail::trace_directions>>;
@@ -155,20 +155,20 @@ struct alignment_fixture_collection
         return vec;
     }
 
-    auto get_back_coordinates() const
+    auto get_end_positions() const
     {
-        std::vector<decltype(collection[0].back_coordinate)> vec;
+        std::vector<decltype(collection[0].end_positions)> vec;
         for (size_t i = 0; i < collection.size(); ++i)
-            vec.push_back(collection[i].back_coordinate);
+            vec.push_back(collection[i].end_positions);
 
         return vec;
     }
 
-    auto get_front_coordinates() const
+    auto get_begin_positions() const
     {
-        std::vector<decltype(collection[0].front_coordinate)> vec;
+        std::vector<decltype(collection[0].begin_positions)> vec;
         for (size_t i = 0; i < collection.size(); ++i)
-            vec.push_back(collection[i].front_coordinate);
+            vec.push_back(collection[i].begin_positions);
 
         return vec;
     }

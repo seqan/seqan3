@@ -77,7 +77,7 @@ void map_reads(std::filesystem::path const & query_path,
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
                 auto aligned_seq = alignment.alignment();
-                size_t ref_offset = alignment.front_coordinate().first + 2 + start;
+                size_t ref_offset = alignment.sequence1_begin_position() + 2 + start;
                 size_t map_qual = 60u + alignment.score();
 
                 sam_out.emplace_back(query,

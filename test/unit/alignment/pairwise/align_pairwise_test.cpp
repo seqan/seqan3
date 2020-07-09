@@ -81,8 +81,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
-            EXPECT_EQ(res.back_coordinate().first, 8u);
-            EXPECT_EQ(res.back_coordinate().second, 9u);
+            EXPECT_EQ(res.sequence1_end_position(), 8u);
+            EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
             EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
             EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
@@ -108,8 +108,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
-            EXPECT_EQ(res.back_coordinate().first, 8u);
-            EXPECT_EQ(res.back_coordinate().second, 9u);
+            EXPECT_EQ(res.sequence1_end_position(), 8u);
+            EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
             EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
             EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
@@ -135,8 +135,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         {
             EXPECT_EQ(res.id(), idx++);
             EXPECT_EQ(res.score(), -4);
-            EXPECT_EQ(res.back_coordinate().first, 8u);
-            EXPECT_EQ(res.back_coordinate().second, 9u);
+            EXPECT_EQ(res.sequence1_end_position(), 8u);
+            EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
             EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
             EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
@@ -173,8 +173,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
             {
                 EXPECT_EQ(res.id(), idx++);
                 EXPECT_EQ(res.score(), -4);
-                EXPECT_EQ(res.back_coordinate().first, 8u);
-                EXPECT_EQ(res.back_coordinate().second, 9u);
+                EXPECT_EQ(res.sequence1_end_position(), 8u);
+                EXPECT_EQ(res.sequence2_end_position(), 9u);
                 auto && [gap1, gap2] = res.alignment();
                 EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
                 EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");

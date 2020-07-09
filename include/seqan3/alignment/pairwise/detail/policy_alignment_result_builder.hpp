@@ -115,13 +115,13 @@ protected:
             result.data.score = std::move(score);
         }
 
-        if constexpr (traits_type::compute_back_coordinate)
+        if constexpr (traits_type::compute_end_positions)
         {
-            static_assert(!std::same_as<decltype(result.data.back_coordinate), invalid_t>,
+            static_assert(!std::same_as<decltype(result.data.end_positions), invalid_t>,
                           "Invalid configuration. Expected result with end positions!");
 
-            result.data.back_coordinate.first = end_positions.col;
-            result.data.back_coordinate.second = end_positions.row;
+            result.data.end_positions.first = end_positions.col;
+            result.data.end_positions.second = end_positions.row;
         }
 
        // TODO: Add other result.data like sequence1_begin_position, sequence1_end_position, and so on.

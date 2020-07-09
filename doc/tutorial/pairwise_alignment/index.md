@@ -237,12 +237,12 @@ seqan3::align_cfg::result configuration.
 Accordingly, the alignment algorithm is configured to use the best implementation to obtain the desired result.
 The following table shows the different outcomes that can be configured:
 
-| Entity                                                                                 | Available result                                      |
-| ---------------------------------------------------------------------------------------|------------------------------------------------------ |
-| \ref seqan3::align_cfg::result::with_score  "seqan3::with_score"                       | alignment score                                       |
-| \ref seqan3::align_cfg::result::with_back_coordinate  "seqan3::with_back_coordinate"   | alignment score; back coordinate                      |
-| \ref seqan3::align_cfg::result::with_front_coordinate  "seqan3::with_front_coordinate" | alignment score; back and front coordinate            |
-| \ref seqan3::align_cfg::result::with_alignment  "seqan3::with_alignment"               | alignment score; back and front coordinate; alignment |
+| Entity                                                                               | Available result                                      |
+| -------------------------------------------------------------------------------------|------------------------------------------------------ |
+| \ref seqan3::align_cfg::result::with_score  "seqan3::with_score"                     | alignment score                                       |
+| \ref seqan3::align_cfg::result::with_end_positions  "seqan3::with_end_positions"     | alignment score; back coordinate                      |
+| \ref seqan3::align_cfg::result::with_begin_positions  "seqan3::with_begin_positions" | alignment score; back and front coordinate            |
+| \ref seqan3::align_cfg::result::with_alignment  "seqan3::with_alignment"             | alignment score; back and front coordinate; alignment |
 
 The final result is returned as a seqan3::alignment_result object. This object offers special member functions to access
 the stored values. If you try to access a value, e.g. the alignment, although you didn't specify `with_alignment` in
