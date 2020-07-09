@@ -256,7 +256,7 @@ TYPED_TEST(integral_from_char_test, to_chars_small_value)
 
     EXPECT_EQ(res.ptr, &buffer[3]);
     EXPECT_EQ(res.ec, std::errc{});
-    EXPECT_EQ((std::string_view{buffer.data(), 3}), std::string_view{std::to_string(val)});
+    EXPECT_EQ((std::string_view{buffer.data(), 3}), std::string_view{"120"});
 }
 
 TYPED_TEST(integral_from_char_test, to_chars_error)
@@ -268,4 +268,17 @@ TYPED_TEST(integral_from_char_test, to_chars_error)
 
     EXPECT_EQ(res.ptr, buffer.data() + buffer.size());
     EXPECT_EQ(res.ec, std::errc::value_too_large);
+}
+
+// https://github.com/seqan/seqan3/issues/1595
+TEST(to_chars_test, large_number)
+{
+    uint64_t val{123456789};
+    std::array<char, 100> buffer{};
+
+    auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+
+    EXPECT_EQ(res.ptr, &buffer[9]);
+    EXPECT_EQ(res.ec, std::errc{});
+    EXPECT_EQ((std::string_view{buffer.data(), 9}), std::string_view{"123456789"});
 }
