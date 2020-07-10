@@ -192,8 +192,17 @@ inline void move_forward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_en
     // pre-increment
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
-    for (auto it = it_begin; it != it_end && rng_it != rng_it_end; ++it, ++rng_it)
-        expect_iter_equal<test_type>(it, rng_it);
+    for (auto it = it_begin; true;)
+    {
+        auto it_copy = ++it;
+        ++rng_it;
+
+        if (it == it_end || rng_it == rng_it_end)
+            break;
+
+        expect_iter_equal<test_type>(it_copy, rng_it);
+    }
+    EXPECT_EQ(rng_it, rng_it_end);
 }
 
 template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
@@ -202,8 +211,32 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
     // post-increment
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
-    for (auto it = it_begin; it != it_end && rng_it != rng_it_end; it++, ++rng_it)
+
+    static constexpr bool is_cpp20_input_iterator = std::same_as<decltype(it_begin++), void>;
+
+    if constexpr (is_cpp20_input_iterator)
+    {
+        // input iterator can return void for post-increment (expressed by std::weakly_incrementable)
+        EXPECT_TRUE(std::input_iterator<it_begin_t>);
+        // forward iterator require std::incrementable which requires `{ i++ } -> same_as<I>;`
+        EXPECT_FALSE(std::forward_iterator<it_begin_t>);
+    }
+
+    for (auto it = it_begin; it != it_end && rng_it != rng_it_end;)
+    {
         expect_iter_equal<test_type>(it, rng_it);
+
+        if constexpr (!is_cpp20_input_iterator)
+        {
+            expect_iter_equal<test_type>(it++, rng_it++);
+        }
+        else
+        {
+            it++;
+            rng_it++;
+        }
+    }
+    EXPECT_EQ(rng_it, rng_it_end);
 }
 
 TYPED_TEST_P(iterator_fixture, move_forward_pre)
