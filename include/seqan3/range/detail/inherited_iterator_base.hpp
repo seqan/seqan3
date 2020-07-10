@@ -107,6 +107,24 @@ public:
     {}
     //!\}
 
+    //!\brief Cast this to base type.
+    constexpr base_t & base()
+    {
+        if constexpr (wrap_base)
+            return member;
+        else
+            return *this;
+    }
+
+    //!\copydoc base
+    constexpr base_t const & base() const
+    {
+        if constexpr (wrap_base)
+            return member;
+        else
+            return *this;
+    }
+
     /*!\name Comparison operators
      * \brief Unless specialised in derived_type, all operators perform base_t's operator and cast to derived_t.
      * \{
@@ -119,7 +137,7 @@ public:
         requires std::equality_comparable<base_t>
     //!\endcond
     {
-        return *this_to_base() == *rhs.this_to_base();
+        return base() == rhs.base();
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
@@ -139,7 +157,7 @@ public:
         requires std::totally_ordered<base_t>
     //!\endcond
     {
-        return *this_to_base() < *rhs.this_to_base();
+        return base() < rhs.base();
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
@@ -149,7 +167,7 @@ public:
         requires std::totally_ordered<base_t>
     //!\endcond
     {
-        return *this_to_base() > *rhs.this_to_base();
+        return base() > rhs.base();
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
@@ -186,7 +204,7 @@ public:
         requires requires (base_t_ i) { ++i; }
     //!\endcond
     {
-        ++(*this_to_base());
+        ++base();
         return *this_derived();
     }
 
@@ -199,7 +217,7 @@ public:
         requires requires (base_t_ i) { i++; requires !std::same_as<decltype(i++), base_t_>; }
     //!\endcond
     {
-        return (*this_to_base())++;
+        return base()++;
     }
 
     //!\brief Post-increment, return previous iterator state.
@@ -213,7 +231,7 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{(*this_to_base())++};
+        return derived_t{base()++};
     }
 
     //!\brief Pre-decrement, return updated iterator.
@@ -225,7 +243,7 @@ public:
         requires requires (base_t_ i) { --i; }
     //!\endcond
     {
-        --(*this_to_base());
+        --base();
         return *this_derived();
     }
 
@@ -239,7 +257,7 @@ public:
         requires requires (base_t_ i) { i--; } && std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{(*this_to_base())--};
+        return derived_t{base()--};
     }
 
     //!\brief Move iterator to the right.
@@ -251,7 +269,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i += n; }
     //!\endcond
     {
-        *this_to_base() += skip;
+        base() += skip;
         return *this_derived();
     }
 
@@ -266,7 +284,7 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{*this_to_base() + skip};
+        return derived_t{base() + skip};
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
@@ -277,7 +295,7 @@ public:
                  std::constructible_from<derived_t, base_t>
     //!\endcond
     {
-        return derived_t{skip + static_cast<base_t const &>(it)};
+        return it + skip;
     }
 
     //!\brief Decrement iterator by skip.
@@ -289,7 +307,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i -= n; }
     //!\endcond
     {
-        *this_to_base() -= skip;
+        base() -= skip;
         return *this_derived();
     }
 
@@ -304,17 +322,17 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{*this_to_base() - skip};
+        return derived_t{base() - skip};
     }
 
     //!\brief Return offset between this and remote iterator's position.
-    constexpr difference_type operator-(derived_t const rhs) const
+    constexpr difference_type operator-(derived_t const & rhs) const
         noexcept(noexcept(std::declval<base_t &>() - std::declval<base_t &>()))
     //!\cond
         requires std::sized_sentinel_for<base_t, base_t>
     //!\endcond
     {
-        return static_cast<difference_type>(*this_to_base() - *rhs.this_to_base());
+        return base() - rhs.base();
     }
     //!\}
 
@@ -327,7 +345,7 @@ public:
         requires std::indirectly_readable<base_t>
     //!\endcond
     {
-        return **this_to_base();
+        return *base();
     }
 
     //!\brief Dereference operator returns element currently pointed at.
@@ -336,7 +354,7 @@ public:
         requires std::indirectly_readable<base_t>
     //!\endcond
     {
-        return **this_to_base();
+        return *base();
     }
 
     //!\brief Return pointer to this iterator.
@@ -345,7 +363,7 @@ public:
         requires std::input_iterator<base_t>
     //!\endcond
     {
-        return &*this_to_base();
+        return &base();
     }
 
     //!\brief Return pointer to this iterator.
@@ -354,7 +372,7 @@ public:
         requires std::input_iterator<base_t>
     //!\endcond
     {
-        return &*this_to_base();
+        return &base();
     }
 
     //!\brief Return underlying container value currently pointed at.
@@ -367,7 +385,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return (*this_to_base())[n];
+        return base()[n];
     }
 
     //!\brief Return underlying container value currently pointed at.
@@ -380,7 +398,7 @@ public:
         requires requires (base_t_ const i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return (*this_to_base())[n];
+        return base()[n];
     }
     //!\}
 
@@ -401,24 +419,6 @@ private:
     constexpr derived_t const * this_derived() const
     {
         return static_cast<derived_t const *>(this);
-    }
-
-    //!\brief Cast this to base type.
-    constexpr base_t * this_to_base()
-    {
-        if constexpr (wrap_base)
-            return &member;
-        else
-            return static_cast<base_t*>(this);
-    }
-
-    //!\copydoc this_to_base
-    constexpr base_t const * this_to_base() const
-    {
-        if constexpr (wrap_base)
-            return &member;
-        else
-            return static_cast<base_t const *>(this);
     }
 };
 
