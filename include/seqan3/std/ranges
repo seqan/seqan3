@@ -216,7 +216,7 @@ namespace views { using ::ranges::cpp20::views::drop_while; }
 
 // [range.join], join view
 // using ::ranges::cpp20::join_view;
-// namespace views { using ::ranges::cpp20::views::join; }
+namespace views { using ::ranges::cpp20::views::join; }
 
 // [range.split], split view
 // using ::ranges::cpp20::split_view;
