@@ -307,9 +307,9 @@ public:
     //!\brief The pointer type.
     using pointer = void;
     //!\brief The iterator category tag.
-    using iterator_category = iterator_tag_t<underlying_iterator_type>;
-    //!\brief The iterator concept.
-    using iterator_concept = iterator_category;
+    using iterator_category = detail::iterator_category_tag_t<underlying_iterator_type>;
+    //!\brief The iterator concept tag.
+    using iterator_concept = detail::iterator_concept_tag_t<underlying_iterator_type>;
     //!\}
 
     /*!\name Constructors, destructor and assignment

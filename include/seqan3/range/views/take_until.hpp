@@ -264,7 +264,9 @@ public:
     //!\brief The pointer type.
     using pointer = detail::iter_pointer_t<base_base_t>;
     //!\brief The iterator category tag.
-    using iterator_category = iterator_tag_t<base_base_t>;
+    using iterator_category = detail::iterator_category_tag_t<base_base_t>;
+    //!\brief The iterator concept tag.
+    using iterator_concept = detail::iterator_concept_tag_t<base_base_t>;
     //!\}
 
     //!\brief Returns a copy of the underlying iterator.

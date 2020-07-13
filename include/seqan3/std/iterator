@@ -179,7 +179,7 @@ using ::ranges::cpp20::sortable;
 // =================================
 
 // [std.iterator.tags], iterator tags
-// using ::ranges::cpp20::contiguous_iterator_tag;
+using ::ranges::contiguous_iterator_tag;
 
 // ======================================================
 // [predef.iterators], predefined iterators and sentinels

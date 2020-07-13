@@ -68,9 +68,9 @@ public:
     //!\brief The pointer type.
     using pointer = detail::iter_pointer_t<base_t>;
     //!\brief The iterator category tag.
-    using iterator_category = iterator_tag_t<base_t>;
+    using iterator_category = detail::iterator_category_tag_t<base_t>;
     //!\brief The iterator concept tag.
-    using iterator_concept = iterator_category;
+    using iterator_concept = detail::iterator_concept_tag_t<base_t>;
     //!\}
 
     /*!\name Constructors, destructor and assignment
