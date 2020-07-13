@@ -5,23 +5,12 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-//!\author Clemens Cords (clemens.cords@fu-berlin.de)
-
-#include <fstream>
-#include <sstream>
-#include <type_traits>
-
 #include <benchmark/benchmark.h>
 
-#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/test/seqan2.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
@@ -38,12 +27,12 @@ static std::string create_sam_file_string(size_t const n_queries)
 {
     if (file_dict.find(n_queries) == file_dict.end())
     {
-        size_t const seed = 1234u;
-        size_t const length_variance = 0;
-        size_t const reference_size = 500;
-        size_t const read_size = 100; // typical illumina read
-        std::string const default_query_id = "query_";
-        std::string const reference_id = "reference_id";
+        size_t const seed{1234u};
+        size_t const length_variance{0u};
+        size_t const reference_size{500u};
+        size_t const read_size{100u}; // typical illumina read
+        std::string const query_prefix{"query_"};
+        std::string const reference_id{"reference_id"};
 
         // generate sequences
         auto reference = seqan3::test::generate_sequence<seqan3::dna4>(reference_size, length_variance, seed);
@@ -68,7 +57,7 @@ static std::string create_sam_file_string(size_t const n_queries)
             auto query = seqan3::test::generate_sequence<seqan3::dna4>(read_size, length_variance, seed + i);
             auto qualities = seqan3::test::generate_sequence<seqan3::phred42>(read_size, length_variance, seed + i);
             auto align_result = *(seqan3::align_pairwise(std::tie(query, reference), config).begin());
-            std::string const current_query_id = default_query_id + std::to_string(i);
+            std::string const current_query_id = query_prefix + std::to_string(i);
 
             sam_out.emplace_back(query,                                   // field::seq
                                  current_query_id,                        // field::id
@@ -101,7 +90,7 @@ void write_file(std::string const & file_name, size_t const n_queries)
 
 void sam_file_read_from_stream(benchmark::State &state)
 {
-    size_t n_queries = state.range(0);
+    size_t const n_queries = state.range(0);
 
     std::istringstream istream{create_sam_file_string(n_queries)};
 
@@ -122,7 +111,7 @@ void sam_file_read_from_stream(benchmark::State &state)
 
 void sam_file_read_from_disk(benchmark::State &state)
 {
-    size_t n_queries = state.range(0);
+    size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};
     auto tmp_path = file_name.get_path();
 
@@ -146,7 +135,7 @@ void sam_file_read_from_disk(benchmark::State &state)
 
 void seqan2_sam_file_read_from_stream(benchmark::State &state)
 {
-    size_t n_queries = state.range(0);
+    size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};
     std::string sam_file = create_sam_file_string(n_queries);
 
@@ -183,7 +172,7 @@ void seqan2_sam_file_read_from_stream(benchmark::State &state)
 
 void seqan2_sam_file_read_from_disk(benchmark::State &state)
 {
-    size_t n_queries = state.range(0);
+    size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};
     auto tmp_path = file_name.get_path();
 
@@ -208,18 +197,26 @@ void seqan2_sam_file_read_from_disk(benchmark::State &state)
 
 #endif // SEQAN3_HAS_SEQAN2
 
-BENCHMARK(sam_file_read_from_stream)->Arg(50);
-BENCHMARK(sam_file_read_from_stream)->Arg(500);
+#ifndef NDEBUG
+static constexpr size_t low_query_count{5u};
+static constexpr size_t high_query_count{10u};
+#else
+static constexpr size_t low_query_count{50u};
+static constexpr size_t high_query_count{500u};
+#endif // NDEBUG
 
-BENCHMARK(sam_file_read_from_disk)->Arg(50);
-BENCHMARK(sam_file_read_from_disk)->Arg(500);
+BENCHMARK(sam_file_read_from_stream)->Arg(low_query_count);
+BENCHMARK(sam_file_read_from_stream)->Arg(high_query_count);
+
+BENCHMARK(sam_file_read_from_disk)->Arg(low_query_count);
+BENCHMARK(sam_file_read_from_disk)->Arg(high_query_count);
 
 #if SEQAN3_HAS_SEQAN2
-BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(50);
-BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(500);
+BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(low_query_count);
+BENCHMARK(seqan2_sam_file_read_from_stream)->Arg(high_query_count);
 
-BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(50);
-BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(500);
+BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(low_query_count);
+BENCHMARK(seqan2_sam_file_read_from_disk)->Arg(high_query_count);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_MAIN();
