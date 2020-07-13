@@ -72,7 +72,8 @@
  *
  * \include test/snippet/core/algorithm/configuration_get_or.cpp
  */
- #include <seqan3/core/algorithm/bound.hpp>
+#include <seqan3/core/algorithm/alignment_range.hpp>
+#include <seqan3/core/algorithm/bound.hpp>
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>

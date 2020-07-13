@@ -12,7 +12,7 @@
 
 #include <range/v3/view/iota.hpp>
 
-#include <seqan3/alignment/pairwise/alignment_range.hpp>
+#include <seqan3/core/algorithm/alignment_range.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 
 #include "../../range/iterator_test_template.hpp"
