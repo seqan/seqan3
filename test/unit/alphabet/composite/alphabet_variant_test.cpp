@@ -343,12 +343,7 @@ TEST(alphabet_variant_test, char_is_valid_for)
     EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
 }
 
-template <typename T>
-using alphabet_variant_typed_test = ::testing::Test;
-
-TYPED_TEST_SUITE(alphabet_variant_typed_test, alphabet_variant_types, );
-
-TYPED_TEST(alphabet_variant_typed_test, char_is_valid_for)
+TYPED_TEST(alphabet_variant_test, char_is_valid_for)
 {
     using gapped_alphabet_t = TypeParam;
     using gapped_alphabet_bases_t = typename gapped_alphabet_t::seqan3_required_types;
