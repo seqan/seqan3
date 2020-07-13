@@ -335,7 +335,8 @@ TEST(alphabet_variant_test, two_different_variants)
 }
 
 TEST(alphabet_variant_test, char_is_valid_for)
-{ // see issue https://github.com/seqan/seqan3/issues/1972
+{
+    // see issue https://github.com/seqan/seqan3/issues/1972
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
