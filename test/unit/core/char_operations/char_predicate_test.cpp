@@ -11,6 +11,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 
 using namespace std::literals;
 
@@ -437,5 +438,44 @@ TEST(char_predicate_, char_types)
 
     {  // check value out of range
         EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::dna5>(char16_t{256}));
+    }
+}
+
+TEST(char_predicate_, is_in_alphabet_alphabet_variant)
+{ // see issue https://github.com/seqan/seqan3/issues/1972
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
+}
+
+template <typename T>
+using char_predicate_typed_test = ::testing::Test;
+
+using alphabet_variant_types = ::testing::Types<seqan3::alphabet_variant<seqan3::dna4, seqan3::gap>,
+                                                seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap>,
+                                                seqan3::alphabet_variant<char, seqan3::gap>>;
+
+TYPED_TEST_SUITE(char_predicate_typed_test, alphabet_variant_types, );
+
+TYPED_TEST(char_predicate_typed_test, is_in_alphabet_alphabet_variant)
+{
+    using gapped_alphabet_t = TypeParam;
+    using gapped_alphabet_bases_t = typename gapped_alphabet_t::seqan3_required_types;
+    using char_t = seqan3::alphabet_char_t<gapped_alphabet_t>;
+
+    char_t i = std::numeric_limits<char_t>::min();
+    char_t end = std::numeric_limits<char_t>::max();
+    uint64_t i_no_overflow = std::numeric_limits<char_t>::min();
+
+    for (; i_no_overflow <= static_cast<uint64_t>(end); ++i, ++i_no_overflow)
+    {
+        bool is_valid{};
+        seqan3::detail::for_each<gapped_alphabet_bases_t>([&is_valid, i](auto id)
+        {
+             using type = typename decltype(id)::type;
+             is_valid = is_valid || seqan3::is_in_alphabet<type>(i);
+        });
+        EXPECT_EQ(seqan3::is_in_alphabet<gapped_alphabet_t>(i), is_valid);
     }
 }

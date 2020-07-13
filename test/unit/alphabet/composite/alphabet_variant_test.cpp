@@ -13,7 +13,7 @@
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
@@ -335,41 +335,36 @@ TEST(alphabet_variant_test, two_different_variants)
 }
 
 TEST(alphabet_variant_test, char_is_valid_for)
-{
+{ // see issue https://github.com/seqan/seqan3/issues/1972
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
     EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
+}
 
-    using char_t = seqan3::alphabet_char_t<seqan3::gapped<seqan3::rna5>>;
+template <typename T>
+using alphabet_variant_typed_test = ::testing::Test;
+
+TYPED_TEST_SUITE(alphabet_variant_typed_test, alphabet_variant_types, );
+
+TYPED_TEST(alphabet_variant_typed_test, char_is_valid_for)
+{
+    using gapped_alphabet_t = TypeParam;
+    using gapped_alphabet_bases_t = typename gapped_alphabet_t::seqan3_required_types;
+    using char_t = seqan3::alphabet_char_t<gapped_alphabet_t>;
 
     char_t i = std::numeric_limits<char_t>::min();
     char_t end = std::numeric_limits<char_t>::max();
+    uint64_t i_no_overflow = std::numeric_limits<char_t>::min();
 
-    // note that without the cast i <= end would result in an ininite loop
-    for (; static_cast<int64>(i) <= static_cast<int64>(end); ++i)
+    for (; i_no_overflow <= static_cast<uint64_t>(end); ++i, ++i_no_overflow)
     {
-        EXPECT_EQ(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>(i),
-                  seqan3::char_is_valid_for<seqan3::gap>(i) || seqan3::char_is_valid_for<seqan3::rna5>(i));
-    }
-}
-
-TEST(alphabet_variant_test, is_in_alphabet)
-{ // see issue https://github.com/seqan/seqan3/issues/1972
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
-    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
-
-    using char_t = seqan3::alphabet_char_t<seqan3::gapped<seqan3::rna5>>;
-
-    char_t i = std::numeric_limits<char_t>::min();
-    char_t j = std::numeric_limits<char_t>::max();
-
-    // note that without the cast i <= end would result in an ininite loop
-    for (; static_cast<int64>(i) <= static_cast<int64>(end); ++i)
-    {
-        EXPECT_EQ(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>(i),
-                  seqan3::is_in_alphabet<seqan3::gap>(i) || seqan3::is_in_alphabet<seqan3::rna5>(i));
+        bool is_valid{};
+        seqan3::detail::for_each<gapped_alphabet_bases_t>([&is_valid, i](auto id)
+        {
+             using type = typename decltype(id)::type;
+             is_valid = is_valid || seqan3::char_is_valid_for<type>(i);
+        });
+        EXPECT_EQ(seqan3::char_is_valid_for<gapped_alphabet_t>(i), is_valid);
     }
 }
