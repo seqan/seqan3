@@ -13,9 +13,10 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/iterator>
 #include <type_traits>
 
-#include <seqan3/std/iterator>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
