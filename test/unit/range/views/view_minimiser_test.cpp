@@ -83,13 +83,8 @@ class minimiser_view_properties_test: public ::testing::Test { };
 
 using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::vector<seqan3::dna4> const,
-#if SEQAN3_WORKAROUND_ISSUE_1743
-                                                // seqan3::bitcompressed_vector<seqan3::dna4>,
-                                                // seqan3::bitcompressed_vector<seqan3::dna4> const,
-#else // ^^^ workaround / no workaround vvv
                                                 seqan3::bitcompressed_vector<seqan3::dna4>,
                                                 seqan3::bitcompressed_vector<seqan3::dna4> const,
-#endif // SEQAN3_WORKAROUND_ISSUE_1743
                                                 std::list<seqan3::dna4>,
                                                 std::list<seqan3::dna4> const,
                                                 std::forward_list<seqan3::dna4>,
@@ -215,23 +210,12 @@ TEST_F(minimiser_test, combinability)
     EXPECT_RANGE_EQ(result3_ungapped_stop, text3 | stop_at_t | kmer_view | minimiser_no_rev_view);
     EXPECT_RANGE_EQ(result3_gapped_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_no_rev_view);
 
-#if SEQAN3_WORKAROUND_ISSUE_1953
-    /*
     EXPECT_RANGE_EQ(result3_ungapped_stop, (seqan3::detail::minimiser_view{text3 | stop_at_t | kmer_view,
-                                                                    text3 | stop_at_t | rev_kmer_view,
-                                                                    5}));
+                                                                           text3 | stop_at_t | rev_kmer_view,
+                                                                           5}));
     EXPECT_RANGE_EQ(result3_gapped_stop, (seqan3::detail::minimiser_view{text3 | stop_at_t | gapped_kmer_view,
-                                                                  text3 | stop_at_t | rev_gapped_kmer_view,
-                                                                  5}));
-    */
-#else // ^^^ workaround / no workaround vvv
-    EXPECT_RANGE_EQ(result3_ungapped_stop, (seqan3::detail::minimiser_view{text3 | stop_at_t | kmer_view,
-                                                                    text3 | stop_at_t | rev_kmer_view,
-                                                                    5}));
-    EXPECT_RANGE_EQ(result3_gapped_stop, (seqan3::detail::minimiser_view{text3 | stop_at_t | gapped_kmer_view,
-                                                                  text3 | stop_at_t | rev_gapped_kmer_view,
-                                                                  5}));
-#endif // SEQAN3_WORKAROUND_ISSUE_1953
+                                                                         text3 | stop_at_t | rev_gapped_kmer_view,
+                                                                         5}));
 
     auto start_at_a = seqan3::views::drop(6);
     EXPECT_RANGE_EQ(result3_start, (seqan3::detail::minimiser_view{text3 | start_at_a | kmer_view,
