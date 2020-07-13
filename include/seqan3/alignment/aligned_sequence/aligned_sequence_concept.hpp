@@ -92,7 +92,7 @@ namespace seqan3
  * \brief     The generic concept for an aligned sequence.
  * \ingroup   aligned_sequence
  *
- * This concept describes the requirements a sequence must fulfill in order to represent a sequence in an alignment.
+ * This concept describes the requirements a sequence must fulfil in order to represent a sequence in an alignment.
  *
  * The type needs to model seqan3::sequence and the reference type must be comparable to seqan3::gap.
  *
