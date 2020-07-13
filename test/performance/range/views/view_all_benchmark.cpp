@@ -7,12 +7,13 @@
 
 #include <deque>
 #include <list>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/std/ranges>
+#include <range/v3/view/all.hpp>
 
 #include <seqan3/range/views/type_reduce.hpp>
 
