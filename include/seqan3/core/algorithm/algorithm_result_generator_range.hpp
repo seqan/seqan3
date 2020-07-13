@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::alignment_range.
+ * \brief Provides seqan3::detail::algorithm_result_generator_range.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -40,7 +40,7 @@ namespace seqan3
  * \endif
  */
 template <typename alignment_executor_type>
-class alignment_range
+class algorithm_result_generator_range
 {
     static_assert(!std::is_const_v<alignment_executor_type>,
                   "Cannot create an alignment stream over a const buffer.");
@@ -50,24 +50,24 @@ class alignment_range
     //!\brief The actual algorithm result type.
     using algorithm_result_type = typename optional_type::value_type;
 
-    class alignment_range_iterator;
+    class algorithm_result_generator_range_iterator;
 
     //!\brief Befriend the iterator type.
-    friend class alignment_range_iterator;
+    friend class algorithm_result_generator_range_iterator;
 
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_range() = default; //!< Defaulted.
-    alignment_range(alignment_range const &) = delete; //!< This is a move-only type.
-    alignment_range(alignment_range &&) = default; //!< Defaulted.
-    alignment_range & operator=(alignment_range const &) = delete; //!< This is a move-only type.
-    alignment_range & operator=(alignment_range &&) = default; //!< Defaulted.
-    ~alignment_range() = default; //!< Defaulted.
+    algorithm_result_generator_range() = default; //!< Defaulted.
+    algorithm_result_generator_range(algorithm_result_generator_range const &) = delete; //!< This is a move-only type.
+    algorithm_result_generator_range(algorithm_result_generator_range &&) = default; //!< Defaulted.
+    algorithm_result_generator_range & operator=(algorithm_result_generator_range const &) = delete; //!< This is a move-only type.
+    algorithm_result_generator_range & operator=(algorithm_result_generator_range &&) = default; //!< Defaulted.
+    ~algorithm_result_generator_range() = default; //!< Defaulted.
 
     //!\brief Explicit deletion to forbid copy construction of the underlying executor.
-    explicit alignment_range(alignment_executor_type const & alignment_executor) = delete;
+    explicit algorithm_result_generator_range(alignment_executor_type const & alignment_executor) = delete;
 
     /*!\brief Constructs a new alignment range by taking ownership over the passed alignment buffer.
      *
@@ -77,7 +77,7 @@ public:
      *
      * Constructs a new alignment range by taking ownership over the passed alignment buffer.
      */
-    explicit alignment_range(alignment_executor_type && alignment_executor) :
+    explicit algorithm_result_generator_range(alignment_executor_type && alignment_executor) :
         alignment_executor_ptr{std::make_unique<alignment_executor_type>(std::move(alignment_executor))}
     {}
     //!\}
@@ -93,13 +93,13 @@ public:
      *
      * Invocation of this function will trigger the computation of the first alignment.
      */
-    constexpr alignment_range_iterator begin()
+    constexpr algorithm_result_generator_range_iterator begin()
     {
-        return alignment_range_iterator{*this};
+        return algorithm_result_generator_range_iterator{*this};
     }
 
     //!\brief This range is not const-iterable.
-    alignment_range_iterator begin() const = delete;
+    algorithm_result_generator_range_iterator begin() const = delete;
 
     /*!\brief Returns a sentinel signaling the end of the alignment range.
      * \return a sentinel.
@@ -149,20 +149,20 @@ private:
 };
 
 /*!\name Type deduction guide
- * \relates seqan3::alignment_range
+ * \relates seqan3::algorithm_result_generator_range
  * \{
  */
 
 //!\brief Deduces from the passed alignment_executor_type
 template <typename alignment_executor_type>
-alignment_range(alignment_executor_type &&) -> alignment_range<std::remove_reference_t<alignment_executor_type>>;
+algorithm_result_generator_range(alignment_executor_type &&) -> algorithm_result_generator_range<std::remove_reference_t<alignment_executor_type>>;
 //!\}
 
-/*!\brief The iterator of seqan3::detail::alignment_range.
+/*!\brief The iterator of seqan3::detail::algorithm_result_generator_range.
  * \implements std::input_iterator
  */
 template <typename alignment_executor_type>
-class alignment_range<alignment_executor_type>::alignment_range_iterator
+class algorithm_result_generator_range<alignment_executor_type>::algorithm_result_generator_range_iterator
 {
 public:
     /*!\name Associated types
@@ -183,15 +183,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alignment_range_iterator() noexcept = default; //!< Defaulted.
-    constexpr alignment_range_iterator(alignment_range_iterator const &) noexcept = default; //!< Defaulted.
-    constexpr alignment_range_iterator(alignment_range_iterator &&) noexcept = default; //!< Defaulted.
-    constexpr alignment_range_iterator & operator=(alignment_range_iterator const &) noexcept = default; //!< Defaulted.
-    constexpr alignment_range_iterator & operator=(alignment_range_iterator &&) noexcept = default; //!< Defaulted.
-    ~alignment_range_iterator() = default; //!< Defaulted.
+    constexpr algorithm_result_generator_range_iterator() noexcept = default; //!< Defaulted.
+    constexpr algorithm_result_generator_range_iterator(algorithm_result_generator_range_iterator const &) noexcept = default; //!< Defaulted.
+    constexpr algorithm_result_generator_range_iterator(algorithm_result_generator_range_iterator &&) noexcept = default; //!< Defaulted.
+    constexpr algorithm_result_generator_range_iterator & operator=(algorithm_result_generator_range_iterator const &) noexcept = default; //!< Defaulted.
+    constexpr algorithm_result_generator_range_iterator & operator=(algorithm_result_generator_range_iterator &&) noexcept = default; //!< Defaulted.
+    ~algorithm_result_generator_range_iterator() = default; //!< Defaulted.
 
     //!\brief Construct from alignment stream.
-    explicit constexpr alignment_range_iterator(alignment_range & range) : range_ptr(std::addressof(range))
+    explicit constexpr algorithm_result_generator_range_iterator(algorithm_result_generator_range & range) : range_ptr(std::addressof(range))
     {
         ++(*this); // Fetch the next element.
     }
@@ -221,7 +221,7 @@ public:
      * \{
      */
     //!\brief Increments the iterator by one.
-    alignment_range_iterator & operator++(/*pre*/)
+    algorithm_result_generator_range_iterator & operator++(/*pre*/)
     {
         assert(range_ptr != nullptr);
 
@@ -240,7 +240,7 @@ public:
      * \{
      */
     //!\brief Checks whether lhs is equal to the sentinel.
-    friend constexpr bool operator==(alignment_range_iterator const & lhs,
+    friend constexpr bool operator==(algorithm_result_generator_range_iterator const & lhs,
                                      std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end;
@@ -248,13 +248,13 @@ public:
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
     friend constexpr bool operator==(std::default_sentinel_t const & lhs,
-                                     alignment_range_iterator const & rhs) noexcept
+                                     algorithm_result_generator_range_iterator const & rhs) noexcept
     {
         return rhs == lhs;
     }
 
     //!\brief Checks whether `*this` is not equal to the sentinel.
-    friend constexpr bool operator!=(alignment_range_iterator const & lhs,
+    friend constexpr bool operator!=(algorithm_result_generator_range_iterator const & lhs,
                                      std::default_sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
@@ -262,7 +262,7 @@ public:
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
     friend constexpr bool operator!=(std::default_sentinel_t const & lhs,
-                                     alignment_range_iterator const & rhs) noexcept
+                                     algorithm_result_generator_range_iterator const & rhs) noexcept
     {
         return rhs != lhs;
     }
@@ -270,7 +270,7 @@ public:
 
 private:
     //!\brief Pointer to the underlying range.
-    alignment_range * range_ptr{};
+    algorithm_result_generator_range * range_ptr{};
     //!\brief Indicates the end of the underlying resource.
     bool at_end{true};
 };

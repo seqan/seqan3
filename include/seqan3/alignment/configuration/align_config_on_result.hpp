@@ -33,8 +33,8 @@ namespace seqan3::align_cfg
  * Allows the user to specify a callback that should be called for every computed alignment result. The callback
  * must take exactly one argument for the alignment result and return `void`. If the user callback is
  * specified, the call to the alignment algorithm seqan3::align_pairwise will return nothing, i.e. it does not return
- * a seqan3::alignment_range anymore. Note that within a parallel configuration the order of the generated alignment 
- * results and therefore the call to the user callback is non-deterministic. However, the continuation interface with the 
+ * a seqan3::algorithm_result_generator_range anymore. Note that within a parallel configuration the order of the generated alignment
+ * results and therefore the call to the user callback is non-deterministic. However, the continuation interface with the
  * user callback can be more efficient in a concurrent environment. If you pass an lvalue function object as callback
  * function, you need to make sure that the referenced function object outlives the call to the alignment algorithm.
  *

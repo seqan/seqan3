@@ -12,7 +12,7 @@
 
 #include <range/v3/view/iota.hpp>
 
-#include <seqan3/core/algorithm/alignment_range.hpp>
+#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 
 #include "../../range/iterator_test_template.hpp"
@@ -51,66 +51,66 @@ private:
 // Testing iterator.
 // ----------------------------------------------------------------------------
 
-using alignment_range_t = seqan3::alignment_range<dummy_executor>;
-using alignment_range_iterator = std::ranges::iterator_t<alignment_range_t>;
+using algorithm_result_generator_range_t = seqan3::algorithm_result_generator_range<dummy_executor>;
+using algorithm_result_generator_range_iterator = std::ranges::iterator_t<algorithm_result_generator_range_t>;
 
 template <>
-struct iterator_fixture<alignment_range_iterator> : ::testing::Test
+struct iterator_fixture<algorithm_result_generator_range_iterator> : ::testing::Test
 {
     using iterator_tag = std::input_iterator_tag;
     static constexpr bool const_iterable = false;
 
-    alignment_range_t test_range{dummy_executor{}};
+    algorithm_result_generator_range_t test_range{dummy_executor{}};
     std::vector<size_t> expected_range{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 };
 
-INSTANTIATE_TYPED_TEST_SUITE_P(alignment_range_iterator, iterator_fixture, alignment_range_iterator, );
+INSTANTIATE_TYPED_TEST_SUITE_P(algorithm_result_generator_range_iterator, iterator_fixture, algorithm_result_generator_range_iterator, );
 
 // ----------------------------------------------------------------------------
 // Testing alignment range concepts and interfaces.
 // ----------------------------------------------------------------------------
 
-TEST(alignment_range, concept_test)
+TEST(algorithm_result_generator_range, concept_test)
 {
-    EXPECT_TRUE(std::ranges::input_range<alignment_range_t>);
-    EXPECT_FALSE(std::ranges::forward_range<alignment_range_t>);
+    EXPECT_TRUE(std::ranges::input_range<algorithm_result_generator_range_t>);
+    EXPECT_FALSE(std::ranges::forward_range<algorithm_result_generator_range_t>);
 }
 
-TEST(alignment_range, construction)
+TEST(algorithm_result_generator_range, construction)
 {
-    EXPECT_TRUE(std::is_default_constructible_v<alignment_range_t>);
-    EXPECT_FALSE(std::is_copy_constructible_v<alignment_range_t>);
-    EXPECT_TRUE(std::is_move_constructible_v<alignment_range_t>);
-    EXPECT_FALSE(std::is_copy_assignable_v<alignment_range_t>);
-    EXPECT_TRUE(std::is_move_assignable_v<alignment_range_t>);
+    EXPECT_TRUE(std::is_default_constructible_v<algorithm_result_generator_range_t>);
+    EXPECT_FALSE(std::is_copy_constructible_v<algorithm_result_generator_range_t>);
+    EXPECT_TRUE(std::is_move_constructible_v<algorithm_result_generator_range_t>);
+    EXPECT_FALSE(std::is_copy_assignable_v<algorithm_result_generator_range_t>);
+    EXPECT_TRUE(std::is_move_assignable_v<algorithm_result_generator_range_t>);
 
-    EXPECT_TRUE((std::is_constructible_v<alignment_range_t, dummy_executor>));
+    EXPECT_TRUE((std::is_constructible_v<algorithm_result_generator_range_t, dummy_executor>));
 }
 
-TEST(alignment_range, type_deduction)
+TEST(algorithm_result_generator_range, type_deduction)
 {
-    seqan3::alignment_range rng{dummy_executor{}};
-    EXPECT_TRUE((std::is_same_v<decltype(rng), seqan3::alignment_range<dummy_executor>>));
+    seqan3::algorithm_result_generator_range rng{dummy_executor{}};
+    EXPECT_TRUE((std::is_same_v<decltype(rng), seqan3::algorithm_result_generator_range<dummy_executor>>));
 }
 
-TEST(alignment_range, begin)
+TEST(algorithm_result_generator_range, begin)
 {
-    seqan3::alignment_range rng{dummy_executor{}};
+    seqan3::algorithm_result_generator_range rng{dummy_executor{}};
     auto it = rng.begin();
     EXPECT_EQ(*it, 0u);
 }
 
-TEST(alignment_range, end)
+TEST(algorithm_result_generator_range, end)
 {
-    seqan3::alignment_range rng{dummy_executor{}};
+    seqan3::algorithm_result_generator_range rng{dummy_executor{}};
     auto it = rng.end();
     EXPECT_FALSE(it == rng.begin());
     EXPECT_FALSE(rng.begin() == it);
 }
 
-TEST(alignment_range, iterable)
+TEST(algorithm_result_generator_range, iterable)
 {
-    seqan3::alignment_range rng{dummy_executor{}};
+    seqan3::algorithm_result_generator_range rng{dummy_executor{}};
     size_t sum = 0;
     for (size_t res : rng)
         sum += res;
@@ -118,8 +118,8 @@ TEST(alignment_range, iterable)
     EXPECT_EQ(sum, 45u);
 }
 
-TEST(alignment_range, default_construction)
+TEST(algorithm_result_generator_range, default_construction)
 {
-    seqan3::alignment_range<dummy_executor> rng{};
+    seqan3::algorithm_result_generator_range<dummy_executor> rng{};
     EXPECT_THROW(rng.begin(), std::runtime_error);
 }
