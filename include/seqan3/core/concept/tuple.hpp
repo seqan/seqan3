@@ -131,8 +131,8 @@ namespace seqan3
  * \details
  *
  * Types that meet this concept are for example std::tuple, std::pair, std::array, seqan3::pod_tuple, seqan3::record.
- * The std::totally_ordered will only be required if all types contained in the tuple like
- * data structure are them selfs strict totally ordered.
+ * The std::totally_ordered will only be required if all types contained in the tuple-like
+ * data structure are themselves strict totally ordered.
  */
 /*!\name Requirements for seqan3::tuple_like
  * \brief You can expect these (meta-)functions on all types that implement seqan3::tuple_like.
@@ -188,6 +188,21 @@ SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && re
                              meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
                 std::totally_ordered<remove_cvref_t<t>>);
 };
+//!\endcond
+
+/*!\interface seqan3::pair_like
+ * \extends seqan3::tuple_like
+ * \ingroup core
+ * \brief Whether a type behaves like a tuple with exactly two elements.
+ *
+ * \details
+ *
+ * Types that meet this concept are for example std::tuple, std::pair, std::array, seqan3::pod_tuple,
+ * iff std::tuple_size equals `2`.
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT pair_like = tuple_like<t> && std::tuple_size_v<std::remove_reference_t<t>> == 2;
 //!\endcond
 
 } // namespace seqan3

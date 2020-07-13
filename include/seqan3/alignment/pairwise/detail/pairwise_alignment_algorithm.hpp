@@ -23,7 +23,9 @@
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
-#include <seqan3/range/views/drop.hpp>
+#include <seqan3/core/simd/view_to_simd.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/zip.hpp>
 
 namespace seqan3::detail
@@ -54,15 +56,13 @@ class pairwise_alignment_algorithm : protected policies_t...
 protected:
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
-    //!\brief The type of the scoring scheme.
-    using scoring_scheme_type =  typename traits_type::scoring_scheme_type;
+    //!\brief The configured score type.
+    using score_type = typename traits_type::score_type;
     //!\brief The configured alignment result type.
     using alignment_result_type = typename traits_type::alignment_result_type;
 
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
 
-    //!\brief The configured scoring scheme.
-    scoring_scheme_type m_scoring_scheme{};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -80,12 +80,10 @@ public:
      *
      * \details
      *
-     * Initialises the algorithm given the user settings from the alignment configuration object.
+     * Initialises the base policies of the alignment algorithm.
      */
     pairwise_alignment_algorithm(alignment_configuration_t const & config) : policies_t(config)...
-    {
-        m_scoring_scheme = seqan3::get<align_cfg::scoring>(config).value;
-    }
+    {}
     //!\}
 
     /*!\name Invocation
@@ -153,7 +151,84 @@ public:
     }
     //!\}
 
+    //!\overload
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
+    //!\cond
+        requires traits_type::is_vectorised && std::invocable<callback_t, alignment_result_type>
+    //!\endcond
+    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
+    {
+        using simd_collection_t = std::vector<score_type, aligned_allocator<score_type, alignof(score_type)>>;
+        using original_score_t = typename traits_type::original_score_type;
+
+        // Extract the batch of sequences for the first and the second sequence.
+        auto seq1_collection = indexed_sequence_pairs | views::get<0> | views::get<0>;
+        auto seq2_collection = indexed_sequence_pairs | views::get<0> | views::get<1>;
+
+        this->initialise_tracker(seq1_collection, seq2_collection);
+
+        // Convert batch of sequences to sequence of simd vectors.
+        thread_local simd_collection_t simd_seq1_collection{};
+        thread_local simd_collection_t simd_seq2_collection{};
+
+        convert_batch_of_sequences_to_simd_vector(simd_seq1_collection, seq1_collection, traits_type::padding_symbol);
+        convert_batch_of_sequences_to_simd_vector(simd_seq2_collection, seq2_collection, traits_type::padding_symbol);
+
+        compute_matrix(simd_seq1_collection, simd_seq2_collection);
+
+        size_t index = 0;
+        for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
+        {
+            original_score_t score = this->optimal_score[index] -
+                                     (this->padding_offsets[index] * this->scoring_scheme.padding_match_score());
+            matrix_coordinate coordinate{row_index_type{size_t{this->optimal_coordinate.row[index]}},
+                                         column_index_type{size_t{this->optimal_coordinate.col[index]}}};
+            this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
+                                         std::move(idx),
+                                         std::move(score),
+                                         std::move(coordinate),
+                                         callback);
+            ++index;
+        }
+    }
+
 protected:
+    /*!\brief Converts a batch of sequences to a sequence of simd vectors.
+     * \tparam simd_sequence_t The type of the simd sequence; must model std::ranges::output_range for the `score_type`.
+     * \tparam sequence_collection_t The type of the collection containing the sequences; must model
+     *                               std::ranges::forward_range.
+     * \tparam padding_symbol_t The type of the padding symbol.
+     *
+     * \param[out] simd_sequence The transformed simd sequence.
+     * \param[in] sequences The batch of sequences to transform.
+     * \param[in] padding_symbol The symbol that should be appended during the transformation/
+     *
+     * \details
+     *
+     * Expects that the size of the collection is less or equal than the number of alignments that can be computed
+     * within one simd vector (simd_traits\<score_type\>\::length).
+     * Applies an Array-of-Structures (AoS) to Structure-of-Arrays (SoA) transformation by storing one
+     * column of the collection as a simd vector. The resulting simd sequence has the size of the longest sequence in
+     * the collection. For all sequences with a smaller size the padding symbol will be appended during the simd
+     * transformation to fill up the remaining size difference.
+     */
+    template <typename simd_sequence_t,
+              std::ranges::forward_range sequence_collection_t,
+              arithmetic padding_symbol_t>
+    //!\cond
+        requires std::ranges::output_range<simd_sequence_t, score_type>
+    //!\endcond
+    void convert_batch_of_sequences_to_simd_vector(simd_sequence_t & simd_sequence,
+                                                   sequence_collection_t & sequences,
+                                                   padding_symbol_t const & padding_symbol)
+    {
+        assert(static_cast<size_t>(std::ranges::distance(sequences)) <= traits_type::alignments_per_vector);
+
+        simd_sequence.clear();
+        for (auto && simd_vector_chunk : sequences | views::to_simd<score_type>(padding_symbol))
+            std::ranges::move(simd_vector_chunk, std::cpp20::back_inserter(simd_sequence));
+    }
+
     /*!\brief Compute the actual alignment.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
@@ -167,11 +242,12 @@ protected:
         // ---------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
         // ---------------------------------------------------------------------
+        using matrix_index_t = typename traits_type::matrix_index_type;
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<int32_t> local_score_matrix{};
-        coordinate_matrix<uint32_t> local_index_matrix{};
+        thread_local score_matrix_single_column<score_type> local_score_matrix{};
+        coordinate_matrix<matrix_index_t> local_index_matrix{};
 
         size_t number_of_columns = std::ranges::distance(sequence1) + 1;
         size_t number_of_rows = std::ranges::distance(sequence2) + 1;
@@ -246,7 +322,7 @@ protected:
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for ([[maybe_unused]] auto && unused : sequence2)
+        for ([[maybe_unused]] auto const & unused : sequence2)
         {
             ++first_column_it;
             *first_column_it = this->track_cell(this->initialise_first_column_cell(*first_column_it),
@@ -280,8 +356,11 @@ protected:
      */
     template <std::ranges::input_range alignment_column_t,
               std::ranges::input_range cell_index_column_t,
-              semialphabet sequence1_value_t,
+              typename sequence1_value_t,
               std::ranges::input_range sequence2_t>
+    //!\cond
+        requires semialphabet<sequence1_value_t> || simd_concept<sequence1_value_t>
+    //!\endcond
     void compute_column(alignment_column_t && alignment_column,
                         cell_index_column_t && cell_index_column,
                         sequence1_value_t const & sequence1_value,
@@ -304,12 +383,12 @@ protected:
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for (auto && sequence2_value : sequence2)
+        for (auto const & sequence2_value : sequence2)
         {
             auto cell = *++alignment_column_it;
             score_type next_diagonal = cell.best_score();
             *alignment_column_it = this->track_cell(
-                this->compute_inner_cell(diagonal, cell, m_scoring_scheme.score(sequence1_value, sequence2_value)),
+                this->compute_inner_cell(diagonal, cell, this->scoring_scheme.score(sequence1_value, sequence2_value)),
                 *++cell_index_column_it);
             diagonal = next_diagonal;
         }

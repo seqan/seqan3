@@ -26,7 +26,9 @@
 #include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion_banded.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_optimum_tracker_simd.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_scoring_scheme.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
@@ -509,11 +511,12 @@ private:
         // macrobenchmarks to show that it maintains a high performance.
 
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                    // it is a local alignment,
-                      (traits_t::is_banded && traits_t::with_free_end_gaps) || // banded and with free end gaps,
-                      traits_t::is_vectorised ||                               // it is vectorised,
-                      traits_t::is_debug ||                                    // it runs in debug mode,
-                      traits_t::result_type_rank > 1)                          // it computes more than the end position.
+        if constexpr (traits_t::is_local ||                                        // it is a local alignment,
+                      (traits_t::is_banded && traits_t::with_free_end_gaps) ||     // banded and with free end gaps,
+                      (traits_t::is_vectorised && traits_t::is_banded) ||          // it is vectorised and banded,
+                      traits_t::is_debug ||                                        // it runs in debug mode,
+                      traits_t::result_type_rank > 1 ||                            // it computes more than the end position.
+                      (traits_t::is_vectorised && traits_t::result_type_rank > 0)) // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;
@@ -522,17 +525,36 @@ private:
         }
         else  // Use new alignment algorithm implementation.
         {
-            using optimum_tracker_policy_t = policy_optimum_tracker<config_t>;
+            using optimum_tracker_policy_t =
+                lazy_conditional_t<traits_t::is_vectorised,
+                                   lazy<policy_optimum_tracker_simd, config_t, max_score_updater_simd_global>,
+                                   lazy<policy_optimum_tracker, config_t, max_score_updater>>;
+
             using gap_cost_policy_t = std::conditional_t<traits_t::is_banded,
                                                          policy_affine_gap_recursion_banded<config_t>,
                                                          policy_affine_gap_recursion<config_t>>;
             using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
+            using alignment_method_t = typename std::conditional_t<traits_t::is_global,
+                                                                   seqan3::detail::method_global_tag,
+                                                                   seqan3::detail::method_local_tag>;
+
+            using alignment_scoring_scheme_t =
+                lazy_conditional_t<traits_t::is_vectorised,
+                                   lazy<simd_match_mismatch_scoring_scheme,
+                                        typename traits_t::score_type,
+                                        typename traits_t::scoring_scheme_alphabet_type,
+                                        alignment_method_t>,
+                                   typename traits_t::scoring_scheme_type>;
+
+            using scoring_scheme_policy_t = policy_scoring_scheme<config_t, alignment_scoring_scheme_t>;
+
             using algorithm_t = select_alignment_algorithm_t<traits_t,
                                                              config_t,
                                                              gap_cost_policy_t,
                                                              optimum_tracker_policy_t,
-                                                             result_builder_policy_t>;
+                                                             result_builder_policy_t,
+                                                             scoring_scheme_policy_t>;
             return algorithm_t{cfg};
         }
     }
