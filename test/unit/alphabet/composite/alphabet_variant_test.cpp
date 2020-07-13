@@ -334,7 +334,7 @@ TEST(alphabet_variant_test, two_different_variants)
     EXPECT_EQ(l, r2); // this works because rna4 and dna4 are implicitly convertible to each other
 }
 
-TEST(alphabet_variant_test, char_is_valid_for)
+TEST(alphabet_variant_test, char_is_valid_for_issue_1972)
 {
     // see issue https://github.com/seqan/seqan3/issues/1972
     EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
