@@ -75,10 +75,12 @@ void write_all(benchmark::State & state)
         {
             it.write_range(cont_rando);
         }
+        #ifdef SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2_stream_it_write_range)
         {
             seqan::write(it, cont_rando2);
         }
+        #endif
         else
         {
             for (auto chr : cont_rando)
