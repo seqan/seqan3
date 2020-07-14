@@ -165,7 +165,6 @@ public:
     {
         using simd_collection_t = std::vector<score_type, aligned_allocator<score_type, alignof(score_type)>>;
         using original_score_t = typename traits_type::original_score_type;
-        using matrix_index_t = typename traits_type::matrix_index_type;
 
         // Extract the batch of sequences for the first and the second sequence.
         auto seq1_collection = indexed_sequence_pairs | views::get<0> | views::get<0>;
@@ -180,14 +179,10 @@ public:
         convert_batch_of_sequences_to_simd_vector(simd_seq1_collection, seq1_collection, traits_type::padding_symbol);
         convert_batch_of_sequences_to_simd_vector(simd_seq2_collection, seq2_collection, traits_type::padding_symbol);
 
-        thread_local score_matrix_single_column<score_type> alignment_matrix{};
-        coordinate_matrix<matrix_index_t> index_matrix{};
+        size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
+        size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
 
-        size_t const number_of_columns = std::ranges::distance(simd_seq1_collection) + 1;
-        size_t const number_of_rows = std::ranges::distance(simd_seq2_collection) + 1;
-
-        alignment_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-        index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
+        auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size, sequence2_size);
 
         compute_matrix(simd_seq1_collection, simd_seq2_collection, alignment_matrix, index_matrix);
 

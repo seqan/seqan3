@@ -49,6 +49,8 @@ class policy_alignment_matrix
 protected:
     //!\brief The configured score type.
     using score_type = typename traits_t::score_type;
+    //!\brief The configured matrix index type to store the coordinates.
+    using matrix_index_type = typename traits_t::matrix_index_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -95,7 +97,7 @@ protected:
                           score_type initial_score = score_type{}) const
     {
         static thread_local alignment_matrix_t alignment_matrix{};
-        static thread_local coordinate_matrix<uint32_t> index_matrix{};
+        static thread_local coordinate_matrix<matrix_index_type> index_matrix{};
 
         // Increase dimension by one for the initialisation of the matrix.
         size_t const column_count = sequence1_size + 1;
