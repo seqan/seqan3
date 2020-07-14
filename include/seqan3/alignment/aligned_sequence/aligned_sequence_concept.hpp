@@ -111,7 +111,7 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT aligned_sequence =
     sequence<t> &&
-    std::equality_comparable_with<std::ranges::range_reference_t<t>, gap const &>;
+    std::equality_comparable_with<std::ranges::range_reference_t<t>, gap>;
 //!\endcond
 
 /*!\interface seqan3::writable_aligned_sequence <>
@@ -503,23 +503,23 @@ namespace seqan3::detail
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
-inline bool constexpr all_model_aligned_seq = false;
+inline bool constexpr all_model_aligned_seq = (aligned_sequence<elems> && ...);
 
-/*!\brief True, if each type models seqan3::aligned_sequence; false otherwise.
+/*!\brief True, if each type in the seqan3::type_list models seqan3::aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
-inline bool constexpr all_model_aligned_seq<type_list<elems...>> = (aligned_sequence<elems> && ...);
-
-/*!\brief True, if each type models seqan3::writable_aligned_sequence; false otherwise.
- * \tparam elems The pack of types to be tested.
- */
-template <typename ...elems>
-inline bool constexpr all_model_writable_aligned_seq = false;
+inline bool constexpr all_model_aligned_seq<type_list<elems...>> = all_model_aligned_seq<elems...>;
 
 /*!\brief True, if each type models seqan3::writable_aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
 template <typename ...elems>
-inline bool constexpr all_model_writable_aligned_seq<type_list<elems...>> = (writable_aligned_sequence<elems> && ...);
+inline bool constexpr all_model_writable_aligned_seq = (writable_aligned_sequence<elems> && ...);
+
+/*!\brief True, if each type in the seqan3::type_list models seqan3::writable_aligned_sequence; false otherwise.
+ * \tparam elems The pack of types to be tested.
+ */
+template <typename ...elems>
+inline bool constexpr all_model_writable_aligned_seq<type_list<elems...>> = all_model_writable_aligned_seq<elems...>;
 } // namespace seqan3::detail
