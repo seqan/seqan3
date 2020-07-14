@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <numeric>
 
 #include <benchmark/benchmark.h>
 

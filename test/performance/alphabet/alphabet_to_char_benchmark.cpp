@@ -19,15 +19,35 @@
 #include <seqan/modifier.h>
 #endif
 
+template <typename alphabet_t, bool is_seqan2>
+std::array<alphabet_t, 256> create_alphabet_array()
+{
+    std::array<alphabet_t, 256> alphabet_array{};
+
+    auto convert_to_alphabet = [] (auto const c, auto & a)
+    {
+        if constexpr (is_seqan2)
+        {
+             a = (char) c;
+        }
+        else
+        {
+            using char_t = seqan3::alphabet_char_t<alphabet_t>;
+            seqan3::assign_char_to(char_t(c), a);
+        }
+    };
+
+    uint8_t i = 0;
+    for (alphabet_t & a : alphabet_array)
+        convert_to_alphabet(i++, a);
+
+    return alphabet_array;
+}
+
 template <seqan3::alphabet alphabet_t>
 void to_char_(benchmark::State & state)
 {
-    using char_t = seqan3::alphabet_char_t<alphabet_t>;
-
-    std::array<alphabet_t, 256> alphs{};
-    size_t i = 0;
-    for (alphabet_t & a : alphs)
-        seqan3::assign_char_to(char_t(i++), a);
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, false>();
 
     for (auto _ : state)
         for (alphabet_t a : alphs)
@@ -63,10 +83,7 @@ BENCHMARK_TEMPLATE(to_char_, seqan3::qualified<seqan3::dna5, seqan3::phred63>);
 template <typename alphabet_t>
 void to_char_seqan2(benchmark::State & state)
 {
-    std::array<alphabet_t, 256> alphs{};
-    char i = 0;
-    for (alphabet_t & a : alphs)
-        a = i++;
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>();
 
     for (auto _ : state)
         for (alphabet_t a : alphs)

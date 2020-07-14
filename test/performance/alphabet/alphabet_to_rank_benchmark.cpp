@@ -18,13 +18,30 @@
 #include <seqan/modifier.h>
 #endif
 
+template <typename alphabet_t, bool is_seqan2>
+std::array<alphabet_t, 256> create_alphabet_array(size_t const alphabet_size)
+{
+    std::array<alphabet_t, 256> alphabet_array{};
+
+    auto convert_to_alphabet = [] (auto const rank, auto & a)
+    {
+        if constexpr (is_seqan2)
+             a = static_cast<uint8_t>(rank);
+        else
+            seqan3::assign_rank_to(rank, a);
+    };
+
+    uint8_t i = 0;
+    for (alphabet_t & a : alphabet_array)
+        convert_to_alphabet(i++ % alphabet_size, a);
+
+    return alphabet_array;
+}
+
 template <seqan3::semialphabet alphabet_t>
 void to_rank_(benchmark::State & state)
 {
-    std::array<alphabet_t, 256> alphs{};
-    size_t i = 0;
-    for (alphabet_t & a : alphs)
-        seqan3::assign_rank_to(i++ % seqan3::alphabet_size<alphabet_t>, a);
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, false>(seqan3::alphabet_size<alphabet_t>);
 
     for (auto _ : state)
         for (alphabet_t a : alphs)
@@ -60,10 +77,7 @@ BENCHMARK_TEMPLATE(to_rank_, seqan3::qualified<seqan3::dna5, seqan3::phred63>);
 template <typename alphabet_t>
 void to_rank_seqan2(benchmark::State & state)
 {
-    std::array<alphabet_t, 256> alphs{};
-    uint8_t i = 0;
-    for (alphabet_t & a : alphs)
-        a = static_cast<uint8_t>(i++ % seqan::ValueSize<alphabet_t>::VALUE);
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>(seqan::ValueSize<alphabet_t>::VALUE);
 
     for (auto _ : state)
         for (alphabet_t a : alphs)
