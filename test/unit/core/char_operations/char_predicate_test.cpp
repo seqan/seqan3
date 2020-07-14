@@ -11,6 +11,7 @@
 
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 
 using namespace std::literals;
 
@@ -438,4 +439,13 @@ TEST(char_predicate_, char_types)
     {  // check value out of range
         EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::dna5>(char16_t{256}));
     }
+}
+
+// see issue https://github.com/seqan/seqan3/issues/1972
+TEST(char_predicate_, issue1972)
+{
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
 }
