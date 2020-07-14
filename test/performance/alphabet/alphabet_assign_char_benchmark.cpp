@@ -14,9 +14,9 @@
 #include <seqan3/test/seqan2.hpp>
 
 #if SEQAN3_HAS_SEQAN2
+#include <seqan/align.h>
 #include <seqan/basic.h>
 #include <seqan/modifier.h>
-#include <seqan/align.h>
 #endif
 
 template <seqan3::alphabet alphabet_t>
@@ -25,9 +25,7 @@ void assign_char_(benchmark::State & state)
     using char_t = seqan3::alphabet_char_t<alphabet_t>;
 
     std::array<char_t, 256> chars{};
-    size_t i = 0;
-    for (char_t & r : chars)
-        r = i++;
+    std::iota(chars.begin(), chars.end(), 0);
 
     alphabet_t a{};
     for (auto _ : state)
@@ -65,9 +63,7 @@ template <typename alphabet_t>
 void assign_char_2(benchmark::State & state)
 {
     std::array<char, 256> chars{};
-    size_t i = 0;
-    for (char & r : chars)
-        r = i++;
+    std::iota(chars.begin(), chars.end(), 0);
 
     alphabet_t a{};
     for (auto _ : state)
