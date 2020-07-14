@@ -99,6 +99,7 @@ protected:
         upper_diagonal = band.upper_diagonal.get();
 
         bool invalid_band = upper_diagonal < lower_diagonal;
+        std::string error_cause = (invalid_band) ? " The upper diagonal is smaller than the lower diagonal." : "";
         if constexpr (traits_t::with_free_end_gaps)
         {
             auto aligned_ends_config = seqan3::get<align_cfg::aligned_ends>(config).value;
@@ -109,16 +110,18 @@ protected:
             last_column_is_free = aligned_ends_config[3];
             // band starts in first column without free gaps or band starts in first row without free gaps.
             invalid_band |= (upper_diagonal < 0 && !first_column_is_free) || (lower_diagonal > 0 && !first_row_is_free);
+            error_cause += " The band starts in a region without free gaps.";
         }
         else if constexpr (traits_t::is_global)
         {
             invalid_band |= (upper_diagonal < 0 || lower_diagonal > 0);
+            error_cause += " The first cell of the matrix is not enclosed by the band.";
         }
 
         if (invalid_band)
             throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
                                                   std::to_string(upper_diagonal) + "] cannot be used with the current "
-                                                  "alignment configuration."};
+                                                  "alignment configuration:" + error_cause};
     }
     //!\}
 
@@ -189,21 +192,24 @@ protected:
         bool const lower_diagonal_ends_behind_last_cell = (-lower_diagonal + sequence1_size) < sequence2_size;
 
         bool invalid_band = false;
+        std::string error_cause{};
         if constexpr (traits_t::with_free_end_gaps)
         {
             // band ends in last column without free gaps or band ends in last row without free gaps.
             invalid_band |= (lower_diagonal_ends_behind_last_cell && !last_column_is_free) ||
                             (upper_diagonal_ends_before_last_cell && !last_row_is_free);
+            error_cause = "The band ends in a region without free gaps.";
         }
         else if constexpr (traits_t::is_global)
         {
             invalid_band |= (upper_diagonal_ends_before_last_cell || lower_diagonal_ends_behind_last_cell);
+            error_cause = "The last cell of the matrix is not enclosed by the band.";
         }
 
         if (invalid_band)
             throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
                                                   std::to_string(upper_diagonal) + "] cannot be used with the current "
-                                                  "alignment configuration."};
+                                                  "alignment configuration: " + error_cause};
     }
 };
 } // namespace seqan3::detail
