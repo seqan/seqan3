@@ -60,7 +60,7 @@ BENCHMARK_TEMPLATE(assign_char_, seqan3::qualified<seqan3::dna5, seqan3::phred63
 
 #if SEQAN3_HAS_SEQAN2
 template <typename alphabet_t>
-void assign_char_2(benchmark::State & state)
+void assign_char_seqan2(benchmark::State & state)
 {
     std::array<char, 256> chars{};
     std::iota(chars.begin(), chars.end(), 0);
@@ -71,15 +71,15 @@ void assign_char_2(benchmark::State & state)
             benchmark::DoNotOptimize(a = c);
 }
 
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Dna);
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Rna);
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Dna5);
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Rna5);
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Iupac);
-BENCHMARK_TEMPLATE(assign_char_2, seqan::AminoAcid);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Rna5);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Iupac);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::AminoAcid);
 
-BENCHMARK_TEMPLATE(assign_char_2, seqan::Dna5Q);
-BENCHMARK_TEMPLATE(assign_char_2, typename seqan::GappedValueType<seqan::Dna>::Type);
+BENCHMARK_TEMPLATE(assign_char_seqan2, seqan::Dna5Q);
+BENCHMARK_TEMPLATE(assign_char_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
 #endif
 
 BENCHMARK_MAIN();
