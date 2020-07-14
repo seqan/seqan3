@@ -79,7 +79,6 @@ private:
 
     //!\brief The first underlying range.
     urng1_t urange1{};
-
     //!\brief The second underlying range.
     urng2_t urange2{};
 
@@ -104,18 +103,20 @@ public:
     ~minimiser_view() = default; //!< Defaulted.
 
     /*!\brief Construct from a view and a given number of values in one window.
-    * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam window_size The number of values in one window.
+    * \param[in] urange1     The input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] window_size The number of values in one window.
     */
     minimiser_view(urng1_t urange1, size_t const window_size) :
         minimiser_view{std::move(urange1), default_urng2_t{}, window_size}
     {}
 
     /*!\brief Construct from a non-view that can be view-wrapped and a given number of values in one window.
-    * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam window_size The number of values in one window.
+    * \tparam other_urng1_t  The type of another urange. Must model std::ranges::viewable_range and be constructible
+                             from urng1_t.
+    * \param[in] urange1     The input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] window_size The number of values in one window.
     */
     template <typename other_urng1_t>
     //!\cond
@@ -129,11 +130,11 @@ public:
     {}
 
     /*!\brief Construct from two views and a given number of values in one window.
-    * \tparam urange1     The first input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam urange2     The second input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam window_size The number of values in one window.
+    * \param[in] urange1     The first input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] urange2     The second input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] window_size The number of values in one window.
     */
     minimiser_view(urng1_t urange1, urng2_t urange2, size_t const window_size) :
         urange1{std::move(urange1)},
@@ -148,11 +149,15 @@ public:
     }
 
     /*!\brief Construct from two non-views that can be view-wrapped and a given number of values in one window.
-    * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam urange2     The second input range to process. Must model std::ranges::viewable_range and
-    *                     std::ranges::forward_range.
-    * \tparam window_size The number of values in one window.
+    * \tparam other_urng1_t  The type of another urange. Must model std::ranges::viewable_range and be constructible
+                             from urng1_t.
+    * \tparam other_urng2_t  The type of another urange. Must model std::ranges::viewable_range and be constructible
+                             from urng2_t.
+    * \param[in] urange1     The input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] urange2     The second input range to process. Must model std::ranges::viewable_range and
+    *                        std::ranges::forward_range.
+    * \param[in] window_size The number of values in one window.
     */
     template <typename other_urng1_t, typename other_urng2_t>
     //!\cond
@@ -388,10 +393,8 @@ private:
 
     //!\brief Iterator to the rightmost value of one window.
     urng1_iterator_t urng1_iterator{};
-
     //!brief Iterator to last element in range.
     urng1_sentinel_t urng1_sentinel{};
-
     //!\brief Iterator to the rightmost value of one window of the second range.
     urng2_iterator_t urng2_iterator{};
 
@@ -405,7 +408,7 @@ private:
     }
 
     //!\brief Returns new window value.
-    auto window_value()
+    auto window_value() const
     {
         if constexpr (!second_range_is_given)
             return *urng1_iterator;
@@ -495,9 +498,10 @@ struct minimiser_fn
 
     /*!\brief Call the view's constructor with two arguments: the underlying view and an integer indicating how many
      *        values one window contains.
-     * \tparam urange1     The input range to process. Must model std::ranges::viewable_range and
-     *                     std::ranges::forward_range.
-     * \tparam window_size The number of values in one window.
+     * \tparam urng1_t        The type of the input range to process. Must model std::ranges::viewable_range.
+     * \param[in] urange1     The input range to process. Must model std::ranges::viewable_range and
+     *                        std::ranges::forward_range.
+     * \param[in] window_size The number of values in one window.
      * \returns  A range of converted values.
      */
     template <std::ranges::range urng1_t>

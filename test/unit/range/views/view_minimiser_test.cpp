@@ -189,8 +189,8 @@ TEST_F(minimiser_test, gapped_kmer_hash)
     auto empty_view2 = too_short_text | gapped_kmer_view | minimiser_no_rev_view;
     EXPECT_TRUE(std::ranges::empty(empty_view2));
     EXPECT_RANGE_EQ(result3_gapped, (seqan3::detail::minimiser_view{text3 | gapped_kmer_view,
-                                                                   text3 | rev_gapped_kmer_view,
-                                                                   5}));
+                                                                    text3 | rev_gapped_kmer_view,
+                                                                    5}));
     EXPECT_RANGE_EQ(result3_gapped_no_rev, text3 | gapped_kmer_view | minimiser_no_rev_view);
 }
 
@@ -200,8 +200,8 @@ TEST_F(minimiser_test, window_too_big)
     EXPECT_RANGE_EQ(result1_short, text1 | gapped_kmer_view | seqan3::views::minimiser(20));
     EXPECT_RANGE_EQ(result1_short, (seqan3::detail::minimiser_view{text1 | kmer_view, text1 | rev_kmer_view, 20}));
     EXPECT_RANGE_EQ(result1_short, (seqan3::detail::minimiser_view{text1 | gapped_kmer_view,
-                                                                  text1 | rev_gapped_kmer_view,
-                                                                  20}));
+                                                                   text1 | rev_gapped_kmer_view,
+                                                                   20}));
 }
 
 TEST_F(minimiser_test, combinability)
@@ -219,11 +219,11 @@ TEST_F(minimiser_test, combinability)
 
     auto start_at_a = seqan3::views::drop(6);
     EXPECT_RANGE_EQ(result3_start, (seqan3::detail::minimiser_view{text3 | start_at_a | kmer_view,
-                                                            text3 | start_at_a | rev_kmer_view,
-                                                            5}));
+                                                                   text3 | start_at_a | rev_kmer_view,
+                                                                   5}));
     EXPECT_RANGE_EQ(result3_start, (seqan3::detail::minimiser_view{text3 | start_at_a | gapped_kmer_view,
-                                                            text3 | start_at_a | rev_gapped_kmer_view,
-                                                            5}));
+                                                                   text3 | start_at_a | rev_gapped_kmer_view,
+                                                                   5}));
 }
 
 TEST_F(minimiser_test, non_arithmetic_value)
