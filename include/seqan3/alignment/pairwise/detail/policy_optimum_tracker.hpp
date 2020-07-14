@@ -138,13 +138,9 @@ protected:
      */
     policy_optimum_tracker(alignment_configuration_t const & config)
     {
-        if constexpr (traits_type::with_free_end_gaps)
-        {
-            // front_end_first, back_end_first, front_end_second, back_end_second
-            auto align_ends_config = get<align_cfg::aligned_ends>(config).value;
-            test_last_row_cell = align_ends_config[1];
-            test_last_column_cell = align_ends_config[3];
-        }
+        auto align_ends_config = config.get_or(align_cfg::aligned_ends{free_ends_none}).value;
+        test_last_row_cell = align_ends_config[1];
+        test_last_column_cell = align_ends_config[3];
     }
     //!\}
 

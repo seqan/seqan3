@@ -82,10 +82,15 @@ public:
         lower_diagonal = band.lower_diagonal.get();
         upper_diagonal = band.upper_diagonal.get();
 
-        if (upper_diagonal < lower_diagonal || upper_diagonal < 0 || lower_diagonal > 0)
+        // Band is invalid if ...
+        bool const invalid_band = upper_diagonal < lower_diagonal || // upper diagonal is smaller than lower diagonal,
+                                  (upper_diagonal < 0 && !this->first_column_is_free) || // band starts in first column but does not use free ends,
+                                  (lower_diagonal > 0 && !this->first_row_is_free); // band starts in first row but does not use free ends.
+
+        if (invalid_band)
             throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] is not supported because it "
-                                                  "does not completely encloses both sequences."};
+                                                  std::to_string(upper_diagonal) + "] is not valid for the "
+                                                  "configured alignment because the optimum cannot be computed."};
     }
     //!\}
 
@@ -127,7 +132,10 @@ protected:
         bool const upper_diagonal_ends_before_last_cell = (upper_diagonal + sequence2_size) < sequence1_size;
         bool const lower_diagonal_ends_behind_last_cell = (-lower_diagonal + sequence1_size) < sequence2_size;
 
-        if (upper_diagonal_ends_before_last_cell || lower_diagonal_ends_behind_last_cell)
+        bool const invalid_band = (lower_diagonal_ends_behind_last_cell && !this->test_last_column_cell) || // band ends in last column but does not use free ends,
+                                  (upper_diagonal_ends_before_last_cell && !this->test_last_row_cell); // band ends in last row but does not use free ends.
+
+        if (invalid_band)
             throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
                                                   std::to_string(upper_diagonal) + "] does not cover the last cell."};
     }
@@ -252,7 +260,7 @@ protected:
 
         this->track_last_column_cell(*alignment_column_it, *cell_index_column_it);
 
-        for (; first_row_index < sequence2_size; ++first_row_index)
+        for (size_t last_row = std::min(sequence2_size, row_size); first_row_index < last_row; ++first_row_index)
             this->track_last_column_cell(*++alignment_column_it, *++cell_index_column_it);
 
         this->track_final_cell(*alignment_column_it, *cell_index_column_it);

@@ -511,12 +511,13 @@ private:
         // macrobenchmarks to show that it maintains a high performance.
 
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                        // it is a local alignment,
-                      (traits_t::is_banded && traits_t::with_free_end_gaps) ||     // banded and with free end gaps,
-                      (traits_t::is_vectorised && traits_t::is_banded) ||          // it is vectorised and banded,
-                      traits_t::is_debug ||                                        // it runs in debug mode,
-                      traits_t::result_type_rank > 1 ||                            // it computes more than the end position.
-                      (traits_t::is_vectorised && traits_t::result_type_rank > 0)) // simd and more than the score.
+        if constexpr (traits_t::is_local ||                                       // it is a local alignment,
+                      traits_t::is_debug ||                                       // it runs in debug mode,
+                      traits_t::result_type_rank > 1 ||                           // it computes more than the end position.
+                    //  (traits_t::is_banded && traits_t::with_free_end_gaps) ||     // banded and with free end gaps,
+                     (traits_t::is_banded && traits_t::result_type_rank > 0) ||   // banded and end coordinate
+                     (traits_t::is_vectorised && traits_t::is_banded) ||          // it is vectorised and banded,
+                     (traits_t::is_vectorised && traits_t::result_type_rank > 0)) // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;
