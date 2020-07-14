@@ -20,9 +20,6 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/take.hpp>
 
 namespace seqan3::detail
 {
@@ -348,7 +345,10 @@ public:
      * \tparam number_type The type of number; must model seqan3::arithmetic.
      * \param[in] num The number to write.
      */
-    template <arithmetic number_type>
+    template <typename number_type>
+    //!\cond
+        requires std::is_arithmetic_v<number_type>
+    //!\endcond
     auto write_number(number_type num)
     {
         if (stream_buf->epptr() - stream_buf->pptr() > 300) // enough space for any number, should be likely
