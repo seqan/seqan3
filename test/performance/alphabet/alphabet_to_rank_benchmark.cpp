@@ -61,7 +61,7 @@ template <typename alphabet_t>
 void to_rank_2(benchmark::State & state)
 {
     std::array<alphabet_t, 256> alphs{};
-    size_t i = 0;
+    uint8_t i = 0;
     for (alphabet_t & a : alphs)
         a = static_cast<uint8_t>(i++ % seqan::ValueSize<alphabet_t>::VALUE);
 

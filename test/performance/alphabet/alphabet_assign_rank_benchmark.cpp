@@ -25,7 +25,7 @@ void assign_rank_(benchmark::State & state)
     using rank_t = seqan3::alphabet_rank_t<alphabet_t>;
 
     std::array<rank_t, 256> ranks{};
-    size_t i = 0;
+    uint8_t i = 0;
     for (rank_t & r : ranks)
         r = i++ % seqan3::alphabet_size<alphabet_t>;
 
@@ -67,7 +67,7 @@ void assign_rank_2(benchmark::State & state)
     using rank_t = uint8_t;
 
     std::array<rank_t, 256> ranks{};
-    size_t i = 0;
+    uint8_t i = 0;
     for (rank_t & r : ranks)
         r = i++ % seqan::ValueSize<alphabet_t>::VALUE;
 

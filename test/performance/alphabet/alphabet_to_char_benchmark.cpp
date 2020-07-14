@@ -64,9 +64,9 @@ template <typename alphabet_t>
 void to_char_2(benchmark::State & state)
 {
     std::array<alphabet_t, 256> alphs{};
-    size_t i = 0;
+    char i = 0;
     for (alphabet_t & a : alphs)
-        a = (char)i++;
+        a = i++;
 
     for (auto _ : state)
         for (alphabet_t a : alphs)
