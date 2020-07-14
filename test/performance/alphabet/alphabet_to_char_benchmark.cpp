@@ -14,9 +14,9 @@
 #include <seqan3/test/seqan2.hpp>
 
 #if SEQAN3_HAS_SEQAN2
+#include <seqan/align.h>
 #include <seqan/basic.h>
 #include <seqan/modifier.h>
-#include <seqan/align.h>
 #endif
 
 template <seqan3::alphabet alphabet_t>
