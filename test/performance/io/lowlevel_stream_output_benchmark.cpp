@@ -39,10 +39,10 @@ void write_all(benchmark::State & state)
     std::ofstream os{filename.get_path(), std::ios::binary};
 
     // sequence to write:
-    std::vector<char> cont_rando = seqan3::test::generate_sequence<char>(10'000, 0, 0);
+    std::vector<char> sequence = seqan3::test::generate_sequence<char>(10'000, 0, 0);
 
 #ifdef SEQAN3_HAS_SEQAN2
-    auto cont_rando2 = seqan3::test::generate_sequence_seqan2<char>(10'000, 0, 0);
+    auto seqan2_sequence = seqan3::test::generate_sequence_seqan2<char>(10'000, 0, 0);
 #endif
     /* start benchmark */
     for (auto _ : state)
@@ -73,17 +73,17 @@ void write_all(benchmark::State & state)
 
         if constexpr (id == tag::seqan3_streambuf_it_write_range)
         {
-            it.write_range(cont_rando);
+            it.write_range(sequence);
         }
         #ifdef SEQAN3_HAS_SEQAN2
         else if constexpr (id == tag::seqan2_stream_it_write_range)
         {
-            seqan::write(it, cont_rando2);
+            seqan::write(it, seqan2_sequence);
         }
         #endif
         else
         {
-            for (auto chr : cont_rando)
+            for (auto chr : sequence)
                 *it = chr;
         }
     }
