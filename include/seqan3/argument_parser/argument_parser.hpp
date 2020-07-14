@@ -217,14 +217,14 @@ public:
      *                     regarded as a container).
      *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator.
+     *                        value. Must model seqan3::validator.
      *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  short_id  The short identifier for the option (e.g. 'a').
-     * \param[in]  long_id   The long identifier for the option (e.g. "age").
-     * \param[in]  desc      The description of the option to be shown in the help page.
-     * \param[in]  spec      Advanced option specification, see seqan3::option_spec.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \param[in, out] value The variable in which to store the given command line argument.
+     * \param[in] short_id The short identifier for the option (e.g. 'a').
+     * \param[in] long_id The long identifier for the option (e.g. "age").
+     * \param[in] desc The description of the option to be shown in the help page.
+     * \param[in] spec Advanced option specification, see seqan3::option_spec.
+     * \param[in] option_validator A seqan3::validator that verifies the value after parsing (callable).
      *
      * \throws seqan3::design_error
      */
@@ -239,7 +239,7 @@ public:
                     std::string const & long_id,
                     std::string const & desc,
                     option_spec const spec = option_spec::DEFAULT,
-                    validator_type validator = validator_type{}) // copy to bind rvalues
+                    validator_type option_validator = validator_type{}) // copy to bind rvalues
     {
         if (sub_parser != nullptr)
             throw design_error{"You may only specify flags for the top-level parser."};
@@ -247,16 +247,17 @@ public:
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
-        std::visit([=, &value] (auto & f) { f.add_option(value, short_id, long_id, desc, spec, validator); }, format);
+        std::visit([=, &value] (auto & f) { f.add_option(value, short_id, long_id, desc, spec, option_validator); },
+                   format);
     }
 
     /*!\brief Adds a flag to the seqan3::argument_parser.
      *
-     * \param[out] value    The variable in which to store the given command line argument.
-     * \param[in]  short_id The short identifier for the flag (e.g. 'i').
-     * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
-     * \param[in]  desc     The description of the flag to be shown in the help page.
-     * \param[in]  spec     Advanced flag specification, see seqan3::option_spec.
+     * \param[in, out] value     The variable in which to store the given command line argument.
+     * \param[in]      short_id  The short identifier for the flag (e.g. 'i').
+     * \param[in]      long_id   The long identifier for the flag (e.g. "integer").
+     * \param[in]      desc      The description of the flag to be shown in the help page.
+     * \param[in]      spec      Advanced flag specification, see seqan3::option_spec.
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -278,11 +279,11 @@ public:
      *                     regarded as a container).
      *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
-     *                        value. Must satisfy seqan3::validator.
+     *                        value. Must model seqan3::validator.
      *
-     * \param[out] value     The variable in which to store the given command line argument.
-     * \param[in]  desc      The description of the positional option to be shown in the help page.
-     * \param[in]  validator The validator applied to the value after parsing (callable).
+     * \param[in, out] value The variable in which to store the given command line argument.
+     * \param[in] desc The description of the positional option to be shown in the help page.
+     * \param[in] option_validator A seqan3::validator that verifies the value after parsing (callable).
      *
      * \throws seqan3::design_error
      *
@@ -298,7 +299,7 @@ public:
     //!\endcond
     void add_positional_option(option_type & value,
                                std::string const & desc,
-                               validator_type validator = validator_type{}) // copy to bind rvalues
+                               validator_type option_validator = validator_type{}) // copy to bind rvalues
     {
         if (sub_parser != nullptr)
             throw design_error{"You may only specify flags for the top-level parser."};
@@ -312,7 +313,7 @@ public:
 
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
-        std::visit([=, &value] (auto & f) { f.add_positional_option(value, desc, validator); }, format);
+        std::visit([=, &value] (auto & f) { f.add_positional_option(value, desc, option_validator); }, format);
     }
     //!\}
 

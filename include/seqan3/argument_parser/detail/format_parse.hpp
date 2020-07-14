@@ -80,11 +80,11 @@ public:
                     std::string const & long_id,
                     std::string const & SEQAN3_DOXYGEN_ONLY(desc),
                     option_spec const spec,
-                    validator_type && validator)
+                    validator_type && option_validator)
     {
-        option_calls.push_back([this, &value, short_id, long_id, spec, validator]()
+        option_calls.push_back([this, &value, short_id, long_id, spec, option_validator]()
         {
-            get_option(value, short_id, long_id, spec, validator);
+            get_option(value, short_id, long_id, spec, option_validator);
         });
     }
 
@@ -109,11 +109,11 @@ public:
     template <typename option_type, typename validator_type>
     void add_positional_option(option_type & value,
                                std::string const & SEQAN3_DOXYGEN_ONLY(desc),
-                               validator_type && validator)
+                               validator_type && option_validator)
     {
-        positional_option_calls.push_back([this, &value, validator]()
+        positional_option_calls.push_back([this, &value, option_validator]()
         {
-            get_positional_option(value, validator);
+            get_positional_option(value, option_validator);
         });
     }
 
