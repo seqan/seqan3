@@ -15,7 +15,6 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/take.hpp>
@@ -48,11 +47,6 @@ protected:
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
     static_assert(traits_type::is_banded, "Alignment configuration must have band configured.");
 
-    //!\brief The selected lower diagonal.
-    int32_t lower_diagonal{};
-    //!\brief The selected upper diagonal.
-    int32_t upper_diagonal{};
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -71,27 +65,10 @@ public:
      *
      * Initialises the algorithm given the user settings from the alignment configuration object.
      *
-     * \throws seqan3::invalid_alignment_configuration if the given band settings are invalid.
+     * \throws seqan3::invalid_alignment_configuration.
      */
     pairwise_alignment_algorithm_banded(alignment_configuration_t const & config) : base_algorithm_t(config)
-    {
-        using seqan3::get;
-
-        auto band = get<seqan3::align_cfg::band_fixed_size>(config);
-
-        lower_diagonal = band.lower_diagonal.get();
-        upper_diagonal = band.upper_diagonal.get();
-
-        // Band is invalid if ...
-        bool const invalid_band = upper_diagonal < lower_diagonal || // upper diagonal is smaller than lower diagonal,
-                                  (upper_diagonal < 0 && !this->first_column_is_free) || // band starts in first column but does not use free ends,
-                                  (lower_diagonal > 0 && !this->first_row_is_free); // band starts in first row but does not use free ends.
-
-        if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] is not valid for the "
-                                                  "configured alignment because the optimum cannot be computed."};
-    }
+    {}
     //!\}
 
     /*!\name Invocation
@@ -108,7 +85,14 @@ public:
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair));
+            size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
+            size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
+
+            auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
+                                                                              sequence2_size,
+                                                                              this->lowest_viable_score());
+
+            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          this->optimal_score,
@@ -119,33 +103,18 @@ public:
     //!\}
 
 protected:
-    /*!\brief Checks whether the band is valid for the given sequence sizes.
-     *
-     * \param[in] sequence1_size The size of the first sequence.
-     * \param[in] sequence2_size The size of the second sequence.
-     *
-     * \throws seqan3::invalid_alignment_configuration if the band is invalid for the given sequence sizes and the
-     *         alignment configuration.
-     */
-    void check_valid_band_configuration(size_t const sequence1_size, size_t const sequence2_size) const
-    {
-        bool const upper_diagonal_ends_before_last_cell = (upper_diagonal + sequence2_size) < sequence1_size;
-        bool const lower_diagonal_ends_behind_last_cell = (-lower_diagonal + sequence1_size) < sequence2_size;
-
-        bool const invalid_band = (lower_diagonal_ends_behind_last_cell && !this->test_last_column_cell) || // band ends in last column but does not use free ends,
-                                  (upper_diagonal_ends_before_last_cell && !this->test_last_row_cell); // band ends in last row but does not use free ends.
-
-        if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] does not cover the last cell."};
-    }
-
     /*!\brief Compute the actual banded alignment.
      * \tparam sequence1_t The type of the first sequence; must model std::ranges::forward_range.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::forward_range.
+     * \tparam alignment_matrix_t The type of the alignment matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
+     * \tparam index_matrix_t The type of the index matrix; must model std::ranges::input_range and its
+     *                            std::ranges::range_reference_t type must model std::ranges::forward_range.
      *
      * \param[in] sequence1 The first sequence to compute the alignment for.
      * \param[in] sequence2 The second sequence to compute the alignment for.
+     * \param[in] alignment_matrix The alignment matrix to compute.
+     * \param[in] index_matrix The index matrix corresponding to the alignment matrix.
      *
      * \details
      *
@@ -185,41 +154,31 @@ protected:
      * G 3|     |     |(3,2)|(3,3)|(3,4)|(3,5)|(3,6)|
      * T 4|     |     |     |(4,3)|(4,4)|(4,5)|(4,6)|
      *```
-     *
-     * \throws seqan3::invalid_alignment_configuration if the band is not valid for the given sequences or
-     *         std::bad_alloc if too much memory is allocated.
      */
-    template <std::ranges::forward_range sequence1_t, std::ranges::forward_range sequence2_t>
-    void compute_matrix(sequence1_t && sequence1, sequence2_t && sequence2)
+    template <std::ranges::forward_range sequence1_t,
+              std::ranges::forward_range sequence2_t,
+              std::ranges::input_range alignment_matrix_t,
+              std::ranges::input_range index_matrix_t>
+    //!\cond
+        requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>> &&
+                 std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
+    //!\endcond
+    void compute_matrix(sequence1_t && sequence1,
+                        sequence2_t && sequence2,
+                        alignment_matrix_t && alignment_matrix,
+                        index_matrix_t && index_matrix)
     {
-        size_t sequence1_size = std::ranges::distance(sequence1);
-        size_t sequence2_size = std::ranges::distance(sequence2);
-
-        check_valid_band_configuration(sequence1_size, sequence2_size);
-
         // ---------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
         // ---------------------------------------------------------------------
 
         this->reset_optimum(); // Reset the tracker for the new alignment computation.
 
-        thread_local score_matrix_single_column<score_type> local_score_matrix{};
-        coordinate_matrix<uint32_t> local_index_matrix{};
+        auto alignment_matrix_it = alignment_matrix.begin();
+        auto indexed_matrix_it = index_matrix.begin();
 
-        size_t const number_of_columns = sequence1_size + 1;
-        size_t const number_of_rows = sequence2_size + 1;
-        size_t const band_size = upper_diagonal - lower_diagonal + 1;
-
-        local_score_matrix.resize(column_index_type{number_of_columns},
-                                  row_index_type{band_size + 1},
-                                  this->lowest_viable_score());
-        local_index_matrix.resize(column_index_type{number_of_columns}, row_index_type{number_of_rows});
-
-        auto alignment_matrix_it = local_score_matrix.begin();
-        auto indexed_matrix_it = local_index_matrix.begin();
-
-        size_t row_size = std::max<int32_t>(0, -lower_diagonal);
-        size_t const column_size = std::max<int32_t>(0, upper_diagonal);
+        size_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
+        size_t const column_size = std::max<int32_t>(0, this->upper_diagonal);
         this->initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2 | views::take(row_size));
 
         // ---------------------------------------------------------------------
@@ -260,7 +219,9 @@ protected:
 
         this->track_last_column_cell(*alignment_column_it, *cell_index_column_it);
 
-        for (size_t last_row = std::min(sequence2_size, row_size); first_row_index < last_row; ++first_row_index)
+        for (size_t last_row = std::min<size_t>(std::ranges::distance(sequence2), row_size);
+             first_row_index < last_row;
+             ++first_row_index)
             this->track_last_column_cell(*++alignment_column_it, *++cell_index_column_it);
 
         this->track_final_cell(*alignment_column_it, *cell_index_column_it);
