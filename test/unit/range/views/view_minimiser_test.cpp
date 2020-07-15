@@ -140,6 +140,8 @@ TYPED_TEST(minimiser_view_properties_test, concepts)
     {
         auto v2 = seqan3::detail::minimiser_view{text | kmer_view, text | rev_kmer_view, 5};
         compare_types(v2, rev_kmer_view, text);
+        auto v3 = seqan3::detail::minimiser_view{text | kmer_view, text | kmer_view, 5};
+        compare_types(v3, kmer_view, text);
     }
 }
 
