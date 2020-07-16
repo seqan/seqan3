@@ -30,7 +30,7 @@ using gap_sequence_vector = std::vector<seqan3::gapped<seqan3::dna4>>;
 //  insert at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-    requires seqan3::aligned_sequence<gap_decorator_t>
+    requires seqan3::writable_aligned_sequence<gap_decorator_t>
 void insert_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);
@@ -86,7 +86,7 @@ BENCHMARK_TEMPLATE(insert_random, gap_sequence_vector, true)->Apply(custom_argum
 //  delete at random position
 // ============================================================================
 template <typename gap_decorator_t, bool gapped_flag>
-    requires seqan3::aligned_sequence<gap_decorator_t>
+    requires seqan3::writable_aligned_sequence<gap_decorator_t>
 void delete_random(benchmark::State & state)
 {
     unsigned int seq_len = state.range(0);

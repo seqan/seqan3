@@ -98,7 +98,7 @@ namespace seqan3
 template <typename char_t, typename alignment_t>
 //!\cond
     requires (detail::debug_streamable_tuple<alignment_t> &&
-              detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<alignment_t>>>)
+              detail::all_model_aligned_seq<detail::tuple_type_list_t<remove_cvref_t<alignment_t>>>)
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_t && alignment)
 {

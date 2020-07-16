@@ -101,7 +101,7 @@ template <
 //!\cond
     requires matrix<remove_cvref_t<trace_matrix_t>> &&
              std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
-             detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_t>>
+             detail::all_model_writable_aligned_seq<detail::tuple_type_list_t<alignment_t>>
 //!\endcond
 inline alignment_t alignment_trace(database_t && database,
                                    query_t && query,

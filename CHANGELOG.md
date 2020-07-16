@@ -39,6 +39,9 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1876](https://github.com/seqan/seqan3/pull/1876)).
 * The function `seqan3::align_pairwise` accepts a std::pair of sequences as input
   ([\#1913](https://github.com/seqan/seqan3/pull/1913)).
+* We lowered the requirements of the `seqan3::aligned_sequence` concept by removing everything that needs write
+  access to the object. We then added a new `seqan3::writable_aligned_sequence` concept which extends
+  `seqan3::aligned_sequence` by the requirements that need write access (e.g. `insert_gap`).
 
 #### Argument Parser
 

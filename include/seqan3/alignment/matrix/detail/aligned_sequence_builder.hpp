@@ -82,10 +82,10 @@ struct make_pairwise_alignment_type
     //!\brief The aligned sequence type for the second sequence.
     using second_aligned_t = typename make_aligned_sequence_type<second_sequence_t>::type;
 
-    static_assert(seqan3::aligned_sequence<first_aligned_t>,
-                  "first_aligned_t is required to model seqan3::aligned_sequence!");
-    static_assert(seqan3::aligned_sequence<second_aligned_t>,
-                  "second_aligned_t is required to model seqan3::aligned_sequence!");
+    static_assert(seqan3::writable_aligned_sequence<first_aligned_t>,
+                  "first_aligned_t is required to model seqan3::writable_aligned_sequence!");
+    static_assert(seqan3::writable_aligned_sequence<second_aligned_t>,
+                  "second_aligned_t is required to model seqan3::writable_aligned_sequence!");
 
     //!\brief The resulting pairwise alignment type.
     using type = std::tuple<first_aligned_t, second_aligned_t>;
@@ -100,7 +100,8 @@ struct make_pairwise_alignment_type
  *
  * This class builds the alignment from a given trace path over the specified sequences. Use the interface
  * seqan3::detail::aligned_sequence_builder::operator() to get the actual alignment.
- * The returned seqan3::aligned_sequence type is determined by the input types `fst_sequence_t` and `sec_sequence_t`.
+ * The returned seqan3::writable_aligned_sequence type is determined by the input types `fst_sequence_t` and
+ * `sec_sequence_t`.
  *
  * See the seqan3::detail::make_aligned_sequence_type transformation trait for more information about the selected
  * type.

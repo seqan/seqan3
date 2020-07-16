@@ -309,7 +309,7 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
  * \ingroup alignment_file
  *
  * \tparam alignment_type The type of alignment; must model seqan3::tuple_like and all tuple element types
- *                        must model seqan3::aligned_sequence.
+ *                        must model seqan3::writable_aligned_sequence.
  *
  * \param[in,out] alignment    The alignment to fill with gaps according to the cigar information.
  * \param[in]     cigar_vector The cigar information given as a std::vector over seqan3::cigar.
@@ -331,7 +331,7 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
 template <tuple_like alignment_type>
 //!\cond
     requires (std::tuple_size_v<remove_cvref_t<alignment_type>> == 2) &&
-             detail::all_satisfy_aligned_seq<detail::tuple_type_list_t<alignment_type>>
+             detail::all_model_writable_aligned_seq<detail::tuple_type_list_t<alignment_type>>
 //!\endcond
 inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> const & cigar_vector)
 {
