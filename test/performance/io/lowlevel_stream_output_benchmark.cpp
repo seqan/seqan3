@@ -27,7 +27,8 @@ enum class tag
     std_streambuf_it,
     seqan3_streambuf_it,
     seqan3_streambuf_it_write_range,
-    seqan2_stream_it
+    seqan2_stream_it,
+    seqan2_stream_it_write_range
 };
 
 template <tag id>
@@ -38,8 +39,11 @@ void write_all(benchmark::State & state)
     std::ofstream os{filename.get_path(), std::ios::binary};
 
     // sequence to write:
-    std::vector<char> cont_rando = seqan3::test::generate_sequence<char>(10'000, 0, 0);
+    std::vector<char> sequence = seqan3::test::generate_sequence<char>(10'000, 0, 0);
 
+#ifdef SEQAN3_HAS_SEQAN2
+    auto seqan2_sequence = seqan3::test::generate_sequence_seqan2<char>(10'000, 0, 0);
+#endif
     /* start benchmark */
     for (auto _ : state)
     {
@@ -60,7 +64,7 @@ void write_all(benchmark::State & state)
                 return seqan3::detail::fast_ostreambuf_iterator<char>{*os.rdbuf()};
             }
         #ifdef SEQAN3_HAS_SEQAN2
-            else if constexpr (id == tag::seqan2_stream_it)
+            else if constexpr (id == tag::seqan2_stream_it || id == tag::seqan2_stream_it_write_range)
             {
                 return seqan::Iter<std::ofstream, seqan::StreamIterator<seqan::Output>>{os};
             }
@@ -69,11 +73,17 @@ void write_all(benchmark::State & state)
 
         if constexpr (id == tag::seqan3_streambuf_it_write_range)
         {
-            it.write_range(cont_rando);
+            it.write_range(sequence);
         }
+        #ifdef SEQAN3_HAS_SEQAN2
+        else if constexpr (id == tag::seqan2_stream_it_write_range)
+        {
+            seqan::write(it, seqan2_sequence);
+        }
+        #endif
         else
         {
-            for (auto chr : cont_rando)
+            for (auto chr : sequence)
                 *it = chr;
         }
     }
@@ -85,6 +95,7 @@ BENCHMARK_TEMPLATE(write_all, tag::seqan3_streambuf_it);
 BENCHMARK_TEMPLATE(write_all, tag::seqan3_streambuf_it_write_range);
 #ifdef SEQAN3_HAS_SEQAN2
 BENCHMARK_TEMPLATE(write_all, tag::seqan2_stream_it);
+BENCHMARK_TEMPLATE(write_all, tag::seqan2_stream_it_write_range);
 #endif
 
 BENCHMARK_MAIN();
