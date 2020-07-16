@@ -17,10 +17,10 @@
 namespace seqan3
 {
 
-template <typename search_result_range_t>
-std::vector<std::ranges::range_value_t<search_result_range_t>> uniquify(search_result_range_t && search_result_range)
+template <typename result_range_t>
+std::vector<std::ranges::range_value_t<result_range_t>> uniquify(result_range_t && result_range)
 {
-    auto unique_res = search_result_range | views::to<std::vector>;
+    auto unique_res = result_range | views::to<std::vector>;
     std::sort(unique_res.begin(), unique_res.end());
     unique_res.erase(std::unique(unique_res.begin(), unique_res.end()), unique_res.end());
     return unique_res;

@@ -20,10 +20,10 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
-#include <seqan3/alignment/pairwise/alignment_range.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
+#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
@@ -42,7 +42,7 @@ namespace seqan3
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
  * \param[in] seq             A tuple with two sequences or a range over such tuples.
  * \param[in] config          The object storing the alignment configuration.
- * \return A seqan3::alignment_range.
+ * \return A seqan3::algorithm_result_generator_range.
  *
  * \details
  *
@@ -71,10 +71,10 @@ namespace seqan3
  * ### Accessing the alignment results
  *
  * For each sequence pair one or more \ref seqan3::alignment_result "seqan3::alignment_result"s can be computed.
- * The seqan3::align_pairwise function returns an seqan3::alignment_range which can be used to iterate over the
+ * The seqan3::align_pairwise function returns an seqan3::algorithm_result_generator_range which can be used to iterate over the
  * alignments. If the `vectorise` configurations are omitted the alignments are computed on-demand when iterating over
  * the results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin` on
- * the associated seqan3::alignment_range.
+ * the associated seqan3::algorithm_result_generator_range.
  *
  * The following snippets demonstrate the single element and the range based interface.
  *
@@ -215,10 +215,10 @@ constexpr auto align_pairwise(sequence_t && sequences,
                                                 indexed_sequence_chunk_view,
                                                 get<align_cfg::on_result>(complete_config).callback);
     else  // Require two way execution: return the range over the alignments.
-        return alignment_range{executor_t{std::move(indexed_sequence_chunk_view),
-                                          std::move(algorithm),
-                                          alignment_result_t{},
-                                          select_execution_handler()}};
+        return algorithm_result_generator_range{executor_t{std::move(indexed_sequence_chunk_view),
+                                                std::move(algorithm),
+                                                alignment_result_t{},
+                                                select_execution_handler()}};
 }
 //!\endcond
 

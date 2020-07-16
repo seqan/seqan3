@@ -23,7 +23,7 @@
 #include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
-#include <seqan3/search/search_result_range.hpp>
+#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 
 namespace seqan3::detail
 {
@@ -74,7 +74,7 @@ namespace seqan3
  * \param[in] index   String index to be searched.
  * \param[in] cfg     A configuration object specifying the search parameters (e.g. number of errors, error types,
  *                    output format, etc.).
- * \returns A seqan3::search_result_range with value type of seqan3::search_result.
+ * \returns A seqan3::algorithm_result_generator_range with value type of seqan3::search_result.
  *
  * \if DEV \note Always returns `void` if an on_hit delegate has been specified.\endif
  *
@@ -145,10 +145,10 @@ inline auto search(queries_t && queries,
         }
     };
 
-    return search_result_range{executor_t{std::move(indexed_queries),
-                                          std::move(algorithm),
-                                          algorithm_result_t{},
-                                          select_execution_handler()}};
+    return algorithm_result_generator_range{executor_t{std::move(indexed_queries),
+                                            std::move(algorithm),
+                                            algorithm_result_t{},
+                                            select_execution_handler()}};
 }
 
 //!\cond DEV

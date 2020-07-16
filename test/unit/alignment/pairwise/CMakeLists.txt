@@ -1,5 +1,4 @@
 seqan3_test(align_pairwise_test.cpp)
-seqan3_test(alignment_range_test.cpp)
 seqan3_test(alignment_result_debug_stream_test.cpp)
 seqan3_test(alignment_result_test.cpp)
 seqan3_test(align_result_selector_test.cpp)
