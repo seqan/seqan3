@@ -28,7 +28,7 @@ TEST(dna3bs, concept_check)
     EXPECT_TRUE(seqan3::nucleotide_alphabet<seqan3::dna3bs const &>);
 }
 
-TEST(dna3bs, global_complement)
+TEST(dna3bs, complement)
 {
     EXPECT_EQ(seqan3::complement(seqan3::dna3bs{}.assign_char('A')), seqan3::dna3bs{}.assign_char('T'));
     EXPECT_EQ(seqan3::complement(seqan3::dna3bs{}.assign_char('C')), seqan3::dna3bs{}.assign_char('A'));

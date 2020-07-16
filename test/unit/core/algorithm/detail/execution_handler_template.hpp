@@ -77,10 +77,10 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
          it += chunk_size, pos += chunk_size)
     {
         std::ranges::subrange<range_iterator_t, range_iterator_t> chunk{it, std::next(it, chunk_size)};
-        exec_handler.execute(simulate_alignment_with_range, std::move(chunk), [_pos = pos, &buffer] (auto && res) mutable
+        exec_handler.execute(simulate_alignment_with_range, std::move(chunk), [pos = pos, &buffer] (auto && res) mutable
         {
-            *(buffer.begin() + _pos) = std::forward<decltype(res)>(res);
-            ++_pos;
+            *(buffer.begin() + pos) = std::forward<decltype(res)>(res);
+            ++pos;
         });
     }
 

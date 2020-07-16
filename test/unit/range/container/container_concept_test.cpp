@@ -39,7 +39,7 @@ TEST(range_concept, forward_range)
                                                                                            seqan3::phred42>>>));
 }
 
-TEST(container_, container)
+TEST(container, container)
 {
     EXPECT_TRUE((seqan3::container<std::array<char, 2>>));
     EXPECT_TRUE((seqan3::container<std::list<char>>));
@@ -52,7 +52,7 @@ TEST(container_, container)
     EXPECT_TRUE((seqan3::container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_, sequence_container_former_travis_bug)
+TEST(container, sequence_container_former_travis_bug)
 {
     // This tests a bug with const iterators on strings which was there in a
     // special gcc 7.2 build (ppa) for ubuntu 14.04 and 16.04. We leave it as
@@ -100,7 +100,7 @@ TEST(container_, sequence_container_former_travis_bug)
     EXPECT_EQ("Exemplar is an:== example string.", s);
 }
 
-TEST(container_, sequence_container)
+TEST(container, sequence_container)
 {
     EXPECT_FALSE((seqan3::sequence_container<std::array<char, 2>>));
     EXPECT_TRUE((seqan3::sequence_container<std::list<char>>));
@@ -113,7 +113,7 @@ TEST(container_, sequence_container)
     EXPECT_TRUE((seqan3::sequence_container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_, random_access_container)
+TEST(container, random_access_container)
 {
     EXPECT_FALSE((seqan3::random_access_container<std::array<char, 2>>));
     EXPECT_FALSE((seqan3::random_access_container<std::list<char>>));
@@ -126,7 +126,7 @@ TEST(container_, random_access_container)
     EXPECT_TRUE((seqan3::random_access_container<seqan3::concatenated_sequences<std::vector<char>>>));
 }
 
-TEST(container_, reservible_container)
+TEST(container, reservible_container)
 {
     EXPECT_FALSE((seqan3::reservible_container<std::array<char, 2>>));
     EXPECT_FALSE((seqan3::reservible_container<std::list<char>>));

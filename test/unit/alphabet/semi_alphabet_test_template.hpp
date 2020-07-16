@@ -40,7 +40,7 @@ TYPED_TEST_P(semi_alphabet_test, type_properties)
     EXPECT_TRUE((seqan3::standard_layout<TypeParam>));
 }
 
-TYPED_TEST_P(semi_alphabet_test, alphabet_size_)
+TYPED_TEST_P(semi_alphabet_test, alphabet_size)
 {
     EXPECT_GT(seqan3::alphabet_size<TypeParam>, 0u);
 }
@@ -50,7 +50,7 @@ TYPED_TEST_P(semi_alphabet_test, default_value_constructor)
     EXPECT_TRUE((std::is_nothrow_default_constructible_v<TypeParam>));
 }
 
-TYPED_TEST_P(semi_alphabet_test, global_assign_rank_to)
+TYPED_TEST_P(semi_alphabet_test, assign_rank_to)
 {
     // this double checks the value initialisation
     EXPECT_EQ((seqan3::assign_rank_to(0, TypeParam{})), TypeParam{});
@@ -63,7 +63,7 @@ TYPED_TEST_P(semi_alphabet_test, global_assign_rank_to)
     EXPECT_TRUE((std::is_same_v<decltype(seqan3::assign_rank_to(0, TypeParam{})), TypeParam>));
 }
 
-TYPED_TEST_P(semi_alphabet_test, global_to_rank)
+TYPED_TEST_P(semi_alphabet_test, to_rank)
 {
     // this double checks the value initialisation
     EXPECT_EQ(seqan3::to_rank(TypeParam{}), 0u);
@@ -169,10 +169,10 @@ TYPED_TEST_P(semi_alphabet_test, comparison_operators)
 REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_test,
                             concept_check,
                             type_properties,
-                            alphabet_size_,
+                            alphabet_size,
                             default_value_constructor,
-                            global_assign_rank_to,
-                            global_to_rank,
+                            assign_rank_to,
+                            to_rank,
                             copy_constructor,
                             move_constructor,
                             copy_assignment,

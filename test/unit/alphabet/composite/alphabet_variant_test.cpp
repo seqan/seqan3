@@ -259,7 +259,7 @@ TEST(alphabet_variant_test, rank_type)
     EXPECT_TRUE((std::is_same_v<seqan3::alphabet_rank_t<alphabet3_t>, uint16_t>));
 }
 
-TEST(alphabet_variant_test, alphabet_size_)
+TEST(alphabet_variant_test, alphabet_size)
 {
     using alphabet1_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap>;
     using alphabet2_t = seqan3::alphabet_variant<seqan3::gap, seqan3::dna5, seqan3::dna4>;
