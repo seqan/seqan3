@@ -31,6 +31,7 @@ inline namespace simd
  * * max_length - the maximum number of packable values in a simd vector, if the underlying type would be [u]int8_t
  * * mask_type - the type returned by comparison operators
  * * swizzle_type - the type used to define how to swizzle a simd vector
+ * * rebind - the type used to rebind a simd vector to another scalar_type
  *
  * \include test/snippet/core/simd/simd_traits.cpp
  */
@@ -59,6 +60,10 @@ struct simd_traits
      * defined if *simd_t* does not model *seqan3::simd::simd*)
      */
     using swizzle_type = IMPLEMENTATION_DEFINED;
+    /*!\brief The type used to rebind a simd vector to another scalar_type (is not defined if *simd_t* does not model
+     * seqan3::simd::simd*)
+     */
+    using rebind = IMPLEMENTATION_DEFINED;
 }
 #endif
 ;
