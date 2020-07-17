@@ -11,16 +11,43 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/test/seqan2.hpp>
+
+#if SEQAN3_HAS_SEQAN2
+#include <seqan/align.h>
+#include <seqan/basic.h>
+#include <seqan/modifier.h>
+#endif
+
+template <typename alphabet_t, bool is_seqan2>
+std::array<alphabet_t, 256> create_alphabet_array()
+{
+    std::array<alphabet_t, 256> alphabet_array{};
+
+    auto convert_to_alphabet = [] (auto const c, auto & a)
+    {
+        if constexpr (is_seqan2)
+        {
+             a = (char) c;
+        }
+        else
+        {
+            using char_t = seqan3::alphabet_char_t<alphabet_t>;
+            seqan3::assign_char_to(char_t(c), a);
+        }
+    };
+
+    uint8_t i = 0;
+    for (alphabet_t & a : alphabet_array)
+        convert_to_alphabet(i++, a);
+
+    return alphabet_array;
+}
 
 template <seqan3::alphabet alphabet_t>
 void to_char_(benchmark::State & state)
 {
-    using char_t = seqan3::alphabet_char_t<alphabet_t>;
-
-    std::array<alphabet_t, 256> alphs{};
-    size_t i = 0;
-    for (alphabet_t & a : alphs)
-        seqan3::assign_char_to(char_t(i++), a);
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, false>();
 
     for (auto _ : state)
         for (alphabet_t a : alphs)
@@ -51,5 +78,27 @@ BENCHMARK_TEMPLATE(to_char_, seqan3::alphabet_variant<seqan3::dna4, char>);
 BENCHMARK_TEMPLATE(to_char_, seqan3::masked<seqan3::dna4>);
 BENCHMARK_TEMPLATE(to_char_, seqan3::qualified<seqan3::dna4, seqan3::phred42>);
 BENCHMARK_TEMPLATE(to_char_, seqan3::qualified<seqan3::dna5, seqan3::phred63>);
+
+#if SEQAN3_HAS_SEQAN2
+template <typename alphabet_t>
+void to_char_seqan2(benchmark::State & state)
+{
+    std::array<alphabet_t, 256> alphs = create_alphabet_array<alphabet_t, true>();
+
+    for (auto _ : state)
+        for (alphabet_t a : alphs)
+            benchmark::DoNotOptimize(static_cast<char>(a));
+}
+
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna);
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Rna);
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna5);
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Rna5);
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Iupac);
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::AminoAcid);
+
+BENCHMARK_TEMPLATE(to_char_seqan2, seqan::Dna5Q);
+BENCHMARK_TEMPLATE(to_char_seqan2, typename seqan::GappedValueType<seqan::Dna>::Type);
+#endif
 
 BENCHMARK_MAIN();
