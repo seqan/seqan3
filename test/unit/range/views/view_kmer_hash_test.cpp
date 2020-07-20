@@ -125,7 +125,7 @@ TYPED_TEST(kmer_hash_ungapped_test, concepts)
     EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(text)>, std::ranges::sized_range<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
 }
@@ -141,7 +141,7 @@ TYPED_TEST(kmer_hash_gapped_test, concepts)
     EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(text)>, std::ranges::sized_range<decltype(v1)>);
-    EXPECT_FALSE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), size_t>));
 }
@@ -271,5 +271,41 @@ TYPED_TEST(kmer_hash_gapped_test, issue1963)
         auto v = text1 | seqan3::views::complement | gapped_view;
         EXPECT_RANGE_EQ(gapped, v);
         EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
+    }
+}
+
+// https://github.com/seqan/seqan3/issues/1988
+TYPED_TEST(kmer_hash_ungapped_test, issue1988)
+{
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+        result_t ungapped{6, 27, 44, 50, 9};
+
+        auto v = text | ungapped_view;
+        EXPECT_RANGE_EQ(ungapped, v);
+        EXPECT_TRUE(seqan3::const_iterable_range<decltype(v)>);
+
+        auto v2 = text | ungapped_view | std::views::reverse;
+        EXPECT_RANGE_EQ(ungapped | std::views::reverse, v2);
+        EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
+    }
+}
+
+// https://github.com/seqan/seqan3/issues/1988
+TYPED_TEST(kmer_hash_gapped_test, issue1988)
+{
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
+        result_t gapped{2, 7, 8, 14, 1};
+
+        auto v = text | gapped_view;
+        EXPECT_RANGE_EQ(gapped, v);
+        EXPECT_TRUE(seqan3::const_iterable_range<decltype(v)>);
+
+        auto v2 = text | gapped_view | std::views::reverse;
+        EXPECT_RANGE_EQ(gapped | std::views::reverse, v2);
+        EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
     }
 }
