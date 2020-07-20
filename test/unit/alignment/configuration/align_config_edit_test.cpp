@@ -8,16 +8,11 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
-
-TEST(align_cfg_edit, is_global)
-{
-    auto config = seqan3::align_cfg::edit;
-    EXPECT_TRUE(config.template exists<seqan3::detail::method_global_tag>());
-}
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 
 TEST(align_cfg_edit, is_hamming)
 {
-    auto scheme = seqan3::get<seqan3::align_cfg::scoring>(seqan3::align_cfg::edit).value;
+    auto scheme = seqan3::get<seqan3::align_cfg::scoring>(seqan3::align_cfg::edit_scheme).value;
 
     for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
     {
@@ -35,7 +30,7 @@ TEST(align_cfg_edit, is_hamming)
 
 TEST(align_cfg_edit, is_simple_gap)
 {
-    auto scheme = seqan3::get<seqan3::align_cfg::gap>(seqan3::align_cfg::edit).value;
+    auto scheme = seqan3::get<seqan3::align_cfg::gap>(seqan3::align_cfg::edit_scheme).value;
     EXPECT_EQ(scheme.get_gap_score(), -1);
     EXPECT_EQ(scheme.get_gap_open_score(), 0);
 }

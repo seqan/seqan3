@@ -196,8 +196,8 @@
  *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring is initialised with default initialised seqan3::nucleotide_scoring_scheme.
  *  * Global alignment, i.e. seqan3::align_cfg::method_global.
  *
- * There is a special shortcut for the above required configs called seqan3::align_cfg::edit, which can be used to
- * safe some typing.
+ * There is a special shortcut for the above required scoring/gap configs called seqan3::align_cfg::edit_scheme,
+ * which can be used to safe some typing.
  *
  * The edit configuration can be further specialised with following configs:
  *  * Allow maximal number of errors, i.e specify the seqan3::align_cfg::max_error configuration

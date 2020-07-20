@@ -12,7 +12,7 @@ int main()
 //![start]
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::edit;
+    auto config = seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme;
 
     {
     //![example1]
@@ -34,11 +34,13 @@ int main()
                     std::pair{"AGTTACGAC"_dna4, "AGTAGCGATCG"_dna4}};
 
     // Compute the alignment of a single pair.
-    for (auto const & res : seqan3::align_pairwise(std::tie(vec[0].first, vec[0].second), seqan3::align_cfg::edit))
+    auto edit_config = seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme;
+
+    for (auto const & res : seqan3::align_pairwise(std::tie(vec[0].first, vec[0].second), edit_config))
         seqan3::debug_stream << "The score: " << res.score() << "\n";
 
     // Compute the alignment over a range of pairs.
-    for (auto const & res : seqan3::align_pairwise(vec, seqan3::align_cfg::edit))
+    for (auto const & res : seqan3::align_pairwise(vec, edit_config))
         seqan3::debug_stream << "The score: " << res.score() << "\n";
     //![example3]
 //![end]

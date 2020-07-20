@@ -294,7 +294,7 @@ used to compute the edit distance. This happens in SeqAn automatically if the re
 To do so, you need a scoring scheme initialised with Manhattan distance (at the moment only
 seqan3::nucleotide_scoring_scheme supports this) and a gap scheme initialised with `-1` for a gap and `0`
 for a gap open score and computing a seqan3::global_alignment.
-To make the configuration easier, we added a shortcut called seqan3::align_cfg::edit.
+To make the configuration easier, we added a shortcut called seqan3::align_cfg::edit_scheme.
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_edit
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp edit

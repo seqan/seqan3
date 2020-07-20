@@ -53,7 +53,8 @@ void map_reads(std::filesystem::path const & query_path,
                                                 seqan3::search_cfg::hit_all_best;
 
 //! [alignment_config]
-    seqan3::configuration const align_config = seqan3::align_cfg::edit |
+    seqan3::configuration const align_config = seqan3::align_cfg::method_global |
+                                               seqan3::align_cfg::edit_scheme |
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 //! [alignment_config]

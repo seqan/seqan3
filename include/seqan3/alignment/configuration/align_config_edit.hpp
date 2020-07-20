@@ -6,14 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::edit.
+ * \brief Provides seqan3::align_cfg::edit_scheme.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -49,7 +48,6 @@ namespace seqan3::align_cfg
  * trigger the slower algorithm which can handle the case if the ends are free in the second sequence instead of the
  * first sequence.
  */
-inline constexpr configuration edit = method_global | scoring{nucleotide_scoring_scheme{}} |
-                                      gap{gap_scheme{gap_score{-1}}};
+inline constexpr configuration edit_scheme = scoring{nucleotide_scoring_scheme{}} | gap{gap_scheme{gap_score{-1}}};
 
 } // namespace seqan3

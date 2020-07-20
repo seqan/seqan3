@@ -71,6 +71,36 @@ TEST(pipeable_config_element, configuration_with_element)
     }
 }
 
+TEST(pipeable_config_element, element_with_configuration)
+{
+    seqan3::configuration<bar> tmp{};
+    bax b2{};
+
+    // lvalue | lvalue
+    {
+        auto cfg = b2 | tmp;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+    }
+
+    // rvalue | lvalue
+    {
+        auto cfg = bax{} | tmp;
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+    }
+
+    // lvalue | rvalue
+    {
+        auto cfg = b2 | seqan3::configuration<bar>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+    }
+
+    // rvalue | rvalue
+    {
+        auto cfg = bax{} | seqan3::configuration<bar>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+    }
+}
+
 TEST(pipeable_config_element, configuration_with_configuration)
 {
     seqan3::configuration<bar> tmp{};

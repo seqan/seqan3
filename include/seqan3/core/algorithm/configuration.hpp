@@ -301,6 +301,44 @@ public:
         return lhs.push_back(static_cast<rhs_derived_t const &>(rhs));
     }
 
+    /*!\brief Combines a seqan3::pipeable_config_element with a seqan3::configuration.
+     * \tparam lhs_derived_t The derived type of the left hand side operand.
+     * \tparam lhs_value_t   The value type of the left hand side operand.
+     * \param[in] lhs     The left hand operand.
+     * \param[in] rhs     The right hand operand.
+     * \returns A new seqan3::configuration adding `lhs` to the passed `rhs` object.
+     */
+    template <typename lhs_derived_t, typename lhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                    configuration && rhs)
+    {
+        return std::move(rhs) | std::move(lhs);
+    }
+
+    //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> && lhs,
+                                    configuration const & rhs)
+    {
+        return rhs | std::move(lhs);
+    }
+
+    //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                    configuration && rhs)
+    {
+        return std::move(rhs) | lhs;
+    }
+
+    //!\overload
+    template <typename lhs_derived_t, typename lhs_value_t>
+    friend constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> const & lhs,
+                                    configuration const & rhs)
+    {
+        return rhs | lhs;
+    }
+
     /*!\brief Combines two seqan3::configuration objects.
      * \tparam rhs_configs_t  A template parameter pack for the second seqan3::configuration operand.
      * \param[in] lhs         The left hand operand.
