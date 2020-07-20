@@ -11,6 +11,17 @@
  *
  * \defgroup submodule_kmer_index k-mer Index
  * \ingroup search
+ * \brief Implementation of a k-mer Index.
+ *
+ * \details
+ *
+ * A k-mer index is a data structure that stores all occurrences of k-mers in a text.
+ * A k-mer can be either an exact string of length k or it can contain one or more wildcards,
+ * which denote positions of arbitrary characters.
+ *
+ * The index is very fast for retrieving all occurrences of a k-mer in the underlying text.
+ * Usually the query length (k) is small and the underlying text is very large.
+ * The parameter k and the position(s) of wildcards must be fixed at index creation.
  */
 
 #pragma once

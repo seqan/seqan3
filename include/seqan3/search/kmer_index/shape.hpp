@@ -36,7 +36,7 @@ struct bin_literal
     uint64_t value;
 };
 
-/*!\brief A class that defines what positions of a pattern to hash.
+/*!\brief A class that defines which positions of a pattern to hash.
  * \ingroup submodule_kmer_index
  *
  * \details
