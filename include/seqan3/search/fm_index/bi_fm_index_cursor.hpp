@@ -1001,6 +1001,48 @@ public:
         return occ;
     }
 
+    //!\overload
+    void locate(std::vector<std::pair<size_type, size_type>> & occ) const
+    //!\cond
+        requires index_t::text_layout_mode == text_layout::collection
+    //!\endcond
+    {
+        assert(index != nullptr);
+        auto const start = occ.size();
+        occ.reserve(start + count());
+
+        if (!count())
+            return; // empty result vector
+
+        // fill occ with locations in order to not allocate another vector
+        for (size_type i = 0; i < count(); ++i)
+            occ.emplace_back(offset() - index->fwd_fm.index[fwd_lb + i], 0);
+        std::sort(occ.begin(), occ.end());
+
+        size_type seq_idx = index->fwd_fm.text_begin_rs.rank(occ[0].first + 1);
+        size_type seq_offset = index->fwd_fm.text_begin_ss.select(seq_idx);
+        size_type next_seq_offset = (seq_idx == index->fwd_fm.text_begin_rs.rank(index->fwd_fm.size() - 1))
+                                        ? index->fwd_fm.size() - 1
+                                        : index->fwd_fm.text_begin_ss.select(seq_idx + 1);
+
+        // replace first occurrence value with correct entries
+        occ[start].second = occ[start].first - seq_offset; // position in seq i
+        occ[start].first  = seq_idx - 1; // position in seq i
+
+        for (size_type i = 1; i < count(); ++i)
+        {
+            if (occ[start + i].first >= next_seq_offset)
+            {
+                seq_idx = index->fwd_fm.text_begin_rs.rank(occ[start + i].first + 1);
+                seq_offset = index->fwd_fm.text_begin_ss.select(seq_idx);
+            }
+
+            // replace occurrence values with correct entries
+            occ[start + i].second = occ[start + i].first - seq_offset; // position in seq i
+            occ[start + i].first  = seq_idx - 1; // position in seq i
+        }
+    }
+
     /*!\brief Locates the occurrences of the searched query in the text on demand, i.e. a ranges::view is returned
      *        and every position is located once it is accessed.
      * \returns Positions in the text.
