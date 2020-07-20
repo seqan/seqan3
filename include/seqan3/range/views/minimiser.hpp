@@ -548,6 +548,14 @@ namespace seqan3::views
  * Note that in the interface with the second underlying range the const-iterable property will only be preserved if
  * both underlying ranges are const-iterable.
  *
+ * ### Robust winnowing
+ *
+ * In case there are multiple minimal values within one window, the minimum and therefore the minimizer is ambiguous.
+ * We choose the right most value as the minimizer of the window, and when shifting the window, the minimizer is only
+ * changed if there appears a value that is strictly smaller as the current minimum. This approach is termed
+ * *robust winnowing* by [Chirag et al.](https://www.biorxiv.org/content/10.1101/2020.02.11.943241v1.full.pdf)
+ * and is proven to work especially well on repeat regions.
+ *
  * ### Example
  *
  * \include test/snippet/range/views/minimiser.cpp
