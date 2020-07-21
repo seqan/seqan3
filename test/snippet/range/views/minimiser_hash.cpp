@@ -22,5 +22,5 @@ int main()
     // to 0, so lexicographical ordering is used for demonstration purposes.
     auto minimisers2 = text | seqan3::views::minimiser_hash(0b10101_shape, seqan3::window_size{8}, seqan3::seed{0});
     seqan3::debug_stream << minimisers2 << '\n';
-    // This leads to [9, 18, 18, 7, 6] representing the k-mers [A.G.C, C.A.G, C.A.G, a.c.t, a.c.g]
+    // This leads to [9, 18, 7, 6] representing the k-mers [A.G.C, C.A.G, a.c.t, a.c.g]
 }
