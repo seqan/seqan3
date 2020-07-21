@@ -432,7 +432,7 @@ private:
         window_values.push_back(window_value());
         auto minimiser_it = std::ranges::min_element(window_values, std::less_equal<value_type>{});
         minimiser_value = *minimiser_it ;
-        minimiser_position_offset = std::distance(std::begin(window_values), minimiser_it );
+        minimiser_position_offset = std::distance(std::begin(window_values), minimiser_it);
     }
 
     /*!\brief Calculates the next minimiser value.
@@ -456,7 +456,7 @@ private:
         {
             auto minimiser_it = std::ranges::min_element(window_values, std::less_equal<value_type>{});
             minimiser_value = *minimiser_it ;
-            minimiser_position_offset = std::distance(std::begin(window_values), minimiser_it );
+            minimiser_position_offset = std::distance(std::begin(window_values), minimiser_it);
             return true;
         }
 
