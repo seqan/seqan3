@@ -77,6 +77,9 @@
  * A k-mer index can be used to efficiently retrieve all occurrences of a certain k-mer in the text.
  * The k-mer can be either an exact string of length k or it can contain one or more wildcards,
  * which denote positions of arbitrary characters.
+ *
+ * An exact k-mer is represented as seqan3::ungapped, and wildcards can be defined with seqan3::shape.
+ * Please check the respective documentation for details and examples.
  */
 
 #pragma once
