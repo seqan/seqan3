@@ -123,9 +123,9 @@ namespace seqan3::views
  * \details
  *
  * A sequence can be presented by a small number of k-mers (minimisers). For a given shape and window size all k-mers
- * are determined in the forward strand and only the lexicographically smallest k-mer is returned for
- * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
- * minimiser, it is saved only once.
+ * are determined in the forward strand and the backward strand and only the lexicographically smallest k-mer is
+ * returned for one window. This process is repeated over every possible window of a sequence. If consecutive windows
+ * share a minimiser, it is saved only once.
  * For example, in the sequence "TAAAGTGCTAAA" for an ungapped shape of length 3 and a window size of 5 the first,
  * the second and the last window contain the same minimiser "AAA".
  * Because the minimisers of the first two consecutive windows also share the same position, storing this minimiser
