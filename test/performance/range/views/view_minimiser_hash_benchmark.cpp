@@ -130,6 +130,37 @@ void compute_minimisers(benchmark::State & state)
     state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
 }
 
+template <method_tag tag>
+void compute_minimisers_on_poly_A_sequence(benchmark::State & state)
+{
+    auto sequence_length = state.range(0);
+    size_t k = static_cast<size_t>(state.range(1));
+    uint32_t w = static_cast<size_t>(state.range(2));
+    assert(sequence_length > 0);
+    assert(k > 0);
+    assert(w > k);
+    auto seq = std::vector<seqan3::dna4>(sequence_length);
+
+    size_t sum{0};
+
+    for (auto _ : state)
+    {
+        if constexpr (tag == method_tag::seqan3_ungapped)
+        {
+            for (auto h : seq | seqan3::views::minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, seqan3::window_size{w}))
+                benchmark::DoNotOptimize(sum += h);
+        }
+        else if constexpr (tag == method_tag::seqan3_gapped)
+        {
+            for (auto h : seq | seqan3::views::minimiser_hash(make_gapped_shape(k), seqan3::window_size{w}))
+                benchmark::DoNotOptimize(sum += h);
+        }
+    }
+
+    state.counters["Throughput[bp/s]"] = bp_per_second(sequence_length - k + 1);
+}
+
+
 #ifdef SEQAN3_HAS_SEQAN2
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_ungapped)->Apply(arguments);
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_gapped)->Apply(arguments);
@@ -138,5 +169,8 @@ BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan2_gapped)->Apply(argumen
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::naive)->Apply(arguments);
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan3_ungapped)->Apply(arguments);
 BENCHMARK_TEMPLATE(compute_minimisers, method_tag::seqan3_gapped)->Apply(arguments);
+
+BENCHMARK_TEMPLATE(compute_minimisers_on_poly_A_sequence, method_tag::seqan3_ungapped)->Apply(arguments);
+BENCHMARK_TEMPLATE(compute_minimisers_on_poly_A_sequence, method_tag::seqan3_gapped)->Apply(arguments);
 
 BENCHMARK_MAIN();
