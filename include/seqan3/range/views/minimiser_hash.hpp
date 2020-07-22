@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>
 #include <seqan3/range/views/minimiser.hpp>
 
@@ -84,9 +85,18 @@ struct minimiser_hash_fn
         if (shape.size() > window_size.get())
             throw std::invalid_argument{"The size of the shape cannot be greater than the window size."};
 
-        return std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
-                                            | std::views::transform([seed] (uint64_t i) {return i ^ seed.get();})
-                                            | seqan3::views::minimiser(window_size.get() - shape.size() + 1);
+        auto forward_strand = std::forward<urng_t>(urange) | seqan3::views::kmer_hash(shape)
+                                                           | std::views::transform([seed] (uint64_t i)
+                                                                                  {return i ^ seed.get();});
+
+        auto reverse_strand = std::forward<urng_t>(urange) | seqan3::views::complement
+                                                           | std::views::reverse
+                                                           | seqan3::views::kmer_hash(shape)
+                                                           | std::views::transform([seed] (uint64_t i)
+                                                                                  {return i ^ seed.get();})
+                                                           | std::views::reverse;
+
+        return seqan3::detail::minimiser_view(forward_strand, reverse_strand, window_size.get() - shape.size() + 1);
     }
 };
 
@@ -113,9 +123,9 @@ namespace seqan3::views
  * \details
  *
  * A sequence can be presented by a small number of k-mers (minimisers). For a given shape and window size all k-mers
- * are determined in the forward strand and only the lexicographically smallest k-mer is returned for
- * one window. This process is repeated over every possible window of a sequence. If consecutive windows share a
- * minimiser, it is saved only once.
+ * are determined in the forward strand and the backward strand and only the lexicographically smallest k-mer is
+ * returned for one window. This process is repeated over every possible window of a sequence. If consecutive windows
+ * share a minimiser, it is saved only once.
  * For example, in the sequence "TAAAGTGCTAAA" for an ungapped shape of length 3 and a window size of 5 the first,
  * the second and the last window contain the same minimiser "AAA".
  * Because the minimisers of the first two consecutive windows also share the same position, storing this minimiser
