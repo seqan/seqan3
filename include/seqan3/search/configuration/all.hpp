@@ -93,7 +93,7 @@
  *
  * \include test/snippet/search/configuration_error.cpp
  *
- * \subsection search_configuration_subsection_output 2. Output Configuration
+ * \subsection search_configuration_subsection_output 4. Output Configuration
  *
  * The output configuration is closely tied to the seqan3::search_result:
  *

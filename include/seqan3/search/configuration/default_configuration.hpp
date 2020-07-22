@@ -22,7 +22,7 @@
 namespace seqan3::search_cfg
 {
 
-/*!\brief The default configuration.
+/*!\brief The default configuration: Compute all exact matches.
  * \ingroup search_configuration
  *
  * \if DEV

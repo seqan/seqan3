@@ -10,7 +10,7 @@
  * \brief Meta-header for the search module.
  *
  * \defgroup search Search
- * \brief Contains datastructures and algorithms for searching.
+ * \brief Data structures and algorithms for the search of query sequences in a large collection of text.
  *
  * \details
  * # Introduction
@@ -20,34 +20,34 @@
  * component for searching large amounts of data and are used for tools such as read mappers, assemblers or protein
  * search tools.
  *
- * \if DEV
- * There are currently two major kind of indices: FM indices and k-mer indices (also known as q-gram
- * indices).
- *
- * \todo Elaborate on that (space consumption for growing k, maybe a rule of thumb).
- *
- * Generally speaking k-mer indices support very fast searching of exact k-mers (strings of length k) or k-mers with
- * predefined wildcard positions that do not have to match. FM indices on the other hand are more versatile and work
- * with arbitrary pattern lengths and error numbers / positions.
- * \todo k-mer indices are coming soon. Stay tuned!
+ * \if KMER
+ * SeqAn currently implements two kinds of indices: FM indices and k-mer indices (also known as q-gram indices).
+ * Generally speaking, k-mer indices support very fast searching of exact k-mers (strings of length k) or k-mers with
+ * predefined wildcard positions, which match with any character.
+ * FM indices on the other hand are more versatile and work
+ * with arbitrary pattern lengths and error numbers or positions.
+ * \else
+ * SeqAn currently implements only the FM index and a k-mer index is planned. The FM index works
+ * with arbitrary pattern lengths and error numbers.
  * \endif
  *
- * SeqAn currently supports very fast FM indices. For more details visit the \ref submodule_fm_index
- * "FM Index submodule".
+ * \if DEV
+ * \todo Elaborate on that (space consumption for growing k, maybe a rule of thumb).
+ * \todo Add a description of the DREAM index here.
+ * \endif
  *
- * ## Search algorithm
+ * # Search algorithm
  *
- * The Search module offers a simple unified interface that allows searching FM indices and choosing the best
- * algorithm based on the index at hand.
+ * The Search module offers a simple unified interface for searching a query in a large indexed text.
+ * The algorithm chooses the best search method based on the provided index.
  *
- * ## FM indices
+ * # FM index
  *
  * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
- * Latter are currently only available for searches with up to and including three errors using bidirectional indices.
- * The optimum search schemes will be improved in the future to handle unidirectional indices and higher error counts.
+ * The latter are currently only available for searches with up to three errors using bidirectional indices.
+ * In the future we plan to improve the optimum search schemes to handle higher error counts.
  *
  * \if DEV
- *
  * ### Implementation details of Search Schemes
  *
  * A search scheme is a collection of searches, where each search `s` specifies the order in which the blocks are
@@ -68,19 +68,26 @@
  *
  * \endif
  *
- * ### Reference
+ * **Reference:**
  *
  * Kianfar, K., Pockrandt, C., Torkamandi, B., Luo, H., & Reinert, K. (2018).
  *
  * Optimum Search Schemes for Approximate String Matching Using Bidirectional FM-Index. bioRxiv, 301085.
  * https://doi.org/10.1101/301085
  *
- * \if DEV
- * ## K-mer Indices
  *
- * \todo Rewrite landing page.
- * \endif
+ * # K-mer index
  *
+ * A k-mer index can be used to efficiently retrieve all occurrences of a certain k-mer in the text.
+ * The k-mer can be either an exact string of length k or it can contain one or more wildcards,
+ * which denote positions of arbitrary characters.
+ *
+ * An exact k-mer is represented as seqan3::ungapped, and wildcards can be defined with seqan3::shape.
+ * Please check the respective documentation for details and examples.
+ *
+ * \note The k-mer index is not yet implemented.
+ * \sa seqan3::views::kmer_hash
+ * \sa seqan3::views::minimiser
  */
 
 #pragma once
