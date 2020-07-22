@@ -28,12 +28,12 @@
  * with arbitrary pattern lengths and error numbers or positions.
  * \else
  * SeqAn currently implements only the FM index and a k-mer index is planned. The FM index works
- * with arbitrary pattern lengths and error numbers or positions.
+ * with arbitrary pattern lengths and error numbers.
  * \endif
  *
  * \if DEV
  * \todo Elaborate on that (space consumption for growing k, maybe a rule of thumb).
- *       Add a description of the DREAM index here.
+ * \todo Add a description of the DREAM index here.
  * \endif
  *
  * # Search algorithm
@@ -45,8 +45,7 @@
  *
  * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
  * The latter are currently only available for searches with up to three errors using bidirectional indices.
- * In the future we plan to improve the optimum search schemes, to handle
- * higher error counts.
+ * In the future we plan to improve the optimum search schemes to handle higher error counts.
  *
  * \if DEV
  * ### Implementation details of Search Schemes
