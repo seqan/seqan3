@@ -215,12 +215,12 @@ Which of the following concepts do you think `v` models?
 | std::ranges::sized_range         |         |
 | std::ranges::output_range        |         |
 
-Surprised? Let's have a closer look at the std::views::filter view. The filter view only returns the value of the 
+Surprised? Let's have a closer look at the std::views::filter view. The filter view only returns the value of the
 underlying range for which the given predicate evaluates to `true`. To know which value is an element of the filter
-view, the view has to look at each of them. Thus, it must scan the underlying range value-by-value and cannot jump to an 
-arbitrary location in constant time since it cannot know how many elements it had to skip without looking at them. 
-Accordingly, the std::views::filter preserves only std::ranges::bidirectional_range, because it can scan the text in 
-reverse order as well. Since the view cannot guarantee that the values lie in contiguous memory, it can also not 
+view, the view has to look at each of them. Thus, it must scan the underlying range value-by-value and cannot jump to an
+arbitrary location in constant time since it cannot know how many elements it had to skip without looking at them.
+Accordingly, the std::views::filter preserves only std::ranges::bidirectional_range, because it can scan the text in
+reverse order as well. Since the view cannot guarantee that the values lie in contiguous memory, it can also not
 preserve std::ranges::contiguous_range. Similarly, the view cannot model std::ranges::sized_range as it cannot determine
 the number of values not filtered out in constant time.
 

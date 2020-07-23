@@ -2,9 +2,9 @@
 
 [TOC]
 
-This tutorial introduces minimisers. Minimisers are a compact representation of a sequence that is closely related to,
-but more efficient than a representation by k-mers. The minimisers are implemented as a view in SeqAn3. For more
-information about views and how to implement your own view, please see  
+This tutorial introduces minimisers. Minimisers are a compact representation of a DNA or a RNA sequence that is closely
+related to, but more efficient than a representation by k-mers. The minimisers are implemented as a view in SeqAn3. For
+more information about views and how to implement your own view, please see  
 \ref tutorial_ranges and \ref howto_write_a_view .
 
 \tutorial_head{Easy, 20 min, , \ref tutorial_ranges\, \ref howto_write_a_view}
@@ -13,9 +13,9 @@ information about views and how to implement your own view, please see
 
 A common way to work with sequences is to obtain their k-mers, but even with a large size of k, the number of k-mers is
 non-trivial, therefore storing k-mers is costly. At the same time, due to the overlap of consecutive k-mers, the
-information they contain is highly redundant. That is why, minimiser come in handy. Minimisers are k-mers, which are
-minimal in a window of a specified size.  Minimal could for example mean lexicographically smallest. By storing only
-these minimal k-mers the storage cost is significantly reduced while maintaining a similar percentage of information.
+information they contain is highly redundant. That is why minimisers come in handy. Minimisers are k-mers, which are
+a minimal value in a window of a specified size.  Minimal could for example mean lexicographically smallest. By storing only
+these minimal k-mers the storage cost is significantly reduced while maintaining a similar amount of information.
 
 # Minimiser Workflow
 
@@ -30,25 +30,31 @@ The following figure shows three examples, where a) and b) differ only in their 
 a gapped k-mer. All positions marked with a ’.’ are gaps and all k-mers in lower case come from the reverse strand.
 As the example shows, k-mer size, shape and window size influence the total amount of minimisers.
 
-<img src="Minimiser.png"
-     alt="Minimiser Example"
-     style="width: 1000px; float: left; margin-right: 2px;" />
+\image html minimiser.png
 
 ### Non-lexicographical Minimisers
 
 When sliding the window over the sequence, it might happen that consecutive minimisers differ only slightly.
 For instance, when a minimiser starts with a repetition of A’s, it is highly likely that the minimiser of the next
 window will start with a repetition of A’s too, which will then just be one A shorter. This may go on for multiple
-window shifts, depending on how long the repetition is. Saving these only slightly different minimiser makes no sense
+window shifts, depending on how long the repetition is. Saving these only slightly different minimisers makes no sense
 because they contain no new information about the underlying sequence.
 Additionally, sequences with a repetition of A’s will be seen as more similar to each other than they actually are.
 As [Marçais et al.](https://doi.org/10.1093/bioinformatics/btx235) have shown, randomizing the order of the k-mers
 can solve this problem.
 
+### Robust Winnowing
+
+In case there are multiple minimal values within one window, the minimum and therefore the minimiser is ambiguous.
+We choose the rightmost value as the minimiser of the window, and when shifting the window, the minimiser is only
+changed if there appears a value that is strictly smaller than the current minimum. This approach is termed
+*robust winnowing* by [Chirag et al.](https://www.biorxiv.org/content/10.1101/2020.02.11.943241v1.full.pdf) and is
+proven to work especially well on repeat regions.
+
 # Usage in SeqAn3
 
 The minimisers are implemented in `seqan3::views::minimiser_hash`. The function requires three arguments: The sequence,
-the shape and the window size. The above mentioned k-mer size is implicitly given by the size of the shape.
+the shape and the window size. The above-mentioned k-mer size is implicitly given by the size of the shape.
 That is all the information you need to obtain minimisers with SeqAn3, so let's just dive right into the first
 assignment!
 
@@ -102,19 +108,42 @@ same hash value.
 ### Ignoring the backward strand
 
 So far, we have always considered the forward and the backward strand of a sequence, but there might be cases where
-the backward strand should not be considered. Therefore, there is an option to use `seqan3::views::minimiser_hash` with
-the option `reverse==false`. What happens now, if we use `reverse==false` and the `shape.size()` equals the
-`window_size`?
+the backward strand should not be considered. If this is the desired behaviour then the `seqan3::views::minimiser` needs
+to be used. Unlike the `seqan3::views::minimiser_hash`, `seqan3::views::minimiser` does not hash the values for you, so
+you have to do this yourself. But fear not, `seqan3::views::kmer_hash` makes this really easy for you!
+
+```cpp
+auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(5);
+```
+
+This syntax will result in minimisers with k-mer size 4 and a window-length of 8 (5 + 4 - 1). (So, to determine the
+right window size you always have to determine the window size you would like to use in `seqan3::views::minimiser_hash`
+and subtract it by the k-mer size and add 1, here: 8 - 4 + 1 = 5.)
+Got it? Then let's make a simple test, what is the actual window size of the following:
+
+\snippet doc/tutorial/ranges/views/minimiser/minimiser_snippets.cpp minimiser
 
 \hint
-`seqan3::views::minimiser_hash` will return the same values as `seqan3::views::kmer_hash`, because if `shape.size()`
-equals the `window_size` there is only one comparison to determine the minimal k-mer, the comparison between forward
-and backward strand. Therefore, if the backward strand is not considered, the minimisers are all k-mers from the given
-sequence.
+1 + 4 - 1 = 4. So, k-mer size and window size are equal.
 \endhint
 
-In order to ensure that this is the desired behaviour, using `seqan3::views::minimiser_hash` with `reverse==false`
-and `shape.size()` equals `window_size` is prohibited. Please, use `seqan3::views::kmer_hash` instead.
+Wait a second, what does it mean, if k-mer size and window size are equal and we are not considering the backward
+strand?
+
+\hint
+`seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(1)` will return the same values as
+`seqan3::views::kmer_hash`, because if k-mer size and window size is equal, there is only one comparison to determine
+the minimal k-mer, the comparison between forward and backward strand. Therefore, if the backward strand is not
+considered, the minimisers are all k-mers from the given sequence.
+\endhint
+
+In order to ensure that this is the desired behaviour, using `seqan3::views::minimiser(1)` is prohibited. Please, use
+`seqan3::views::kmer_hash` instead.
+
+Last but not least, `seqan3::views::kmer_hash` and `seqan3::views::minimiser` do not have a seed parameter. So, in order
+to obtain a random ordering, you have to XOR the view yourself. This can be done with the following command:
+
+\snippet doc/tutorial/ranges/views/minimiser/minimiser_snippets.cpp minimiser_seed
 
 \assignment{Assignment 3: Fun with minimisers III}
 Task: Repeat assignment 2 but this time do not consider the backward strand.
