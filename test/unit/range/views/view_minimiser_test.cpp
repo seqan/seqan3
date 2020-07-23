@@ -65,7 +65,7 @@ template <>
 struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
 {
     using iterator_tag = std::forward_iterator_tag;
-    static constexpr bool const_iterable = false;
+    static constexpr bool const_iterable = true;
 
     seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
     decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4})) vec = text | kmer_view;
@@ -113,8 +113,8 @@ protected:
     result_t result3_gapped_no_rev_start{3};      // For start at second A
 };
 
-template <typename adaptor_t, typename adaptor2_t, typename text_t>
-void compare_types(adaptor_t v, adaptor2_t kmer_view, text_t text)
+template <typename adaptor_t>
+void compare_types(adaptor_t v)
 {
     EXPECT_TRUE(std::ranges::input_range<decltype(v)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v)>);
@@ -123,8 +123,7 @@ void compare_types(adaptor_t v, adaptor2_t kmer_view, text_t text)
     EXPECT_TRUE(std::ranges::view<decltype(v)>);
     EXPECT_FALSE(std::ranges::sized_range<decltype(v)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v)>);
-    EXPECT_EQ(seqan3::const_iterable_range<decltype((text | kmer_view))>,
-              seqan3::const_iterable_range<decltype(v)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v), size_t>));
 }
 
@@ -134,14 +133,13 @@ TYPED_TEST(minimiser_view_properties_test, concepts)
                    'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
 
     auto v = text | kmer_view | minimiser_no_rev_view;
-    compare_types(v, kmer_view, text);
+    compare_types(v);
     auto v2 = seqan3::detail::minimiser_view{text | kmer_view, text | kmer_view, 5};
-    compare_types(v2, kmer_view, text);
 
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
         auto v3 = seqan3::detail::minimiser_view{text | kmer_view, text | rev_kmer_view, 5};
-        compare_types(v3, rev_kmer_view, text);
+        compare_types(v3);
     }
 }
 

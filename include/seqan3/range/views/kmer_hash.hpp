@@ -127,15 +127,6 @@ public:
         return shape_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
-    //!\copydoc begin()
-    auto cbegin() const noexcept
-    //!\cond
-        requires const_iterable_range<urng_t>
-    //!\endcond
-    {
-        return begin();
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the range.
      * \returns Iterator to the end.
      *
@@ -153,7 +144,11 @@ public:
      */
     auto end() noexcept
     {
-        return std::ranges::end(urange);
+        // Assigning the end iterator to the text_right iterator of the shape_iterator only works for common ranges.
+        if constexpr (std::ranges::common_range<urng_t>)
+            return shape_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
+        else
+            return std::ranges::end(urange);
     }
 
     //!\copydoc end()
@@ -162,16 +157,11 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return std::ranges::end(urange);
-    }
-
-    //!\copydoc end()
-    auto cend() const noexcept
-    //!\cond
-        requires const_iterable_range<urng_t>
-    //!\endcond
-    {
-        return end();
+        // Assigning the end iterator to the text_right iterator of the shape_iterator only works for common ranges.
+        if constexpr (std::ranges::common_range<urng_t const>)
+            return shape_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
+        else
+            return std::ranges::end(urange);
     }
     //!\}
 
@@ -281,6 +271,7 @@ public:
 
     /*!\brief Construct from a given iterator on the text and a seqan3::shape.
     * /param[in] it_start Iterator pointing to the first position of the text.
+    * /param[in] it_end   Sentinel pointing to the end of the text.
     * /param[in] s_       The seqan3::shape that determines which positions participate in hashing.
     *
     * \details
@@ -290,16 +281,66 @@ public:
     * Linear in size of shape.
     */
     shape_iterator(it_t it_start, sentinel_t it_end, shape s_) :
-        shape_{s_}, text_left{it_start}, text_right{std::ranges::next(it_start, s_.size(), it_end)}
+        shape_{s_}, text_left{it_start}, text_right{std::ranges::next(text_left, shape_.size() - 1, it_end)}
     {
         assert(std::ranges::size(shape_) > 0);
 
-        if (shape_.size() <= std::ranges::distance(text_left, text_right))
+        // shape size = 3
+        // Text:      1 2 3 4 5 6 7 8 9
+        // text_left: ^
+        // text_right:    ^
+        // distance(text_left, text_right) = 2
+        if (shape_.size() <= std::ranges::distance(text_left, text_right) + 1)
         {
             roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
-
             hash_full();
         }
+    }
+
+    /*!\brief Construct from a given iterator on the text and a seqan3::shape.
+    * /param[in] it_start Iterator pointing to the first position of the text.
+    * /param[in] it_end   Sentinel pointing to the end of the text.
+    * /param[in] s_       The seqan3::shape that determines which positions participate in hashing.
+    * /param[in] is_end   Indicates that this iterator should point to the end of the text.
+    *
+    * \details
+    *
+    * If we have a common_range as underlying range, we want to preserve this property.
+    * This means that we need to have a shape_iterator that can act as end for the kmer_hash_view, i.e.
+    * the text_right iterator is equal to the end iterator of the underlying range.
+    * However, we still need to do some initialisation via hash_full:
+    * When using `std::views::reverse`, we start iterating from the end and decrement the iterator.
+    * After calling hash_full, we need to reset our text_right iterator to point to the end again.
+    *
+    * Another difference to the other constructor is that we need to do some work to determine the position of
+    * the text_left iterator. Note that we use `std::ranges::next` instead of `std::ranges::prev` because the latter
+    * only works for bidirectional ranges.    *
+    *
+    * ### Complexity
+    *
+    * Linear in size of shape.
+    */
+    shape_iterator(it_t it_start, sentinel_t it_end, shape s_, bool SEQAN3_DOXYGEN_ONLY(is_end)) : shape_{s_}
+    {
+        assert(std::ranges::size(shape_) > 0);
+
+        auto urange_size = std::ranges::distance(it_start, it_end);
+        auto step = (shape_.size() + 1 > urange_size) ? 0 : urange_size - shape_.size() + 1;
+        text_left = std::ranges::next(it_start, step, it_end);
+        text_right = it_end;
+
+        // shape size = 3
+        // Text:      1 2 3 4 5 6 7 8 9
+        // text_left: ^
+        // text_right:    ^
+        // distance(text_left, text_right) = 2
+        if (shape_.size() <= std::ranges::distance(text_left, text_right) + 1)
+        {
+            roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
+            hash_full();
+        }
+
+        text_right = it_end;
     }
     //!\}
 
@@ -481,15 +522,15 @@ public:
     }
 
     /*!\anchor shape_iterator_operator-difference
-     * \brief Return offset between this and remote iterator's position.
+     * \brief Return offset between two iterator's positions.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    difference_type operator-(shape_iterator const & lhs) const noexcept
+    friend difference_type operator-(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
     {
-        return static_cast<difference_type>(text_right - lhs.text_right);
+        return static_cast<difference_type>(lhs.text_right - rhs.text_right);
     }
 
     /*!\brief Return offset between remote sentinel's position and this.
@@ -621,6 +662,7 @@ private:
             hash_value *= shape_[i] ? sigma : 1;
             std::ranges::advance(text_right, 1);
         }
+
     }
 
     //!\brief Calculates the next hash value via rolling hash.
@@ -729,7 +771,7 @@ namespace seqan3::views
  * | std::ranges::viewable_range      | *required*                         | *guaranteed*                     |
  * | std::ranges::view                |                                    | *guaranteed*                     |
  * | std::ranges::sized_range         |                                    | *preserved*                      |
- * | std::ranges::common_range        |                                    | *lost*                           |
+ * | std::ranges::common_range        |                                    | *preserved*                      |
  * | std::ranges::output_range        |                                    | *lost*                           |
  * | seqan3::const_iterable_range     |                                    | *preserved*                      |
  * |                                  |                                    |                                  |
