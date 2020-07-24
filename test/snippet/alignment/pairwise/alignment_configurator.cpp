@@ -3,7 +3,7 @@
 int main()
 {
     using sequences_t = std::vector<std::pair<std::string, std::string>>;
-    using config_t = decltype(seqan3::align_cfg::method_global |
+    using config_t = decltype(seqan3::align_cfg::method_global{} |
                               seqan3::align_cfg::edit_scheme |
                               seqan3::align_cfg::result{seqan3::with_score});
 

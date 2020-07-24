@@ -101,7 +101,7 @@ auto cfg = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{
 //! [edit]
 
 // Configure an edit distance alignment.
-auto cfg = seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme;
+auto cfg = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;
 //! [edit]
 (void) cfg;
 }

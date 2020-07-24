@@ -47,40 +47,40 @@ auto run_test(config_t const & cfg)
 
 TEST(alignment_configurator, configure_edit)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global | seqan3::align_cfg::edit_scheme).score(), 0);
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_end_position)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global |
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
                        seqan3::align_cfg::result{seqan3::with_end_positions}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_begin_position)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global |
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
                        seqan3::align_cfg::result{seqan3::with_begin_positions}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_trace)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global |
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
                        seqan3::align_cfg::result{seqan3::with_alignment}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_semi)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global |
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
                        seqan3::align_cfg::aligned_ends{seqan3::free_ends_first}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_banded)
 {
-    EXPECT_THROW((run_test(seqan3::align_cfg::method_global |
+    EXPECT_THROW((run_test(seqan3::align_cfg::method_global{} |
                            seqan3::align_cfg::edit_scheme |
                            seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-1},
                                                               seqan3::align_cfg::upper_diagonal{1}})),
@@ -89,14 +89,14 @@ TEST(alignment_configurator, configure_edit_banded)
 
 TEST(alignment_configurator, configure_edit_max_error)
 {
-    EXPECT_EQ(run_test(seqan3::align_cfg::method_global |
+    EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
                        seqan3::align_cfg::max_error{3u}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
 
@@ -105,7 +105,7 @@ TEST(alignment_configurator, configure_affine_global)
 
 TEST(alignment_configurator, configure_affine_global_max_error)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                seqan3::align_cfg::max_error{5u};
@@ -115,7 +115,7 @@ TEST(alignment_configurator, configure_affine_global_max_error)
 
 TEST(alignment_configurator, configure_affine_global_end_position)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                seqan3::align_cfg::result{seqan3::with_end_positions};
@@ -125,7 +125,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
 
 TEST(alignment_configurator, configure_affine_global_begin_position)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                seqan3::align_cfg::result{seqan3::with_begin_positions};
@@ -135,7 +135,7 @@ TEST(alignment_configurator, configure_affine_global_begin_position)
 
 TEST(alignment_configurator, configure_affine_global_trace)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                seqan3::align_cfg::result{seqan3::with_alignment};
@@ -146,7 +146,7 @@ TEST(alignment_configurator, configure_affine_global_trace)
 TEST(alignment_configurator, configure_affine_global_banded)
 {
     {
-        auto cfg = seqan3::align_cfg::method_global |
+        auto cfg = seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                    seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
           seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-1}, seqan3::align_cfg::upper_diagonal{1}};
@@ -155,7 +155,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
     }
 
     {  // invalid band
-        auto cfg_base = seqan3::align_cfg::method_global |
+        auto cfg_base = seqan3::align_cfg::method_global{} |
                         seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                         seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}};
         auto cfg_lower = cfg_base | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10},
@@ -170,7 +170,7 @@ TEST(alignment_configurator, configure_affine_global_banded)
 
 TEST(alignment_configurator, configure_affine_global_banded_with_alignment)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
       seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-1}, seqan3::align_cfg::upper_diagonal{1}};
@@ -186,7 +186,7 @@ TEST(alignment_configurator, configure_affine_global_banded_with_alignment)
 
 TEST(alignment_configurator, configure_affine_global_semi)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
@@ -235,7 +235,7 @@ TEST(alignment_configurator, configure_affine_local_alignment)
 
 TEST(alignment_configurator, configure_result_score_type)
 {
-    auto cfg = seqan3::align_cfg::method_global |
+    auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<double>};
     auto result = run_test(cfg);

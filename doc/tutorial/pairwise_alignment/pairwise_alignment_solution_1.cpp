@@ -17,7 +17,7 @@ int main()
                     "AGGTACGAGCGACACT"_dna4};
 
     // Configure the alignment kernel.
-    auto config = seqan3::align_cfg::method_global |
+    auto config = seqan3::align_cfg::method_global{} |
                   seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
 
     for (auto const & res : seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config))

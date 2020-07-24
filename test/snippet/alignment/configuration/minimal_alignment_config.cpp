@@ -9,7 +9,7 @@ using seqan3::operator""_dna4;
 
 int main()
 {
-    auto min_cfg = seqan3::align_cfg::method_global |
+    auto min_cfg = seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}};
 
     auto seq1 = "ACGT"_dna4;
