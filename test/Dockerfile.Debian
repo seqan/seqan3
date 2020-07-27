@@ -1,0 +1,19 @@
+FROM debian:sid-slim
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  cmake \
+  ninja-build \
+  zlib1g-dev \
+  libboost-dev \
+  libgtest-dev \
+  libcereal-dev \
+  libbenchmark-dev \
+  librange-v3-dev \
+  build-essential \
+  git \
+  ca-certificates
+COPY . /src
+WORKDIR /src
+RUN mkdir /build-unit
+WORKDIR /build-unit
+RUN cmake -DCMAKE_CXX_FLAGS="-g -fstack-protector-strong -Wformat -Werror=format-security -DNDEBUG -O3 -std=c++17 -fconcepts" -DCMAKE_BUILD_TYPE=None -GNinja -DCMAKE_VERBOSE_MAKEFILE=ON /src/test/unit
+RUN ninja -j$(nproc) -v
