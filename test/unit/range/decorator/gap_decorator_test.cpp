@@ -36,8 +36,8 @@ using test_types = ::testing::Types<decorator_t, decorator_t2>;
 // test templates
 // ---------------------------------------------------------------------------------------------------------------------
 
-template <typename inner_type_>
-class aligned_sequence<seqan3::gap_decorator<inner_type_>> : public ::testing::Test
+template <typename inner_type>
+class aligned_sequence<seqan3::gap_decorator<inner_type>> : public ::testing::Test
 {
 public:
     // Initialiser function is needed for the typed test because the gapped_decorator

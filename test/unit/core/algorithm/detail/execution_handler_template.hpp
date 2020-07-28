@@ -5,21 +5,21 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/algorithm>
+#include <iterator>
+#include <seqan3/std/ranges>
 #include <utility>
 #include <vector>
 
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/chunk.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
-template <typename T>
+template <typename t>
 struct execution_handler : public ::testing::Test
 {
     static constexpr size_t total_size = 10000;
@@ -77,7 +77,7 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
          it += chunk_size, pos += chunk_size)
     {
         std::ranges::subrange<range_iterator_t, range_iterator_t> chunk{it, std::next(it, chunk_size)};
-        exec_handler.execute(simulate_alignment_with_range, std::move(chunk), [pos = pos, &buffer] (auto && res) mutable
+        exec_handler.execute(simulate_alignment_with_range, std::move(chunk), [pos, &buffer] (auto && res) mutable
         {
             *(buffer.begin() + pos) = std::forward<decltype(res)>(res);
             ++pos;

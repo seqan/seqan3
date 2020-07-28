@@ -9,7 +9,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 
-template <typename T>
+template <typename t>
 using alphabet_constexpr = ::testing::Test;
 
 TYPED_TEST_SUITE_P(alphabet_constexpr);

@@ -8,12 +8,12 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/views/join.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/range/views/join.hpp>
-#include <seqan3/range/views/to.hpp>
 
 struct options
 {
@@ -55,7 +55,7 @@ template <seqan3::alphabet alphabet_t>
 std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> const & ref,
                                                     size_t const number_of_reads,
                                                     size_t const read_length,
-                                                    uint8_t const simulated_errors_,
+                                                    uint8_t simulated_errors,
                                                     double const prob_insertion,
                                                     double const prob_deletion,
                                                     double const stddev = 0,
@@ -64,7 +64,7 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     std::vector<std::vector<alphabet_t>> reads;
     std::mt19937_64 gen{seed};
 
-    std::normal_distribution<> dis_error_count{static_cast<double>(simulated_errors_), stddev};
+    std::normal_distribution<> dis_error_count{static_cast<double>(simulated_errors), stddev};
 
     // mutation distributions
     std::uniform_real_distribution<double> mutation_type_prob{0.0, 1.0};
@@ -78,8 +78,7 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     for (size_t i = 0; i < number_of_reads; ++i)
     {
         // simulate concrete error number or use normal distribution
-        uint8_t simulated_errors = (stddev == 0) ? simulated_errors_ :
-                                                   std::abs(std::round(dis_error_count(gen)));
+        simulated_errors = (stddev == 0) ? simulated_errors : std::abs(std::round(dis_error_count(gen)));
 
         std::uniform_int_distribution<size_t> random_read_pos{0, std::ranges::size(ref) - read_length - simulated_errors};
         size_t rpos = random_read_pos(gen);

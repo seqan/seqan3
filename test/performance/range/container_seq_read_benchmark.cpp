@@ -25,13 +25,13 @@ using small_vec = seqan3::small_vector<t, 10'000>;
 //  sequential_read
 // ============================================================================
 
-template <template <typename> typename container_t, typename alphabet_t, bool const_ = false>
+template <template <typename> typename container_t, typename alphabet_t, bool const_qualified = false>
 void sequential_read(benchmark::State & state)
 {
     auto cont_rando = seqan3::test::generate_sequence<alphabet_t>(10'000, 0, 0);
     container_t<alphabet_t> source(cont_rando.begin(), cont_rando.end());
 
-    using source_ref_t = std::conditional_t<const_,
+    using source_ref_t = std::conditional_t<const_qualified,
                                             container_t<alphabet_t> const &,
                                             container_t<alphabet_t> &>;
 
@@ -45,7 +45,7 @@ void sequential_read(benchmark::State & state)
     state.counters["sizeof"] = sizeof(alphabet_t);
     if constexpr (seqan3::alphabet<alphabet_t>)
         state.counters["alph_size"] = seqan3::alphabet_size<alphabet_t>;
-    state.counters["const"] = const_;
+    state.counters["const"] = const_qualified;
 }
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector, char);

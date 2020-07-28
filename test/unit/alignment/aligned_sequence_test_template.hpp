@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <string>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
@@ -19,7 +19,7 @@
 
 using seqan3::operator""_dna4;
 
-template <typename T>
+template <typename t>
 class aligned_sequence : public ::testing::Test
 {};
 

@@ -12,7 +12,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
-template <typename T>
+template <typename t>
 using nucleotide = ::testing::Test;
 
 TYPED_TEST_SUITE_P(nucleotide);

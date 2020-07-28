@@ -7,20 +7,20 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
 #include <array>
-#include <list>
-#include <forward_list>
 #include <deque>
+#include <forward_list>
+#include <list>
 #include <string>
+#include <vector>
 
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
+#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/concept.hpp>
 
 TEST(range_concept, forward_range)

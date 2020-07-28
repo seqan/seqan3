@@ -7,14 +7,13 @@
 
 #pragma once
 
+#include <forward_list>
 #include <iterator>
 #include <list>
-#include <forward_list>
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 using input_iterator = std::istream_iterator<char>;
 using output_iterator = std::cpp20::ostream_iterator<char>;

@@ -13,7 +13,7 @@
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/test/cereal.hpp>
 
-template <typename T>
+template <typename t>
 using alphabet_cereal = ::testing::Test;
 
 using test_types = ::testing::Types<seqan3::dna4,

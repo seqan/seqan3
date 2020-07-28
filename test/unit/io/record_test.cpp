@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <algorithm>
 #include <sstream>
 
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/io/record.hpp>
-#include <seqan3/io/detail/record.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/std/algorithm>
+#include <seqan3/io/detail/record.hpp>
+#include <seqan3/io/record.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;

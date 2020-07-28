@@ -72,7 +72,7 @@ TEST(view_persist, wrap_temporary)
     EXPECT_EQ("o", v3b);
 }
 
-TEST(view_persist, const_)
+TEST(view_persist, const)
 {
     // inner const
     using t = std::string const;
