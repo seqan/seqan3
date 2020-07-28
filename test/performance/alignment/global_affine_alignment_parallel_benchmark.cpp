@@ -65,14 +65,14 @@ auto generate_data_seqan3()
 template <typename alphabet_t>
 auto generate_data_seqan2()
 {
-    using sequence_t = decltype(generate_sequence_seqan2<alphabet_t>());
+    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<alphabet_t>());
 
     seqan::StringSet<sequence_t> vec1;
     seqan::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
-        appendValue(vec1, generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
-        appendValue(vec2, generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i + set_size));
+        appendValue(vec1, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
+        appendValue(vec2, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i + set_size));
     }
     return std::pair{vec1, vec2};
 }
@@ -141,7 +141,7 @@ template <typename result_t>
 void seqan2_affine_dna4_parallel(benchmark::State & state)
 {
     auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
-    ExecutionPolicy<Parallel, Serial> exec{};
+    seqan::ExecutionPolicy<seqan::Parallel, seqan::Serial> exec{};
     setNumThreads(exec, std::thread::hardware_concurrency());
 
     int64_t total = 0;

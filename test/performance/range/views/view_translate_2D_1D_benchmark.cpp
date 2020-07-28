@@ -192,7 +192,7 @@ void copy(benchmark::State & state)
 
     for (size_t i = 0; i < length(dna_sequence_collection); ++i)
     {
-        dna_sequence_collection[i] = generate_sequence_seqan2<seqan::Dna>(100, 0, 0);
+        dna_sequence_collection[i] = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, 0);
     }
 
     copy_impl_seqan2<tag_t, stringset_t>(state, dna_sequence_collection);
