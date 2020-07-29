@@ -267,11 +267,11 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
+    //!\cond
+        requires std::convertible_to<char_t, index_alphabet_type>
+    //!\endcond
     bool extend_right(char_t const c) noexcept
     {
-        static_assert(std::convertible_to<char_t, index_alphabet_type>,
-                     "The character must be convertible to the alphabet of the index.");
-
         assert(index != nullptr);
         // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
         // for the indexed text.
