@@ -12,7 +12,12 @@
 
 #pragma once
 
-#include <range/v3/algorithm/copy.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
+#include <seqan3/std/span>
+#include <seqan3/std/type_traits>
 
 #include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/core/type_traits/range.hpp>
@@ -23,12 +28,6 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
-#include <seqan3/std/span>
-#include <seqan3/std/type_traits>
 
 namespace seqan3::detail
 {

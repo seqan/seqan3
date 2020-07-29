@@ -13,10 +13,10 @@
 #pragma once
 
 #include <algorithm>
+#include <seqan3/std/algorithm>
 #include <bitset>
+#include <seqan3/std/ranges>
 #include <utility>
-
-#include <range/v3/algorithm/copy.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_trace_algorithms.hpp>
@@ -25,7 +25,6 @@
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

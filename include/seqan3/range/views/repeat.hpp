@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include <range/v3/view/single.hpp>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 
 #include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
