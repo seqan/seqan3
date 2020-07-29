@@ -36,27 +36,27 @@ using test_types = ::testing::Types<decorator_t, decorator_t2>;
 // test templates
 // ---------------------------------------------------------------------------------------------------------------------
 
-template <typename inner_type_>
-class aligned_sequence_<seqan3::gap_decorator<inner_type_>> : public ::testing::Test
+template <typename inner_type>
+class aligned_sequence<seqan3::gap_decorator<inner_type>> : public ::testing::Test
 {
 public:
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<seqan3::gapped<seqan3::dna>>.
-    void initialise_typed_test_container(decorator_t & container_, seqan3::dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t & container, seqan3::dna4_vector const & target)
     {
-        container_ = target;
+        container = target;
     }
 
     // Initialiser function is needed for the typed test because the gapped_decorator
     // will be initialised differently than the naive vector<seqan3::gapped<seqan3::dna>>.
-    void initialise_typed_test_container(decorator_t2 & container_, seqan3::dna4_vector const & target)
+    void initialise_typed_test_container(decorator_t2 & container, seqan3::dna4_vector const & target)
     {
-        container_ = std::ranges::subrange<decltype(target.begin()),
+        container = std::ranges::subrange<decltype(target.begin()),
                                            decltype(target.end())>{target.begin(), target.end()};
     }
 };
 
-INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator, aligned_sequence_, test_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator, aligned_sequence, test_types, );
 
 template <>
 struct iterator_fixture<std::ranges::iterator_t<decorator_t>> : public ::testing::Test

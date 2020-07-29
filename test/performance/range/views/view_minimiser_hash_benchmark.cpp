@@ -27,14 +27,14 @@ inline benchmark::Counter bp_per_second(size_t const basepairs)
 
 inline seqan3::shape make_gapped_shape(size_t const k)
 {
-    seqan3::shape shape_{};
+    seqan3::shape shape{};
 
     for (size_t i{0}; i < k - 1; ++i)
-        shape_.push_back((i + 1) % 2);
+        shape.push_back((i + 1) % 2);
 
-    shape_.push_back(1u);
-    shape_.push_back(0u);
-    return shape_;
+    shape.push_back(1u);
+    shape.push_back(0u);
+    return shape;
 }
 
 static void arguments(benchmark::internal::Benchmark* b)
@@ -112,13 +112,13 @@ void compute_minimisers(benchmark::State & state)
                                                seqan::Shape<seqan::Dna, seqan::SimpleShape>,
                                                seqan::Shape<seqan::Dna, seqan::GenericShape>>;
 
-            shape_t shape_;
+            shape_t shape;
             if constexpr (tag == method_tag::seqan2_ungapped)
-               seqan::resize(shape_, k);
+               seqan::resize(shape, k);
             else
-                shape_ = make_gapped_shape_seqan2(k);
+                shape = make_gapped_shape_seqan2(k);
 
-            minimiser<decltype(shape_)> seqan_minimiser(window{w}, kmer{k}, shape_);
+            minimiser<decltype(shape)> seqan_minimiser(window{w}, kmer{k}, shape);
             seqan_minimiser.compute(seqan2_seq);
 
             for (auto h : seqan_minimiser.minimiser_hash)

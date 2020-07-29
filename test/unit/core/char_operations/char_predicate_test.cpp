@@ -37,19 +37,19 @@ struct bar
     }
 };
 
-TEST(char_predicate_, basic)
+TEST(char_predicate, basic)
 {
     foo<'a'> p{};
     EXPECT_TRUE(p('a'));
     EXPECT_FALSE(p('f'));
 }
 
-TEST(char_predicate_, char_predicate_msg)
+TEST(char_predicate, char_predicate_msg)
 {
     EXPECT_EQ(foo<'o'>::msg, "foo_o"s);
 }
 
-TEST(char_predicate_, concept_)
+TEST(char_predicate, concept)
 {
     using seqan3::operator""_aa27;
 
@@ -70,7 +70,7 @@ TEST(char_predicate_, concept_)
     EXPECT_FALSE(seqan3::detail::char_predicate<int>);
 }
 
-TEST(char_predicate_, char_predicate_combiner)
+TEST(char_predicate, char_predicate_combiner)
 {
     using cond_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_TRUE(cond_t{}('a'));
@@ -89,13 +89,13 @@ TEST(char_predicate_, char_predicate_combiner)
     EXPECT_FALSE(p('1'));
 }
 
-TEST(char_predicate_, char_predicate_combiner_msg)
+TEST(char_predicate, char_predicate_combiner_msg)
 {
     using or_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_EQ(or_t::msg,   "(foo_a || foo_A || foo_0)"s);
 }
 
-TEST(char_predicate_, is_not)
+TEST(char_predicate, is_not)
 {
     using cond_t = seqan3::detail::char_predicate_negator<foo<'a'>>;
     EXPECT_FALSE(cond_t{}('a'));
@@ -108,13 +108,13 @@ TEST(char_predicate_, is_not)
     EXPECT_TRUE(p('0'));
 }
 
-TEST(char_predicate_, is_not_msg)
+TEST(char_predicate, is_not_msg)
 {
     using fn = decltype(!seqan3::is_alpha);
     EXPECT_EQ(fn::msg, "!(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
-TEST(char_predicate_, is_in_interval)
+TEST(char_predicate, is_in_interval)
 {
     auto constexpr cond = seqan3::is_in_interval<'a', 'z'>;
     EXPECT_TRUE(cond('a'));
@@ -125,12 +125,12 @@ TEST(char_predicate_, is_in_interval)
     EXPECT_FALSE(cond('!'));
 }
 
-TEST(char_predicate_, is_in_interval_msg)
+TEST(char_predicate, is_in_interval_msg)
 {
     EXPECT_EQ((seqan3::detail::is_in_interval_type<'a', 'z'>::msg), "is_in_interval<'a', 'z'>"s);
 }
 
-TEST(char_predicate_, is_in_alphabet)
+TEST(char_predicate, is_in_alphabet)
 {
     {
         auto constexpr cond = seqan3::is_in_alphabet<seqan3::dna4>;
@@ -160,12 +160,12 @@ TEST(char_predicate_, is_in_alphabet)
     }
 }
 
-TEST(char_predicate_, is_in_alphabet_msg)
+TEST(char_predicate, is_in_alphabet_msg)
 {
     EXPECT_EQ((seqan3::detail::is_in_alphabet_type<seqan3::dna4>::msg), "is_in_alphabet<seqan3::dna4>"s);
 }
 
-TEST(char_predicate_, is_char)
+TEST(char_predicate, is_char)
 {
     using seqan3::operator""_aa27;
     {
@@ -181,14 +181,14 @@ TEST(char_predicate_, is_char)
     }
 }
 
-TEST(char_predicate_, is_char_msg)
+TEST(char_predicate, is_char_msg)
 {
     using seqan3::operator""_dna4;
     EXPECT_EQ((seqan3::is_char<seqan3::to_char('A'_dna4)>.msg), "is_char<'A'>"s);
     EXPECT_EQ((seqan3::is_char<'\t'>.msg), "is_char<'\t'>"s);
 }
 
-TEST(char_predicate_, is_cntrl)
+TEST(char_predicate, is_cntrl)
 {
     EXPECT_TRUE(seqan3::is_cntrl('\0'));
     EXPECT_TRUE(seqan3::is_cntrl(static_cast<char>(31)));
@@ -197,7 +197,7 @@ TEST(char_predicate_, is_cntrl)
     EXPECT_FALSE(seqan3::is_cntrl('A'));
 }
 
-TEST(char_predicate_, is_print)
+TEST(char_predicate, is_print)
 {
     EXPECT_FALSE(seqan3::is_print('\0'));
     EXPECT_FALSE(seqan3::is_print(static_cast<char>(31)));
@@ -207,13 +207,13 @@ TEST(char_predicate_, is_print)
     EXPECT_TRUE(seqan3::is_print('~'));
 }
 
-TEST(char_predicate_, is_print_msg)
+TEST(char_predicate, is_print_msg)
 {
     EXPECT_EQ((seqan3::is_print.message()), "is_in_interval<' ', '~'>"s);
 }
 
 
-TEST(char_predicate_, is_blank)
+TEST(char_predicate, is_blank)
 {
     EXPECT_TRUE(seqan3::is_blank(' '));
     EXPECT_TRUE(seqan3::is_blank('\t'));
@@ -221,12 +221,12 @@ TEST(char_predicate_, is_blank)
     EXPECT_FALSE(seqan3::is_blank('\n'));
 }
 
-TEST(char_predicate_, is_blank_msg)
+TEST(char_predicate, is_blank_msg)
 {
     EXPECT_EQ((seqan3::is_blank.message()), "(is_char<'\t'> || is_char<' '>)"s);
 }
 
-TEST(char_predicate_, is_space)
+TEST(char_predicate, is_space)
 {
     EXPECT_TRUE(seqan3::is_space('\n'));
     EXPECT_TRUE(seqan3::is_space('\r'));
@@ -238,13 +238,13 @@ TEST(char_predicate_, is_space)
     EXPECT_FALSE(seqan3::is_space('\0'));
 }
 
-TEST(char_predicate_, is_space_msg)
+TEST(char_predicate, is_space_msg)
 {
     EXPECT_EQ((seqan3::is_space.message()),
               "(is_in_interval<'\t', '\r'> || is_char<' '>)"s);
 }
 
-TEST(char_predicate_, is_punct)
+TEST(char_predicate, is_punct)
 {
     EXPECT_TRUE(seqan3::is_punct('!'));
     EXPECT_TRUE(seqan3::is_punct('"'));
@@ -261,13 +261,13 @@ TEST(char_predicate_, is_punct)
     EXPECT_FALSE(seqan3::is_punct('\0'));
 }
 
-TEST(char_predicate_, is_punct_msg)
+TEST(char_predicate, is_punct_msg)
 {
     EXPECT_EQ((seqan3::is_punct.message()),
               "(((is_in_interval<'!', '/'> || is_in_interval<':', '@'>) || is_in_interval<'[', '`'>) || is_in_interval<'{', '~'>)"s);
 }
 
-TEST(char_predicate_, is_alpha)
+TEST(char_predicate, is_alpha)
 {
     EXPECT_FALSE(seqan3::is_alpha('\n'));
     EXPECT_FALSE(seqan3::is_alpha('\r'));
@@ -279,13 +279,13 @@ TEST(char_predicate_, is_alpha)
     EXPECT_TRUE(seqan3::is_alpha('Z'));
 }
 
-TEST(char_predicate_, is_alpha_msg)
+TEST(char_predicate, is_alpha_msg)
 {
     EXPECT_EQ((seqan3::is_alpha.message()),
               "(is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>)"s);
 }
 
-TEST(char_predicate_, is_upper)
+TEST(char_predicate, is_upper)
 {
     EXPECT_FALSE(seqan3::is_upper('\n'));
     EXPECT_FALSE(seqan3::is_upper('\r'));
@@ -298,12 +298,12 @@ TEST(char_predicate_, is_upper)
     EXPECT_FALSE(seqan3::is_upper('z'));
 }
 
-TEST(char_predicate_, is_upper_msg)
+TEST(char_predicate, is_upper_msg)
 {
     EXPECT_EQ((seqan3::is_upper.message()), "is_in_interval<'A', 'Z'>"s);
 }
 
-TEST(char_predicate_, is_lower)
+TEST(char_predicate, is_lower)
 {
     EXPECT_FALSE(seqan3::is_lower('\n'));
     EXPECT_FALSE(seqan3::is_lower('\r'));
@@ -316,12 +316,12 @@ TEST(char_predicate_, is_lower)
     EXPECT_TRUE(seqan3::is_lower('z'));
 }
 
-TEST(char_predicate_, is_lower_msg)
+TEST(char_predicate, is_lower_msg)
 {
     EXPECT_EQ((seqan3::is_lower.message()), "is_in_interval<'a', 'z'>"s);
 }
 
-TEST(char_predicate_, is_digit)
+TEST(char_predicate, is_digit)
 {
     EXPECT_FALSE(seqan3::is_digit('\n'));
     EXPECT_FALSE(seqan3::is_digit('\r'));
@@ -334,12 +334,12 @@ TEST(char_predicate_, is_digit)
     EXPECT_FALSE(seqan3::is_digit('Z'));
 }
 
-TEST(char_predicate_, is_digit_msg)
+TEST(char_predicate, is_digit_msg)
 {
     EXPECT_EQ((seqan3::is_digit.message()), "is_in_interval<'0', '9'>"s);
 }
 
-TEST(char_predicate_, is_xdigit)
+TEST(char_predicate, is_xdigit)
 {
     EXPECT_TRUE(seqan3::is_xdigit('0'));
     EXPECT_TRUE(seqan3::is_xdigit('9'));
@@ -357,12 +357,12 @@ TEST(char_predicate_, is_xdigit)
     EXPECT_FALSE(seqan3::is_xdigit(' '));
 }
 
-TEST(char_predicate_, is_xdigit_msg)
+TEST(char_predicate, is_xdigit_msg)
 {
     EXPECT_EQ((seqan3::is_xdigit.message()), "((is_in_interval<'0', '9'> || is_in_interval<'A', 'F'>) || is_in_interval<'a', 'f'>)"s);
 }
 
-TEST(char_predicate_, is_alnum)
+TEST(char_predicate, is_alnum)
 {
     EXPECT_FALSE(seqan3::is_alnum('\n'));
     EXPECT_FALSE(seqan3::is_alnum('\r'));
@@ -375,12 +375,12 @@ TEST(char_predicate_, is_alnum)
     EXPECT_TRUE(seqan3::is_alnum('Z'));
 }
 
-TEST(char_predicate_, is_alnum_msg)
+TEST(char_predicate, is_alnum_msg)
 {
     EXPECT_EQ((seqan3::is_alnum.message()), "((is_in_interval<'0', '9'> || is_in_interval<'A', 'Z'>) || is_in_interval<'a', 'z'>)"s);
 }
 
-TEST(char_predicate_, is_graph)
+TEST(char_predicate, is_graph)
 {
     EXPECT_FALSE(seqan3::is_graph('\n'));
     EXPECT_FALSE(seqan3::is_graph('\r'));
@@ -394,12 +394,12 @@ TEST(char_predicate_, is_graph)
     EXPECT_TRUE(seqan3::is_graph('~'));
 }
 
-TEST(char_predicate_, is_graph_msg)
+TEST(char_predicate, is_graph_msg)
 {
     EXPECT_EQ((seqan3::is_graph.message()), "is_in_interval<'!', '~'>"s);
 }
 
-TEST(char_predicate_, char_types)
+TEST(char_predicate, char_types)
 {
     {  // is_char
         char c1 = '\t';
@@ -442,7 +442,7 @@ TEST(char_predicate_, char_types)
 }
 
 // see issue https://github.com/seqan/seqan3/issues/1972
-TEST(char_predicate_, issue1972)
+TEST(char_predicate, issue1972)
 {
     EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
     EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char

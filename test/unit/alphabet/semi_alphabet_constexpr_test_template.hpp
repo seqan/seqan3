@@ -9,7 +9,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 
-template <typename T>
+template <typename t>
 using semi_alphabet_constexpr = ::testing::Test;
 
 TYPED_TEST_SUITE_P(semi_alphabet_constexpr);
@@ -34,13 +34,13 @@ TYPED_TEST_P(semi_alphabet_constexpr, default_value_constructor)
     [[maybe_unused]] constexpr TypeParam t0{};
 }
 
-TYPED_TEST_P(semi_alphabet_constexpr, global_assign_rank)
+TYPED_TEST_P(semi_alphabet_constexpr, assign_rank)
 {
     constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     [[maybe_unused]] constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
 }
 
-TYPED_TEST_P(semi_alphabet_constexpr, global_to_rank)
+TYPED_TEST_P(semi_alphabet_constexpr, to_rank)
 {
     constexpr size_t rank = 1 % seqan3::alphabet_size<TypeParam>;
     constexpr TypeParam t0{seqan3::assign_rank_to(rank, TypeParam{})};
@@ -148,8 +148,8 @@ TYPED_TEST_P(semi_alphabet_constexpr, comparison_operators)
 REGISTER_TYPED_TEST_SUITE_P(semi_alphabet_constexpr,
                             concept_check,
                             default_value_constructor,
-                            global_assign_rank,
-                            global_to_rank,
+                            assign_rank,
+                            to_rank,
                             copy_constructor,
                             move_constructor,
                             copy_assignment,

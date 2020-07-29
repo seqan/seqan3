@@ -394,7 +394,7 @@ TEST(composite, custom_comparison)
     EXPECT_GT(seqan3::phred42{0}, t61); // *
 }
 
-TEST(composite, get_)
+TEST(composite, get)
 {
     using seqan3::get;
 

@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/algorithm>
 #include <sstream>
 
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/io/record.hpp>
-#include <seqan3/io/detail/record.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/std/algorithm>
+#include <seqan3/io/detail/record.hpp>
+#include <seqan3/io/record.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;
@@ -54,14 +54,14 @@ TEST(fields, usage)
 // record
 // ----------------------------------------------------------------------------
 
-struct record_ : public ::testing::Test
+struct record : public ::testing::Test
 {
     using types        = seqan3::type_list<std::string, seqan3::dna4_vector>;
     using types_as_ids = seqan3::fields<seqan3::field::id, seqan3::field::seq>;
     using record_type  = seqan3::record<types, types_as_ids>;
 };
 
-TEST_F(record_, definition_tuple_traits)
+TEST_F(record, definition_tuple_traits)
 {
     EXPECT_TRUE((std::is_same_v<typename record_type::base_type,
                                 std::tuple<std::string, seqan3::dna4_vector>>));
@@ -75,12 +75,12 @@ TEST_F(record_, definition_tuple_traits)
     EXPECT_TRUE(seqan3::tuple_like<record_type>);
 }
 
-TEST_F(record_, construction)
+TEST_F(record, construction)
 {
     [[maybe_unused]] record_type r{"MY ID", "ACGT"_dna4};
 }
 
-TEST_F(record_, get_by_index)
+TEST_F(record, get_by_index)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
@@ -88,7 +88,7 @@ TEST_F(record_, get_by_index)
     EXPECT_RANGE_EQ(std::get<1>(r), "ACGT"_dna4);
 }
 
-TEST_F(record_, get_by_type)
+TEST_F(record, get_by_type)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
@@ -96,7 +96,7 @@ TEST_F(record_, get_by_type)
     EXPECT_RANGE_EQ(std::get<seqan3::dna4_vector>(r), "ACGT"_dna4);
 }
 
-TEST_F(record_, get_by_field)
+TEST_F(record, get_by_field)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 

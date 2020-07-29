@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <list>
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -13,14 +14,13 @@
 #include <meta/meta.hpp>
 
 
+#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_list/all.hpp>
 #include <seqan3/core/type_traits/all.hpp>
-#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/std/ranges>
 
-TEST(range_and_iterator, iterator_)
+TEST(range_and_iterator, iterator)
 {
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
@@ -34,7 +34,7 @@ TEST(range_and_iterator, iterator_)
                                  decltype(std::ranges::end(v))>));
 }
 
-TEST(range_and_iterator, sentinel_)
+TEST(range_and_iterator, sentinel)
 {
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
@@ -66,7 +66,7 @@ void expect_same_types()
         expect_same_types<list1, list2, pos + 1>();
 }
 
-TEST(range_and_iterator, value_type_)
+TEST(range_and_iterator, value_type)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -89,7 +89,7 @@ TEST(range_and_iterator, value_type_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, reference_)
+TEST(range_and_iterator, reference)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -111,7 +111,7 @@ TEST(range_and_iterator, reference_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, rvalue_reference_)
+TEST(range_and_iterator, rvalue_reference)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -134,7 +134,7 @@ TEST(range_and_iterator, rvalue_reference_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, const_reference_)
+TEST(range_and_iterator, const_reference)
 {
     using const_iterator_of_int_vector = std::ranges::iterator_t<std::vector<int> const>;
     using const_foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int> const>;
@@ -154,7 +154,7 @@ TEST(range_and_iterator, const_reference_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, difference_type_)
+TEST(range_and_iterator, difference_type)
 {
     //TODO(h-2): add something that actually has a different difference_type
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
@@ -187,7 +187,7 @@ TEST(range_and_iterator, difference_type_)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, size_type_)
+TEST(range_and_iterator, size_type)
 {
     //TODO(h-2): add something that actually has a different size_type
 // iota is not a sized range, but take_exactly is

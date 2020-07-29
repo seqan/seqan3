@@ -53,20 +53,20 @@ namespace my_namespace
 class my_alph
 {
 public:
-    bool b{};
+    bool rank{};
 
     constexpr my_alph() noexcept = default;
     constexpr my_alph(my_alph const &) = default;
     constexpr my_alph & operator=(my_alph const &) = default;
 
-    constexpr my_alph(bool _b) : b{_b} {}
+    constexpr my_alph(bool rank) : rank{rank} {}
 
-    constexpr friend bool operator==(my_alph lhs, my_alph rhs) { return lhs.b == rhs.b; }
-    constexpr friend bool operator!=(my_alph lhs, my_alph rhs) { return lhs.b != rhs.b; }
-    constexpr friend bool operator<=(my_alph lhs, my_alph rhs) { return lhs.b <= rhs.b; }
-    constexpr friend bool operator>=(my_alph lhs, my_alph rhs) { return lhs.b >= rhs.b; }
-    constexpr friend bool operator< (my_alph lhs, my_alph rhs) { return lhs.b <  rhs.b; }
-    constexpr friend bool operator> (my_alph lhs, my_alph rhs) { return lhs.b >  rhs.b; }
+    constexpr friend bool operator==(my_alph lhs, my_alph rhs) { return lhs.rank == rhs.rank; }
+    constexpr friend bool operator!=(my_alph lhs, my_alph rhs) { return lhs.rank != rhs.rank; }
+    constexpr friend bool operator<=(my_alph lhs, my_alph rhs) { return lhs.rank <= rhs.rank; }
+    constexpr friend bool operator>=(my_alph lhs, my_alph rhs) { return lhs.rank >= rhs.rank; }
+    constexpr friend bool operator< (my_alph lhs, my_alph rhs) { return lhs.rank <  rhs.rank; }
+    constexpr friend bool operator> (my_alph lhs, my_alph rhs) { return lhs.rank >  rhs.rank; }
 };
 
 
@@ -77,18 +77,18 @@ constexpr size_t alphabet_size(my_alph const &) noexcept
 
 constexpr bool to_rank(my_alph const a) noexcept
 {
-    return a.b;
+    return a.rank;
 }
 
 constexpr my_alph & assign_rank_to(bool const r, my_alph & a) noexcept
 {
-    a.b = r;
+    a.rank = r;
     return a;
 }
 
 constexpr char to_char(my_alph const a) noexcept
 {
-    if (a.b)
+    if (a.rank)
         return '1';
     else
         return '0';
@@ -98,8 +98,8 @@ constexpr my_alph & assign_char_to(char const c, my_alph & a) noexcept
 {
     switch (c)
     {
-        case '0': case 'F': case 'f': a.b = 0; return a;
-        default: a.b = 1; return a;
+        case '0': case 'F': case 'f': a.rank = 0; return a;
+        default: a.rank = 1; return a;
     }
 }
 

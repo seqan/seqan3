@@ -7,14 +7,13 @@
 
 #pragma once
 
-#include <iterator>
-#include <list>
 #include <forward_list>
+#include <seqan3/std/iterator>
+#include <list>
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <seqan3/io/stream/iterator.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 using input_iterator = std::istream_iterator<char>;
 using output_iterator = std::cpp20::ostream_iterator<char>;
@@ -84,7 +83,7 @@ struct test_sized_sentinel : public test_sentinel<input_or_output_iter_value_t<i
 {
     using difference_type = typename iterator_type::difference_type;
 
-    iterator_type _pos;
+    iterator_type pos;
 };
 
 template <typename iterator_t>
@@ -93,7 +92,7 @@ inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(test_sized_sentinel<iterator_t> const & s,
           iterator_t const & i)
 {
-    return s._pos - i;
+    return s.pos - i;
 }
 
 template <typename iterator_t>
@@ -102,5 +101,5 @@ inline typename test_sized_sentinel<iterator_t>::difference_type
 operator-(iterator_t const & i,
           test_sized_sentinel<iterator_t> const & s)
 {
-    return i - s._pos;
+    return i - s.pos;
 }

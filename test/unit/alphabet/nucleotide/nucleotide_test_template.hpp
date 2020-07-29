@@ -12,7 +12,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 
-template <typename T>
+template <typename t>
 using nucleotide = ::testing::Test;
 
 TYPED_TEST_SUITE_P(nucleotide);
@@ -25,7 +25,7 @@ TYPED_TEST_P(nucleotide, concept_check)
     EXPECT_TRUE(seqan3::nucleotide_alphabet<TypeParam const &>);
 }
 
-TYPED_TEST_P(nucleotide, global_complement)
+TYPED_TEST_P(nucleotide, complement)
 {
     EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('A')), TypeParam{}.assign_char('T'));
     EXPECT_EQ(seqan3::complement(TypeParam{}.assign_char('C')), TypeParam{}.assign_char('G'));
@@ -42,4 +42,4 @@ TYPED_TEST_P(nucleotide, global_complement)
     }
 }
 
-REGISTER_TYPED_TEST_SUITE_P(nucleotide, concept_check, global_complement);
+REGISTER_TYPED_TEST_SUITE_P(nucleotide, concept_check, complement);
