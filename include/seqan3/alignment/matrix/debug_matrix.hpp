@@ -487,7 +487,7 @@ namespace seqan3
  *
  * This prints out an alignment matrix which can be a score matrix or a trace matrix.
  */
-template <detail::matrix alignment_matrix_t, typename char_t>
+template <typename char_t, detail::matrix alignment_matrix_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {
     detail::debug_matrix debug{std::forward<alignment_matrix_t>(matrix)};
@@ -499,7 +499,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, ali
 }
 
 //!\overload
-template <std::ranges::input_range alignment_matrix_t, typename char_t>
+template <typename char_t, std::ranges::input_range alignment_matrix_t>
 //!\cond
     requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::matrix<alignment_matrix_t>
 //!\endcond

@@ -11,7 +11,8 @@
 #include <string>
 
 #include <seqan3/alphabet/mask/mask.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/alignment_file/misc.hpp>

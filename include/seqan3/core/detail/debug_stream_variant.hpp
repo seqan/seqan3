@@ -33,7 +33,7 @@ namespace seqan3
  *
  * Note that in case the variant is valueless(_by_exception), nothing is printed.
  */
-template <typename variant_type, typename char_t>
+template <typename char_t, typename variant_type>
 //!\cond
     requires detail::is_type_specialisation_of_v<remove_cvref_t<variant_type>, std::variant>
 //!\endcond
