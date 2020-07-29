@@ -12,7 +12,10 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"

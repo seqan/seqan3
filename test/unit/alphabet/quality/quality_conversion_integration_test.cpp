@@ -13,7 +13,9 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/phred63.hpp>
+#include <seqan3/alphabet/quality/phred68legacy.hpp>
 
 template <typename T>
 using quality_conversion = ::testing::Test;

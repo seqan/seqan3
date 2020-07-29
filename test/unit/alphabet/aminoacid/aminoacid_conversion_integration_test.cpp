@@ -7,7 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa10li.hpp>
+#include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
+#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 

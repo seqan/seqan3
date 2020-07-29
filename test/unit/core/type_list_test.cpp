@@ -12,7 +12,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_list/all.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 
 TEST(type_list, basic)
 {

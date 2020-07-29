@@ -7,7 +7,13 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/phred63.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
 
 using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;

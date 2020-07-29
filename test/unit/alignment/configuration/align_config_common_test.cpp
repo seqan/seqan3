@@ -9,7 +9,16 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
+#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
+#include <seqan3/alignment/configuration/align_config_band.hpp>
+#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_max_error.hpp>
+#include <seqan3/alignment/configuration/align_config_method.hpp>
+#include <seqan3/alignment/configuration/align_config_parallel.hpp>
+#include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_vectorise.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 
 template <typename T>

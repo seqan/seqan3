@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>

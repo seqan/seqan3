@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 
 #include <gtest/gtest.h>
 
