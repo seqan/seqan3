@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <algorithm>
+#include <seqan3/std/algorithm>
 #include <sstream>
 
 #include <gtest/gtest.h>

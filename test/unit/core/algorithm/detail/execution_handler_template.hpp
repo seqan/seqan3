@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <seqan3/std/algorithm>
-#include <iterator>
+#include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <utility>
 #include <vector>

@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <iterator>
+#include <seqan3/std/iterator>
 #include <string>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
