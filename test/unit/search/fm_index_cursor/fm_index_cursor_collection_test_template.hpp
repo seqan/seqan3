@@ -11,6 +11,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "../helper.hpp"
 
@@ -253,9 +254,8 @@ TYPED_TEST_P(fm_index_cursor_collection_test, query)
 
     // query()
     TypeParam it(fm);
-    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3)));      // "ACG"
-    EXPECT_TRUE(std::ranges::equal(it.path_label(this->text_col2),
-                                   seqan3::views::slice(this->text1, 0, 3)));   // "ACG"
+    EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 3))); // "ACG"
+    EXPECT_RANGE_EQ(it.path_label(this->text_col2), seqan3::views::slice(this->text1, 0, 3)); // "ACG"
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, last_rank)
@@ -306,8 +306,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, incomplete_alphabet)
 
         EXPECT_TRUE(it.extend_right(this->text4[0]));                                           // 'A'
         EXPECT_TRUE(it.cycle_back());
-        EXPECT_TRUE(std::ranges::equal(it.path_label(this->text_col7),
-                                       seqan3::views::slice(this->text4, 1, 2)));               // "T"
+        EXPECT_RANGE_EQ(it.path_label(this->text_col7), seqan3::views::slice(this->text4, 1, 2)); // "T"
     }
 }
 
@@ -318,7 +317,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, lazy_locate)
     TypeParam it = TypeParam(fm);
     it.extend_right(seqan3::views::slice(this->text1, 0, 3));    // "ACG"
 
-    EXPECT_TRUE(std::ranges::equal(it.locate(), it.lazy_locate()));
+    EXPECT_RANGE_EQ(it.locate(), it.lazy_locate());
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
@@ -338,7 +337,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
         it1.extend_right(cg);
         it2.extend_right(seqan3::views::slice(this->text1, 1, 3));      // "CG"
 
-        EXPECT_TRUE(std::ranges::equal(it1.locate(), it2.locate()));    // [(0,1),(0,4),(1,4),(1,1)]
+        EXPECT_RANGE_EQ(it1.locate(), it2.locate());    // [(0,1),(0,4),(1,4),(1,1)]
     }
 }
 

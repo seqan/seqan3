@@ -14,6 +14,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 using seqan3::operator""_dna5;
@@ -230,8 +231,8 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  id_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 
         counter++;
@@ -248,8 +249,8 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
     size_t counter = 0;
     for (auto & [ seq, id, qual ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_RANGE_EQ(seq, seq_comp[counter]);
+        EXPECT_RANGE_EQ(id,  id_comp[counter]);
         EXPECT_TRUE(empty(qual));
 
         counter++;
@@ -268,8 +269,8 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq_qual | seqan3::views::convert<seqan3::dna5>, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_RANGE_EQ(seq_qual | seqan3::views::convert<seqan3::dna5>, seq_comp[counter]);
+        EXPECT_RANGE_EQ(id,  id_comp[counter]);
 
         counter++;
     }
@@ -322,8 +323,8 @@ TEST_F(sequence_file_input_f, file_view)
     for (auto & rec : fin | minimum_length_filter)
     {
 #endif // SEQAN3_WORKAROUND_GCC_93983
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  id_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 
         counter++;
@@ -342,8 +343,8 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 
         counter++;

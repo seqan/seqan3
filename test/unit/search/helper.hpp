@@ -11,11 +11,27 @@
 #include <vector>
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/std/iterator>
 
 namespace seqan3
 {
+template <typename char_t, typename index_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s,
+                                              seqan3::fm_index_cursor<index_t> const &)
+{
+    return s << ("fm_index_cursor");
+}
+
+template <typename char_t, typename index_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s,
+                                              seqan3::bi_fm_index_cursor<index_t> const &)
+{
+    return s << ("bi_fm_index_cursor");
+}
 
 template <typename result_range_t>
 std::vector<std::ranges::range_value_t<result_range_t>> uniquify(result_range_t && result_range)

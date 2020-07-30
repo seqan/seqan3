@@ -122,16 +122,25 @@ struct read : public ::testing::Test
         {
             EXPECT_EQ(check_energy, seqan3::get<seqan3::field::energy>(*it).has_value());
             if (check_seq)
-                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx])));}
+            {
+                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
+            }
             if (check_id)
-                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(*it), expected_id[idx])));}
+            {
+                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
+            }
             if (check_structure)
-                {bpp_test(                       seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);}
+            {
+                bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
+            }
             if (check_energy)
-                {EXPECT_DOUBLE_EQ(               *seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);}
+            {
+                EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
+            }
             if (check_structure)
-                {EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::structure>(*it),
-                                                 expected_structure[idx])));}
+            {
+                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
+            }
         }
     }
 };

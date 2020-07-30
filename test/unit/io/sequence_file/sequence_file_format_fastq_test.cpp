@@ -115,9 +115,9 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), seqs[i])));
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(*it), ids[i])));
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(*it), quals[i])));
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
         }
     }
 };
@@ -209,7 +209,7 @@ TEST_F(read, only_qual)
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
-        EXPECT_TRUE((std::ranges::equal(std::get<0>(*it), quals[i])));
+        EXPECT_RANGE_EQ(std::get<0>(*it), quals[i]);
 }
 
 //TODO fail_no_2nd_id

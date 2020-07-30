@@ -117,7 +117,7 @@ TYPED_TEST(container_of_container, iterators)
 
     // writability
     (*t1.begin())[0] = 'T'_dna4;
-    EXPECT_TRUE((std::ranges::equal(*t1.begin(), "TCGT"_dna4)));
+    EXPECT_RANGE_EQ(*t1.begin(), "TCGT"_dna4);
 }
 
 TYPED_TEST(container_of_container, element_access)

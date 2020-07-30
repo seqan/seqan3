@@ -15,6 +15,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 using seqan3::operator""_dna4;
@@ -258,9 +259,9 @@ TEST_F(alignment_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter]);
 
         counter++;
     }
@@ -278,8 +279,8 @@ TEST_F(alignment_file_input_f, record_reading_custom_fields)
     size_t counter = 0;
     for (auto & [ id, seq ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seq, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id,  id_comp[counter])));
+        EXPECT_RANGE_EQ(seq, seq_comp[counter]);
+        EXPECT_RANGE_EQ(id, id_comp[counter]);
 
         counter++;
     }
@@ -308,9 +309,9 @@ TEST_F(alignment_file_input_f, file_view)
     for (auto & rec : fin | minimum_length_filter)
     {
 #endif // SEQAN3_WORKAROUND_GCC_93983
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter]);
 
         counter++;
     }
@@ -328,9 +329,9 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(rec), fix.qual_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), fix.id_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), fix.qual_comp[counter]);
 
         counter++;
     }
@@ -543,8 +544,8 @@ TEST_F(alignment_file_input_sam_format_f, construct_by_filename_and_read_alignme
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
-        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
 
         counter++;
     }
@@ -565,8 +566,8 @@ TEST_F(alignment_file_input_sam_format_f, construct_from_stream_and_read_alignme
     size_t counter = 0;
     for (auto & [ alignment ] : fin)
     {
-        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
 
         counter++;
     }
@@ -651,8 +652,8 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_filename)
         EXPECT_EQ(seq, seq_comp[counter]);
         EXPECT_EQ(qual, qual_comp[counter]);
 
-        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
 
         counter++;
     }
@@ -683,8 +684,8 @@ TEST_F(alignment_file_input_bam_format_f, construct_by_stream)
         EXPECT_EQ(seq, seq_comp[counter]);
         EXPECT_EQ(qual, qual_comp[counter]);
 
-        EXPECT_TRUE(std::ranges::equal(std::get<0>(alignment), std::get<0>(alignments_expected[counter])));
-        EXPECT_TRUE(std::ranges::equal(std::get<1>(alignment), std::get<1>(alignments_expected[counter])));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
+        EXPECT_RANGE_EQ(std::get<0>(alignment), std::get<0>(alignments_expected[counter]));
 
         counter++;
     }

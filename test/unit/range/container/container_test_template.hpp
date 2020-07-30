@@ -15,6 +15,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/test/cereal.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using seqan3::operator""_dna4;
@@ -120,7 +121,7 @@ TYPED_TEST_P(container_over_dna4_test, iterators)
 
     // mutability
     *t1.begin() = 'T'_dna4;
-    EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
+    EXPECT_RANGE_EQ(t1, "TCCGT"_dna4);
 }
 
 TYPED_TEST_P(container_over_dna4_test, element_access)
@@ -148,13 +149,13 @@ TYPED_TEST_P(container_over_dna4_test, element_access)
 
     // mutability
     t1[0] = 'T'_dna4;
-    EXPECT_TRUE((std::ranges::equal(t1, "TCCGT"_dna4)));
+    EXPECT_RANGE_EQ(t1, "TCCGT"_dna4);
 
     t1.front() = 'C'_dna4;
-    EXPECT_TRUE((std::ranges::equal(t1, "CCCGT"_dna4)));
+    EXPECT_RANGE_EQ(t1, "CCCGT"_dna4);
 
     t1.back() = 'G'_dna4;
-    EXPECT_TRUE((std::ranges::equal(t1, "CCCGG"_dna4)));
+    EXPECT_RANGE_EQ(t1, "CCCGG"_dna4);
 }
 
 TYPED_TEST_P(container_over_dna4_test, capacity)

@@ -17,6 +17,7 @@
 #include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
 
@@ -26,11 +27,11 @@ TEST(view_as_const, basic)
 
     // pipe notation
     auto v = vec | seqan3::views::as_const;
-    EXPECT_TRUE((std::ranges::equal(vec, v)));
+    EXPECT_RANGE_EQ(vec, v);
 
     // function notation
     auto v2(seqan3::views::as_const(vec));
-    EXPECT_TRUE((std::ranges::equal(vec, v2)));
+    EXPECT_RANGE_EQ(vec, v2);
 
     // combinability
     seqan3::dna5_vector vec2{"ACGTA"_dna5};
