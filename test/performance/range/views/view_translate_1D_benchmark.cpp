@@ -133,7 +133,7 @@ void copy(benchmark::State & state)
     std::vector<seqan3::dna4> seqan3_dna_sequence{seqan3::test::generate_sequence<seqan3::dna4>(1000, 0, 0)};
 
 #ifdef SEQAN3_HAS_SEQAN2
-    seqan::DnaString seqan2_dna_sequence{generate_sequence_seqan2<seqan::Dna>(1000, 0, 0)};
+    seqan::DnaString seqan2_dna_sequence{seqan3::test::generate_sequence_seqan2<seqan::Dna>(1000, 0, 0)};
 #endif // SEQAN3_HAS_SEQAN2
 
     if constexpr (std::is_same_v<tag_t, translate_tag>)

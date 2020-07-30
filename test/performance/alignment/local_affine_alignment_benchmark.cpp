@@ -62,8 +62,8 @@ BENCHMARK(seqan3_affine_dna4);
 
 void seqan2_affine_dna4(benchmark::State & state)
 {
-    auto seq1 = generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
-    auto seq2 = generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
 
     for (auto _ : state)
     {
@@ -106,8 +106,8 @@ BENCHMARK(seqan3_affine_dna4_trace);
 
 void seqan2_affine_dna4_trace(benchmark::State & state)
 {
-    auto seq1 = generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
-    auto seq2 = generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
+    auto seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(500, 0, 0);
+    auto seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(250, 0, 1);
 
     seqan::Gaps<decltype(seq1)> gap1{seq1};
     seqan::Gaps<decltype(seq2)> gap2{seq2};
@@ -157,14 +157,14 @@ BENCHMARK(seqan3_affine_dna4_collection);
 
 void seqan2_affine_dna4_collection(benchmark::State & state)
 {
-    using sequence_t = decltype(generate_sequence_seqan2<seqan::Dna>());
+    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
 
     seqan::StringSet<sequence_t> vec1;
     seqan::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < 100; ++i)
     {
-        sequence_t seq1 = generate_sequence_seqan2<seqan::Dna>(100, 0, i);
-        sequence_t seq2 = generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
+        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
         appendValue(vec1, seq1);
         appendValue(vec2, seq2);
     }
@@ -211,14 +211,14 @@ BENCHMARK(seqan3_affine_dna4_trace_collection);
 
 void seqan2_affine_dna4_trace_collection(benchmark::State & state)
 {
-    using sequence_t = decltype(generate_sequence_seqan2<seqan::Dna>());
+    using sequence_t = decltype(seqan3::test::generate_sequence_seqan2<seqan::Dna>());
 
     seqan::StringSet<sequence_t> vec1;
     seqan::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < 100; ++i)
     {
-        sequence_t seq1 = generate_sequence_seqan2<seqan::Dna>(100, 0, i);
-        sequence_t seq2 = generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
+        sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
+        sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
         appendValue(vec1, seq1);
         appendValue(vec2, seq2);
     }
