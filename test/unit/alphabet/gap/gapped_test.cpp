@@ -93,3 +93,12 @@ TEST(gapped_test, assign_from_component_alphabet)
     letter = {static_cast<alphabet_t>('T'_dna4)};
     EXPECT_EQ(letter.to_rank(), 3);
 }
+
+TEST(gapped_test, issue_1972)
+{
+    // see issue https://github.com/seqan/seqan3/issues/1972
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('A')); // valid seqan3::dna4 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('a')); // valid seqan3::dna4 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('S')); // neither seqan3::dna4 nor seqan3::gap
+}
