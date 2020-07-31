@@ -5,17 +5,17 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <seqan3/std/algorithm>
+#include <iostream>
+#include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 using seqan3::operator""_dna5;
 

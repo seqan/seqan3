@@ -7,7 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/algorithm>
 #include <iostream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
@@ -20,8 +22,6 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 using seqan3::operator""_aa27;
 

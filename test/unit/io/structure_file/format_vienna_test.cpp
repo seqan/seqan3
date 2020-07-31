@@ -5,12 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <seqan3/std/algorithm>
+#include <seqan3/std/iterator>
 #include <set>
 #include <sstream>
 #include <tuple>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
@@ -19,8 +21,6 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/structure_file/all.hpp>
 #include <seqan3/range/views/convert.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/iterator>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_rna5;
