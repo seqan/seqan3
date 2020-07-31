@@ -15,8 +15,8 @@
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/debug_stream_variant.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/alignment_file/output_format_concept.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

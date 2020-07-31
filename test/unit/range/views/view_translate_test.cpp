@@ -11,8 +11,8 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
