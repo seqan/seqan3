@@ -89,7 +89,7 @@ namespace seqan3
  * to avoid ambiguous function calls.
  * \endif
  */
-template <std::ranges::input_range rng_t, typename char_t>
+template <typename char_t, std::ranges::input_range rng_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
     requires detail::debug_stream_range_guard<rng_t>
@@ -118,7 +118,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
 }
 
 //!\overload
-template <sequence rng_t, typename char_t>
+template <typename char_t, sequence rng_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
     requires detail::debug_stream_range_guard<rng_t> &&

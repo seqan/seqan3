@@ -157,11 +157,11 @@ inline auto search(queries_t && queries,
 template <fm_index_specialisation index_t,
           std::ranges::forward_range query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-inline auto search(query_t query,
+inline auto search(query_t && query,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
 {
-    return search(std::views::single(std::move(query)), index, cfg);
+    return search(std::views::single(std::forward<query_t>(query)), index, cfg);
 }
 
 //!\overload

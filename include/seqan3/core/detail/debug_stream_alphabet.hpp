@@ -28,8 +28,8 @@ namespace seqan3
  * \param l The alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <alphabet alphabet_t, typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t const l)
+template <typename char_t, alphabet alphabet_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
 //!\cond
     requires (!output_stream_over<std::basic_ostream<char_t>, alphabet_t>)
 //!\endcond

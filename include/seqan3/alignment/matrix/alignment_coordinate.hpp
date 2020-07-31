@@ -396,7 +396,7 @@ public:
  *
  * Prints the alignment coordinate as a tuple.
  */
-template <typename coordinate_type, typename char_t>
+template <typename char_t, typename coordinate_type>
 //!\cond
     requires std::same_as<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
              detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,

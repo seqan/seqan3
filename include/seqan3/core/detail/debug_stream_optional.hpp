@@ -29,11 +29,8 @@ namespace seqan3
  * \param[in] arg           This is std::nullopt.
  * \relates seqan3::debug_stream_type
  */
-template <typename optional_type, typename char_t>
-//!\cond
-   requires std::same_as<remove_cvref_t<optional_type>, std::nullopt_t>
-//!\endcond
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && SEQAN3_DOXYGEN_ONLY(arg))
+template <typename char_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, std::nullopt_t SEQAN3_DOXYGEN_ONLY(arg))
 {
    s << "<VALUELESS_OPTIONAL>";
    return s;
@@ -45,7 +42,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
  * \param[in] arg           The std::optional.
  * \relates seqan3::debug_stream_type
  */
-template <typename optional_type, typename char_t>
+template <typename char_t, typename optional_type>
 //!\cond
     requires detail::is_type_specialisation_of_v<remove_cvref_t<optional_type>, std::optional>
 //!\endcond

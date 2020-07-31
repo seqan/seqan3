@@ -116,12 +116,8 @@ public:
      * \{
      */
     //!\brief Forwards to the underlying stream object.
-    template <typename t>
-    debug_stream_type & operator<<(t && v)
-    {
-        *stream << v;
-        return *this;
-    }
+    template <typename other_char_t, typename t>
+    friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v);
 
     //!\brief This overloads enables forwarding std::endl and other manipulators.
     debug_stream_type & operator<<(std::ostream&(*fp)(std::ostream&))
@@ -234,5 +230,13 @@ private:
     //!\brief The SeqAn specific flags to the stream.
     fmtflags2 flgs2{fmtflags2::default_};
 };
+
+//!\brief Forwards to the underlying stream object.
+template <typename char_t, typename t>
+debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, t && v)
+{
+    (*s.stream) << v;
+    return s;
+}
 
 } // namespace seqan3

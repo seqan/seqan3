@@ -27,7 +27,7 @@ namespace seqan3
  * the API was not in shape yet. Remove the `private` and `todo` commands and remove `seqan3::simd` from
  * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
  */
-template <typename simd_t, typename char_t>
+template <typename char_t, typename simd_t>
 //!\cond
     requires simd::simd_concept<remove_cvref_t<simd_t>>
 //!\endcond
