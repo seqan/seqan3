@@ -165,16 +165,6 @@ public:
             return const_iterator{std::ranges::cbegin(urange), 0, target_size};
     }
 
-    //!\copydoc begin()
-    constexpr auto cbegin() const noexcept
-        requires const_iterable_range<urng_t>
-    {
-        if constexpr (std::ranges::random_access_range<urng_t> && std::ranges::sized_range<urng_t>)
-            return std::ranges::cbegin(urange);
-        else
-            return const_iterator{std::ranges::cbegin(urange), 0, target_size};
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the range.
      * \returns Iterator to the end.
      *
@@ -198,16 +188,6 @@ public:
 
     //!\copydoc end()
     constexpr auto end() const noexcept
-        requires const_iterable_range<urng_t>
-    {
-        if constexpr (std::ranges::random_access_range<urng_t> && std::ranges::sized_range<urng_t>)
-            return std::ranges::cbegin(urange) + target_size;
-        else
-            return std::ranges::cend(urange);
-    }
-
-    //!\copydoc end()
-    constexpr auto cend() const noexcept
         requires const_iterable_range<urng_t>
     {
         if constexpr (std::ranges::random_access_range<urng_t> && std::ranges::sized_range<urng_t>)

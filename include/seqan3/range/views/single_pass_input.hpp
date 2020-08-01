@@ -121,9 +121,6 @@ public:
     //!\brief Const version of begin is deleted, since the underlying view_state must be mutable.
     iterator begin() const = delete;
 
-    //!\copydoc single_pass_input_view::begin() const
-    iterator cbegin() const = delete;
-
     //!\brief Returns a sentinel.
     sentinel end()
     {
@@ -132,9 +129,6 @@ public:
 
     //!\brief Const version of end is deleted, since the underlying view_state must be mutable.
     sentinel end() const = delete;
-
-    //!\copydoc single_pass_input_view::end() const
-    sentinel cend() const = delete;
     //!\}
 };
 

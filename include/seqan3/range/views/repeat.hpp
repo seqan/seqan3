@@ -133,12 +133,6 @@ public:
         return const_iterator{*this};
     }
 
-    //!\copydoc begin()
-    constexpr const_iterator cbegin() const noexcept
-    {
-        return const_iterator{*this};
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the range.
      * \returns Iterator to the end.
      *
@@ -161,12 +155,6 @@ public:
 
     //!\copydoc end()
     constexpr sentinel_type end() const noexcept
-    {
-        return {};
-    }
-
-    //!\copydoc end()
-    constexpr sentinel_type cend() const noexcept
     {
         return {};
     }

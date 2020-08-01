@@ -259,12 +259,6 @@ public:
         return {*this, 0};
     }
 
-    //!\overload
-    const_iterator cbegin() const noexcept
-    {
-        return begin();
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the container.
      * \returns Iterator to the first element.
      *
@@ -287,12 +281,6 @@ public:
     const_iterator end() const noexcept
     {
         return {*this, size()};
-    }
-
-    //!\overload
-    const_iterator cend() const noexcept
-    {
-        return end();
     }
     //!\}
 
@@ -646,12 +634,6 @@ public:
         return {*this, 0};
     }
 
-    //!\overload
-    const_iterator cbegin() const noexcept
-    {
-        return begin();
-    }
-
     /*!\brief Returns an iterator to the element following the last element of the container.
      * \returns Iterator to the first element.
      *
@@ -675,13 +657,6 @@ public:
     {
         return {*this, size()};
     }
-
-    //!\overload
-    const_iterator cend() const noexcept
-    {
-        return end();
-    }
-    //!\}
 
     /*!\brief Returns the number of elements in the view.
      * \returns The number of elements in the container.

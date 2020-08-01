@@ -389,7 +389,7 @@ TYPED_TEST(pairwise_combine_test, begin)
 
     EXPECT_EQ(*v.begin(), (std::tuple{'a', 'b'}));
     EXPECT_EQ(*cv.begin(), (std::tuple{'a', 'b'}));
-    EXPECT_EQ(*v.cbegin(), (std::tuple{'a', 'b'}));
+    EXPECT_EQ(*std::ranges::cbegin(v), (std::tuple{'a', 'b'}));
 }
 
 TYPED_TEST(pairwise_combine_test, end)
@@ -399,7 +399,7 @@ TYPED_TEST(pairwise_combine_test, end)
 
     EXPECT_TRUE(v.begin() != v.end());
     EXPECT_TRUE(cv.begin() != cv.end());
-    EXPECT_TRUE(v.cbegin() != v.cend());
+    EXPECT_TRUE(std::ranges::cbegin(v) != std::ranges::cend(v));
 }
 
 TYPED_TEST(pairwise_combine_test, iterate)

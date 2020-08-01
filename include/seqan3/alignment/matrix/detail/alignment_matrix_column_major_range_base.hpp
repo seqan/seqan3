@@ -257,9 +257,6 @@ private:
         //!\brief Deleted begin for const-qualified alignment-columns.
         constexpr auto begin() const noexcept = delete; // Not needed by the alignment algorithm
 
-        //!\brief Deleted begin for const-qualified alignment-columns.
-        constexpr auto cbegin() const noexcept = delete;  // Not needed by the alignment algorithm
-
         //!\brief Returns an iterator to the end of the column.
         constexpr sentinel end() noexcept
         {
@@ -268,9 +265,6 @@ private:
 
         //!\brief Deleted end for const-qualified alignment-columns.
         constexpr sentinel end() const noexcept = delete; // Not needed by the alignment algorithm
-
-        //!\brief Deleted end for const-qualified alignment-columns.
-        constexpr sentinel cend() const noexcept = delete; // Not needed by the alignment algorithm
         //!\}
 
         //!\brief Returns the size the alignment column.
@@ -504,9 +498,6 @@ public:
     //!\brief Deleted begin for const-qualified alignment matrix.
     constexpr iterator begin() const noexcept = delete; // not needed for the alignment algorithm
 
-    //!\brief Deleted begin for const-qualified alignment matrix.
-    constexpr iterator cbegin() const noexcept = delete; // not needed for the alignment algorithm
-
     //!\brief Returns a sentinel marking the end of the matrix.
     constexpr sentinel end() noexcept
     {
@@ -515,9 +506,6 @@ public:
 
     //!\brief Deleted end for const-qualified alignment matrix.
     constexpr sentinel end() const noexcept = delete; // not needed for the alignment algorithm
-
-    //!\brief Deleted end for const-qualified alignment matrix.
-    constexpr sentinel cend() const noexcept = delete; // not needed for the alignment algorithm
     //!\}
 };
 } // namespace seqan3::detail

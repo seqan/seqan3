@@ -80,10 +80,10 @@ TEST(general, iterator)
     EXPECT_TRUE(v.begin() != v.end());
     EXPECT_TRUE(v.end() != v.begin());
 
-    EXPECT_FALSE(v.cbegin() == v.cend());
-    EXPECT_FALSE(v.cend() == v.cbegin());
-    EXPECT_TRUE(v.cbegin() != v.cend());
-    EXPECT_TRUE(v.cend() != v.cbegin());
+    EXPECT_FALSE(std::ranges::cbegin(v) == std::ranges::cend(v));
+    EXPECT_FALSE(std::ranges::cend(v) == std::ranges::cbegin(v));
+    EXPECT_TRUE(std::ranges::cbegin(v) != std::ranges::cend(v));
+    EXPECT_TRUE(std::ranges::cend(v) != std::ranges::cbegin(v));
 
     auto it = v.begin();
     EXPECT_EQ(*it, 'A');
@@ -116,7 +116,7 @@ TEST(general, iterator)
     *it = 'X';
     EXPECT_EQ(*it, 'X');
 
-    auto cit = v.cbegin();
+    auto cit = std::ranges::cbegin(v);
     cit = v.begin(); // assign it from const it
 }
 

@@ -49,15 +49,6 @@ private:
     //!\brief Shared storage of the underlying range.
     std::shared_ptr<urng_t> urange;
 
-    /*!\name Associated types
-     * \{
-     */
-    //!\brief The iterator type of this view (a random access iterator).
-    using iterator          = std::ranges::iterator_t<urng_t>;
-    //!\brief The const_iterator type is equal to the iterator type.
-    using const_iterator    = iterator;
-    //!\}
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -93,15 +84,18 @@ public:
      *
      * No-throw guarantee.
      */
-    const_iterator begin() const noexcept
+    auto begin() noexcept
     {
         return std::ranges::begin(*urange);
     }
 
     //!\copydoc begin()
-    const_iterator cbegin() const noexcept
+    auto begin() const noexcept
+    //!\cond
+        requires const_iterable_range<urng_t>
+    //!\endcond
     {
-        return begin();
+        return std::ranges::cbegin(*urange);
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -117,15 +111,18 @@ public:
      *
      * No-throw guarantee.
      */
-    auto end() const noexcept
+    auto end() noexcept
     {
         return std::ranges::end(*urange);
     }
 
     //!\copydoc end()
-    auto cend() const noexcept
+    auto end() const noexcept
+    //!\cond
+        requires const_iterable_range<urng_t>
+    //!\endcond
     {
-        return end();
+        return std::ranges::cend(*urange);
     }
     //!\}
 };

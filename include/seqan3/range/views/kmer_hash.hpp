@@ -124,7 +124,7 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return shape_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
+        return shape_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -159,9 +159,9 @@ public:
     {
         // Assigning the end iterator to the text_right iterator of the shape_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t const>)
-            return shape_iterator<urng_t const>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
+            return shape_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
         else
-            return std::ranges::end(urange);
+            return std::ranges::cend(urange);
     }
     //!\}
 

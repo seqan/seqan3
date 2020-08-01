@@ -91,7 +91,6 @@ TEST(view_persist, const)
 
 TEST(view_persist, concepts)
 {
-    std::string vec{"foobar"};
     EXPECT_TRUE(std::ranges::input_range<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(std::string{"foo"})>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(std::string{"foo"})>);

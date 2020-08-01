@@ -179,16 +179,7 @@ public:
         requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
-        return {std::ranges::begin(u_range), std::ranges::begin(u_range), std::ranges::end(u_range)};
-    }
-
-    //!\copydoc begin()
-    constexpr const_iterator cbegin() const noexcept
-    //!\cond
-        requires const_iterable_range<underlying_range_type>
-    //!\endcond
-    {
-        return begin();
+        return {std::ranges::cbegin(u_range), std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -215,16 +206,7 @@ public:
         requires const_iterable_range<underlying_range_type>
     //!\endcond
     {
-        return {back_iterator, std::ranges::begin(u_range), std::ranges::end(u_range)};
-    }
-
-    //!\copydoc end()
-    constexpr const_iterator cend() const noexcept
-    //!\cond
-        requires const_iterable_range<underlying_range_type>
-    //!\endcond
-    {
-        return end();
+        return {back_iterator, std::ranges::cbegin(u_range), std::ranges::cend(u_range)};
     }
     //!\}
 
