@@ -21,7 +21,7 @@ GGAGTATAATATATATATATATAT
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_93983
+#if !SEQAN3_WORKAROUND_GCC_96070
     using seqan3::get;
 
     // minimum_average_quality_filter and minimum_sequence_length_filter need to be implemented first
@@ -46,5 +46,5 @@ int main()
         | minimum_sequence_length_filter
         | std::views::take(3)
         | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
-#endif // !SEQAN3_WORKAROUND_GCC_93983
+#endif // !SEQAN3_WORKAROUND_GCC_96070
 }
