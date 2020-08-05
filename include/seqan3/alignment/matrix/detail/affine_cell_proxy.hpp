@@ -15,7 +15,9 @@
 #include <tuple>
 #include <type_traits>
 
+#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 
@@ -29,6 +31,16 @@ namespace seqan3::detail
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
+//!\endcond
+
+/*!\interface seqan3::detail::tracedirections_or_simd <>
+ * \brief The concept for a type that either is the same type as seqan3::detail::trace_directions or
+ *        models the seqan3::simd::simd_concept.
+ * \ingroup alignment_matrix
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<remove_cvref_t<t>, trace_directions> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_cell <>
@@ -50,24 +62,71 @@ SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
                                    arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
 //!\endcond
 
-/*!\brief A wrapper for an affine score matrix cell.
+/*!\interface seqan3::detail::affine_trace_cell <>
+ * \extends seqan3::tuple_like
+ * \brief The concept for a type that models an affine cell of the trace matrix.
+ * \ingroup alignment_matrix
+ *
+ * \details
+ *
+ * This concept describes the requirements an alignment matrix cell must fulfil to represent an affine trace
+ * matrix entry.
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT affine_trace_cell = tuple_like<t> &&
+                                   std::tuple_size_v<t> == 3 &&
+                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+//!\endcond
+
+/*!\interface seqan3::detail::affine_score_and_trace_cell <>
+ * \extends seqan3::tuple_like
+ * \brief The concept for a type that models an affine cell of the combined score and trace matrix.
+ * \ingroup alignment_matrix
+ *
+ * \details
+ *
+ * This concept describes the requirements an alignment matrix cell must fulfil to represent an affine score
+ * matrix entry with the score and trace information.
+ */
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT affine_score_and_trace_cell = tuple_like<t> &&
+                                             std::tuple_size_v<t> == 2 &&
+                                             affine_score_cell<std::tuple_element_t<0, t>> &&
+                                             affine_trace_cell<std::tuple_element_t<1, t>>;
+//!\endcond
+
+/*!\brief A proxy for an affine score matrix cell.
  * \implements seqan3::tuple_like
  * \ingroup alignment_matrix
  *
  * \tparam tuple_t The underlying cell type of the affine alignment matrix; must model
- *                 seqan3::detail::affine_score_cell.
+ *                 seqan3::detail::affine_score_cell or seqan3::detail::affine_score_and_trace_cell.
  *
  * \details
  *
  * This wrapper provides a uniform access to the different elements of the cell within an affine score matrix. This
- * includes the optimal score, the horizontal gap score and the vertical gap score.
+ * includes the best score, the horizontal gap score and the vertical gap score. In case of a combined alignment
+ * matrix including the trace matrix, the interface is extended to also access the best, horizontal, and vertical trace
+ * value.
  */
-template <affine_score_cell tuple_t>
+template <typename tuple_t>
 //!\cond
-    requires (std::tuple_size_v<tuple_t> == 3)
+    requires (affine_score_cell<tuple_t> || affine_score_and_trace_cell<tuple_t>)
 //!\endcond
 class affine_cell_proxy : public tuple_t
 {
+private:
+    //!\brief The type of the score cell.
+    using score_cell_type = std::conditional_t<affine_score_cell<tuple_t>, tuple_t, std::tuple_element_t<0, tuple_t>>;
+    //!\brief The type of the trace cell (might be seqan3::detail::empty_type if not defined).
+    using trace_cell_type = std::conditional_t<affine_score_and_trace_cell<tuple_t>,
+                                               std::tuple_element_t<1, tuple_t>,
+                                               empty_type>;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -97,7 +156,7 @@ public:
     //!\overload
     decltype(auto) best_score() const && noexcept
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-        using return_t = std::tuple_element_t<0, tuple_t>;
+        using return_t = std::tuple_element_t<0, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<0>(std::move(*this)));
     }
 
@@ -110,7 +169,7 @@ public:
     //!\overload
      decltype(auto) horizontal_score() const && noexcept
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-        using return_t = std::tuple_element_t<1, tuple_t>;
+        using return_t = std::tuple_element_t<1, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<1>(std::move(*this)));
     }
 
@@ -123,8 +182,52 @@ public:
     //!\overload
     decltype(auto) vertical_score() const && noexcept
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-        using return_t = std::tuple_element_t<2, tuple_t>;
+        using return_t = std::tuple_element_t<2, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<2>(std::move(*this)));
+    }
+    //!\}
+
+    /*!\name Trace value accessor
+     * \brief Specific accessor function to get the respective trace value from an affine matrix cell.
+     * \{
+     */
+    //!\brief Access the optimal score of the wrapped score matrix cell.
+    decltype(auto) best_trace() & { return get_trace_impl<0>(*this); }
+    //!\overload
+    decltype(auto) best_trace() const & { return get_trace_impl<0>(*this); }
+    //!\overload
+    decltype(auto) best_trace() && { return get_trace_impl<0>(std::move(*this)); }
+    //!\overload
+    decltype(auto) best_trace() const &&
+    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+        using return_t = std::tuple_element_t<0, trace_cell_type>;
+        return static_cast<return_t const &&>(get_trace_impl<0>(std::move(*this)));
+    }
+
+    //!\brief Access the horizontal score of the wrapped score matrix cell.
+    decltype(auto) horizontal_trace() & { return get_trace_impl<1>(*this); }
+    //!\overload
+    decltype(auto) horizontal_trace() const & { return get_trace_impl<1>(*this); }
+    //!\overload
+    decltype(auto) horizontal_trace() && { return get_trace_impl<1>(std::move(*this)); }
+    //!\overload
+    decltype(auto) horizontal_trace() const &&
+    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+        using return_t = std::tuple_element_t<1, trace_cell_type>;
+        return static_cast<return_t const &&>(get_trace_impl<1>(std::move(*this)));
+    }
+
+    //!\brief Access the vertical score of the wrapped score matrix cell.
+    decltype(auto) vertical_trace() & { return get_trace_impl<2>(*this); }
+    //!\overload
+    decltype(auto) vertical_trace() const & { return get_trace_impl<2>(*this); }
+    //!\overload
+    decltype(auto) vertical_trace() && { return get_trace_impl<2>(std::move(*this)); }
+    //!\overload
+    decltype(auto) vertical_trace() const &&
+    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+        using return_t = std::tuple_element_t<2, trace_cell_type>;
+        return static_cast<return_t const &&>(get_trace_impl<2>(std::move(*this)));
     }
     //!\}
 
@@ -145,7 +248,29 @@ private:
     {
         using std::get;
 
-        return get<index>(std::forward<this_t>(me));
+        if constexpr (affine_score_cell<tuple_t>)
+            return get<index>(std::forward<this_t>(me));
+        else
+            return get<index>(get<0>(std::forward<this_t>(me)));
+    }
+
+    /*!\brief Implements the get interface for the various calls to receive the trace value.
+     * \tparam index The index of the tuple element to get; must be smaller than 3.
+     * \tparam this_t The perfectly forwarded type of `*this`.
+     *
+     * \param[in] me The instance of `*this`.
+     *
+     * \returns The trace value from the given tuple index.
+     */
+    template <size_t index, typename this_t>
+    //!\cond
+        requires (index < 3 && affine_score_and_trace_cell<tuple_t>)
+    //!\endcond
+    static constexpr decltype(auto) get_trace_impl(this_t && me) noexcept
+    {
+        using std::get;
+
+        return get<index>(get<1>(std::forward<this_t>(me)));
     }
 };
 } // namespace seqan3::detail
