@@ -60,3 +60,8 @@ struct iterator_fixture<matrix_iterator_t> : public ::testing::Test
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(trace_matrix_full_test, iterator_fixture, matrix_iterator_t, );
+
+TEST(trace_matrix_full_test, viewable_range_proxy)
+{
+    EXPECT_TRUE(std::ranges::view<std::iter_reference_t<matrix_iterator_t>>);
+}

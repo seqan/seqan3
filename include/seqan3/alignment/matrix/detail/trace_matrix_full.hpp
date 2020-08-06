@@ -278,17 +278,17 @@ class trace_matrix_full<trace_t>::iterator::column_proxy : public std::ranges::v
 {
 private:
     //!\brief The represented column.
-    matrix_column_type column;
+    matrix_column_type column{};
 
 public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    column_proxy() noexcept = default; //!< Defaulted.
-    column_proxy(column_proxy const &) noexcept = default; //!< Defaulted.
-    column_proxy(column_proxy &&) noexcept = default; //!< Defaulted.
-    column_proxy & operator=(column_proxy const &) noexcept = default; //!< Defaulted.
-    column_proxy & operator=(column_proxy &&) noexcept = default; //!< Defaulted.
+    column_proxy() = default; //!< Defaulted.
+    column_proxy(column_proxy const &) = default; //!< Defaulted.
+    column_proxy(column_proxy &&) = default; //!< Defaulted.
+    column_proxy & operator=(column_proxy const &) = default; //!< Defaulted.
+    column_proxy & operator=(column_proxy &&) = default; //!< Defaulted.
     ~column_proxy() = default; //!< Defaulted.
 
     /*!\brief Initialises the proxy with the respective column.
