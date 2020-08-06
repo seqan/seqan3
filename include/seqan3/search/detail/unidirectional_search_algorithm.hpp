@@ -71,10 +71,14 @@ public:
      * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
      * \param[in] cfg The configuration object that guides the search algorithm.
      * \param[in] index The index used in the algorithm.
+     *
+     * \details
+     *
+     * Initialises the stratum value from the configuration if it was set by the user.
      */
-    unidirectional_search_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{}...
+    unidirectional_search_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{cfg}...
     {
-        config = cfg;
+        stratum = cfg.get_or(search_cfg::hit_strata{0}).value;
         index_ptr = &index;
     }
     //!\}
@@ -108,7 +112,7 @@ public:
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;
-        auto error_state = this->max_error_counts(config, query); // see policy_max_error
+        auto error_state = this->max_error_counts(query); // see policy_max_error
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
         std::vector<typename index_t::cursor_type> internal_hits{};
@@ -123,14 +127,14 @@ public:
     }
 
 private:
-    //!\brief The configuration object.
-    configuration_t config{};
-
     //!\brief A pointer to the fm index which is used to perform the unidirectional search.
     index_t const * index_ptr{nullptr};
 
     //!\brief A function object that stores the on-hit-delegate to be executed whenever a hit in the index is found.
     std::function<void(typename index_t::cursor_type const &)> delegate;
+
+    //!\brief The stratum value if set.
+    uint8_t stratum{};
 
     // forward declaration
     template <bool abort_on_hit, typename query_t>
@@ -174,7 +178,6 @@ private:
                 if (!internal_hits.empty())
                 {
                     internal_hits.clear();
-                    uint8_t const stratum = get<search_cfg::hit_strata>(config).value;
                     error_state.total += stratum - 1;
                     search_trivial<false>(index_ptr->cursor(), query, 0, error_state, error_type::none);
                 }
