@@ -44,6 +44,7 @@ enum struct search_config_id : uint8_t
     max_error_substitution, //!< Identifier for the max_error_substitution configuration.
     max_error_insertion, //!< Identifier for the max_error_insertion configuration.
     max_error_deletion, //!< Identifier for the max_error_deletion configuration.
+    on_result, //!< Identifier for the configuration to pass a user defined callable.
     output_query_id, //!< Identifier for the output configuration of the query_id.
     output_reference_id, //!< Identifier for the output configuration of the reference_id.
     output_reference_begin_position, //!< Identifier for the output configuration of the reference_begin_position.
@@ -80,24 +81,26 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(search_config_
        // |  max_error_substitution,
        // |  |  max_error_insertion,
        // |  |  |  max_error_deletion,
-       // |  |  |  |  output_query_id,
-       // |  |  |  |  |  output_reference_id,
-       // |  |  |  |  |  |  output_reference_begin_position,
-       // |  |  |  |  |  |  |  output_index_cursor,
-       // |  |  |  |  |  |  |  |  hit,
-       // |  |  |  |  |  |  |  |  |  parallel,
-       // |  |  |  |  |  |  |  |  |  |  result_type
-        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_total
-        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_substitution
-        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_insertion
-        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1}, // max_error_deletion
-        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, // output_query_id
-        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, // output_reference_id
-        { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // output_reference_begin_position
-        { 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // output_index_cursor
-        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // hit
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // parallel
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // result_type
+       // |  |  |  |  on_result,
+       // |  |  |  |  |  output_query_id,
+       // |  |  |  |  |  |  output_reference_id,
+       // |  |  |  |  |  |  |  output_reference_begin_position,
+       // |  |  |  |  |  |  |  |  output_index_cursor,
+       // |  |  |  |  |  |  |  |  |  hit,
+       // |  |  |  |  |  |  |  |  |  |  parallel,
+       // |  |  |  |  |  |  |  |  |  |  |  result_type
+        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_total
+        { 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_substitution
+        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_insertion
+        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, // max_error_deletion
+        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1}, // on_result
+        { 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, // output_query_id
+        { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, // output_reference_id
+        { 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // output_reference_begin_position
+        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // output_index_cursor
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // hit
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // parallel
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // result_type
     }
 };
 
