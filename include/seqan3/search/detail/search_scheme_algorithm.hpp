@@ -43,6 +43,9 @@ private:
 
     static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured.");
 
+    //!\brief The stratum value if set.
+    uint8_t stratum{};
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -59,10 +62,14 @@ public:
      * \tparam index_t The type of index; must model seqan3::bi_fm_index_specialisation.
      * \param[in] cfg The configuration object that guides the search algorithm.
      * \param[in] index The index used in the algorithm.
+     *
+     * \details
+     *
+     * Initialises the stratum value from the configuration if it was set by the user.
      */
-    search_scheme_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{}...
+    search_scheme_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{cfg}...
     {
-        config = cfg;
+        stratum = cfg.get_or(search_cfg::hit_strata{0}).value;
         index_ptr = std::addressof(index);
     }
     //!\}
@@ -96,7 +103,7 @@ public:
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;
-        auto error_state = this->max_error_counts(config, query); // see policy_max_error
+        auto error_state = this->max_error_counts(query); // see policy_max_error
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
         std::vector<typename index_t::cursor_type> internal_hits{};
@@ -112,9 +119,6 @@ public:
     }
 
 private:
-    //!\brief The configuration object.
-    configuration_t config{};
-
     //!\brief A pointer to the fm index which is used to perform the unidirectional search.
     index_t const * index_ptr{nullptr};
 
@@ -156,7 +160,6 @@ private:
                 if (!internal_hits.empty())
                 {
                     internal_hits.clear(); // TODO:don't clear when using Optimum Search Schemes with lower error bounds
-                    uint8_t const stratum = get<search_cfg::hit_strata>(config).value;
                     error_state.total += stratum - 1;
                     search_algo_bi<false>(query, error_state, on_hit_delegate);
                 }
