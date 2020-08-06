@@ -17,6 +17,7 @@
 #include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
 
@@ -26,11 +27,11 @@ TEST(view_move, basic)
 
     // pipe notation
     auto v = vec | seqan3::views::move;
-    EXPECT_TRUE((std::ranges::equal(vec, v))); // equality comparison does not move
+    EXPECT_RANGE_EQ(vec, v); // equality comparison does not move
 
     // function notation
     auto v2(seqan3::views::move(vec));
-    EXPECT_TRUE((std::ranges::equal(vec, v2))); // equality comparison does not move
+    EXPECT_RANGE_EQ(vec, v2); // equality comparison does not move
 
     // combinability
     seqan3::dna5_vector vec2{"ACGTA"_dna5};

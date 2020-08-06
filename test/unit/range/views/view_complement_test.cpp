@@ -15,6 +15,7 @@
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
 
@@ -56,16 +57,16 @@ TEST(view_complement, deep_view)
     auto v = foo | seqan3::views::complement;
 
     ASSERT_EQ(size(v), 2u);
-    EXPECT_TRUE((std::ranges::equal(v[0], "TGCAT"_dna5)));
-    EXPECT_TRUE((std::ranges::equal(v[1], "ACGTA"_dna5)));
+    EXPECT_RANGE_EQ(v[0], "TGCAT"_dna5);
+    EXPECT_RANGE_EQ(v[1], "ACGTA"_dna5);
 
     std::vector<seqan3::dna5_vector> const bar{"ACGTA"_dna5, "TGCAT"_dna5};
 
     auto v2 = bar | seqan3::views::complement;
 
     ASSERT_EQ(size(v2), 2u);
-    EXPECT_TRUE((std::ranges::equal(v2[0], "TGCAT"_dna5)));
-    EXPECT_TRUE((std::ranges::equal(v2[1], "ACGTA"_dna5)));
+    EXPECT_RANGE_EQ(v2[0], "TGCAT"_dna5);
+    EXPECT_RANGE_EQ(v2[1], "ACGTA"_dna5);
 }
 
 TEST(view_complement, concepts)

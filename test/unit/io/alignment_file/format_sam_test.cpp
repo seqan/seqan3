@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/test/expect_range_eq.hpp>
+
 #include "alignment_file_format_test_template.hpp"
 
 template <>
@@ -274,7 +276,7 @@ TEST_F(sam_format, short_cigar_string_with_softclipping)
                                          ref_sequences,
                                          seqan3::format_sam{},
                                          seqan3::fields<seqan3::field::alignment>{}};
-        EXPECT_TRUE((std::ranges::equal(std::get<1>(std::get<0>(*fin.begin())), "AGAGGGGGAT"_dna5)));
+        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "AGAGGGGGAT"_dna5);
     }
 
     {
@@ -284,7 +286,7 @@ TEST_F(sam_format, short_cigar_string_with_softclipping)
                                          ref_sequences,
                                          seqan3::format_sam{},
                                          seqan3::fields<seqan3::field::alignment>{}};
-        EXPECT_TRUE((std::ranges::equal(std::get<1>(std::get<0>(*fin.begin())), "GGGATAACCA"_dna5)));
+        EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "GGGATAACCA"_dna5);
     }
 }
 

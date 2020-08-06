@@ -19,6 +19,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 using seqan3::operator""_rna5;
@@ -267,9 +268,9 @@ struct structure_file_input_read : public ::testing::Test
         counter = 0ul;
         for (auto & rec : fin)
         {
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter])));
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
             ++counter;
         }
 
@@ -303,9 +304,9 @@ TEST_F(structure_file_input_read, record_general)
     size_t counter = 0ul;
     for (auto & rec : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec), id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
@@ -325,9 +326,9 @@ TEST_F(structure_file_input_read, record_struct_bind)
     size_t counter = 0ul;
     for (auto & [ sequence, id, bpp, structure, energy ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(sequence, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(id, id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(structure, structure_comp[counter])));
+        EXPECT_RANGE_EQ(sequence, seq_comp[counter]);
+        EXPECT_RANGE_EQ(id, id_comp[counter]);
+        EXPECT_RANGE_EQ(structure, structure_comp[counter]);
         EXPECT_DOUBLE_EQ(energy.value(), energy_comp[counter]);
         bpp_test(bpp, interaction_comp[counter]);
         ++counter;
@@ -345,9 +346,9 @@ TEST_F(structure_file_input_read, record_custom_fields)
     size_t counter = 0ul;
     for (auto & [ id, seq_structure ] : fin)
     {
-        EXPECT_TRUE((std::ranges::equal(id, id_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seq_structure | seqan3::views::convert<seqan3::rna5>, seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seq_structure | seqan3::views::convert<seqan3::wuss51>, structure_comp[counter])));
+        EXPECT_RANGE_EQ(id, id_comp[counter]);
+        EXPECT_RANGE_EQ(seq_structure | seqan3::views::convert<seqan3::rna5>, seq_comp[counter]);
+        EXPECT_RANGE_EQ(seq_structure | seqan3::views::convert<seqan3::wuss51>, structure_comp[counter]);
         ++counter;
     }
     EXPECT_EQ(counter, num_records);
@@ -377,10 +378,10 @@ TEST_F(structure_file_input_read, record_file_view)
     for (auto & rec : fin | minimum_length_filter)
 #endif // SEQAN3_WORKAROUND_GCC_93983
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(rec),  id_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         bpp_test(seqan3::get<seqan3::field::bpp>(rec), interaction_comp[counter]);
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
         EXPECT_DOUBLE_EQ(seqan3::get<seqan3::field::energy>(rec).value(), energy_comp[counter]);
         ++counter;
     }

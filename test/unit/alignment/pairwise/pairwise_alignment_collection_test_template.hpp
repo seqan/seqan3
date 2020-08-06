@@ -56,16 +56,15 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
     auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
                  | seqan3::views::to<std::vector>;
 
-    EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
-                                    fixture.get_scores())));
-    EXPECT_TRUE((std::ranges::equal(res_vec |
-                                    std::views::transform([] (auto res)
-                                    {
-                                        return seqan3::alignment_coordinate{
-                                                   seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                                   seqan3::detail::row_index_type{res.sequence2_end_position()}};
-                                    }),
-                                    fixture.get_end_positions())));
+    EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
+    EXPECT_RANGE_EQ(res_vec |
+                    std::views::transform([] (auto res)
+                    {
+                        return seqan3::alignment_coordinate{
+                                   seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                   seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                    }),
+                    fixture.get_end_positions());
 }
 
 TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
@@ -81,24 +80,24 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
         auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
                      | seqan3::views::to<std::vector>;
 
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
-                                        fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return seqan3::alignment_coordinate{
-                                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
-                                        }),
-                                        fixture.get_end_positions())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return seqan3::alignment_coordinate{
-                                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
-                                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
-                                        }),
-                                        fixture.get_begin_positions())));
+        EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }),
+                        fixture.get_scores());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return seqan3::alignment_coordinate{
+                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                        }),
+                        fixture.get_end_positions());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return seqan3::alignment_coordinate{
+                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
+                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                        }),
+                        fixture.get_begin_positions());
     }
 }
 
@@ -115,38 +114,37 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
         auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
                      | seqan3::views::to<std::vector>;
 
-        EXPECT_TRUE((std::ranges::equal(res_vec | std::views::transform([] (auto res) { return res.score(); }),
-                                        fixture.get_scores())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return seqan3::alignment_coordinate{
-                                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
-                                        }),
-                                        fixture.get_end_positions())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return seqan3::alignment_coordinate{
-                                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
-                                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
-                                        }),
-                                        fixture.get_begin_positions())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return std::get<0>(res.alignment()) | seqan3::views::to_char
-                                                                                | seqan3::views::to<std::string>;
-                                        }),
-                                        fixture.get_aligned_sequences1())));
-        EXPECT_TRUE((std::ranges::equal(res_vec |
-                                        std::views::transform([] (auto res)
-                                        {
-                                            return std::get<1>(res.alignment()) | seqan3::views::to_char
-                                                                                | seqan3::views::to<std::string>;
-                                        }),
-                                        fixture.get_aligned_sequences2())));
+        EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return seqan3::alignment_coordinate{
+                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                        }),
+                        fixture.get_end_positions());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return seqan3::alignment_coordinate{
+                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
+                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                        }),
+                        fixture.get_begin_positions());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return std::get<0>(res.alignment()) | seqan3::views::to_char
+                                                                | seqan3::views::to<std::string>;
+                        }),
+                        fixture.get_aligned_sequences1());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return std::get<1>(res.alignment()) | seqan3::views::to_char
+                                                                | seqan3::views::to<std::string>;
+                        }),
+                        fixture.get_aligned_sequences2());
     }
 }
 

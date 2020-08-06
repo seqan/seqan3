@@ -156,7 +156,7 @@ TEST(view_take, type_erasure)
         auto v = seqan3::views::take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange.substr(0,3))));
+        EXPECT_RANGE_EQ(v, urange.substr(0,3));
     }
 
     {   // stringview overload
@@ -165,7 +165,7 @@ TEST(view_take, type_erasure)
         auto v = seqan3::views::take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange.substr(0,3))));
+        EXPECT_RANGE_EQ(v, urange.substr(0,3));
     }
 
     {   // contiguous overload
@@ -174,7 +174,7 @@ TEST(view_take, type_erasure)
         auto v = seqan3::views::take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
     }
 
     {   // contiguous overload
@@ -183,7 +183,7 @@ TEST(view_take, type_erasure)
         auto v = seqan3::views::take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
     }
 
     {   // random-access overload
@@ -193,7 +193,7 @@ TEST(view_take, type_erasure)
 
         EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
                                                                      typename std::deque<int>::iterator>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
     }
 
     {   // generic overload (bidirectional container)
@@ -203,7 +203,7 @@ TEST(view_take, type_erasure)
 
         EXPECT_TRUE((std::same_as<decltype(v), seqan3::detail::view_take<std::views::all_t<std::list<int> &>,
                                                                          false, false>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
     }
 
     {   // generic overload (view)
@@ -213,7 +213,7 @@ TEST(view_take, type_erasure)
         auto v2 = seqan3::views::take(v, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v2), seqan3::detail::view_take<decltype(v), false, false>>));
-        EXPECT_TRUE((std::ranges::equal(v2, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
     }
 
     {   // generic overload (random access, non-sized, pointer as iterator)
@@ -224,7 +224,7 @@ TEST(view_take, type_erasure)
         auto v2 = seqan3::views::take(v1, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v2), seqan3::detail::view_take<decltype(v1), false, false>>));
-        EXPECT_TRUE((std::ranges::equal(v2, std::vector{1, 2, 3})));
+        EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
     }
 }
 

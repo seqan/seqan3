@@ -17,6 +17,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 // ============================================================================
 //  test templates
@@ -30,7 +31,7 @@ TEST(type_reduce, string_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_FALSE((std::same_as<decltype(v), std::string_view>)); // only returns string_view for string const
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 
     {
@@ -40,7 +41,7 @@ TEST(type_reduce, string_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 
     {
@@ -49,7 +50,7 @@ TEST(type_reduce, string_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 }
 
@@ -61,7 +62,7 @@ TEST(type_reduce, contiguous_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 
     {
@@ -70,7 +71,7 @@ TEST(type_reduce, contiguous_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 }
 
@@ -82,7 +83,7 @@ TEST(type_reduce, random_access_overload)
 
     EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
                                                                  typename std::deque<int>::iterator>>));
-    EXPECT_TRUE((std::ranges::equal(v, urange)));
+    EXPECT_RANGE_EQ(v, urange);
 }
 
 TEST(type_reduce, generic_overload)
@@ -93,7 +94,7 @@ TEST(type_reduce, generic_overload)
         auto v = seqan3::views::type_reduce(urange);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::views::all_t<std::list<int> &>>));
-        EXPECT_TRUE((std::ranges::equal(v, urange)));
+        EXPECT_RANGE_EQ(v, urange);
     }
 
     {   // view
@@ -103,6 +104,6 @@ TEST(type_reduce, generic_overload)
         auto v2 = seqan3::views::type_reduce(v);
 
         EXPECT_TRUE((std::same_as<decltype(v2), std::views::all_t<decltype(v)>>));
-        EXPECT_TRUE((std::ranges::equal(v2, urange)));
+        EXPECT_RANGE_EQ(v2, urange);
     }
 }

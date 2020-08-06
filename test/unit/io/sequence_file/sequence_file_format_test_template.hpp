@@ -19,6 +19,7 @@
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
 #include <seqan3/std/concepts>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 using seqan3::operator""_dna5;
@@ -77,11 +78,11 @@ TYPED_TEST_P(sequence_file_read, standard)
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq>(*it), this->seqs[i])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), this->seqs[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
         if constexpr (std::same_as<TypeParam, seqan3::format_fastq> || std::same_as<TypeParam, seqan3::format_sam>)
         {
-            EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::qual>(*it), this->quals[i])));
+            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), this->quals[i]);
         }
     }
 }
@@ -114,9 +115,9 @@ TYPED_TEST_P(sequence_file_read, seq_qual)
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
     {
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::id>(*it), this->ids[i])));
-        EXPECT_TRUE((std::ranges::equal(seqan3::get<seqan3::field::seq_qual>(*it)
-                                        | seqan3::views::convert<seqan3::dna5>, this->seqs[i])));
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq_qual>(*it) | seqan3::views::convert<seqan3::dna5>,
+                        this->seqs[i]);
     }
 }
 

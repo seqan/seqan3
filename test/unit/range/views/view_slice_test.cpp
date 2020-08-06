@@ -23,6 +23,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 // ============================================================================
 //  test templates
@@ -136,7 +137,7 @@ TEST(view_slice, type_erasure)
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange.substr(1,3))));
+        EXPECT_RANGE_EQ(v, urange.substr(1,3));
     }
 
     {   // stringview overload
@@ -145,7 +146,7 @@ TEST(view_slice, type_erasure)
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
-        EXPECT_TRUE((std::ranges::equal(v, urange.substr(1,3))));
+        EXPECT_RANGE_EQ(v, urange.substr(1,3));
     }
 
     {   // contiguous overload
@@ -154,7 +155,7 @@ TEST(view_slice, type_erasure)
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
+        EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 
     {   // contiguous overload
@@ -163,7 +164,7 @@ TEST(view_slice, type_erasure)
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
+        EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 
     {   // random-access overload
@@ -173,6 +174,6 @@ TEST(view_slice, type_erasure)
 
         EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
                                                                      typename std::deque<int>::iterator>>));
-        EXPECT_TRUE((std::ranges::equal(v, std::vector{2, 3, 4})));
+        EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 }

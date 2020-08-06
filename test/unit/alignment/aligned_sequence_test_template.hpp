@@ -16,6 +16,7 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;
 
@@ -51,7 +52,7 @@ TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
     assign_unaligned(aligned_seq, unaligned_seq);
 
     EXPECT_EQ(aligned_seq.size(), unaligned_seq.size());
-    EXPECT_TRUE((std::ranges::equal(aligned_seq, unaligned_seq)));
+    EXPECT_RANGE_EQ(aligned_seq, unaligned_seq);
 }
 
 TYPED_TEST_P(aligned_sequence, assign_empty_unaligned_sequence)

@@ -90,42 +90,42 @@ TYPED_TEST(nucleotide, view_translate)
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y],[S,R,A,L],[R,E,L,*],[E,S,F,S],[A,K,A,L],[L,K,L,S],[*,S,S,R]]
     EXPECT_EQ(v1.size(), cmp4.size());
     for (unsigned i = 0; i < v1.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v1[i], cmp4[i])));
+        EXPECT_RANGE_EQ(v1[i], cmp4[i]);
 
     // default parameter translation_frames
     auto v2 = vec | seqan3::views::translate_join();
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y],[S,R,A,L],[R,E,L,*],[E,S,F,S],[A,K,A,L],[L,K,L,S],[*,S,S,R]]
     EXPECT_EQ(v2.size(), cmp4.size());
     for (unsigned i = 0; i < v2.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v2[i], cmp4[i])));
+        EXPECT_RANGE_EQ(v2[i], cmp4[i]);
 
     // single frame translation
     auto v3 = vec | seqan3::views::translate_join(seqan3::translation_frames::FWD_FRAME_0);
     // == [[T,Y,V,R],[S,R,A,L]]
     EXPECT_EQ(v3.size(), cmp1.size());
     for (unsigned i = 0; i < v3.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v3[i], cmp1[i])));
+        EXPECT_RANGE_EQ(v3[i], cmp1[i]);
 
     // reverse translation
     auto v4 = vec | seqan3::views::translate_join(seqan3::translation_frames::FWD_REV_0);
     // == [[T,Y,V,R],Y,V,R,T],[S,R,A,L],[A,K,A,L]]
     EXPECT_EQ(v4.size(), cmp2.size());
     for (unsigned i = 0; i < v4.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v4[i], cmp2[i])));
+        EXPECT_RANGE_EQ(v4[i], cmp2[i]);
 
     // forward frames translation
     auto v5 = vec | seqan3::views::translate_join(seqan3::translation_frames::FWD);
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[S,R,A,L],[R,E,L,*],[E,S,F,S]]
     EXPECT_EQ(v5.size(), cmp3.size());
     for (unsigned i = 0; i < v5.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v5[i], cmp3[i])));
+        EXPECT_RANGE_EQ(v5[i], cmp3[i]);
 
     // six frame translation
     auto v6 = vec | seqan3::views::translate_join(seqan3::translation_frames::SIX_FRAME);
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y],[S,R,A,L],[R,E,L,*],[E,S,F,S],[A,K,A,L],[L,K,L,S],[*,S,S,R]]
     EXPECT_EQ(v6.size(), cmp4.size());
     for (unsigned i = 0; i < v6.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v6[i], cmp4[i])));
+        EXPECT_RANGE_EQ(v6[i], cmp4[i]);
 
     // user-defined frame combination
     auto v7 = vec
@@ -134,21 +134,21 @@ TYPED_TEST(nucleotide, view_translate)
     // == [[T,Y,V,R],[V,R,T],[S,R,A,L],[E,S,F,S]]
     EXPECT_EQ(v7.size(), cmp5.size());
     for (unsigned i = 0; i < v7.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v7[i], cmp5[i])));
+        EXPECT_RANGE_EQ(v7[i], cmp5[i]);
 
     // function syntax
     auto v8 = seqan3::views::translate_join(vec, seqan3::translation_frames::FWD_REV_0);
     // == [[T,Y,V,R],[R,T,Y,V],[V,R,T],[Y,V,R,T],[T,Y,V,R],[R,T,Y],[S,R,A,L], [R,E,L,*], [E,S,F,S], [A,K,A,L], [L,K,L,S], [*,S,S,R]]
     EXPECT_EQ(v8.size(), cmp2.size());
     for (unsigned i = 0; i < v8.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v8[i], cmp2[i])));
+        EXPECT_RANGE_EQ(v8[i], cmp2[i]);
 
     // combinability
     auto v9 = vec | seqan3::views::complement | seqan3::views::translate_join(seqan3::translation_frames::FWD_REV_0);
     // == [[C,M,H,A],[M,H,A,C],[S,S,R,N],[R,F,R,E]]
     EXPECT_EQ(v9.size(), cmp6.size());
     for (unsigned i = 0; i < v9.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v9[i], cmp6[i])));
+        EXPECT_RANGE_EQ(v9[i], cmp6[i]);
 
     // combinability
     auto v10 = vec
@@ -158,7 +158,7 @@ TYPED_TEST(nucleotide, view_translate)
     // == [C,M,H,A]
     EXPECT_EQ(v10.size(), cmp7.size());
     for (unsigned i = 0; i < v10.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v10[i], cmp7[i])));
+        EXPECT_RANGE_EQ(v10[i], cmp7[i]);
 
     // combinability and function syntax
     auto v11 = seqan3::detail::view_translate_join(seqan3::views::complement(vec),
@@ -166,7 +166,7 @@ TYPED_TEST(nucleotide, view_translate)
     // == [[C,M,H,A],[M,H,A,C],[S,S,R,N],[R,F,R,E]]
     EXPECT_EQ(v11.size(), cmp6.size());
     for (unsigned i = 0; i < v11.size(); i++)
-        EXPECT_TRUE((std::ranges::equal(v11[i], cmp6[i])));
+        EXPECT_RANGE_EQ(v11[i], cmp6[i]);
 }
 
 TYPED_TEST(nucleotide, view_translate_concepts)
