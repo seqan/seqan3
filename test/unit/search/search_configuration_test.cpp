@@ -9,6 +9,7 @@
 
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/configuration/result_type.hpp>
@@ -25,11 +26,15 @@ using search_result_t = seqan3::search_result<seqan3::detail::empty_type,
                                               seqan3::detail::empty_type,
                                               seqan3::detail::empty_type>;
 
+// Needed to test the on_result config.
+inline constexpr auto on_result_caller = [] (auto &&) {};
+
 using test_types = ::testing::Types<seqan3::search_cfg::max_error_total,
                                     seqan3::search_cfg::max_error_substitution,
                                     seqan3::search_cfg::max_error_insertion,
                                     seqan3::search_cfg::max_error_deletion,
                                     seqan3::detail::hit_single_best_tag,
+                                    seqan3::search_cfg::on_result<decltype(on_result_caller)>,
                                     seqan3::detail::output_query_id_tag,
                                     seqan3::detail::output_reference_id_tag,
                                     seqan3::detail::output_reference_begin_position_tag,
