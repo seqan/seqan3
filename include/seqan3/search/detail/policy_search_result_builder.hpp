@@ -36,7 +36,8 @@ protected:
     //!\brief The configured search result type.
     using search_result_type = typename search_traits_type::search_result_type;
 
-    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
+    static_assert(!std::same_as<search_result_type, typename search_traits_type::empty_search_result_type>,
+                  "The search result type was not configured properly.");
 
     /*!\name Constructors, destructor and assignment
      * \{

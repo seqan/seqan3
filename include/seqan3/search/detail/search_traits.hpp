@@ -31,19 +31,13 @@ namespace seqan3::detail
 template <typename search_configuration_t>
 struct search_traits
 {
-private:
-    //!\brief Maybe the result type configuration element or seqan3::detail::empty_type wrapped in std::type_identity.
-    static constexpr auto result_type_or_empty_type = [] ()
-    {
-        if constexpr (search_configuration_t::template exists<search_cfg::detail::result_type_tag>())
-            return get<search_cfg::detail::result_type_tag>(search_configuration_t{});
-        else
-            return std::type_identity<empty_type>{};
-    }();
-
-public:
-    //!\brief The configured search result type or seqan3::detail::empty_type if not configured yet.
-    using search_result_type = typename remove_cvref_t<decltype(result_type_or_empty_type)>::type;
+    //!\brief A specific empty search result type indicating misconfiguration of the search algorithm.
+    using empty_search_result_type = search_result<empty_type, empty_type, empty_type, empty_type>;
+    //!\brief The configured search result type.
+    using search_result_type =
+        typename remove_cvref_t<decltype(std::declval<search_configuration_t>().get_or(
+                search_cfg::detail::result_type<empty_search_result_type>))
+        >::type;
 
     //!\brief A flag indicating whether search should be invoked with total errors.
     static constexpr bool has_max_error_total =
