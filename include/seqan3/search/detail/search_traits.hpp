@@ -17,6 +17,7 @@
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/result_type.hpp>
 
@@ -92,6 +93,9 @@ struct search_traits
                                                      output_reference_id |
                                                      output_reference_begin_position |
                                                      output_index_cursor;
+
+    //!\brief A flag indicating whether a user provided callback was given.
+    static constexpr bool is_one_way_execution = search_configuration_t::template exists<search_cfg::on_result>();
 };
 
 } // namespace seqan3::detail

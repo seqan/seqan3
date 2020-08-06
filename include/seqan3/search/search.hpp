@@ -20,6 +20,7 @@
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
@@ -118,15 +119,12 @@ inline auto search(queries_t && queries,
     auto [algorithm, complete_config] = detail::search_configurator::configure_algorithm<query_t>(updated_cfg, index);
 
     using complete_configuration_t = decltype(complete_config);
-    using algorithm_result_t = typename detail::search_traits<complete_configuration_t>::search_result_type;
+    using traits_t = detail::search_traits<complete_configuration_t>;
+    using algorithm_result_t = typename traits_t::search_result_type;
     using execution_handler_t = std::conditional_t<
                                     complete_configuration_t::template exists<search_cfg::parallel>(),
                                     detail::execution_handler_parallel,
                                     detail::execution_handler_sequential>;
-    using executor_t = detail::algorithm_executor_blocking<indexed_queries_t,
-                                                           decltype(algorithm),
-                                                           algorithm_result_t,
-                                                           execution_handler_t>;
 
     // Select the execution handler for the search configuration.
     auto select_execution_handler = [&] ()
@@ -145,10 +143,25 @@ inline auto search(queries_t && queries,
         }
     };
 
-    return algorithm_result_generator_range{executor_t{std::move(indexed_queries),
-                                            std::move(algorithm),
-                                            algorithm_result_t{},
-                                            select_execution_handler()}};
+    // Finally, choose between two way execution returning an algorithm range or calling a user callback on every hit.
+    if constexpr (traits_t::is_one_way_execution)
+    {
+        select_execution_handler().bulk_execute(algorithm,
+                                                indexed_queries,
+                                                get<search_cfg::on_result>(complete_config).callback);
+    }
+    else
+    {
+        using executor_t = detail::algorithm_executor_blocking<indexed_queries_t,
+                                                               decltype(algorithm),
+                                                               algorithm_result_t,
+                                                               execution_handler_t>;
+
+        return algorithm_result_generator_range{executor_t{std::move(indexed_queries),
+                                                           std::move(algorithm),
+                                                           algorithm_result_t{},
+                                                           select_execution_handler()}};
+    }
 }
 
 //!\cond DEV
