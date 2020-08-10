@@ -14,9 +14,9 @@
 
 #include <type_traits>
 
-#include <range/v3/utility/semiregular_box.hpp>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/semiregular_box.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::search_cfg
@@ -39,7 +39,7 @@ namespace seqan3::search_cfg
  * user callback can be more efficient in a concurrent environment.
  *
  * \if DEV
- * The given callback is wrapped inside a ranges::semiregular_box wrapper type. This allows to also
+ * The given callback is wrapped inside a seqan3::semiregular_box wrapper type. This allows to also
  * use lambdas with a capture block, which otherwise are not std::copy_assignable and therefore invalidate the
  * requirements for the configuration element (must model std::semiregular).
  * \endif
@@ -54,7 +54,7 @@ template <std::move_constructible callback_t>
 struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 {
     //!\brief The stored callable which will be invoked with the search result.
-    ranges::semiregular_box_t<callback_t> callback{}; // Allow lambdas with capture block which are not copy_assignable.
+    seqan3::semiregular_box_t<callback_t> callback{}; // Allow lambdas with capture block which are not copy_assignable.
 
     /*!\name Constructors, destructor and assignment
      * \{
