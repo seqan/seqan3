@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::alignment_result_capture.
+ * \brief Provides seqan3::detail::alignment_result_capture.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -30,7 +30,7 @@ namespace seqan3::detail
  *
  * Implementation of the alignment result capture config.
  *
- * \see seqan3::align_cfg::alignment_result_capture
+ * \see seqan3::align_cfg::detail::alignment_result_capture
  */
 template <typename alignment_result_t>
 //!\cond
@@ -43,10 +43,9 @@ struct alignment_result_capture_element :
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::alignment_result_capture};
 };
-
 } // namespace seqan3::detail
 
-namespace seqan3::align_cfg
+namespace seqan3::align_cfg::detail
 {
 /*!\if DEV
  * \brief Configuration element capturing the configured seqan3::alignment_result for the alignment algorithm.
@@ -71,8 +70,7 @@ namespace seqan3::align_cfg
  */
 template <typename alignment_result_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<alignment_result_t, alignment_result>
+    requires is_type_specialisation_of_v<alignment_result_t, alignment_result>
 //!\endcond
-inline constexpr detail::alignment_result_capture_element<alignment_result_t> alignment_result_capture{};
-}  // namespace seqan3::align_cfg
-
+inline constexpr alignment_result_capture_element<alignment_result_t> alignment_result_capture{};
+} //seqan3::align_cfg::detail

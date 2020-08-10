@@ -290,7 +290,7 @@ public:
             using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
             // Capture the alignment result type.
-            auto config_with_result_type = cfg | align_cfg::alignment_result_capture<alignment_result_t>;
+            auto config_with_result_type = cfg | align_cfg::detail::alignment_result_capture<alignment_result_t>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions

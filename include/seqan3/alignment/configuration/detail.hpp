@@ -22,7 +22,7 @@ namespace seqan3::detail
  */
 enum struct align_config_id : uint8_t
 {
-    //!\brief ID for the \ref seqan3::align_cfg::alignment_result_capture "alignment_result_capture" option.
+    //!\brief ID for the \ref seqan3::align_config::detail::alignment_result_capture "alignment_result_capture" option.
     alignment_result_capture,
     aligned_ends, //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
     band,         //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
