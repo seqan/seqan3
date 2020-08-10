@@ -172,7 +172,7 @@
  * To do so, one can use the configuration element seqan3::search_cfg::on_result. This configuration element
  * is initialised with a user defined callback, e.g. a lambda function, which will be invoked with a generated
  * seqan3::search_result whenever a hit was found.
- * This has two implications. First, signature of the seqan3::search function changes to a void function, i.e. it
+ * This has two implications. First, the return type of the seqan3::search function changes to `void`, i.e. it
  * returns nothing. Second, in a parallel execution of the search the order of the hits is not deterministic and the
  * user has to make sure that concurrent invocations of the given callback are safe.
  *
