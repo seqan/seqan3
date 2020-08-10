@@ -168,7 +168,7 @@
  *
  * In the default case, a call to seqan3::search returns a lazy range over the results of the search. This lazy range
  * has the advantage that the results are always in a deterministic order even if the search is executed in parallel.
- * Sometimes, however, it might be demanding to provide a user defined callback.
+ * Sometimes, however, it might be challenging to provide a user defined callback.
  * To do so, one can use the configuration element seqan3::search_cfg::on_result. This configuration element
  * is initialised with a user defined callback, e.g. a lambda function, which will be invoked with a generated
  * seqan3::search_result whenever a hit was found.
