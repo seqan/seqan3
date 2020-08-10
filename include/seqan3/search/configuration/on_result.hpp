@@ -33,7 +33,7 @@ namespace seqan3::search_cfg
  * Allows the user to specify a callback that should be called for every computed search result. The callback
  * must take exactly one argument for the search result and return `void`. If the user callback is
  * specified, the call to the search algorithm seqan3::search will return nothing, i.e. it does not return
- * a seqan3::algorithm_result_generator_range any more. Note that within a parallel configuration the order of the
+ * a seqan3::algorithm_result_generator_range any more. Note that within a parallel configuration, the order of the
  * generated search results and therefore the call to the user callback is non-deterministic.
  * However, the continuation interface with the
  * user callback can be more efficient in a concurrent environment.
