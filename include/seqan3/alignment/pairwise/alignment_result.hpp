@@ -36,11 +36,11 @@ class policy_alignment_result_builder;
  *
  * \tparam id_t                  The type for the alignment identifier.
  * \tparam score_t               The type for the resulting score.
- * \tparam end_positions_t          The type for the end positions, can be omitted.
- * \tparam begin_positions_t         The type for the begin positions, can be omitted.
+ * \tparam end_positions_t       The type for the end positions, can be omitted.
+ * \tparam begin_positions_t     The type for the begin positions, can be omitted.
  * \tparam alignment_t           The type for the alignment, can be omitted.
- * \tparam score_debug_matrix_t  The type for the score matrix. Only present if seqan3::align_cfg::debug is enabled.
- * \tparam trace_debug_matrix_t  The type for the trace matrix. Only present if seqan3::align_cfg::debug is enabled.
+ * \tparam score_debug_matrix_t  The type for the score matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
+ * \tparam trace_debug_matrix_t  The type for the trace matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
  */
 template <typename id_t,
           typename score_t,
@@ -62,9 +62,9 @@ struct alignment_result_value_type
     //! \brief The alignment, i.e. the actual base pair matching.
     alignment_t alignment{};
 
-    //!\brief The score matrix. Only accessible with seqan3::align_cfg::debug.
+    //!\brief The score matrix. Only accessible with seqan3::align_cfg::detail::debug.
     score_debug_matrix_t score_debug_matrix{};
-    //!\brief The trace matrix. Only accessible with seqan3::align_cfg::debug.
+    //!\brief The trace matrix. Only accessible with seqan3::align_cfg::detail::debug.
     trace_debug_matrix_t trace_debug_matrix{};
 };
 
@@ -295,10 +295,10 @@ public:
      * \details
      *
      * This function is only used for debugging such that performance can be affected significantly when enabling
-     * seqan3::align_cfg::debug.
+     * seqan3::align_cfg::detail::debug.
      *
      * \note This function is only available if the debug mode was requested via the alignment configuration
-     * (see seqan3::align_cfg::debug).
+     * (see seqan3::align_cfg::detail::debug).
      */
     constexpr auto const & score_matrix() const noexcept
     {
@@ -313,10 +313,10 @@ public:
      * \details
      *
      * This function is only used for debugging such that performance can be affected significantly when enabling
-     * seqan3::align_cfg::debug.
+     * seqan3::align_cfg::detail::debug.
      *
      * \note This function is only available if the debug mode and the alignment was requested via the alignment
-     * configuration (see seqan3::align_cfg::debug and seqan3::align_cfg::result).
+     * configuration (see seqan3::align_cfg::detail::debug and seqan3::align_cfg::result).
      */
     constexpr auto const & trace_matrix() const noexcept
     {

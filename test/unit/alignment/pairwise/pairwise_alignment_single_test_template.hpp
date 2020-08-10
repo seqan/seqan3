@@ -86,7 +86,7 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment}
-                                                     | seqan3::align_cfg::debug;
+                                                     | seqan3::align_cfg::detail::debug;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

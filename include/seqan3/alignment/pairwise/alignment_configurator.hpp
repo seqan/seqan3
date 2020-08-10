@@ -482,7 +482,7 @@ private:
      * \details
      *
      * The correct scoring scheme is selected based on the vectorisation mode. If no vectorisation is enabled, the
-     * scoring scheme is the one configured in seqan3::align_config::scoring. If vectorisation is enabled, then the
+     * scoring scheme is the one configured in seqan3::align_cfg::scoring. If vectorisation is enabled, then the
      * appropriate scoring scheme for the vectorised alignment algorithm is selected. This involves checking whether the
      * passed scoring scheme is a matrix or a simple scoring scheme, which has only mismatch and match costs.
      */

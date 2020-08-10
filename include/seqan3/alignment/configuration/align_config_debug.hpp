@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::debug.
+ * \brief Provides seqan3::align_cfg::detail::debug.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -16,7 +16,7 @@
 #include <seqan3/core/algorithm/configuration_element_debug_mode.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 
-namespace seqan3::align_cfg
+namespace seqan3::align_cfg::detail
 {
 //!\cond DEV
 /*!\brief Configuration element for debugging the alignment algorithm.
@@ -35,4 +35,4 @@ namespace seqan3::align_cfg
 inline constexpr seqan3::detail::debug_mode<std::integral_constant<seqan3::detail::align_config_id,
                                                                    seqan3::detail::align_config_id::debug>> debug{};
 //!\endcond
-}  // namespace seqan3::align_cfg
+}  // namespace seqan3::align_cfg::detail

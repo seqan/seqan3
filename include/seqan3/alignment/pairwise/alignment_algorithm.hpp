@@ -360,8 +360,8 @@ private:
      *
      * \details
      *
-     * Initialises the debug matrices if the alignment algorithm is running in debug mode. See seqan3::align_cfg::debug
-     * for more information.
+     * Initialises the debug matrices if the alignment algorithm is running in debug mode. See
+     * seqan3::align_cfg::detail::debug for more information.
      */
     template <typename sequence1_t, typename sequence2_t>
     constexpr void initialise_debug_matrices(sequence1_t & sequence1, sequence2_t & sequence2)
@@ -586,8 +586,8 @@ private:
      * 3. The begin positions of the aligned range for the first and second sequence.
      * 4. The alignment between both sequences in the respective aligned region.
      *
-     * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
-     * are stored in the alignment result as well.
+     * If the alignment is run in debug mode (see seqan3::align_cfg::detail::debug) the debug score and optionally trace
+     * matrix are stored in the alignment result as well.
      *
      * Finally, the callback is invoked with the computed alignment result.
      */
@@ -671,8 +671,8 @@ private:
      * 3. The begin positions of the aligned range for the first and second sequence.
      * 4. The alignment between both sequences in the respective aligned region.
      *
-     * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
-     * are stored in the alignment result as well.
+     * If the alignment is run in debug mode (see seqan3::align_cfg::detail::debug) the debug score and optionally trace
+     * matrix are stored in the alignment result as well.
      *
      * Finally, the callback is invoked with each computed alignment result iteratively.
      */
