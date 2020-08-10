@@ -124,6 +124,12 @@ install:
     fi
 
 before_script:
+  - |
+    # clone seqan2 into submodules
+    git clone https://github.com/seqan/seqan.git submodules/seqan
+    cd submodules/seqan
+    git checkout develop
+    cd ../../
   - mkdir ../seqan3-build
   - cd ../seqan3-build
   - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
