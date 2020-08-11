@@ -21,7 +21,7 @@ using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_re
 using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
                                     seqan3::align_cfg::band_fixed_size,
                                     seqan3::align_cfg::gap<seqan3::gap_scheme<>>,
-                                    seqan3::align_cfg::max_error,
+                                    seqan3::align_cfg::min_score,
                                     seqan3::align_cfg::method_global,
                                     seqan3::detail::method_local_tag,
                                     seqan3::align_cfg::parallel,

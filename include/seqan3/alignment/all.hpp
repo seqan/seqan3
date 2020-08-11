@@ -83,7 +83,7 @@
  * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"                      |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::band_fixed_size "1: Band"                           |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::gap "2: Gap scheme"                                 |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::max_error "3: Max error"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::min_score "3: Min score"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_global "4: Method global"                    |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_local "5: Method local"                      |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::output_alignment "6: Alignment output"              |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
@@ -224,7 +224,7 @@
  * which can be used to safe some typing.
  *
  * The edit configuration can be further specialised with following configs:
- *  * Allow maximal number of errors, i.e specify the seqan3::align_cfg::max_error configuration
+ *  * Given a minimal score, i.e specify the seqan3::align_cfg::min_score configuration
  *  * Compute a semi-global alignment, i.e seqan3::align_cfg::aligned_ends is initialised with seqan3::end_gaps::free_ends_first.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment

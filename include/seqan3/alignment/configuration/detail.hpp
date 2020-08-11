@@ -29,7 +29,7 @@ enum struct align_config_id : uint8_t
     gap,                   //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
     global,                //!< ID for the \ref seqan3::align_cfg::method_global "global alignment" option.
     local,                 //!< ID for the \ref seqan3::align_cfg::method_local "local alignment" option.
-    max_error,             //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
+    min_score,             //!< ID for the \ref seqan3::align_cfg::min_score "min_score" option.
     on_result,             //!< ID for the \ref seqan3::align_cfg::on_result "on_result" option.
     output_alignment,      //!< ID for the \ref seqan3::align_cfg::output_alignment "alignment output" option.
     output_begin_position, //!< ID for the \ref seqan3::align_cfg::output_begin_position "begin position output" option.
@@ -64,7 +64,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         //|  |  |  gap
         //|  |  |  |  global
         //|  |  |  |  |  local
-        //|  |  |  |  |  |  max_error
+        //|  |  |  |  |  |  min_score
         //|  |  |  |  |  |  |  on_result
         //|  |  |  |  |  |  |  |  output_alignment
         //|  |  |  |  |  |  |  |  |  output_begin_position
@@ -83,7 +83,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: gap
         { 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: global
         { 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  5: local
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  6: max_error
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  6: min_score
         { 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  7: on_result
         { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  8: output_alignment
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  9: output_begin_position

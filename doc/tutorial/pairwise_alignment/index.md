@@ -309,7 +309,7 @@ To make the configuration easier, we added a shortcut called seqan3::align_cfg::
 ### Refine edit distance
 
 The edit distance can be further refined using seqan3::align_cfg::aligned_ends to also compute a semi-global alignment
-and the seqan3::align_cfg::max_error configuration to give an upper limit of the allowed number of edits. If the
+and the seqan3::align_cfg::min_score configuration to give an upper limit of the allowed number of edits. If the
 respective alignment could not find a solution within the given error bound, the resulting score is infinity
 (corresponds to std::numeric_limits::max). Also the alignment and the front and back coordinates can be computed using
 the align_cfg::result option.

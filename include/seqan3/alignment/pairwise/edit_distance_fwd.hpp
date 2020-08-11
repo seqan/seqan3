@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
+#include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
@@ -92,7 +92,7 @@ struct default_edit_distance_trait_type
 
     //!\brief When true the computation will use the ukkonen trick with the last active cell and bounds the error to
     //!       config.max_errors.
-    static constexpr bool use_max_errors = align_config_type::template exists<align_cfg::max_error>();
+    static constexpr bool use_max_errors = align_config_type::template exists<align_cfg::min_score>();
     //!\brief Whether the alignment is a semi-global alignment or not.
     static constexpr bool is_semi_global = is_semi_global_t::value;
     //!\brief Whether the alignment is a global alignment or not.

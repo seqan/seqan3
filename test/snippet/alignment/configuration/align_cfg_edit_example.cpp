@@ -1,7 +1,7 @@
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
+#include <seqan3/alignment/configuration/align_config_min_score.hpp>
 
 int main()
 {
@@ -23,8 +23,8 @@ int main()
                     seqan3::align_cfg::edit_scheme |
                     seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
 
-    // Computes global edit distance allowing maximal 3 errors.
+    // Computes global distance allowing a minimal score of 3 (Default: edit distance).
     auto cfg_errors = seqan3::align_cfg::method_global{} |
                       seqan3::align_cfg::edit_scheme |
-                      seqan3::align_cfg::max_error{3u};
+                      seqan3::align_cfg::min_score{-3};
 }
