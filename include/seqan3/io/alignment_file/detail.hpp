@@ -298,8 +298,8 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
                                                   uint32_t const query_end_pos = 0,
                                                   bool const extended_cigar = false)
 //!\cond
-    requires std::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<ref_seq_type>> &&
-             std::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<query_seq_type>>
+    requires seqan3::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<ref_seq_type>> &&
+             seqan3::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<query_seq_type>>
 //!\endcond
 {
     return get_cigar_string(std::tie(ref_seq, query_seq), query_start_pos, query_end_pos, extended_cigar);

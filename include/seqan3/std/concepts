@@ -17,62 +17,7 @@
 #include <concepts>
 #endif // __has_include(<concepts>)
 
-#ifdef __cpp_lib_concepts        // C++20 concepts available
-
-namespace std
-{
-inline namespace deprecated
-{
-/*!\brief This should be removed.
- * \deprecated No viable alternative.
- */
-template <class B>
-concept boolean =
-    movable<std::remove_cvref_t<B>> &&
-    requires(std::remove_reference_t<B> const & b1,
-             std::remove_reference_t<B> const & b2, bool const a)
-    {
-        requires convertible_to<const std::remove_reference_t<B>&, bool>;
-        !b1;      requires convertible_to<decltype(!b1), bool>;
-        b1 && a;  requires same_as<decltype(b1 && a), bool>;
-        b1 || a;  requires same_as<decltype(b1 || a), bool>;
-        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
-        a && b2;  requires same_as<decltype(a && b2), bool>;
-        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
-        a || b2;  requires same_as<decltype(a || b2), bool>;
-        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
-        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
-        a == b2;  requires convertible_to<decltype(a == b2), bool>;
-        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
-        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
-        a != b2;  requires convertible_to<decltype(a != b2), bool>;
-    };
-} // inline namespace std::deprecated
-} // namespace std
-
-namespace std::detail
-{
-/*!\interface   std::detail::weakly_equality_comparable_with <>
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-//!\cond
-template <class T, class U>
-concept weakly_equality_comparable_with =
-    requires(std::remove_reference_t<T> const & t,
-             std::remove_reference_t<U> const & u)
-    {
-        t == u; requires boolean<decltype(t == u)>;
-        t != u; requires boolean<decltype(t != u)>;
-        u == t; requires boolean<decltype(u == t)>;
-        u != t; requires boolean<decltype(u != t)>;
-    };
-//!\endcond
-} // namespace std::detail
-
-#else                         // use range-v3 to emulate
+#ifndef __cpp_lib_concepts // use range-v3 to emulate, if C++20 concepts are not available
 
 #include <functional>
 #include <type_traits>
@@ -215,59 +160,7 @@ using ::concepts::movable;
 //  Comparison concepts
 // ============================================================================
 
-/*!\interface   std::boolean <>
- * \extends     std::movable
- * \brief       Specifies that a type can be used in boolean contexts.
- * \sa          https://en.cppreference.com/w/cpp/concepts/boolean
- */
-//!\cond
-template <class B>
-SEQAN3_CONCEPT boolean =
-    movable<seqan3::remove_cvref_t<B>> &&
-    requires(std::remove_reference_t<B> const & b1,
-             std::remove_reference_t<B> const & b2, bool const a)
-    {
-        requires convertible_to<const std::remove_reference_t<B>&, bool>;
-        !b1;      requires convertible_to<decltype(!b1), bool>;
-        b1 && a;  requires same_as<decltype(b1 && a), bool>;
-        b1 || a;  requires same_as<decltype(b1 || a), bool>;
-        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
-        a && b2;  requires same_as<decltype(a && b2), bool>;
-        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
-        a || b2;  requires same_as<decltype(a || b2), bool>;
-        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
-        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
-        a == b2;  requires convertible_to<decltype(a == b2), bool>;
-        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
-        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
-        a != b2;  requires convertible_to<decltype(a != b2), bool>;
-  };
-//!\endcond
-
 } // namespace std
-
-namespace std::detail
-{
-
-/*!\interface   std::detail::weakly_equality_comparable_with <>
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT weakly_equality_comparable_with =
-    requires(std::remove_reference_t<T> const & t,
-             std::remove_reference_t<U> const & u)
-    {
-        t == u; requires boolean<decltype(t == u)>;
-        t != u; requires boolean<decltype(t != u)>;
-        u == t; requires boolean<decltype(u == t)>;
-        u != t; requires boolean<decltype(u != t)>;
-    };
-//!\endcond
-} // namespace std::detail
 
 namespace std
 {
