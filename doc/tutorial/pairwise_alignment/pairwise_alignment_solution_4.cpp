@@ -18,8 +18,12 @@ int main()
                          seqan3::align_cfg::output_end_position |
                          seqan3::align_cfg::output_alignment;
 
-    // Configure the alignment kernel with the output.
-    auto config = seqan3::align_cfg::method_global{} |
+    // Configure the alignment kernel together with the previous output configuration.
+    auto config = seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
                   seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |

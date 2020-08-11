@@ -27,14 +27,27 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::method_global{} |
-                                     seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+inline constexpr auto align_config = seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}} |
                                      seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
                                                                         seqan3::align_cfg::upper_diagonal{8}};
 
-inline constexpr auto align_config_semi_seq1 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
-inline constexpr auto align_config_semi_seq2 = align_config | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
+inline constexpr auto align_config_semi_seq1 = align_config |
+                                               seqan3::align_cfg::method_global{
+                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
+                                               } |
+                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+inline constexpr auto align_config_semi_seq2 = align_config |
+                                               seqan3::align_cfg::method_global{
+                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                                               } |
+                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
 
 static auto dna4_01_semi_first = []()
 {
