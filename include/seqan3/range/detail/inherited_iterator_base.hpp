@@ -107,22 +107,19 @@ public:
     {}
     //!\}
 
-    //!\brief Cast this to base type.
-    constexpr base_t & base()
+    //!\brief Get a copy of the base.
+    constexpr base_t base() const &
+    //!\cond
+        requires std::copyable<base_t>
+    //!\endcond
     {
-        if constexpr (wrap_base)
-            return member;
-        else
-            return *this;
+        return as_base();
     }
 
     //!\copydoc base
-    constexpr base_t const & base() const
+    constexpr base_t base() &&
     {
-        if constexpr (wrap_base)
-            return member;
-        else
-            return *this;
+        return std::move(as_base());
     }
 
     /*!\name Comparison operators
@@ -204,7 +201,7 @@ public:
         requires requires (base_t_ i) { ++i; }
     //!\endcond
     {
-        ++base();
+        ++as_base();
         return *this_derived();
     }
 
@@ -217,7 +214,7 @@ public:
         requires requires (base_t_ i) { i++; requires !std::same_as<decltype(i++), base_t_>; }
     //!\endcond
     {
-        return base()++;
+        return as_base()++;
     }
 
     //!\brief Post-increment, return previous iterator state.
@@ -231,7 +228,7 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{base()++};
+        return derived_t{as_base()++};
     }
 
     //!\brief Pre-decrement, return updated iterator.
@@ -243,7 +240,7 @@ public:
         requires requires (base_t_ i) { --i; }
     //!\endcond
     {
-        --base();
+        --as_base();
         return *this_derived();
     }
 
@@ -257,7 +254,7 @@ public:
         requires requires (base_t_ i) { i--; } && std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{base()--};
+        return derived_t{as_base()--};
     }
 
     //!\brief Move iterator to the right.
@@ -269,7 +266,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i += n; }
     //!\endcond
     {
-        base() += skip;
+        as_base() += skip;
         return *this_derived();
     }
 
@@ -284,7 +281,7 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{base() + skip};
+        return derived_t{as_base() + skip};
     }
 
     //!\brief Non-member operator+ delegates to non-friend operator+.
@@ -307,7 +304,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i -= n; }
     //!\endcond
     {
-        base() -= skip;
+        as_base() -= skip;
         return *this_derived();
     }
 
@@ -322,7 +319,7 @@ public:
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {
-        return derived_t{base() - skip};
+        return derived_t{as_base() - skip};
     }
 
     //!\brief Return offset between this and remote iterator's position.
@@ -332,7 +329,7 @@ public:
         requires std::sized_sentinel_for<base_t, base_t>
     //!\endcond
     {
-        return base() - rhs.base();
+        return as_base() - rhs.as_base();
     }
     //!\}
 
@@ -345,7 +342,7 @@ public:
         requires std::indirectly_readable<base_t>
     //!\endcond
     {
-        return *base();
+        return *as_base();
     }
 
     //!\brief Dereference operator returns element currently pointed at.
@@ -354,7 +351,7 @@ public:
         requires std::indirectly_readable<base_t>
     //!\endcond
     {
-        return *base();
+        return *as_base();
     }
 
     //!\brief Return pointer to this iterator.
@@ -363,7 +360,7 @@ public:
         requires std::input_iterator<base_t>
     //!\endcond
     {
-        return &base();
+        return &as_base();
     }
 
     //!\brief Return pointer to this iterator.
@@ -372,7 +369,7 @@ public:
         requires std::input_iterator<base_t>
     //!\endcond
     {
-        return &base();
+        return &as_base();
     }
 
     //!\brief Return underlying container value currently pointed at.
@@ -385,7 +382,7 @@ public:
         requires requires (base_t_ i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return base()[n];
+        return as_base()[n];
     }
 
     //!\brief Return underlying container value currently pointed at.
@@ -398,7 +395,7 @@ public:
         requires requires (base_t_ const i, difference_type const n) { i[n]; }
     //!\endcond
     {
-        return base()[n];
+        return as_base()[n];
     }
     //!\}
 
@@ -408,6 +405,24 @@ private:
 
     //!\brief Befriend the derived type so it can access the private members.
     friend derived_t;
+
+    //!\brief Cast this to base type.
+    constexpr base_t & as_base() & noexcept
+    {
+        if constexpr (wrap_base)
+            return member;
+        else
+            return *this;
+    }
+
+    //!\copydoc as_base
+    constexpr base_t const & as_base() const & noexcept
+    {
+        if constexpr (wrap_base)
+            return member;
+        else
+            return *this;
+    }
 
     //!\brief Cast this to derived type.
     constexpr derived_t * this_derived()
