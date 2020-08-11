@@ -133,14 +133,14 @@ protected:
      *
      * \details
      *
-     * Reads the state of seqan3::align_cfg::aligned_ends and enables the tracking of the last row or column if
+     * Reads the state of seqan3::align_cfg::method_global and enables the tracking of the last row or column if
      * requested. Otherwise, only the last cell will be tracked.
      */
     policy_optimum_tracker(alignment_configuration_t const & config)
     {
-        auto align_ends_config = config.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-        test_last_row_cell = align_ends_config[1];
-        test_last_column_cell = align_ends_config[3];
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+        test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing;
+        test_last_column_cell = method_global_config.free_end_gaps_sequence2_trailing;
     }
     //!\}
 

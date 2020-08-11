@@ -98,9 +98,9 @@ protected:
             gap_open_score = static_cast<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
         }
 
-        auto align_ends_config = config.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-        first_row_is_free = align_ends_config[0];
-        first_column_is_free = align_ends_config[2];
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+        first_row_is_free = method_global_config.free_end_gaps_sequence1_leading;
+        first_column_is_free = method_global_config.free_end_gaps_sequence2_leading;
     }
     //!\}
 
