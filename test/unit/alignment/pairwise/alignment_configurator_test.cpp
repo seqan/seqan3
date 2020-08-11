@@ -78,8 +78,7 @@ TEST(alignment_configurator, configure_edit_semi)
                            seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
                            seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                            seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                       seqan3::align_cfg::edit_scheme |
-                       seqan3::align_cfg::aligned_ends{seqan3::free_ends_first}).score(), 0);
+                       seqan3::align_cfg::edit_scheme).score(), 0);
 }
 
 TEST(alignment_configurator, configure_edit_banded)
@@ -196,8 +195,7 @@ TEST(alignment_configurator, configure_affine_global_semi)
                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
-               seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
-               seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
+               seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}};
 
     EXPECT_EQ(run_test(cfg).score(), 0);
 }

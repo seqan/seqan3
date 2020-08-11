@@ -12,7 +12,6 @@
 #include "alignment_fixture.hpp"
 #include "semi_global_edit_distance_unbanded.hpp"
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>

@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
@@ -34,17 +33,13 @@ inline constexpr auto align_config_semi_seq1 = align_config |
                                                     seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
                                                     seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
                                                     seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
-                                               } |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}};
 inline constexpr auto align_config_semi_seq2 = align_config |
                                                seqan3::align_cfg::method_global{
                                                     seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
                                                     seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
                                                     seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
-                                               } |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
+                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}};
 
 static auto dna4_01_semi_first = []()
 {

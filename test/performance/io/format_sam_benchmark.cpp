@@ -46,7 +46,6 @@ static std::string create_sam_file_string(size_t const n_queries)
                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                    seqan3::mismatch_score{-2}}} |
                       seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
-                      seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                       seqan3::align_cfg::result{seqan3::with_alignment};
 
         using sam_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::offset,

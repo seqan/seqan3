@@ -26,7 +26,6 @@ void run_text_single()
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
                                                seqan3::align_cfg::edit_scheme |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 
     auto search_results = search(query, index, search_config);
@@ -68,7 +67,6 @@ void run_text_collection()
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
                                                seqan3::align_cfg::edit_scheme |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::result{seqan3::with_alignment};
 
     seqan3::debug_stream << "-----------------\n";

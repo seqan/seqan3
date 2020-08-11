@@ -21,7 +21,6 @@ int main()
                   seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
                   seqan3::align_cfg::result{seqan3::with_alignment} |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
                                                      seqan3::align_cfg::upper_diagonal{8}};
