@@ -20,7 +20,8 @@ struct align_cfg_output_test : public ::testing::Test
 {};
 
 using test_types = ::testing::Types<seqan3::align_cfg::output_score_tag,
-                                    seqan3::align_cfg::output_end_position_tag>;
+                                    seqan3::align_cfg::output_end_position_tag,
+                                    seqan3::align_cfg::output_begin_position_tag>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(output, pipeable_config_element_test, test_types, );
 
@@ -36,10 +37,19 @@ TEST(align_config_output, end_position)
                               seqan3::align_cfg::output_end_position_tag>));
 }
 
+TEST(align_config_output, begin_position)
+{
+    EXPECT_TRUE((std::same_as<seqan3::remove_cvref_t<decltype(seqan3::align_cfg::output_begin_position)>,
+                              seqan3::align_cfg::output_begin_position_tag>));
+}
+
 TEST(align_config_output, combine_outputs)
 {
-    seqan3::configuration cfg = seqan3::align_cfg::output_score | seqan3::align_cfg::output_end_position;
+    seqan3::configuration cfg = seqan3::align_cfg::output_score |
+                                seqan3::align_cfg::output_end_position |
+                                seqan3::align_cfg::output_begin_position;
 
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_score_tag>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_end_position_tag>());
+    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_begin_position_tag>());
 }
