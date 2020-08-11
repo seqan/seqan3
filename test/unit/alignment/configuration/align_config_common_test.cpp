@@ -53,7 +53,7 @@ TEST(alignment_configuration_test, symmetric_configuration)
 TEST(alignment_configuration_test, number_of_configs)
 {
     // NOTE(rrahn): You must update this test if you add a new value to seqan3::align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 16);
+    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 17);
 }
 
 TYPED_TEST(alignment_configuration_test, config_element_specialisation)

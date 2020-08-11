@@ -123,4 +123,36 @@ struct output_begin_position_tag : public pipeable_config_element<output_begin_p
  */
 inline constexpr output_begin_position_tag output_begin_position{};
 
+/*!\brief Tag representing alignment output for the alignment algorithms.
+ * \ingroup alignment_configuration
+ */
+struct output_alignment_tag : public pipeable_config_element<output_alignment_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_alignment};
+};
+
+/*!\brief Configures the alignment result to output the alignment.
+ * \ingroup alignment_configuration
+ *
+ * \details
+ *
+ * This option forces the alignment to compute and output the actual aligned sequences.
+ *
+ * If this option is not set in the alignment configuration, accessing the alignment via the
+ * seqan3::alignment_result object is forbidden and will lead to a compile time error.
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/align_cfg_output_alignment.cpp
+ *
+ * \see seqan3::align_cfg::output_score
+ * \see seqan3::align_cfg::output_end_position
+ * \see seqan3::align_cfg::output_begin_position
+ * \see seqan3::align_cfg::output_sequence1_id
+ * \see seqan3::align_cfg::output_sequence2_id
+ */
+inline constexpr output_alignment_tag output_alignment{};
+
 } // namespace seqan3::align_cfg
