@@ -17,6 +17,8 @@
 #include <utility>
 #include <vector>
 
+#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
+#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
@@ -44,7 +46,6 @@
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
-#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -319,14 +320,16 @@ public:
             // Use default edit distance if gaps are not set.
             auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
             auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
-            auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
             if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
             {
+                auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
                 // Only use edit distance if ...
                 if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
-                    !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
-                    align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+                    !(method_global_cfg.free_end_gaps_sequence2_leading.get() ||
+                      method_global_cfg.free_end_gaps_sequence2_trailing.get()) &&
+                    (method_global_cfg.free_end_gaps_sequence1_leading.get() ==
+                     method_global_cfg.free_end_gaps_sequence1_trailing.get()))
                 {
                     // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
                     //       option via the scheme.
@@ -351,6 +354,7 @@ public:
             if (config_t::template exists<align_cfg::max_error>())
                 throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
                                                       "the specific edit distance computation."};
+
             // Configure the alignment algorithm.
             return std::pair{configure_scoring_scheme<function_wrapper_t>(config_with_result_type),
                              config_with_result_type};
@@ -380,8 +384,7 @@ private:
         // ----------------------------------------------------------------------------
 
         // Get the value for the sequence ends configuration.
-        auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-        using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
+        auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
 
         auto configure_edit_traits = [&] (auto is_semi_global)
         {
@@ -401,18 +404,9 @@ private:
             {
                 return configure_edit_traits(std::false_type{});
             }
-            else if constexpr (align_ends_cfg_t::template is_static<1>())
-            {
-#if defined(__GNUC__) && __GNUC__ >= 9
-                constexpr bool free_ends_trailing = align_ends_cfg_t::template get_static<1>();
-                return configure_edit_traits(std::integral_constant<bool, free_ends_trailing>{});
-#else // ^^^ workaround / no workaround vvv
-                return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
-#endif // defined(__GNUC__) && __GNUC__ >= 9
-            }
             else // Resolve correct property at runtime.
             {
-                if (align_ends_cfg[1])
+                if (method_global_cfg.free_end_gaps_sequence1_trailing.get())
                     return configure_edit_traits(std::true_type{});
                 else
                     return configure_edit_traits(std::false_type{});
@@ -420,20 +414,14 @@ private:
         };
 
         // Check if it has free ends set for the first sequence leading gaps.
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<0>())
-            return has_free_ends_trailing(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
-        else // Resolve correct property at runtime.
-        {
-            if (align_ends_cfg[0])
-                return has_free_ends_trailing(std::true_type{});
-            else
-                return has_free_ends_trailing(std::false_type{});
-        }
+        if (method_global_cfg.free_end_gaps_sequence1_leading.get())
+            return has_free_ends_trailing(std::true_type{});
+        else
+            return has_free_ends_trailing(std::false_type{});
     }
 
-    /*!\brief Configures the dynamic programming matrix initialisation accoring to seqan3::align_cfg::aligned_ends
-     *        settings.
+    /*!\brief Configures the dynamic programming matrix initialisation according to the free ends setting in
+     *        seqan3::align_cfg::method_global.
      *
      * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
      * \tparam policies_t A template parameter pack for the already configured policy types.
@@ -446,13 +434,13 @@ private:
      * \details
      *
      * The matrix initialisation depends on the settings for the leading gaps for the first and the second sequence
-     * within the seqan3::align_cfg::aligned_ends configuration element.
+     * within the seqan3::align_cfg::method_global configuration element.
      */
     template <typename function_wrapper_t, typename ...policies_t, typename config_t>
     static constexpr function_wrapper_t configure_free_ends_initialisation(config_t const & cfg);
 
-    /*!\brief Configures the search space for the alignment algorithm according to seqan3::align_cfg::aligned_ends
-     *        settings.
+    /*!\brief Configures the search space for the alignment algorithm according to free end settings in
+     *        seqan3::align_cfg::method_global.
      *
      * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
      * \tparam policies_t A template parameter pack for the already configured policy types.
@@ -464,7 +452,7 @@ private:
      *
      * \details
      *
-     * This option is configured in the seqan3::align_cfg::aligned_ends configuration element according to
+     * This option is configured in the seqan3::align_cfg::method_global configuration element according to
      * the settings for the trailing gaps of the first and the second sequence.
      */
     template <typename function_wrapper_t, typename ...policies_t, typename config_t>
@@ -591,12 +579,9 @@ template <typename function_wrapper_t, typename ...policies_t, typename config_t
 constexpr function_wrapper_t alignment_configurator::configure_free_ends_initialisation(config_t const & cfg)
 {
     using traits_t = alignment_configuration_traits<config_t>;
-    // Get the value for the sequence ends configuration.
-    auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-    using align_ends_cfg_t = decltype(align_ends_cfg);
 
     // This lambda augments the initialisation policy of the alignment algorithm
-    // with the aligned_ends configuration from before.
+    // with the method_global free ends gap configuration from before.
     auto configure_leading_both = [&] (auto first_seq, auto second_seq) constexpr
     {
         // Define the trait for the initialisation policy
@@ -608,7 +593,28 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
 
         // Make initialisation policy a deferred CRTP base and delegate to configure the find optimum policy.
         using gap_init_policy_t = deferred_crtp_base<affine_gap_init_policy, policy_trait_type>;
-        return configure_free_ends_optimum_search<function_wrapper_t, policies_t..., gap_init_policy_t>(cfg);
+
+        if constexpr (traits_t::is_global)
+        {
+            if (auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
+                !config_t::template exists<seqan3::align_cfg::aligned_ends>() &&
+                (method_global_cfg.free_end_gaps_sequence1_leading.get() ||
+                 method_global_cfg.free_end_gaps_sequence1_trailing.get() ||
+                 method_global_cfg.free_end_gaps_sequence2_leading.get() ||
+                 method_global_cfg.free_end_gaps_sequence2_trailing.get()))
+            {
+                auto ends_config = seqan3::align_cfg::aligned_ends{seqan3::free_ends_none};
+                return configure_free_ends_optimum_search<function_wrapper_t, policies_t..., gap_init_policy_t>(cfg | ends_config);
+            }
+            else
+            {
+                return configure_free_ends_optimum_search<function_wrapper_t, policies_t..., gap_init_policy_t>(cfg);
+            }
+        }
+        else
+        {
+            return configure_free_ends_optimum_search<function_wrapper_t, policies_t..., gap_init_policy_t>(cfg);
+        }
     };
 
     if constexpr (traits_t::is_local)
@@ -617,40 +623,27 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
     }
     else
     {
+        // Get the value for the sequence ends configuration.
+        auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
+
         // This lambda determines the initialisation configuration for the second sequence given
         // the leading gap property for it.
         auto configure_leading_second = [&] (auto first) constexpr
         {
-            // If possible use static information.
-            if constexpr (align_ends_cfg_t::template is_static<2>())
-            {
-                using second_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<2>()>;
-                return configure_leading_both(first, second_t{});
-            }
+            // Resolve correct property at runtime.
+            if (method_global_cfg.free_end_gaps_sequence2_leading.get())
+                return configure_leading_both(first, std::true_type{});
             else
-            {   // Resolve correct property at runtime.
-                if (align_ends_cfg[2])
-                    return configure_leading_both(first, std::true_type{});
-                else
-                    return configure_leading_both(first, std::false_type{});
-            }
+                return configure_leading_both(first, std::false_type{});
         };
 
         // Here the initialisation configuration for the first sequence is determined given
         // the leading gap property for it.
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<0>())
-        {
-            using first_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>;
-            return configure_leading_second(first_t{});
-        }
+        // Resolve correct property at runtime.
+        if (method_global_cfg.free_end_gaps_sequence1_leading.get())
+            return configure_leading_second(std::true_type{});
         else
-        {  // Resolve correct property at runtime.
-            if (align_ends_cfg[0])
-                return configure_leading_second(std::true_type{});
-            else
-                return configure_leading_second(std::false_type{});
-        }
+            return configure_leading_second(std::false_type{});
     }
 }
 //!\endcond
@@ -663,12 +656,8 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
 {
     using traits_t = alignment_configuration_traits<config_t>;
 
-    // Get the value for the sequence ends configuration.
-    auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-    using align_ends_cfg_t = decltype(align_ends_cfg);
-
     // This lambda augments the find optimum policy of the alignment algorithm with the
-    // respective aligned_ends configuration.
+    // respective method_global free end gaps configuration.
     auto configure_trailing_both = [&] (auto first_seq, auto second_seq) constexpr
     {
         struct policy_trait_type
@@ -689,40 +678,27 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
     }
     else
     {
+        // Get the value for the sequence ends configuration.
+        auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
+
         // This lambda determines the lookup configuration for the second sequence given
         // the trailing gap property for it.
         auto configure_trailing_second = [&] (auto first) constexpr
         {
-            // If possible use static information.
-            if constexpr (align_ends_cfg_t::template is_static<3>())
-            {
-                using second_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<3>()>;
-                return configure_trailing_both(first, second_t{});
-            }
+            // Resolve correct property at runtime.
+            if (method_global_cfg.free_end_gaps_sequence2_trailing.get())
+                return configure_trailing_both(first, std::true_type{});
             else
-            { // Resolve correct property at runtime.
-                if (align_ends_cfg[3])
-                    return configure_trailing_both(first, std::true_type{});
-                else
-                    return configure_trailing_both(first, std::false_type{});
-            }
+                return configure_trailing_both(first, std::false_type{});
         };
 
         // Here the lookup configuration for the first sequence is determined given
         // the trailing gap property for it.
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<1>())
-        {
-            using first_t = std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>;
-            return configure_trailing_second(first_t{});
-        }
+        // Resolve correct property at runtime.
+        if (method_global_cfg.free_end_gaps_sequence1_trailing.get())
+            return configure_trailing_second(std::true_type{});
         else
-        { // Resolve correct property at runtime.
-            if (align_ends_cfg[1])
-                return configure_trailing_second(std::true_type{});
-            else
-                return configure_trailing_second(std::false_type{});
-        }
+            return configure_trailing_second(std::false_type{});
     }
 }
 //!\endcond
