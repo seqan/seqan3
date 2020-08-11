@@ -23,7 +23,8 @@ using test_types = ::testing::Types<seqan3::align_cfg::output_score_tag,
                                     seqan3::align_cfg::output_end_position_tag,
                                     seqan3::align_cfg::output_begin_position_tag,
                                     seqan3::align_cfg::output_alignment_tag,
-                                    seqan3::align_cfg::output_sequence1_id_tag>;
+                                    seqan3::align_cfg::output_sequence1_id_tag,
+                                    seqan3::align_cfg::output_sequence2_id_tag>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(output, pipeable_config_element_test, test_types, );
 
@@ -57,13 +58,20 @@ TEST(align_config_output, sequence1_id)
                               seqan3::align_cfg::output_sequence1_id_tag>));
 }
 
+TEST(align_config_output, sequence2_id)
+{
+    EXPECT_TRUE((std::same_as<seqan3::remove_cvref_t<decltype(seqan3::align_cfg::output_sequence2_id)>,
+                              seqan3::align_cfg::output_sequence2_id_tag>));
+}
+
 TEST(align_config_output, combine_outputs)
 {
     seqan3::configuration cfg = seqan3::align_cfg::output_score |
                                 seqan3::align_cfg::output_end_position |
                                 seqan3::align_cfg::output_begin_position |
                                 seqan3::align_cfg::output_alignment |
-                                seqan3::align_cfg::output_sequence1_id;
+                                seqan3::align_cfg::output_sequence1_id |
+                                seqan3::align_cfg::output_sequence2_id;
 
 
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_score_tag>());
@@ -71,4 +79,5 @@ TEST(align_config_output, combine_outputs)
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_begin_position_tag>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_alignment_tag>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_sequence1_id_tag>());
+    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_sequence2_id_tag>());
 }

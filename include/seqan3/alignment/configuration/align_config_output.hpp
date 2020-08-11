@@ -187,4 +187,36 @@ struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1
  */
 inline constexpr output_sequence1_id_tag output_sequence1_id{};
 
+/*!\brief Tag representing sequence2 id output for the alignment algorithms.
+ * \ingroup alignment_configuration
+ */
+struct output_sequence2_id_tag : public pipeable_config_element<output_sequence2_id_tag>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
+};
+
+/*!\brief Configures the alignment result to output the id of the second sequence.
+ * \ingroup alignment_configuration
+ *
+ * \details
+ *
+ * This option forces the alignment to output the id of the second sequence.
+ *
+ * If this option is not set in the alignment configuration, accessing the id of the second sequence via the
+ * seqan3::alignment_result object is forbidden and will lead to a compile time error.
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/align_cfg_output_sequence2_id.cpp
+ *
+ * \see seqan3::align_cfg::output_score
+ * \see seqan3::align_cfg::output_end_position
+ * \see seqan3::align_cfg::output_begin_position
+ * \see seqan3::align_cfg::output_alignment
+ * \see seqan3::align_cfg::output_sequence1_id
+ */
+inline constexpr output_sequence2_id_tag output_sequence2_id{};
+
 } // namespace seqan3::align_cfg
