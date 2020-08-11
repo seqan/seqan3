@@ -13,16 +13,13 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/std/ranges>
-
-#include <range/v3/view/generate_n.hpp>
 
 using seqan3::operator""_dna4;
 

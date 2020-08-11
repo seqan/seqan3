@@ -14,7 +14,7 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>

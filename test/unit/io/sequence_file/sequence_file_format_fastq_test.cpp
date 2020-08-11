@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>

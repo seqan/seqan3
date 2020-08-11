@@ -8,8 +8,10 @@
 #include <gtest/gtest.h>
 
 #include <type_traits>
+#include <seqan3/std/ranges>
 
-#include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/test/cereal.hpp>
 
 template <typename T>

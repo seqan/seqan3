@@ -14,9 +14,14 @@
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
-#include <seqan3/alphabet/aminoacid/all.hpp>
-#include <seqan3/alphabet/nucleotide/all.hpp>
-#include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/test/cereal.hpp>

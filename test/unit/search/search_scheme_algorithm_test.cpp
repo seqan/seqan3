@@ -5,26 +5,27 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <type_traits>
 
-#include "helper.hpp"
-#include "helper_search_scheme.hpp"
-#include <seqan3/test/performance/sequence_generator.hpp>
-
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 #include <seqan3/search/detail/policy_max_error.hpp>
 #include <seqan3/search/detail/policy_search_result_builder.hpp>
-#include <seqan3/search/fm_index/all.hpp>
-#include <seqan3/range/views/slice.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 
-#include <gtest/gtest.h>
+#include "helper.hpp"
+#include "helper_search_scheme.hpp"
 
 // Uses the trivial search of the unidirectional search algorithm.
 // The algorithm is configured with the corrsponding configuration types.

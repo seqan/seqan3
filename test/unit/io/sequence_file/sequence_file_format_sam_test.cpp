@@ -12,8 +12,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/quality/all.hpp>
-#include <seqan3/io/sequence_file/all.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/test/pretty_printing.hpp>
 
