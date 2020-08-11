@@ -19,14 +19,10 @@
 
 #ifndef __cpp_lib_concepts // use range-v3 to emulate, if C++20 concepts are not available
 
-#include <functional>
-#include <type_traits>
-
 #include <concepts/concepts.hpp>
 #include <range/v3/functional/concepts.hpp>
-#include <range/v3/utility/common_type.hpp>
 
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/platform.hpp>
 
 /*!\defgroup std std
  * \brief A subset of the C++20 standard library made available in pre-C++20 contexts.
