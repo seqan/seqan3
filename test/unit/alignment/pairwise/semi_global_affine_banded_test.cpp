@@ -32,8 +32,7 @@ struct pairwise_semiglobal_affine_banded : public ::testing::Test
 
     auto base_config() const
     {
-        return seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+        return seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                          seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                             seqan3::mismatch_score{-5}}};
@@ -43,6 +42,12 @@ struct pairwise_semiglobal_affine_banded : public ::testing::Test
 TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_greater_0)
 {
     auto config = base_config() |
+                  seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                  } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{1},
                                                      seqan3::align_cfg::upper_diagonal{8}} |
                   seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::false_type{}},
@@ -57,6 +62,12 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_greater_0)
 TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_0)
 {
     auto config = base_config() |
+                  seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                  } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
                                                      seqan3::align_cfg::upper_diagonal{-1}} |
                   seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
@@ -71,6 +82,12 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_0)
 TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_lower_diagonal)
 {
     auto config = base_config() |
+                  seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                  } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{3},
                                                      seqan3::align_cfg::upper_diagonal{-3}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
@@ -82,6 +99,12 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_lo
 TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_ends_in_last_column)
 {
     auto config = base_config() |
+                  seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
+                  } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{4},
                                                      seqan3::align_cfg::upper_diagonal{8}} |
                   seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
@@ -96,6 +119,12 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_ends_in_la
 TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_ends_in_last_row)
 {
     auto config = base_config() |
+                  seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                  } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
                                                      seqan3::align_cfg::upper_diagonal{-4}} |
                   seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
