@@ -13,6 +13,7 @@
 #pragma once
 
 #include <ios>
+#include <seqan3/std/iterator>
 
 #include <seqan3/core/debug_stream.hpp>
 
