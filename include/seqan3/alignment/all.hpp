@@ -224,7 +224,7 @@
  * which can be used to safe some typing.
  *
  * The edit configuration can be further specialised with following configs:
- *  * Given a minimal score, i.e specify the seqan3::align_cfg::min_score configuration
+ *  * Set a minimal score, i.e. specify the seqan3::align_cfg::min_score configuration
  *  * Compute a semi-global alignment, i.e seqan3::align_cfg::aligned_ends is initialised with seqan3::end_gaps::free_ends_first.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment

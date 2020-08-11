@@ -42,6 +42,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * We lowered the requirements of the `seqan3::aligned_sequence` concept by removing everything that needs write
   access to the object. We then added a new `seqan3::writable_aligned_sequence` concept which extends
   `seqan3::aligned_sequence` by the requirements that need write access (e.g. `insert_gap`).
+* Configuration: Change the `align_cfg::max_error` to `align_cfg::min_score` and thus prepare it for non-edit scoring
+  schemes in the future as well ([\#2021](https://github.com/seqan/seqan3/pull/2021)).
 
 #### Argument Parser
 
