@@ -71,8 +71,7 @@ namespace seqan3::align_cfg
  */
 template <typename alignment_result_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<alignment_result_t, alignment_result>
+    requires seqan3::detail::is_type_specialisation_of_v<alignment_result_t, alignment_result>
 //!\endcond
-inline constexpr detail::alignment_result_capture_element<alignment_result_t> alignment_result_capture{};
+inline constexpr seqan3::detail::alignment_result_capture_element<alignment_result_t> alignment_result_capture{};
 }  // namespace seqan3::align_cfg
-

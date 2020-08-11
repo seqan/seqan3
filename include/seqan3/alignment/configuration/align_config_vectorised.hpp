@@ -52,6 +52,6 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-inline constexpr detail::vectorised_tag vectorised{};
+inline constexpr seqan3::detail::vectorised_tag vectorised{};
 
 } // namespace seqan3::align_cfg

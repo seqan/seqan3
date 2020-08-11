@@ -42,7 +42,7 @@ struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scori
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::scoring};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::scoring};
 };
 
 /*!\name Type deduction guides
