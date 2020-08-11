@@ -32,6 +32,7 @@ enum struct align_config_id : uint8_t
     local,        //!< ID for the \ref seqan3::align_cfg::method_local "local alignment" option.
     max_error,    //!< ID for the \ref seqan3::align_cfg::max_error "max_error" option.
     on_result,    //!< ID for the \ref seqan3::align_cfg::on_result "on_result" option.
+    output_score, //!< ID for the \ref seqan3::align_cfg::output_score "score output" option.
     parallel,     //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.
     result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring,      //!< ID for the \ref seqan3::align_cfg::scoring_scheme "scoring_scheme" option.
@@ -52,20 +53,34 @@ template <>
 inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_id::SIZE)>,
                             static_cast<uint8_t>(align_config_id::SIZE)> compatibility_table<align_config_id>
 {
-    {   //0  1  2  3  4  5  6  7  8  9 10 11 12
-        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: alignment_result_capture
-        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, //  1: aligned_ends
-        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  2: band
-        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: debug
-        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: gap
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1}, //  5: global
-        { 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1}, //  6: local
-        { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1}, //  7: max_error
-        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, //  8: on_result
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, //  9: parallel
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 10: result
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 11: scoring
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 12: vectorised
+    {   //alignment_result_capture
+        //|  aligned_ends
+        //|  |  band
+        //|  |  |  debug
+        //|  |  |  |  gap
+        //|  |  |  |  |  global
+        //|  |  |  |  |  |  local
+        //|  |  |  |  |  |  |  max_error
+        //|  |  |  |  |  |  |  |  on_result
+        //|  |  |  |  |  |  |  |  |  output_score
+        //|  |  |  |  |  |  |  |  |  |  parallel
+        //|  |  |  |  |  |  |  |  |  |  |  result
+        //|  |  |  |  |  |  |  |  |  |  |  |  scoring
+        //|  |  |  |  |  |  |  |  |  |  |  |  |  vectorised
+        { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: alignment_result_capture
+        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1}, //  1: aligned_ends
+        { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  2: band
+        { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: debug
+        { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: gap
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1}, //  5: global
+        { 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1}, //  6: local
+        { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1}, //  7: max_error
+        { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, //  8: on_result
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, //  9: output_score
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // 10: parallel
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 11: result
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 12: scoring
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 13: vectorised
     }
 };
 
