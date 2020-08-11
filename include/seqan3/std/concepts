@@ -64,81 +64,100 @@ namespace std
 //!\addtogroup concepts
 //!\{
 
-// ============================================================================
-//  Core language concepts
-// ============================================================================
+// ==========================================
+// [concepts.lang], language-related concepts
+// ==========================================
 
+// [concept.same], concept same_as
 using ::concepts::same_as;
+
+// [concept.derived], concept derived_from
 using ::concepts::derived_from;
+
+// [concept.convertible], concept convertible_to
 using ::concepts::convertible_to;
+
+// [concept.commonref], concept common_­reference_­with
 using ::concepts::common_reference_with;
+
+// [concept.common], concept common_with
 using ::concepts::common_with;
+
+// [concept.arithmetic], arithmetic concepts
 using ::concepts::integral;
 using ::concepts::signed_integral;
 using ::concepts::unsigned_integral;
-
-/*!\interface std::floating_point <>
- * \brief The concept std::floating_point<T> is satisfied if and only if T is a floating-point type.
- * \sa https://en.cppreference.com/w/cpp/types/is_floating_point
- */
+// using ::concepts::floating_point;
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT floating_point = std::is_floating_point_v<t>;
-// using ::concepts::floating_point;
 //!\endcond
 
+// [concept.assignable], concept assignable_from
 using ::concepts::assignable_from;
+
+// [concept.swappable], concept swappable
+// namespace ranges { inline namespace unspecified { using ::concepts::swap; } }
 using ::concepts::swappable;
 using ::concepts::swappable_with;
+
+// [concept.destructible], concept destructible
 using ::concepts::destructible;
+
+// [concept.constructible], concept constructible_from
 using ::concepts::constructible_from;
 
-/*!\interface   std::default_initializable <>
- * \extends     std::constructible_from
- * \brief       The std::default_initializable concept provides a shorthand for the common case when the question is whether
- *              a type can be constructed with no arguments.
- * \sa          https://en.cppreference.com/w/cpp/concepts/default_initializable
- */
+// [concept.default.init], concept default_initializable
+// using ::concepts::default_initializable;
 //!\cond
 template <class T>
 SEQAN3_CONCEPT default_initializable = ::concepts::default_constructible<T>;
-// using ::concepts::default_constructible;
 //!\endcond
+
+// [concept.moveconstructible], concept move_constructible
 using ::concepts::move_constructible;
+
+// [concept.copyconstructible], concept copy_constructible
 using ::concepts::copy_constructible;
-using ::concepts::movable;
 
-// ============================================================================
-//  Comparison concepts
-// ============================================================================
+// =======================================
+// [concepts.compare], comparison concepts
+// =======================================
 
-} // namespace std
-
-namespace std
-{
-
+// [concept.equalitycomparable], concept equality_comparable
 using ::concepts::equality_comparable;
 using ::concepts::equality_comparable_with;
 
+// [concept.totallyordered], concept totally_ordered
 using ::concepts::totally_ordered;
 using ::concepts::totally_ordered_with;
 
-// ============================================================================
-//  Object concepts  part2
-// ============================================================================
-
+// [concept.object], object concepts
+using ::concepts::movable;
 using ::concepts::copyable;
 using ::concepts::semiregular;
 using ::concepts::regular;
 
-// ============================================================================
-//  Callable concepts
-// ============================================================================
+// ======================================
+// [concepts.callable], callable concepts
+// ======================================
 
+// [concept.invocable], concept invocable
 using ::ranges::invocable;
+
+// [concept.regularinvocable], concept regular_invocable
 using ::ranges::regular_invocable;
+
+// [concept.predicate], concept predicate
 using ::ranges::predicate;
+
+// [concept.relation], concept relation
 using ::ranges::relation;
+
+// [concept.equiv], concept equivalence_relation
+// using ::ranges::equivalence_relation;
+
+// [concept.strictweakorder], concept strict_weak_order
 using ::ranges::strict_weak_order;
 
 } // namespace std
