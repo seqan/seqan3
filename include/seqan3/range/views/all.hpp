@@ -33,7 +33,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/translate.hpp>
-#include <seqan3/range/views/trim.hpp>
+#include <seqan3/range/views/trim_quality.hpp>
 
 /*!\defgroup views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
@@ -52,7 +52,7 @@
  *
  * See the \link range range module \endlink for how views relate to containers and decorators.
  *
- * Most views provided by SeqAn are specific to biological operations, like seqan3::views::trim which trims
+ * Most views provided by SeqAn are specific to biological operations, like seqan3::views::trim_quality which trims
  * sequences based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
  * But SeqAn also provides some general purpose views.
  *
