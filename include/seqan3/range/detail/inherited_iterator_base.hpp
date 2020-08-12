@@ -116,7 +116,7 @@ public:
         return as_base();
     }
 
-    //!\copydoc base
+    //!\brief Returns an [rvalue](https://en.cppreference.com/w/cpp/language/value_category) of the base.
     constexpr base_t base() &&
     {
         return std::move(as_base());
