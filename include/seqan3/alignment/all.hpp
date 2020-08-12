@@ -104,6 +104,7 @@
  * \endif
  *
  * ## Accessing the alignment results
+ * \anchor seqan3_align_cfg_output_configurations
  *
  * The seqan3::align_pairwise interface returns a seqan3::algorithm_result_generator_range. This range is a single pass
  * range over the computed alignments and the range's element types are seqan3::alignment_result objects.
