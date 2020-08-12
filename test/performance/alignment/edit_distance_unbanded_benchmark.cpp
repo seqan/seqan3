@@ -239,8 +239,8 @@ void seqan2_edit_distance_dna4_generic_collection(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (int score_: seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{0, -1, -1}))
-            score += score;
+        for (int score_ : seqan::globalAlignmentScore(vec1, vec2, seqan::Score<int>{0, -1, -1}))
+            score += score_;
     }
 
     state.counters["score"] = score;
