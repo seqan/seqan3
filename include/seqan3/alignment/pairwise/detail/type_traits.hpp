@@ -174,7 +174,11 @@ public:
     //!\brief Flag indicating whether the front coordintate shall be computed.
     static constexpr bool compute_begin_positions = result_type_rank >= 2;
     //!\brief Flag indicating whether the sequence alignment shall be computed.
-    static constexpr bool compute_sequence_alignment = result_type_rank >= 3;
+    //!\brief Flag indicating if any output option was set.
+    static constexpr bool has_output_configuration = compute_score ||
+                                                     compute_end_positions ||
+                                                     compute_begin_positions ||
+                                                     compute_sequence_alignment;
     //!\brief The padding symbol to use for the computation of the alignment.
     static constexpr original_score_type padding_symbol =
         static_cast<original_score_type>(1u << (sizeof_bits<original_score_type> - 1));

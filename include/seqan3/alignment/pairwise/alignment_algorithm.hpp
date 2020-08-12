@@ -644,7 +644,7 @@ private:
         if constexpr (traits_t::is_debug)
         {
             res.score_debug_matrix = std::move(score_debug_matrix);
-            if constexpr (traits_t::result_type_rank == 3) // compute alignment
+            if constexpr (traits_t::compute_sequence_alignment) // compute alignment
                 res.trace_debug_matrix = std::move(trace_debug_matrix);
         }
 
@@ -734,7 +734,7 @@ private:
         }), score_debug_matrix.begin() + offset);
 
         // if traceback is enabled.
-        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
+        if constexpr (traits_t::compute_sequence_alignment)
         {
             auto trace_matrix_it = trace_debug_matrix.begin() + offset;
             std::ranges::copy(column | std::views::transform([] (auto const & tpl)
