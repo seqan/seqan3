@@ -245,15 +245,28 @@ TYPED_TEST_P(iterator_fixture, move_forward_pre)
                                      std::ranges::end(this->test_range),
                                      this->expected_range);
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>) // iterate over it again
+    // iterate over it again
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
         move_forward_pre_test<TypeParam>(std::ranges::begin(this->test_range),
                                          std::ranges::end(this->test_range),
                                          this->expected_range);
+}
 
+TYPED_TEST_P(iterator_fixture, move_forward_pre_const)
+{
     if constexpr (TestFixture::const_iterable)
+    {
         move_forward_pre_test<TypeParam>(std::ranges::cbegin(this->test_range),
                                          std::ranges::cend(this->test_range),
                                          this->expected_range);
+
+         // iterate over it again
+        if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
+            move_forward_pre_test<TypeParam>(std::ranges::cbegin(this->test_range),
+                                             std::ranges::cend(this->test_range),
+                                             this->expected_range);
+
+    }
 }
 
 TYPED_TEST_P(iterator_fixture, move_forward_post)
@@ -262,15 +275,27 @@ TYPED_TEST_P(iterator_fixture, move_forward_post)
                                       std::ranges::end(this->test_range),
                                       this->expected_range);
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>) // iterate over it again
+    // iterate over it again
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
         move_forward_post_test<TypeParam>(std::ranges::begin(this->test_range),
                                           std::ranges::end(this->test_range),
                                           this->expected_range);
+}
 
+TYPED_TEST_P(iterator_fixture, move_forward_post_const)
+{
     if constexpr (TestFixture::const_iterable)
+    {
         move_forward_post_test<TypeParam>(std::ranges::cbegin(this->test_range),
                                           std::ranges::cend(this->test_range),
                                           this->expected_range);
+
+        // iterate over it again
+        if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>)
+            move_forward_post_test<TypeParam>(std::ranges::cbegin(this->test_range),
+                                              std::ranges::cend(this->test_range),
+                                              this->expected_range);
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -623,7 +648,9 @@ REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
                             dereference,
                             compare,
                             move_forward_pre,
+                            move_forward_pre_const,
                             move_forward_post,
+                            move_forward_post_const,
                             move_backward_pre,
                             move_backward_post,
                             jump_forward,
