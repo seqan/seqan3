@@ -109,7 +109,7 @@ using ::ranges::cpp20::data;
 // [range.range], ranges
 using ::ranges::cpp20::range;
 // using ::ranges::cpp20::enable_borrowed_range;
-// using ::ranges::cpp20::borrowed_range;
+using ::ranges::cpp20::borrowed_range;
 
 using ::ranges::iterator_t;
 using ::ranges::sentinel_t;
