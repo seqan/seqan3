@@ -22,8 +22,8 @@
 namespace seqan3::detail
 {
 
-// forward declaration for friend declaraion in alignment_result.
-template <typename>
+// forward declaration for friend declaration in alignment_result.
+template <typename configuration_t>
 #if !SEQAN3_WORKAROUND_GCC_93467
 //!\cond
     requires is_type_specialisation_of_v<configuration_t, configuration>
@@ -159,7 +159,7 @@ private:
     template <typename configuration_t>
     #if !SEQAN3_WORKAROUND_GCC_93467
     //!\cond
-        requires is_type_specialisation_of_v<configuration_t, configuration>
+        requires detail::is_type_specialisation_of_v<configuration_t, configuration>
     //!\endcond
     #endif // !SEQAN3_WORKAROUND_GCC_93467
     friend class detail::policy_alignment_result_builder;
