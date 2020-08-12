@@ -104,6 +104,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()`
   functions have been deprecated:
   Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
+* We removed `seqan3::forward_range`. Use `std::ranges::borrowed_range` instead ([\#2038](https://github.com/seqan/seqan3/pull/2038)).
 * Added `seqan3::views::minimiser`, a view that computes the minimum in a window shifted over a range of comparable values.
   ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
 * Added `seqan3::views::minimiser_hash`, a view that computes the minimisers of a range of type seqan3::semialphabet.
