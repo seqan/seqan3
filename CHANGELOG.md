@@ -71,6 +71,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   multiple bins ([\#920](https://github.com/seqan/seqan3/pull/920)).
 * Added `seqan3::search_cfg::hit`, which allows dynamic configuration of the hit strategy.
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
+* Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
+  ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
 

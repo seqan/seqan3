@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::on_result.
+ * \brief Provides seqan3::search_cfg::on_result.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,28 +15,28 @@
 #include <type_traits>
 
 
-#include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/semiregular_box.hpp>
+#include <seqan3/search/configuration/detail.hpp>
 
-namespace seqan3::align_cfg
+namespace seqan3::search_cfg
 {
 
-/*!\brief Configuration element to provide a user defined callback function for the alignment.
- * \ingroup alignment_configuration
+/*!\brief Configuration element to provide a user defined callback function for the search.
+ * \ingroup search_configuration
  *
- * \tparam callback_t The type of the callback; must model std::invocable with the generated seqan3::alignment_result
+ * \tparam callback_t The type of the callback; must model std::invocable with the generated seqan3::search_result
  *                    and std::move_constructible.
  *
  * \details
  *
- * Allows the user to specify a callback that should be called for every computed alignment result. The callback
- * must take exactly one argument for the alignment result and return `void`. If the user callback is
- * specified, the call to the alignment algorithm seqan3::align_pairwise will return nothing, i.e. it does not return
- * a seqan3::algorithm_result_generator_range anymore. Note that within a parallel configuration the order of the generated alignment
- * results and therefore the call to the user callback is non-deterministic. However, the continuation interface with the
- * user callback can be more efficient in a concurrent environment. If you pass an lvalue function object as callback
- * function, you need to make sure that the referenced function object outlives the call to the alignment algorithm.
+ * Allows the user to specify a callback that should be called for every computed search result. The callback
+ * must take exactly one argument for the search result and return `void`. If the user callback is
+ * specified, the call to the search algorithm seqan3::search will return nothing, i.e. it does not return
+ * a seqan3::algorithm_result_generator_range any more. Note that within a parallel configuration, the order of the
+ * generated search results and therefore the call to the user callback is non-deterministic.
+ * However, the continuation interface with the
+ * user callback can be more efficient in a concurrent environment.
  *
  * \if DEV
  * The given callback is wrapped inside a seqan3::semiregular_box wrapper type. This allows to also
@@ -48,12 +48,12 @@ namespace seqan3::align_cfg
  *
  * The following code snippet demonstrates the basic usage:
  *
- * \include test/snippet/alignment/configuration/align_cfg_on_result.cpp
+ * \include test/snippet/search/configuration_on_result.cpp
  */
 template <std::move_constructible callback_t>
 struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 {
-    //!\brief The stored callable which will be invoked with the alignment result.
+    //!\brief The stored callable which will be invoked with the search result.
     seqan3::semiregular_box_t<callback_t> callback{}; // Allow lambdas with capture block which are not copy_assignable.
 
     /*!\name Constructors, destructor and assignment
@@ -67,7 +67,7 @@ struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
     ~on_result() = default; //!< Defaulted.
 
     /*!\brief Constructs the configuration element with the given user callback.
-     * \param[in] callback The callback to invoke for a computed seqan3::alignment_result.
+     * \param[in] callback The callback to invoke with a computed seqan3::search_result.
      */
     constexpr explicit on_result(callback_t callback) : callback{std::forward<callback_t>(callback)}
     {}
@@ -75,7 +75,7 @@ struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::on_result};
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::on_result};
 };
 
 /*!\name Type deduction guides
@@ -85,4 +85,4 @@ struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 template <std::move_constructible callback_t>
 on_result(callback_t &&) -> on_result<std::decay_t<callback_t>>;
 //!\}
-}  // namespace seqan3::align_cfg
+}  // namespace seqan3::search_cfg

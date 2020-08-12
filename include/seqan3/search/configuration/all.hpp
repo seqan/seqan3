@@ -163,4 +163,20 @@
  * The seqan3::search_cfg::parallel configuration element can be combined with any other search configuration.
  *
  * \include test/snippet/search/configuration_parallel.cpp
+ *
+ * ### User callback
+ *
+ * In the default case, a call to seqan3::search returns a lazy range over the results of the search. This lazy range
+ * has the advantage that the results are always in a deterministic order even if the search is executed in parallel.
+ * Sometimes, however, it might be desirable to provide a user defined callback.
+ * To do so, one can use the configuration element seqan3::search_cfg::on_result. This configuration element
+ * is initialised with a user defined callback, e.g. a lambda function, which will be invoked with a generated
+ * seqan3::search_result whenever a hit was found.
+ * This has two implications. First, the return type of the seqan3::search function changes to `void`, i.e. it
+ * returns nothing. Second, in a parallel execution of the search, the order of the hits is not deterministic and the
+ * user has to make sure that concurrent invocations of the given callback are safe.
+ *
+ * The following snippet demonstrates the basic use case for this configuration element:
+ *
+ * \include test/snippet/search/search_with_user_callback.cpp
  */

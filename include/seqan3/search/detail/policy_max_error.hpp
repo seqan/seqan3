@@ -26,38 +26,81 @@ namespace seqan3::detail
 struct policy_max_error
 {
 protected:
+    //!\brief The total errors set by the user.
+    search_cfg::max_error_total total{};
+    //!\brief The substitution errors set by the user.
+    search_cfg::max_error_substitution substitution{};
+    //!\brief The insertion errors set by the user.
+    search_cfg::max_error_insertion insertion{};
+    //!\brief The deletion errors set by the user.
+    search_cfg::max_error_deletion deletion{};
+
+    //!\brief Flag indicating if only max error was given.
+    bool only_max_error_total{false};
+    //!\brief Flag indicating if max error total was given.
+    bool has_max_error_total{false};
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    policy_max_error() = default; //!< Defaulted.
+    policy_max_error(policy_max_error const &) = default; //!< Defaulted.
+    policy_max_error(policy_max_error &&) = default; //!< Defaulted.
+    policy_max_error & operator=(policy_max_error const &) = default; //!< Defaulted.
+    policy_max_error & operator=(policy_max_error &&) = default; //!< Defaulted.
+    ~policy_max_error() = default; //!< Defaulted.
+
+    /*!\brief Initialises the policy with the given configuration.
+     *
+     * \tparam configuration_t The configuration type; must be an instance of seqan3::configuration.
+     * \param[in] config The search configuration object.
+     *
+     * \details
+     *
+     * Initialises the maximal errors for the respective edit operations from the given configuration.
+     */
+    template <typename configuration_t>
+    //!\cond
+        requires is_type_specialisation_of_v<configuration_t, seqan3::configuration>
+    //!\endcond
+    explicit policy_max_error(configuration_t const & config)
+    {
+        using search_traits_t = search_traits<configuration_t>;
+        only_max_error_total = search_traits_t::only_max_error_total;
+        has_max_error_total = search_traits_t::has_max_error_total;
+
+        total = config.get_or(search_cfg::max_error_total{search_cfg::error_count{0}});
+        substitution = config.get_or(search_cfg::max_error_substitution{search_cfg::error_count{0}});
+        insertion = config.get_or(search_cfg::max_error_insertion{search_cfg::error_count{0}});
+        deletion = config.get_or(search_cfg::max_error_deletion{search_cfg::error_count{0}});
+    }
+    //!\}
+
     /*!\brief Returns a detail::search_param object filled by the information from the configuration.
      *
-     * \tparam configuration_t The search configuration type.
      * \tparam query_t Must model std::ranges::forward_range over the index's alphabet.
      *
-     * \param[in] cfg The configuration object.
      * \param[in] query The current query sequence.
      *
      * \throws std::invalid_argument
      */
-    template <typename configuration_t, std::ranges::forward_range query_t>
-    auto max_error_counts(configuration_t const & cfg, query_t && query)
+    template <std::ranges::forward_range query_t>
+    auto max_error_counts(query_t && query)
     {
-        using search_traits_t = search_traits<configuration_t>;
-
         detail::search_param errors{0, 0, 0, 0}; // total, substitution, insertion, deletion
 
         [[maybe_unused]] auto query_size = std::ranges::size(query);
 
-        search_cfg::error_count const zero_error = search_cfg::error_count{0};
-
-        errors.total = to_error_count(cfg.get_or(search_cfg::max_error_total{zero_error}).value, query_size);
-        errors.substitution = to_error_count(cfg.get_or(search_cfg::max_error_substitution{zero_error}).value,
-                                             query_size);
-        errors.insertion = to_error_count(cfg.get_or(search_cfg::max_error_insertion{zero_error}).value, query_size);
-        errors.deletion = to_error_count(cfg.get_or(search_cfg::max_error_deletion{zero_error}).value, query_size);
+        errors.total = to_error_count(total.value, query_size);
+        errors.substitution = to_error_count(substitution.value, query_size);
+        errors.insertion = to_error_count(insertion.value, query_size);
+        errors.deletion = to_error_count(deletion.value, query_size);
 
         // If only total is set, we set all other errors to the total limit.
-        if constexpr (search_traits_t::only_max_error_total)
+        if (only_max_error_total)
             errors.substitution = errors.insertion = errors.deletion = errors.total;
         // If total is not set but any other field is set than use total as the sum of all set errors.
-        else if constexpr (!search_traits_t::has_max_error_total)
+        else if (!has_max_error_total)
             errors.total = std::min<uint32_t>(255, errors.substitution + errors.insertion + errors.deletion);
 
         // Validate the error configuration.

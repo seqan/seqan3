@@ -36,7 +36,23 @@ protected:
     //!\brief The configured search result type.
     using search_result_type = typename search_traits_type::search_result_type;
 
-    static_assert(!std::same_as<search_result_type, empty_type>, "The search result type was not configured properly.");
+    static_assert(!std::same_as<search_result_type, typename search_traits_type::empty_search_result_type>,
+                  "The search result type was not configured properly.");
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    policy_search_result_builder() = default; //!< Defaulted.
+    policy_search_result_builder(policy_search_result_builder &&) = default; //!< Defaulted.
+    policy_search_result_builder(policy_search_result_builder const &) = default; //!< Defaulted.
+    policy_search_result_builder & operator=(policy_search_result_builder &&) = default; //!< Defaulted.
+    policy_search_result_builder & operator=(policy_search_result_builder const &) = default; //!< Defaulted.
+    ~policy_search_result_builder() = default; //!< Defaulted.
+
+    //!\brief Construction from the configuration object.
+    explicit policy_search_result_builder(search_configuration_t const &)
+    {}
+    //!\}
 
     /*!\brief Invoke the callback on all hits (index cursors) without calling locate on each cursor.
      *
@@ -92,7 +108,7 @@ protected:
         // sort by reference id or by reference position if both have the same reference id.
         std::sort(results.begin(), results.end(), [] (auto const & r1, auto const & r2)
         {
-            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_position() < 
+            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_position() <
                                                                r2.reference_begin_position())
                                                             : (r1.reference_id() < r2.reference_id());
         });

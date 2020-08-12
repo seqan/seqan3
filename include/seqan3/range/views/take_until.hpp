@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/core/semiregular_box.hpp>
 #include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
@@ -209,7 +210,7 @@ private:
                                          std::remove_reference_t<fun_t> const &,
                                          std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
-    ranges::semiregular_box_t<fun_ref_t> fun;
+    seqan3::semiregular_box_t<fun_ref_t> fun;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -283,7 +284,7 @@ private:
                                          std::remove_reference_t<fun_t> const &,
                                          std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
-    ranges::semiregular_box_t<fun_ref_t> fun;
+    seqan3::semiregular_box_t<fun_ref_t> fun;
 
     //!\brief The sentinel type is identical to that of the underlying range.
     using sentinel_type = std::ranges::sentinel_t<rng_t>;
@@ -428,7 +429,7 @@ private:
     urng_sentinel_type urng_sentinel{};
 
     //!\brief Reference to the predicate stored in the view.
-    ranges::semiregular_box_t<predicate_ref_t> predicate{};
+    seqan3::semiregular_box_t<predicate_ref_t> predicate{};
 
 public:
     /*!\name Constructors, destructor and assignment
