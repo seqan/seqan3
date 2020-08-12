@@ -34,6 +34,20 @@ template <typename t>
 SEQAN3_CONCEPT has_range_value_type = requires { typename std::ranges::range_value_t<remove_cvref_t<t>>; };
 //!\endcond
 
+//!\brief Makes range_t const if const_range is true; otherwise keeps range_t as is.
+//!\ingroup type_traits
+template <bool const_range, typename range_t>
+using maybe_const_range_t = std::conditional_t<const_range, range_t const, range_t>;
+
+//!\brief Returns the const iterator of range_t if const_range is true; otherwise the non-const iterator.
+//!\ingroup type_traits
+template <bool const_range, typename range_t>
+using maybe_const_iterator_t = std::ranges::iterator_t<maybe_const_range_t<const_range, range_t>>;
+
+//!\brief Returns the const sentinel of range_t if const_range is true; otherwise the non-const sentinel.
+//!\ingroup type_traits
+template <bool const_v, typename range_t>
+using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const_v, range_t>>;
 } // namespace seqan3::detail
 
 namespace seqan3

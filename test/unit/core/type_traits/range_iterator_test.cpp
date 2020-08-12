@@ -19,7 +19,7 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 
-TEST(range_and_iterator, iterator)
+TEST(range_and_iterator, iterator_t)
 {
     EXPECT_TRUE((std::is_same_v<std::ranges::iterator_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
@@ -33,7 +33,40 @@ TEST(range_and_iterator, iterator)
                                  decltype(std::ranges::end(v))>));
 }
 
-TEST(range_and_iterator, sentinel)
+TEST(range_and_iterator, maybe_const_iterator_t)
+{
+    // common range
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<false, std::vector<int>>,
+                                typename std::vector<int>::iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, std::vector<int>>,
+                                typename std::vector<int>::const_iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<false, std::vector<int> const>,
+                                typename std::vector<int>::const_iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, std::vector<int> const>,
+                                typename std::vector<int>::const_iterator>));
+
+    // non-common range
+    auto v = std::views::iota(1);
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<false, decltype(v)>,
+                                decltype(std::ranges::begin(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, decltype(v)>,
+                                decltype(std::ranges::cbegin(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<false, decltype(v) const>,
+                                decltype(std::ranges::cbegin(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, decltype(v) const>,
+                                decltype(std::ranges::cbegin(v))>));
+
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<false, decltype(v)>,
+                                 decltype(std::ranges::end(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, decltype(v)>,
+                                 decltype(std::ranges::cend(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, decltype(v) const>,
+                                 decltype(std::ranges::cend(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_iterator_t<true, decltype(v) const>,
+                                 decltype(std::ranges::cend(v))>));
+}
+
+TEST(range_and_iterator, sentinel_t)
 {
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<std::vector<int>>,
                                 typename std::vector<int>::iterator>));
@@ -47,6 +80,39 @@ TEST(range_and_iterator, sentinel)
                                  decltype(std::ranges::begin(v))>));
     EXPECT_TRUE((std::is_same_v<std::ranges::sentinel_t<decltype(v)>,
                                 decltype(std::ranges::end(v))>));
+}
+
+TEST(range_and_iterator, maybe_const_sentinel_t)
+{
+    // common range
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, std::vector<int>>,
+                                typename std::vector<int>::iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, std::vector<int>>,
+                                typename std::vector<int>::const_iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, std::vector<int> const>,
+                                typename std::vector<int>::const_iterator>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, std::vector<int> const>,
+                                typename std::vector<int>::const_iterator>));
+
+    // non-common range
+    auto v = std::views::iota(1);
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, decltype(v)>,
+                                 decltype(std::ranges::begin(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, decltype(v)>,
+                                 decltype(std::ranges::cbegin(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, decltype(v) const>,
+                                 decltype(std::ranges::cbegin(v))>));
+    EXPECT_FALSE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, decltype(v) const>,
+                                 decltype(std::ranges::cbegin(v))>));
+
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, decltype(v)>,
+                                decltype(std::ranges::end(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, decltype(v)>,
+                                decltype(std::ranges::cend(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<false, decltype(v) const>,
+                                decltype(std::ranges::cend(v))>));
+    EXPECT_TRUE((std::is_same_v<seqan3::detail::maybe_const_sentinel_t<true, decltype(v) const>,
+                                decltype(std::ranges::cend(v))>));
 }
 
 template <typename list1, typename list2, size_t pos = 0>
@@ -65,7 +131,7 @@ void expect_same_types()
         expect_same_types<list1, list2, pos + 1>();
 }
 
-TEST(range_and_iterator, value_type)
+TEST(range_and_iterator, range_iter_value_t)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -88,7 +154,7 @@ TEST(range_and_iterator, value_type)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, reference)
+TEST(range_and_iterator, range_iter_reference_t)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -110,7 +176,7 @@ TEST(range_and_iterator, reference)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, rvalue_reference)
+TEST(range_and_iterator, range_iter_rvalue_reference_t)
 {
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
@@ -133,7 +199,7 @@ TEST(range_and_iterator, rvalue_reference)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, const_reference)
+TEST(range_and_iterator, const_range_iter_reference_t)
 {
     using const_iterator_of_int_vector = std::ranges::iterator_t<std::vector<int> const>;
     using const_foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int> const>;
@@ -153,7 +219,7 @@ TEST(range_and_iterator, const_reference)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, difference_type)
+TEST(range_and_iterator, range_iter_difference_t)
 {
     //TODO(h-2): add something that actually has a different difference_type
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
@@ -186,7 +252,7 @@ TEST(range_and_iterator, difference_type)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, size_type)
+TEST(range_and_iterator, range_size_t)
 {
     //TODO(h-2): add something that actually has a different size_type
 // iota is not a sized range, but take_exactly is
@@ -220,7 +286,7 @@ TEST(range_and_iterator, range_innermost_value)
     expect_same_types<type_list_example, comp_list>();
 }
 
-TEST(range_and_iterator, dimension)
+TEST(range_and_iterator, range_dimension_v)
 {
     EXPECT_EQ(1u, seqan3::range_dimension_v<std::vector<int>>);
     EXPECT_EQ(2u, seqan3::range_dimension_v<std::vector<std::vector<int>>>);
