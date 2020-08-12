@@ -5,14 +5,15 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/range/views/zip.hpp>
+
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 #include "aminoacid_test_template.hpp"
-
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
-#include <seqan3/range/views/zip.hpp>
 
 using seqan3::operator""_aa20;
 

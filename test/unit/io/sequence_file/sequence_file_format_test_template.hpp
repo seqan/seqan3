@@ -5,21 +5,22 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
-#include <seqan3/std/concepts>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 

@@ -5,20 +5,18 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iterator>
-#include <fstream>
-#include <sstream>
-
 #include <gtest/gtest.h>
 
-#include <range/v3/view/map.hpp>
-
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
+#include <fstream>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <sstream>
+
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/io/structure_file/input.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 

@@ -7,6 +7,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna3bs.hpp>
 #include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/core/detail/debug_stream_range.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"

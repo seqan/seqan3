@@ -5,15 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <sstream>
-
 #include <gtest/gtest.h>
 
-#include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <sstream>
+
+#include <seqan3/io/sequence_file/input.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 

@@ -22,6 +22,7 @@
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
