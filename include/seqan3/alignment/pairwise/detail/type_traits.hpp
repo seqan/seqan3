@@ -20,6 +20,7 @@
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
+#include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
@@ -168,12 +169,16 @@ public:
     //!\brief The rank of the selected result type.
     static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_type>().value)::rank);
     //!\brief Flag indicating whether the score shall be computed.
-    static constexpr bool compute_score = result_type_rank >= 0;
-    //!\brief Flag indicating whether the back coordintate shall be computed.
-    static constexpr bool compute_end_positions = result_type_rank >= 1;
-    //!\brief Flag indicating whether the front coordintate shall be computed.
-    static constexpr bool compute_begin_positions = result_type_rank >= 2;
+    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
+    //!\brief Flag indicating whether the end positions shall be computed.
+    static constexpr bool compute_end_positions =
+        configuration_t::template exists<align_cfg::output_end_position_tag>();
+    //!\brief Flag indicating whether the begin positions shall be computed.
+    static constexpr bool compute_begin_positions =
+        configuration_t::template exists<align_cfg::output_begin_position_tag>();
     //!\brief Flag indicating whether the sequence alignment shall be computed.
+    static constexpr bool compute_sequence_alignment =
+        configuration_t::template exists<align_cfg::output_alignment_tag>();
     //!\brief Flag indicating if any output option was set.
     static constexpr bool has_output_configuration = compute_score ||
                                                      compute_end_positions ||

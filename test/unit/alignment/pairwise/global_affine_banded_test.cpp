@@ -41,7 +41,8 @@ struct pairwise_global_affine_banded : public ::testing::Test
 TEST_F(pairwise_global_affine_banded, invalid_band_lower_diagonal_greater_0)
 {
     band().lower_diagonal = seqan3::align_cfg::lower_diagonal{1};
-    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2), fixture.config)),
+    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
+                                 fixture.config | seqan3::align_cfg::output_score)),
                  seqan3::invalid_alignment_configuration);
 }
 
@@ -49,20 +50,23 @@ TEST_F(pairwise_global_affine_banded, invalid_band_upper_diagonal_smaller_0)
 {
     band().lower_diagonal = seqan3::align_cfg::lower_diagonal{-4};
     band().upper_diagonal = seqan3::align_cfg::upper_diagonal{-1};
-    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2), fixture.config)),
+    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
+                                 fixture.config | seqan3::align_cfg::output_score)),
                  seqan3::invalid_alignment_configuration);
 }
 
 TEST_F(pairwise_global_affine_banded, invalid_band_upper_diagonal_smaller_lower_diagonal)
 {
     band().upper_diagonal = seqan3::align_cfg::upper_diagonal{-6};
-    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2), fixture.config)),
+    EXPECT_THROW((align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
+                                 fixture.config | seqan3::align_cfg::output_score)),
                  seqan3::invalid_alignment_configuration);
 }
 
 TEST_F(pairwise_global_affine_banded, invalid_band_last_cell_not_covered)
 {
     band().upper_diagonal = seqan3::align_cfg::upper_diagonal{5};
-    auto result_range = align_pairwise(std::tie(fixture.sequence1, fixture.sequence2), fixture.config);
+    auto result_range = align_pairwise(std::tie(fixture.sequence1, fixture.sequence2),
+                                                fixture.config | seqan3::align_cfg::output_score);
     EXPECT_THROW(result_range.begin(), seqan3::invalid_alignment_configuration);
 }

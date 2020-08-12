@@ -69,7 +69,7 @@ struct default_edit_distance_trait_type
     //!\brief The type of one machine word.
     using word_type = word_t;
     static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
-    static_assert(align_config_type::template exists<align_cfg::result>(), "We assume the result type was configured.");
+    static_assert(alignment_traits_type::has_output_configuration, "We assume the result type was configured.");
     //!\brief The type of the score.
     using score_type = typename alignment_traits_type::original_score_type;
     //!\brief The type of the database sequence.

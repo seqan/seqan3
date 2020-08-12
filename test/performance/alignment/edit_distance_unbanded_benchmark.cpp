@@ -29,7 +29,8 @@
 
 constexpr auto edit_distance_cfg = seqan3::align_cfg::method_global{} |
                                    seqan3::align_cfg::edit_scheme |
-                                   seqan3::align_cfg::result{seqan3::with_score};
+                                   seqan3::align_cfg::result{seqan3::with_score} | // TODO: Remove me once result type is resolved.
+                                   seqan3::align_cfg::output_score;
 
 // Shortcut to determine the alignment result type.
 template <typename seq1_t, typename seq2_t, typename config_t>
