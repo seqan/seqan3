@@ -71,10 +71,10 @@ namespace seqan3
  * ### Accessing the alignment results
  *
  * For each sequence pair one or more \ref seqan3::alignment_result "seqan3::alignment_result"s can be computed.
- * The seqan3::align_pairwise function returns an seqan3::algorithm_result_generator_range which can be used to iterate over the
- * alignments. If the `vectorised` configurations are omitted the alignments are computed on-demand when iterating over
- * the results. In case of a parallel execution all alignments are computed at once in parallel when calling `begin` on
- * the associated seqan3::algorithm_result_generator_range.
+ * The seqan3::align_pairwise function returns an seqan3::algorithm_result_generator_range which can be used to iterate
+ * over the alignments. If the `vectorised` configurations are omitted the alignments are computed on-demand when
+ * iterating over the results. In case of a parallel execution all alignments are computed at once in parallel when
+ * calling `begin` on the associated seqan3::algorithm_result_generator_range.
  *
  * The following snippets demonstrate the single element and the range based interface.
  *
