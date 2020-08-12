@@ -186,6 +186,8 @@ public:
                                                      compute_sequence_alignment ||
                                                      output_sequence1_id ||
                                                      output_sequence2_id;
+    //!\brief Flag indicating whether the trace matrix needs to be computed.
+    static constexpr bool requires_trace_information = compute_begin_positions || compute_sequence_alignment;
 };
 
 //------------------------------------------------------------------------------
