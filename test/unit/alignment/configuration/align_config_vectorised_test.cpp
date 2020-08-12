@@ -10,11 +10,11 @@
 #include <functional>
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/align_config_vectorise.hpp>
+#include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
-TEST(align_config_vectorise, config_element)
+TEST(align_config_vectorised, config_element)
 {
-    seqan3::configuration cfg{seqan3::align_cfg::vectorise};
-    EXPECT_TRUE(decltype(cfg)::template exists<seqan3::detail::vectorise_tag>());
+    seqan3::configuration cfg{seqan3::align_cfg::vectorised};
+    EXPECT_TRUE(decltype(cfg)::template exists<seqan3::detail::vectorised_tag>());
 }

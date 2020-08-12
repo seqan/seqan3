@@ -23,7 +23,7 @@
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring.hpp>
-#include <seqan3/alignment/configuration/align_config_vectorise.hpp>
+#include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
@@ -117,7 +117,7 @@ private:
 public:
     //!\brief Flag to indicate vectorised mode.
     static constexpr bool is_vectorised =
-        configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorise)>>();
+        configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorised)>>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
     //!\brief Flag indicating whether global alignment method is enabled.

@@ -35,7 +35,7 @@ enum struct align_config_id : uint8_t
     parallel,     //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.
     result,       //!< ID for the \ref seqan3::align_cfg::result "result" option.
     scoring,      //!< ID for the \ref seqan3::align_cfg::scoring "scoring" option.
-    vectorise,    //!< ID for the \ref seqan3::align_cfg::vectorise "vectorise" option.
+    vectorised,   //!< ID for the \ref seqan3::align_cfg::vectorised "vectorised" option.
     SIZE          //!< Represents the number of configuration elements.
 };
 
@@ -65,7 +65,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, //  9: parallel
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 10: result
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 11: scoring
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 12: vectorise
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 12: vectorised
     }
 };
 
