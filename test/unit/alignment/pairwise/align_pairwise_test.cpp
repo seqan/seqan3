@@ -281,7 +281,7 @@ TYPED_TEST(align_pairwise_test, bug_1598)
 
     // Configure the alignment kernel.
     seqan3::configuration cfg = seqan3::align_cfg::method_global{} |
-                                seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}} |
+                                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
                                 seqan3::align_cfg::result{seqan3::with_alignment};
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.

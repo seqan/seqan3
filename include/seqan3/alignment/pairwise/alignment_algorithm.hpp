@@ -17,7 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
@@ -129,7 +129,7 @@ public:
      */
     explicit constexpr alignment_algorithm(config_t const & cfg) : cfg_ptr{std::make_shared<config_t>(cfg)}
     {
-        this->scoring_scheme = seqan3::get<align_cfg::scoring>(*cfg_ptr).value;
+        this->scoring_scheme = seqan3::get<align_cfg::scoring_scheme>(*cfg_ptr).value;
         this->initialise_alignment_state(*cfg_ptr);
     }
     //!\}

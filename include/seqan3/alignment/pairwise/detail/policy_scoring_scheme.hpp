@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 
 namespace seqan3::detail
 {
@@ -49,7 +49,7 @@ protected:
      * \param[in] config The alignment configuration with the stored scoring scheme.
      */
     explicit policy_scoring_scheme(alignment_configuration_t const & config) :
-        scoring_scheme{seqan3::get<align_cfg::scoring>(config).value}
+        scoring_scheme{seqan3::get<align_cfg::scoring_scheme>(config).value}
     {}
     //!\}
 };

@@ -87,6 +87,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
   ([\#1918](https://github.com/seqan/seqan3/pull/1918).
 * The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`.
+* The `seqan3::align_cfg::scoring` configuration has been renamed to `seqan3::align_cfg::scoring_scheme`.
 
 ### Core
 

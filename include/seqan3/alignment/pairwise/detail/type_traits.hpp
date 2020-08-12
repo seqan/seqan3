@@ -22,7 +22,7 @@
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
@@ -134,7 +134,7 @@ public:
     //!\brief Flag indicating whether a user provided callback was given.
     static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
     //!\brief The selected scoring scheme.
-    using scoring_scheme_type = decltype(get<align_cfg::scoring>(std::declval<configuration_t>()).value);
+    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).value);
     //!\brief The alphabet of the selected scoring scheme.
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
     //!\brief The selected result type.

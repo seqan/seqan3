@@ -15,7 +15,7 @@ int main()
 
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
+                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}};
 
     // Compute the alignment over a range of pairs.
     for (auto const & res : seqan3::align_pairwise(seqan3::views::zip(data1, data2), config))

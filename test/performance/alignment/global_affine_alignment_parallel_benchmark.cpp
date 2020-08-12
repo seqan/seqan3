@@ -31,11 +31,12 @@
     #include <seqan/align_parallel.h>
 #endif
 
+constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                   seqan3::mismatch_score{-5}};
 constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
                             seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                       seqan3::gap_open_score{-10}}} |
-                            seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                         seqan3::mismatch_score{-5}}};
+                            seqan3::align_cfg::scoring_scheme{nt_score_scheme};
 
 // Aliases to beautify the benchmark output
 using score = seqan3::detail::with_score_type;
