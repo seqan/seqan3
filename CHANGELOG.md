@@ -86,6 +86,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
   pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
   ([\#1918](https://github.com/seqan/seqan3/pull/1918).
+* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`.
 
 ### Core
 
