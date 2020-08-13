@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::trim.
+ * \brief Provides seqan3::views::trim_quality.
  */
 
 #pragma once
@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief The underlying type of seqan3::views::trim.
+/*!\brief The underlying type of seqan3::views::trim_quality.
  * \ingroup views
  *
  * Under the hood this delegates to views::take_until.
@@ -39,7 +39,7 @@ struct trim_fn
     }
 
     /*!\brief Trim based on minimum phred score.
-     * \tparam irng_t The type of the range being processed. See seqan3::views::trim for requirements.
+     * \tparam irng_t The type of the range being processed. See seqan3::views::trim_quality for requirements.
      * \param irange The range being processed.
      * \param threshold The minimum quality as a phred score [integral type].
      */
@@ -47,7 +47,7 @@ struct trim_fn
     constexpr auto operator()(irng_t && irange, threshold_t const threshold) const
     {
         static_assert(quality_alphabet<std::remove_reference_t<std::ranges::range_reference_t<irng_t>>>,
-                      "views::trim can only operate on ranges over seqan3::quality_alphabet.");
+                      "views::trim_quality can only operate on ranges over seqan3::quality_alphabet.");
         static_assert(std::same_as<remove_cvref_t<threshold_t>,
                      remove_cvref_t<std::ranges::range_reference_t<irng_t>>> ||
                       std::integral<remove_cvref_t<threshold_t>>,
@@ -90,7 +90,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/trim.hpp}
+ * \header_file{seqan3/range/views/trim_quality.hpp}
  *
  * This view can be used to do easy quality based trimming of sequences.
  *
@@ -126,7 +126,7 @@ namespace seqan3::views
  * \hideinitializer
  */
 
-inline constexpr auto trim = deep{seqan3::detail::trim_fn{}};
+inline constexpr auto trim_quality = deep{seqan3::detail::trim_fn{}};
 
 //!\}
 
