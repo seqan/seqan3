@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::aligned_ends.
+ * \brief Provides seqan3::align_cfg::detail::aligned_ends.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
@@ -512,7 +512,7 @@ inline constexpr end_gaps free_ends_second{front_end_first<std::false_type>{},
 //!\}
 } // namespace seqan3
 
-namespace seqan3::align_cfg
+namespace seqan3::align_cfg::detail
 {
 
 // ----------------------------------------------------------------------------

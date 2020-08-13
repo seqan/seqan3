@@ -597,7 +597,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
         if constexpr (traits_t::is_global)
         {
             if (auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
-                !config_t::template exists<seqan3::align_cfg::aligned_ends>() &&
+                !config_t::template exists<seqan3::detail::align_cfg::aligned_ends>() &&
                 (method_global_cfg.free_end_gaps_sequence1_leading ||
                  method_global_cfg.free_end_gaps_sequence1_trailing ||
                  method_global_cfg.free_end_gaps_sequence2_leading ||

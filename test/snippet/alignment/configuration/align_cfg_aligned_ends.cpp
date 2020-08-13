@@ -3,17 +3,18 @@
 int main()
 {
     // Setup for overlap alignment.
-    seqan3::align_cfg::aligned_ends overlap{seqan3::free_ends_all};
+    seqan3::align_cfg::detail::aligned_ends overlap{seqan3::free_ends_all};
 
     // Setup for global alignment.
-    seqan3::align_cfg::aligned_ends global{seqan3::free_ends_none};
+    seqan3::align_cfg::detail::aligned_ends global{seqan3::free_ends_none};
 
     // Setup for semi-global alignment with free-end gaps in the first sequence.
-    seqan3::align_cfg::aligned_ends semi_seq1{seqan3::free_ends_first};
+    seqan3::align_cfg::detail::aligned_ends semi_seq1{seqan3::free_ends_first};
 
     // Setup for semi-global alignment with free-end gaps in the second sequence.
-    seqan3::align_cfg::aligned_ends semi_seq2{seqan3::free_ends_second};
+    seqan3::align_cfg::detail::aligned_ends semi_seq2{seqan3::free_ends_second};
 
     // Custom settings.
-    seqan3::align_cfg::aligned_ends custom{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}}, seqan3::front_end_second{std::true_type{}}}};
+    seqan3::align_cfg::detail::aligned_ends custom{
+        seqan3::end_gaps{seqan3::front_end_first{std::true_type{}}, seqan3::front_end_second{std::true_type{}}}};
 }

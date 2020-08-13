@@ -24,7 +24,7 @@ enum struct align_config_id : uint8_t
 {
     //!\brief ID for the \ref seqan3::align_cfg::alignment_result_capture "alignment_result_capture" option.
     alignment_result_capture,
-    aligned_ends, //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
+    aligned_ends, //!< ID for the \ref seqan3::align_cfg::detail::aligned_ends "aligned_ends" option.
     band,         //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
     debug,        //!< ID for the \ref seqan3::align_cfg::debug "debug" option.
     gap,          //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
@@ -54,7 +54,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
 {
     {   //0  1  2  3  4  5  6  7  8  9 10 11 12
         { 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: alignment_result_capture
-        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, //  1: aligned_ends
+        { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, //  1: detail::aligned_ends
         { 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  2: band
         { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: debug
         { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: gap
