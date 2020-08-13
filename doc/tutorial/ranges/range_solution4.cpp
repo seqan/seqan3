@@ -2,6 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/argument_parser/all.hpp>                       // include argument parser
+#include <seqan3/core/debug_stream.hpp>                         // for debug_stream
 #include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
 
 using seqan3::operator""_dna4;

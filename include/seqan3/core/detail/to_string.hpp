@@ -12,7 +12,9 @@
 
 #pragma once
 
-#include <seqan3/core/debug_stream.hpp>
+#include <sstream>
+
+#include <seqan3/core/detail/debug_stream_type.hpp>
 
 namespace seqan3::detail
 {

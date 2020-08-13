@@ -1,6 +1,8 @@
+#include <seqan3/std/filesystem>                // to create tmp directory
+
 #include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in tmp file
 #include <seqan3/io/sequence_file/output.hpp>   // to create tmp file
-#include <seqan3/std/filesystem>                // to create tmp directory
+#include <seqan3/core/debug_stream.hpp>         // for debug_stream
 
 // This creates a temporary file to ensure that the snippet works correctly without any dependency on external files.
 
