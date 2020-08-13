@@ -57,9 +57,9 @@ public:
      /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
       * \param rows_size \copydoc rows_size
       */
-     edit_distance_trace_matrix_full(size_t const rows_size)
-         : rows_size{rows_size}, columns{}
-     {}
+    edit_distance_trace_matrix_full(size_t const rows_size)
+        : rows_size{rows_size}, columns{}
+    {}
     //!\}
 
 public:

@@ -227,6 +227,8 @@ private:
 
         for (auto const & [dir, span] : rev_traces)
         {
+            assert(dir == trace_directions::up || dir == trace_directions::left || dir == trace_directions::diagonal);
+
             if (dir == trace_directions::up)
                 fst_it = insert_gap(fst_aligned, fst_it, span);
 

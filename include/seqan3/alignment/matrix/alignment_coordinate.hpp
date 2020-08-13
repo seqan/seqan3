@@ -327,7 +327,7 @@ namespace seqan3
  * \if DEV
  * \details
  * This class only gives access to the respective positions of the sequences and is meant for
- * the user interface. The additional complexity of an advanceable coorindate using the
+ * the user interface. The additional complexity of an advanceable coordinate using the
  * seqan3::detail::advanceable_alignment_coordinate is only necessary for the implementation of the pairwise
  * alignment algorithm. Within in the algorithm the coordinate is used in combination with a seqan3::views::iota to
  * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
