@@ -70,7 +70,7 @@ void seqan3_edit_distance_dna4(benchmark::State & state)
     using alignment_result_t = alignment_result_type_t<seq1_ref_t, seq2_ref_t, decltype(edit_distance_cfg)>;
 
     auto edit_distance_cfg_with_result_type = edit_distance_cfg |
-                                              seqan3::align_cfg::detail::alignment_result_capture<alignment_result_t>;
+                                              seqan3::align_cfg::detail::result_type<alignment_result_t>;
 
     using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<seq1_ref_t,
                                                                            seq2_ref_t,
@@ -166,7 +166,7 @@ void seqan3_edit_distance_dna4_collection(benchmark::State & state)
     using alignment_result_t = alignment_result_type_t<seq1_ref_t, seq2_ref_t, decltype(edit_distance_cfg)>;
 
     auto edit_distance_cfg_with_result_type = edit_distance_cfg |
-                                              seqan3::align_cfg::detail::alignment_result_capture<alignment_result_t>;
+                                              seqan3::align_cfg::detail::result_type<alignment_result_t>;
 
     using edit_traits_t = seqan3::detail::default_edit_distance_trait_type<seq1_ref_t,
                                                                            seq2_ref_t,

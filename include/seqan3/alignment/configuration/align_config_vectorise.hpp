@@ -26,7 +26,7 @@ namespace seqan3::detail
 struct vectorise_tag : public pipeable_config_element<vectorise_tag>
 {
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::vectorise};
+    static constexpr align_config_id id{align_config_id::vectorise};
 };
 
 } // namespace seqan3::detail
@@ -52,6 +52,6 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorise_example.cpp
  */
-inline constexpr detail::vectorise_tag vectorise{};
+inline constexpr seqan3::detail::vectorise_tag vectorise{};
 
 } // namespace seqan3::align_cfg

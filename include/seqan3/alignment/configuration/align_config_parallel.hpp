@@ -36,7 +36,7 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_parallel_example.cpp
  */
-using parallel = seqan3::detail::parallel_mode<std::integral_constant<detail::align_config_id,
-                                                                      detail::align_config_id::parallel>>;
+using parallel = seqan3::detail::parallel_mode<std::integral_constant<seqan3::detail::align_config_id,
+                                                                      seqan3::detail::align_config_id::parallel>>;
 
 } // namespace seqan3::align_cfg

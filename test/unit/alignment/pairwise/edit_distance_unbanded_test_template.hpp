@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
+#include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 
 #include <seqan3/range/views/to_char.hpp>
@@ -90,7 +90,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
                                                        query_t,
                                                        std::remove_reference_t<align_cfg_t>>::type;
     using alignment_result_t = seqan3::alignment_result<alignment_result_value_t>;
-    auto align_cfg_with_result_type = align_cfg | seqan3::align_cfg::detail::alignment_result_capture<alignment_result_t>;
+    auto align_cfg_with_result_type = align_cfg | seqan3::align_cfg::detail::result_type<alignment_result_t>;
     using align_config_with_result_type_t = decltype(align_cfg_with_result_type);
     using edit_traits = edit_traits_type<compute_score_matrix,
                                          database_t,

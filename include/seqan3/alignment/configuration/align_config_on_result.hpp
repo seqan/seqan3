@@ -75,7 +75,7 @@ struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::on_result};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::on_result};
 };
 
 /*!\name Type deduction guides

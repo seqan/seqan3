@@ -543,13 +543,13 @@ namespace seqan3::align_cfg
  */
 template <typename end_gaps_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<end_gaps_t, end_gaps>
+    requires seqan3::detail::is_type_specialisation_of_v<end_gaps_t, end_gaps>
 //!\endcond
 struct aligned_ends : public pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>
 {
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::aligned_ends};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::aligned_ends};
 };
 
 /*!\name Type deduction guides
