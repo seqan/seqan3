@@ -78,18 +78,17 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                               | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
- * |:---------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"   |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"        |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"              |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::max_error "3: Max error"         |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::method_global "4: Method global" |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::method_local "5: Method local"   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::parallel "6: Parallel"           |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::result "7: Result"               |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
- * | \ref seqan3::align_cfg::vectorised "9: Vectorised"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ * | **Config**                                               | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** |
+ * |:---------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+ * | \ref seqan3::align_cfg::band_fixed_size "0: Band"        |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::gap "1: Gap scheme"              |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::max_error "2: Max error"         |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_global "3: Method global" |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_local "4: Method local"   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::parallel "5: Parallel"           |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::result "6: Result"               |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::scoring "7: Scoring scheme"      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
+ * | \ref seqan3::align_cfg::vectorised "8: Vectorised"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
@@ -201,7 +200,8 @@
  *
  * The edit configuration can be further specialised with following configs:
  *  * Allow maximal number of errors, i.e specify the seqan3::align_cfg::max_error configuration
- *  * Compute a semi-global alignment, i.e seqan3::align_cfg::aligned_ends is initialised with seqan3::end_gaps::free_ends_first.
+ *  * Compute a semi-global alignment, i.e refine the seqan3::align_cfg::method_global configuration with the respective
+ *    free end gap specifiers.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment
  * algorithm is executed as a fallback.
