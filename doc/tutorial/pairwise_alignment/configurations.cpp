@@ -11,6 +11,10 @@
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 //! [include_gap_cost_affine]
 
+//! [include_method]
+#include <seqan3/alignment/configuration/align_config_method.hpp>
+//! [include_method]
+
 //! [include_output]
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 //! [include_output]
@@ -29,18 +33,16 @@
 int main()
 {
 {
-//! [aligned_ends]
-
-seqan3::front_end_first fef{std::true_type{}};
-seqan3::back_end_first bef{std::false_type{}};
-seqan3::front_end_second fes{true};
-seqan3::back_end_second bes{false};
-
-auto cfg_1 = seqan3::align_cfg::aligned_ends{seqan3::end_gaps{fef, bef, fes, bes}};
-auto cfg_2 = seqan3::align_cfg::aligned_ends{seqan3::end_gaps{fef, fes}};
-//! [aligned_ends]
-(void) cfg_1;
-(void) cfg_2;
+//! [method_global_free_end_gaps]
+    // Example of a semi-global alignment where leading and trailing gaps in the
+    // second sequence are not penelised:
+    auto config = seqan3::align_cfg::method_global{
+                      seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                      seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}};
+//! [method_global_free_end_gaps]
+(void) config;
 }
 
 {

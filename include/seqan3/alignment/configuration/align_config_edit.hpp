@@ -34,8 +34,9 @@ namespace seqan3::align_cfg
  *
  * Under the hood SeqAn uses a [fast bit-vector algorithm](https://dl.acm.org/citation.cfm?id=316550) to compute the
  * edit distance whenever possible. This depends on the final alignment configuration. Currently, the fast
- * edit distance algorithm is only triggered for \ref seqan3::align_cfg::method_global "global alignments" and
- * \ref seqan3::end_gaps::free_ends_first "semi-global alignments" with free ends in the first sequence.
+ * edit distance algorithm is only triggered for \ref seqan3::align_cfg::method_global "global alignments" with the
+ * with free ends in the first sequence. So make sure to configure the seqan3::align_cfg::method_global configuration
+ * element accordingly (see class documentation).
  *
  * The performance of the algorithm can further be improved if the number of maximal errors (edits) is known by using
  * the align_cfg::min_score configuration.
