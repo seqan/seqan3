@@ -153,7 +153,7 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 
-    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
+    // state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), affine_cfg);
     state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
