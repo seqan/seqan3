@@ -1,6 +1,6 @@
 version: ~> 1.0
 os: linux
-dist: bionic
+dist: focal
 language: cpp
 
 git:
@@ -13,7 +13,7 @@ cache:
 addons:
   apt:
     sources:
-      - sourceline: 'ppa:ubuntu-toolchain-r/test'
+      - sourceline: 'ppa:ubuntu-toolchain-r/ppa'
     packages:
       - g++-7
       - g++-8
@@ -84,15 +84,15 @@ jobs:
       compiler: 'doxygen'
       addons:
         apt:
-          # adds epstopdf, ghostscript, latex
-          packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra']
+          # adds epstopdf, ghostscript, latex, libclang
+          packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra', 'libclang-9-dev', 'libclang-cpp9']
       env:
         - BUILD=documentation
       cache:
         directories:
           - /tmp/doxygen-download
       before_install:
-        - DOXYGEN_VER=1.8.17
+        - DOXYGEN_VER=1.8.19
         - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
         - mkdir -p /tmp/doxygen-download
         - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz

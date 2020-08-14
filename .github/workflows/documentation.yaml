@@ -8,7 +8,7 @@ on:
 jobs:
   deploy_documentation:
     name: Deploy Documentation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -19,7 +19,7 @@ jobs:
 
       - name: Setup Doxygen
         env:
-          DOXYGEN_VER: 1.8.17
+          DOXYGEN_VER: 1.8.19
         shell: bash
         run: |
           mkdir -p /tmp/doxygen-download
@@ -37,8 +37,8 @@ jobs:
           tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
           echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" # Only available in subsequent steps!
 
-      - name: Install Dependencies
-        run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz # graphviz for dot, latex to parse formulas
+      - name: Install Dependencies # graphviz for dot, latex to parse formulas, libclang for doxygen
+        run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9
 
       - name: Build documentation
         env:
