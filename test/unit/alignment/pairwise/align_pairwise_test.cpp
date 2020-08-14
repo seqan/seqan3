@@ -13,7 +13,7 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
@@ -169,7 +169,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
             seqan3::configuration cfg = seqan3::align_cfg::method_global{} |
                                         seqan3::align_cfg::edit_scheme |
                                         seqan3::align_cfg::output_score |
-                                        seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>};
+                                        seqan3::align_cfg::result{seqan3::with_score} |
+                                        seqan3::align_cfg::score_type<double>;
 
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
@@ -181,7 +182,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
         {  // with everything (default if no output is specified)
             seqan3::configuration cfg = seqan3::align_cfg::method_global{} |
                                         seqan3::align_cfg::edit_scheme |
-                                        seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>};
+                                        seqan3::align_cfg::result{seqan3::with_score} |
+                                        seqan3::align_cfg::score_type<double>;
             unsigned idx = 0;
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
@@ -264,7 +266,8 @@ TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
                                     seqan3::align_cfg::edit_scheme |
                                     seqan3::align_cfg::output_score |
                                     seqan3::align_cfg::output_alignment |
-                                    seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>};
+                                    seqan3::align_cfg::result{seqan3::with_score} |
+                                    seqan3::align_cfg::score_type<double>;
 
         for (auto && res : call_alignment<TypeParam>(vec, cfg))
         {

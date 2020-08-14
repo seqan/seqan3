@@ -9,6 +9,7 @@
 
 #include <range/v3/view/single.hpp>
 
+#include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -245,7 +246,8 @@ TEST(alignment_configurator, configure_result_score_type)
 {
     auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<double>};
+               seqan3::align_cfg::result{seqan3::with_end_positions} |
+               seqan3::align_cfg::score_type<double>;
     auto result = run_test(cfg);
 
     EXPECT_DOUBLE_EQ(result.score(), 0.0);

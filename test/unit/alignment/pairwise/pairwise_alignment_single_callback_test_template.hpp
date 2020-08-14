@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -50,8 +51,8 @@ TYPED_TEST_P(pairwise_alignment_callback_test, end_positions)
     auto const & fixture = this->fixture();
 
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::result{seqan3::with_end_positions,
-                                                                seqan3::using_score_type<double>} |
+                                      seqan3::align_cfg::result{seqan3::with_end_positions} |
+                                      seqan3::align_cfg::score_type<double> |
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
