@@ -31,6 +31,12 @@
  * \brief A special sub namespace for the alignment configurations.
  */
 
+ /*!\if DEV
+  * \namespace seqan3::align_cfg::detail
+  * \copydoc seqan3::detail
+  * \endif
+  */
+
 /*!\defgroup alignment_configuration Configuration
  * \ingroup alignment
  * \brief Provides configuration elements for the pairwise alignment configuration.
