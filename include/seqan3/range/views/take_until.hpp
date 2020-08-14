@@ -254,15 +254,6 @@ public:
     //!\brief The iterator concept tag.
     using iterator_concept = detail::iterator_concept_tag_t<base_base_t>;
     //!\}
-
-    //!\brief Returns a copy of the underlying iterator.
-    base_base_t base() const
-    //!\cond
-        requires std::copy_constructible<base_base_t>
-    //!\endcond
-    {
-        return *this->this_to_base();
-    }
 };
 
 //!\brief Special iterator type used when consuming behaviour is selected.
@@ -312,7 +303,7 @@ public:
                            sentinel_type sen) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
     {
-        if ((*this->this_to_base() != stored_end) && fun(**this))
+        if ((this->base() != stored_end) && fun(**this))
         {
             at_end_gracefully = true;
             ++(*this);
@@ -343,7 +334,7 @@ public:
     {
         base_t::operator++();
 
-        while ((*this->this_to_base() != stored_end) && fun(**this))
+        while ((this->base() != stored_end) && fun(**this))
         {
             at_end_gracefully = true;
             base_t::operator++();
@@ -375,7 +366,7 @@ public:
         if (at_end_gracefully)
             return true;
 
-        if (*this->this_to_base() == rhs)
+        if (this->base() == rhs)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};

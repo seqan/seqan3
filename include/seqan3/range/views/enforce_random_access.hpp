@@ -185,7 +185,7 @@ public:
         noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
-        return static_cast<underlying_iter_t const &>(lhs) == rhs;
+        return lhs.base() == rhs;
     }
 
     //!\brief Tests if iterator is at the end.
@@ -228,7 +228,7 @@ public:
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>
     {
-        return static_cast<underlying_iter_t const &>(*this) - rhs;
+        return this->base() - rhs;
     }
 
     //!\brief Computes the distance betwen this iterator and the sentinel of the underlying range.
@@ -238,7 +238,7 @@ public:
                           std::declval<underlying_iter_t const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>
     {
-        return lhs - static_cast<underlying_iter_t const &>(rhs);
+        return lhs - rhs.base();
     }
     //!\}
 };

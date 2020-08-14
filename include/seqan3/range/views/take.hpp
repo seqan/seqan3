@@ -380,7 +380,7 @@ public:
         requires std::forward_iterator<base_base_t>
     //!\endcond
     {
-        return *base_t::this_to_base() == *rhs.this_to_base();
+        return this->base() == rhs.base();
     }
 
     //!\copydoc operator==()
@@ -390,7 +390,7 @@ public:
         if (pos >= max_pos)
             return true;
 
-        if (*base_t::this_to_base() == rhs)
+        if (this->base() == rhs)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before designated size."};
@@ -448,7 +448,7 @@ public:
         requires std::random_access_iterator<base_base_t>
     //!\endcond
     {
-        return base_base_t::operator[](n);
+        return base_t::operator[](n);
     }
     //!\}
 };

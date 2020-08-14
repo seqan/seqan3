@@ -82,7 +82,7 @@ public:
         using base_t::operator-;
         bool operator==(std::default_sentinel_t const &) const
         {
-            return static_cast<u_iterator_t const &>(*this) == last;
+            return this->base() == last;
         }
 
         friend bool operator==(std::default_sentinel_t const &, test_iterator const & rhs)
@@ -102,13 +102,13 @@ public:
 
         typename base_t::difference_type operator-(std::default_sentinel_t const &) const
         {
-            return static_cast<u_iterator_t const &>(*this) - this->last;
+            return this->base() - this->last;
         }
 
         friend typename base_t::difference_type operator-(std::default_sentinel_t const &,
                                                           test_iterator const & rhs)
         {
-            return rhs.last - static_cast<u_iterator_t const &>(rhs);
+            return rhs.last - rhs.base();
         }
 
         u_iterator_t last{};
