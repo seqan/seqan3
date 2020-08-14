@@ -61,28 +61,6 @@
 namespace seqan3::detail
 {
 
-/*!\brief A transformation trait to extract the score type used within the seqan3::align_cfg::result object.
- * \implements seqan3::transformation_trait
- * \ingroup pairwise_alignment
- *
- * \tparam config_t The alignment configuration type; must be of type seqan3::configuration and must contain
- *                  a seqan3::align_cfg::result object.
- */
-template <typename config_t>
-//!\cond
-    requires is_type_specialisation_of_v<config_t, configuration> && (config_t::template exists<align_cfg::result>())
-//!\endcond
-struct align_config_result_score
-{
-private:
-    //!\brief Helper type definition to store the type of the result config.
-    using result_config_t = std::remove_reference_t<decltype(seqan3::get<align_cfg::result>(std::declval<config_t>()))>;
-
-public:
-    //!\brief The score type used for the alignment result configuration.
-    using type = typename result_config_t::score_type;
-};
-
 /*!\brief Provides several contracts to test when configuring the alignment algorithm.
  * \ingroup pairwise_alignment
  * \tparam range_type            The type of the range containing sequences to be aligned.
@@ -257,10 +235,16 @@ public:
     static constexpr auto configure(config_t const & cfg)
     {
 
-        if constexpr (!config_t::template exists<align_cfg::result>())
+        // If no output is set, everything will set by default.
+        if constexpr (!seqan3::detail::alignment_configuration_traits<config_t>::has_output_configuration)
         {
-            // Set the default result value to be computed.
-            return configure<sequences_t>(cfg | align_cfg::result{with_score});
+            return configure<sequences_t>(cfg |
+                                          align_cfg::output_alignment |
+                                          align_cfg::output_begin_position |
+                                          align_cfg::output_end_position |
+                                          align_cfg::output_sequence1_id |
+                                          align_cfg::output_sequence2_id |
+                                          align_cfg::output_score);
         }
         else
         {
