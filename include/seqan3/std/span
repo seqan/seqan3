@@ -21,9 +21,7 @@
 #include <span>
 #endif // __has_include(<span>)
 
-#if defined(__cpp_lib_span)
-#include <seqan3/core/platform.hpp>
-#else // defined(__cpp_lib_span)
+#if !defined(__cpp_lib_span)
 #include <array>        // for array
 #include <cstddef>      // for ptrdiff_t
 #include <iterator>     // for iterators
@@ -459,5 +457,5 @@ template <ranges::contiguous_range range_t>
     span(range_t &&) -> span<ranges::range_value_t<range_t>>;
 } // namespace std
 
-#endif // defined(__cpp_lib_span)
+#endif // !defined(__cpp_lib_span)
 //!\endcond

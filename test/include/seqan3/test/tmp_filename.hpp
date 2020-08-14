@@ -26,6 +26,8 @@
 
 #include <seqan3/std/filesystem>
 
+#include <seqan3/core/platform.hpp>
+
 namespace seqan3
 {
 namespace test
