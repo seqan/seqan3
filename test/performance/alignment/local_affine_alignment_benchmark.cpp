@@ -165,8 +165,8 @@ void seqan2_affine_dna4_collection(benchmark::State & state)
     {
         sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
         sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
-        appendValue(vec1, seq1);
-        appendValue(vec2, seq2);
+        seqan::appendValue(vec1, seq1);
+        seqan::appendValue(vec2, seq2);
     }
 
     for (auto _ : state)
@@ -219,8 +219,8 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
     {
         sequence_t seq1 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(100, 0, i);
         sequence_t seq2 = seqan3::test::generate_sequence_seqan2<seqan::Dna>(50, 0, i + 100);
-        appendValue(vec1, seq1);
-        appendValue(vec2, seq2);
+        seqan::appendValue(vec1, seq1);
+        seqan::appendValue(vec2, seq2);
     }
 
 
@@ -229,8 +229,8 @@ void seqan2_affine_dna4_trace_collection(benchmark::State & state)
 
     for (unsigned i = 0; i < 100; ++i)
     {
-        appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
-        appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
+        seqan::appendValue(gap1, seqan::Gaps<sequence_t>{vec1[i]});
+        seqan::appendValue(gap2, seqan::Gaps<sequence_t>{vec2[i]});
     }
 
     for (auto _ : state)

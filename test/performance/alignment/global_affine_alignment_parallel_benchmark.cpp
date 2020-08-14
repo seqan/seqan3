@@ -72,8 +72,8 @@ auto generate_data_seqan2()
     seqan::StringSet<sequence_t> vec2;
     for (unsigned i = 0; i < set_size; ++i)
     {
-        appendValue(vec1, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
-        appendValue(vec2, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i + set_size));
+        seqan::appendValue(vec1, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i));
+        seqan::appendValue(vec2, seqan3::test::generate_sequence_seqan2<alphabet_t>(sequence_length, variance, i + set_size));
     }
     return std::pair{vec1, vec2};
 }
@@ -178,8 +178,8 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
 
     for (size_t i = 0; i < seqan::length(vec1); ++i)
     {
-        appendValue(gap1, gapped_t{vec1[i]});
-        appendValue(gap2, gapped_t{vec2[i]});
+        seqan::appendValue(gap1, gapped_t{vec1[i]});
+        seqan::appendValue(gap2, gapped_t{vec2[i]});
     }
 
     int64_t total = 0;
