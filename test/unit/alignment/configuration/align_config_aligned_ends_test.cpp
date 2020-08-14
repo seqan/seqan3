@@ -132,9 +132,9 @@ TEST(back_end_second, deduction)
     }
 }
 
-TYPED_TEST(static_end_gap_test, aggreagte)
+TYPED_TEST(static_end_gap_test, is_standard_layout)
 {
-    EXPECT_TRUE((std::is_aggregate_v<TypeParam>));
+    EXPECT_TRUE((std::is_standard_layout_v<TypeParam>));
 }
 
 TYPED_TEST(static_end_gap_test, get_value)
@@ -145,7 +145,7 @@ TYPED_TEST(static_end_gap_test, get_value)
 
 TYPED_TEST(dynamic_end_gap_test, construction)
 {
-    EXPECT_TRUE((std::is_aggregate_v<TypeParam>));
+    EXPECT_TRUE((std::is_standard_layout_v<TypeParam>));
 }
 
 TYPED_TEST(dynamic_end_gap_test, get_value)
@@ -344,9 +344,9 @@ TEST(end_gaps, free_ends_second)
     EXPECT_EQ((std::is_same_v<std::remove_const_t<decltype(seqan3::free_ends_second)>, test>), true);
 }
 
-TEST(align_cfg_aligned_ends, is_aggregate)
+TEST(align_cfg_aligned_ends, is_standard_layout)
 {
-    EXPECT_TRUE((std::is_aggregate_v<seqan3::align_cfg::aligned_ends<seqan3::end_gaps<>>>));
+    EXPECT_TRUE((std::is_standard_layout_v<seqan3::align_cfg::aligned_ends<seqan3::end_gaps<>>>));
 }
 
 TEST(align_cfg_aligned_ends, id)

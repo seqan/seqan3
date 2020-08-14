@@ -25,6 +25,17 @@ namespace seqan3::detail
  */
 struct vectorised_tag : public pipeable_config_element<vectorised_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    vectorised_tag() = default; //!< Defaulted.
+    vectorised_tag(vectorised_tag const &) = default; //!< Defaulted.
+    vectorised_tag(vectorised_tag &&) = default; //!< Defaulted.
+    vectorised_tag & operator=(vectorised_tag const &) = default; //!< Defaulted.
+    vectorised_tag & operator=(vectorised_tag &&) = default; //!< Defaulted.
+    ~vectorised_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::vectorised};
 };

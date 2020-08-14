@@ -27,6 +27,17 @@ namespace seqan3::detail
 //!\ingroup alignment_configuration
 struct method_local_tag : public pipeable_config_element<method_local_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    method_local_tag() = default; //!< Defaulted.
+    method_local_tag(method_local_tag const &) = default; //!< Defaulted.
+    method_local_tag(method_local_tag &&) = default; //!< Defaulted.
+    method_local_tag & operator=(method_local_tag const &) = default; //!< Defaulted.
+    method_local_tag & operator=(method_local_tag &&) = default; //!< Defaulted.
+    ~method_local_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief An internal id used to check for a valid alignment configuration.
     static constexpr detail::align_config_id id{detail::align_config_id::local};

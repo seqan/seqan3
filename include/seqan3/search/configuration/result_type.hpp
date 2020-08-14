@@ -40,6 +40,21 @@ template <typename search_result_t>
 //!\endcond
 struct result_type_tag : public pipeable_config_element<result_type_tag<search_result_t>, seqan3::detail::empty_type>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    result_type_tag() = default; //!< Defaulted.
+    result_type_tag(result_type_tag const &) = default; //!< Defaulted.
+    result_type_tag(result_type_tag &&) = default; //!< Defaulted.
+    result_type_tag & operator=(result_type_tag const &) = default; //!< Defaulted.
+    result_type_tag & operator=(result_type_tag &&) = default; //!< Defaulted.
+    ~result_type_tag() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr result_type_tag(search_result_t const & r) : pipeable_config_element<result_type_tag<search_result_t>,
+                                                                                   seqan3::detail::empty_type>(r) {}
+    //!\}
+
     //!\brief The configured seqan3::search_result type.
     using type = search_result_t;
 

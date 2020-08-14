@@ -40,6 +40,22 @@ struct alignment_result_capture_element :
     public pipeable_config_element<alignment_result_capture_element<alignment_result_t>,
                                    std::type_identity<alignment_result_t>>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    alignment_result_capture_element() = default; //!< Defaulted.
+    alignment_result_capture_element(alignment_result_capture_element const &) = default; //!< Defaulted.
+    alignment_result_capture_element(alignment_result_capture_element &&) = default; //!< Defaulted.
+    alignment_result_capture_element & operator=(alignment_result_capture_element const &) = default; //!< Defaulted.
+    alignment_result_capture_element & operator=(alignment_result_capture_element &&) = default; //!< Defaulted.
+    ~alignment_result_capture_element() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr alignment_result_capture_element(alignment_result_t const & e) :
+        pipeable_config_element<alignment_result_capture_element<alignment_result_t>,
+                                std::type_identity<alignment_result_t>>(e) {}
+    //!\}
+
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::align_config_id id{detail::align_config_id::alignment_result_capture};
 };

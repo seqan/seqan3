@@ -26,6 +26,17 @@ namespace seqan3::detail
 //!\ingroup search_configuration
 struct output_query_id_tag : public pipeable_config_element<output_query_id_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    output_query_id_tag() = default; //!< Defaulted.
+    output_query_id_tag(output_query_id_tag const &) = default; //!< Defaulted.
+    output_query_id_tag(output_query_id_tag &&) = default; //!< Defaulted.
+    output_query_id_tag & operator=(output_query_id_tag const &) = default; //!< Defaulted.
+    output_query_id_tag & operator=(output_query_id_tag &&) = default; //!< Defaulted.
+    ~output_query_id_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_query_id};
@@ -35,6 +46,17 @@ struct output_query_id_tag : public pipeable_config_element<output_query_id_tag>
 //!\ingroup search_configuration
 struct output_reference_id_tag : public pipeable_config_element<output_reference_id_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    output_reference_id_tag() = default; //!< Defaulted.
+    output_reference_id_tag(output_reference_id_tag const &) = default; //!< Defaulted.
+    output_reference_id_tag(output_reference_id_tag &&) = default; //!< Defaulted.
+    output_reference_id_tag & operator=(output_reference_id_tag const &) = default; //!< Defaulted.
+    output_reference_id_tag & operator=(output_reference_id_tag &&) = default; //!< Defaulted.
+    ~output_reference_id_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
@@ -44,6 +66,19 @@ struct output_reference_id_tag : public pipeable_config_element<output_reference
 //!\ingroup search_configuration
 struct output_reference_begin_position_tag : public pipeable_config_element<output_reference_begin_position_tag>
 {
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    output_reference_begin_position_tag() = default; //!< Defaulted.
+    output_reference_begin_position_tag(output_reference_begin_position_tag const &) = default; //!< Defaulted.
+    output_reference_begin_position_tag(output_reference_begin_position_tag &&) = default; //!< Defaulted.
+    output_reference_begin_position_tag & operator=(output_reference_begin_position_tag const &) =
+     default; //!< Defaulted.
+    output_reference_begin_position_tag & operator=(output_reference_begin_position_tag &&) = default; //!< Defaulted.
+    ~output_reference_begin_position_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_position};
@@ -53,6 +88,17 @@ struct output_reference_begin_position_tag : public pipeable_config_element<outp
 //!\ingroup search_configuration
 struct output_index_cursor_tag : public pipeable_config_element<output_index_cursor_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    output_index_cursor_tag() = default; //!< Defaulted.
+    output_index_cursor_tag(output_index_cursor_tag const &) = default; //!< Defaulted.
+    output_index_cursor_tag(output_index_cursor_tag &&) = default; //!< Defaulted.
+    output_index_cursor_tag & operator=(output_index_cursor_tag const &) = default; //!< Defaulted.
+    output_index_cursor_tag & operator=(output_index_cursor_tag &&) = default; //!< Defaulted.
+    ~output_index_cursor_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_index_cursor};
