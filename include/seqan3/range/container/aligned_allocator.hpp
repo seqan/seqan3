@@ -62,7 +62,7 @@ namespace seqan3
  * As you can see, in the case of the aligned_allocator it is guaranteed that the
  * first element in the vector starts at offset 0.
  *
- * \see https://en.cppreference.com/w/cpp/concept/Allocator
+ * \see https://en.cppreference.com/w/cpp/named_req/Allocator
  * \see https://en.cppreference.com/w/cpp/memory/c/aligned_alloc
  */
 template <typename value_t, size_t alignment_v = __STDCPP_DEFAULT_NEW_ALIGNMENT__>

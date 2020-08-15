@@ -71,7 +71,7 @@ namespace seqan3
  * ### The seqan3::gap_decorator::iterator type
  *
  * \attention The iterator of the seqan3::gap_decorator does not model the
- *            [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator)
+ *            [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/iterator/bidirectional_iterator)
  *            requirements of the STL because dereferencing the iterator returns a proxy and no operator-> is provided.
  *            It does model the C++20 std::bidirectional_iterator.
  *
@@ -582,7 +582,7 @@ gap_decorator(urng_t range) -> gap_decorator<urng_t>;
  * \details
  *
  * This iterator returns values when dereferenced, not references, i.e. it does not satisfy the semantic
- * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/named_req/bidirectional_iterator).
+ * requirements of [Cpp17BidirectionalIterator](https://en.cppreference.com/w/cpp/iterator/bidirectional_iterator).
  * It does model the C++20 std::bidirectional_iterator. In addition, it offers all interfaces of a standard
  * std::random_access_iterator except the iterator category which is defined as std::bidirectional_iterator_tag,
  * because the complexity of the iterator is logarithmic and not constant. However, all interfaces inside the
