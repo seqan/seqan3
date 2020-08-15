@@ -287,7 +287,7 @@ On Linux based systems use `/usr/bin/time -v <program> <args>` and look for "Max
 On macOS and BSD use `/usr/bin/time -l <program> <args>` and look for "maximum resident set size".
 
 \note This command diplays the peak memory usage and only gives you a first impression. You can use [valgrind]
-(http://valgrind.org/docs/manual/ms-manual.html) if you want to have a more detailed analysis of your memory
+(https://valgrind.org/docs/manual/ms-manual.html) if you want to have a more detailed analysis of your memory
 consumption.
 \endassignment
 \solution
