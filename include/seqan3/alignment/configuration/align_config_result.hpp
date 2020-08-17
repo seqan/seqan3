@@ -126,12 +126,12 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_result_example.cpp
  */
-template <typename alignment_result_tag_t = detail::with_score_type, typename score_t = int32_t>
+template <typename alignment_result_tag_t = seqan3::detail::with_score_type, typename score_t = int32_t>
 //!\cond
-    requires std::same_as<alignment_result_tag_t, detail::with_score_type> ||
-             std::same_as<alignment_result_tag_t, detail::with_end_positions_type> ||
-             std::same_as<alignment_result_tag_t, detail::with_begin_positions_type> ||
-             std::same_as<alignment_result_tag_t, detail::with_alignment_type>
+    requires std::same_as<alignment_result_tag_t, seqan3::detail::with_score_type> ||
+             std::same_as<alignment_result_tag_t, seqan3::detail::with_end_positions_type> ||
+             std::same_as<alignment_result_tag_t, seqan3::detail::with_begin_positions_type> ||
+             std::same_as<alignment_result_tag_t, seqan3::detail::with_alignment_type>
 //!\endcond
 class result : public pipeable_config_element<result<alignment_result_tag_t, score_t>, alignment_result_tag_t>
 {
@@ -164,12 +164,14 @@ public:
      * \param[in] score_type_tag The score type to use (e.g. seqan3::using_score_type<int>).
      */
     constexpr result(alignment_result_tag_t result_tag,
-                     detail::score_type<score_t> SEQAN3_DOXYGEN_ONLY(score_type_tag)) noexcept : base_t{result_tag} {}
+                     seqan3::detail::score_type<score_t> SEQAN3_DOXYGEN_ONLY(score_type_tag)) noexcept
+        : base_t{result_tag}
+    {}
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::result};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::result};
 };
 
 /*!\name Type deduction guides
@@ -182,6 +184,6 @@ result(alignment_result_tag_t) -> result<alignment_result_tag_t>;
 
 //!\brief Deduces the alignment result from the given constructor arguments.
 template <typename alignment_result_tag_t, arithmetic score_t>
-result(alignment_result_tag_t, detail::score_type<score_t>) -> result<alignment_result_tag_t, score_t>;
+result(alignment_result_tag_t, seqan3::detail::score_type<score_t>) -> result<alignment_result_tag_t, score_t>;
 //!\}
 } // namespace seqan3::align_cfg

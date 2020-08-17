@@ -16,6 +16,7 @@
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
@@ -85,6 +86,23 @@ TYPED_TEST(search_test, error_free)
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 4, 8}));
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | position, (std::vector<int>{}));
     }
+}
+
+TYPED_TEST(search_test, on_result_invocation)
+{
+    std::vector<int> actual_positions{};
+    seqan3::configuration const cfg = seqan3::search_cfg::on_result{[&] (auto && search_result) -> void
+    {
+        actual_positions.push_back(search_result.reference_begin_position());
+    }};
+
+    search("ACGT"_dna4, this->index, cfg);
+    EXPECT_RANGE_EQ(actual_positions, (std::vector{0, 4, 8}));
+
+    actual_positions.clear();
+    search("ACGG"_dna4, this->index, cfg);
+
+    EXPECT_TRUE(actual_positions.empty());
 }
 
 TYPED_TEST(search_test, convertible_query)

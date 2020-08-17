@@ -235,7 +235,7 @@ We provide overview tables for all our view adaptors that document which concept
 ## Views in the standard library and in SeqAn
 
 The standard library in C++20 provides a number of useful views and SeqAn provides many views, as well.
-Most views provided by SeqAn3 are specific to biological operations, like seqan3::views::trim which trims sequences
+Most views provided by SeqAn3 are specific to biological operations, like seqan3::views::trim_quality which trims sequences
 based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
 But SeqAn3 also provides some general purpose views.
 

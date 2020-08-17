@@ -143,7 +143,7 @@ struct method_global : public pipeable_config_element<method_global>
 
     //!\privatesection
     //!\brief An internal id used to check for a valid alignment configuration.
-    static constexpr detail::align_config_id id{detail::align_config_id::global};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::global};
 };
 
 } // namespace seqan3::align_cfg

@@ -45,14 +45,14 @@
  * \see \ref about_customisation
  */
 
-/*!\cond DEV
+/*!\if DEV
  * \namespace seqan3::detail
  * \brief The internal SeqAn3 namespace.
  * \details
  * The contents of this namespace are not visible to consumers of the library and the documentation is
  * only generated for developers.
  * \sa https://github.com/seqan/seqan3/wiki/Documentation
- * \endcond
+ * \endif
  */
 
 /*!\namespace std

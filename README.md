@@ -37,7 +37,7 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
 |**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 7      | no other compiler is currently supported!   |
 |**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
-|                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 0.10.0 |                                             |
+|                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 0.11.0 |                                             |
 |**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | required for serialisation and CTD support  |
 |                   | [zlib](https://github.com/madler/zlib)               | ≥ 1.2    | required for `*.gz` and `.bam` file support |
 |                   | [bzip2](http://www.bzip.org)                         | ≥ 1.0    | required for `*.bz2` file support           |

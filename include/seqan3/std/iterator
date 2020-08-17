@@ -76,7 +76,7 @@ using ::ranges::cpp20::incrementable_traits;
 using ::ranges::cpp20::iter_difference_t;
 
 // [readable.traits], indirectly readable traits
-// using ::ranges::cpp20::indirectly_readable_traits;
+using ::ranges::cpp20::indirectly_readable_traits;
 using ::ranges::cpp20::iter_value_t;
 
 // [iterator.traits], iterator traits
@@ -88,13 +88,11 @@ using ::ranges::cpp20::iter_rvalue_reference_t;
 // ======================================
 
 // [iterator.concept.readable], concept indirectly_readable
-template <class T>
-SEQAN3_CONCEPT indirectly_readable = ::ranges::cpp20::readable<T>;
+using ranges::cpp20::indirectly_readable;
 // using ::ranges::cpp20::iter_common_reference_t;
 
 // [iterator.concept.writable], concept indirectly_writable
-template<class Out, class T>
-SEQAN3_CONCEPT indirectly_writable = ::ranges::cpp20::writable<Out, T>;
+using ::ranges::cpp20::indirectly_writable;
 
 // [iterator.concept.winc], concept weakly_incrementable
 using ::ranges::cpp20::weakly_incrementable;

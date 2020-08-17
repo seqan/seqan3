@@ -89,7 +89,7 @@
  * | \ref seqan3::align_cfg::parallel "6: Parallel"           |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::result "7: Result"               |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
- * | \ref seqan3::align_cfg::vectorise "9: Vectorise"         |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ * | \ref seqan3::align_cfg::vectorised "9: Vectorised"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the

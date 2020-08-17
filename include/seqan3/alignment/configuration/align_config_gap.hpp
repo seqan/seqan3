@@ -41,11 +41,11 @@ namespace seqan3::align_cfg
 template <typename gap_scheme_t>
 struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
 {
-    static_assert(detail::is_type_specialisation_of_v<gap_scheme_t, gap_scheme>,
+    static_assert(seqan3::detail::is_type_specialisation_of_v<gap_scheme_t, gap_scheme>,
                   "Expects seqan3::gap_scheme class.");
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::gap};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::gap};
 };
 
 /*!\name Type deduction guides
