@@ -15,7 +15,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/concept/cereal.hpp>
 
 namespace seqan3::detail
 {
@@ -27,6 +27,7 @@ namespace seqan3::detail
 /*!\brief Internal representation of the node of an FM index cursor.
  * \ingroup fm_index
  * \tparam index_t The type of the underlying index; must satisfy seqan3::fm_index_specialisation.
+ * \implements seqan3::cerealisable
  */
 template <typename index_t>
 struct fm_index_cursor_node
@@ -61,6 +62,23 @@ struct fm_index_cursor_node
     {
         return !(*this == rhs);
     }
+
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
+     * \param archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(lb);
+        archive(rb);
+        archive(depth);
+        archive(last_char);
+    }
+    //!\endcond
 };
 
 // std::tuple get_suffix_array_range(fm_index_cursor<index_t> const & it)

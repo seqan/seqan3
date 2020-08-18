@@ -11,6 +11,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/std/algorithm>
+#include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include <sdsl/csa_wt.hpp>
@@ -300,6 +301,16 @@ TYPED_TEST_P(fm_index_cursor_test, concept_check)
     EXPECT_TRUE(seqan3::fm_index_cursor_specialisation<TypeParam>);
 }
 
+TYPED_TEST_P(fm_index_cursor_test, serialisation)
+{
+    typename TypeParam::index_type fm{this->text1};
+
+    TypeParam it = TypeParam(fm);
+    it.extend_right(seqan3::views::slice(this->text1, 0, 3));
+
+    seqan3::test::do_serialisation(it);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
                             extend_right_range_and_cycle, extend_right_char_and_cycle, extend_right_and_cycle, query,
-                            last_rank, incomplete_alphabet, lazy_locate, concept_check);
+                            last_rank, incomplete_alphabet, lazy_locate, concept_check, serialisation);

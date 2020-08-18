@@ -35,6 +35,7 @@ namespace seqan3
 /*!\brief The SeqAn FM Index Cursor.
  * \implements seqan3::fm_index_cursor_specialisation
  * \tparam index_t The type of the underlying index; must model seqan3::fm_index_specialisation.
+ * \implements seqan3::cerealisable
  * \details
  *
  * The cursor's interface provides searching a string from left to right in the indexed text.
@@ -621,6 +622,23 @@ public:
                    return locate_result_value_type{sequence_rank - 1, sequence_position};
                });
     }
+
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
+     * \param archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(parent_lb);
+        archive(parent_rb);
+        archive(node);
+        archive(sigma);
+    }
+    //!\endcond
 };
 
 //!\}
