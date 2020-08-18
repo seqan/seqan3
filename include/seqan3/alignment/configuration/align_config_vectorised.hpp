@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::vectorise configuration.
+ * \brief Provides seqan3::align_cfg::vectorised configuration.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
@@ -23,10 +23,10 @@ namespace seqan3::detail
 /*!\brief A tag to select the vectorised alignment algorithm.
  * \ingroup alignment_configuration
  */
-struct vectorise_tag : public pipeable_config_element<vectorise_tag>
+struct vectorised_tag : public pipeable_config_element<vectorised_tag>
 {
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::vectorise};
+    static constexpr detail::align_config_id id{detail::align_config_id::vectorised};
 };
 
 } // namespace seqan3::detail
@@ -50,8 +50,8 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \include test/snippet/alignment/configuration/align_cfg_vectorise_example.cpp
+ * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-inline constexpr detail::vectorise_tag vectorise{};
+inline constexpr seqan3::detail::vectorised_tag vectorised{};
 
 } // namespace seqan3::align_cfg

@@ -32,7 +32,7 @@ namespace seqan3::align_cfg
  * \note This configuration is only useful for debugging purposes as it can have a significant impact on the
  *       performance.
  */
-inline constexpr detail::debug_mode<std::integral_constant<detail::align_config_id,
-                                                           detail::align_config_id::debug>> debug{};
+inline constexpr seqan3::detail::debug_mode<std::integral_constant<seqan3::detail::align_config_id,
+                                                                   seqan3::detail::align_config_id::debug>> debug{};
 //!\endcond
 }  // namespace seqan3::align_cfg

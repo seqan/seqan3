@@ -71,8 +71,14 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   multiple bins ([\#920](https://github.com/seqan/seqan3/pull/920)).
 * Added `seqan3::search_cfg::hit`, which allows dynamic configuration of the hit strategy.
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
+* Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
+  ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
+
+* The required version of the ranges-v3 library has increased:
+  We now support the versions >= 0.11.0 and < 0.12.0, increasing the previous requirement of >= 0.10.0 and < 0.11.0
+  ([\#2014](https://github.com/seqan/seqan3/pull/2014)).
 
 ### Alignment
 
@@ -84,6 +90,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
   pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
   ([\#1918](https://github.com/seqan/seqan3/pull/1918).
+* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`.
 
 ### Core
 
@@ -101,6 +108,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
 * Added `seqan3::views::minimiser_hash`, a view that computes the minimisers of a range of type seqan3::semialphabet.
   ([\#1721](https://https://github.com/seqan/seqan3/pull/1721)).
+* `seqan3::views:trim` has been renamed to `seqan3::views:trim_quality`.
 
 #### Search
 
