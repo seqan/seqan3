@@ -326,10 +326,10 @@ public:
                 auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
                 // Only use edit distance if ...
                 if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
-                    !(method_global_cfg.free_end_gaps_sequence2_leading.get() ||
-                      method_global_cfg.free_end_gaps_sequence2_trailing.get()) &&
-                    (method_global_cfg.free_end_gaps_sequence1_leading.get() ==
-                     method_global_cfg.free_end_gaps_sequence1_trailing.get()))
+                    !(method_global_cfg.free_end_gaps_sequence2_leading ||
+                      method_global_cfg.free_end_gaps_sequence2_trailing) &&
+                    (method_global_cfg.free_end_gaps_sequence1_leading ==
+                     method_global_cfg.free_end_gaps_sequence1_trailing))
                 {
                     // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
                     //       option via the scheme.
@@ -406,7 +406,7 @@ private:
             }
             else // Resolve correct property at runtime.
             {
-                if (method_global_cfg.free_end_gaps_sequence1_trailing.get())
+                if (method_global_cfg.free_end_gaps_sequence1_trailing)
                     return configure_edit_traits(std::true_type{});
                 else
                     return configure_edit_traits(std::false_type{});
@@ -414,7 +414,7 @@ private:
         };
 
         // Check if it has free ends set for the first sequence leading gaps.
-        if (method_global_cfg.free_end_gaps_sequence1_leading.get())
+        if (method_global_cfg.free_end_gaps_sequence1_leading)
             return has_free_ends_trailing(std::true_type{});
         else
             return has_free_ends_trailing(std::false_type{});
@@ -598,10 +598,10 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
         {
             if (auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
                 !config_t::template exists<seqan3::align_cfg::aligned_ends>() &&
-                (method_global_cfg.free_end_gaps_sequence1_leading.get() ||
-                 method_global_cfg.free_end_gaps_sequence1_trailing.get() ||
-                 method_global_cfg.free_end_gaps_sequence2_leading.get() ||
-                 method_global_cfg.free_end_gaps_sequence2_trailing.get()))
+                (method_global_cfg.free_end_gaps_sequence1_leading ||
+                 method_global_cfg.free_end_gaps_sequence1_trailing ||
+                 method_global_cfg.free_end_gaps_sequence2_leading ||
+                 method_global_cfg.free_end_gaps_sequence2_trailing))
             {
                 auto ends_config = seqan3::align_cfg::aligned_ends{seqan3::free_ends_none};
                 return configure_free_ends_optimum_search<function_wrapper_t, policies_t..., gap_init_policy_t>(cfg | ends_config);
@@ -631,7 +631,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
         auto configure_leading_second = [&] (auto first) constexpr
         {
             // Resolve correct property at runtime.
-            if (method_global_cfg.free_end_gaps_sequence2_leading.get())
+            if (method_global_cfg.free_end_gaps_sequence2_leading)
                 return configure_leading_both(first, std::true_type{});
             else
                 return configure_leading_both(first, std::false_type{});
@@ -640,7 +640,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_initial
         // Here the initialisation configuration for the first sequence is determined given
         // the leading gap property for it.
         // Resolve correct property at runtime.
-        if (method_global_cfg.free_end_gaps_sequence1_leading.get())
+        if (method_global_cfg.free_end_gaps_sequence1_leading)
             return configure_leading_second(std::true_type{});
         else
             return configure_leading_second(std::false_type{});
@@ -686,7 +686,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
         auto configure_trailing_second = [&] (auto first) constexpr
         {
             // Resolve correct property at runtime.
-            if (method_global_cfg.free_end_gaps_sequence2_trailing.get())
+            if (method_global_cfg.free_end_gaps_sequence2_trailing)
                 return configure_trailing_both(first, std::true_type{});
             else
                 return configure_trailing_both(first, std::false_type{});
@@ -695,7 +695,7 @@ constexpr function_wrapper_t alignment_configurator::configure_free_ends_optimum
         // Here the lookup configuration for the first sequence is determined given
         // the trailing gap property for it.
         // Resolve correct property at runtime.
-        if (method_global_cfg.free_end_gaps_sequence1_trailing.get())
+        if (method_global_cfg.free_end_gaps_sequence1_trailing)
             return configure_trailing_second(std::true_type{});
         else
             return configure_trailing_second(std::false_type{});
