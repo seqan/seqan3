@@ -92,9 +92,9 @@
  * | \ref seqan3::align_cfg::vectorised "9: Vectorised"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \if DEV
- * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
- * alignment matrices from the DP algorithm using the returned seqan3::alignment_result. It is compatible with all
- * other configuration elements.
+ * There is an additional configuration element \ref seqan3::align_cfg::detail::debug "Debug", which enables the output
+ * of the alignment matrices from the DP algorithm using the returned seqan3::alignment_result. It is compatible with
+ * all other configuration elements.
  * \endif
  *
  * ## Accessing the computed alignment

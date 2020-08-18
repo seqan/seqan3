@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_config::gap.
+ * \brief Provides seqan3::align_cfg::gap.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  */
