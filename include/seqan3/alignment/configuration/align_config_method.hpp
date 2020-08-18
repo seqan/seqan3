@@ -132,14 +132,14 @@ struct method_global : public pipeable_config_element<method_global>
     {}
     //!\}
 
-    //!\brief If set to `true`, leading gaps in sequence1 are not penalized when computing the optimal alignment.
-    seqan3::align_cfg::free_end_gaps_sequence1_leading free_end_gaps_sequence1_leading{false};
-    //!\brief If set to `true`, leading gaps in sequence2 are not penalized when computing the optimal alignment.
-    seqan3::align_cfg::free_end_gaps_sequence2_leading free_end_gaps_sequence2_leading{false};
-    //!\brief If set to `true`, trailing gaps in sequence1 are not penalized when computing the optimal alignment.
-    seqan3::align_cfg::free_end_gaps_sequence1_trailing free_end_gaps_sequence1_trailing{false};
-    //!\brief If set to `true`, trailing gaps in sequence2 are not penalized when computing the optimal alignment.
-    seqan3::align_cfg::free_end_gaps_sequence2_trailing free_end_gaps_sequence2_trailing{false};
+    //!\brief If set to `true`, leading gaps in sequence1 are not penalised when computing the optimal alignment.
+    bool free_end_gaps_sequence1_leading{false};
+    //!\brief If set to `true`, leading gaps in sequence2 are not penalised when computing the optimal alignment.
+    bool free_end_gaps_sequence2_leading{false};
+    //!\brief If set to `true`, trailing gaps in sequence1 are not penalised when computing the optimal alignment.
+    bool free_end_gaps_sequence1_trailing{false};
+    //!\brief If set to `true`, trailing gaps in sequence2 are not penalised when computing the optimal alignment.
+    bool free_end_gaps_sequence2_trailing{false};
 
     //!\privatesection
     //!\brief An internal id used to check for a valid alignment configuration.
