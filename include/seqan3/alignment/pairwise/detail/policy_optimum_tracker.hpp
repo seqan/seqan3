@@ -139,8 +139,8 @@ protected:
     policy_optimum_tracker(alignment_configuration_t const & config)
     {
         auto method_global_config = config.get_or(align_cfg::method_global{});
-        test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing.get();
-        test_last_column_cell = method_global_config.free_end_gaps_sequence2_trailing.get();
+        test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing;
+        test_last_column_cell = method_global_config.free_end_gaps_sequence2_trailing;
     }
     //!\}
 

@@ -105,11 +105,11 @@ protected:
         {
             auto method_global_config = get<seqan3::align_cfg::method_global>(config);
 
-            bool first_row_is_free = method_global_config.free_end_gaps_sequence1_leading.get();
-            bool first_column_is_free = method_global_config.free_end_gaps_sequence2_leading.get();
+            bool first_row_is_free = method_global_config.free_end_gaps_sequence1_leading;
+            bool first_column_is_free = method_global_config.free_end_gaps_sequence2_leading;
 
-            last_row_is_free = method_global_config.free_end_gaps_sequence1_trailing.get();
-            last_column_is_free = method_global_config.free_end_gaps_sequence2_trailing.get();
+            last_row_is_free = method_global_config.free_end_gaps_sequence1_trailing;
+            last_column_is_free = method_global_config.free_end_gaps_sequence2_trailing;
             // band starts in first column without free gaps or band starts in first row without free gaps.
             invalid_band |= (upper_diagonal < 0 && !first_column_is_free) || (lower_diagonal > 0 && !first_row_is_free);
             error_cause += " The band starts in a region without free gaps.";

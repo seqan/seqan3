@@ -99,8 +99,8 @@ protected:
         }
 
         auto method_global_config = config.get_or(align_cfg::method_global{});
-        first_row_is_free = method_global_config.free_end_gaps_sequence1_leading.get();
-        first_column_is_free = method_global_config.free_end_gaps_sequence2_leading.get();
+        first_row_is_free = method_global_config.free_end_gaps_sequence1_leading;
+        first_column_is_free = method_global_config.free_end_gaps_sequence2_leading;
     }
     //!\}
 
