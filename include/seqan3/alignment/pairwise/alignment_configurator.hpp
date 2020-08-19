@@ -117,10 +117,10 @@ public:
     //!\brief Tests whether the scoring scheme is set and can be invoked with the sequences passed.
     constexpr static bool expects_valid_scoring_scheme()
     {
-        if constexpr (alignment_config_type::template exists<align_cfg::scoring>())
+        if constexpr (alignment_config_type::template exists<align_cfg::scoring_scheme>())
         {
             using scoring_type = std::remove_reference_t<
-                                    decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
+                                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).value)
                                  >;
             return static_cast<bool>(scoring_scheme<scoring_type,
                                                    std::ranges::range_value_t<first_seq_t>,
@@ -318,7 +318,7 @@ public:
 
             // Use default edit distance if gaps are not set.
             auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
-            auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
+            auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
             auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
             if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())

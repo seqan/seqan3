@@ -47,7 +47,7 @@ In this case it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
 The minimum requirement for computing a pairwise alignment is to specify the alignment method (seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
-seqan3::align_cfg::scoring configuration elements. The first one selects the internal algorithm and the second one
+seqan3::align_cfg::scoring_scheme configuration elements. The first one selects the internal algorithm and the second one
 provides the scoring scheme that should be used to score a pair of sequence characters.
 
 Now we are going to call seqan3::align_pairwise. This interface requires two arguments: a tuple or a range of tuples
@@ -203,8 +203,8 @@ positive value and the score for mismatch and gaps must be negative in order to 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_scheme
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
-seqan3::align_cfg::scoring and the seqan3::align_cfg::gap configurations. The
-seqan3::align_cfg::scoring is mandatory - similarly to the alignment method configuration. It would be
+seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap configurations. The
+seqan3::align_cfg::scoring_scheme is mandatory - similarly to the alignment method configuration. It would be
 wrong to assume what the default scoring scheme should be. If you do not provide these configurations, the compilation
 will fail with a corresponding error message. Not providing the gap scheme is ok. In this case the default initialised
 gap scheme will be used for the alignment computation.

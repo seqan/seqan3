@@ -38,9 +38,10 @@ static std::string create_sam_file_string(size_t const n_queries)
         auto reference = seqan3::test::generate_sequence<seqan3::dna4>(reference_size, length_variance, seed);
 
         // align
+        constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                           seqan3::mismatch_score{-2}};
         auto config = seqan3::align_cfg::method_global{} |
-                      seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                   seqan3::mismatch_score{-2}}} |
+                      seqan3::align_cfg::scoring_scheme{nt_score_scheme} |
                       seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                       seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                       seqan3::align_cfg::result{seqan3::with_alignment};

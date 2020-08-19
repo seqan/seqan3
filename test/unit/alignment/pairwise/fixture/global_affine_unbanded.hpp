@@ -11,7 +11,7 @@
 
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -30,7 +30,7 @@ inline constexpr auto align_config = seqan3::align_cfg::method_global{}
                                    | seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                             seqan3::gap_open_score{-10}}};
 inline constexpr auto align_config_dna_score = align_config
-                                             | seqan3::align_cfg::scoring{
+                                             | seqan3::align_cfg::scoring_scheme{
                                                     seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                       seqan3::mismatch_score{-5}}};
 

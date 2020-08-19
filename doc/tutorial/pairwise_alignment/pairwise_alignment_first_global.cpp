@@ -14,7 +14,7 @@ int main()
 
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{}};
+                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}};
 
     // Invoke the pairwise alignment which returns a lazy range over alignment results.
     auto results = seqan3::align_pairwise(std::tie(s1, s2), config);

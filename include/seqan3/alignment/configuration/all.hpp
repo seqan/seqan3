@@ -23,7 +23,7 @@
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/configuration/detail.hpp>
 

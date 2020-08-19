@@ -14,7 +14,7 @@ int main()
 
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{
+                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
