@@ -44,8 +44,7 @@ struct alignment_selector_test : public ::testing::Test
     static constexpr seqan3::configuration base_config = [] ()
     {
             return seqan3::align_cfg::method_global{} |
-                   seqan3::align_cfg::edit_scheme |
-                   seqan3::align_cfg::result{seqan3::with_score};
+                   seqan3::align_cfg::edit_scheme;
     }();
 };
 
@@ -75,10 +74,9 @@ TEST_F(alignment_selector_test, align_result_selector_using_score_type)
 {
     auto cfg = seqan3::align_cfg::method_global{} |  // TODO: Change to base_config once using_score_type has been fixed.
                seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} |
-               seqan3::align_cfg::score_type<double> |
                seqan3::align_cfg::output_score |
-               seqan3::align_cfg::output_end_position;
+               seqan3::align_cfg::output_end_position |
+               seqan3::align_cfg::score_type<double>;
 
     using result_t = alignment_result_t<decltype(cfg)>;
 
