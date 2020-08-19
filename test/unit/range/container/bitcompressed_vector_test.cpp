@@ -9,6 +9,7 @@
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 

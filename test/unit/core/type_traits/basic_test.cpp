@@ -16,7 +16,6 @@
 #include <range/v3/view/take_exactly.hpp>
 
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/range/detail/random_access_iterator.hpp>
 
 //------------------------------------------------------------------------------
 // Tests for remove_cvref transformation trait
