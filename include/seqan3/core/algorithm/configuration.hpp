@@ -479,7 +479,7 @@ private:
 
         return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
             std::tuple_cat(static_cast<base_type>(*this),
-            std::tuple{std::move(elem)})};
+                           std::tuple{std::move(elem)})};
     }
 
     //!\copydoc push_back
@@ -493,7 +493,7 @@ private:
 
         return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
             std::tuple_cat(std::move(static_cast<base_type>(*this)),
-            std::tuple{std::move(elem)})};
+                           std::tuple{std::move(elem)})};
     }
 
     /*!\brief Remove a config element from the configuration.

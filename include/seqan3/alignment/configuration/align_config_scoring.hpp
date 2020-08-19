@@ -40,6 +40,21 @@ namespace seqan3::align_cfg
 template <typename scoring_scheme_t>
 struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scoring_scheme_t>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    scoring() = default; //!< Defaulted.
+    scoring(scoring const &) = default; //!< Defaulted.
+    scoring(scoring &&) = default; //!< Defaulted.
+    scoring & operator=(scoring const &) = default; //!< Defaulted.
+    scoring & operator=(scoring &&) = default; //!< Defaulted.
+    ~scoring() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr scoring(scoring_scheme_t const & s) : pipeable_config_element<scoring<scoring_scheme_t>,
+                                                                                    scoring_scheme_t>(s) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::scoring};

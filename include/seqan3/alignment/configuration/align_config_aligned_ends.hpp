@@ -547,6 +547,20 @@ template <typename end_gaps_t>
 //!\endcond
 struct aligned_ends : public pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    aligned_ends() = default; //!< Defaulted.
+    aligned_ends(aligned_ends const &) = default; //!< Defaulted.
+    aligned_ends(aligned_ends &&) = default; //!< Defaulted.
+    aligned_ends & operator=(aligned_ends const &) = default; //!< Defaulted.
+    aligned_ends & operator=(aligned_ends &&) = default; //!< Defaulted.
+    ~aligned_ends() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr aligned_ends(end_gaps_t const & e) : pipeable_config_element<aligned_ends<end_gaps_t>, end_gaps_t>(e) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::aligned_ends};

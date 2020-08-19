@@ -35,6 +35,21 @@ namespace seqan3::search_cfg
 class max_error_total : public pipeable_config_element<max_error_total, std::variant<error_count, error_rate>>
 {
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_total() = default; //!< Defaulted.
+    max_error_total(max_error_total const &) = default; //!< Defaulted.
+    max_error_total(max_error_total &&) = default; //!< Defaulted.
+    max_error_total & operator=(max_error_total const &) = default; //!< Defaulted.
+    max_error_total & operator=(max_error_total &&) = default; //!< Defaulted.
+    ~max_error_total() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    max_error_total(std::variant<error_count, error_rate> const & e) :
+        pipeable_config_element<max_error_total, std::variant<error_count, error_rate>>(e) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_total};
@@ -55,6 +70,21 @@ class max_error_substitution : public pipeable_config_element<max_error_substitu
                                                               error_rate>>
 {
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_substitution() = default; //!< Defaulted.
+    max_error_substitution(max_error_substitution const &) = default; //!< Defaulted.
+    max_error_substitution(max_error_substitution &&) = default; //!< Defaulted.
+    max_error_substitution & operator=(max_error_substitution const &) = default; //!< Defaulted.
+    max_error_substitution & operator=(max_error_substitution &&) = default; //!< Defaulted.
+    ~max_error_substitution() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    max_error_substitution(std::variant<error_count, error_rate> const & e) :
+        pipeable_config_element<max_error_substitution, std::variant<error_count, error_rate>>(e) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_substitution};
@@ -73,6 +103,21 @@ public:
 class max_error_insertion : public pipeable_config_element<max_error_insertion, std::variant<error_count, error_rate>>
 {
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_insertion() = default; //!< Defaulted.
+    max_error_insertion(max_error_insertion const &) = default; //!< Defaulted.
+    max_error_insertion(max_error_insertion &&) = default; //!< Defaulted.
+    max_error_insertion & operator=(max_error_insertion const &) = default; //!< Defaulted.
+    max_error_insertion & operator=(max_error_insertion &&) = default; //!< Defaulted.
+    ~max_error_insertion() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    max_error_insertion(std::variant<error_count, error_rate> const & e) :
+        pipeable_config_element<max_error_insertion, std::variant<error_count, error_rate>>(e) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_insertion};
@@ -92,6 +137,21 @@ public:
 class max_error_deletion : public pipeable_config_element<max_error_deletion, std::variant<error_count, error_rate>>
 {
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_deletion() = default; //!< Defaulted.
+    max_error_deletion(max_error_deletion const &) = default; //!< Defaulted.
+    max_error_deletion(max_error_deletion &&) = default; //!< Defaulted.
+    max_error_deletion & operator=(max_error_deletion const &) = default; //!< Defaulted.
+    max_error_deletion & operator=(max_error_deletion &&) = default; //!< Defaulted.
+    ~max_error_deletion() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr max_error_deletion(std::variant<error_count, error_rate> const & e) :
+        pipeable_config_element<max_error_deletion, std::variant<error_count, error_rate>>(e) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_deletion};

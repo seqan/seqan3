@@ -34,6 +34,13 @@ TYPED_TEST_P(pipeable_config_element_test, standard_construction)
     EXPECT_TRUE((std::is_move_assignable_v<TypeParam>));
 }
 
+TYPED_TEST_P(pipeable_config_element_test, base_class_construction)
+{
+    EXPECT_FALSE(std::default_initializable<seqan3::pipeable_config_element<TypeParam>>);
+    EXPECT_FALSE(std::copy_constructible<seqan3::pipeable_config_element<TypeParam>>);
+    EXPECT_FALSE(std::move_constructible<seqan3::pipeable_config_element<TypeParam>>);
+}
+
 TYPED_TEST_P(pipeable_config_element_test, configuration_construction)
 {
     seqan3::configuration cfg{TypeParam{}};
@@ -96,6 +103,7 @@ TYPED_TEST_P(pipeable_config_element_test, pipeability)
 REGISTER_TYPED_TEST_SUITE_P(pipeable_config_element_test,
                             concept_check,
                             standard_construction,
+                            base_class_construction,
                             configuration_construction,
                             configuration_assignment,
                             exists,

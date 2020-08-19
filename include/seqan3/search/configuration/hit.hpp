@@ -30,6 +30,17 @@ namespace seqan3::detail
  */
 struct hit_all_tag : public pipeable_config_element<hit_all_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    hit_all_tag() = default; //!< Defaulted.
+    hit_all_tag(hit_all_tag const &) = default; //!< Defaulted.
+    hit_all_tag(hit_all_tag &&) = default; //!< Defaulted.
+    hit_all_tag & operator=(hit_all_tag const &) = default; //!< Defaulted.
+    hit_all_tag & operator=(hit_all_tag &&) = default; //!< Defaulted.
+    ~hit_all_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
@@ -40,6 +51,17 @@ struct hit_all_tag : public pipeable_config_element<hit_all_tag>
  */
 struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    hit_all_best_tag() = default; //!< Defaulted.
+    hit_all_best_tag(hit_all_best_tag const &) = default; //!< Defaulted.
+    hit_all_best_tag(hit_all_best_tag &&) = default; //!< Defaulted.
+    hit_all_best_tag & operator=(hit_all_best_tag const &) = default; //!< Defaulted.
+    hit_all_best_tag & operator=(hit_all_best_tag &&) = default; //!< Defaulted.
+    ~hit_all_best_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
@@ -50,6 +72,17 @@ struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag>
  */
 struct hit_single_best_tag : public pipeable_config_element<hit_single_best_tag>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr hit_single_best_tag() = default; //!< Defaulted.
+    constexpr hit_single_best_tag(hit_single_best_tag const &) = default; //!< Defaulted.
+    constexpr hit_single_best_tag(hit_single_best_tag &&) = default; //!< Defaulted.
+    constexpr hit_single_best_tag & operator=(hit_single_best_tag const &) = default; //!< Defaulted.
+    constexpr hit_single_best_tag & operator=(hit_single_best_tag &&) = default; //!< Defaulted.
+    ~hit_single_best_tag() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
@@ -88,6 +121,20 @@ inline constexpr detail::hit_single_best_tag hit_single_best{};
  */
 struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr hit_strata() = default; //!< Defaulted.
+    constexpr hit_strata(hit_strata const &) = default; //!< Defaulted.
+    constexpr hit_strata(hit_strata &&) = default; //!< Defaulted.
+    constexpr hit_strata & operator=(hit_strata const &) = default; //!< Defaulted.
+    constexpr hit_strata & operator=(hit_strata &&) = default; //!< Defaulted.
+    ~hit_strata() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr hit_strata(uint8_t const & u) : pipeable_config_element<hit_strata, uint8_t>(u) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};

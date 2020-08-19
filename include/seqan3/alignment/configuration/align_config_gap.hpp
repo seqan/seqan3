@@ -43,6 +43,21 @@ struct gap : public pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>
 {
     static_assert(seqan3::detail::is_type_specialisation_of_v<gap_scheme_t, gap_scheme>,
                   "Expects seqan3::gap_scheme class.");
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    gap() = default; //!< Defaulted.
+    gap(gap const &) = default; //!< Defaulted.
+    gap(gap &&) = default; //!< Defaulted.
+    gap & operator=(gap const &) = default; //!< Defaulted.
+    gap & operator=(gap &&) = default; //!< Defaulted.
+    ~gap() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr gap(gap_scheme_t const & s) : pipeable_config_element<gap<gap_scheme_t>, gap_scheme_t>(s) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::gap};

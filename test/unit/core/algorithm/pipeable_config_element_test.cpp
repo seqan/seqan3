@@ -154,3 +154,10 @@ TEST(pipeable_config_element, const_config)
         EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foobar<>, foo, bar>>));
     }
 }
+
+TEST(pipeable_config_element, base_class_construction)
+{
+    EXPECT_FALSE(std::default_initializable<seqan3::pipeable_config_element<bar>>);
+    EXPECT_FALSE(std::copy_constructible<seqan3::pipeable_config_element<bar>>);
+    EXPECT_FALSE(std::move_constructible<seqan3::pipeable_config_element<bar>>);
+}

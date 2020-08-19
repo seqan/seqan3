@@ -35,6 +35,20 @@ namespace seqan3::align_cfg
  */
 struct max_error : public pipeable_config_element<max_error, uint32_t>
 {
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error() = default; //!< Defaulted.
+    max_error(max_error const &) = default; //!< Defaulted.
+    max_error(max_error &&) = default; //!< Defaulted.
+    max_error & operator=(max_error const &) = default; //!< Defaulted.
+    max_error & operator=(max_error &&) = default; //!< Defaulted.
+    ~max_error() = default; //!< Defaulted.
+
+    //!\brief Construct from base type.
+    constexpr max_error(uint32_t const & i) : pipeable_config_element<max_error, uint32_t>(i) {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::max_error};
