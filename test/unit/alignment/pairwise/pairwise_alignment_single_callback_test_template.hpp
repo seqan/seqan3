@@ -52,9 +52,8 @@ TYPED_TEST_P(pairwise_alignment_callback_test, end_positions)
 
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_end_position |
-                                      seqan3::align_cfg::score_type<double> |
                                       seqan3::align_cfg::output_score |
-                                      seqan3::align_cfg::output_end_position |
+                                      seqan3::align_cfg::score_type<double> |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           EXPECT_EQ(result.score(), fixture.score);
@@ -74,9 +73,9 @@ TYPED_TEST_P(pairwise_alignment_callback_test, begin_positions)
     auto const & fixture = this->fixture();
 
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::output_score |
-                                      seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_begin_position |
+                                      seqan3::align_cfg::output_end_position |
+                                      seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           EXPECT_EQ(result.score(), fixture.score);
