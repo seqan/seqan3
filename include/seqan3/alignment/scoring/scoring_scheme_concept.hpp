@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::scoring_scheme.
+ * \brief Provides seqan3::scoring_scheme_for.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -17,7 +17,7 @@
 namespace seqan3
 {
 
-/*!\interface seqan3::scoring_scheme <>
+/*!\interface seqan3::scoring_scheme_for <>
  * \brief A concept that requires that type be able to score two letters.
  * \tparam t            The type the concept check is performed on (the putative scoring scheme).
  * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::alphabet.
@@ -31,14 +31,14 @@ namespace seqan3
  * ability to score the two letters is required.
  *
  */
-/*!\name Requirements for seqan3::scoring_scheme
- * \brief You can expect these members on all types that implement seqan3::scoring_scheme.
- * \memberof seqan3::scoring_scheme
+/*!\name Requirements for seqan3::scoring_scheme_for
+ * \brief You can expect these members on all types that implement seqan3::scoring_scheme_for.
+ * \memberof seqan3::scoring_scheme_for
  * \{
  */
 
 /*!\typedef     typedef IMPLEMENTATION_DEFINED score_type;
- * \brief       The type returned by seqan3::scoring_scheme::score(), usually a seqan3::arithmetic.
+ * \brief       The type returned by seqan3::scoring_scheme_for::score(), usually a seqan3::arithmetic.
  *
  * \details
  * \attention This is a concept requirement, not an actual typedef (however types satisfying this concept
@@ -58,9 +58,9 @@ namespace seqan3
 
 //!\cond
 template <typename t, typename alphabet_t, typename alphabet2_t = alphabet_t>
-SEQAN3_CONCEPT scoring_scheme = requires (t scheme,
-                                          alphabet_t const alph1,
-                                          alphabet2_t const alph2)
+SEQAN3_CONCEPT scoring_scheme_for = requires (t scheme,
+                                              alphabet_t const alph1,
+                                              alphabet2_t const alph2)
 {
     requires alphabet<alphabet_t>;
     requires alphabet<alphabet2_t>;
