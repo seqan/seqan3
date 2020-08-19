@@ -5,11 +5,11 @@
 This changelog contains a top-level entry for each release with sections on new features, API changes and notable
 bug-fixes (not all bug-fixes will be listed).
 
-Get to know SeqAn3 with our [tutorials](http://docs.seqan.de/seqan/3-master-user/usergroup1.html).
+Get to know SeqAn3 with our [tutorials](https://docs.seqan.de/seqan/3-master-user/usergroup1.html).
 
 Please see the release announcement: https://www.seqan.de/announcing-seqan3/
 
-See the porting guide for some help on porting: http://docs.seqan.de/seqan/3-master-user/howto_porting.html
+See the porting guide for some help on porting: https://docs.seqan.de/seqan/3-master-user/howto_porting.html
 
 See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
 when API changes are allowed.
@@ -295,7 +295,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1471](https://github.com/seqan/seqan3/pull/1471)).
 * Customising for third party types has changes slightly:
   You are only affected if you added types to `seqan3::custom::`.
-  Please see [About Customisation](http://docs.seqan.de/seqan/3.0.1/about_customisation.html)
+  Please see [About Customisation](https://docs.seqan.de/seqan/3.0.1/about_customisation.html)
   ([\#1225](https://github.com/seqan/seqan3/pull/1225)).
 * All our concepts are named in the `snake_case` style
   (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the

@@ -198,7 +198,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
  * \brief A more refined container concept than seqan3::sequence_container.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
- * [STL SequenceConcept](httpa://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
+ * [STL SequenceConcept](https://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
  * by `std::vector`, `std::deque` and `std::basic_string`.
  *
  * \attention
