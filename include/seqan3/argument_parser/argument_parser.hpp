@@ -215,7 +215,7 @@ public:
      *                     If option_type is a container, its value type must have the
      *                     formatted input function (exception: std::string is not
      *                     regarded as a container).
-     *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
+     *                     See <a href="https://en.cppreference.com/w/cpp/named_req/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
      *                        value. Must model seqan3::validator.
      *
@@ -277,7 +277,7 @@ public:
      *                     If option_type is a container, its value type must have the
      *                     formatted input function (exception: std::string is not
      *                     regarded as a container).
-     *                     See <a href="https://en.cppreference.com/w/cpp/concept/FormattedInputFunction"> FormattedInputFunction </a>.
+     *                     See <a href="https://en.cppreference.com/w/cpp/named_req/FormattedInputFunction"> FormattedInputFunction </a>.
      * \tparam validator_type The type of validator to be applied to the option
      *                        value. Must model seqan3::validator.
      *
