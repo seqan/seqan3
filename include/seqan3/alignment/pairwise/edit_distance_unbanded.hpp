@@ -1040,30 +1040,36 @@ public:
     template <typename callback_t>
     void operator()(size_t const idx, callback_t && callback)
     {
+        using traits_type = alignment_configuration_traits<align_config_t>;
         using result_value_type = typename alignment_result_value_type_accessor<alignment_result_type>::type;
 
         compute();
-        result_value_type res_vt{};
-        res_vt.id = idx;
-        if constexpr (compute_score)
-        {
-            res_vt.score = this->score().value_or(matrix_inf<score_type>);
-        }
+
+        // First cache the begin and end positions if enabled by the edit distance traits.
+        // Note, that they might be activated even if the user did not configure them, but in order to
+        // compute for example the alignment both information are required and enabled internally.
+        auto cached_end_positions = this->invalid_coordinate();
+        auto cached_begin_positions = this->invalid_coordinate();
 
         if constexpr (compute_end_positions)
-        {
-            res_vt.end_positions = this->end_positions();
-        }
+            cached_end_positions = this->end_positions();
 
         if constexpr (compute_begin_positions)
         {
+            static_assert(compute_end_positions, "End positions required to compute the begin positions.");
             if (this->is_valid())
-                res_vt.begin_positions = alignment_begin_positions(this->trace_matrix(), res_vt.end_positions);
-            else
-                res_vt.begin_positions = this->invalid_coordinate();
+                cached_begin_positions = alignment_begin_positions(this->trace_matrix(), cached_end_positions);
         }
 
-        if constexpr (compute_sequence_alignment)
+        // Fill the result value type. Note we need to ask what was enabled on the user side in order to store
+        // the correct information in the alignment result type. This information is stored in the alignment
+        // configuration traits and not in the edit distance traits.
+        result_value_type res_vt{};
+        res_vt.id = idx;
+        if constexpr (traits_type::compute_score)
+            res_vt.score = this->score().value_or(matrix_inf<score_type>);
+
+        if constexpr (traits_type::compute_sequence_alignment)
         {
             if (this->is_valid())
             {
@@ -1071,10 +1077,17 @@ public:
                 res_vt.alignment = alignment_trace<alignment_t>(database,
                                                                 query,
                                                                 this->trace_matrix(),
-                                                                res_vt.end_positions,
-                                                                res_vt.begin_positions);
+                                                                cached_end_positions,
+                                                                cached_begin_positions);
             }
         }
+
+        if constexpr (traits_type::compute_end_positions)
+            res_vt.end_positions = std::move(cached_end_positions);
+
+        if constexpr (traits_type::compute_begin_positions)
+            res_vt.begin_positions = std::move(cached_begin_positions);
+
         callback(alignment_result_type{std::move(res_vt)});
     }
 };

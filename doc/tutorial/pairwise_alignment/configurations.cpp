@@ -15,9 +15,9 @@
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 //! [include_gap_scheme]
 
-//! [include_result]
-#include <seqan3/alignment/configuration/align_config_result.hpp>
-//! [include_result]
+//! [include_output]
+#include <seqan3/alignment/configuration/align_config_output.hpp>
+//! [include_output]
 
 //! [include_band]
 #include <seqan3/alignment/configuration/align_config_band.hpp>
@@ -79,11 +79,11 @@ auto gap_open = g.get_gap_open_score(); // gap_open == -10
 }
 
 {
-//! [result]
+//! [output]
 
 // Configure the alignment to only compute the score.
-auto cfg = seqan3::align_cfg::result{seqan3::with_score};
-//! [result]
+auto cfg = seqan3::align_cfg::output_score;
+//! [output]
 (void) cfg;
 }
 

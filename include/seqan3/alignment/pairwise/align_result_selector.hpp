@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
@@ -51,81 +52,58 @@ template <std::ranges::forward_range first_range_t,
 struct align_result_selector
 {
 private:
+    //!\brief The traits type used for the alignment.
+    using traits_type = alignment_configuration_traits<configuration_t>;
     //!\brief The user configured score type.
     using score_type = typename alignment_configuration_traits<
                                     std::remove_reference_t<configuration_t>>::original_score_type;
+    //!\brief The type to indicate that an output option was not configured.
+    using disabled_type = std::nullopt_t *;
+    //!\brief Score matrix type in debug mode.
+    using debug_score_matrix_type = two_dimensional_matrix<std::optional<score_type>,
+                                                           std::allocator<std::optional<score_type>>,
+                                                           matrix_major_order::column>;
+    //!\brief Trace matrix type in debug mode.
+    using debug_trace_matrix_type = two_dimensional_matrix<std::optional<trace_directions>,
+                                                           std::allocator<std::optional<trace_directions>>,
+                                                           matrix_major_order::column>;
+    //!\brief The configured score type if selected.
+    using configured_score_type = std::conditional_t<traits_type::compute_score, score_type, disabled_type>;
+    //!\brief The configured end position type if selected.
+    using configured_end_position_type = std::conditional_t<traits_type::compute_end_positions,
+                                                            alignment_coordinate,
+                                                            disabled_type>;
+    //!\brief The configured begin position type if selected.
+    using configured_begin_position_type = std::conditional_t<traits_type::compute_begin_positions,
+                                                              alignment_coordinate,
+                                                              disabled_type>;
+    //!\brief The configured alignment type if selected.
+    using configured_alignment_type = typename lazy_conditional_t<traits_type::compute_sequence_alignment,
+                                                                  lazy<make_pairwise_alignment_type,
+                                                                       first_range_t &,
+                                                                       second_range_t &>,
+                                                                  std::type_identity<disabled_type>>::type;
 
-    //!\brief Helper function to determine the actual result type.
-    static constexpr auto select()
-    {
-        static_assert(configuration_t::template exists<align_cfg::result>());
+    //!\brief The debug score matrix type if selected.
+    using configured_debug_score_matrix_type = std::conditional_t<traits_type::is_debug,
+                                                                  debug_score_matrix_type,
+                                                                  disabled_type>;
 
-        if constexpr (configuration_t::template exists<align_cfg::result<with_end_positions_type, score_type>>())
-        {
-            return alignment_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate>{};
-        }
-        else if constexpr (configuration_t::template exists<align_cfg::result<with_begin_positions_type, score_type>>())
-        {
-            return alignment_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate>{};
-        }
-        else if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type, score_type>>())
-        {
-            // TODO: type `(first|second)_range_t &` is a hack to make the sequences viewable_ranges
-            // https://github.com/seqan/seqan3/projects/10#card-33400557
-            using alignment_type = typename make_pairwise_alignment_type<first_range_t &, second_range_t &>::type;
-
-            return alignment_result_value_type<uint32_t,
-                                               score_type,
-                                               alignment_coordinate,
-                                               alignment_coordinate,
-                                               alignment_type>{};
-        }
-        else
-        {
-            return alignment_result_value_type<uint32_t, score_type>{};
-        }
-    }
-
-    //!\brief Augments the result type with the debug output for score and trace matrix.
-    template <typename alignment_result_value_t>
-    static constexpr auto augment_if_debug(alignment_result_value_t)
-    {
-        if constexpr (configuration_t::template exists<detail::debug_mode>())
-        {
-            using as_type_list = transfer_template_args_onto_t<alignment_result_value_t, type_list>;
-            using score_matrix_t = two_dimensional_matrix<std::optional<score_type>,
-                                                          std::allocator<std::optional<score_type>>,
-                                                          matrix_major_order::column>;
-            using trace_matrix_t = two_dimensional_matrix<std::optional<trace_directions>,
-                                                          std::allocator<std::optional<trace_directions>>,
-                                                          matrix_major_order::column>;
-
-            if constexpr (configuration_t::template exists<align_cfg::result<with_alignment_type>>())
-            {
-                using with_score_t = list_traits::replace_at<score_matrix_t, 5, as_type_list>;
-                return transfer_template_args_onto_t<list_traits::replace_at<trace_matrix_t, 6, with_score_t>,
-                                                     alignment_result_value_type>{};
-            }
-            else
-            {
-                return transfer_template_args_onto_t<list_traits::replace_at<score_matrix_t, 5, as_type_list>,
-                                                     alignment_result_value_type>{};
-            }
-        }
-        else  // Return as is.
-        {
-            return alignment_result_value_t{};
-        }
-    }
+    //!\brief The debug trace matrix type if selected.
+    using configured_debug_trace_matrix_type =
+        std::conditional_t<traits_type::is_debug && traits_type::compute_sequence_alignment,
+                           debug_trace_matrix_type,
+                           disabled_type>;
 
 public:
     //!\brief The selected result type.
-    using type = decltype(augment_if_debug(select()));
+    using type = alignment_result_value_type<uint32_t,
+                                             configured_score_type,
+                                             configured_end_position_type,
+                                             configured_begin_position_type,
+                                             configured_alignment_type,
+                                             configured_debug_score_matrix_type,
+                                             configured_debug_trace_matrix_type>;
 };
 
 } // namespace seqan3::detail

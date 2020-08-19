@@ -85,12 +85,16 @@ template <template <bool, typename...> typename edit_traits_type,
           typename align_cfg_t>
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
+    auto align_cfg_with_score_type = align_cfg | seqan3::align_cfg::result{seqan3::with_score}; // TODO remove once score type can be configured separately.
+    using align_cfg_with_score_type_t = decltype(align_cfg_with_score_type);
+
     using alignment_result_value_t =
         typename seqan3::detail::align_result_selector<database_t,
                                                        query_t,
-                                                       std::remove_reference_t<align_cfg_t>>::type;
+                                                       std::remove_reference_t<align_cfg_with_score_type_t>>::type;
     using alignment_result_t = seqan3::alignment_result<alignment_result_value_t>;
-    auto align_cfg_with_result_type = align_cfg | seqan3::align_cfg::alignment_result_capture<alignment_result_t>;
+    auto align_cfg_with_result_type = align_cfg_with_score_type |
+                                      seqan3::align_cfg::alignment_result_capture<alignment_result_t>;
     using align_config_with_result_type_t = decltype(align_cfg_with_result_type);
     using edit_traits = edit_traits_type<compute_score_matrix,
                                          database_t,
@@ -110,7 +114,7 @@ auto edit_distance(database_t && database, query_t && query, align_cfg_t && alig
 TYPED_TEST_P(edit_distance_unbanded_test, score)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_score;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -122,7 +126,9 @@ TYPED_TEST_P(edit_distance_unbanded_test, score)
 TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
+    seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_score |
+                                      seqan3::align_cfg::output_alignment ;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -139,7 +145,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -155,7 +161,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 TYPED_TEST_P(edit_distance_unbanded_test, end_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_end_positions};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_end_position;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -169,7 +175,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, end_positions)
 TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_begin_positions};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_begin_position;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -183,7 +189,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_alignment};
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

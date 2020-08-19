@@ -89,9 +89,16 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
     ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
 * The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
   pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
-  ([\#1918](https://github.com/seqan/seqan3/pull/1918).
-* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`.
-* The `seqan3::align_cfg::scoring` configuration has been renamed to `seqan3::align_cfg::scoring_scheme`.
+  ([\#1918](https://github.com/seqan/seqan3/pull/1918)).
+* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`
+  ([\#2026](https://github.com/seqan/seqan3/pull/2026)).
+* The `seqan3::align_cfg::scoring` configuration has been renamed to `seqan3::align_cfg::scoring_scheme`
+  ([\#2027](https://github.com/seqan/seqan3/pull/2027)).
+* The `seqan3::align_cfg::result` configuration has been replaced by
+  [`seqan3::align_cfg::output_*` options](http://docs.seqan.de/seqan/3.0.2/group__alignment.html).
+  The default behaviour when not specifying any output configuration has changed from computing only the score to
+  computing everything. Please read the linked documentation above carefully to understand all implied changes
+  ([\#2024](https://github.com/seqan/seqan3/pull/2024)).
 
 ### Core
 
