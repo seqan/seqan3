@@ -24,200 +24,119 @@
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 
-TEST(alignment_selector, align_result_selector_with_list)
+struct alignment_selector_test : public ::testing::Test
 {
     using seq1_t = std::vector<seqan3::dna4>;
     using seq2_t = std::list<seqan3::dna4>;
 
+    using gapped_seq1_t = seqan3::gap_decorator<seqan3::type_reduce_view<std::vector<seqan3::dna4> &>>;
+    using gapped_seq2_t = std::vector<seqan3::gapped<seqan3::dna4>>;
+
+    using alignment_t = std::tuple<gapped_seq1_t, gapped_seq2_t>;
+
+    template <typename config_t>
+    using alignment_result_value_t = typename seqan3::detail::align_result_selector<seq1_t, seq2_t, config_t>::type;
+
+    template <typename config_t>
+    using alignment_result_t = seqan3::alignment_result<alignment_result_value_t<config_t>>;
+
+    static constexpr seqan3::configuration base_config = [] ()
     {
-        auto cfg = seqan3::align_cfg::method_global{} |
+            return seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::edit_scheme |
-                   seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-                   seqan3::align_cfg::output_score;
-        using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
-                                                                                          seq2_t,
-                                                                                          decltype(cfg)>::type>;
+                   seqan3::align_cfg::result{seqan3::with_score};
+    }();
+};
 
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().score()), int32_t>));
-    }
+TEST_F(alignment_selector_test, align_result_selector_all)
+{
+    auto cfg = base_config |
+                seqan3::align_cfg::output_score |
+                seqan3::align_cfg::output_begin_position |
+                seqan3::align_cfg::output_end_position |
+                seqan3::align_cfg::output_alignment |
+                seqan3::align_cfg::output_sequence1_id |
+                seqan3::align_cfg::output_sequence2_id;
 
-    { // full output configuration
-        auto cfg = seqan3::align_cfg::method_global{} |
-                   seqan3::align_cfg::edit_scheme |
-                   seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-                   seqan3::align_cfg::output_score |
-                   seqan3::align_cfg::output_begin_position |
-                   seqan3::align_cfg::output_end_position |
-                   seqan3::align_cfg::output_alignment |
-                   seqan3::align_cfg::output_sequence1_id |
-                   seqan3::align_cfg::output_sequence2_id;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-        using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
-                                                                                          seq2_t,
-                                                                                          decltype(cfg)>::type>;
-
-        using gapped_seq1_t = seqan3::gap_decorator<seqan3::type_reduce_view<std::vector<seqan3::dna4> &>>;
-        using gapped_seq2_t = std::vector<seqan3::gapped<seqan3::dna4>>;
-
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_id()), uint32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().score()), int32_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_end_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_end_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_begin_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_begin_position()), size_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().alignment()),
-                                    std::tuple<gapped_seq1_t, gapped_seq2_t> const &>));
-    }
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_id()), uint32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_id()), uint32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().score()), int32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_begin_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_begin_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().alignment()), alignment_t const &>));
 }
 
-TEST(alignment_selector, align_result_selector_using_score_type)
+TEST_F(alignment_selector_test, align_result_selector_using_score_type)
 {
-    using seq1_t = std::vector<seqan3::dna4>;
-    using seq2_t = std::list<seqan3::dna4>;
-
-    auto cfg = seqan3::align_cfg::method_global{} |
+    auto cfg = seqan3::align_cfg::method_global{} |  // TODO: Change to base_config once using_score_type has been fixed.
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<double>} |
                seqan3::align_cfg::output_score |
                seqan3::align_cfg::output_end_position;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq1_t,
-                                                                                      seq2_t,
-                                                                                      decltype(cfg)>::type>;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().score()), double>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_end_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().score()), double>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_end_position()), size_t>));
 }
 
-TEST(alignment_selector, align_result_selector_with_vector)
+TEST_F(alignment_selector_test, output_score_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_score;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_score |
-               seqan3::align_cfg::output_begin_position |
-               seqan3::align_cfg::output_end_position |
-               seqan3::align_cfg::output_alignment |
-               seqan3::align_cfg::output_sequence1_id |
-               seqan3::align_cfg::output_sequence2_id;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    using gapped_seq_t = seqan3::gap_decorator<seqan3::type_reduce_view<std::vector<seqan3::dna4> &>>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_id()), uint32_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_id()), uint32_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().score()), int32_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_end_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_end_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_begin_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_begin_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().alignment()),
-                                std::tuple<gapped_seq_t, gapped_seq_t> const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().score()), int32_t>));
 }
 
-TEST(alignment_selector, output_score_only)
+TEST_F(alignment_selector_test, output_end_positions_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_end_position;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_score;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().score()), int32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_end_position()), size_t>));
 }
 
-TEST(alignment_selector, output_end_positions_only)
+TEST_F(alignment_selector_test, output_begin_positions_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_begin_position;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_end_position;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_end_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_end_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_begin_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_begin_position()), size_t>));
 }
 
-TEST(alignment_selector, output_begin_positions_only)
+TEST_F(alignment_selector_test, output_alignment_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_alignment;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_begin_position;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_begin_position()), size_t>));
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_begin_position()), size_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().alignment()), alignment_t const &>));
 }
 
-TEST(alignment_selector, output_alignment_only)
+TEST_F(alignment_selector_test, output_sequence1_id_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_sequence1_id;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_alignment;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-    using gapped_seq_t = seqan3::gap_decorator<seqan3::type_reduce_view<std::vector<seqan3::dna4> &>>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().alignment()),
-                                std::tuple<gapped_seq_t, gapped_seq_t> const &>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence1_id()), uint32_t>));
 }
 
-TEST(alignment_selector, output_sequence1_id_only)
+TEST_F(alignment_selector_test, output_sequence2_id_only)
 {
-    using seq_t = std::vector<seqan3::dna4>;
+    auto cfg = base_config | seqan3::align_cfg::output_sequence2_id;
 
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_sequence1_id;
+    using result_t = alignment_result_t<decltype(cfg)>;
 
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence1_id()), uint32_t>));
-}
-
-TEST(alignment_selector, output_sequence2_id_only)
-{
-    using seq_t = std::vector<seqan3::dna4>;
-
-    auto cfg = seqan3::align_cfg::method_global{} |
-               seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::result{seqan3::with_score} | // TODO remove me when score type is configured differently.
-               seqan3::align_cfg::output_sequence2_id;
-
-    using t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<seq_t,
-                                                                                      seq_t,
-                                                                                      decltype(cfg)>::type>;
-
-    EXPECT_TRUE((std::is_same_v<decltype(std::declval<t>().sequence2_id()), uint32_t>));
+    EXPECT_TRUE((std::is_same_v<decltype(std::declval<result_t>().sequence2_id()), uint32_t>));
 }
