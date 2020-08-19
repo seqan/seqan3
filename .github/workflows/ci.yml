@@ -18,81 +18,90 @@ jobs:
           access_token: ${{ github.token }}
   build:
     needs: cancel
-    name: ${{ matrix.config.name }}
+    name: ${{ matrix.name }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
-        config:
-        - {
-            name: "Coverage gcc7",
-            CXX: "g++-7",
-            CC: "gcc-7",
-            build: coverage,
+        include:
+          - name: "Coverage gcc7"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: coverage
             build_type: Debug
-          }
-        - {
-            name: "Unit gcc9 (c++2a)",
-            CXX: "g++-9",
-            CC: "gcc-9",
-            build: unit,
-            build_type: Release,
-            CXXFLAGS: "-std=c++2a"
-          }
-        - {
-            name: "Unit gcc10 (c++17)",
-            CXX: "g++-10",
-            CC: "gcc-10",
-            build: unit,
-            build_type: Release,
-            CXXFLAGS: "-std=c++17 -fconcepts"
-          }
-        - {
-            name: "Unit gcc10 (c++20)",
-            CXX: "g++-10",
-            CC: "gcc-10",
-            build: unit,
+
+          - name: "Unit gcc9 (c++2a)"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-9"
+            cc: "gcc-9"
+            build: unit
             build_type: Release
-          }
-        - {
-            name: "Unit gcc8",
-            CXX: "g++-8",
-            CC: "gcc-8",
-            build: unit,
+            cxx_flags: "-std=c++2a"
+
+          - name: "Unit gcc10 (c++17)"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
             build_type: Release
-          }
-        - {
-            name: "Unit gcc7",
-            CXX: "g++-7",
-            CC: "gcc-7",
-            build: unit,
+            cxx_flags: "-std=c++17 -fconcepts"
+
+          - name: "Unit gcc10 (c++20)"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
             build_type: Release
-          }
-        - {
-            name: "Performance gcc7",
-            CXX: "g++-7",
-            CC: "gcc-7",
-            build: performance,
+
+          - name: "Unit gcc8"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-8"
+            cc: "gcc-8"
+            build: unit
             build_type: Release
-          }
-        - {
-            name: "Header gcc7",
-            CXX: "g++-7",
-            CC: "gcc-7",
-            build: header,
+
+          - name: "Unit gcc7"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
             build_type: Release
-          }
-        - {
-            name: "Snippet gcc7",
-            CXX: "g++-7",
-            CC: "gcc-7",
-            build: snippet,
+
+          - name: "Performance gcc7"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: performance
             build_type: Release
-          }
-        - {
-            name: "Documentation",
+
+          - name: "Header gcc7"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: header
+            build_type: Release
+
+          - name: "Snippet gcc7"
+            requires_ubuntu_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: snippet
+            build_type: Release
+
+          - name: "Documentation"
+            requires_ubuntu_toolchain: false
+            requires_ccache: false
             build: documentation
-          }
 
     steps:
       - name: Checkout
@@ -110,7 +119,7 @@ jobs:
           echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" # Only available in subsequent steps!
 
       - name: Setup Doxygen
-        if: matrix.config.build == 'documentation'
+        if: matrix.build == 'documentation'
         shell: bash
         run: |
           sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
@@ -120,44 +129,29 @@ jobs:
           echo "::add-path::/tmp/doxygen-${DOXYGEN_VERSION}/bin" # Only available in subsequent steps!
 
       - name: Add package source
-        if: matrix.config.build != 'documentation'
+        if: matrix.requires_ubuntu_toolchain
         shell: bash
         run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
 
       - name: Install ccache
-        if: matrix.config.build != 'documentation'
+        if: matrix.requires_ccache
         shell: bash
         run: sudo apt-get install --yes ccache
 
-      - name: Install GCC 7
-        if: matrix.config.cxx == 'g++-7'
+      - name: Install compiler ${{ matrix.cxx }}
+        if: matrix.requires_ubuntu_toolchain
         shell: bash
-        run: sudo apt-get install --yes g++-7
-
-      - name: Install GCC 8
-        if: matrix.config.cxx == 'g++-8'
-        shell: bash
-        run: sudo apt-get install --yes g++-8
-
-      - name: Install GCC 9
-        if: matrix.config.cxx == 'g++-9'
-        shell: bash
-        run: sudo apt-get install --yes g++-9
-
-      - name: Install GCC 10
-        if: matrix.config.cxx == 'g++-10'
-        shell: bash
-        run: sudo apt-get install --yes g++-10
+        run: sudo apt-get install --yes ${{ matrix.cxx }}
 
       - name: Install lcov
-        if: matrix.config.build == 'coverage'
+        if: matrix.build == 'coverage'
         shell: bash
         run: |
           sudo apt-get install --yes lcov
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
 
       - name: Prepare ccache
-        if: matrix.config.build != 'documentation'
+        if: matrix.requires_ccache
         id: ccache_prepare
         shell: cmake -P {0}
         run: |
@@ -165,36 +159,32 @@ jobs:
           message("::set-output name=timestamp::${current_date}")
 
       - name: Load ccache
-        if: matrix.config.build != 'documentation'
+        if: matrix.requires_ccache
         uses: actions/cache@v1.1.0
         with:
           path: .ccache
-          key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_prepare.outputs.timestamp }}
+          key: ${{ matrix.name }}-ccache-${{ steps.ccache_prepare.outputs.timestamp }}
           restore-keys: |
-            ${{ matrix.config.name }}-ccache-
+            ${{ matrix.name }}-ccache-
 
       - name: Configure tests
         env:
-          CXX: ${{ matrix.config.cxx }}
-          CC: ${{ matrix.config.cc }}
-          CXXFLAGS: ${{ matrix.config.cxxflags }}
-          BUILD: ${{ matrix.config.build }}
-          BUILD_TYPE: ${{ matrix.config.build_type }}
+          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.cc }}
         shell: bash
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_CXX_FLAGS="${CXXFLAGS}"
-          if [[ "${BUILD}" =~ ^(unit|header|snippet|coverage)$ ]]; then
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
+          if [[ "${{ matrix.build }}" =~ ^(unit|header|snippet|coverage)$ ]]; then
             make gtest_project
           fi
-          if [[ "${BUILD}" =~ ^(performance)$ ]]; then
+          if [[ "${{ matrix.build }}" =~ ^(performance)$ ]]; then
             make gbenchmark_project
           fi
 
-      - name: Build and run tests
+      - name: Build tests
         env:
-          BUILD: ${{ matrix.config.build }}
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
@@ -205,26 +195,33 @@ jobs:
           ccache -p || true
           cd seqan3-build
           make -k -j2
-          if [[ "${BUILD}" =~ ^(coverage)$ ]]; then
+          ccache -s || true
+
+      - name: Run tests
+        shell: bash
+        run: |
+          cd seqan3-build
+          if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then
             : ; else
-            if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
+            if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
               ctest . --output-on-failure]; else
               ctest . -j2 --output-on-failure
             fi
           fi
-          ccache -s || true
 
       - name: Submit coverage build
-        if: matrix.config.build == 'coverage'
+        if: matrix.build == 'coverage'
         shell: bash
         run: bash <(curl -s https://codecov.io/bash) -f ./seqan3-build/seqan3_coverage -R ./seqan3 || echo 'Codecov failed to upload'
 
-      - name: Tar documentation
-        if: matrix.config.build == 'documentation'
+      - name: Package documentation
+        if: matrix.build == 'documentation'
+        continue-on-error: true
         run: tar -zcf documentation.tar.gz seqan3-build
 
       - name: Upload documentation
-        if: matrix.config.build == 'documentation'
+        if: matrix.build == 'documentation'
+        continue-on-error: true
         uses: actions/upload-artifact@v2
         with:
           name: documentation
