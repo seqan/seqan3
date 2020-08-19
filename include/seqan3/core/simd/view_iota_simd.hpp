@@ -274,3 +274,21 @@ template <simd_concept index_simd_t>
 inline constexpr detail::iota_simd_view_fn<index_simd_t> iota_simd{};
 
 } // namespace seqan3::views
+
+namespace ranges
+{
+//!\cond
+template <seqan3::simd_concept index_simd_t>
+inline constexpr bool enable_borrowed_range<seqan3::detail::iota_simd_view<index_simd_t>> = true;
+//!\endcond
+} // namespace ranges
+
+#ifdef __cpp_lib_ranges
+namespace std::ranges
+{
+//!\cond
+template <seqan3::simd_concept index_simd_t>
+inline constexpr bool enable_borrowed_range<seqan3::detail::iota_simd_view<index_simd_t>> = true;
+//!\endcond
+} // namespace std::ranges
+#endif // __cpp_lib_ranges

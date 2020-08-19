@@ -62,6 +62,7 @@ TEST(iota_simd_test, concept_checks)
     EXPECT_TRUE(std::ranges::forward_range<iota_simd_view_t>);
     EXPECT_TRUE(std::ranges::common_range<iota_simd_view_t>);
     EXPECT_TRUE(std::ranges::sized_range<iota_simd_view_t>);
+    EXPECT_TRUE(std::ranges::borrowed_range<iota_simd_view_t>);
 }
 
 TEST(iota_simd_test, size)
