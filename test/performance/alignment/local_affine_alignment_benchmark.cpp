@@ -90,8 +90,7 @@ void seqan3_affine_dna4_trace(benchmark::State & state)
 
     for (auto _ : state)
     {
-        auto rng = align_pairwise(std::tie(seq1, seq2), local_affine_cfg |
-                                                        seqan3::align_cfg::result{seqan3::with_alignment});
+        auto rng = align_pairwise(std::tie(seq1, seq2), local_affine_cfg | seqan3::align_cfg::output_alignment);
         *std::ranges::begin(rng);
     }
 
@@ -197,7 +196,7 @@ void seqan3_affine_dna4_trace_collection(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (auto && rng : align_pairwise(vec, local_affine_cfg | seqan3::align_cfg::result{seqan3::with_alignment}))
+        for (auto && rng : align_pairwise(vec, local_affine_cfg | seqan3::align_cfg::output_alignment))
             rng.score();
     }
 

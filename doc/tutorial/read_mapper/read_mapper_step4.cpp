@@ -69,7 +69,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
                                                seqan3::align_cfg::edit_scheme |
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
-                                               seqan3::align_cfg::result{seqan3::with_alignment};
+                                               seqan3::align_cfg::output_alignment;
 
     for (auto && record : query_file_in)
     {
