@@ -144,6 +144,11 @@
  * Trying to access an output which has not been configured, will raise a static assertion
  * informing the developer about the invalid access.
  *
+ * \note Currently, the sequence ids are represented by an internal mechanism and might not refer to the actual id
+ *       of the underlying sequences in the respective alignment, rather it is an ongoing number identifying the
+ *       computed pair of sequences. In the future, there will be a mechanism for the user to specify the id of
+ *       the sequences.
+ *
  * ## Using scoring and gap schemes
  *
  * To compute an alignment a scoring and a gap scheme must be provided which give a "score" for substituting, inserting,

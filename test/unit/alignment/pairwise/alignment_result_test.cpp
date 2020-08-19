@@ -31,22 +31,22 @@ struct alignment_result_test : public ::testing::Test
 {};
 
 using alignment_result_test_types = ::testing::Types
-      <seqan3::detail::alignment_result_value_type<uint32_t, int32_t,
+      <seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::pair<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, int32_t,
+       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::tuple<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, int32_t,
+       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::vector<aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, float,
+       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::pair<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, float,
+       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::tuple<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, float,
+       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
                                                    std::pair<size_t, size_t>, std::pair<size_t, size_t>,
                                                    std::vector<aligned_seq_type>>>;
 
@@ -69,21 +69,28 @@ TYPED_TEST(alignment_result_test, constructor)
 
 TYPED_TEST(alignment_result_test, get_id)
 {
-    using id_t = decltype(std::declval<TypeParam>().id);
+    using id1_t = decltype(std::declval<TypeParam>().sequence1_id);
+    using id2_t = decltype(std::declval<TypeParam>().sequence2_id);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), id_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).id()), id_t>));
-        EXPECT_EQ(tmp.id(), 1u);
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), id1_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), id2_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).sequence1_id()), id1_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).sequence2_id()), id2_t>));
+        EXPECT_EQ(tmp.sequence1_id(), 1u);
+        EXPECT_EQ(tmp.sequence2_id(), 2u);
     }
 
     {
-        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.id(), 1u);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), id_t>));
-        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).id()), id_t>));
+        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        EXPECT_EQ(tmp.sequence1_id(), 1u);
+        EXPECT_EQ(tmp.sequence2_id(), 2u);
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), id1_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), id2_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).sequence1_id()), id1_t>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).sequence2_id()), id2_t>));
     }
 }
 
@@ -93,14 +100,14 @@ TYPED_TEST(alignment_result_test, get_score)
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.score(), 0);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), score_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).score()), score_t>));
     }
 
     {
-        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.score(), 0);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), score_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).score()), score_t>));
@@ -113,7 +120,7 @@ TYPED_TEST(alignment_result_test, end_positions)
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.sequence1_end_position(), 10ul);
         EXPECT_EQ(tmp.sequence2_end_position(), 10ul);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), size_t>));
@@ -123,7 +130,7 @@ TYPED_TEST(alignment_result_test, end_positions)
     }
 
     {
-        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.sequence1_end_position(), 10ul);
         EXPECT_EQ(tmp.sequence2_end_position(), 10ul);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), size_t>));
@@ -138,7 +145,7 @@ TYPED_TEST(alignment_result_test, begin_positions)
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.sequence1_begin_position(), 0ul);
         EXPECT_EQ(tmp.sequence2_begin_position(), 0ul);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_begin_position()), size_t>));
@@ -148,7 +155,7 @@ TYPED_TEST(alignment_result_test, begin_positions)
     }
 
     {
-        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.sequence1_begin_position(), 0ul);
         EXPECT_EQ(tmp.sequence2_begin_position(), 0ul);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_begin_position()), size_t>));
@@ -164,14 +171,14 @@ TYPED_TEST(alignment_result_test, alignment)
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.alignment(), (alignment_t{seq, seq}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), alignment_t const &>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
     }
 
     {
-        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> const tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.alignment(), (alignment_t{seq, seq}));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), alignment_t const &>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).alignment()), alignment_t const &>));
@@ -179,7 +186,7 @@ TYPED_TEST(alignment_result_test, alignment)
 
     if constexpr (seqan3::tuple_like<alignment_t>)
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(std::get<0>(tmp.alignment()) | seqan3::views::persist
                                                | seqan3::views::to_char
                                                | seqan3::views::to<std::string>,
@@ -191,7 +198,7 @@ TYPED_TEST(alignment_result_test, alignment)
     }
     else
     {
-        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
+        seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
         EXPECT_EQ(tmp.alignment()[0] | seqan3::views::persist | seqan3::views::to_char | seqan3::views::to<std::string>,
                   "AT-C--A");
         EXPECT_EQ(tmp.alignment()[1] | seqan3::views::persist | seqan3::views::to_char | seqan3::views::to<std::string>,
@@ -202,26 +209,32 @@ TYPED_TEST(alignment_result_test, alignment)
 TEST(alignment_result_test, reduced_type)
 {
     {
-        seqan3::detail::alignment_result_value_type tr{2u, 5};
+        seqan3::detail::alignment_result_value_type tr{2u, 4u, 5};
         seqan3::alignment_result tmp(tr);
-        EXPECT_EQ(tmp.id(), 2u);
+        EXPECT_EQ(tmp.sequence1_id(), 2u);
+        EXPECT_EQ(tmp.sequence2_id(), 4u);
         EXPECT_EQ(tmp.score(), 5);
     }
 
     {
-        seqan3::detail::alignment_result_value_type tr{2, 5.0f, std::pair<int, int>{1, -1}};
+        seqan3::detail::alignment_result_value_type tr{2, 4u, 5.0f, std::pair<int, int>{1, -1}};
         seqan3::alignment_result tmp(tr);
-        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_EQ(tmp.sequence1_id(), 2);
+        EXPECT_EQ(tmp.sequence2_id(), 4u);
         EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
         EXPECT_EQ((tmp.sequence1_end_position()), 1);
         EXPECT_EQ((tmp.sequence2_end_position()), -1);
     }
 
     {
-        seqan3::detail::alignment_result_value_type tr{2, 5.0f, std::pair<int, int>{1, -1}, std::pair<int, int>{10,
-                                                                                                                -10}};
+        seqan3::detail::alignment_result_value_type tr{2,
+                                                       4u,
+                                                       5.0f,
+                                                       std::pair<int, int>{1, -1},
+                                                       std::pair<int, int>{10, -10}};
         seqan3::alignment_result tmp(tr);
-        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_EQ(tmp.sequence1_id(), 2);
+        EXPECT_EQ(tmp.sequence2_id(), 4u);
         EXPECT_FLOAT_EQ(tmp.score(), 5.0f);
         EXPECT_EQ((tmp.sequence1_end_position()), 1);
         EXPECT_EQ((tmp.sequence2_end_position()), -1);
@@ -242,9 +255,10 @@ TEST(alignment_result_test, type_deduction)
                                                       seqan3::gap{},
                                                       'A'_rna5};
 
-        seqan3::detail::alignment_result_value_type tr{2, 5.0, coord_t{1, -1}, coord_t{10,-10}, seq};
+        seqan3::detail::alignment_result_value_type tr{2, 4, 5.0, coord_t{1, -1}, coord_t{10,-10}, seq};
         seqan3::alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), int>));
@@ -252,7 +266,8 @@ TEST(alignment_result_test, type_deduction)
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_begin_position()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.alignment()), std::vector<seqan3::gapped<seqan3::rna5>> const &>));
 
-        EXPECT_EQ(tmp.id(), 2);
+        EXPECT_EQ(tmp.sequence1_id(), 2);
+        EXPECT_EQ(tmp.sequence2_id(), 4);
         EXPECT_DOUBLE_EQ(tmp.score(), 5.0);
         EXPECT_EQ((tmp.sequence1_end_position()), 1);
         EXPECT_EQ((tmp.sequence2_end_position()), -1);
@@ -264,18 +279,20 @@ TEST(alignment_result_test, type_deduction)
     {
         using coord_t = std::pair<int, int>;
 
-        seqan3::detail::alignment_result_value_type tr{2, 5.0, coord_t{1, -1}};
+        seqan3::detail::alignment_result_value_type tr{2, 4, 5.0, coord_t{1, -1}};
         seqan3::alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_end_position()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_end_position()), int>));
     }
 
     {
-        seqan3::detail::alignment_result_value_type tr{2, 5.0};
+        seqan3::detail::alignment_result_value_type tr{2, 3, 5.0};
         seqan3::alignment_result tmp(tr);
-        EXPECT_TRUE((std::is_same_v<decltype(tmp.id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), int>));
+        EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), double>));
     }
 }
@@ -289,7 +306,7 @@ TEST(alignment_result_test, empty_type)
 
 TEST(alignment_result_test, access_result_value_type)
 {
-    seqan3::detail::alignment_result_value_type result_value{2u, 5};
+    seqan3::detail::alignment_result_value_type result_value{2u, 4u, 5};
     seqan3::alignment_result result(result_value);
 
     using result_value_t = typename seqan3::detail::alignment_result_value_type_accessor<decltype(result)>::type;

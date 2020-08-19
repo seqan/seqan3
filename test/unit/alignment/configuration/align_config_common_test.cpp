@@ -16,7 +16,7 @@ template <typename T>
 class alignment_configuration_test : public ::testing::Test
 {};
 
-using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int>>;
+using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int, int>>;
 
 using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
                                     seqan3::align_cfg::band_fixed_size,
