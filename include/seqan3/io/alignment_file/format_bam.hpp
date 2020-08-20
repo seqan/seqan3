@@ -814,7 +814,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
                         if constexpr (std::ranges::contiguous_range<decltype(id_source)> &&
                                       std::ranges::sized_range<decltype(id_source)> &&
-                                      forwarding_range<decltype(id_source)>)
+                                      std::ranges::borrowed_range<decltype(id_source)>)
                         {
                             id_it = header.ref_dict.find(std::span{std::ranges::data(id_source),
                                                                    std::ranges::size(id_source)});
