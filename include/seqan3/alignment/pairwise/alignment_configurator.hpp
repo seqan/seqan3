@@ -123,9 +123,9 @@ public:
             using scoring_type = std::remove_reference_t<
                                     decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(scoring_scheme<scoring_type,
-                                                   std::ranges::range_value_t<first_seq_t>,
-                                                   std::ranges::range_value_t<second_seq_t>>);
+            return static_cast<bool>(scoring_scheme_for<scoring_type,
+                                                        std::ranges::range_value_t<first_seq_t>,
+                                                        std::ranges::range_value_t<second_seq_t>>);
         }
         else
         {
