@@ -26,7 +26,7 @@ namespace seqan3::detail
 struct vectorised_tag : public pipeable_config_element<vectorised_tag>
 {
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::vectorised};
+    static constexpr align_config_id id{align_config_id::vectorised};
 };
 
 } // namespace seqan3::detail
