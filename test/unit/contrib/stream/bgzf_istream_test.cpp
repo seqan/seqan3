@@ -15,6 +15,8 @@ template <>
 class istream<seqan3::contrib::bgzf_istream> : public ::testing::Test
 {
 public:
+    static constexpr bool zero_out_os_byte = false;
+
     static inline std::string compressed
     {
         '\x1F', '\x8B', '\x08', '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xFF', '\x06', '\x00', '\x42', '\x43',

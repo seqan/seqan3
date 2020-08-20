@@ -15,6 +15,8 @@ template <>
 class ostream<seqan3::contrib::bz2_ostream> : public ::testing::Test
 {
 public:
+    static constexpr bool zero_out_os_byte = false;
+
     static inline std::string compressed
     {
         '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\x45','\x9D','\xEE','\x61','\x00','\x00',
