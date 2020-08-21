@@ -5,7 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <cmath>
 #include <type_traits>
+#include <version>
+
+#ifdef __cpp_lib_int_pow2
+#include <bit>
+#endif
 
 #include <gtest/gtest.h>
 
@@ -39,11 +45,17 @@ TEST(bit_manipulation, is_power_of_two)
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
         EXPECT_TRUE(seqan3::detail::is_power_of_two(power_of_two));
+#ifdef __cpp_lib_int_pow2
+        EXPECT_TRUE(std::has_single_bit(power_of_two));
+#endif // __cpp_lib_int_pow2
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
             EXPECT_FALSE(seqan3::detail::is_power_of_two(i)) << i << " should not be a power of two.";
+#ifdef __cpp_lib_int_pow2
+            EXPECT_FALSE(std::has_single_bit(i));
+#endif // __cpp_lib_int_pow2
         }
     }
 }
@@ -62,12 +74,18 @@ TEST(bit_manipulation, next_power_of_two)
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
         EXPECT_EQ(seqan3::detail::next_power_of_two(power_of_two), power_of_two);
+#ifdef __cpp_lib_int_pow2
+        EXPECT_EQ(std::bit_ceil(power_of_two), power_of_two);
+#endif // __cpp_lib_int_pow2
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
             EXPECT_EQ(seqan3::detail::next_power_of_two(i), next_power) << "The next power of two of " << i
                                                                         << " should be " << next_power;
+#ifdef __cpp_lib_int_pow2
+            EXPECT_EQ(std::bit_ceil(i), next_power);
+#endif // __cpp_lib_int_pow2
         }
     }
 }
@@ -106,6 +124,9 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
                                                    << position;
             EXPECT_EQ(seqan3::detail::most_significant_bit_set(n), position) << "The position of the msb of " << n
                                                                              << " should be " << position;
+#ifdef __cpp_lib_int_pow2
+            EXPECT_EQ(std::bit_width(n), position + 1u);
+#endif // __cpp_lib_int_pow2
         }
     }
 }
@@ -137,6 +158,9 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
                                                                                           << " leading zeros.";
             EXPECT_EQ(seqan3::detail::count_leading_zeros(n), cnt) << "n " << n << " should have " << cnt
                                                                    << " leading zeros.";
+#ifdef __cpp_lib_int_pow2
+            EXPECT_EQ(std::countl_zero(n), cnt);
+#endif // __cpp_lib_int_pow2
         }
     }
 }
@@ -166,6 +190,9 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
             EXPECT_EQ(sdsl::bits::lo(n), cnt) << "[SDSL] n " << n << " should have " << cnt << " trailing zeros.";
             EXPECT_EQ(seqan3::detail::count_trailing_zeros(n), cnt) << "n " << n << " should have " << cnt
                                                                     << " trailing zeros.";
+#ifdef __cpp_lib_int_pow2
+            EXPECT_EQ(std::countr_zero(n), cnt);
+#endif // __cpp_lib_int_pow2
         }
     }
 }
@@ -216,6 +243,9 @@ TYPED_TEST(unsigned_operations, popcount)
             EXPECT_EQ(seqan3::detail::popcount(n),
                       sizeof_bits_of_unsigned_t - position) << "The pocount of " << n << " should be "
                                                             << sizeof_bits_of_unsigned_t - position;
+#ifdef __cpp_lib_int_pow2
+            EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position);
+#endif // __cpp_lib_int_pow2
         }
     }
 }
