@@ -80,6 +80,40 @@ TYPED_TEST(single_pass_input, view_concept)
     EXPECT_FALSE(std::ranges::random_access_range<view_t>);
 }
 
+TYPED_TEST(single_pass_input, deduction_guide_lvalue)
+{
+    TypeParam data_container{this->data};
+
+    EXPECT_TRUE((std::ranges::viewable_range<TypeParam &>));
+
+    // this is
+    std::views::all_t<TypeParam &> data_view{data_container};
+    seqan3::detail::single_pass_input_view<decltype(data_view)> v1{data_view};
+
+    // same as
+    seqan3::detail::single_pass_input_view v2{data_container};
+
+    EXPECT_TRUE((std::same_as<decltype(v1), decltype(v2)>));
+}
+
+TYPED_TEST(single_pass_input, deduction_guide_view)
+{
+    auto data_view = TypeParam{this->data} | seqan3::views::persist;
+
+    using uview_t = decltype(data_view);
+    EXPECT_TRUE((std::ranges::viewable_range<uview_t>));
+    EXPECT_TRUE((std::ranges::view<uview_t>));
+
+    // this is
+    std::views::all_t<uview_t> data_all_view{data_view};
+
+    // same as
+    seqan3::detail::single_pass_input_view<decltype(data_all_view)> v1{data_all_view};
+    seqan3::detail::single_pass_input_view v2{std::move(data_view)};
+
+    EXPECT_TRUE((std::same_as<decltype(v1), decltype(v2)>));
+}
+
 TYPED_TEST(single_pass_input, view_construction)
 {
     using rng_t = decltype(std::declval<TypeParam>() | seqan3::views::persist);
