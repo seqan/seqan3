@@ -84,6 +84,7 @@ SeqAn has the following test suites:
   * snippet: tests the buildability of code snippets inside the documentation
   * header: tests that every header includes all required headers and detects linkage issues
   * performance: contains microbenchmarks
+  * macro_benchmark: contains macrobenchmarks
 
 If your unit tests pass and you submit a pull request, our continuous integration builds also run the other test suites.
 You might encounter failures in one of them in which case you need to also setup that test suite to fix your problems
