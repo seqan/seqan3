@@ -68,7 +68,7 @@
  * namespace called seqan3::align_cfg. This namespace is used to disambiguate configurations for the
  * alignment algorithm with configurations from other algorithms in SeqAn.
  * To compute a pairwise alignment at least two configuration elements must be provided, namely the
- * the alignment method and the seqan3::align_cfg::scoring.
+ * the alignment method and the seqan3::align_cfg::scoring_scheme.
  *
  * ### Combining configuration elements
  *
@@ -78,47 +78,70 @@
  * types cannot be printed within the static assert, but the following table shows which combinations are possible.
  * In general, the same configuration element cannot occur more than once inside of a configuration specification.
  *
- * | **Config**                                               | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** |
- * |:---------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
- * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"   |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::band_fixed_size "1: Band"        |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"              |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::max_error "3: Max error"         |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::method_global "4: Method global" |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::method_local "5: Method local"   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::parallel "6: Parallel"           |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::result "7: Result"               |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::scoring "8: Scoring scheme"      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
- * | \ref seqan3::align_cfg::vectorised "9: Vectorised"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+ * | **Config**                                                                  | **0** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** | **10** | **11** | **12** | **13** | **14** | **15** |
+ * |:----------------------------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:------:|:------:|:------:|:------:|:------:|:------:|
+ * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"                      |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::band_fixed_size "1: Band"                           |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::gap "2: Gap scheme"                                 |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::max_error "3: Max error"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_global "4: Method global"                    |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::method_local "5: Method local"                      |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_alignment "6: Alignment output"              |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_end_position "7: End positions output"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_begin_position "8: Begin positions output"   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_score "9: Score output"                      |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_sequence1_id "10: Sequence1 id output"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::output_sequence2_id "11: Sequence2 id output"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::parallel "12: Parallel"                             |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::result "13: Result"                                 |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::scoring_scheme "14: Scoring scheme"                 |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
+ * | \ref seqan3::align_cfg::vectorised "15: Vectorised"                         |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
  *
  * \if DEV
- * There is an additional configuration element \ref seqan3::align_cfg::debug "Debug", which enables the output of the
- * alignment matrices from the DP algorithm using the returned seqan3::alignment_result. It is compatible with all
- * other configuration elements.
+ * There is an additional configuration element \ref seqan3::align_cfg::detail::debug "Debug", which enables the output
+ * of the alignment matrices from the DP algorithm using the returned seqan3::alignment_result. It is compatible with
+ * all other configuration elements.
  * \endif
  *
- * ## Accessing the computed alignment
+ * ## Accessing the alignment results
+ * \anchor seqan3_align_cfg_output_configurations
  *
- * The seqan3::align_pairwise interface returns a seqan3::algorithm_result_generator_range. This range is a single pass range over
- * the computed alignments and the range's element types are seqan3::alignment_result objects.
+ * The seqan3::align_pairwise interface returns a seqan3::algorithm_result_generator_range. This range is a single pass
+ * range over the computed alignments and the range's element types are seqan3::alignment_result objects.
  * Even if only a single alignment is computed a range will be returned since it could be possible that
  * one alignment invocation produces multiple results, e.g. to receive suboptimal alignments.
- * The seqan3::alignment_result object contains only the information that has been requested via the alignment
- * configuration. The seqan3::align_cfg::result configuration element allows to limit the parts that are computed
- * in the alignment algorithm. The following table shows the parts that are computed depending on the
- * seqan3::align_cfg::result configuration:
+ * The seqan3::alignment_result object contains only the information that has been requested via the `output`
+ * configuration. The algorithm will then choose the most efficient implementation to
+ * compute the requested outputs.
+ * The following table shows the different output configurations:
  *
- * | **Entity**                                                                   | **Available result**                                  |
- * | -----------------------------------------------------------------------------|------------------------------------------------------ |
- * | \ref seqan3::align_cfg::result::with_score  "with_score"                     | alignment score                                       |
- * | \ref seqan3::align_cfg::result::with_end_positions  "with_end_positions"     | alignment score; back coordinate                      |
- * | \ref seqan3::align_cfg::result::with_begin_positions  "with_begin_positions" | alignment score; back and front coordinate            |
- * | \ref seqan3::align_cfg::result::with_alignment  "with_alignment"             | alignment score; back and front coordinate; alignment |
+ * | **Output option**                                                                        | **Available result**                     |
+ * | -----------------------------------------------------------------------------------------|------------------------------------------|
+ * | \ref seqan3::align_cfg::output_score "seqan3::align_cfg::output_score"                   | alignment score                          |
+ * | \ref seqan3::align_cfg::output_end_position "seqan3::align_cfg::output_end_position"     | end positions of the aligned sequences   |
+ * | \ref seqan3::align_cfg::output_begin_position "seqan3::align_cfg::output_begin_position" | begin positions of the aligned sequences |
+ * | \ref seqan3::align_cfg::output_alignment "seqan3::align_cfg::output_alignment"           | alignment of the two sequences           |
+ * | \ref seqan3::align_cfg::output_sequence1_id "seqan3::align_cfg::output_sequence1_id"     | id of the first sequence                 |
+ * | \ref seqan3::align_cfg::output_sequence2_id "seqan3::align_cfg::output_sequence2_id"     | id of the second sequence                |
  *
- * The back coordinate stores the end of the alignment within both sequences. Note that theses positions are
- * inclusive. The front coordinate stores the begin of the alignment part in both sequences.
- * With the last option the complete alignment is computed. If seqan3::align_cfg::result is not specified only the
- * score is available. Accessing one of the results that have not been requested will trigger a static assertion
+ * The begin and end positions refer to the begin and end positions of the slices of the original sequences that are
+ * aligned. For example, the positions reported for the global alignment correspond to the positions
+ * of the original sequences since the the entire sequences are encompassed by the global alignment.
+ * In case of a local alignment the aligned part might only encompass a part of the original sequences.
+ * In this case, the begin and end positions denote the begin and end of the slices of the original sequences that are
+ * aligned.
+ * To obtain the actual alignment the option seqan3::align_cfg::output_alignment has to be specified.
+ * The options can be combiend with each other in order to customise the alignment algorithm and the respective output
+ * of the alignment. For example computing the alignment will always incur some run time penalty compared to just
+ * computing the score.
+ * See the following snippet for some examples:
+ *
+ * \include test/snippet/alignment/configuration/align_cfg_output_examples.cpp
+ *
+ * If none of the above configuration was set by the user, then all output options will be enabled by default, i.e.
+ * the alignment algorithm will compute every output. Otherwise, if any of the output configurations was set
+ * by the user, then only the configured ones are available in the final seqan3::alignment_result.
+ * Trying to access an output which has not been configured, will raise a static assertion
  * informing the developer about the invalid access.
  *
  * ## Using scoring and gap schemes
@@ -147,9 +170,9 @@
  * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
  * add completely different types, as long as they model seqan3::scoring_scheme.
  *
- * The scoring scheme can be configured with the seqan3::align_cfg::scoring element. Since the scoring scheme is
+ * The scoring scheme can be configured with the seqan3::align_cfg::scoring_scheme element. Since the scoring scheme is
  * strongly coupled on the sequences to be aligned it can not be defaulted. Thus, it is mandatory for the
- * the developer to specify the seqan3::align_cfg::scoring configuration.
+ * the developer to specify the seqan3::align_cfg::scoring_scheme configuration.
  *
  * ### Scoring gaps
  *
@@ -193,7 +216,8 @@
  * special combinations of parameters a notably faster algorithm is available.
  * It is automatically selected if all of the following requirements are satisfied:
  *  * Edit distance gaps, i.e. seqan3::align_cfg::gap is initialised with default initialised seqan3::gap_scheme
- *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring is initialised with default initialised seqan3::nucleotide_scoring_scheme.
+ *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
+ *   initialised with default initialised seqan3::nucleotide_scoring_scheme.
  *  * Global alignment, i.e. seqan3::align_cfg::method_global.
  *
  * There is a special shortcut for the above required scoring/gap configs called seqan3::align_cfg::edit_scheme,

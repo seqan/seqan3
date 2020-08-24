@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
@@ -29,7 +29,7 @@ TYPED_TEST_SUITE(align_confg_scoring_test, test_types, );
 TYPED_TEST(align_confg_scoring_test, config_element_specialisation)
 {
     using scheme_t = typename TestFixture::scheme_t;
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring<scheme_t>>));
+    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
 }
 
 TYPED_TEST(align_confg_scoring_test, configuration)
@@ -37,17 +37,23 @@ TYPED_TEST(align_confg_scoring_test, configuration)
     using alph_t   = typename TestFixture::alph_t;
     using scheme_t = typename TestFixture::scheme_t;
     {
-        seqan3::align_cfg::scoring elem{scheme_t{}};
+        seqan3::align_cfg::scoring_scheme elem{scheme_t{}};
         seqan3::configuration cfg{elem};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring>(cfg).value.score(seqan3::assign_char_to('a', alph_t{}),
-                                                                            seqan3::assign_char_to('a', alph_t{}))), 0);
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).value.score(seqan3::assign_char_to('a',
+                                                                                                          alph_t{}),
+                                                                                   seqan3::assign_char_to('a',
+                                                                                                          alph_t{}))),
+                  0);
     }
 
     {
-        seqan3::configuration cfg{seqan3::align_cfg::scoring{scheme_t{}}};
+        seqan3::configuration cfg{seqan3::align_cfg::scoring_scheme{scheme_t{}}};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring>(cfg).value.score(seqan3::assign_char_to('a', alph_t{}),
-                                                                            seqan3::assign_char_to('c', alph_t{}))), -1);
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).value.score(seqan3::assign_char_to('a',
+                                                                                                          alph_t{}),
+                                                                                   seqan3::assign_char_to('c',
+                                                                                                          alph_t{}))),
+                  -1);
     }
 }

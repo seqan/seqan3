@@ -17,7 +17,7 @@
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 
@@ -35,7 +35,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::detail::method_local_tag,
                                     seqan3::align_cfg::parallel,
                                     seqan3::align_cfg::result<>,
-                                    seqan3::align_cfg::scoring<seqan3::nucleotide_scoring_scheme<int8_t>>,
+                                    seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
                                     seqan3::detail::vectorised_tag,
                                     seqan3::detail::alignment_result_capture_element<alignment_result_t>>;
 
@@ -62,7 +62,7 @@ TEST(alignment_configuration_test, symmetric_configuration)
 TEST(alignment_configuration_test, number_of_configs)
 {
     // NOTE(rrahn): You must update this test if you add a new value to seqan3::align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 13);
+    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 19);
 }
 
 TYPED_TEST(alignment_configuration_test, config_element_specialisation)

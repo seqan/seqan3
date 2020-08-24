@@ -12,7 +12,7 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
@@ -30,6 +30,8 @@ namespace seqan3::test::alignment::fixture::global::affine::banded
 inline constexpr auto align_config = seqan3::align_cfg::method_global{} |
                                      seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                                seqan3::gap_open_score{-10}}};
+inline constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                          seqan3::mismatch_score{-5}};
 
 static auto dna4_01 = []()
 {   //    AACCGGTTAACCGGTT
@@ -50,8 +52,7 @@ static auto dna4_01 = []()
         "ACGTACGTA"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
                                                           seqan3::align_cfg::upper_diagonal{8}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                    seqan3::mismatch_score{-5}}},
+                       seqan3::align_cfg::scoring_scheme{nt_score_scheme},
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",
@@ -107,7 +108,7 @@ static auto dna4_same_sequence_upper_diagonal_0 = []()
         "ACGTACGTA"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
                                                           seqan3::align_cfg::upper_diagonal{0}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                       seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         36,
         "ACGTACGTA",
@@ -164,7 +165,7 @@ static auto dna4_same_sequence_lower_diagonal_0 = []()
         "ACGTACGTA"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
                                                           seqan3::align_cfg::upper_diagonal{8}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                       seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         36,
         "ACGTACGTA",
@@ -221,7 +222,7 @@ static auto dna4_small_band = []()
         "ACGACTAGC"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-2},
                                                           seqan3::align_cfg::upper_diagonal{2}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                       seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         -2,
         "ATCGACGATA",
@@ -275,7 +276,7 @@ static auto dna4_single_diagonal = []()
         "ACGAC"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{0},
                                                           seqan3::align_cfg::upper_diagonal{0}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                       seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         -16,
         "ATCGA",
@@ -321,7 +322,7 @@ static auto dna4_large_band = []()
         "ACGAC"_dna4,
         align_config | seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10},
                                                           seqan3::align_cfg::upper_diagonal{10}} |
-                       seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                       seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                     seqan3::mismatch_score{-5}}},
         -6,
         "ATCGA-",

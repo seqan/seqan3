@@ -18,6 +18,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
+#include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
@@ -117,14 +118,14 @@ public:
     //!\brief Tests whether the scoring scheme is set and can be invoked with the sequences passed.
     constexpr static bool expects_valid_scoring_scheme()
     {
-        if constexpr (alignment_config_type::template exists<align_cfg::scoring>())
+        if constexpr (alignment_config_type::template exists<align_cfg::scoring_scheme>())
         {
             using scoring_type = std::remove_reference_t<
-                                    decltype(get<align_cfg::scoring>(std::declval<alignment_config_type>()).value)
+                                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).value)
                                  >;
-            return static_cast<bool>(scoring_scheme<scoring_type,
-                                                   std::ranges::range_value_t<first_seq_t>,
-                                                   std::ranges::range_value_t<second_seq_t>>);
+            return static_cast<bool>(scoring_scheme_for<scoring_type,
+                                                        std::ranges::range_value_t<first_seq_t>,
+                                                        std::ranges::range_value_t<second_seq_t>>);
         }
         else
         {
@@ -158,7 +159,8 @@ private:
     {
     private:
         //!\brief Indicates whether only the coordinate is required to compute the alignment.
-        static constexpr bool only_coordinates = traits_t::result_type_rank < with_begin_positions_type::rank;
+        static constexpr bool only_coordinates = !(traits_t::compute_begin_positions ||
+                                                   traits_t::compute_sequence_alignment);
 
         //!\brief The selected score matrix for either banded or unbanded alignments.
         using score_matrix_t = std::conditional_t<traits_t::is_banded,
@@ -266,6 +268,9 @@ public:
         }
         else
         {
+            auto config_with_output = maybe_default_output(cfg);
+            using config_with_output_t = decltype(config_with_output);
+
             // ----------------------------------------------------------------------------
             // Configure the type-erased alignment function.
             // ----------------------------------------------------------------------------
@@ -283,20 +288,20 @@ public:
             // Select the result type based on the sequences and the configuration.
             using alignment_result_value_t = typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
                                                                             std::remove_reference_t<wrapped_second_t>,
-                                                                            config_t>::type;
+                                                                            config_with_output_t>::type;
             using alignment_result_t = alignment_result<alignment_result_value_t>;
             using callback_on_result_t = std::function<void(alignment_result_t)>;
             // Define the function wrapper type.
             using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
             // Capture the alignment result type.
-            auto config_with_result_type = cfg | align_cfg::alignment_result_capture<alignment_result_t>;
+            auto config_with_result_type = config_with_output | align_cfg::alignment_result_capture<alignment_result_t>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
             // ----------------------------------------------------------------------------
 
-            using alignment_contract_t = alignment_contract<sequences_t, config_t>;
+            using alignment_contract_t = alignment_contract<sequences_t, config_with_output_t>;
 
             static_assert(alignment_contract_t::expects_alignment_configuration(),
                           "Alignment configuration error: "
@@ -318,7 +323,7 @@ public:
 
             // Use default edit distance if gaps are not set.
             auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
-            auto const & scoring_scheme = get<align_cfg::scoring>(cfg).value;
+            auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
             auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
             if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
@@ -358,6 +363,31 @@ public:
     }
 
 private:
+    /*!\brief Adds maybe the default output arguments if the user did not provide any.
+     *
+     * \tparam config_t The original type of the alignment configuration.
+     *
+     * \param[in] config The original user configuration to check.
+     *
+     * \returns Either the original config if the user specified any output configuration or a new config with all
+     *          output options enabled.
+     */
+    template <typename config_t>
+    static constexpr auto maybe_default_output(config_t const & config) noexcept
+    {
+        using traits_t = alignment_configuration_traits<config_t>;
+
+        if constexpr (traits_t::has_output_configuration)
+            return config;
+        else
+            return config | align_cfg::output_score |
+                            align_cfg::output_begin_position |
+                            align_cfg::output_end_position |
+                            align_cfg::output_alignment |
+                            align_cfg::output_sequence1_id |
+                            align_cfg::output_sequence2_id;
+    }
+
     /*!\brief Configures the edit distance algorithm.
      * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
      * \tparam config_t           The alignment configuration type.
@@ -482,7 +512,7 @@ private:
      * \details
      *
      * The correct scoring scheme is selected based on the vectorisation mode. If no vectorisation is enabled, the
-     * scoring scheme is the one configured in seqan3::align_config::scoring. If vectorisation is enabled, then the
+     * scoring scheme is the one configured in seqan3::align_cfg::scoring. If vectorisation is enabled, then the
      * appropriate scoring scheme for the vectorised alignment algorithm is selected. This involves checking whether the
      * passed scoring scheme is a matrix or a simple scoring scheme, which has only mismatch and match costs.
      */
@@ -513,12 +543,12 @@ private:
         // macrobenchmarks to show that it maintains a high performance.
 
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                       // it is a local alignment,
-                      traits_t::is_debug ||                                       // it runs in debug mode,
-                      traits_t::result_type_rank > 1 ||                           // it computes more than the end position.
-                     (traits_t::is_banded && traits_t::result_type_rank > 0) ||   // banded and end coordinate
-                     (traits_t::is_vectorised && traits_t::is_banded) ||          // it is vectorised and banded,
-                     (traits_t::is_vectorised && traits_t::result_type_rank > 0)) // simd and more than the score.
+        if constexpr (traits_t::is_local ||                                                         // it is a local alignment,
+                      traits_t::is_debug ||                                                         // it runs in debug mode,
+                     (traits_t::compute_begin_positions || traits_t::compute_sequence_alignment) || // it computes more than the end position.
+                     (traits_t::is_banded && traits_t::compute_end_positions) ||                    // banded
+                     (traits_t::is_vectorised && traits_t::is_banded) ||                            // it is vectorised and banded,
+                     (traits_t::is_vectorised && traits_t::compute_end_positions))                  // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;

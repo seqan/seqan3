@@ -161,7 +161,7 @@ SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyab
  * \brief       A type that satisfies seqan3::trivially_copyable and seqan3::trivially_destructible.
  * \extends     seqan3::trivially_copyable
  * \extends     seqan3::trivially_destructible
- * \sa          https://en.cppreference.com/w/cpp/experimental/ranges/concepts/copyable
+ * \sa          https://en.cppreference.com/w/cpp/types/is_trivial
  */
 //!\cond
 template <typename t>
@@ -170,7 +170,7 @@ SEQAN3_CONCEPT trivial = trivially_copyable<t> && trivially_destructible<t> && s
 
 /*!\interface   seqan3::standard_layout
  * \brief       Resolves to std::is_standard_layout_v<t>.
- * \sa          https://en.cppreference.com/w/cpp/named_req/standard_layoutType
+ * \sa          https://en.cppreference.com/w/cpp/types/is_standard_layout
  */
 //!\cond
 template <typename t>

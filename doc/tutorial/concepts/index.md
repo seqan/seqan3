@@ -9,7 +9,7 @@ You will learn the terminology used in the context of concepts and how to use Se
 
 This tutorial teaches the very basics of working with concepts. For more background and information on how to implement
 your own concepts, we recommend:
-  * A well-readable [paper](http://www.stroustrup.com/good_concepts.pdf) with motivation and historical background.
+  * A well-readable [paper](https://www.stroustrup.com/good_concepts.pdf) with motivation and historical background.
   * The (rather dense) [documentation on cppreference](https://en.cppreference.com/w/cpp/language/constraints).
 
 # Constraints

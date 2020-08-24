@@ -57,8 +57,8 @@ private:
     static_assert(std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>,
                   "The functor type for views::take_until must model"
                   "std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
-    static_assert(std::boolean<std::result_of_t<fun_t&&(std::ranges::range_reference_t<urng_t>)>>,
-                  "The functor type for views::take_until must return std::boolean.");
+    static_assert(std::convertible_to<std::result_of_t<fun_t&&(std::ranges::range_reference_t<urng_t>)>, bool>,
+                  "The result type of the functor for views::take_until must be a boolean.");
 
     //!\brief The underlying range.
     urng_t urange;

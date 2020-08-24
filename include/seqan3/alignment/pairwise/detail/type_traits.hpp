@@ -20,9 +20,10 @@
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
+#include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
@@ -134,7 +135,7 @@ public:
     //!\brief Flag indicating whether a user provided callback was given.
     static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
     //!\brief The selected scoring scheme.
-    using scoring_scheme_type = decltype(get<align_cfg::scoring>(std::declval<configuration_t>()).value);
+    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).value);
     //!\brief The alphabet of the selected scoring scheme.
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
     //!\brief The selected result type.
@@ -168,13 +169,21 @@ public:
     //!\brief The rank of the selected result type.
     static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_type>().value)::rank);
     //!\brief Flag indicating whether the score shall be computed.
-    static constexpr bool compute_score = result_type_rank >= 0;
-    //!\brief Flag indicating whether the back coordintate shall be computed.
-    static constexpr bool compute_end_positions = result_type_rank >= 1;
-    //!\brief Flag indicating whether the front coordintate shall be computed.
-    static constexpr bool compute_begin_positions = result_type_rank >= 2;
+    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
+    //!\brief Flag indicating whether the end positions shall be computed.
+    static constexpr bool compute_end_positions =
+        configuration_t::template exists<align_cfg::output_end_position_tag>();
+    //!\brief Flag indicating whether the begin positions shall be computed.
+    static constexpr bool compute_begin_positions =
+        configuration_t::template exists<align_cfg::output_begin_position_tag>();
     //!\brief Flag indicating whether the sequence alignment shall be computed.
-    static constexpr bool compute_sequence_alignment = result_type_rank >= 3;
+    static constexpr bool compute_sequence_alignment =
+        configuration_t::template exists<align_cfg::output_alignment_tag>();
+    //!\brief Flag indicating if any output option was set.
+    static constexpr bool has_output_configuration = compute_score ||
+                                                     compute_end_positions ||
+                                                     compute_begin_positions ||
+                                                     compute_sequence_alignment;
     //!\brief The padding symbol to use for the computation of the alignment.
     static constexpr original_score_type padding_symbol =
         static_cast<original_score_type>(1u << (sizeof_bits<original_score_type> - 1));

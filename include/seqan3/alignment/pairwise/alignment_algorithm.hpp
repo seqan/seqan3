@@ -17,7 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
@@ -129,7 +129,7 @@ public:
      */
     explicit constexpr alignment_algorithm(config_t const & cfg) : cfg_ptr{std::make_shared<config_t>(cfg)}
     {
-        this->scoring_scheme = seqan3::get<align_cfg::scoring>(*cfg_ptr).value;
+        this->scoring_scheme = seqan3::get<align_cfg::scoring_scheme>(*cfg_ptr).value;
         this->initialise_alignment_state(*cfg_ptr);
     }
     //!\}
@@ -360,8 +360,8 @@ private:
      *
      * \details
      *
-     * Initialises the debug matrices if the alignment algorithm is running in debug mode. See seqan3::align_cfg::debug
-     * for more information.
+     * Initialises the debug matrices if the alignment algorithm is running in debug mode. See
+     * seqan3::align_cfg::detail::debug for more information.
      */
     template <typename sequence1_t, typename sequence2_t>
     constexpr void initialise_debug_matrices(sequence1_t & sequence1, sequence2_t & sequence2)
@@ -586,8 +586,8 @@ private:
      * 3. The begin positions of the aligned range for the first and second sequence.
      * 4. The alignment between both sequences in the respective aligned region.
      *
-     * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
-     * are stored in the alignment result as well.
+     * If the alignment is run in debug mode (see seqan3::align_cfg::detail::debug) the debug score and optionally trace
+     * matrix are stored in the alignment result as well.
      *
      * Finally, the callback is invoked with the computed alignment result.
      */
@@ -644,7 +644,7 @@ private:
         if constexpr (traits_t::is_debug)
         {
             res.score_debug_matrix = std::move(score_debug_matrix);
-            if constexpr (traits_t::result_type_rank == 3) // compute alignment
+            if constexpr (traits_t::compute_sequence_alignment) // compute alignment
                 res.trace_debug_matrix = std::move(trace_debug_matrix);
         }
 
@@ -671,8 +671,8 @@ private:
      * 3. The begin positions of the aligned range for the first and second sequence.
      * 4. The alignment between both sequences in the respective aligned region.
      *
-     * If the alignment is run in debug mode (see seqan3::align_cfg::debug) the debug score and optionally trace matrix
-     * are stored in the alignment result as well.
+     * If the alignment is run in debug mode (see seqan3::align_cfg::detail::debug) the debug score and optionally trace
+     * matrix are stored in the alignment result as well.
      *
      * Finally, the callback is invoked with each computed alignment result iteratively.
      */
@@ -734,7 +734,7 @@ private:
         }), score_debug_matrix.begin() + offset);
 
         // if traceback is enabled.
-        if constexpr (config_t::template exists<align_cfg::result<with_alignment_type>>())
+        if constexpr (traits_t::compute_sequence_alignment)
         {
             auto trace_matrix_it = trace_debug_matrix.begin() + offset;
             std::ranges::copy(column | std::views::transform([] (auto const & tpl)

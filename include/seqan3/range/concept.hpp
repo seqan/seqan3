@@ -48,21 +48,6 @@ SEQAN3_CONCEPT const_iterable_range =
     (std::ranges::random_access_range<std::remove_const_t<type>> == std::ranges::random_access_range<type const>);
 //!\endcond
 
-/*!\interface seqan3::forwarding_range<>
- * \ingroup range
- * \extends std::ranges::range
- * \brief Specifies a range whose iterators may outlive the range and remain valid.
- * \see https://eel.is/c++draft/range.req
- */
-//!\cond
-template <typename type>
-SEQAN3_CONCEPT forwarding_range = std::ranges::range<type> && requires (type && val)
-{
-    std::ranges::begin(std::forward<type>(val));
-    std::ranges::end(std::forward<type>(val));
-};
-//!\endcond
-
 /*!\interface seqan3::pseudo_random_access_iterator <>
  * \ingroup range
  * \extends   std::forward_iterator

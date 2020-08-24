@@ -754,7 +754,7 @@ inline void format_sam::write_alignment_record(stream_type & stream,
 
             if constexpr (std::ranges::contiguous_range<decltype(ref_id)> &&
                           std::ranges::sized_range<decltype(ref_id)> &&
-                          forwarding_range<decltype(ref_id)>)
+                          std::ranges::borrowed_range<decltype(ref_id)>)
             {
                 id_it = header.ref_dict.find(std::span{std::ranges::data(ref_id), std::ranges::size(ref_id)});
             }

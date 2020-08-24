@@ -42,7 +42,7 @@ namespace seqan3::detail
  */
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t, typename scoring_scheme_t>
 //!\cond
-    requires scoring_scheme<scoring_scheme_t, alphabet_t> &&
+    requires scoring_scheme_for<scoring_scheme_t, alphabet_t> &&
              (std::same_as<alignment_t, detail::method_local_tag> ||
               std::same_as<alignment_t, align_cfg::method_global>)
 //!\endcond

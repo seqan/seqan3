@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 - [ ] Check for critical performance regressions.
-- [ ] Check [Nightlies](http://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures.
+- [ ] Check [Nightlies](https://cdash.seqan.de/index.php?project=SeqAn3) for critical build failures.
 - [ ] Check the [Changelog.md](https://github.com/seqan/seqan3/blob/master/CHANGELOG.md) for completeness.
 - [ ] Update the index from cppreference.com so that up-to-date documentation links are generated.
   <details><summary>Click for detailed steps</summary><br>
@@ -66,7 +66,7 @@ assignees: ''
       that the server in Tübingen, which takes care of the argument parser update notifications, is aware of it
       (@smehringer).
 - [ ] Announce release on twitter.
-- [ ] Announce release on www.seqan.de.
+- [ ] Announce release on [www.seqan.de](https://www.seqan.de).
 - [ ] Announce release on mailing list `seqan-dev@lists.fu-berlin.de`.
 - [ ] Announce release on public Gitter channel [![Gitter](https://badges.gitter.im/seqan/Lobby.svg)](https://gitter.im/seqan/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge).
 - [ ] Notify upstream package maintainers

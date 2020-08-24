@@ -17,70 +17,12 @@
 #include <concepts>
 #endif // __has_include(<concepts>)
 
-#ifdef __cpp_lib_concepts        // C++20 concepts available
-
-namespace std
-{
-inline namespace deprecated
-{
-/*!\brief This should be removed.
- * \deprecated No viable alternative.
- */
-template <class B>
-concept boolean =
-    movable<std::remove_cvref_t<B>> &&
-    requires(std::remove_reference_t<B> const & b1,
-             std::remove_reference_t<B> const & b2, bool const a)
-    {
-        requires convertible_to<const std::remove_reference_t<B>&, bool>;
-        !b1;      requires convertible_to<decltype(!b1), bool>;
-        b1 && a;  requires same_as<decltype(b1 && a), bool>;
-        b1 || a;  requires same_as<decltype(b1 || a), bool>;
-        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
-        a && b2;  requires same_as<decltype(a && b2), bool>;
-        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
-        a || b2;  requires same_as<decltype(a || b2), bool>;
-        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
-        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
-        a == b2;  requires convertible_to<decltype(a == b2), bool>;
-        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
-        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
-        a != b2;  requires convertible_to<decltype(a != b2), bool>;
-    };
-} // inline namespace std::deprecated
-} // namespace std
-
-namespace std::detail
-{
-/*!\interface   std::detail::weakly_equality_comparable_with <>
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-//!\cond
-template <class T, class U>
-concept weakly_equality_comparable_with =
-    requires(std::remove_reference_t<T> const & t,
-             std::remove_reference_t<U> const & u)
-    {
-        t == u; requires boolean<decltype(t == u)>;
-        t != u; requires boolean<decltype(t != u)>;
-        u == t; requires boolean<decltype(u == t)>;
-        u != t; requires boolean<decltype(u != t)>;
-    };
-//!\endcond
-} // namespace std::detail
-
-#else                         // use range-v3 to emulate
-
-#include <functional>
-#include <type_traits>
+#ifndef __cpp_lib_concepts // use range-v3 to emulate, if C++20 concepts are not available
 
 #include <concepts/concepts.hpp>
 #include <range/v3/functional/concepts.hpp>
 
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/platform.hpp>
 
 /*!\defgroup std std
  * \brief A subset of the C++20 standard library made available in pre-C++20 contexts.
@@ -112,610 +54,108 @@ concept weakly_equality_comparable_with =
  * \brief The \<concepts\> header from C++20's standard library.
  */
 
-// see https://github.com/seqan/seqan3/projects/19#card-27177080 :
-#if 0
-namespace std
-{
-
-namespace
-{
-
-// from concept/concepts.hpp (also range-v3)
-using namespace ::concepts;
-
-// missing from range-v3
-template <class B>
-SEQAN3_CONCEPT boolean =
-    movable<seqan3::remove_cvref_t<B>> &&
-    requires(std::remove_reference_t<B> const & b1,
-             std::remove_reference_t<B> const & b2, bool const a)
-    {
-        requires convertible_to<const std::remove_reference_t<B>&, bool>;
-        !b1;      requires convertible_to<decltype(!b1), bool>;
-        b1 && a;  requires same_as<decltype(b1 && a), bool>;
-        b1 || a;  requires same_as<decltype(b1 || a), bool>;
-        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
-        a && b2;  requires same_as<decltype(a && b2), bool>;
-        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
-        a || b2;  requires same_as<decltype(a || b2), bool>;
-        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
-        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
-        a == b2;  requires convertible_to<decltype(a == b2), bool>;
-        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
-        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
-        a != b2;  requires convertible_to<decltype(a != b2), bool>;
-  };
-
-// from range/v3/functional/concepts.hpp
-using ::ranges::invocable;
-using ::ranges::predicate;
-using ::ranges::regular_invocable;
-using ::ranges::relation;
-using ::ranges::strict_weak_order;
-
-} // anonymous namespace
-
-} // namespace std
-
-#else  // old code
-
-#include <range/v3/utility/common_type.hpp>
-
 namespace std
 {
 
 //!\addtogroup concepts
 //!\{
 
-// ============================================================================
-//  Core language concepts
-// ============================================================================
+// ==========================================
+// [concepts.lang], language-related concepts
+// ==========================================
 
-/*!\interface std::same_as <>
- * \brief The concept `std::same_as<T, U>` is satisfied if and only if T and U denote the same type.
- * \sa https://en.cppreference.com/w/cpp/concepts/same_as
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT same_as = std::is_same_v<T, U>;
-//!\endcond
+// [concept.same], concept same_as
+using ::concepts::same_as;
 
-/*!\interface std::derived_from <>
- * \brief The concept `std::derived_from<Derived, Base>` is satisfied if and only if Base is a class type that is either
- *        Derived or a public and unambiguous base of Derived, ignoring cv-qualifiers.
- * \sa https://en.cppreference.com/w/cpp/concepts/derived_from
- */
-//!\cond
-template <class Derived, class Base >
-SEQAN3_CONCEPT derived_from =
-    std::is_base_of_v<Base, Derived> &&
-    std::is_convertible_v<const volatile Derived*, const volatile Base*>;
-//!\endcond
+// [concept.derived], concept derived_from
+using ::concepts::derived_from;
 
-/*!\interface std::convertible_to
- * \brief The concept `std::convertible_to<From, To>` specifies that an expression of the type and value category
- *        specified by From can be implicitly and explicitly converted to the type To, and the two forms of conversion
- *        are equivalent.
- * \sa https://en.cppreference.com/w/cpp/concepts/convertible_to
- */
-//!\cond
-template <class From, class To>
-SEQAN3_CONCEPT convertible_to =
-    std::is_convertible_v<From, To> &&
-    requires(From (&f)())
-    {
-        static_cast<To>(f());
-    };
-//!\endcond
+// [concept.convertible], concept convertible_to
+using ::concepts::convertible_to;
 
-/*!\interface std::common_reference_with
- * \brief The concept `std::common_reference_with<T, U>` specifies that two types T and U share a common reference type
- *        (as computed by std::common_reference_t) to which both can be converted.
- * \sa https://en.cppreference.com/w/cpp/concepts/common_reference_with
- */
-//!\cond
-template <class T, class U >
-SEQAN3_CONCEPT common_reference_with =
-  same_as<::ranges::common_reference_t<T, U>, ::ranges::common_reference_t<U, T>> &&
-  convertible_to<T, ::ranges::common_reference_t<T, U>> &&
-  convertible_to<U, ::ranges::common_reference_t<T, U>>;
-//!\endcond
+// [concept.commonref], concept common_­reference_­with
+using ::concepts::common_reference_with;
 
-/*!\interface std::common_with
- * \brief The concept `std::common_with<T, U>` specifies that two types T and U share a common type (as computed by
- *        std::common_type_t) to which both can be converted.
- * \sa https://en.cppreference.com/w/cpp/concepts/common_with
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT common_with =
-    same_as<::ranges::common_type_t<T, U>, ::ranges::common_type_t<U, T>> &&
-    convertible_to<T, ::ranges::common_type_t<T, U>> &&
-    convertible_to<U, ::ranges::common_type_t<T, U>> &&
-    common_reference_with<std::add_lvalue_reference_t<const T>, std::add_lvalue_reference_t<const U>> &&
-    common_reference_with<std::add_lvalue_reference_t<::ranges::common_type_t<T, U>>,
-                    ::ranges::common_reference_t<std::add_lvalue_reference_t<const T>,
-                                                 std::add_lvalue_reference_t<const U>>>;
-//!\endcond
+// [concept.common], concept common_with
+using ::concepts::common_with;
 
-/*!\interface std::integral
- * \brief The concept integral is satisfied if and only if T is an integral type.
- * \sa https://en.cppreference.com/w/cpp/concepts/integral
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT integral = std::is_arithmetic_v<T> && std::is_integral_v<T>;
-//!\endcond
-
-/*!\interface std::signed_integral
- * \extends std::integral
- * \brief The concept std::signed_integral is satisfied if and only if T is an integral type and std::is_signed_v<T>
- *        is true.
- * \sa https://en.cppreference.com/w/cpp/concepts/signed_integral
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT signed_integral = integral<T> && std::is_signed_v<T>;
-//!\endcond
-
-/*!\interface std::unsigned_integral
- * \extends std::integral
- * \brief The concept std::unsigned_integral is satisfied if and only if T is an integral type and
- *        std::is_signed_v<T> is false.
- * \sa https://en.cppreference.com/w/cpp/concepts/unsigned_integral
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT unsigned_integral = integral<T> && !signed_integral<T>;
-//!\endcond
-
-/*!\interface std::floating_point <>
- * \brief The concept std::floating_point<T> is satisfied if and only if T is a floating-point type.
- * \sa https://en.cppreference.com/w/cpp/types/is_floating_point
- */
+// [concept.arithmetic], arithmetic concepts
+using ::concepts::integral;
+using ::concepts::signed_integral;
+using ::concepts::unsigned_integral;
+// using ::concepts::floating_point;
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT floating_point = std::is_floating_point_v<t>;
 //!\endcond
 
-/*!\interface std::assignable_from <>
- * \brief The concept `std::assignable_from<LHS, RHS>` specifies that an expression of the type and value category specified
- *        by RHS can be assigned to an lvalue expression whose type is specified by LHS.
- * \sa https://en.cppreference.com/w/cpp/concepts/assignable_from
- */
-/*!\fn          t & operator=(t1 const & rhs)
- * \brief       Assignment operator.
- * \memberof    std::assignable_from
- * \param rhs   Right hand side parameter to assign.
- * \returns     Reference to self.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-//!\cond
-template <class LHS, class RHS>
-SEQAN3_CONCEPT assignable_from =
-    std::is_lvalue_reference_v<LHS> &&
-    common_reference_with<std::remove_reference_t<LHS> const &, std::remove_reference_t<RHS> const&> &&
-    requires(LHS lhs, RHS&& rhs)
-    {
-        lhs = std::forward<RHS>(rhs);
-        requires same_as<decltype(lhs = std::forward<RHS>(rhs)), LHS>;
-    };
-//!\endcond
+// [concept.assignable], concept assignable_from
+using ::concepts::assignable_from;
 
-/*!\interface std::swappable <>
- * \brief       The concept std::swappable specifies that lvalues of type T are swappable.
- * \sa https://en.cppreference.com/w/cpp/concepts/swappable
- */
-/*!\name Requirements for std::swappable
- * \brief You can expect these functions on all types that implement std::swappable.
- * \{
- */
-/*!\fn          void swap(t & lhs, t & rhs)
- * \brief       Swaps the contents of two objects.
- * \relates     std::swappable
- * \param lhs   Left hand side parameter to swap.
- * \param rhs   Right hand side parameter to swap.
- */
-//!\}
+// [concept.swappable], concept swappable
+// namespace ranges { inline namespace unspecified { using ::concepts::swap; } }
+using ::concepts::swappable;
+using ::concepts::swappable_with;
+
+// [concept.destructible], concept destructible
+using ::concepts::destructible;
+
+// [concept.constructible], concept constructible_from
+using ::concepts::constructible_from;
+
+// [concept.default.init], concept default_initializable
+// using ::concepts::default_initializable;
 //!\cond
 template <class T>
-SEQAN3_CONCEPT swappable = std::is_swappable_v<T>;
+SEQAN3_CONCEPT default_initializable = ::concepts::default_constructible<T>;
 //!\endcond
 
-/*!\interface std::swappable_with <>
- * \brief The concept `std::swappable_with<T, U>` specifies that expressions of the type and value category encoded by T and U
- *        are swappable with each other.
- * \sa https://en.cppreference.com/w/cpp/concepts/swappable
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT swappable_with =
-    std::is_swappable_with_v<T, T> &&
-    std::is_swappable_with_v<U, U> &&
-    common_reference_with<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
-    std::is_swappable_with_v<T, U> &&
-    std::is_swappable_with_v<U, T>;
-//!\endcond
+// [concept.moveconstructible], concept move_constructible
+using ::concepts::move_constructible;
 
-/*!\interface   std::destructible <>
- * \brief       The concept std::destructible specifies the concept of all types whose instances can safely be destroyed at
- *              the end of their lifetime (including reference types).
- * \sa          https://en.cppreference.com/w/cpp/concepts/destructible
- */
-//!\cond
-template < class T >
-SEQAN3_CONCEPT destructible = std::is_nothrow_destructible_v<T>;
-//!\endcond
+// [concept.copyconstructible], concept copy_constructible
+using ::concepts::copy_constructible;
 
-/*!\interface   std::constructible_from <>
- * \extends     std::destructible
- * \brief       The std::constructible_from concept specifies that a variable of type T can be initialized with the given set of
- *              argument types Args....
- * \sa          https://en.cppreference.com/w/cpp/concepts/constructible_from
- */
-//!\cond
-template < class T, class... Args >
-SEQAN3_CONCEPT constructible_from = destructible<T> && std::is_constructible_v<T, Args...>;
-//!\endcond
+// =======================================
+// [concepts.compare], comparison concepts
+// =======================================
 
-/*!\interface   std::default_initializable <>
- * \extends     std::constructible_from
- * \brief       The std::default_initializable concept provides a shorthand for the common case when the question is whether
- *              a type can be constructed with no arguments.
- * \sa          https://en.cppreference.com/w/cpp/concepts/default_initializable
- */
-//!\cond
-template < class T >
-SEQAN3_CONCEPT default_initializable = constructible_from<T>;
-//!\endcond
+// [concept.equalitycomparable], concept equality_comparable
+using ::concepts::equality_comparable;
+using ::concepts::equality_comparable_with;
 
-/*!\interface   std::move_constructible <>
- * \extends     std::constructible_from
- * \extends     std::convertible_to
- * \brief       The concept std::move_constructible is satisfied if T is a reference type, or if it is an object type where
- *              an object of that type can constructed from an rvalue of that type in both direct- and
- *              copy-initialization contexts, with the usual semantics.
- * \sa          https://en.cppreference.com/w/cpp/concepts/move_constructible
- */
-//!\cond
-template< class T >
-SEQAN3_CONCEPT move_constructible = constructible_from<T, T> && convertible_to<T, T>;
-//!\endcond
+// [concept.totallyordered], concept totally_ordered
+using ::concepts::totally_ordered;
+using ::concepts::totally_ordered_with;
 
-/*!\interface   std::copy_constructible <>
- * \extends     std::move_constructible
- * \brief       The concept std::copy_constructible is satisfied if T is an lvalue reference type, or if it is a
- *              move_constructible object type where an object of that type can constructed from a (possibly const)
- *              lvalue or const rvalue of that type in both direct- and copy-initialization contexts with the usual
- *              semantics (a copy is constructed with the source unchanged).
- * \sa          https://en.cppreference.com/w/cpp/concepts/copy_constructible
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT copy_constructible =
-  move_constructible<T> &&
-  constructible_from<T, T&>       && convertible_to<T&, T> &&
-  constructible_from<T, const T&> && convertible_to<const T&, T> &&
-  constructible_from<T, const T>  && convertible_to<const T, T>;
-//!\endcond
+// [concept.object], object concepts
+using ::concepts::movable;
+using ::concepts::copyable;
+using ::concepts::semiregular;
+using ::concepts::regular;
 
-// ============================================================================
-//  Object concepts part 1
-// ============================================================================
+// ======================================
+// [concepts.callable], callable concepts
+// ======================================
 
-/*!\interface   std::movable
- * \brief       Subsumes std::Object, std::move_constructible, std::swappable bool and
- *              requires that the type be std::assignable_from bool from a value of itself.
- * \extends     std::move_constructible
- * \extends     std::assignable_from
- * \extends     std::swappable
- *
- * \sa https://en.cppreference.com/w/cpp/concepts/movable
- */
-//!\cond
-template < class T >
-SEQAN3_CONCEPT movable = std::is_object_v<T> && move_constructible<T> && assignable_from<T&, T> && swappable<T>;
-//!\endcond
+// [concept.invocable], concept invocable
+using ::ranges::invocable;
 
-// ============================================================================
-//  Comparison concepts
-// ============================================================================
+// [concept.regularinvocable], concept regular_invocable
+using ::ranges::regular_invocable;
 
-/*!\interface   std::boolean <>
- * \extends     std::movable
- * \brief       Specifies that a type can be used in boolean contexts.
- * \sa          https://en.cppreference.com/w/cpp/concepts/boolean
- */
-//!\cond
-template <class B>
-SEQAN3_CONCEPT boolean =
-    movable<seqan3::remove_cvref_t<B>> &&
-    requires(std::remove_reference_t<B> const & b1,
-             std::remove_reference_t<B> const & b2, bool const a)
-    {
-        requires convertible_to<const std::remove_reference_t<B>&, bool>;
-        !b1;      requires convertible_to<decltype(!b1), bool>;
-        b1 && a;  requires same_as<decltype(b1 && a), bool>;
-        b1 || a;  requires same_as<decltype(b1 || a), bool>;
-        b1 && b2; requires same_as<decltype(b1 && b2), bool>;
-        a && b2;  requires same_as<decltype(a && b2), bool>;
-        b1 || b2; requires same_as<decltype(b1 || b2), bool>;
-        a || b2;  requires same_as<decltype(a || b2), bool>;
-        b1 == b2; requires convertible_to<decltype(b1 == b2), bool>;
-        b1 == a;  requires convertible_to<decltype(b1 == a), bool>;
-        a == b2;  requires convertible_to<decltype(a == b2), bool>;
-        b1 != b2; requires convertible_to<decltype(b1 != b2), bool>;
-        b1 != a;  requires convertible_to<decltype(b1 != a), bool>;
-        a != b2;  requires convertible_to<decltype(a != b2), bool>;
-  };
-//!\endcond
+// [concept.predicate], concept predicate
+using ::ranges::predicate;
+
+// [concept.relation], concept relation
+using ::ranges::relation;
+
+// [concept.equiv], concept equivalence_relation
+// using ::ranges::equivalence_relation;
+
+// [concept.strictweakorder], concept strict_weak_order
+using ::ranges::strict_weak_order;
 
 } // namespace std
-
-namespace std::detail
-{
-
-/*!\interface   std::detail::weakly_equality_comparable_with <>
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT weakly_equality_comparable_with =
-    requires(std::remove_reference_t<T> const & t,
-             std::remove_reference_t<U> const & u)
-    {
-        t == u; requires boolean<decltype(t == u)>;
-        t != u; requires boolean<decltype(t != u)>;
-        u == t; requires boolean<decltype(u == t)>;
-        u != t; requires boolean<decltype(u != t)>;
-    };
-//!\endcond
-} // namespace std::detail
-
-namespace std
-{
-
-/*!\interface   std::equality_comparable <>
- * \brief       The same as std::weakly_equality_comparable_with<t,t>.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-/*!\name Requirements for std::equality_comparable
- * \brief You can expect these functions on all types that implement std::Equality_comparable.
- * \{
- */
-/*!\fn          bool operator==(type const & lhs, type const & rhs)
- * \brief       (In-)Equality comparison.
- * \relates     std::equality_comparable
- * \param[in]   lhs Left hand side parameter to compare.
- * \param[in]   rhs Right hand side parameter to compare.
- * \returns     `true` or `false`, depending of the outcome of the comparison.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-/*!\fn      bool operator!=(type const & lhs, type const & rhs)
- * \relates std::equality_comparable
- * \copydoc std::equality_comparable::operator==
- */
-//!\}
-//!\cond
-template < class T >
-SEQAN3_CONCEPT equality_comparable = std::detail::weakly_equality_comparable_with<T, T>;
-//!\endcond
-
-/*!\interface   std::equality_comparable_with <>
- * \extends     seqan3::detail::weakly_equality_comparable_with
- * \brief       Requires seqan3::detail::weakly_equality_comparable_witht<t1,t2>, but also that t1 and t2, as well as
- *              their common_reference_t satisfy std::equality_comparable.
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \sa          https://en.cppreference.com/w/cpp/concepts/equality_comparable
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT equality_comparable_with =
-    equality_comparable<T> &&
-    equality_comparable<U> &&
-    common_reference_with<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
-    equality_comparable<::ranges::common_reference_t<std::remove_reference_t<T> const &,
-                                               std::remove_reference_t<U> const &>> &&
-    detail::weakly_equality_comparable_with<T, U>;
-//!\endcond
-
-/*!\interface   std::totally_ordered
- * \extends     std::equality_comparable
- * \brief       Requires std::equality_comparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
- * \sa          https://en.cppreference.com/w/cpp/concepts/totally_ordered
- */
-/*!\name Requirements for std::totally_ordered
- * \brief You can expect these functions on all types that implement std::totally_ordered.
- * \{
- */
-/*!\fn          bool operator<(type const & lhs, type const & rhs)
- * \brief       Less-than, greater-than and -or-equal comparisons.
- * \relates     std::totally_ordered
- * \param[in]   lhs Left hand side parameter to compare.
- * \param[in]   rhs Right hand side parameter to compare.
- * \returns     `true` or `false`, depending of the outcome of the comparison.
- *
- * \details
- * \attention This is a concept requirement, not an actual function (however types satisfying this concept
- * will provide an implementation).
- */
-/*!\fn      bool operator<=(type const & lhs, type const & rhs)
- * \relates std::totally_ordered
- * \copydoc std::totally_ordered::operator<
- */
-/*!\fn      bool operator>(type const & lhs, type const & rhs)
- * \relates std::totally_ordered
- * \copydoc std::totally_ordered::operator<
- */
-/*!\fn      bool operator>=(type const & lhs, type const & rhs)
- * \relates std::totally_ordered
- * \copydoc std::totally_ordered::operator<
- */
-//!\}
-//!\cond
-template <class T>
-SEQAN3_CONCEPT totally_ordered =
-    equality_comparable<T> &&
-    requires(std::remove_reference_t<T> const & a,
-             std::remove_reference_t<T> const & b)
-    {
-        a < b;  requires boolean<decltype(a < b)>;
-        a > b;  requires boolean<decltype(a > b)>;
-        a <= b; requires boolean<decltype(a <= b)>;
-        a >= b; requires boolean<decltype(a >= b)>;
-    };
-//!\endcond
-
-/*!\interface   std::totally_ordered_with
- * \extends     std::equality_comparable_with
- * \brief       Requires std::equality_comparable and all remaing comparison operators (`<`, `<=`, `>`, `>=`).
- * \tparam t1   The first type to compare.
- * \tparam t2   The second type to compare.
- * \sa          https://en.cppreference.com/w/cpp/concepts/totally_ordered
- */
-//!\cond
-template <class T, class U>
-SEQAN3_CONCEPT totally_ordered_with =
-    totally_ordered<T> &&
-    totally_ordered<U> &&
-    common_reference_with<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
-    totally_ordered<::ranges::common_reference_t<std::remove_reference_t<T> const &,
-                                                 std::remove_reference_t<U> const &>> &&
-    equality_comparable_with<T, U> &&
-    requires(std::remove_reference_t<T> const & t,
-             std::remove_reference_t<U> const & u)
-    {
-        t < u;  requires boolean<decltype(t < u)>;
-        t > u;  requires boolean<decltype(t > u)>;
-        t <= u; requires boolean<decltype(t <= u)>;
-        t >= u; requires boolean<decltype(t >= u)>;
-        u < t;  requires boolean<decltype(u < t)>;
-        u > t;  requires boolean<decltype(u > t)>;
-        u <= t; requires boolean<decltype(u <= t)>;
-        u >= t; requires boolean<decltype(u >= t)>;
-    };
-//!\endcond
-
-// ============================================================================
-//  Object concepts  part2
-// ============================================================================
-
-/*!\interface   std::copyable
- * \brief       Subsumes std::movable, std::copy_constructible, and
- *              requires that the type be std::assignable_from bool from a `const &` of itself.
- * \extends     std::movable
- * \extends     std::copy_constructible
- * \sa          https://en.cppreference.com/w/cpp/concepts/copyable
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT copyable = copy_constructible<T> && movable<T> && assignable_from<T&, const T&>;
-//!\endcond
-
-/*!\interface   std::semiregular
- * \brief       Subsumes std::copyable and std::default_initializable.
- * \extends     std::copyable
- * \extends     std::default_initializable
- * \sa          https://en.cppreference.com/w/cpp/concepts/semiregular
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT semiregular = copyable<T> && default_initializable<T>;
-//!\endcond
-
-/*!\interface   std::regular
- * \brief       Subsumes std::semiregular and std::equality_comparable.
- * \extends     std::semiregular
- * \extends     std::equality_comparable
- * \sa          https://en.cppreference.com/w/cpp/concepts/regular
- */
-//!\cond
-template <class T>
-SEQAN3_CONCEPT regular = semiregular<T> && equality_comparable<T>;
-//!\endcond
-
-// ============================================================================
-//  Callable concepts
-// ============================================================================
-
-/*!\interface   std::invocable <>
- * \brief       Specifies whether the given callable is invocable with the given arguments.
- * \sa          https://en.cppreference.com/w/cpp/concepts/invocable
- */
-//!\cond
-template< class F, class... Args >
-SEQAN3_CONCEPT invocable =
-    requires(F&& f, Args&&... args)
-    {
-        std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
-        /* not required to be equality preserving */
-    };
-//!\endcond
-
-/*!\interface   std::regular_invocable <>
- * \extends     std::invocable
- * \brief       Specifies whether the given callable is invocable with the given arguments and equality preserving
- *              (invocations change neither the callable, nor the arguments).
- * \sa          https://en.cppreference.com/w/cpp/concepts/regular_invocable
- */
-//!\cond
-template< class F, class... Args >
-SEQAN3_CONCEPT regular_invocable = invocable<F, Args...>;
-//!\endcond
-
-/*!\interface   std::predicate <>
- * \extends     std::regular_invocable
- * \brief       Specifies whether the given callable is std::regular_invocable and returns bool.
- * \sa          https://en.cppreference.com/w/cpp/concepts/predicate
- */
-//!\cond
-template < class F, class... Args >
-SEQAN3_CONCEPT predicate = regular_invocable<F, Args...> && boolean<std::invoke_result_t<F, Args...>>;
-//!\endcond
-
-/*!\interface   std::relation <>
- * \extends     std::predicate
- * \brief       Specifies that R defines a binary relation over the set of expressions whose type and value category
- *              are those encoded by either t or u.
- * \sa          https://en.cppreference.com/w/cpp/concepts/relation
- */
-//!\cond
-template <class R, class T, class U>
-SEQAN3_CONCEPT relation =
-    predicate<R, T, T> &&
-    predicate<R, U, U> &&
-    common_reference_with<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &> &&
-    predicate<R,
-        ::ranges::common_reference_t<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &>,
-        ::ranges::common_reference_t<std::remove_reference_t<T> const &, std::remove_reference_t<U> const &>> &&
-    predicate<R, T, U> &&
-    predicate<R, U, T>;
-//!\endcond
-
-/*!\interface   std::strict_weak_order <>
- * \extends     std::relation
- * \brief       The concept strict_weak_order<R, T, U> specifies that the relation R imposes a strict weak ordering
- *              on its arguments.
- * \sa          https://en.cppreference.com/w/cpp/concepts/relation
- */
-//!\cond
-template < class R, class T, class U >
-SEQAN3_CONCEPT strict_weak_order = relation<R, T, U>;
-//!\endcond
-//!\}
-
-} // namespace std
-
-#endif // compile check
 
 #endif // not __has_include(<concepts>)
