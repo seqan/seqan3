@@ -87,12 +87,14 @@ TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
 TYPED_TEST(unsigned_operations, most_significant_bit_set)
 {
     using unsigned_t = TypeParam;
+    constexpr size_t zero = std::bit_width<unsigned_t>(0b0000);
     constexpr size_t one = std::bit_width<unsigned_t>(0b0001);
     constexpr size_t two1 = std::bit_width<unsigned_t>(0b0010);
     constexpr size_t two2 = std::bit_width<unsigned_t>(0b0011);
     constexpr size_t three1 = std::bit_width<unsigned_t>(0b0101);
     constexpr size_t three2 = std::bit_width<unsigned_t>(0b0111);
     constexpr size_t eight = std::bit_width<unsigned_t>(0b10010010);
+    EXPECT_EQ(zero, 0u);
     EXPECT_EQ(one, 1u);
     EXPECT_EQ(two1, 2u);
     EXPECT_EQ(two2, 2u);
@@ -117,12 +119,14 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
 TYPED_TEST(unsigned_operations, count_leading_zeros)
 {
     using unsigned_t = TypeParam;
+    constexpr size_t t0 = std::countl_zero<unsigned_t>(0b0000u);
     constexpr size_t t1 = std::countl_zero<unsigned_t>(0b0001u);
     constexpr size_t t2 = std::countl_zero<unsigned_t>(0b0101u);
     constexpr size_t t3 = std::countl_zero<unsigned_t>(0b0010u);
     constexpr size_t t4 = std::countl_zero<unsigned_t>(0b0110u);
     constexpr size_t t5 = std::countl_zero<unsigned_t>(0b0100u);
     constexpr size_t t6 = std::countl_zero<unsigned_t>(0b10100000u);
+    EXPECT_EQ(t0, seqan3::detail::sizeof_bits<unsigned_t>);
     EXPECT_EQ(t1, seqan3::detail::sizeof_bits<unsigned_t> - 1u);
     EXPECT_EQ(t2, seqan3::detail::sizeof_bits<unsigned_t> - 3u);
     EXPECT_EQ(t3, seqan3::detail::sizeof_bits<unsigned_t> - 2u);
@@ -149,12 +153,14 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
 TYPED_TEST(unsigned_operations, count_trailing_zeros)
 {
     using unsigned_t = TypeParam;
+    constexpr size_t sizeof_bits = std::countr_zero<unsigned_t>(0b0000);
     constexpr size_t zero  = std::countr_zero<unsigned_t>(0b0001);
     constexpr size_t zero2 = std::countr_zero<unsigned_t>(0b0101);
     constexpr size_t one1  = std::countr_zero<unsigned_t>(0b0010);
     constexpr size_t one2  = std::countr_zero<unsigned_t>(0b0110);
     constexpr size_t two   = std::countr_zero<unsigned_t>(0b0100);
     constexpr size_t five  = std::countr_zero<unsigned_t>(0b10100000);
+    EXPECT_EQ(sizeof_bits, seqan3::detail::sizeof_bits<unsigned_t>);
     EXPECT_EQ(zero,  0u);
     EXPECT_EQ(zero2, 0u);
     EXPECT_EQ(one1,  1u);
