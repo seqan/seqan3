@@ -147,9 +147,7 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
                                                                                           << " leading zeros.";
             EXPECT_EQ(seqan3::detail::count_leading_zeros(n), cnt) << "n " << n << " should have " << cnt
                                                                    << " leading zeros.";
-#ifdef __cpp_lib_int_pow2
             EXPECT_EQ(std::countl_zero(n), cnt);
-#endif // __cpp_lib_int_pow2
         }
     }
 }

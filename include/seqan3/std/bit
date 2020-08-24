@@ -17,6 +17,8 @@
 #if __has_include(<bit>)
 #include <bit>
 #endif // __has_include(<bit>)
+#include <climits>
+#include <type_traits>
 
 #ifndef __cpp_lib_endian
 
@@ -56,6 +58,12 @@ enum class endian
 namespace std
 {
 
+namespace detail
+{
+template <typename type_t>
+constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
+} // namespace std::detail
+
 // // bit_­cast
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
 //
@@ -89,7 +97,19 @@ template<class T> constexpr T bit_ceil(T x) noexcept
 // template<class T> [[nodiscard]] constexpr T rotr(T x, int s) noexcept;
 //
 // // counting
-// template<class T> constexpr int countl_zero(T x) noexcept;
+template<class T> constexpr int countl_zero(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+    assert(x > 0); // n == 0 might have undefined behaviour
+
+    if constexpr (sizeof(T) == sizeof(unsigned long long))
+        return __builtin_clzll(x);
+    else if constexpr (sizeof(T) == sizeof(unsigned long))
+        return __builtin_clzl(x);
+    else
+        return __builtin_clz(x) + detail::sizeof_bits<T> - detail::sizeof_bits<unsigned int>;
+}
+
 // template<class T> constexpr int countl_one(T x) noexcept;
 // template<class T> constexpr int countr_zero(T x) noexcept;
 // template<class T> constexpr int countr_one(T x) noexcept;
