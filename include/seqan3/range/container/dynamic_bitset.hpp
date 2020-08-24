@@ -216,7 +216,7 @@ public:
         if (std::popcount(value >> 58u) != 0u)
             throw std::invalid_argument{"The dynamic_bitset can be at most 58 long."};
         data.bits |= value;
-        data.size |= value ? std::bit_width(value) : 0u;
+        data.size |= std::bit_width(value);
     }
 
     /*!\brief Construct from two iterators.
