@@ -70,6 +70,7 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::contiguous_range<decltype(vec)>);
     EXPECT_FALSE(std::ranges::view<decltype(vec)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
@@ -81,17 +82,32 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5_vector>)); // view temporary returned in deep case
 
+    auto v2 = v1 | std::views::reverse;
+    EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v2)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v2)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), seqan3::dna5_vector>)); // view temporary returned in deep case
+
+    // v_elem has type std::ranges::reverse_view<std::ranges::ref_view<std::vector<seqan3::dna5> > >
     auto v_elem = v1[0];
     EXPECT_TRUE(std::ranges::input_range<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(v_elem)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v_elem)>); // reverse_view drops contiguous_range
     EXPECT_TRUE(std::ranges::view<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v_elem)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v_elem)>);
