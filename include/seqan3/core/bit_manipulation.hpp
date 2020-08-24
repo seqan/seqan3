@@ -94,7 +94,7 @@ SEQAN3_DEPRECATED_310 constexpr size_t next_power_of_two(size_t n)
 * Constant.
 */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t popcount(unsigned_t const n) noexcept
+SEQAN3_DEPRECATED_310 constexpr uint8_t popcount(unsigned_t const n) noexcept
 {
     return std::popcount(n);
 }

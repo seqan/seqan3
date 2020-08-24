@@ -211,7 +211,7 @@ public:
      */
     constexpr dynamic_bitset(uint64_t const value)
     {
-        if (detail::popcount(value >> 58) != 0)
+        if (std::popcount(value >> 58u) != 0u)
             throw std::invalid_argument{"The dynamic_bitset can be at most 58 long."};
         data.bits |= value;
         data.size |= value ? detail::most_significant_bit_set(value) + 1 : 0u;
@@ -953,7 +953,7 @@ public:
     //!\brief Returns the number of set bits.
     constexpr size_type count() const noexcept
     {
-        return detail::popcount(data.bits);
+        return std::popcount(data.bits);
     }
 
     /*!\brief Returns the i-th element.

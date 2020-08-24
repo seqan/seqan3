@@ -192,12 +192,12 @@ unsigned_t permute_bits(unsigned_t v)
 TYPED_TEST(unsigned_operations, popcount)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t zero  = seqan3::detail::popcount<unsigned_t>(0b0000);
-    constexpr size_t one   = seqan3::detail::popcount<unsigned_t>(0b0100);
-    constexpr size_t two   = seqan3::detail::popcount<unsigned_t>(0b1100);
-    constexpr size_t three = seqan3::detail::popcount<unsigned_t>(0b1110);
-    constexpr size_t four  = seqan3::detail::popcount<unsigned_t>(0b1111);
-    constexpr size_t five  = seqan3::detail::popcount<unsigned_t>(0b10011011);
+    constexpr size_t zero  = std::popcount<unsigned_t>(0b0000);
+    constexpr size_t one   = std::popcount<unsigned_t>(0b0100);
+    constexpr size_t two   = std::popcount<unsigned_t>(0b1100);
+    constexpr size_t three = std::popcount<unsigned_t>(0b1110);
+    constexpr size_t four  = std::popcount<unsigned_t>(0b1111);
+    constexpr size_t five  = std::popcount<unsigned_t>(0b10011011);
     EXPECT_EQ(zero,  0u);
     EXPECT_EQ(one,   1u);
     EXPECT_EQ(two,   2u);
@@ -210,7 +210,7 @@ TYPED_TEST(unsigned_operations, popcount)
         unsigned_t start = std::numeric_limits<unsigned_t>::max() >> position;
         auto sizeof_bits_of_unsigned_t = seqan3::detail::sizeof_bits<unsigned_t>;
 
-        EXPECT_EQ(seqan3::detail::popcount(start),
+        EXPECT_EQ(std::popcount(start),
                   sizeof_bits_of_unsigned_t - position) << "The pocount of " << start << " should be "
                                                         << sizeof_bits_of_unsigned_t - position;
         for (unsigned_t n = permute_bits(start), k = 0u;
@@ -220,7 +220,7 @@ TYPED_TEST(unsigned_operations, popcount)
             EXPECT_EQ(static_cast<uint8_t>(sdsl::bits::cnt(n)),
                       sizeof_bits_of_unsigned_t - position) << "[SDSL] The pocount of " << n << " should be "
                                                             << sizeof_bits_of_unsigned_t - position;
-            EXPECT_EQ(seqan3::detail::popcount(n),
+            EXPECT_EQ(std::popcount(n),
                       sizeof_bits_of_unsigned_t - position) << "The pocount of " << n << " should be "
                                                             << sizeof_bits_of_unsigned_t - position;
             EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position);
