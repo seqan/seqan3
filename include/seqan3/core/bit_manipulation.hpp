@@ -49,7 +49,7 @@ constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
  */
-constexpr bool is_power_of_two(size_t const n)
+SEQAN3_DEPRECATED_310 constexpr bool is_power_of_two(size_t const n)
 {
     return std::has_single_bit(n);
 }
@@ -218,7 +218,7 @@ constexpr type to_little_endian(type const in) noexcept
     {
         static_assert(sizeof(type) <= 8,
                       "Can only convert the byte encoding for integral numbers with a size of up to 8 bytes.");
-        static_assert(is_power_of_two(sizeof(type)),
+        static_assert(std::has_single_bit(sizeof(type)),
                       "Can only convert the byte encoding for integral numbers whose byte size is a power of two.");
 
         if constexpr (sizeof(type) == 2)

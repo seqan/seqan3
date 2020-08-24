@@ -32,10 +32,10 @@ TEST(bit_manipulation, sizeof_bits)
 
 TEST(bit_manipulation, is_power_of_two)
 {
-    constexpr bool is_power_of_two0 = seqan3::detail::is_power_of_two(0);
-    constexpr bool is_power_of_two1 = seqan3::detail::is_power_of_two(1);
-    constexpr bool is_power_of_two2 = seqan3::detail::is_power_of_two(2);
-    constexpr bool is_power_of_two3 = seqan3::detail::is_power_of_two(3);
+    constexpr bool is_power_of_two0 = std::has_single_bit(0u);
+    constexpr bool is_power_of_two1 = std::has_single_bit(1u);
+    constexpr bool is_power_of_two2 = std::has_single_bit(2u);
+    constexpr bool is_power_of_two3 = std::has_single_bit(3u);
     EXPECT_FALSE(is_power_of_two0);
     EXPECT_TRUE(is_power_of_two1);
     EXPECT_TRUE(is_power_of_two2);
@@ -43,14 +43,12 @@ TEST(bit_manipulation, is_power_of_two)
 
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
-        EXPECT_TRUE(seqan3::detail::is_power_of_two(power_of_two));
         EXPECT_TRUE(std::has_single_bit(power_of_two));
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
-            EXPECT_FALSE(seqan3::detail::is_power_of_two(i)) << i << " should not be a power of two.";
-            EXPECT_FALSE(std::has_single_bit(i));
+            EXPECT_FALSE(std::has_single_bit(i)) << i << " should not be a power of two.";
         }
     }
 }

@@ -13,9 +13,9 @@
 
 #pragma once
 
+#include <seqan3/std/bit>
 #include <type_traits>
 
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/simd/detail/default_simd_length.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
@@ -56,7 +56,7 @@ struct builtin_simd;
 //!\ingroup simd
 template <typename scalar_t, size_t length>
 //!\cond
-    requires (is_power_of_two(length))
+    requires (std::has_single_bit(length))
 //!\endcond
 struct builtin_simd<scalar_t, length>
 {
@@ -97,11 +97,11 @@ struct builtin_simd_traits_helper<builtin_simd_t>
     //!\brief The scalar type of builtin_simd_t
     using scalar_type = std::remove_reference_t<decltype(std::declval<builtin_simd_t>()[0])>;
     //!\brief The length of builtin_simd_t
-    static constexpr auto length = min_viable_uint_v<sizeof(builtin_simd_t) / sizeof(scalar_type)>;
+    static constexpr auto length = sizeof(builtin_simd_t) / sizeof(scalar_type);
 
     //!\brief Whether builtin_simd_t is a builtin type or not?
     //!\hideinitializer
-    static constexpr bool value = is_power_of_two(length) &&
+    static constexpr bool value = std::has_single_bit(length) &&
                                   std::is_same_v<builtin_simd_t,
                                                  transformation_trait_or_t<builtin_simd<scalar_type, length>, void>>;
 };
