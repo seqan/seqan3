@@ -87,18 +87,18 @@ TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
 TYPED_TEST(unsigned_operations, most_significant_bit_set)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t zero  = seqan3::detail::most_significant_bit_set<unsigned_t>(0b0001);
-    constexpr size_t one1  = seqan3::detail::most_significant_bit_set<unsigned_t>(0b0010);
-    constexpr size_t one2  = seqan3::detail::most_significant_bit_set<unsigned_t>(0b0011);
-    constexpr size_t two1  = seqan3::detail::most_significant_bit_set<unsigned_t>(0b0101);
-    constexpr size_t two2  = seqan3::detail::most_significant_bit_set<unsigned_t>(0b0111);
-    constexpr size_t seven = seqan3::detail::most_significant_bit_set<unsigned_t>(0b10010010);
-    EXPECT_EQ(zero, 0u);
-    EXPECT_EQ(one1, 1u);
-    EXPECT_EQ(one2, 1u);
+    constexpr size_t one = std::bit_width<unsigned_t>(0b0001);
+    constexpr size_t two1 = std::bit_width<unsigned_t>(0b0010);
+    constexpr size_t two2 = std::bit_width<unsigned_t>(0b0011);
+    constexpr size_t three1 = std::bit_width<unsigned_t>(0b0101);
+    constexpr size_t three2 = std::bit_width<unsigned_t>(0b0111);
+    constexpr size_t eight = std::bit_width<unsigned_t>(0b10010010);
+    EXPECT_EQ(one, 1u);
     EXPECT_EQ(two1, 2u);
     EXPECT_EQ(two2, 2u);
-    EXPECT_EQ(seven, 7u);
+    EXPECT_EQ(three1, 3u);
+    EXPECT_EQ(three2, 3u);
+    EXPECT_EQ(eight, 8u);
 
     for (uint8_t position = 0; position < seqan3::detail::sizeof_bits<unsigned_t>; ++position)
     {
@@ -108,9 +108,8 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
         {
             EXPECT_EQ(sdsl::bits::hi(n), position) << "[SDSL] The position of the msb of " << n << " should be "
                                                    << position;
-            EXPECT_EQ(seqan3::detail::most_significant_bit_set(n), position) << "The position of the msb of " << n
-                                                                             << " should be " << position;
-            EXPECT_EQ(std::bit_width(n), position + 1u);
+            EXPECT_EQ(std::bit_width(n), position + 1u) << "The position of the msb of " << n << " should be "
+                                                        << position;
         }
     }
 }
