@@ -177,9 +177,7 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
             EXPECT_EQ(sdsl::bits::lo(n), cnt) << "[SDSL] n " << n << " should have " << cnt << " trailing zeros.";
             EXPECT_EQ(seqan3::detail::count_trailing_zeros(n), cnt) << "n " << n << " should have " << cnt
                                                                     << " trailing zeros.";
-#ifdef __cpp_lib_int_pow2
             EXPECT_EQ(std::countr_zero(n), cnt);
-#endif // __cpp_lib_int_pow2
         }
     }
 }
