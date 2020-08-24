@@ -678,7 +678,7 @@ public:
                 while (tmp > 0)
                 {
                     // Jump to the next 1 and increment the corresponding vector entry.
-                    uint8_t step = detail::count_trailing_zeros(tmp);
+                    uint8_t step = std::countr_zero(tmp);
                     bin += step++;
                     tmp >>= step;
                     ++(*this)[bin++];

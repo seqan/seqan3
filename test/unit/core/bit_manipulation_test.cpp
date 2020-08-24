@@ -150,12 +150,12 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
 TYPED_TEST(unsigned_operations, count_trailing_zeros)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t zero  = seqan3::detail::count_trailing_zeros<unsigned_t>(0b0001);
-    constexpr size_t zero2 = seqan3::detail::count_trailing_zeros<unsigned_t>(0b0101);
-    constexpr size_t one1  = seqan3::detail::count_trailing_zeros<unsigned_t>(0b0010);
-    constexpr size_t one2  = seqan3::detail::count_trailing_zeros<unsigned_t>(0b0110);
-    constexpr size_t two   = seqan3::detail::count_trailing_zeros<unsigned_t>(0b0100);
-    constexpr size_t five  = seqan3::detail::count_trailing_zeros<unsigned_t>(0b10100000);
+    constexpr size_t zero  = std::countr_zero<unsigned_t>(0b0001);
+    constexpr size_t zero2 = std::countr_zero<unsigned_t>(0b0101);
+    constexpr size_t one1  = std::countr_zero<unsigned_t>(0b0010);
+    constexpr size_t one2  = std::countr_zero<unsigned_t>(0b0110);
+    constexpr size_t two   = std::countr_zero<unsigned_t>(0b0100);
+    constexpr size_t five  = std::countr_zero<unsigned_t>(0b10100000);
     EXPECT_EQ(zero,  0u);
     EXPECT_EQ(zero2, 0u);
     EXPECT_EQ(one1,  1u);
@@ -170,9 +170,7 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
         for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
         {
             EXPECT_EQ(sdsl::bits::lo(n), cnt) << "[SDSL] n " << n << " should have " << cnt << " trailing zeros.";
-            EXPECT_EQ(seqan3::detail::count_trailing_zeros(n), cnt) << "n " << n << " should have " << cnt
-                                                                    << " trailing zeros.";
-            EXPECT_EQ(std::countr_zero(n), cnt);
+            EXPECT_EQ(std::countr_zero(n), cnt) << "n " << n << " should have " << cnt << " trailing zeros.";
         }
     }
 }
@@ -185,7 +183,7 @@ unsigned_t permute_bits(unsigned_t v)
         return v;
 
     unsigned_t t = v | (v - 1);
-    unsigned_t w = (t + 1) | (((~t & -~t) - 1) >> (seqan3::detail::count_trailing_zeros(v) + 1));
+    unsigned_t w = (t + 1) | (((~t & -~t) - 1) >> (std::countr_zero(v) + 1));
     return w;
 }
 

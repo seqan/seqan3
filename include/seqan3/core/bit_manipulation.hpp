@@ -157,7 +157,7 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t count_leading_zeros(unsigned_t const n) 
  * Constant.
  */
 template <std::unsigned_integral unsigned_t>
-constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
+SEQAN3_DEPRECATED_310 constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
     return std::countr_zero(n);
