@@ -12,6 +12,8 @@
 
 #include <gtest/gtest.h>
 
+#include <sdsl/bits.hpp>
+
 #include <seqan3/core/bit_manipulation.hpp>
 
 static constexpr size_t max_iterations = 1 << 15;

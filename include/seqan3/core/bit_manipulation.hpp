@@ -15,8 +15,6 @@
 
 #include <meta/meta.hpp>
 
-#include <sdsl/bits.hpp>
-
 #include <seqan3/std/bit>
 #include <climits>
 #include <seqan3/std/concepts>
@@ -53,7 +51,7 @@ constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
  */
 constexpr bool is_power_of_two(size_t const n)
 {
-    return n > 0 && (n & (n-1)) == 0;
+    return std::has_single_bit(n);
 }
 
 /*!\brief Returns \f$2^{\lceil\log_2(n)\rceil}\f$ for an \f$n\f$.
@@ -69,14 +67,7 @@ constexpr bool is_power_of_two(size_t const n)
  */
 constexpr size_t next_power_of_two(size_t n)
 {
-    if (n == 0)
-        return 1;
-
-    --n;
-    for (size_t shift = 1; !is_power_of_two(n + 1); shift <<= 1)
-        n |= n >> shift;
-
-    return n + 1;
+    return std::bit_ceil(n);
 }
 
 /*!\brief Returns the number of 1-bits.
@@ -105,16 +96,7 @@ constexpr size_t next_power_of_two(size_t n)
 template <std::unsigned_integral unsigned_t>
 constexpr uint8_t popcount(unsigned_t const n) noexcept
 {
-#if defined(__GNUC__)
-    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return __builtin_popcountll(n);
-    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return __builtin_popcountl(n);
-    else
-        return __builtin_popcount(n);
-#else
-    return sdsl::bits::cnt(n);
-#endif
+    return std::popcount(n);
 }
 
 /*!\brief Returns the number of leading 0-bits, starting at the most significant bit position.
@@ -146,16 +128,7 @@ template <std::unsigned_integral unsigned_t>
 constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
-#if defined(__GNUC__)
-    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return __builtin_clzll(n);
-    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return __builtin_clzl(n);
-    else
-        return __builtin_clz(n) + sizeof_bits<unsigned_t> - sizeof_bits<unsigned int>;
-#else
-    return sizeof_bits<unsigned_t> - sdsl::bits::hi(n) - 1;
-#endif
+    return std::countl_zero(n);
 }
 
 /*!\brief Returns the number of trailing 0-bits, starting at the least significant bit position.
@@ -187,16 +160,7 @@ template <std::unsigned_integral unsigned_t>
 constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
-#if defined(__GNUC__)
-    if constexpr (sizeof(unsigned_t) == sizeof(unsigned long long))
-        return __builtin_ctzll(n);
-    else if constexpr (sizeof(unsigned_t) == sizeof(unsigned long))
-        return __builtin_ctzl(n);
-    else
-        return __builtin_ctz(n);
-#else
-    return sdsl::bits::lo(n);
-#endif
+    return std::countr_zero(n);
 }
 
 /*!\brief Returns the position (0-based) of the most significant bit.
@@ -228,11 +192,7 @@ template <std::unsigned_integral unsigned_t>
 constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 {
     assert(n > 0); // n == 0 might have undefined behaviour
-#if defined(__GNUC__)
-    return sizeof_bits<unsigned_t> - count_leading_zeros(n) - 1;
-#else
-    return sdsl::bits::hi(n);
-#endif
+    return std::bit_width(n) - 1;
 }
 
 /*!\brief Convert the byte encoding of integer values to little-endian byte order.
