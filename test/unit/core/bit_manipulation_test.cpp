@@ -55,10 +55,10 @@ TEST(bit_manipulation, is_power_of_two)
 
 TEST(bit_manipulation, next_power_of_two)
 {
-    constexpr size_t next_power_of_two0 = seqan3::detail::next_power_of_two(0);
-    constexpr size_t next_power_of_two1 = seqan3::detail::next_power_of_two(1);
-    constexpr size_t next_power_of_two2 = seqan3::detail::next_power_of_two(2);
-    constexpr size_t next_power_of_two3 = seqan3::detail::next_power_of_two(3);
+    constexpr size_t next_power_of_two0 = std::bit_ceil(0u);
+    constexpr size_t next_power_of_two1 = std::bit_ceil(1u);
+    constexpr size_t next_power_of_two2 = std::bit_ceil(2u);
+    constexpr size_t next_power_of_two3 = std::bit_ceil(3u);
     EXPECT_EQ(next_power_of_two0, 1u);
     EXPECT_EQ(next_power_of_two1, 1u);
     EXPECT_EQ(next_power_of_two2, 2u);
@@ -66,15 +66,12 @@ TEST(bit_manipulation, next_power_of_two)
 
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
-        EXPECT_EQ(seqan3::detail::next_power_of_two(power_of_two), power_of_two);
         EXPECT_EQ(std::bit_ceil(power_of_two), power_of_two);
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
-            EXPECT_EQ(seqan3::detail::next_power_of_two(i), next_power) << "The next power of two of " << i
-                                                                        << " should be " << next_power;
-            EXPECT_EQ(std::bit_ceil(i), next_power);
+            EXPECT_EQ(std::bit_ceil(i), next_power) << "The next power of two of " << i << " should be " << next_power;
         }
     }
 }

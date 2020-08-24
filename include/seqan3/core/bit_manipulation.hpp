@@ -65,7 +65,7 @@ SEQAN3_DEPRECATED_310 constexpr bool is_power_of_two(size_t const n)
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
  */
-constexpr size_t next_power_of_two(size_t n)
+SEQAN3_DEPRECATED_310 constexpr size_t next_power_of_two(size_t n)
 {
     return std::bit_ceil(n);
 }
