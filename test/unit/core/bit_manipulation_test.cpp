@@ -5,13 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/bit>
 #include <cmath>
 #include <type_traits>
 #include <version>
-
-#ifdef __cpp_lib_int_pow2
-#include <bit>
-#endif
 
 #include <gtest/gtest.h>
 
@@ -45,17 +42,13 @@ TEST(bit_manipulation, is_power_of_two)
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
         EXPECT_TRUE(seqan3::detail::is_power_of_two(power_of_two));
-#ifdef __cpp_lib_int_pow2
         EXPECT_TRUE(std::has_single_bit(power_of_two));
-#endif // __cpp_lib_int_pow2
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
             EXPECT_FALSE(seqan3::detail::is_power_of_two(i)) << i << " should not be a power of two.";
-#ifdef __cpp_lib_int_pow2
             EXPECT_FALSE(std::has_single_bit(i));
-#endif // __cpp_lib_int_pow2
         }
     }
 }

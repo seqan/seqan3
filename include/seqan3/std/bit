@@ -60,7 +60,12 @@ namespace std
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
 //
 // // integral powers of 2
-// template<class T> constexpr bool has_single_bit(T x) noexcept;
+template<class T> constexpr bool has_single_bit(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    return x > 0 && (x & (x-1)) == 0;
+}
 // template<class T> constexpr T bit_ceil(T x) noexcept;
 // template<class T> constexpr T bit_floor(T x) noexcept;
 // template<class T> constexpr T bit_width(T x) noexcept;
