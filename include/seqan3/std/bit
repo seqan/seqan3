@@ -65,6 +65,9 @@ template <typename type_t>
 constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
 } // namespace std::detail
 
+// forward declare
+template<class T> constexpr int countl_zero(T x) noexcept;
+
 // // bit_­cast
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
 //
@@ -91,7 +94,12 @@ template<class T> constexpr T bit_ceil(T x) noexcept
 }
 
 // template<class T> constexpr T bit_floor(T x) noexcept;
-// template<class T> constexpr T bit_width(T x) noexcept;
+template<class T> constexpr T bit_width(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    return detail::sizeof_bits<T> - countl_zero(x);
+}
 //
 // // rotating
 // template<class T> [[nodiscard]] constexpr T rotl(T x, int s) noexcept;

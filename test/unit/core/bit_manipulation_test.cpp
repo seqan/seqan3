@@ -113,9 +113,7 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
                                                    << position;
             EXPECT_EQ(seqan3::detail::most_significant_bit_set(n), position) << "The position of the msb of " << n
                                                                              << " should be " << position;
-#ifdef __cpp_lib_int_pow2
             EXPECT_EQ(std::bit_width(n), position + 1u);
-#endif // __cpp_lib_int_pow2
         }
     }
 }
