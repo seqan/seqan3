@@ -228,9 +228,7 @@ TYPED_TEST(unsigned_operations, popcount)
             EXPECT_EQ(seqan3::detail::popcount(n),
                       sizeof_bits_of_unsigned_t - position) << "The pocount of " << n << " should be "
                                                             << sizeof_bits_of_unsigned_t - position;
-#ifdef __cpp_lib_int_pow2
             EXPECT_EQ(std::popcount(n), sizeof_bits_of_unsigned_t - position);
-#endif // __cpp_lib_int_pow2
         }
     }
 }

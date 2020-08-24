@@ -125,7 +125,17 @@ template<class T> constexpr int countr_zero(T x) noexcept
         return __builtin_ctz(x);
 }
 // template<class T> constexpr int countr_one(T x) noexcept;
-// template<class T> constexpr int popcount(T x) noexcept;
+template<class T> constexpr int popcount(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if constexpr (sizeof(T) == sizeof(unsigned long long))
+        return __builtin_popcountll(x);
+    else if constexpr (sizeof(T) == sizeof(unsigned long))
+        return __builtin_popcountl(x);
+    else
+        return __builtin_popcount(x);
+}
 
 } // namespace std
 
