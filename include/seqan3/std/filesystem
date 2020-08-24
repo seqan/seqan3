@@ -7,7 +7,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief This header includes C++17 filesystem support and imports it into namespace seqan3::filesystem (independent of whether it is marked as "experimental").
+ * \brief This header includes C++17 filesystem support and imports it into namespace std::filesystem (independent of
+ *        whether it is marked as "experimental").
  * \author Vitor C. Piro <pirov AT zedat.fu-berlin.de >
  */
 
