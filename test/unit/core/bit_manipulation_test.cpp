@@ -118,12 +118,12 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
 TYPED_TEST(unsigned_operations, count_leading_zeros)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t t1 = seqan3::detail::count_leading_zeros<unsigned_t>(0b0001);
-    constexpr size_t t2 = seqan3::detail::count_leading_zeros<unsigned_t>(0b0101);
-    constexpr size_t t3 = seqan3::detail::count_leading_zeros<unsigned_t>(0b0010);
-    constexpr size_t t4 = seqan3::detail::count_leading_zeros<unsigned_t>(0b0110);
-    constexpr size_t t5 = seqan3::detail::count_leading_zeros<unsigned_t>(0b0100);
-    constexpr size_t t6 = seqan3::detail::count_leading_zeros<unsigned_t>(0b10100000);
+    constexpr size_t t1 = std::countl_zero<unsigned_t>(0b0001u);
+    constexpr size_t t2 = std::countl_zero<unsigned_t>(0b0101u);
+    constexpr size_t t3 = std::countl_zero<unsigned_t>(0b0010u);
+    constexpr size_t t4 = std::countl_zero<unsigned_t>(0b0110u);
+    constexpr size_t t5 = std::countl_zero<unsigned_t>(0b0100u);
+    constexpr size_t t6 = std::countl_zero<unsigned_t>(0b10100000u);
     EXPECT_EQ(t1, seqan3::detail::sizeof_bits<unsigned_t> - 1u);
     EXPECT_EQ(t2, seqan3::detail::sizeof_bits<unsigned_t> - 3u);
     EXPECT_EQ(t3, seqan3::detail::sizeof_bits<unsigned_t> - 2u);
@@ -140,7 +140,7 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
             EXPECT_EQ(seqan3::detail::sizeof_bits<unsigned_t> - sdsl::bits::hi(n) - 1, n) << "[SDSL] n " << n
                                                                                           << " should have " << cnt
                                                                                           << " leading zeros.";
-            EXPECT_EQ(seqan3::detail::count_leading_zeros(n), cnt) << "n " << n << " should have " << cnt
+            EXPECT_EQ(std::countl_zero(n), cnt) << "n " << n << " should have " << cnt
                                                                    << " leading zeros.";
             EXPECT_EQ(std::countl_zero(n), cnt);
         }
