@@ -117,19 +117,34 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
     return s;
 }
 
-//!\overload
-template <typename char_t, sequence rng_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
+/*!\brief All biological sequences can be printed to the seqan3::debug_stream.
+ * \tparam sequence_t Type of the (biological) sequence to be printed; must model seqan3::sequence.
+ * \param s The seqan3::debug_stream.
+ * \param sequence The input range.
+ * \relates seqan3::debug_stream_type
+ *
+ * \details
+ *
+ * The (biological) sequence (except for ranges over unsigned integers) is printed just as if it were a string, i.e.
+ * <tt>std::vector<dna4>{'C'_dna4, 'G'_dna4, 'A'_dna4}</tt> is printed as "CGA".
+ *
+ * \if DEV
+ * Note that overloads for range based streaming need to refine the seqan3::detail::debug_stream_range_guard concept
+ * to avoid ambiguous function calls.
+ * \endif
+ */
+template <typename char_t, sequence sequence_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, sequence_t && sequence)
 //!\cond
-    requires detail::debug_stream_range_guard<rng_t> &&
-             (!detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<rng_t>>>)
+    requires detail::debug_stream_range_guard<sequence_t> &&
+             (!detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<sequence_t>>>)
 //!\endcond
 {
-    for (auto && l : r)
-        s << l;
-
+    for (auto && chr : sequence)
+        s << chr;
     return s;
 }
+
 //!\}
 
 } // namespace seqan3
