@@ -67,18 +67,14 @@ TEST(bit_manipulation, next_power_of_two)
     for (size_t power_of_two = 1; power_of_two <= (size_t{1u} << 31); power_of_two <<= 1)
     {
         EXPECT_EQ(seqan3::detail::next_power_of_two(power_of_two), power_of_two);
-#ifdef __cpp_lib_int_pow2
         EXPECT_EQ(std::bit_ceil(power_of_two), power_of_two);
-#endif // __cpp_lib_int_pow2
 
         size_t next_power = (power_of_two << 1);
         for (size_t i = power_of_two + 1, k = 0; i < next_power && k < max_iterations; ++i, ++k)
         {
             EXPECT_EQ(seqan3::detail::next_power_of_two(i), next_power) << "The next power of two of " << i
                                                                         << " should be " << next_power;
-#ifdef __cpp_lib_int_pow2
             EXPECT_EQ(std::bit_ceil(i), next_power);
-#endif // __cpp_lib_int_pow2
         }
     }
 }

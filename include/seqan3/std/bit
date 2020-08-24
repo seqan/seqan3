@@ -66,7 +66,21 @@ template<class T> constexpr bool has_single_bit(T x) noexcept
 
     return x > 0 && (x & (x-1)) == 0;
 }
-// template<class T> constexpr T bit_ceil(T x) noexcept;
+
+template<class T> constexpr T bit_ceil(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if (x == 0)
+        return 1;
+
+    --x;
+    for (size_t shift = 1; !has_single_bit(x + 1); shift <<= 1)
+        x |= x >> shift;
+
+    return x + 1;
+}
+
 // template<class T> constexpr T bit_floor(T x) noexcept;
 // template<class T> constexpr T bit_width(T x) noexcept;
 //
