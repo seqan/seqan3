@@ -11,7 +11,8 @@ int main()
     using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;
 
     // Select the result type based on the sequences and the configuration.
-    using result_t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<std::remove_reference_t<first_seq_t>,
+    using result_t = seqan3::alignment_result<typename seqan3::detail::align_result_selector<
+                                                                 std::remove_reference_t<first_seq_t>,
                                                                  std::remove_reference_t<second_seq_t>,
                                                                  config_t>::type>;
     // Define the function wrapper type.

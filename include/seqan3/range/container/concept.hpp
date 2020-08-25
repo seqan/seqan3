@@ -69,7 +69,7 @@ namespace seqan3
  * \extends seqan3::const_iterable_range
  * \brief The (most general) container concept as defined by the standard library.
  * \details
- * The container concept is modelled as in the [STL](https://en.cppreference.com/w/cpp/concept/Container), but
+ * The container concept is modelled as in the [STL](https://en.cppreference.com/w/cpp/named_req/Container), but
  * additionally requires std::swap() to be implemented.
  *
  * \attention
@@ -135,7 +135,7 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
  *
  * Includes constraints on constructors, `assign()`, `.insert()`, `.erase()`, `.push_back()`, `.pop_back`, `.clear()`,
  * `.size()`, `front()` and `.back()` member functions with corresponding signatures. Models the subset of the
- * [STL SequenceConcept](https://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
+ * [STL SequenceConcept](https://en.cppreference.com/w/cpp/named_req/SequenceContainer) that is supported
  * by `std::list`, `std::vector`, `std::deque`, `std::basic_string`.
  *
  * \attention
@@ -198,7 +198,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
  * \brief A more refined container concept than seqan3::sequence_container.
  *
  * Adds requirements for `.at()`, `.resize()` and the subscript operator `[]`. Models the subset of the
- * [STL SequenceConcept](httpa://en.cppreference.com/w/cpp/concept/SequenceConcept) that is supported
+ * [STL SequenceConcept](https://en.cppreference.com/w/cpp/named_req/SequenceContainer) that is supported
  * by `std::vector`, `std::deque` and `std::basic_string`.
  *
  * \attention

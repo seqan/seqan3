@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::scoring.
+ * \brief Provides seqan3::align_cfg::scoring_scheme.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
@@ -38,21 +38,22 @@ namespace seqan3::align_cfg
  * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
 template <typename scoring_scheme_t>
-struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scoring_scheme_t>
+struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_scheme_t>, scoring_scheme_t>
 {
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    scoring() = default; //!< Defaulted.
-    scoring(scoring const &) = default; //!< Defaulted.
-    scoring(scoring &&) = default; //!< Defaulted.
-    scoring & operator=(scoring const &) = default; //!< Defaulted.
-    scoring & operator=(scoring &&) = default; //!< Defaulted.
-    ~scoring() = default; //!< Defaulted.
+    scoring_scheme() = default; //!< Defaulted.
+    scoring_scheme(scoring_scheme const &) = default; //!< Defaulted.
+    scoring_scheme(scoring_scheme &&) = default; //!< Defaulted.
+    scoring_scheme & operator=(scoring_scheme const &) = default; //!< Defaulted.
+    scoring_scheme & operator=(scoring_scheme &&) = default; //!< Defaulted.
+    ~scoring_scheme() = default; //!< Defaulted.
 
     //!\brief Construct from base type.
-    constexpr scoring(scoring_scheme_t const & s) : pipeable_config_element<scoring<scoring_scheme_t>,
-                                                                                    scoring_scheme_t>(s) {}
+    constexpr scoring_scheme(scoring_scheme_t const & s) :
+        pipeable_config_element<scoring_scheme<scoring_scheme_t>, scoring_scheme_t>(s)
+    {}
     //!\}
 
     //!\privatesection
@@ -61,13 +62,13 @@ struct scoring : public pipeable_config_element<scoring<scoring_scheme_t>, scori
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::align_cfg::scoring
+ * \relates seqan3::align_cfg::scoring_scheme
  * \{
  */
 
 //!\brief Deduces the scoring scheme type from the constructor argument.
 template <typename scheme_t>
-scoring(scheme_t) -> scoring<remove_cvref_t<scheme_t>>;
+scoring_scheme(scheme_t) -> scoring_scheme<remove_cvref_t<scheme_t>>;
 //!\}
 
 } // namespace seqan3::align_cfg

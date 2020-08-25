@@ -70,14 +70,14 @@ struct drop_fn
             return std::basic_string_view{std::ranges::data(urange) + drop_size, new_size};
         }
         // contiguous
-        else if constexpr (forwarding_range<urng_t> &&
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
                            std::ranges::contiguous_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
             return std::span{std::ranges::data(urange) + drop_size, new_size};
         }
         // random_access
-        else if constexpr (forwarding_range<urng_t> &&
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
                            std::ranges::random_access_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
@@ -145,12 +145,12 @@ namespace seqan3::views
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                                                           | `rrng_t` (returned range type)  |
- * |:------------------------------------------------------------------------------------------:|:-------------------------------:|
- * | `std::basic_string const &` *or* `std::basic_string_view`                                  | `std::basic_string_view`        |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::contiguous_range`    | `std::span`                     |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::random_access_range` | `std::ranges::subrange`         |
- * | *else*                                                                                     | *implementation defined type*   |
+ * | `urng_t` (underlying range type)                                                              | `rrng_t` (returned range type)  |
+ * |:---------------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::basic_string const &` *or* `std::basic_string_view`                                     | `std::basic_string_view`        |
+ * | `std::ranges::borrowed_range && std::ranges::sized_range && std::ranges::contiguous_range`    | `std::span`                     |
+ * | `std::ranges::borrowed_range && std::ranges::sized_range && std::ranges::random_access_range` | `std::ranges::subrange`         |
+ * | *else*                                                                                        | *implementation defined type*   |
  *
  * The adaptor is different from std::views::drop in that it performs type erasure for some underlying ranges.
  * It returns exactly the type specified above.

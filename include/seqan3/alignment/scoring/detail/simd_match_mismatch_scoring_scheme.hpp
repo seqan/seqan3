@@ -88,7 +88,7 @@ public:
     //!\copydoc seqan3::detail::simd_match_mismatch_scoring_scheme::initialise_from_scalar_scoring_scheme
     template <typename scoring_scheme_t>
     //!\cond
-        requires scoring_scheme<scoring_scheme_t, alphabet_t>
+        requires scoring_scheme_for<scoring_scheme_t, alphabet_t>
     //!\endcond
     constexpr explicit simd_match_mismatch_scoring_scheme(scoring_scheme_t const & scoring_scheme)
     {
@@ -98,7 +98,7 @@ public:
     //!\copydoc seqan3::detail::simd_match_mismatch_scoring_scheme::initialise_from_scalar_scoring_scheme
     template <typename scoring_scheme_t>
     //!\cond
-        requires scoring_scheme<scoring_scheme_t, alphabet_t>
+        requires scoring_scheme_for<scoring_scheme_t, alphabet_t>
     //!\endcond
     constexpr simd_match_mismatch_scoring_scheme & operator=(scoring_scheme_t const & scoring_scheme)
     {

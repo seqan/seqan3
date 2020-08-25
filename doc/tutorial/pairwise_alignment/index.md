@@ -47,7 +47,7 @@ In this case it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
 The minimum requirement for computing a pairwise alignment is to specify the alignment method (seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
-seqan3::align_cfg::scoring configuration elements. The first one selects the internal algorithm and the second one
+seqan3::align_cfg::scoring_scheme configuration elements. The first one selects the internal algorithm and the second one
 provides the scoring scheme that should be used to score a pair of sequence characters.
 
 Now we are going to call seqan3::align_pairwise. This interface requires two arguments: a tuple or a range of tuples
@@ -111,7 +111,7 @@ seqan3::align_cfg::method_global.
 It would be wrong for us to assume what the intended default behaviour should be.
 
 The global alignment can be further refined by setting the seqan3::align_cfg::aligned_ends option.
-The seqan3::align_cfg::aligned_ends class specifies wether or not gaps at the end of the sequences are penalised.
+The seqan3::align_cfg::aligned_ends class specifies whether or not gaps at the end of the sequences are penalised.
 In SeqAn you can configure this behaviour for every end (front and back of the first sequence and second sequence)
 separately using the seqan3::end_gaps class.
 This class is constructed with up to 4 end gap specifiers (one for every end):
@@ -203,8 +203,8 @@ positive value and the score for mismatch and gaps must be negative in order to 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_scheme
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
-seqan3::align_cfg::scoring and the seqan3::align_cfg::gap configurations. The
-seqan3::align_cfg::scoring is mandatory - similarly to the alignment method configuration. It would be
+seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap configurations. The
+seqan3::align_cfg::scoring_scheme is mandatory - similarly to the alignment method configuration. It would be
 wrong to assume what the default scoring scheme should be. If you do not provide these configurations, the compilation
 will fail with a corresponding error message. Not providing the gap scheme is ok. In this case the default initialised
 gap scheme will be used for the alignment computation.
@@ -226,27 +226,34 @@ the assignment. Et voilà, we have computed a pairwise alignment over aminoacid 
 
 ## Alignment result
 
-So far we have only computed the score, but obviously in many situations the final alignment is required, e.g. when
+So far we have only used the score, but obviously in many situations the final alignment is required, e.g. when
 mapping reads and the user wishes to write the alignment to the final SAM/BAM file.
 In SeqAn you can simply configure what is going to be computed by the alignment algorithm using the
-seqan3::align_cfg::result configuration.
+different \ref seqan3_align_cfg_output_configurations "output configurations".
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_result
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp result
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_output
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp output
 
 Accordingly, the alignment algorithm is configured to use the best implementation to obtain the desired result.
 The following table shows the different outcomes that can be configured:
 
-| Entity                                                                               | Available result                                      |
-| -------------------------------------------------------------------------------------|------------------------------------------------------ |
-| \ref seqan3::align_cfg::result::with_score  "seqan3::with_score"                     | alignment score                                       |
-| \ref seqan3::align_cfg::result::with_end_positions  "seqan3::with_end_positions"     | alignment score; back coordinate                      |
-| \ref seqan3::align_cfg::result::with_begin_positions  "seqan3::with_begin_positions" | alignment score; back and front coordinate            |
-| \ref seqan3::align_cfg::result::with_alignment  "seqan3::with_alignment"             | alignment score; back and front coordinate; alignment |
+| **Output option**                                                                        | **Available result**                     |
+| -----------------------------------------------------------------------------------------|------------------------------------------|
+| \ref seqan3::align_cfg::output_score "seqan3::align_cfg::output_score"                   | alignment score                          |
+| \ref seqan3::align_cfg::output_end_position "seqan3::align_cfg::output_end_position"     | end positions of the aligned sequences   |
+| \ref seqan3::align_cfg::output_begin_position "seqan3::align_cfg::output_begin_position" | begin positions of the aligned sequences |
+| \ref seqan3::align_cfg::output_alignment "seqan3::align_cfg::output_alignment"           | alignment of the two sequences           |
+| \ref seqan3::align_cfg::output_sequence1_id "seqan3::align_cfg::output_sequence1_id"     | id of the first sequence                 |
+| \ref seqan3::align_cfg::output_sequence2_id "seqan3::align_cfg::output_sequence2_id"     | id of the second sequence                |
 
 The final result is returned as a seqan3::alignment_result object. This object offers special member functions to access
-the stored values. If you try to access a value, e.g. the alignment, although you didn't specify `with_alignment` in
-the result configuration, a static assertion will be triggered during compilation.
+the stored values. If you try to access a value, e.g. the alignment, although you didn't specify
+seqan3::align_cfg::output_alignment in the result configuration, a static assertion will be triggered during
+compilation.
+
+\note If you don't specify any of the above mentioned output configurations then by default all options are enabled and
+      will be computed. In order to potentially increase the performance of the alignment algorithm only enable those
+      options that are needed for your use case.
 
 \assignment{Assignment 4}
 Compute the overlap alignment of the following two sequences. Use a linear gap scheme with a gap score of `-4` and

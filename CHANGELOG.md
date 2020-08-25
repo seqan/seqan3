@@ -5,11 +5,11 @@
 This changelog contains a top-level entry for each release with sections on new features, API changes and notable
 bug-fixes (not all bug-fixes will be listed).
 
-Get to know SeqAn3 with our [tutorials](http://docs.seqan.de/seqan/3-master-user/usergroup1.html).
+Get to know SeqAn3 with our [tutorials](https://docs.seqan.de/seqan/3-master-user/usergroup1.html).
 
 Please see the release announcement: https://www.seqan.de/announcing-seqan3/
 
-See the porting guide for some help on porting: http://docs.seqan.de/seqan/3-master-user/howto_porting.html
+See the porting guide for some help on porting: https://docs.seqan.de/seqan/3-master-user/howto_porting.html
 
 See the documentation on [API stability](https://docs.seqan.de/seqan/3-master-user/about_api.html) to learn about
 when API changes are allowed.
@@ -89,8 +89,16 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
     ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
 * The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
   pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
-  ([\#1918](https://github.com/seqan/seqan3/pull/1918).
-* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`.
+  ([\#1918](https://github.com/seqan/seqan3/pull/1918)).
+* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`
+  ([\#2026](https://github.com/seqan/seqan3/pull/2026)).
+* The `seqan3::align_cfg::scoring` configuration has been renamed to `seqan3::align_cfg::scoring_scheme`
+  ([\#2027](https://github.com/seqan/seqan3/pull/2027)).
+* The `seqan3::align_cfg::result` configuration has been replaced by
+  [`seqan3::align_cfg::output_*` options](http://docs.seqan.de/seqan/3.0.2/group__alignment.html).
+  The default behaviour when not specifying any output configuration has changed from computing only the score to
+  computing everything. Please read the linked documentation above carefully to understand all implied changes
+  ([\#2024](https://github.com/seqan/seqan3/pull/2024)).
 
 ### Core
 
@@ -104,6 +112,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()`
   functions have been deprecated:
   Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
+* We removed `seqan3::forward_range`. Use `std::ranges::borrowed_range` instead ([\#2038](https://github.com/seqan/seqan3/pull/2038)).
 * Added `seqan3::views::minimiser`, a view that computes the minimum in a window shifted over a range of comparable values.
   ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
 * Added `seqan3::views::minimiser_hash`, a view that computes the minimisers of a range of type seqan3::semialphabet.
@@ -294,7 +303,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1471](https://github.com/seqan/seqan3/pull/1471)).
 * Customising for third party types has changes slightly:
   You are only affected if you added types to `seqan3::custom::`.
-  Please see [About Customisation](http://docs.seqan.de/seqan/3.0.1/about_customisation.html)
+  Please see [About Customisation](https://docs.seqan.de/seqan/3.0.1/about_customisation.html)
   ([\#1225](https://github.com/seqan/seqan3/pull/1225)).
 * All our concepts are named in the `snake_case` style
   (e.g. `seqan3::WritableAlphabet` -> `seqan3::writable_alphabet`)! This change was motivated by the decision of the

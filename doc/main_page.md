@@ -28,7 +28,7 @@ Resources outside of this web-site that might be useful:
 
 ### Some notes on using this documentation
 
-We use [doxygen](http://doxygen.nl) to generate our documentation.
+We use [doxygen](https://doxygen.nl) to generate our documentation.
 It may not be the most beautiful system, but it works quite well in practice.
 If you spot any dead links in the documentation, please open an issue at our bug-tracker (see above) or
 [directly submit a pull request](\ref about_contributing) fixing the problem.

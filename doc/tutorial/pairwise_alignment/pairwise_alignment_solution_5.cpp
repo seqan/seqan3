@@ -12,13 +12,19 @@ int main()
     auto seq1 = "TTACGTACGGACTAGCTACAACATTACGGACTAC"_dna4;
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 
+    // Configure the output:
+    auto output_config = seqan3::align_cfg::output_score |
+                         seqan3::align_cfg::output_begin_position |
+                         seqan3::align_cfg::output_end_position |
+                         seqan3::align_cfg::output_alignment;
+
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} |
-                  seqan3::align_cfg::scoring{seqan3::nucleotide_scoring_scheme{
+                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
-                  seqan3::align_cfg::result{seqan3::with_alignment} |
+                  output_config |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
                                                      seqan3::align_cfg::upper_diagonal{8}};
 

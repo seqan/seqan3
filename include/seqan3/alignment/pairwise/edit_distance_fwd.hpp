@@ -69,7 +69,7 @@ struct default_edit_distance_trait_type
     //!\brief The type of one machine word.
     using word_type = word_t;
     static_assert(std::is_unsigned_v<word_type>, "the word type of edit_distance_unbanded must be unsigned.");
-    static_assert(align_config_type::template exists<align_cfg::result>(), "We assume the result type was configured.");
+    static_assert(alignment_traits_type::has_output_configuration, "We assume the result type was configured.");
     //!\brief The type of the score.
     using score_type = typename alignment_traits_type::original_score_type;
     //!\brief The type of the database sequence.
@@ -99,12 +99,14 @@ struct default_edit_distance_trait_type
     static constexpr bool is_global = !is_semi_global;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score.
     static constexpr bool compute_score = true;
-    //!\brief Whether the alignment configuration indicates to compute and/or store the back coordinate.
-    static constexpr bool compute_end_positions = alignment_traits_type::compute_end_positions;
-    //!\brief Whether the alignment configuration indicates to compute and/or store the front coordinate.
-    static constexpr bool compute_begin_positions = alignment_traits_type::compute_begin_positions;
     //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
     static constexpr bool compute_sequence_alignment = alignment_traits_type::compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the begin positions.
+    static constexpr bool compute_begin_positions = alignment_traits_type::compute_begin_positions ||
+                                                    compute_sequence_alignment;
+    //!\brief Whether the alignment configuration indicates to compute and/or store the end positions.
+    static constexpr bool compute_end_positions = alignment_traits_type::compute_end_positions ||
+                                                  compute_begin_positions;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
     static constexpr bool compute_score_matrix = false;
     //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.

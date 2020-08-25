@@ -749,7 +749,7 @@ protected:
 
             if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type_>> &&
                           std::ranges::sized_range<std::ranges::range_reference_t<ref_ids_type_>> &&
-                          forwarding_range<std::ranges::range_reference_t<ref_ids_type_>>)
+                          std::ranges::borrowed_range<std::ranges::range_reference_t<ref_ids_type_>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;

@@ -272,7 +272,7 @@ public:
     /*!\brief Writes a range to the associated output.
      * \tparam range_type The type of range to write; Must model std::ranges::forward_range.
      * \param[in] rng The range to write.
-     * \returns If `range_type` models `std::ranges::forwarding_range` returns an iterator pointing to end of the range
+     * \returns If `range_type` models `std::ranges::borrowed_range` returns an iterator pointing to end of the range
      *          (rng) else returns `void`.
      *
      * This function avoids the buffer-at-end check by writing the range in chunks, where a chunks has the size of
@@ -281,7 +281,7 @@ public:
      * may use memcpy if applicable. Otherwise, a simple for loop iterates over the chunk.
      *
      * \attention You can only use the return value (end iterator) if your range type models
-     *            `std::ranges::forwarding_range`.
+     *            `std::ranges::borrowed_range`.
      *
      * Example:
      *
@@ -289,7 +289,7 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires forwarding_range<range_type>
+        requires std::ranges::borrowed_range<range_type>
     //!\endcond
     auto write_range(range_type && rng)
     {
@@ -336,7 +336,7 @@ public:
     }
 
     //!\cond
-    // overload for non-forwarding_range types that return void
+    // overload for non-std::ranges::borrowed_range types that return void
     template <std::ranges::forward_range range_type>
     void write_range(range_type && rng)
     {

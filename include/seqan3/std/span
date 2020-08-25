@@ -29,7 +29,6 @@
 #include <iterator>     // for iterators
 #include <type_traits>  // for remove_cv, etc
 
-#include <seqan3/range/concept.hpp>  // for forwarding_range
 #include <seqan3/std/iterator>       // for iterator concepts
 #include <seqan3/std/ranges>         // for range concepts
 
@@ -292,7 +291,7 @@ public:
                                   element_type(*)[]> &&
                  ranges::contiguous_range<range_t> &&
                  ranges::sized_range<range_t> &&
-                 (seqan3::forwarding_range<range_t> || is_const_v<element_type>)
+                 (ranges::borrowed_range<range_t> || is_const_v<element_type>)
     constexpr span(range_t && rng) : data_{ranges::data(rng)}, size_{static_cast<index_type>(ranges::size(rng))}
     {}
 

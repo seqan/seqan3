@@ -65,14 +65,14 @@ private:
             return std::basic_string_view{std::ranges::data(urange), std::ranges::size(urange)};
         }
         // contiguous
-        else if constexpr (forwarding_range<urng_t> &&
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
                            std::ranges::contiguous_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
             return std::span{std::ranges::data(urange), std::ranges::size(urange)};
         }
         // random_access
-        else if constexpr (forwarding_range<urng_t> &&
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
                            std::ranges::random_access_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
@@ -138,13 +138,13 @@ namespace seqan3::views
  *
  * ### Return type
  *
- * | `urng_t` (underlying range type)                                                               | `rrng_t` (returned range type)  |
- * |:----------------------------------------------------------------------------------------------:|:-------------------------------:|
- * | `std::ranges::view`                                                                            | `urng_t`                        |
- * | `std::basic_string const &` *or* `std::basic_string_view`                                      | `std::basic_string_view`        |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::contiguous_range`        | `std::span`                     |
- * | `seqan3::forwarding_range && std::ranges::sized_range && std::ranges::random_access_range`     | `std::ranges::subrange`         |
- * | *else*                                                                                         | `std::ranges::ref_view<urng_t>` |
+ * | `urng_t` (underlying range type)                                                                  | `rrng_t` (returned range type)  |
+ * |:-------------------------------------------------------------------------------------------------:|:-------------------------------:|
+ * | `std::ranges::view`                                                                               | `urng_t`                        |
+ * | `std::basic_string const &` *or* `std::basic_string_view`                                         | `std::basic_string_view`        |
+ * | `std::ranges::borrowed_range && std::ranges::sized_range && std::ranges::contiguous_range`        | `std::span`                     |
+ * | `std::ranges::borrowed_range && std::ranges::sized_range && std::ranges::random_access_range`     | `std::ranges::subrange`         |
+ * | *else*                                                                                            | `std::ranges::ref_view<urng_t>` |
  *
  * This adaptor is different from std::views::all in that it performs type erasure for some underlying ranges;
  * std::views::all always returns `std::ranges::ref_view<urng_t>` or the type itself if it already is a view.

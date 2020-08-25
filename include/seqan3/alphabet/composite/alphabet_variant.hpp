@@ -81,7 +81,7 @@ namespace seqan3
  *
  * The alphabet_variant represents the union of two or more alternative alphabets (e.g. the
  * four letter DNA alternative + the gap alternative). It behaves similar to a
- * [variant](https://en.cppreference.com/w/cpp/language/variant) or std::variant, but it preserves the
+ * [variant](https://en.cppreference.com/w/cpp/utility/variant) or std::variant, but it preserves the
  * seqan3::alphabet.
  *
  * Short description:

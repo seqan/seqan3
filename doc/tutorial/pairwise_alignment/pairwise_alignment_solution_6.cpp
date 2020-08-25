@@ -21,7 +21,7 @@ int main()
     auto config = seqan3::align_cfg::method_global{} |
                   seqan3::align_cfg::edit_scheme |
                   seqan3::align_cfg::max_error{7u} |
-                  seqan3::align_cfg::result{seqan3::with_score};
+                  seqan3::align_cfg::output_score;
 
     auto filter_v = std::views::filter([](auto && res) { return res.score() >= -6;});
 

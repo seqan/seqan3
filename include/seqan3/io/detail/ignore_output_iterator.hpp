@@ -33,7 +33,7 @@ public:
     /*!\name Member types
      * \{
      * \brief Associated types are void for output iterators, see also
-     * [output iterator concept](https://en.cppreference.com/w/cpp/concept/output_iterator).
+     * [output iterator concept](https://en.cppreference.com/w/cpp/iterator/output_iterator).
      */
 
     //!\brief The value type (void).
