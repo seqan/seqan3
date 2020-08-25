@@ -3,6 +3,10 @@ os: linux
 dist: bionic
 language: cpp
 
+branches:
+  only:
+  - master
+
 git:
   submodules: true
 
