@@ -311,8 +311,9 @@ To make the configuration easier, we added a shortcut called seqan3::align_cfg::
 The edit distance can be further refined using seqan3::align_cfg::aligned_ends to also compute a semi-global alignment
 and the seqan3::align_cfg::min_score configuration to fix an edit score (a limit of the allowed number of edits). If the
 respective alignment could not find a solution within the given error bound, the resulting score is infinity
-(corresponds to std::numeric_limits::max). Also the alignment and the front and back coordinates can be computed using
-the align_cfg::result option.
+(corresponds to std::numeric_limits::max). Also the alignment and the begin and end positions of the alignment can be
+computed using a combination of the align_cfg::output_alignment, align_cfg::output_begin_position and
+align_cfg::output_end_position options.
 
 \attention Only the options seqan3::free_ends_none and seqan3::free_ends_first
 are supported for the aligned ends configuration with the edit distance. Using any other aligned ends configuration will

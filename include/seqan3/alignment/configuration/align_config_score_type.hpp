@@ -6,14 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides configuration for alignment output.
+ * \brief Provides alignment configuration seqan3::align_cfg::score_type.
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 
@@ -35,10 +34,9 @@ struct score_type_tag : public pipeable_config_element<score_type_tag<score_t>>
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::score_type};
 };
 
-/*!\brief Helper variable used to configure the score type for the alignment algorithm.
+/*!\brief A configuration element to set the score type used in the alignment algorithm.
  * \ingroup alignment_configuration
- * \relates seqan3::align_cfg::output_alignment
- * \tparam t The type to use for the computed alignment score; must model seqan3::arithmetic.
+ * \tparam score_t The type to use for the computed alignment score; must model seqan3::arithmetic.
  *
  * \details
  *

@@ -169,7 +169,7 @@ public:
      * ### Complexity
      *
      * The following table lists the runtime and space complexities for the banded and unbanded algorithm dependent
-     * on the configured seqan3::align_cfg::result per sequence pair.
+     * on the given \ref seqan3_align_cfg_output_configurations "seqan3::align_cfg::output_*" per sequence pair.
      * Let `n` be the length of the first sequence, `m` be the length of the second sequence and `k` be the size of
      * the band.
      *
@@ -608,8 +608,8 @@ private:
         // Build the alignment result
         // ----------------------------------------------------------------------------
 
-        static_assert(config_t::template exists<align_cfg::result>(),
-                      "The configuration must contain an align_cfg::result element.");
+        static_assert(seqan3::detail::alignment_configuration_traits<config_t>::has_output_configuration,
+                      "The configuration must contain at least one align_cfg::output_* element.");
 
         result_value_t res{};
 

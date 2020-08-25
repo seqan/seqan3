@@ -215,7 +215,7 @@ public:
      *
      * This function reads the seqan3::configuration object and generates the corresponding alignment algorithm type.
      * During this process some runtime configurations are converted to static configurations if required.
-     * In case of a missing configuration that has a default, e.g. the seqan3::align_cfg::result option, the
+     * In case of a missing configuration that has a default, e.g. the seqan3::align_cfg::output_* options, the
      * default version of this configuration element is added to the passed configuration object.
      * The return type is a std::pair over a std::function object and the adapted configuration object. Thus, the
      * calling function has access to the possibly modified configuration object.

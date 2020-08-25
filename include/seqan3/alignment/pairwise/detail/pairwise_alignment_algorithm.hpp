@@ -113,7 +113,7 @@ public:
      * ### Complexity
      *
      * The following table lists the runtime and space complexities for the banded and unbanded algorithm dependent
-     * on the configured seqan3::align_cfg::result per sequence pair.
+     * on the given \ref seqan3_align_cfg_output_configurations "seqan3::align_cfg::output_*" per sequence pair.
      * Let `n` be the length of the first sequence, `m` be the length of the second sequence and `k` be the size of
      * the band.
      *
