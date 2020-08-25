@@ -159,13 +159,19 @@ TEST(range_and_iterator, difference_type)
     //TODO(h-2): add something that actually has a different difference_type
     using iterator_of_int_vector = std::ranges::iterator_t<std::vector<int>>;
     using foreign_iterator = seqan3::detail::random_access_iterator<std::vector<int>>;
-    auto v = std::views::iota(1);
     using type_list_example = seqan3::type_list<std::ranges::range_difference_t<std::vector<int>>, // short
                                                 typename std::vector<int>::difference_type, // member type
                                                 std::ranges::range_difference_t<std::vector<int> const>, // const container
                                                 std::iter_difference_t<iterator_of_int_vector>, // iterator
-                                                std::iter_difference_t<foreign_iterator>, // iterator2
-                                                std::ranges::range_difference_t<decltype(v)>>; // range, no member
+                                                std::iter_difference_t<foreign_iterator>>; // range, no member
+
+    using comp_list = seqan3::type_list<std::ptrdiff_t,
+                                        std::ptrdiff_t,
+                                        std::ptrdiff_t,
+                                        std::ptrdiff_t,
+                                        std::ptrdiff_t>;
+
+    expect_same_types<type_list_example, comp_list>();
 
     // views::ints' difference_type is not std::ptrdiff_t, but depends on the size.
     // For infinite views, like in our case, it's std::int_fast64_t (or std::int_fast32_t on 32bit).
@@ -177,14 +183,10 @@ TEST(range_and_iterator, difference_type)
                                                std::int_fast64_t,
                                                std::int_fast32_t>;
 
-    using comp_list = seqan3::type_list<std::ptrdiff_t,
-                                        std::ptrdiff_t,
-                                        std::ptrdiff_t,
-                                        std::ptrdiff_t,
-                                        std::ptrdiff_t,
-                                        view_int_diff_t>;
-
-    expect_same_types<type_list_example, comp_list>();
+    auto v = std::views::iota(1);
+    using iota_difference_t = std::ranges::range_difference_t<decltype(v)>;
+    EXPECT_TRUE((std::signed_integral<iota_difference_t>));
+    EXPECT_EQ(sizeof(iota_difference_t), sizeof(view_int_diff_t));
 }
 
 TEST(range_and_iterator, size_type)
