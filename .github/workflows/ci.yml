@@ -19,21 +19,23 @@ jobs:
   build:
     needs: cancel
     name: ${{ matrix.name }}
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: "Coverage gcc7"
-            requires_ubuntu_toolchain: true
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-7"
             cc: "gcc-7"
             build: coverage
             build_type: Debug
 
-          - name: "Unit gcc9 (c++2a)"
-            requires_ubuntu_toolchain: true
+          - name: "Unit gcc9 (c++2a) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-9"
             cc: "gcc-9"
@@ -41,8 +43,19 @@ jobs:
             build_type: Release
             cxx_flags: "-std=c++2a"
 
-          - name: "Unit gcc10 (c++17)"
-            requires_ubuntu_toolchain: true
+          - name: "Unit gcc9 (c++2a) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-9"
+            cc: "gcc-9"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++2a"
+
+          - name: "Unit gcc10 (c++17) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-10"
             cc: "gcc-10"
@@ -50,24 +63,64 @@ jobs:
             build_type: Release
             cxx_flags: "-std=c++17 -fconcepts"
 
-          - name: "Unit gcc10 (c++20)"
-            requires_ubuntu_toolchain: true
+          - name: "Unit gcc10 (c++17) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++17 -fconcepts"
+
+          - name: "Unit gcc10 (c++20) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-10"
             cc: "gcc-10"
             build: unit
             build_type: Release
 
-          - name: "Unit gcc8"
-            requires_ubuntu_toolchain: true
+          - name: "Unit gcc10 (c++20) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
+
+          - name: "Unit gcc8 on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-8"
             cc: "gcc-8"
             build: unit
             build_type: Release
 
-          - name: "Unit gcc7"
-            requires_ubuntu_toolchain: true
+          - name: "Unit gcc8 on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-8"
+            cc: "gcc-8"
+            build: unit
+            build_type: Release
+
+          - name: "Unit gcc7 on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Release
+
+          - name: "Unit gcc7 on macOS"
+            os: macos-10.15
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-7"
             cc: "gcc-7"
@@ -75,7 +128,8 @@ jobs:
             build_type: Release
 
           - name: "Performance gcc7"
-            requires_ubuntu_toolchain: true
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-7"
             cc: "gcc-7"
@@ -83,7 +137,8 @@ jobs:
             build_type: Release
 
           - name: "Header gcc7"
-            requires_ubuntu_toolchain: true
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-7"
             cc: "gcc-7"
@@ -91,7 +146,8 @@ jobs:
             build_type: Release
 
           - name: "Snippet gcc7"
-            requires_ubuntu_toolchain: true
+            os: ubuntu-20.04
+            requires_toolchain: true
             requires_ccache: true
             cxx: "g++-7"
             cc: "gcc-7"
@@ -99,7 +155,8 @@ jobs:
             build_type: Release
 
           - name: "Documentation"
-            requires_ubuntu_toolchain: false
+            os: ubuntu-20.04
+            requires_toolchain: false
             requires_ccache: false
             build: documentation
 
@@ -113,10 +170,15 @@ jobs:
       - name: Setup CMake
         shell: bash
         run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            OS="Linux"
+          else
+            OS="Darwin"
+          fi
           mkdir -p /tmp/cmake-download
-          wget --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-          tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-          echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" # Only available in subsequent steps!
+          wget --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
+          tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
+          echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" # Only available in subsequent steps!
 
       - name: Setup Doxygen
         if: matrix.build == 'documentation'
@@ -129,19 +191,29 @@ jobs:
           echo "::add-path::/tmp/doxygen-${DOXYGEN_VERSION}/bin" # Only available in subsequent steps!
 
       - name: Add package source
-        if: matrix.requires_ubuntu_toolchain
+        if: matrix.requires_toolchain && runner.os == 'Linux'
         shell: bash
         run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
 
       - name: Install ccache
         if: matrix.requires_ccache
         shell: bash
-        run: sudo apt-get install --yes ccache
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install --yes ccache
+          else
+            brew install --force-bottle ccache
+          fi
 
       - name: Install compiler ${{ matrix.cxx }}
-        if: matrix.requires_ubuntu_toolchain
+        if: matrix.requires_toolchain
         shell: bash
-        run: sudo apt-get install --yes ${{ matrix.cxx }}
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install --yes ${{ matrix.cxx }}
+          else
+            brew install --force-bottle $(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
+          fi
 
       - name: Install lcov
         if: matrix.build == 'coverage'
