@@ -13,7 +13,6 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
-#include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/core/bit_manipulation.hpp>

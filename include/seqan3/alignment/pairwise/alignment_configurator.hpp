@@ -215,8 +215,9 @@ public:
      *
      * This function reads the seqan3::configuration object and generates the corresponding alignment algorithm type.
      * During this process some runtime configurations are converted to static configurations if required.
-     * In case of a missing configuration that has a default, e.g. the seqan3::align_cfg::output_* options, the
-     * default version of this configuration element is added to the passed configuration object.
+     * In case of a missing configuration that has a default, e.g. the \ref seqan3_align_cfg_output_configurations
+     * "seqan3::align_cfg::output_*" options, the default version of this configuration element is added to the passed
+     * configuration object.
      * The return type is a std::pair over a std::function object and the adapted configuration object. Thus, the
      * calling function has access to the possibly modified configuration object.
      * The function object type is determined using the following type trait:
@@ -234,112 +235,97 @@ public:
     //!\endcond
     static constexpr auto configure(config_t const & cfg)
     {
+        auto config_with_output = maybe_default_output(cfg);
+        using config_with_output_t = decltype(config_with_output);
 
-        // If no output is set, everything will set by default.
-        if constexpr (!seqan3::detail::alignment_configuration_traits<config_t>::has_output_configuration)
+        // ----------------------------------------------------------------------------
+        // Configure the type-erased alignment function.
+        // ----------------------------------------------------------------------------
+
+        using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequences_t>>;
+        using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;
+
+        using wrapped_first_t  = type_reduce_view<first_seq_t &>;
+        using wrapped_second_t = type_reduce_view<second_seq_t &>;
+
+        // The alignment executor passes a chunk over an indexed sequence pair range to the alignment algorithm.
+        using indexed_sequence_pair_range_t = typename chunked_indexed_sequence_pairs<sequences_t>::type;
+        using indexed_sequence_pair_chunk_t = std::ranges::range_value_t<indexed_sequence_pair_range_t>;
+
+        // Select the result type based on the sequences and the configuration.
+        using alignment_result_value_t = typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
+                                                                        std::remove_reference_t<wrapped_second_t>,
+                                                                        config_with_output_t>::type;
+        using alignment_result_t = alignment_result<alignment_result_value_t>;
+        using callback_on_result_t = std::function<void(alignment_result_t)>;
+        // Define the function wrapper type.
+        using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
+
+        // Capture the alignment result type.
+        auto config_with_result_type = config_with_output | align_cfg::detail::result_type<alignment_result_t>;
+
+        // ----------------------------------------------------------------------------
+        // Test some basic preconditions
+        // ----------------------------------------------------------------------------
+
+        using alignment_contract_t = alignment_contract<sequences_t, config_with_output_t>;
+
+        static_assert(alignment_contract_t::expects_alignment_configuration(),
+                      "Alignment configuration error: "
+                      "The alignment can only be configured with alignment configurations.");
+
+        static_assert(alignment_contract_t::expects_tuple_like_value_type(),
+                      "Alignment configuration error: "
+                      "The value type of the sequence ranges must model the seqan3::tuple_like and must contain "
+                      "exactly 2 elements.");
+
+        static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
+                      "Alignment configuration error: "
+                      "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
+                      "the value types of the passed sequences.");
+
+        // ----------------------------------------------------------------------------
+        // Configure the algorithm
+        // ----------------------------------------------------------------------------
+
+        // Use default edit distance if gaps are not set.
+        auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
+        auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
+        auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
+
+        if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
-            return configure<sequences_t>(cfg |
-                                          align_cfg::output_alignment |
-                                          align_cfg::output_begin_position |
-                                          align_cfg::output_end_position |
-                                          align_cfg::output_sequence1_id |
-                                          align_cfg::output_sequence2_id |
-                                          align_cfg::output_score);
-        }
-        else
-        {
-            auto config_with_output = maybe_default_output(cfg);
-            using config_with_output_t = decltype(config_with_output);
-
-            // ----------------------------------------------------------------------------
-            // Configure the type-erased alignment function.
-            // ----------------------------------------------------------------------------
-
-            using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequences_t>>;
-            using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;
-
-            using wrapped_first_t  = type_reduce_view<first_seq_t &>;
-            using wrapped_second_t = type_reduce_view<second_seq_t &>;
-
-            // The alignment executor passes a chunk over an indexed sequence pair range to the alignment algorithm.
-            using indexed_sequence_pair_range_t = typename chunked_indexed_sequence_pairs<sequences_t>::type;
-            using indexed_sequence_pair_chunk_t = std::ranges::range_value_t<indexed_sequence_pair_range_t>;
-
-            // Select the result type based on the sequences and the configuration.
-            using alignment_result_value_t = typename align_result_selector<std::remove_reference_t<wrapped_first_t>,
-                                                                            std::remove_reference_t<wrapped_second_t>,
-                                                                            config_with_output_t>::type;
-            using alignment_result_t = alignment_result<alignment_result_value_t>;
-            using callback_on_result_t = std::function<void(alignment_result_t)>;
-            // Define the function wrapper type.
-            using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
-
-            // Capture the alignment result type.
-            auto config_with_result_type = config_with_output | align_cfg::detail::result_type<alignment_result_t>;
-
-            // ----------------------------------------------------------------------------
-            // Test some basic preconditions
-            // ----------------------------------------------------------------------------
-
-            using alignment_contract_t = alignment_contract<sequences_t, config_with_output_t>;
-
-            static_assert(alignment_contract_t::expects_alignment_configuration(),
-                          "Alignment configuration error: "
-                          "The alignment can only be configured with alignment configurations.");
-
-            static_assert(alignment_contract_t::expects_tuple_like_value_type(),
-                          "Alignment configuration error: "
-                          "The value type of the sequence ranges must model the seqan3::tuple_like "
-                          "and must contain exactly 2 elements.");
-
-            static_assert(alignment_contract_t::expects_valid_scoring_scheme(),
-                          "Alignment configuration error: "
-                          "Either the scoring scheme was not configured or the given scoring scheme cannot be invoked with "
-                          "the value types of the passed sequences.");
-
-            // ----------------------------------------------------------------------------
-            // Configure the algorithm
-            // ----------------------------------------------------------------------------
-
-            // Use default edit distance if gaps are not set.
-            auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
-            auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
-            auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-
-            if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
+            // Only use edit distance if ...
+            if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+                !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
+                align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
             {
-                // Only use edit distance if ...
-                if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
-                    !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
-                    align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+                // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
+                //       option via the scheme.
+                if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                                                          nucleotide_scoring_scheme>)
                 {
-                    // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
-                    //       option via the scheme.
-                    if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
-                                                              nucleotide_scoring_scheme>)
+                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
+                        (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
                     {
-                        if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                            (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
-                        {
-                            return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
-                                             config_with_result_type};
-                        }
+                        return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
+                                         config_with_result_type};
                     }
                 }
             }
-
-            // ----------------------------------------------------------------------------
-            // Check if invalid configuration was used.
-            // ----------------------------------------------------------------------------
-
-            // Do not allow min score configuration for alignments not computing the edit distance.
-            if (config_t::template exists<align_cfg::min_score>())
-                throw invalid_alignment_configuration{"The align_cfg::min_score configuration is only allowed for "
-                                                      "the specific edit distance computation."};
-            // Configure the alignment algorithm.
-            return std::pair{configure_scoring_scheme<function_wrapper_t>(config_with_result_type),
-                             config_with_result_type};
         }
+
+        // ----------------------------------------------------------------------------
+        // Check if invalid configuration was used.
+        // ----------------------------------------------------------------------------
+
+        // Do not allow min score configuration for alignments not computing the edit distance.
+        if (config_t::template exists<align_cfg::min_score>())
+            throw invalid_alignment_configuration{"The align_cfg::min_score configuration is only allowed for the "
+                                                  "specific edit distance computation."};
+        // Configure the alignment algorithm.
+        return std::pair{configure_scoring_scheme<function_wrapper_t>(config_with_result_type),
+                         config_with_result_type};
     }
 
 private:

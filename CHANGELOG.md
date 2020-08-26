@@ -100,7 +100,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   [`seqan3::align_cfg::output_*` options](http://docs.seqan.de/seqan/3.0.2/group__alignment.html).
   The default behaviour when not specifying any output configuration has changed from computing only the score to
   computing everything. Please read the linked documentation above carefully to understand all implied changes
-  ([\#2024](https://github.com/seqan/seqan3/pull/2024)).
+  ([\#2024](https://github.com/seqan/seqan3/pull/2024)) & ([\#2035](https://github.com/seqan/seqan3/pull/2035)).
 
 ### Core
 
