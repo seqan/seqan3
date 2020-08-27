@@ -18,6 +18,7 @@
 namespace std
 {
 
+#ifndef __cpp_lib_type_identity
 /*!\defgroup std_type_traits type_traits
  * \ingroup std
  * \brief The \<concepts\> header from C++20's standard library.
@@ -44,5 +45,6 @@ struct type_identity<t>
 //!\ingroup std_type_traits
 template <typename t>
 using type_identity_t = typename type_identity<t>::type;
+#endif // __cpp_lib_type_identity
 
 } // namespace std
