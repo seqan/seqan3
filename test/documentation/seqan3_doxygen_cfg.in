@@ -16,7 +16,8 @@ INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include               \
 STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
-IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}
+IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
