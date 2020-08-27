@@ -32,18 +32,18 @@
 
 #ifdef SEQAN3_HAS_SEQAN2
 
-#include <seqan/basic.h>
 #include <seqan3/std/ranges>
 
-#if __cpp_lib_ranges // C++20 ranges available
-namespace std
-#else // implement via range-v3
+#include <range/v3/range_fwd.hpp>
+
+#include <seqan/basic.h>
+
 namespace ranges
-#endif
 {
 
-//!\brief This makes seqan iterators ranges-aware, i.e. makes them fulfil ranges::readable which is in turn needed for
-//!ranges::input_range.
+/*!\brief This makes seqan2 iterators ranges-aware, i.e. makes them fulfil ranges::indirectly_readable which is in turn
+ *        needed for ranges::input_iterator and ranges::input_range.
+ */
 template <typename ...args_t>
 struct indirectly_readable_traits<seqan::Iter<args_t...>>
 {
@@ -51,4 +51,20 @@ struct indirectly_readable_traits<seqan::Iter<args_t...>>
 };
 
 } // namespace ranges
-#endif
+
+#if __cpp_lib_ranges // C++20 ranges available
+namespace std
+{
+
+/*!\brief This makes seqan2 iterators ranges-aware, i.e. makes them fulfil std::indirectly_readable which is in turn
+ *        needed for std::input_iterator and std::ranges::input_range.
+ */
+template <typename ...args_t>
+struct indirectly_readable_traits<seqan::Iter<args_t...>>
+{
+    using value_type = typename seqan::Value<seqan::Iter<args_t...>>::Type;
+};
+
+} // namespace std
+#endif //__cpp_lib_ranges
+#endif // SEQAN3_HAS_SEQAN2
