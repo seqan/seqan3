@@ -318,12 +318,11 @@ struct edit_distance_trace_matrix_full<word_t, is_semi_global, use_max_errors>::
             coordinate_.row = std::max<size_t>(coordinate_.row, 1) - 1;
             coordinate_.col = std::max<size_t>(coordinate_.col, 1) - 1;
         }
-        else
-        {
-            // Unknown seqan3::trace_direction in an inner cell of the trace matrix.
-            // This can't happen in non-local alignments.
-            assert(coordinate_.row == 0 || coordinate_.col == 0);
-        }
+
+        // seqan3::trace_direction::none in an inner cell of the trace matrix is not possible in
+        // non-local alignments, e.g. global, semi-global, max-error, banded. On the other hand,
+        // this can happen in a cell of the first row or first colomn.
+        assert(dir != N || coordinate_.row == 0 || coordinate_.col == 0);
 
         return *this;
     }
