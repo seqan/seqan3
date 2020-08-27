@@ -161,11 +161,18 @@ jobs:
             build: documentation
 
     steps:
-      - name: Checkout
+      - name: Checkout SeqAn3
         uses: actions/checkout@v2
         with:
           path: seqan3
           submodules: true
+
+      - name: Checkout SeqAn2
+        uses: actions/checkout@v2
+        with:
+          repository: seqan/seqan
+          ref: develop
+          path: seqan3/submodules/seqan
 
       - name: Setup CMake
         shell: bash
