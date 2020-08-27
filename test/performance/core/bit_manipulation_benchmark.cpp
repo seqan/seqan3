@@ -54,6 +54,17 @@ static void is_power_of_two_seqan3(benchmark::State & state) {
 }
 BENCHMARK(is_power_of_two_seqan3);
 
+static void is_power_of_two_std(benchmark::State & state) {
+    std::srand(0);
+    size_t n = 0;
+    for (auto _ : state)
+    {
+        n = std::rand();
+        benchmark::DoNotOptimize(std::has_single_bit(n));
+    }
+}
+BENCHMARK(is_power_of_two_std);
+
 static void next_power_of_two_seqan3(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
@@ -64,5 +75,16 @@ static void next_power_of_two_seqan3(benchmark::State & state) {
     }
 }
 BENCHMARK(next_power_of_two_seqan3);
+
+static void next_power_of_two_std(benchmark::State & state) {
+    std::srand(0);
+    size_t n = 0;
+    for (auto _ : state)
+    {
+        n = std::rand();
+        benchmark::DoNotOptimize(std::bit_ceil(n));
+    }
+}
+BENCHMARK(next_power_of_two_std);
 
 BENCHMARK_MAIN();
