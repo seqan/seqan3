@@ -16,7 +16,80 @@
 #include <seqan3/std/concepts>
 #include <stdexcept>
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/bit_manipulation.hpp>
+
+namespace seqan3::detail
+{
+
+/*!\brief Computes the floor of the logarithm to the base of two for unsigned integers.
+ * \ingroup core
+ * \param[in] n An unsigned integer.
+ * \attention *n = 0* is a special case and is undefined.
+ * \returns \f$ \lfloor log_2(n) \rfloor \f$.
+ *
+ * \details
+ *
+ * The difference to `std::floor(std::log2(n))` is that everything is computed *exactly* (without precision loss due to
+ * promoting to `double`)
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/floor_log2.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ */
+template <std::unsigned_integral unsigned_t>
+constexpr unsigned_t floor_log2(unsigned_t const n) noexcept
+{
+    assert(n > 0u); // n == 0 is undefined behaviour
+    return most_significant_bit_set(n);
+}
+
+/*!\brief Computes the ceil of the logarithm to the base of two for unsigned integers.
+ * \ingroup core
+ * \param[in] n An unsigned integer.
+ * \attention *n = 0* is a special case and is undefined.
+ * \returns \f$ \lceil log_2(n) \rceil \f$.
+ *
+ * \details
+ *
+ * The difference to `std::ceil(std::log2(n))` is that everything is computed *exactly* (without precision loss due to
+ * promoting to `double`)
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/ceil_log2.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ */
+template <std::unsigned_integral unsigned_t>
+constexpr unsigned_t ceil_log2(unsigned_t const n) noexcept
+{
+    assert(n > 0u); // n == 0 is undefined behaviour
+    return (n == 1u) ? 0u : seqan3::detail::floor_log2(n - 1u) + 1u;
+}
+
+} // namespace seqan3::detail
 
 namespace seqan3
 {

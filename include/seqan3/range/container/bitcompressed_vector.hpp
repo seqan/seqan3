@@ -17,6 +17,7 @@
 #include <sdsl/int_vector.hpp>
 
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
+#include <seqan3/core/math.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/to_char.hpp>
@@ -65,7 +66,7 @@ class bitcompressed_vector
 {
 private:
     //!\brief The number of bits needed to represent a single letter of the alphabet_type.
-    static constexpr size_t bits_per_letter = std::ceil(std::log2(alphabet_size<alphabet_type>));
+    static constexpr size_t bits_per_letter = detail::ceil_log2(alphabet_size<alphabet_type>);
 
     static_assert(bits_per_letter <= 64, "alphabet must be representable in at most 64bit.");
 
