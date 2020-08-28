@@ -219,7 +219,8 @@ public:
         requires std::ranges::sized_range<underlying_range_type>
     //!\endcond
     {
-        return (std::ranges::size(u_range) * (std::ranges::size(u_range) - 1) / 2);
+        auto const size = std::ranges::size(u_range);
+        return (size * (size - 1)) / 2;
     }
     //!\}
 
