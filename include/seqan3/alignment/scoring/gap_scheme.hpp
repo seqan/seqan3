@@ -27,7 +27,8 @@ namespace seqan3
 // ------------------------------------------------------------------
 
 /*!\brief A strong type of underlying type `score_type` that represents the score of any character against a gap
- *        character.
+ *        character. 
+ * \deprecated This type is deprecated and will be removed in SeqAn3.1.
  * \tparam score_type The underlying type.
  * \ingroup scoring
  * \see seqan3::gap_scheme
@@ -54,6 +55,7 @@ gap_score(score_type) -> gap_score<score_type>;
 
 /*!\brief A strong type of underlying type `score_type` that represents an additional score (usually negative) that
  *        is incurred once additionaly per stretch of consecutive gaps.
+ * \deprecated This type is deprecated and will be removed in SeqAn3.1.
  * \tparam score_type The underlying type.
  * \ingroup scoring
  * \see seqan3::gap_scheme
@@ -84,7 +86,7 @@ gap_open_score(score_type) -> gap_open_score<score_type>;
  * \ingroup scoring
  */
 template <arithmetic score_t = int8_t>
-class gap_scheme
+class SEQAN3_DEPRECATED_310 gap_scheme
 {
 public:
 
@@ -131,7 +133,7 @@ public:
      * \tparam score_arg_t The underlying type of the arguments.
      * \param[in] g  The cost of each gap character (of type seqan3::gap_score).
      * \param[in] go The additional cost per sequence of gaps (of type seqan3::gap_open_score).
-     * \throws std::invalid_argument Thrown if you pass a value that is to large/low to be represented by `score_t`.
+     * \throws std::invalid_argument Thrown if you pass a value that is too large/low to be represented by `score_t`.
      *
      * \details
      *
