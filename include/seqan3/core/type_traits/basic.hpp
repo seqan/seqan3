@@ -43,7 +43,7 @@ namespace seqan3
  * \tparam t The type to operate on.
  */
 template <typename t>
-using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
+using remove_cvref_t SEQAN3_DEPRECATED_310 = std::remove_cv_t<std::remove_reference_t<t>>;
 
 // ----------------------------------------------------------------------------
 // remove_rvalue_reference
