@@ -169,7 +169,7 @@ jobs:
           submodules: true
 
       - name: Setup CMake
-        shell: bash
+        shell: bash -x {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             OS="Linux"
@@ -183,7 +183,7 @@ jobs:
 
       - name: Setup Doxygen
         if: matrix.build == 'documentation'
-        shell: bash
+        shell: bash -x {0}
         run: |
           sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
           mkdir -p /tmp/doxygen-download
@@ -198,7 +198,7 @@ jobs:
 
       - name: Install ccache
         if: matrix.requires_ccache
-        shell: bash
+        shell: bash -x {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install --yes ccache
@@ -208,7 +208,7 @@ jobs:
 
       - name: Install compiler ${{ matrix.cxx }}
         if: matrix.requires_toolchain
-        shell: bash
+        shell: bash -x {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install --yes ${{ matrix.cxx }}
@@ -218,7 +218,7 @@ jobs:
 
       - name: Install lcov
         if: matrix.build == 'coverage'
-        shell: bash
+        shell: bash -x {0}
         run: |
           sudo apt-get install --yes lcov
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
@@ -244,7 +244,7 @@ jobs:
         env:
           CXX: ${{ matrix.cxx }}
           CC: ${{ matrix.cc }}
-        shell: bash
+        shell: bash -x {0}
         run: |
           mkdir seqan3-build
           cd seqan3-build
@@ -263,7 +263,7 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
           CCACHE_MAXSIZE: 5G
-        shell: bash
+        shell: bash -x {0}
         run: |
           ccache -p || true
           cd seqan3-build
@@ -271,7 +271,7 @@ jobs:
           ccache -s || true
 
       - name: Run tests
-        shell: bash
+        shell: bash -x {0}
         run: |
           cd seqan3-build
           if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then
