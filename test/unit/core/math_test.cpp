@@ -9,6 +9,85 @@
 
 #include <seqan3/core/math.hpp>
 
+static constexpr size_t max_iterations = 1;//1 << 15;
+
+using unsigned_types = ::testing::Types<uint8_t, uint16_t, uint32_t, uint64_t>;
+
+template <typename type>
+class unsigned_operations : public ::testing::Test
+{};
+
+TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
+
+TYPED_TEST(unsigned_operations, floor_log2)
+{
+    using unsigned_t = TypeParam;
+    constexpr size_t zero = seqan3::detail::floor_log2<unsigned_t>(0b0001);
+    constexpr size_t one1 = seqan3::detail::floor_log2<unsigned_t>(0b0010);
+    constexpr size_t one2 = seqan3::detail::floor_log2<unsigned_t>(0b0011);
+    constexpr size_t two1 = seqan3::detail::floor_log2<unsigned_t>(0b0101);
+    constexpr size_t two2 = seqan3::detail::floor_log2<unsigned_t>(0b0111);
+    constexpr size_t seven = seqan3::detail::floor_log2<unsigned_t>(0b10010010);
+    EXPECT_EQ(zero, 0u);
+    EXPECT_EQ(one1, 1u);
+    EXPECT_EQ(one2, 1u);
+    EXPECT_EQ(two1, 2u);
+    EXPECT_EQ(two2, 2u);
+    EXPECT_EQ(seven, 7u);
+
+    for (uint8_t log2_value = 0; log2_value < seqan3::detail::sizeof_bits<unsigned_t>; ++log2_value)
+    {
+        unsigned_t start = unsigned_t{1u} << log2_value;
+        unsigned_t end = start << 1u;
+        for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
+        {
+            EXPECT_EQ(seqan3::detail::floor_log2(n), log2_value);
+            EXPECT_EQ(std::floor(std::log2(n)), log2_value) << "If this fails this might be a floating point rounding "
+                                                            << "error on your machine";
+        }
+    }
+}
+
+TYPED_TEST(unsigned_operations, ceil_log2)
+{
+    using unsigned_t = TypeParam;
+    constexpr size_t zero = seqan3::detail::ceil_log2<unsigned_t>(0b0001);
+    constexpr size_t one = seqan3::detail::ceil_log2<unsigned_t>(0b0010);
+    constexpr size_t two = seqan3::detail::ceil_log2<unsigned_t>(0b0011);
+    constexpr size_t three1 = seqan3::detail::ceil_log2<unsigned_t>(0b0101);
+    constexpr size_t three2 = seqan3::detail::ceil_log2<unsigned_t>(0b0111);
+    constexpr size_t eight = seqan3::detail::ceil_log2<unsigned_t>(0b10010010);
+    EXPECT_EQ(zero, 0u);
+    EXPECT_EQ(one, 1u);
+    EXPECT_EQ(two, 2u);
+    EXPECT_EQ(three1, 3u);
+    EXPECT_EQ(three2, 3u);
+    EXPECT_EQ(eight, 8u);
+
+    for (uint8_t log2_value = 0; log2_value < seqan3::detail::sizeof_bits<unsigned_t>; ++log2_value)
+    {
+        unsigned_t start = unsigned_t{1u} << log2_value;
+        unsigned_t end = start << 1u;
+        EXPECT_EQ(seqan3::detail::ceil_log2(start), log2_value);
+        EXPECT_EQ(std::ceil(std::log2(start)), log2_value) << "ceil_log2 of " << start << " should be " << log2_value
+                                                           << "; If this fails this might be a floating point rounding "
+                                                           << "error on your machine.";
+
+        for (unsigned_t n = start + 1u, k = 0u; n < end && k < max_iterations; ++n, ++k)
+        {
+            EXPECT_EQ(seqan3::detail::ceil_log2(n), log2_value + 1u);
+
+            if constexpr (seqan3::detail::sizeof_bits<unsigned_t> <= 32u) // known to fail for 64bit unsigned integers
+            {
+                EXPECT_EQ(std::ceil(std::log2(n)), log2_value + 1u) << "ceil_log2 of " << start << " should be "
+                                                                    << log2_value
+                                                                    << "; If this fails this might be a floating point"
+                                                                    << "rounding error on your machine.";
+            }
+        }
+    }
+}
+
 TEST(pow, unsigned_base)
 {
     EXPECT_EQ(0u, seqan3::pow(0u, 2u));

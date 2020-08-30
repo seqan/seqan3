@@ -28,18 +28,18 @@ TEST(method_global, access_member_variables)
     seqan3::align_cfg::method_global opt{}; // default construction
 
     // all default to false
-    EXPECT_FALSE(opt.free_end_gaps_sequence1_leading.get());
-    EXPECT_FALSE(opt.free_end_gaps_sequence2_leading.get());
-    EXPECT_FALSE(opt.free_end_gaps_sequence1_trailing.get());
-    EXPECT_FALSE(opt.free_end_gaps_sequence2_trailing.get());
+    EXPECT_FALSE(opt.free_end_gaps_sequence1_leading);
+    EXPECT_FALSE(opt.free_end_gaps_sequence2_leading);
+    EXPECT_FALSE(opt.free_end_gaps_sequence1_trailing);
+    EXPECT_FALSE(opt.free_end_gaps_sequence2_trailing);
 
-    opt.free_end_gaps_sequence1_leading = seqan3::align_cfg::free_end_gaps_sequence1_leading{true};
-    opt.free_end_gaps_sequence2_leading = seqan3::align_cfg::free_end_gaps_sequence2_leading{true};
-    opt.free_end_gaps_sequence1_trailing = seqan3::align_cfg::free_end_gaps_sequence1_trailing{true};
-    opt.free_end_gaps_sequence2_trailing = seqan3::align_cfg::free_end_gaps_sequence2_trailing{true};
+    opt.free_end_gaps_sequence1_leading = true;
+    opt.free_end_gaps_sequence2_leading = true;
+    opt.free_end_gaps_sequence1_trailing = true;
+    opt.free_end_gaps_sequence2_trailing = true;
 
-    EXPECT_TRUE(opt.free_end_gaps_sequence1_leading.get());
-    EXPECT_TRUE(opt.free_end_gaps_sequence2_leading.get());
-    EXPECT_TRUE(opt.free_end_gaps_sequence1_trailing.get());
-    EXPECT_TRUE(opt.free_end_gaps_sequence2_trailing.get());
+    EXPECT_TRUE(opt.free_end_gaps_sequence1_leading);
+    EXPECT_TRUE(opt.free_end_gaps_sequence2_leading);
+    EXPECT_TRUE(opt.free_end_gaps_sequence1_trailing);
+    EXPECT_TRUE(opt.free_end_gaps_sequence2_trailing);
 }

@@ -10,13 +10,13 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
-#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
 #include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
@@ -37,7 +37,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::align_cfg::result<>,
                                     seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
                                     seqan3::detail::vectorised_tag,
-                                    seqan3::detail::alignment_result_capture_element<alignment_result_t>>;
+                                    seqan3::detail::result_type_tag<alignment_result_t>>;
 
 TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
 

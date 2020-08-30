@@ -280,9 +280,12 @@ for (int h = 0; h < axis_agent.size(); ++h)
 // This is the main stage that executes all jobs registered in the tasks map
 // All steps are executed in parallel. If the contention on the agents are to high
 // consider moving some tasks out into another stage that runs after this one.
-stage ("matrix")
+if (is_nightly)
 {
-    parallel tasks
+    stage ("matrix")
+    {
+        parallel tasks
+    }
 }
 
 // ============================================================================

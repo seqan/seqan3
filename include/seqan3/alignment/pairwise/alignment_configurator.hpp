@@ -17,8 +17,9 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/alignment/configuration/align_config_alignment_result_capture.hpp>
+
 #include <seqan3/alignment/configuration/align_config_output.hpp>
+#include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
@@ -295,7 +296,7 @@ public:
             using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
             // Capture the alignment result type.
-            auto config_with_result_type = config_with_output | align_cfg::alignment_result_capture<alignment_result_t>;
+            auto config_with_result_type = config_with_output | align_cfg::detail::result_type<alignment_result_t>;
 
             // ----------------------------------------------------------------------------
             // Test some basic preconditions
