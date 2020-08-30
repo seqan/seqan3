@@ -18,6 +18,35 @@
 namespace std
 {
 
+// ----------------------------------------------------------------------------
+// remove_cvref_t
+// ----------------------------------------------------------------------------
+#ifndef __cpp_lib_remove_cvref
+/*!\brief Return the input type with `const`, `volatile` and references removed.
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+struct remove_cvref;
+
+//!\cond
+template <typename t>
+    requires true
+struct remove_cvref<t> // needed for gcc-9, it defines std::remove_cvref but does not populate __cpp_lib_remove_cvref
+{
+    using type = std::remove_cv_t<std::remove_reference_t<t>>;
+};
+//!\endcond
+
+/*!\brief Return the input type with `const`, `volatile` and references removed (transformation_trait shortcut).
+ * \tparam t The type to operate on.
+ */
+template <typename t>
+using remove_cvref_t = typename remove_cvref<t>::type;
+#endif // __cpp_lib_remove_cvref
+
+// ----------------------------------------------------------------------------
+// type_identity
+// ----------------------------------------------------------------------------
 #ifndef __cpp_lib_type_identity
 /*!\defgroup std_type_traits type_traits
  * \ingroup std
