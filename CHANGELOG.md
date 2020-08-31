@@ -73,6 +73,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
 * Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
   ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
+* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
+  ([\#2048](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
 

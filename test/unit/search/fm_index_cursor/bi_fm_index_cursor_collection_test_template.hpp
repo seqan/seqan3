@@ -14,6 +14,7 @@
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "../helper.hpp"
@@ -220,5 +221,16 @@ TYPED_TEST_P(bi_fm_index_cursor_collection_test, extend_const_char_pointer)
     }
 }
 
+TYPED_TEST_P(bi_fm_index_cursor_collection_test, serialisation)
+{
+    typename TypeParam::index_type bi_fm{this->text_col2};
+
+    TypeParam it = TypeParam(bi_fm);
+    it.extend_left(seqan3::views::slice(this->text, 1, 3));
+
+    seqan3::test::do_serialisation(it);
+}
+
 REGISTER_TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test, cursor, extend, extend_char, extend_range,
-                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, extend_const_char_pointer);
+                            extend_and_cycle, extend_range_and_cycle, to_fwd_cursor, extend_const_char_pointer,
+                            serialisation);
