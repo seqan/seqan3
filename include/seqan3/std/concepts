@@ -22,8 +22,6 @@
 #include <concepts/concepts.hpp>
 #include <range/v3/functional/concepts.hpp>
 
-#include <seqan3/core/platform.hpp>
-
 /*!\defgroup std std
  * \brief A subset of the C++20 standard library made available in pre-C++20 contexts.
  *
@@ -86,7 +84,7 @@ using ::concepts::unsigned_integral;
 // using ::concepts::floating_point;
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT floating_point = std::is_floating_point_v<t>;
+META_CONCEPT floating_point = std::is_floating_point_v<t>;
 //!\endcond
 
 // [concept.assignable], concept assignable_from
@@ -107,7 +105,7 @@ using ::concepts::constructible_from;
 // using ::concepts::default_initializable;
 //!\cond
 template <class T>
-SEQAN3_CONCEPT default_initializable = ::concepts::default_constructible<T>;
+META_CONCEPT default_initializable = ::concepts::default_constructible<T>;
 //!\endcond
 
 // [concept.moveconstructible], concept move_constructible

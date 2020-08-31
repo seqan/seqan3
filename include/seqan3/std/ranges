@@ -94,7 +94,6 @@ inline constexpr bool enable_borrowed_range<T> = true;
 #include <range/v3/view/take_while.hpp>
 #include <range/v3/view/transform.hpp>
 
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 

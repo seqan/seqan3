@@ -11,8 +11,6 @@
 #include <system_error>
 #include <limits>
 
-#include <seqan3/core/platform.hpp>
-
 #define SEQAN3_CONTRIB_CHARCONV_LIBCPP_BEGIN_NAMESPACE_STD namespace seqan3::contrib::charconv {
 #define SEQAN3_CONTRIB_CHARCONV_LIBCPP_END_NAMESPACE_STD }
 #define SEQAN3_CONTRIB_CHARCONV_LIBCPP_STD_VER 17
