@@ -51,7 +51,7 @@ TEST(align_config_score, invoke)
     EXPECT_EQ(std::get<0>(cfg).value.score('I'_aa27, 'V'_aa27), 3);
 
     using aminoacid_scoring_scheme_cfg = seqan3::detail::align_config_score<seqan3::aminoacid_scoring_scheme<int8_t>>;
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+    EXPECT_TRUE((std::is_same_v<std::remove_cvref_t<decltype(cfg)>,
                                 seqan3::detail::configuration<aminoacid_scoring_scheme_cfg>>));
 }
 

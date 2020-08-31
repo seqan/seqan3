@@ -25,7 +25,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(score_type, pipeable_config_element_test, test_ty
 
 TEST(align_config_score_type, score_type)
 {
-    EXPECT_TRUE((std::same_as<seqan3::remove_cvref_t<decltype(seqan3::align_cfg::score_type<int32_t>)>,
+    EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::score_type<int32_t>)>,
                               seqan3::align_cfg::score_type_tag<int32_t>>));                            // default case
     EXPECT_TRUE((std::same_as<decltype(seqan3::align_cfg::score_type<int32_t>)::score_type, int32_t>)); // default case
 

@@ -32,7 +32,7 @@ void read_left2right(benchmark::State & state)
     // get target sequence length from current range state
     unsigned int seq_len = state.range(0);
     using size_type = typename gap_decorator_t::size_type;
-    using sequence_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
+    using sequence_type = std::remove_cvref_t<seqan3::detail::unaligned_seq_t<gap_decorator_t>>;
     sequence_type seq(seq_len, 'A'_dna4);
 
     // vector of sampled gap lengths for each position

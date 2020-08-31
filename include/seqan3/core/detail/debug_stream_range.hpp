@@ -38,11 +38,11 @@ namespace seqan3::detail
  */
 template <typename rng_t>
 SEQAN3_CONCEPT debug_stream_range_guard =
-    !std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
-                                remove_cvref_t<rng_t>> && // prevent recursive instantiation
+    !std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>,
+                                std::remove_cvref_t<rng_t>> && // prevent recursive instantiation
     // exclude null-terminated strings:
     !(std::is_pointer_v<std::decay_t<rng_t>> &&
-      std::same_as<remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
+      std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, char>);
 
 /*!\brief Helper template variable that checks if the reference type of a range can be streamed into an instance of
  *        seqan3::debug_stream_type .
@@ -122,7 +122,7 @@ template <typename char_t, sequence rng_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
 //!\cond
     requires detail::debug_stream_range_guard<rng_t> &&
-             (!detail::is_uint_adaptation_v<remove_cvref_t<std::ranges::range_reference_t<rng_t>>>)
+             (!detail::is_uint_adaptation_v<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>>)
 //!\endcond
 {
     for (auto && l : r)

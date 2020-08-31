@@ -46,7 +46,7 @@ template <std::ranges::forward_range first_range_t,
           std::ranges::forward_range second_range_t,
           typename configuration_t>
 //!\cond
-    requires is_type_specialisation_of_v<remove_cvref_t<configuration_t>, configuration>
+    requires is_type_specialisation_of_v<std::remove_cvref_t<configuration_t>, configuration>
 //!\endcond
 struct align_result_selector
 {

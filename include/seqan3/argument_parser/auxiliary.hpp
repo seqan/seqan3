@@ -83,9 +83,9 @@ template <typename option_t>
 struct enumeration_names_fn
 {
     //!\brief `option_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_option_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<option_t>> &&
-                                          seqan3::is_constexpr_default_constructible_v<remove_cvref_t<option_t>>,
-                                          remove_cvref_t<option_t>,
+    using s_option_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_t>> &&
+                                          seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_t>>,
+                                          std::remove_cvref_t<option_t>,
                                           std::type_identity<option_t>>;
 
     SEQAN3_CPO_IMPL(1, (deferred_type_t<seqan3::custom::argument_parsing<option_t>, decltype(v)>::enumeration_names))
@@ -98,7 +98,7 @@ struct enumeration_names_fn
         {
             { impl(priority_tag<1>{}, s_option_t{}, dummy{}) };
             std::same_as<decltype(impl(priority_tag<1>{}, s_option_t{}, dummy{})),
-                         std::unordered_map<std::string_view, remove_cvref_t<option_t>>>;
+                         std::unordered_map<std::string_view, std::remove_cvref_t<option_t>>>;
         }
     //!\endcond
     auto operator()() const
@@ -205,7 +205,7 @@ SEQAN3_CONCEPT argument_parser_compatible_option = input_stream_over<std::istrin
  */
 template <typename char_t, typename option_type>
 //!\cond
-    requires named_enumeration<remove_cvref_t<option_type>>
+    requires named_enumeration<std::remove_cvref_t<option_type>>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, option_type && op)
 {

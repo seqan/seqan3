@@ -120,7 +120,7 @@ namespace seqan3
  * follow the above instructions.
  */
 template <typename t>
-inline constexpr bool enable_aminoacid = detail::adl_only::enable_aminoacid_dispatcher::dispatch<remove_cvref_t<t>>();
+inline constexpr bool enable_aminoacid = detail::adl_only::enable_aminoacid_dispatcher::dispatch<std::remove_cvref_t<t>>();
 
 // ============================================================================
 // concept

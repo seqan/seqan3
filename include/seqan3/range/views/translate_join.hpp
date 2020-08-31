@@ -132,7 +132,7 @@ public:
      */
     template <typename rng_t>
     //!\cond
-        requires (!std::same_as<remove_cvref_t<rng_t>, view_translate_join>) &&
+        requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate_join>) &&
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond

@@ -118,7 +118,7 @@ private:
 public:
     //!\brief Flag to indicate vectorised mode.
     static constexpr bool is_vectorised =
-        configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorised)>>();
+        configuration_t::template exists<std::remove_cvref_t<decltype(align_cfg::vectorised)>>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
     //!\brief Flag indicating whether global alignment method is enabled.

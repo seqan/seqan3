@@ -44,7 +44,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, std
  */
 template <typename char_t, typename optional_type>
 //!\cond
-    requires detail::is_type_specialisation_of_v<remove_cvref_t<optional_type>, std::optional>
+    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<optional_type>, std::optional>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, optional_type && arg)
 {

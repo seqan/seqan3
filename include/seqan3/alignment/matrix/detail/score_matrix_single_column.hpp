@@ -168,10 +168,10 @@ private:
 
     //!\brief The transform adaptor to convert the tuple from the zip view into a seqan3::detail::affine_cell_type.
     static constexpr auto transform_to_affine_cell = std::views::transform([] (auto && tpl)
-        -> affine_cell_proxy<remove_cvref_t<decltype(tpl)>>
+        -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
     {
         using fwd_tuple_t = decltype(tpl);
-        return affine_cell_proxy<remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
+        return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
     });
 
     //!\brief The pointer to the underlying matrix.

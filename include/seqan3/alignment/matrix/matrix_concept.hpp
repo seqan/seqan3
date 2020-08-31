@@ -38,35 +38,35 @@ constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
  */
 //!\cond
 template <typename matrix_t>
-SEQAN3_CONCEPT matrix = requires(remove_cvref_t<matrix_t> m)
+SEQAN3_CONCEPT matrix = requires(std::remove_cvref_t<matrix_t> m)
 {
 //!\endcond
 
     /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
      * \brief The type of an entry in the matrix.
      */
-    typename remove_cvref_t<matrix_t>::value_type;
+    typename std::remove_cvref_t<matrix_t>::value_type;
     /*!\typedef typedef IMPLEMENTATION_DEFINED reference;
      * \brief The type of a reference to an entry in the matrix.
      */
-    typename remove_cvref_t<matrix_t>::reference;
+    typename std::remove_cvref_t<matrix_t>::reference;
     /*!\typedef typedef IMPLEMENTATION_DEFINED size_type;
      * \brief The size type of the matrix.
      */
-    typename remove_cvref_t<matrix_t>::size_type;
+    typename std::remove_cvref_t<matrix_t>::size_type;
 
     /*!\fn size_type cols() const noexcept;
      * \brief The number of columns in the matrix.
      */
     //!\cond
-    SEQAN3_RETURN_TYPE_CONSTRAINT(m.cols(), std::same_as, typename remove_cvref_t<matrix_t>::size_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(m.cols(), std::same_as, typename std::remove_cvref_t<matrix_t>::size_type);
     //!\endcond
 
     /*!\fn size_type rows() const noexcept;
      * \brief The number of rows in the matrix.
      */
     //!\cond
-    SEQAN3_RETURN_TYPE_CONSTRAINT(m.rows(), std::same_as, typename remove_cvref_t<matrix_t>::size_type);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(m.rows(), std::same_as, typename std::remove_cvref_t<matrix_t>::size_type);
     //!\endcond
 
     /*!\fn reference at(matrix_coordinate coordinate) noexcept;
@@ -74,7 +74,7 @@ SEQAN3_CONCEPT matrix = requires(remove_cvref_t<matrix_t> m)
      */
     //!\cond
     SEQAN3_RETURN_TYPE_CONSTRAINT(m.at(matrix_coordinate{}),
-                                  std::same_as, typename remove_cvref_t<matrix_t>::reference);
+                                  std::same_as, typename std::remove_cvref_t<matrix_t>::reference);
     //!\endcond
 
 //!\cond
