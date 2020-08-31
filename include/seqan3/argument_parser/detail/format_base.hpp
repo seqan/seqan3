@@ -87,7 +87,7 @@ protected:
     //!\endcond
     static std::string get_type_name_as_string(container_type const & /**/)
     {
-        typename container_type::value_type tmp;
+        typename container_type::value_type tmp{};
         return get_type_name_as_string(tmp);
     }
 

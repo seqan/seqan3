@@ -89,7 +89,7 @@ private:
     template <typename search_configuration_t>
     #if !SEQAN3_WORKAROUND_GCC_93467
     //!\cond
-        requires is_type_specialisation_of_v<search_configuration_t, configuration>
+        requires detail::is_type_specialisation_of_v<search_configuration_t, configuration>
     //!\endcond
     #endif // !SEQAN3_WORKAROUND_GCC_93467
     friend struct detail::policy_search_result_builder;

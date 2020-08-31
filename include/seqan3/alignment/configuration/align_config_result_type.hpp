@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::alignment_result_capture.
+ * \brief Provides seqan3::align_cfg::detail::result_type and seqan3::detail::result_type_tag.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -28,41 +28,39 @@ namespace seqan3::detail
  *
  * \details
  *
- * Implementation of the alignment result capture config.
+ * Implementation of the alignment result type config.
  *
- * \see seqan3::align_cfg::alignment_result_capture
+ * \see seqan3::align_cfg::detail::result_type
  */
 template <typename alignment_result_t>
 //!\cond
     requires is_type_specialisation_of_v<alignment_result_t, alignment_result>
 //!\endcond
-struct alignment_result_capture_element :
-    public pipeable_config_element<alignment_result_capture_element<alignment_result_t>,
-                                   std::type_identity<alignment_result_t>>
+struct result_type_tag :
+    public pipeable_config_element<result_type_tag<alignment_result_t>, std::type_identity<alignment_result_t>>
 {
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    alignment_result_capture_element() = default; //!< Defaulted.
-    alignment_result_capture_element(alignment_result_capture_element const &) = default; //!< Defaulted.
-    alignment_result_capture_element(alignment_result_capture_element &&) = default; //!< Defaulted.
-    alignment_result_capture_element & operator=(alignment_result_capture_element const &) = default; //!< Defaulted.
-    alignment_result_capture_element & operator=(alignment_result_capture_element &&) = default; //!< Defaulted.
-    ~alignment_result_capture_element() = default; //!< Defaulted.
+    result_type_tag() = default; //!< Defaulted.
+    result_type_tag(result_type_tag const &) = default; //!< Defaulted.
+    result_type_tag(result_type_tag &&) = default; //!< Defaulted.
+    result_type_tag & operator=(result_type_tag const &) = default; //!< Defaulted.
+    result_type_tag & operator=(result_type_tag &&) = default; //!< Defaulted.
+    ~result_type_tag() = default; //!< Defaulted.
 
     //!\brief Construct from base type.
-    constexpr alignment_result_capture_element(alignment_result_t const & e) :
-        pipeable_config_element<alignment_result_capture_element<alignment_result_t>,
-                                std::type_identity<alignment_result_t>>(e) {}
+    constexpr result_type_tag(alignment_result_t const & e) :
+        pipeable_config_element<result_type_tag<alignment_result_t>, std::type_identity<alignment_result_t>>(e)
+    {}
     //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::alignment_result_capture};
+    static constexpr detail::align_config_id id{detail::align_config_id::result_type};
 };
-
 } // namespace seqan3::detail
 
-namespace seqan3::align_cfg
+namespace seqan3::align_cfg::detail
 {
 /*!\if DEV
  * \brief Configuration element capturing the configured seqan3::alignment_result for the alignment algorithm.
@@ -89,5 +87,5 @@ template <typename alignment_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<alignment_result_t, alignment_result>
 //!\endcond
-inline constexpr seqan3::detail::alignment_result_capture_element<alignment_result_t> alignment_result_capture{};
-}  // namespace seqan3::align_cfg
+inline constexpr seqan3::detail::result_type_tag<alignment_result_t> result_type{};
+} // namespace seqan3::align_cfg::detail

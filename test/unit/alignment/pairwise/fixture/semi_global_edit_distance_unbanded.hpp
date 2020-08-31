@@ -25,7 +25,11 @@ namespace seqan3::test::alignment::fixture::semi_global::edit_distance::unbanded
 using seqan3::detail::column_index_type;
 using seqan3::detail::row_index_type;
 
-static constexpr auto semi_global_edit_distance = seqan3::align_cfg::method_global{} |
+static constexpr auto semi_global_edit_distance = seqan3::align_cfg::method_global{
+                                                      seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                                      seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                                                      seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                      seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
                                                   seqan3::align_cfg::edit_scheme |
                                                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
 
