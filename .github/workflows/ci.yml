@@ -9,15 +9,7 @@ env:
   TZ: Europe/Berlin
 
 jobs:
-  cancel:
-    name: "Cancel previous runs"
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: styfle/cancel-workflow-action@0.4.1
-        with:
-          access_token: ${{ github.token }}
   build:
-    needs: cancel
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
