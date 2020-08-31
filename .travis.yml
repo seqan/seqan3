@@ -20,107 +20,31 @@ addons:
       - g++-9
       - g++-10
       - lcov
+      - cmake
+arch:
+  - arm64
+  - s390x
+  - ppc64le
 
-# https://docs.travis-ci.com/user/languages/c
-jobs:
-  include:
-    - name: "Coverage gcc7"
-      env:
-        - CXX=g++-7
-        - CC=gcc-7
-        - BUILD=coverage
-        - BUILD_TYPE=Debug
-    - name: "Unit gcc9 (c++2a)"
-      env:
-        - CXX=g++-9
-        - CC=gcc-9
-        - BUILD=unit
-        - BUILD_TYPE=Release
-        - CXXFLAGS="-std=c++2a"
-    - name: "Unit gcc10 (c++17)"
-      env:
-        - CXX=g++-10
-        - CC=gcc-10
-        - BUILD=unit
-        - BUILD_TYPE=Release
-        - CXXFLAGS="-std=c++17 -fconcepts"
-    - name: "Unit gcc10 (c++20)"
-      env:
-        - CXX=g++-10
-        - CC=gcc-10
-        - BUILD=unit
-        - BUILD_TYPE=Release
-    - name: "Unit gcc8"
-      env:
-        - CXX=g++-8
-        - CC=gcc-8
-        - BUILD=unit
-        - BUILD_TYPE=Release
-    - name: "Unit gcc7"
-      env:
-        - CXX=g++-7
-        - CC=gcc-7
-        - BUILD=unit
-        - BUILD_TYPE=Release
-    - name: "Performance gcc7"
-      env:
-        - CXX=g++-7
-        - CC=gcc-7
-        - BUILD=performance
-        - BUILD_TYPE=Release
-    - name: "Header gcc7"
-      env:
-        - CXX=g++-7
-        - CC=gcc-7
-        - BUILD=header
-        - BUILD_TYPE=Release
-    - name: "Snippet gcc7"
-      env:
-        - CXX=g++-7
-        - CC=gcc-7
-        - BUILD=snippet
-        - BUILD_TYPE=Release
-    - name: "Documentation"
-      compiler: 'doxygen'
-      addons:
-        apt:
-          # adds epstopdf, ghostscript, latex, libclang
-          packages: ['texlive-font-utils', 'ghostscript', 'texlive-latex-extra', 'libclang-9-dev', 'libclang-cpp9']
-      env:
-        - BUILD=documentation
-      cache:
-        directories:
-          - /tmp/doxygen-download
-      before_install:
-        - DOXYGEN_VER=1.8.19
-        - DOXYGEN_FOLDER=doxygen-${DOXYGEN_VER}
-        - mkdir -p /tmp/doxygen-download
-        - wget --no-clobber --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/${DOXYGEN_FOLDER}.linux.bin.tar.gz
-        - tar -C /tmp/ -zxvf /tmp/doxygen-download/${DOXYGEN_FOLDER}.linux.bin.tar.gz
-        - PATH=$PATH:/tmp/${DOXYGEN_FOLDER}/bin/
-        - doxygen --version
+env:
+  - BUILD=coverage    CXX=g++-7  CC=gcc-7  BUILD_TYPE=Debug
+  - BUILD=unit        CXX=g++-9  CC=gcc-9  BUILD_TYPE=Release CXXFLAGS="-std=c++2a"
+  - BUILD=unit        CXX=g++-10 CC=gcc-10 BUILD_TYPE=Release CXXFLAGS="-std=c++17 -fconcepts"
+  - BUILD=unit        CXX=g++-10 CC=gcc-10 BUILD_TYPE=Release
+  - BUILD=unit        CXX=g++-8  CC=gcc-8  BUILD_TYPE=Release
+  - BUILD=unit        CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
+  - BUILD=performance CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
+  - BUILD=header      CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
+  - BUILD=snippet     CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
 
 install:
-  - |
-    HOME_BIN_PATH=`realpath ~/bin`
-    mkdir -p ${HOME_BIN_PATH}
-  - |
-    # install cmake
-    CMAKE_VERSION="3.7.2"
-    mkdir -p /tmp/cmake-download
-    wget --no-clobber --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-    tar -C /tmp/ -zxvf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-    export PATH="/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin:${PATH}"
   - ccache --version
-  - ccache -M 10G
   - $CXX -v
   - cmake --version
   - |
     # use gcov7 matching the g++7 compiler
     if [[ "${BUILD}" =~ ^(coverage)$ ]]; then
-      GCOV_PATH=${HOME_BIN_PATH}
-      ln -s `which gcov-7` ${GCOV_PATH}/gcov
-      export PATH="${GCOV_PATH}:${PATH}"
+      sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
     fi
 
 before_script:
@@ -138,10 +62,14 @@ before_script:
 
 script:
   - export SEQAN3_NO_VERSION_CHECK=1
+  - export CCACHE_COMPRESS=true
+  - export CCACHE_COMPRESSLEVEL=6
+  - export CCACHE_MAXSIZE=5G
   - make -k -j2
   - |
-    if test coverage != "${BUILD}"; then
-      if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
+    if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then
+      : ; else
+      if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
         ctest . --output-on-failure]; else
         ctest . -j2 --output-on-failure
       fi
