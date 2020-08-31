@@ -19,7 +19,7 @@ jobs:
 
       - name: Setup Doxygen
         env:
-          DOXYGEN_VER: 1.8.17
+          DOXYGEN_VER: 1.8.20
         shell: bash
         run: |
           mkdir -p /tmp/doxygen-download

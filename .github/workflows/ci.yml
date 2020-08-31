@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 env:
   CMAKE_VERSION: 3.7.2
-  DOXYGEN_VERSION: 1.8.19
+  DOXYGEN_VERSION: 1.8.20
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
