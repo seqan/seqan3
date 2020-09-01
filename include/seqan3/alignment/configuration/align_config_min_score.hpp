@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::align_cfg::max_error configuration.
+ * \brief Provides seqan3::align_cfg::min_score configuration.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -17,7 +17,7 @@
 
 namespace seqan3::align_cfg
 {
-/*!\brief Sets the maximal errors allowed during an edit distance computation.
+/*!\brief Sets the minimal score (maximal errors) allowed during an distance computation e.g. edit distance.
  * \ingroup alignment_configuration
  *
  * \details
@@ -31,13 +31,31 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \include test/snippet/alignment/configuration/align_cfg_max_error_example.cpp
+ * \include test/snippet/alignment/configuration/align_cfg_min_score_example.cpp
  */
-struct max_error : public pipeable_config_element<max_error, uint32_t>
+struct min_score : public pipeable_config_element<min_score>
 {
-    //!\privatesection
+public:
+    //!\brief Minimal score for the distance computation.
+    int32_t score{};
+
+    constexpr min_score() noexcept = default; //!< Defaulted
+    constexpr min_score(min_score const &) noexcept = default; //!< Defaulted
+    constexpr min_score(min_score &&) noexcept = default; //!< Defaulted
+    constexpr min_score & operator=(min_score const &) noexcept = default; //!< Defaulted
+    constexpr min_score & operator=(min_score &&) noexcept = default; //!< Defaulted
+    ~min_score() noexcept = default; //!< Defaulted
+
+    /*!\brief Initialises the minimal score.
+     *
+     * \param score \copybrief score
+     */
+    constexpr min_score(const int32_t score) :
+        score{score}
+    {}
+
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::max_error};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::min_score};
 };
 
 } // namespace seqan3::align_cfg

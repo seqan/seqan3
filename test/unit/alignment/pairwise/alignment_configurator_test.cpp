@@ -95,7 +95,7 @@ TEST(alignment_configurator, configure_edit_max_error)
 {
     EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
-                       seqan3::align_cfg::max_error{3u}).score(), 0);
+                       seqan3::align_cfg::min_score{-3}).score(), 0);
 }
 
 TEST(alignment_configurator, configure_affine_global)
@@ -112,7 +112,7 @@ TEST(alignment_configurator, configure_affine_global_max_error)
     auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
-               seqan3::align_cfg::max_error{5u};
+               seqan3::align_cfg::min_score{-5};
 
     EXPECT_THROW(run_test(cfg), seqan3::invalid_alignment_configuration);
 }

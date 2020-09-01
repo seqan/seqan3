@@ -353,9 +353,9 @@ public:
             // Check if invalid configuration was used.
             // ----------------------------------------------------------------------------
 
-            // Do not allow max error configuration for alignments not computing the edit distance.
-            if (config_t::template exists<align_cfg::max_error>())
-                throw invalid_alignment_configuration{"The align_cfg::max_error configuration is only allowed for "
+            // Do not allow min score configuration for alignments not computing the edit distance.
+            if (config_t::template exists<align_cfg::min_score>())
+                throw invalid_alignment_configuration{"The align_cfg::min_score configuration is only allowed for "
                                                       "the specific edit distance computation."};
             // Configure the alignment algorithm.
             return std::pair{configure_scoring_scheme<function_wrapper_t>(config_with_result_type),

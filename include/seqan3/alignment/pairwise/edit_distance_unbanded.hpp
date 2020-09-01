@@ -82,7 +82,8 @@ protected:
     {
         derived_t * self = static_cast<derived_t *>(this);
 
-        max_errors = get<align_cfg::max_error>(self->config).value;
+        max_errors = -get<align_cfg::min_score>(self->config).score;
+
         assert(max_errors >= score_type{0});
 
         if (std::ranges::empty(self->query)) // [[unlikely]]

@@ -31,7 +31,7 @@ struct align_pairwise_test : ::testing::Test
 {
     // two helper variables to check if the TypeParam contains vectorised.
     using dummy_cfg_t = std::conditional_t<std::is_same_v<void, t>,
-                                           decltype(seqan3::align_cfg::max_error{1}),
+                                           decltype(seqan3::align_cfg::min_score{-1}),
                                            t>;
     using config_t = decltype(seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | dummy_cfg_t{});
 
