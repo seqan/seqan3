@@ -37,6 +37,11 @@ env:
   - BUILD=header      CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
   - BUILD=snippet     CXX=g++-7  CC=gcc-7  BUILD_TYPE=Release
 
+jobs:
+  allow_failures:
+    - os: linux
+  fast_finish: true
+
 install:
   - ccache --version
   - $CXX -v
