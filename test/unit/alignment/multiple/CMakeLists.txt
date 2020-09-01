@@ -1,0 +1,2 @@
+seqan3_test(align_multiple_test.cpp)
+seqan3_test(align_multiple_seqan2_adaptation_test.cpp)
