@@ -24,6 +24,18 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.0.3
+
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
+
+## New features
+
+#### Alignment
+
+* We now provide the `seqan3::align_multiple` algorithm for multiple sequence alignment but be aware that
+  the function is currently only supported if SeqAn2 is available on your system.
+  ([\#1990](https://github.com/seqan/seqan3/pull/1990))
+
 # 3.0.2
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
