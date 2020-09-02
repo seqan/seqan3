@@ -7,6 +7,24 @@ branches:
   only:
   - master
 
+# Notify us on gitter.im
+notifications:
+  webhooks:
+    urls:
+      - secure: >-
+          Y5GdqwrqV3NEDv4sB76MaGl4ZzT3fXAFV6MeC7AeqaIl8eU3e96FxrFdUBGe/elN/6Ghjr4NrHp8GXSQ59owhxsduWebeiI0pyCJCF69x+QGwC
+          QjJSGHchIdn+zKwkFmHfWvPMqBE+9M1qpM6c+fSA0zPcVWo3uSdCGlLf/xC+RfEnVBLnIlAs9KWmCJoBSiSIxH/htnQDUXc6D3xA6IEQy+57/K
+          Bz+gzUo9FUNNx+2bRUKZHjqIIRtgOlwps2IPZeIZliRzcwlX4HklXKiygPkc7FGGu5AV26OcGnccc6ShJrXchStkJORf20jhzDtgCsAFaqWQMd
+          MQoiM9QoHayZpJIbBmzzylZB1X1ID/mFpdm6ejnqWISxFpRrIUOfq6Qnap1GKJq2kpKH85sK0QJT9xAx5pbXS98LD8QymelW/J/UocFp6lm6q7
+          7YnteEjWhbOFrxQvZzbS61hOa4vx68DF8/8c78mfvOiSKLraVCgihwexOdw4V1/sPW/oBPvUF+qkANDTbvBJZXZSLOe69oKxBWzBEQeStHulKk
+          Z5/P90Ehnzx6BiVk4FmMQ8UVCO2xAorh5bBFnK/kkhf8R1NALXK7ihWJyI0UJb8ZT4IB3JVLKWmodVC7N4gypY+0dNmbmNlx+skGRwxncjiHLV
+          tWrfdl/7b0gg74vY2Zcq6t4=
+    on_success: change
+    on_failure: always
+    on_start:   never
+    on_cancel:  never
+    on_error:   always
+
 git:
   submodules: true
 
@@ -25,6 +43,7 @@ addons:
       - g++-10
       - lcov
       - cmake
+
 arch:
   - arm64
   - s390x
