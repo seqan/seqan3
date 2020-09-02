@@ -14,6 +14,7 @@
 
 #include <tuple>
 
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
@@ -54,6 +55,11 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
 
+    //!\brief Initialisation state of the first row of the alignment.
+    bool first_row_is_free{};
+    //!\brief Initialisation state of the first column of the alignment.
+    bool first_column_is_free{};
+
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
      * \{
@@ -64,6 +70,16 @@ private:
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy const &) noexcept = default; //!< Defaulted
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy &&) noexcept = default;      //!< Defaulted
     ~affine_gap_init_policy() noexcept = default;                                                    //!< Defaulted
+
+    //!\brief Initialises the policy with the configuration.
+    template <typename config_t>
+    affine_gap_init_policy(config_t const & config)
+    {
+        bool is_local = config.template exists<method_local_tag>();
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+        first_row_is_free = method_global_config.free_end_gaps_sequence1_leading | is_local;
+        first_column_is_free = method_global_config.free_end_gaps_sequence2_leading | is_local;
+    }
     //!\}
 
     /*!\brief Initialises the first cell of the dynamic programming matrix.
@@ -94,7 +110,7 @@ private:
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(origin_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if (first_column_is_free)
         {
             score_cell.up = convert_to_simd_maybe<score_t>(0);
             trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::none);
@@ -106,7 +122,7 @@ private:
         }
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if (first_row_is_free)
         {
             score_cell.w_left = convert_to_simd_maybe<score_t>(0);
             trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);
@@ -145,7 +161,7 @@ private:
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(column_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if (first_column_is_free)
         {
             score_cell.up = convert_to_simd_maybe<score_t>(0);
         }
@@ -188,7 +204,7 @@ private:
         score_cell.up = score_cell.current + state.gap_open_score;
         trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::up_open);
 
-        if constexpr (traits_type::free_first_leading_t::value)
+        if (first_row_is_free)
         {
             score_cell.w_left = convert_to_simd_maybe<score_t>(0);
             trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);

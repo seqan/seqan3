@@ -62,6 +62,11 @@ private:
     constexpr affine_gap_policy & operator=(affine_gap_policy const &) noexcept = default; //!< Defaulted
     constexpr affine_gap_policy & operator=(affine_gap_policy &&) noexcept = default;      //!< Defaulted
     ~affine_gap_policy() noexcept = default;                                               //!< Defaulted
+
+    //!\brief Initialise the policy.
+    template <typename configuration_t>
+    affine_gap_policy(configuration_t const & /*config*/)
+    {}
     //!\}
 
     /*!\brief Computes the score of the current cell.

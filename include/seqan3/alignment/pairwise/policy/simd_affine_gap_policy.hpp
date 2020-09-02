@@ -69,6 +69,11 @@ private:
     constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted.
     constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted.
     ~simd_affine_gap_policy() noexcept = default; //!< Defaulted.
+
+    //!\brief Initialise the policy.
+    template <typename configuration_t>
+    simd_affine_gap_policy(configuration_t const & /*config*/)
+    {}
     //!\}
 
     /*!\brief Computes the score of the current simd cell.

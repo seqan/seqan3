@@ -53,7 +53,6 @@ struct simd_global_alignment_state
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam simd_t The simd vector type used for computing the scores; must model seqan3::simd::simd_concept.
- * \tparam is_global_alignment_t A std::bool_constant type to check whether a global alignment was requested.
  * \tparam traits_type A traits type that determines which cells should be considered for the optimum.
  *                     Defaults to seqan3::detail::default_find_optimum_trait.
  *
@@ -79,24 +78,21 @@ struct simd_global_alignment_state
  */
 template <typename alignment_algorithm_t,
           simd::simd_concept simd_t,
-          typename is_global_alignment_t,
           typename traits_type = default_find_optimum_trait>
-class simd_find_optimum_policy : public std::conditional_t<is_global_alignment_t::value,
-                                                           simd_global_alignment_state<simd_t>,
-                                                           empty_type>
+class simd_find_optimum_policy : public simd_global_alignment_state<simd_t>
 {
 private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
 
-    //!\brief A bool constant to check if global alignment is computed.
-    static constexpr bool is_global_alignment = is_global_alignment_t::value;
-    //!\brief A bool constant to check if every cell needs to be tested for the global optimum.
-    static constexpr bool search_in_every_cell = traits_type::find_in_every_cell_type::value;
-    //!\brief A bool constant to check if cells of the last row need to be tested for the global optimum.
-    static constexpr bool search_in_last_row = traits_type::find_in_last_row_type::value || is_global_alignment;
-    //!\brief A bool constant to check if cells of the last column need to be tested for the global optimum.
-    static constexpr bool search_in_last_column = traits_type::find_in_last_column_type::value || is_global_alignment;
+    //!\brief A flag to check if global alignment is computed.
+    bool is_global_alignment{false};
+    //!\brief Whether every cell of the alignment matrix shall be tracked.
+    bool test_every_cell{false};
+    //!\brief Whether cells of the last row shall be tracked.
+    bool test_last_row_cell{false};
+    //!\brief Whether cells of the last column shall be tracked.
+    bool test_last_column_cell{false};
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -107,6 +103,21 @@ private:
     constexpr simd_find_optimum_policy & operator=(simd_find_optimum_policy const &) = default; //!< Defaulted.
     constexpr simd_find_optimum_policy & operator=(simd_find_optimum_policy &&) = default; //!< Defaulted.
     ~simd_find_optimum_policy() = default; //!< Defaulted.
+
+    //!\brief Initialise the policy.
+    template <typename configuration_t>
+    simd_find_optimum_policy(configuration_t const & config)
+    {
+        if constexpr (configuration_t::template exists<method_local_tag>())
+            test_every_cell = true;
+
+        is_global_alignment = configuration_t::template exists<align_cfg::method_global>();
+
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+
+        test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing || is_global_alignment;
+        test_last_column_cell = method_global_config.free_end_gaps_sequence2_trailing || is_global_alignment;
+    }
     //!\}
 
 protected:
@@ -115,7 +126,7 @@ protected:
     constexpr void check_score_of_cell([[maybe_unused]] cell_t const & current_cell,
                                        [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
-        if constexpr (search_in_every_cell)
+        if (test_every_cell)
             check_and_update(current_cell, state);
     }
 
@@ -134,9 +145,9 @@ protected:
         noexcept
     {
         // Only search in last row if requested and not done already.}
-        if constexpr (!search_in_every_cell && search_in_last_row)
+        if (!test_every_cell && test_last_row_cell)
         {
-            if constexpr (is_global_alignment)
+            if (is_global_alignment)
                 check_and_update<true>(last_row_cell, state);
             else
                 check_and_update(last_row_cell, state);
@@ -150,11 +161,11 @@ protected:
         const noexcept
     {
         // Only check last cell if not done before.
-        if constexpr (!search_in_every_cell && search_in_last_column)
+        if (!test_every_cell && test_last_column_cell)
         {
             for (auto && cell : last_column)
             {
-                if constexpr (is_global_alignment)
+                if (is_global_alignment)
                     check_and_update<false>(cell, state);
                 else
                     check_and_update(cell, state);
@@ -168,7 +179,7 @@ protected:
                                             [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only check last cell if not done before.
-        if constexpr (!search_in_every_cell && !search_in_last_row && !search_in_last_column)
+        if (!(test_every_cell || test_last_row_cell || test_last_column_cell))
             check_and_update(last_cell, state);
     }
 
@@ -191,7 +202,7 @@ protected:
                                         [[maybe_unused]] sequence2_collection_t && sequence2_collection,
                                         [[maybe_unused]] score_t const padding_score)
     {
-        if constexpr (is_global_alignment)
+        if (is_global_alignment)
         {
             assert(std::ranges::distance(sequence1_collection) == std::ranges::distance(sequence2_collection));
 
@@ -250,8 +261,8 @@ private:
     template <typename cell_t, typename score_t>
     constexpr void check_and_update(cell_t const & cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
-        static_assert(!is_global_alignment, "This function should not be called for the global alignment. "
-                                            "Use the other check_and_update function instead.");
+        assert(!is_global_alignment); // This function should not be called for the global alignment.
+
         auto const & [score_cell, trace_cell] = cell;
         state.optimum.update_if_new_optimal_score(score_cell.current,
                                                   column_index_type{trace_cell.coordinate.first},
@@ -277,8 +288,7 @@ private:
     template <bool in_last_row, typename cell_t, typename score_t>
     constexpr void check_and_update(cell_t const & cell, alignment_algorithm_state<score_t> & state) const noexcept
     {
-        static_assert(is_global_alignment, "This function should only be called for the global alignment. "
-                                           "Use the other check_and_update function instead.");
+        assert(is_global_alignment); // This function should only be called for the global alignment.
 
         using simd_mask_t = typename simd_traits<simd_t>::mask_type;
         auto const & [score_cell, trace_cell] = cell;

@@ -210,16 +210,11 @@ private:
     private:
         //!\brief The score type for the alignment computation.
         using score_t = typename traits_t::score_type;
-        //!\brief A bool constant to disambiguate true global alignments.
-        static constexpr bool is_global_alignment = traits_t::is_global && !traits_t::with_free_end_gaps;
 
     public:
         //!\brief The find optimum policy for either scalar or vectorised alignment.
         using type = std::conditional_t<traits_t::is_vectorised,
-                                        deferred_crtp_base<simd_find_optimum_policy,
-                                                           score_t,
-                                                           std::bool_constant<is_global_alignment>,
-                                                           policy_traits_t>,
+                                        deferred_crtp_base<simd_find_optimum_policy, score_t, policy_traits_t>,
                                         deferred_crtp_base<find_optimum_policy, policy_traits_t>>;
     };
 

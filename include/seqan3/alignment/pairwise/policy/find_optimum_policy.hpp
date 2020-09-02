@@ -14,6 +14,7 @@
 
 #include <type_traits>
 
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
@@ -57,6 +58,13 @@ private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
 
+    //!\brief Whether every cell of the alignment matrix shall be tracked.
+    bool test_every_cell{false};
+    //!\brief Whether cells of the last row shall be tracked.
+    bool test_last_row_cell{false};
+    //!\brief Whether cells of the last column shall be tracked.
+    bool test_last_column_cell{false};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -66,6 +74,18 @@ private:
     constexpr find_optimum_policy & operator=(find_optimum_policy const &) = default; //!< Defaulted
     constexpr find_optimum_policy & operator=(find_optimum_policy &&) = default;      //!< Defaulted
     ~find_optimum_policy() = default;                                                 //!< Defaulted
+
+    //!\brief Initialises the policy with the configuration.
+    template <typename configuration_t>
+    find_optimum_policy(configuration_t const & config)
+    {
+        if constexpr (configuration_t::template exists<method_local_tag>())
+            test_every_cell =  true;
+
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+        test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing;
+        test_last_column_cell = method_global_config.free_end_gaps_sequence2_trailing;
+    }
     //!\}
 
 protected:
@@ -84,7 +104,7 @@ protected:
     constexpr void check_score_of_cell([[maybe_unused]] cell_t const & current_cell,
                                        [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
-        if constexpr (traits_type::find_in_every_cell_type::value)
+        if (test_every_cell)
             check_and_update(current_cell, state);
     }
 
@@ -117,7 +137,7 @@ protected:
         noexcept
     {
         // Only search in last row if requested and not done already.
-        if constexpr (!traits_type::find_in_every_cell_type::value && traits_type::find_in_last_row_type::value)
+        if (!test_every_cell && test_last_row_cell)
             check_and_update(last_row_cell, state);
     }
 
@@ -139,7 +159,7 @@ protected:
         const noexcept
     {
         // Only check last cell if not done before.
-        if constexpr (!traits_type::find_in_every_cell_type::value && traits_type::find_in_last_column_type::value)
+        if (!test_every_cell && test_last_column_cell)
             for (auto && cell : last_column)
                 check_and_update(cell, state);
     }
@@ -161,12 +181,8 @@ protected:
                                             [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only check last cell if not done before.
-        if constexpr (!traits_type::find_in_every_cell_type::value &&
-                      !traits_type::find_in_last_row_type::value &&
-                      !traits_type::find_in_last_column_type::value)
-        {
+        if (!(test_every_cell || test_last_row_cell || test_last_column_cell))
             check_and_update(last_cell, state);
-        }
     }
 
     /*!\brief Tests if the score in the current cell is greater than the current alignment optimum.
