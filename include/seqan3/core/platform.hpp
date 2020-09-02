@@ -175,6 +175,21 @@
 
 // TODO (doesn't have a version.hpp, yet)
 
+// SeqAn 2 [optional]
+/*!\def SEQAN3_HAS_SEQAN2
+ * \brief Whether SeqAn2 library is available or not.
+ * \ingroup test
+ */
+#if __has_include(<seqan/version.h>)
+#    include <seqan/version.h>
+     // Require minimum version of seqan2, see https://github.com/seqan/seqan3/issues/748
+#    if SEQAN_VERSION_MAJOR == 2 && SEQAN_VERSION_MINOR >= 4
+#        define SEQAN3_HAS_SEQAN2 1
+#    endif
+#else
+#    define SEQAN3_HAS_SEQAN2 0
+#endif
+
 // ============================================================================
 //  Documentation
 // ============================================================================
