@@ -34,15 +34,17 @@ class policy_alignment_result_builder;
 /*!\brief A struct that contains the actual alignment result data.
  * \ingroup pairwise_alignment
  *
- * \tparam id_t                  The type for the alignment identifier.
- * \tparam score_t               The type for the resulting score.
- * \tparam end_positions_t       The type for the end positions, can be omitted.
- * \tparam begin_positions_t     The type for the begin positions, can be omitted.
- * \tparam alignment_t           The type for the alignment, can be omitted.
- * \tparam score_debug_matrix_t  The type for the score matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
- * \tparam trace_debug_matrix_t  The type for the trace matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
+ * \tparam sequence1_id_t        The type of the alignment identifier for the first sequence.
+ * \tparam sequence2_id_t        The type of the alignment identifier for the second sequence.
+ * \tparam score_t               The type of the resulting score.
+ * \tparam end_positions_t       The type of the end positions, can be omitted.
+ * \tparam begin_positions_t     The type of the begin positions, can be omitted.
+ * \tparam alignment_t           The type of the alignment, can be omitted.
+ * \tparam score_debug_matrix_t  The type of the score matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
+ * \tparam trace_debug_matrix_t  The type of the trace matrix. Only present if seqan3::align_cfg::detail::debug is enabled.
  */
-template <typename id_t,
+template <typename sequence1_id_t,
+          typename sequence2_id_t,
           typename score_t,
           typename end_positions_t = std::nullopt_t *,
           typename begin_positions_t = std::nullopt_t *,
@@ -51,8 +53,10 @@ template <typename id_t,
           typename trace_debug_matrix_t = std::nullopt_t *>
 struct alignment_result_value_type
 {
-    //! \brief The alignment identifier.
-    id_t id{};
+    //! \brief The alignment identifier for the first sequence.
+    sequence1_id_t sequence1_id{};
+    //! \brief The alignment identifier for the second sequence.
+    sequence2_id_t sequence2_id{};
     //! \brief The alignment score.
     score_t score{};
     //! \brief The end positions of the alignment.
@@ -74,27 +78,41 @@ struct alignment_result_value_type
  */
  //! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
 alignment_result_value_type()
-    -> alignment_result_value_type<std::nullopt_t *, std::nullopt_t *>;
+    -> alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
 
 //! \brief Type deduction for id and score only.
-template <typename id_t, typename score_t>
-alignment_result_value_type(id_t, score_t)
-    -> alignment_result_value_type<id_t, score_t>;
+template <typename sequence1_id_t, typename sequence2_id_t, typename score_t>
+alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t)
+    -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t>;
 
 //! \brief Type deduction for id, score and end positions.
-template <typename id_t, typename score_t, typename end_positions_t>
-alignment_result_value_type(id_t, score_t, end_positions_t)
-    -> alignment_result_value_type<id_t, score_t, end_positions_t>;
+template <typename sequence1_id_t, typename sequence2_id_t, typename score_t, typename end_positions_t>
+alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t, end_positions_t)
+    -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t, end_positions_t>;
 
 //! \brief Type deduction for id, score, end positions and begin positions.
-template <typename id_t, typename score_t, typename end_positions_t, typename begin_positions_t>
-alignment_result_value_type(id_t, score_t, end_positions_t, begin_positions_t)
-    -> alignment_result_value_type<id_t, score_t, end_positions_t, begin_positions_t>;
+template <typename sequence1_id_t,
+          typename sequence2_id_t,
+          typename score_t,
+          typename end_positions_t,
+          typename begin_positions_t>
+alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t, end_positions_t, begin_positions_t)
+    -> alignment_result_value_type<sequence1_id_t, sequence2_id_t, score_t, end_positions_t, begin_positions_t>;
 
 //! \brief Type deduction for id, score, end positions, begin positions and alignment.
-template <typename id_t, typename score_t, typename end_positions_t, typename begin_positions_t, typename alignment_t>
-alignment_result_value_type(id_t, score_t, end_positions_t, begin_positions_t, alignment_t)
-    -> alignment_result_value_type<id_t, score_t, end_positions_t, begin_positions_t, alignment_t>;
+template <typename sequence1_id_t,
+          typename sequence2_id_t,
+          typename score_t,
+          typename end_positions_t,
+          typename begin_positions_t,
+          typename alignment_t>
+alignment_result_value_type(sequence1_id_t, sequence2_id_t, score_t, end_positions_t, begin_positions_t, alignment_t)
+    -> alignment_result_value_type<sequence1_id_t,
+                                   sequence2_id_t,
+                                   score_t,
+                                   end_positions_t,
+                                   begin_positions_t,
+                                   alignment_t>;
 //!\}
 
 //!\cond
@@ -143,8 +161,10 @@ private:
      * \brief Local definition of the types contained in the `data` object.
      * \{
      */
-    //! \brief The type for the alignment identifier.
-    using id_t = decltype(data.id);
+    //! \brief The type for the alignment identifier for the first sequence.
+    using sequence1_id_t = decltype(data.sequence1_id);
+    //! \brief The type for the alignment identifier for the second sequence.
+    using sequence2_id_t = decltype(data.sequence2_id);
     //! \brief The type for the resulting score.
     using score_t = decltype(data.score);
     //! \brief The type for the end positions.
@@ -190,14 +210,26 @@ public:
      * \{
      */
 
-    /*!\brief Returns the alignment identifier.
-     * \return The id field.
+    /*!\brief Returns the alignment identifier of the first sequence.
+     * \return The id of the first sequence.
      */
-    constexpr id_t id() const noexcept
+    constexpr sequence1_id_t sequence1_id() const noexcept
     {
-        static_assert(!std::is_same_v<id_t, std::nullopt_t *>,
-                      "Identifier is not available but should.");
-        return data.id;
+        static_assert(!std::is_same_v<sequence1_id_t, std::nullopt_t *>,
+                      "Trying to access the id of the first sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.sequence1_id;
+    }
+
+    /*!\brief Returns the alignment identifier of the second sequence.
+     * \return The id of the second sequence.
+     */
+    constexpr sequence2_id_t sequence2_id() const noexcept
+    {
+        static_assert(!std::is_same_v<sequence2_id_t, std::nullopt_t *>,
+                      "Trying to access the id of the second sequence, although it was not requested in the"
+                      " alignment configuration.");
+        return data.sequence2_id;
     }
 
     /*!\brief Returns the alignment score.
@@ -206,7 +238,7 @@ public:
     constexpr score_t score() const noexcept
     {
         static_assert(!std::is_same_v<score_t, std::nullopt_t *>,
-                      "Alignment score is not available but should.");
+                      "Trying to access the score, although it was not requested in the alignment configuration.");
         return data.score;
     }
 
@@ -366,29 +398,39 @@ template <typename char_t, typename alignment_result_t>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_result_t && result)
 {
+    using disabled_t = std::nullopt_t *;
     using result_data_t =
         typename detail::alignment_result_value_type_accessor<remove_cvref_t<alignment_result_t>>::type;
 
-    constexpr bool has_id = !std::is_same_v<decltype(std::declval<result_data_t>().id), std::nullopt_t *>;
-    constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), std::nullopt_t *>;
+    constexpr bool has_sequence1_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence1_id), disabled_t>;
+    constexpr bool has_sequence2_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence2_id), disabled_t>;
+    constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), disabled_t>;
     constexpr bool has_end_positions = !std::is_same_v<decltype(std::declval<result_data_t>().end_positions),
-                                                       std::nullopt_t *>;
+                                                       disabled_t>;
     constexpr bool has_begin_positions = !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions),
-                                                         std::nullopt_t *>;
-    constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment),
-                                                   std::nullopt_t *>;
+                                                         disabled_t>;
+    constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment), disabled_t>;
+
+    bool prepend_comma = false;
+    auto append_to_stream = [&] (auto && ...args)
+    {
+        ((stream << (prepend_comma ? std::string{", "} : std::string{})) << ... << std::forward<decltype(args)>(args));
+        prepend_comma = true;
+    };
 
     stream << '{';
-    if constexpr (has_id)
-        stream << "id: " << result.id();
+    if constexpr (has_sequence1_id)
+        append_to_stream("sequence1 id: ", result.sequence1_id());
+    if constexpr (has_sequence2_id)
+        append_to_stream("sequence2 id: ", result.sequence2_id());
     if constexpr (has_score)
-        stream << ", score: " << result.score();
+        append_to_stream("score: ", result.score());
     if constexpr (has_begin_positions)
-        stream << ", begin: (" << result.sequence1_begin_position() << "," << result.sequence2_begin_position() << ")";
+        append_to_stream("begin: (", result.sequence1_begin_position(), ",", result.sequence2_begin_position(), ")");
     if constexpr (has_end_positions)
-        stream << ", end: (" << result.sequence1_end_position() << "," << result.sequence2_end_position() << ")";
+        append_to_stream("end: (", result.sequence1_end_position(), ",", result.sequence2_end_position(), ")");
     if constexpr (has_alignment)
-        stream << "\nalignment:\n" << result.alignment();
+        append_to_stream("\nalignment:\n", result.alignment());
     stream << '}';
 
     return stream;

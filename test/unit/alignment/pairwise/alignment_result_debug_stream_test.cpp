@@ -36,36 +36,37 @@ TEST(alignment_result_test, debug_streamable)
     seqan3::debug_stream_type debug_stream{ostream};
 
     { // Print id and score
-        seqan3::detail::alignment_result_value_type result_value{id, score};
+        seqan3::detail::alignment_result_value_type result_value{id, id, score};
         seqan3::alignment_result result{result_value};
         debug_stream << result;
 
-        EXPECT_EQ(ostream.str(), "{id: 3, score: -15}");
+        EXPECT_EQ(ostream.str(), "{sequence1 id: 3, sequence2 id: 3, score: -15}");
     }
 
     { // Print id and score and back coordinate
         ostream.str("");
-        seqan3::detail::alignment_result_value_type result_value{id, score, end_coordinate};
+        seqan3::detail::alignment_result_value_type result_value{id, id, score, end_coordinate};
         seqan3::alignment_result result{result_value};
 
         EXPECT_TRUE((seqan3::detail::is_type_specialisation_of_v<decltype(result), seqan3::alignment_result>));
         debug_stream << result;
 
-        EXPECT_EQ(ostream.str(), "{id: 3, score: -15, end: (23,35)}");
+        EXPECT_EQ(ostream.str(), "{sequence1 id: 3, sequence2 id: 3, score: -15, end: (23,35)}");
     }
 
     { // Print id and score and back and front coordinate
         ostream.str("");
-        seqan3::detail::alignment_result_value_type result_value{id, score, end_coordinate, begin_coordinate};
+        seqan3::detail::alignment_result_value_type result_value{id, id, score, end_coordinate, begin_coordinate};
         seqan3::alignment_result result{result_value};
         debug_stream << result;
 
-        EXPECT_EQ(ostream.str(), "{id: 3, score: -15, begin: (4,6), end: (23,35)}");
+        EXPECT_EQ(ostream.str(), "{sequence1 id: 3, sequence2 id: 3, score: -15, begin: (4,6), end: (23,35)}");
     }
 
     { // Print id and score and back and front coordinate and alignment
         ostream.str("");
         seqan3::detail::alignment_result_value_type result_value{id,
+                                                                 id,
                                                                  score,
                                                                  end_coordinate,
                                                                  begin_coordinate,
@@ -73,7 +74,7 @@ TEST(alignment_result_test, debug_streamable)
         seqan3::alignment_result result{result_value};
         debug_stream << result;
 
-        EXPECT_EQ(ostream.str(), "{id: 3, score: -15, begin: (4,6), end: (23,35)\n"
+        EXPECT_EQ(ostream.str(), "{sequence1 id: 3, sequence2 id: 3, score: -15, begin: (4,6), end: (23,35), \n"
                                  "alignment:\n"
                                  "      0     \n"
                                  "        AT-A\n"

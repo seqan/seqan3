@@ -595,9 +595,9 @@ private:
     //!\cond
         requires (!traits_t::is_vectorised)
     //!\endcond
-    constexpr void make_alignment_result(index_t const idx,
-                                         sequence1_t & sequence1,
-                                         sequence2_t & sequence2,
+    constexpr void make_alignment_result([[maybe_unused]] index_t const idx,
+                                         [[maybe_unused]] sequence1_t & sequence1,
+                                         [[maybe_unused]] sequence2_t & sequence2,
                                          callback_t & callback)
     {
         using result_value_t = typename alignment_result_value_type_accessor<alignment_result_t>::type;
@@ -611,7 +611,11 @@ private:
 
         result_value_t res{};
 
-        res.id = idx;
+        if constexpr (traits_t::output_sequence1_id)
+            res.sequence1_id = idx;
+
+        if constexpr (traits_t::output_sequence2_id)
+            res.sequence2_id = idx;
 
         // Choose what needs to be computed.
         if constexpr (traits_t::compute_score)
@@ -690,7 +694,12 @@ private:
         {
             (void) sequence_pairs;
             result_value_t res{};
-            res.id = alignment_index;
+
+            if constexpr (traits_t::output_sequence1_id)
+                res.sequence1_id = alignment_index;
+
+            if constexpr (traits_t::output_sequence2_id)
+                res.sequence2_id = alignment_index;
 
             if constexpr (traits_t::compute_score)
                 res.score = this->alignment_state.optimum.score[simd_index];  // Just take this

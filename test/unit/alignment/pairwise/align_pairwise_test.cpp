@@ -82,7 +82,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -112,7 +113,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(sequences, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -142,7 +144,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -182,7 +185,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
             unsigned idx = 0;
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
-                EXPECT_EQ(res.id(), idx++);
+                EXPECT_EQ(res.sequence1_id(), idx);
+                EXPECT_EQ(res.sequence2_id(), idx++);
                 EXPECT_EQ(res.score(), -4);
                 EXPECT_EQ(res.sequence1_end_position(), 8u);
                 EXPECT_EQ(res.sequence2_end_position(), 9u);

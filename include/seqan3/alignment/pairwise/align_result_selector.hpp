@@ -84,6 +84,11 @@ private:
                                                                        second_range_t &>,
                                                                   std::type_identity<disabled_type>>::type;
 
+    //!\brief The configured sequence id type for the first sequence if selected.
+    using configured_sequence1_id_type = std::conditional_t<traits_type::output_sequence1_id, uint32_t, disabled_type>;
+    //!\brief The configured sequence id type for the second sequence if selected.
+    using configured_sequence2_id_type = std::conditional_t<traits_type::output_sequence2_id, uint32_t, disabled_type>;
+
     //!\brief The debug score matrix type if selected.
     using configured_debug_score_matrix_type = std::conditional_t<traits_type::is_debug,
                                                                   debug_score_matrix_type,
@@ -97,7 +102,8 @@ private:
 
 public:
     //!\brief The selected result type.
-    using type = alignment_result_value_type<uint32_t,
+    using type = alignment_result_value_type<configured_sequence1_id_type,
+                                             configured_sequence2_id_type,
                                              configured_score_type,
                                              configured_end_position_type,
                                              configured_begin_position_type,
