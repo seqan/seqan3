@@ -7,7 +7,7 @@
 
 /*!\file
  * \brief Provides the concepts seqan3::transformation_trait and seqan3::unary_type_trait.
- * \author Svenja Mehringer <avenja.mehringer AT fu-berlin.de>
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
 #pragma once
