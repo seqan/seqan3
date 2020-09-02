@@ -76,9 +76,9 @@ script:
   - export CCACHE_MAXSIZE=5G
   - make -k -j2
   - |
-    if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then
+    if [[ "${BUILD}" =~ ^(coverage)$ ]]; then
       : ; else
-      if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
+      if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
         ctest . --output-on-failure]; else
         ctest . -j2 --output-on-failure
       fi
