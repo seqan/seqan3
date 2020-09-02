@@ -21,22 +21,6 @@
 namespace seqan3::detail
 {
 
-/*!\brief The default traits class for seqan3::detail::affine_gap_init_policy.
- * \ingroup alignment_policy
- *
- * \details
- *
- * Enables the behaviour of a global alignment where both sides of the dynamic programming matrix are
- * initialised with growing gap penalties.
- */
-struct default_affine_init_traits
-{
-    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the first sequence.
-    using free_first_leading_t  = std::false_type;
-    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the second sequence.
-    using free_second_leading_t = std::false_type;
-};
-
 /*!\brief The CRTP-policy that implements the initialisation of the dynamic programming matrix with affine gaps.
  * \ingroup alignment_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
@@ -48,7 +32,7 @@ struct default_affine_init_traits
  *          seqan3::detail::alignment_configurator::select_gap_init_policy when selecting the alignment for the given
  *          configuration.
  */
-template <typename alignment_algorithm_t, typename traits_type = default_affine_init_traits>
+template <typename alignment_algorithm_t>
 class affine_gap_init_policy
 {
 private:

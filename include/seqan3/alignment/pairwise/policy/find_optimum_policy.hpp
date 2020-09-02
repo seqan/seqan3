@@ -116,7 +116,7 @@ protected:
     friend class simd_affine_gap_policy;
 
     //!\brief Allow seqan3::detail::affine_gap_init_policy to access check_score.
-    template <typename other_alignment_algorithm_t, typename other_traits_type>
+    template <typename other_alignment_algorithm_t>
     friend class affine_gap_init_policy;
 
     /*!\brief Checks if a cell in the last row of the alignment matrix is a new optimum in the alignment.

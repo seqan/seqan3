@@ -135,7 +135,7 @@ protected:
     friend class simd_affine_gap_policy;
 
     //!\brief Allow seqan3::detail::affine_gap_init_policy to access check_score.
-    template <typename other_alignment_algorithm_t, typename other_traits_type>
+    template <typename other_alignment_algorithm_t>
     friend class affine_gap_init_policy;
 
     //!\copydoc seqan3::detail::find_optimum_policy::check_score_of_last_row_cell
