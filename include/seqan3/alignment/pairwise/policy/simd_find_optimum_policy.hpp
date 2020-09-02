@@ -53,8 +53,6 @@ struct simd_global_alignment_state
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam simd_t The simd vector type used for computing the scores; must model seqan3::simd::simd_concept.
- * \tparam traits_type A traits type that determines which cells should be considered for the optimum.
- *                     Defaults to seqan3::detail::default_find_optimum_trait.
  *
  * \details
  *
@@ -76,9 +74,7 @@ struct simd_global_alignment_state
  * as the indices are finally corrected to represent the original score and coordinates as if the sequence pair
  * was computed in scalar mode.
  */
-template <typename alignment_algorithm_t,
-          simd::simd_concept simd_t,
-          typename traits_type = default_find_optimum_trait>
+template <typename alignment_algorithm_t, simd::simd_concept simd_t>
 class simd_find_optimum_policy : public simd_global_alignment_state<simd_t>
 {
 private:

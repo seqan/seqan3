@@ -21,37 +21,17 @@
 namespace seqan3::detail
 {
 
-/*!\brief The default traits class for seqan3::detail::find_optimum_policy.
- * \ingroup alignment_policy
- *
- * \details
- *
- * Defines the behaviour of a global alignment in which only the last cell of the dynamic programming matrix is
- * checked for the optimum.
- */
-struct default_find_optimum_trait
-{
-    //!\brief Disables optimum search in every cell of the dynamic programming matrix.
-    using find_in_every_cell_type  = std::false_type;
-    //!\brief Disables optimum search in the last row of the dynamic programming matrix.
-    using find_in_last_row_type    = std::false_type;
-    //!\brief Disables optimum search in the last column of the dynamic programming matrix.
-    using find_in_last_column_type = std::false_type;
-};
-
 /*!\brief The CRTP-policy to determine the optimum of the dynamic programming matrix.
  * \ingroup alignment_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
- * \tparam traits_type A traits type that determines which cells should be considered for the optimum.
- *                     Defaults to seqan3::detail::default_find_optimum_trait.
  *
  * \details
  *
  * This class determines the matrix wide optimum. The search space can be further refined using the
  * `traits_type` which configures the search space of the alignment matrix.
  */
-template <typename alignment_algorithm_t, typename traits_type = default_find_optimum_trait>
+template <typename alignment_algorithm_t>
 class find_optimum_policy
 {
 private:
