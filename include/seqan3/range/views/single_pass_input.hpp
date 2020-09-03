@@ -26,7 +26,7 @@ namespace seqan3::detail
 
 //!\brief Forward declaration.
 template <typename view_t>
-class single_pass_input_iterator;
+class basic_iterator;
 
 /*!\brief Adds single_pass_input behavior to the underlying range.
  * \tparam urng_t The underlying range type.
@@ -43,9 +43,9 @@ private:
     //!\brief The iterator type for the underlying range.
     using urng_iterator_type = std::ranges::iterator_t<urng_t>;
 
-    //!\brief Friend declaration for seqan3::detail::single_pass_input_iterator.
+    //!\brief Friend declaration for seqan3::detail::basic_iterator.
     template <typename view_t>
-    friend class single_pass_input_iterator;
+    friend class basic_iterator;
 
     //!\brief An internal state to capture the underlying range and a cached iterator.
     struct state
@@ -63,7 +63,7 @@ private:
      * \{
      */
     //!\brief Iterator type.
-    using iterator = single_pass_input_iterator<single_pass_input_view>;
+    using iterator = basic_iterator<single_pass_input_view>;
     //!\brief The sentinel type.
     using sentinel = std::ranges::sentinel_t<urng_t>;
     //\}
@@ -158,7 +158,7 @@ namespace seqan3::detail
  * This iterator reduces every iterator type of the associated view to an single pass input iterator.
  */
 template <typename view_type>
-class single_pass_input_iterator<single_pass_input_view<view_type>>
+class basic_iterator<single_pass_input_view<view_type>>
 {
     //!\brief The pointer to the associated view.
     using base_iterator_type = typename single_pass_input_view<view_type>::urng_iterator_type;
@@ -170,7 +170,7 @@ class single_pass_input_iterator<single_pass_input_view<view_type>>
 
     //!\brief Friend declaration to give seqan3::detail::single_pass_input_sentinel access to members of this class.
     template <typename input_view_type>
-    friend class single_pass_input_iterator;
+    friend class basic_iterator;
 
     //!\brief Test that the sentinel fulfills the std::sentinel_for for the underlying iterator.
     static_assert(std::sentinel_for<sentinel_type, base_iterator_type>);
@@ -196,20 +196,20 @@ public:
      * \{
      */
     //!\brief Default construction.
-    single_pass_input_iterator() = default;
+    basic_iterator() = default;
     //!\brief Copy construction.
-    constexpr single_pass_input_iterator(single_pass_input_iterator const & rhs) = default;
+    constexpr basic_iterator(basic_iterator const & rhs) = default;
     //!\brief Move construction.
-    constexpr single_pass_input_iterator(single_pass_input_iterator && rhs) = default;
+    constexpr basic_iterator(basic_iterator && rhs) = default;
     //!\brief Copy assignment.
-    constexpr single_pass_input_iterator & operator=(single_pass_input_iterator const & rhs) = default;
+    constexpr basic_iterator & operator=(basic_iterator const & rhs) = default;
     //!\brief Move assignment.
-    constexpr single_pass_input_iterator & operator=(single_pass_input_iterator && rhs) = default;
+    constexpr basic_iterator & operator=(basic_iterator && rhs) = default;
     //!\brief Destruction.
-    ~single_pass_input_iterator() = default;
+    ~basic_iterator() = default;
 
     //!\brief Constructing from the underlying seqan3::single_pass_input_view.
-    single_pass_input_iterator(single_pass_input_view<view_type> & view) noexcept : view_ptr{&view}
+    basic_iterator(single_pass_input_view<view_type> & view) noexcept : view_ptr{&view}
     {}
     //!\}
 
@@ -236,7 +236,7 @@ public:
      * \{
      */
     //!\brief Pre-increment.
-    single_pass_input_iterator & operator++() noexcept
+    basic_iterator & operator++() noexcept
     {
         ++cached();
         return *this;
@@ -248,7 +248,7 @@ public:
         if constexpr (std::output_iterator<base_iterator_type, reference> &&
                       std::copy_constructible<base_iterator_type>)
         {
-            single_pass_input_iterator tmp{*this};
+            basic_iterator tmp{*this};
             ++(*this);
             return tmp;
         }
@@ -270,7 +270,7 @@ public:
 
     //!\copydoc operator==
     friend constexpr bool
-    operator==(sentinel_type const & s, single_pass_input_iterator const & rhs) noexcept
+    operator==(sentinel_type const & s, basic_iterator const & rhs) noexcept
     {
         return rhs == s;
     }
@@ -283,7 +283,7 @@ public:
 
     //!\copydoc operator!=
     friend constexpr bool
-    operator!=(sentinel_type const & s, single_pass_input_iterator const & rhs) noexcept
+    operator!=(sentinel_type const & s, basic_iterator const & rhs) noexcept
     {
         return rhs != s;
     }

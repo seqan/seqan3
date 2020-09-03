@@ -24,7 +24,7 @@
 // This is the path a value takes when using this views::
 //   urange
 // → async_input_buffer_view.buffer               [size n]
-// → async_input_buffer_iterator.cached_value     [size 1]
+// → iterator.cached_value     [size 1]
 // → user
 //-----------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ private:
     std::shared_ptr<state> state_ptr = nullptr;
 
     //!\brief The iterator of the seqan3::detail::async_input_buffer_view.
-    class async_input_buffer_iterator;
+    class iterator;
 
 public:
     /*!\name Constructor, destructor, and assignment.
@@ -140,14 +140,14 @@ public:
      * from different threads (however it is not thread-safe to operate on a single iterator from different
      * threads).
      */
-    async_input_buffer_iterator begin()
+    iterator begin()
     {
         assert(state_ptr != nullptr);
         return {state_ptr->buffer};
     }
 
     //!\brief Const-qualified async_input_buffer_view::begin() is deleted, because iterating changes the view.
-    async_input_buffer_iterator begin() const = delete;
+    iterator begin() const = delete;
 
     //!\brief Returns a sentinel.
     std::default_sentinel_t end()
@@ -162,7 +162,7 @@ public:
 
 //!\brief The iterator of the seqan3::detail::async_input_buffer_view.
 template <typename urng_t>
-class async_input_buffer_view<urng_t>::async_input_buffer_iterator
+class async_input_buffer_view<urng_t>::iterator
 {
     //!\brief The sentinel type to compare to.
     using sentinel_type = std::default_sentinel_t;
@@ -199,18 +199,17 @@ public:
      * \brief Not explicitly `noexcept` because this depends on construction/copy/... of value_type.
      * \{
      */
-    async_input_buffer_iterator() = default; //!< Defaulted.
+    iterator() = default; //!< Defaulted.
     //TODO: delete:
-    async_input_buffer_iterator(async_input_buffer_iterator const & rhs) = default; //!< Defaulted.
-    async_input_buffer_iterator(async_input_buffer_iterator && rhs) = default; //!< Defaulted.
+    iterator(iterator const & rhs) = default; //!< Defaulted.
+    iterator(iterator && rhs) = default; //!< Defaulted.
     //TODO: delete:
-    async_input_buffer_iterator & operator=(async_input_buffer_iterator const & rhs) = default; //!< Defaulted.
-    async_input_buffer_iterator & operator=(async_input_buffer_iterator && rhs) = default; //!< Defaulted.
-    ~async_input_buffer_iterator() noexcept = default; //!< Defaulted.
+    iterator & operator=(iterator const & rhs) = default; //!< Defaulted.
+    iterator & operator=(iterator && rhs) = default; //!< Defaulted.
+    ~iterator() noexcept = default; //!< Defaulted.
 
     //!\brief Constructing from the underlying seqan3::async_input_buffer_view.
-    async_input_buffer_iterator(contrib::fixed_buffer_queue<std::ranges::range_value_t<urng_t>> & buffer) noexcept :
-        buffer_ptr{&buffer}
+    iterator(contrib::fixed_buffer_queue<std::ranges::range_value_t<urng_t>> & buffer) noexcept : buffer_ptr{&buffer}
     {
         ++(*this); // cache first value
     }
@@ -236,7 +235,7 @@ public:
      * \{
      */
     //!\brief Pre-increment.
-    async_input_buffer_iterator & operator++() noexcept
+    iterator & operator++() noexcept
     {
         if (at_end) // TODO unlikely
             return *this;
@@ -260,29 +259,25 @@ public:
      * \{
      */
     //!\brief Compares for equality with sentinel.
-    friend constexpr bool operator==(async_input_buffer_iterator const & lhs,
-                                     std::default_sentinel_t const &) noexcept
+    friend constexpr bool operator==(iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end;
     }
 
     //!\copydoc operator==
-    friend constexpr bool operator==(std::default_sentinel_t const &,
-                                     async_input_buffer_iterator const & rhs) noexcept
+    friend constexpr bool operator==(std::default_sentinel_t const &, iterator const & rhs) noexcept
     {
         return rhs == std::default_sentinel_t{};
     }
 
     //!\brief Compares for inequality with sentinel.
-    friend constexpr bool operator!=(async_input_buffer_iterator const & lhs,
-                                     std::default_sentinel_t const &) noexcept
+    friend constexpr bool operator!=(iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
         return !(lhs == std::default_sentinel_t{});
     }
 
     //!\copydoc operator!=
-    friend constexpr bool operator!=(std::default_sentinel_t const &,
-                                     async_input_buffer_iterator const & rhs) noexcept
+    friend constexpr bool operator!=(std::default_sentinel_t const &, iterator const & rhs) noexcept
     {
         return rhs != std::default_sentinel_t{};
     }
