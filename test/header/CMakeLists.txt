@@ -82,6 +82,15 @@ TEST(${header_test_name_safe}) {}")
 #endif")
                 endif ()
 
+                # seqan3/std/* must not include platform.hpp (and therefore any other seqan3 header)
+                # See https://github.com/seqan/product_backlog/issues/135
+                if (header MATCHES "seqan3/std/")
+                    file (APPEND "${header_target_source}" "
+#ifdef SEQAN3_DOXYGEN_ONLY
+#error \"The standard header '${header}' file MUST NOT include any other seqan3 header (except for seqan3/contrib)\"
+#endif")
+                endif ()
+
                 # test whether seqan3 has the visibility bug on lower gcc versions
                 # https://github.com/seqan/seqan3/issues/1317
                 file (APPEND "${header_target_source}" "
