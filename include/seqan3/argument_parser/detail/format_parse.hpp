@@ -221,7 +221,7 @@ private:
     */
     static std::string prepend_dash(std::string const & long_id)
     {
-        return ("--" + long_id);
+        return {"--" + long_id};
     }
 
     /*!\brief Appends a double dash to a short identifier and returns it.
@@ -230,7 +230,7 @@ private:
     */
     static std::string prepend_dash(char const short_id)
     {
-        return ("-" + std::string(1, short_id));
+        return {"-" + std::string{short_id}};
     }
 
     /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
