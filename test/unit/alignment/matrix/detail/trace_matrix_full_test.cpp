@@ -65,3 +65,52 @@ TEST(trace_matrix_full_test, viewable_range_proxy)
 {
     EXPECT_TRUE(std::ranges::view<std::iter_reference_t<matrix_iterator_t>>);
 }
+
+TEST(trace_matrix_full_test, trace_path)
+{
+    matrix_t matrix{};
+    matrix.resize(seqan3::detail::column_index_type<size_t>{4}, seqan3::detail::row_index_type<size_t>{3});
+    auto trace_column_it = matrix.begin();
+    auto trace_column = *trace_column_it;
+
+    // Initialise column 0
+    auto trace_cell_it = trace_column.begin();
+    *trace_cell_it = std::tuple{trace_t::none, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::up_open, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::up, trace_t::none, trace_t::none};
+
+    // Initialise column 1
+    trace_column = *++trace_column_it;
+    trace_cell_it = trace_column.begin();
+    *trace_cell_it = std::tuple{trace_t::left_open, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::diagonal, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::up_open, trace_t::none, trace_t::none};
+
+    // Initialise column 2
+    trace_column = *++trace_column_it;
+    trace_cell_it = trace_column.begin();
+    *trace_cell_it = std::tuple{trace_t::left, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::diagonal, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::left_open, trace_t::none, trace_t::none};
+
+    // Initialise column 3
+    trace_column = *++trace_column_it;
+    trace_cell_it = trace_column.begin();
+    *trace_cell_it = std::tuple{trace_t::left, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::up_open, trace_t::none, trace_t::none};
+    *++trace_cell_it = std::tuple{trace_t::left, trace_t::none, trace_t::none};
+
+    EXPECT_TRUE(++trace_cell_it == trace_column.end());
+    EXPECT_TRUE(++trace_column_it == matrix.end());
+
+    auto trace_path = matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{2u},
+                                                                          seqan3::detail::column_index_type{3u}});
+
+    auto trace_path_it = trace_path.begin();
+    EXPECT_EQ(*trace_path_it, trace_t::left);
+    EXPECT_EQ(*++trace_path_it, trace_t::left);
+    EXPECT_EQ(*++trace_path_it, trace_t::up);
+    EXPECT_EQ(*++trace_path_it, trace_t::diagonal);
+    EXPECT_EQ(*++trace_path_it, trace_t::none);
+    EXPECT_TRUE(trace_path_it == trace_path.end());
+}
