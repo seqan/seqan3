@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <tuple>
 #include <type_traits>
 
@@ -131,16 +132,75 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    affine_cell_proxy()= default; //!< Defaulted.
+    affine_cell_proxy() = default; //!< Defaulted.
     affine_cell_proxy(affine_cell_proxy const &) = default; //!< Defaulted.
     affine_cell_proxy(affine_cell_proxy &&) = default; //!< Defaulted.
     affine_cell_proxy & operator=(affine_cell_proxy const &) = default; //!< Defaulted.
     affine_cell_proxy & operator=(affine_cell_proxy &&) = default; //!< Defaulted.
     ~affine_cell_proxy() = default; //!< Defaulted.
 
-    // Inherit the tuple constructors and assignment.
+    // Inherit the base class's constructor to enable element-wise initialisation (direct and converting constructor).
     using tuple_t::tuple_t;
-    using tuple_t::operator=;
+
+    //!\brief Converting constructor. Initialises from another tuple type.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t &&>
+    //!\endcond
+    explicit affine_cell_proxy(other_tuple_t && other) :
+        tuple_t{std::forward<other_tuple_t>(other)}
+    {}
+
+    //!\brief Converting copy-constructor.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t const &>
+    //!\endcond
+    explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> const & other) :
+        tuple_t{static_cast<other_tuple_t const &>(other)}
+    {}
+
+    //!\brief Converting move-constructor.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t>
+    //!\endcond
+    explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> && other) :
+        tuple_t{static_cast<other_tuple_t &&>(std::move(other))}
+    {}
+
+    //!\brief Converting assignment. Initialises from another tuple type.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t &&>
+    //!\endcond
+    affine_cell_proxy & operator=(other_tuple_t && other)
+    {
+        as_base() = std::forward<other_tuple_t>(other);
+        return *this;
+    }
+
+    //!\brief Converting copy-assignment.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t const &>
+    //!\endcond
+    affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> const & other)
+    {
+        as_base() = static_cast<other_tuple_t const &>(other);
+        return *this;
+    }
+
+    //!\brief Converting move-assignment.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t>
+    //!\endcond
+    affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> && other)
+    {
+        as_base() = static_cast<other_tuple_t &&>(std::move(other));
+        return *this;
+    }
     //!\}
 
     /*!\name Score value accessor
@@ -271,6 +331,12 @@ private:
         using std::get;
 
         return get<index>(get<1>(std::forward<this_t>(me)));
+    }
+
+    //!\brief Casts `this` to the base class type.
+    tuple_t & as_base() & noexcept
+    {
+        return static_cast<tuple_t &>(*this);
     }
 };
 } // namespace seqan3::detail

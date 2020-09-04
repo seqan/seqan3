@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
+#include <seqan3/core/common_tuple.hpp>
 
 //------------------------------------------------------------------------------
 // score cell proxy
@@ -123,15 +124,16 @@ struct trace_cell_proxy_test : public affine_cell_proxy_test
     trace_type horizontal_trace{trace_type::left};
     trace_type vertical_trace{trace_type::up};
 
-    cell_type trace_cell{{best_score, horizontal_score, vertical_score},
-                         {best_trace, horizontal_trace, vertical_trace}};
+    cell_type trace_cell{score_cell_type{best_score, horizontal_score, vertical_score},
+                         trace_cell_type{best_trace, horizontal_trace, vertical_trace}};
 };
 
 TEST_F(trace_cell_proxy_test, construction)
 {
     trace_type local_trace{trace_type::none};
     int local_score{0};
-    cell_type other_cell{{0, 0, local_score}, {trace_type::up_open, local_trace, local_trace}};
+    cell_type other_cell{score_cell_type{0, 0, local_score},
+                         trace_cell_type{trace_type::up_open, local_trace, local_trace}};
 
     EXPECT_TRUE(std::get<0>(std::get<1>(other_cell)) == trace_type::up_open);
     EXPECT_TRUE(std::get<1>(std::get<1>(other_cell)) == trace_type::none);
@@ -150,7 +152,8 @@ TEST_F(trace_cell_proxy_test, assignment)
     using other_cell_proxy_t = seqan3::detail::affine_cell_proxy<std::pair<local_score_cell_t, local_trace_cell_t>>;
 
     trace_type local_trace{trace_type::none};
-    other_cell_proxy_t other_cell{{0, 1, 2}, {trace_type::up_open, local_trace, local_trace}};
+    other_cell_proxy_t other_cell{local_score_cell_t{0, 1, 2},
+                                  local_trace_cell_t{trace_type::up_open, local_trace, local_trace}};
 
     EXPECT_TRUE(std::get<0>(std::get<0>(other_cell)) == 0);
     EXPECT_TRUE(std::get<1>(std::get<0>(other_cell)) == 1);
@@ -204,4 +207,111 @@ TEST_F(trace_cell_proxy_test, vertical_trace)
     EXPECT_TRUE((std::same_as<decltype(std::as_const(trace_cell).vertical_trace()), trace_type &>));
     EXPECT_TRUE((std::same_as<decltype(cell_type{trace_cell}.vertical_trace()), trace_type &>));
     EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(trace_cell)).vertical_trace()), trace_type &>));
+}
+
+//------------------------------------------------------------------------------
+// emulate alignment use cases:
+//------------------------------------------------------------------------------
+
+struct affine_cell_proxy_assignment_test : ::testing::Test
+{
+    using score_value_t = std::tuple<int, int, int>;
+    using score_ref_t = seqan3::common_tuple<int&, int&, int&>;
+
+    // The source score type defined inside of the affine gap policy.
+    using source_score_cell_t = seqan3::detail::affine_cell_proxy<score_value_t>;
+    // The target score type returned by the alignment matrix iterator.
+    using target_score_cell_t = seqan3::detail::affine_cell_proxy<score_ref_t>;
+
+    using trace_t = seqan3::detail::trace_directions;
+    using trace_value_t = std::tuple<trace_t, trace_t, trace_t>;
+    using trace_ref_t = seqan3::common_tuple<trace_t&, trace_t&, trace_t&>;
+
+    // The source score and trace type defined inside of the affine gap policy.
+    using source_score_trace_cell_t = seqan3::detail::affine_cell_proxy<std::pair<score_value_t, trace_value_t>>;
+    // The source score and trace type returned by the alignment matrix iterator.
+    using target_score_trace_cell_t = seqan3::detail::affine_cell_proxy<seqan3::common_pair<target_score_cell_t,
+                                                                                            trace_ref_t>>;
+
+    int v1{};
+    int v2{};
+    int v3{};
+
+    trace_t t1{};
+    trace_t t2{};
+    trace_t t3{};
+};
+
+TEST_F(affine_cell_proxy_assignment_test, alignment_assignment_emulation_score)
+{
+    EXPECT_TRUE((std::assignable_from<score_ref_t &, score_value_t &>));
+    EXPECT_TRUE((std::assignable_from<score_ref_t &, score_value_t const &>));
+    EXPECT_TRUE((std::assignable_from<score_ref_t &, score_value_t &&>));
+
+    EXPECT_TRUE((std::assignable_from<target_score_cell_t &, source_score_cell_t &>));
+    EXPECT_TRUE((std::assignable_from<target_score_cell_t &, source_score_cell_t const &>));
+    EXPECT_TRUE((std::assignable_from<target_score_cell_t &, source_score_cell_t &&>));
+
+    source_score_cell_t source_lvalue{score_value_t{1, 2, 3}};
+    target_score_cell_t{score_ref_t{v1, v2, v3}} = source_lvalue;
+
+    EXPECT_EQ(v1, 1);
+    EXPECT_EQ(v2, 2);
+    EXPECT_EQ(v3, 3);
+
+    source_score_cell_t const source_const_lvalue{score_value_t{3, 2, 1}};
+    target_score_cell_t{score_ref_t{v1, v2, v3}} = source_const_lvalue;
+
+    EXPECT_EQ(v1, 3);
+    EXPECT_EQ(v2, 2);
+    EXPECT_EQ(v3, 1);
+
+    target_score_cell_t{score_ref_t{v1, v2, v3}} = source_score_cell_t{score_value_t{4, 5, 6}};
+
+    EXPECT_EQ(v1, 4);
+    EXPECT_EQ(v2, 5);
+    EXPECT_EQ(v3, 6);
+}
+
+TEST_F(affine_cell_proxy_assignment_test, alignment_assignment_emulation_score_and_trace)
+{
+    EXPECT_TRUE((std::assignable_from<target_score_trace_cell_t &, source_score_trace_cell_t &>));
+    EXPECT_TRUE((std::assignable_from<target_score_trace_cell_t &, source_score_trace_cell_t const &>));
+    EXPECT_TRUE((std::assignable_from<target_score_trace_cell_t &, source_score_trace_cell_t &&>));
+
+    source_score_trace_cell_t source_lvalue{score_value_t{1, 2, 3},
+                                            trace_value_t{trace_t::diagonal, trace_t::left, trace_t::up}};
+    target_score_trace_cell_t{score_ref_t{v1, v2, v3}, trace_ref_t{t1, t2, t3}} = source_lvalue;
+
+    EXPECT_EQ(v1, 1);
+    EXPECT_EQ(v2, 2);
+    EXPECT_EQ(v3, 3);
+
+    EXPECT_EQ(t1, trace_t::diagonal);
+    EXPECT_EQ(t2, trace_t::left);
+    EXPECT_EQ(t3, trace_t::up);
+
+    source_score_trace_cell_t const source_const_lvalue{score_value_t{3, 2, 1},
+                                            trace_value_t{trace_t::left, trace_t::up, trace_t::up_open}};
+    target_score_trace_cell_t{score_ref_t{v1, v2, v3}, trace_ref_t{t1, t2, t3}} = source_const_lvalue;
+
+    EXPECT_EQ(v1, 3);
+    EXPECT_EQ(v2, 2);
+    EXPECT_EQ(v3, 1);
+
+    EXPECT_EQ(t1, trace_t::left);
+    EXPECT_EQ(t2, trace_t::up);
+    EXPECT_EQ(t3, trace_t::up_open);
+
+    target_score_trace_cell_t{score_ref_t{v1, v2, v3}, trace_ref_t{t1, t2, t3}} =
+            source_score_trace_cell_t{score_value_t{4, 5, 6},
+                                      trace_value_t{trace_t::none, trace_t::none, trace_t::none}};
+
+    EXPECT_EQ(v1, 4);
+    EXPECT_EQ(v2, 5);
+    EXPECT_EQ(v3, 6);
+
+    EXPECT_EQ(t1, trace_t::none);
+    EXPECT_EQ(t2, trace_t::none);
+    EXPECT_EQ(t3, trace_t::none);
 }
