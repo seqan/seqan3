@@ -252,39 +252,102 @@ public:
      * \{
      */
     //!\brief Access the optimal score of the wrapped score matrix cell.
-    decltype(auto) best_trace() & { return get_trace_impl<0>(*this); }
+    decltype(auto) best_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(*this);
+    }
     //!\overload
-    decltype(auto) best_trace() const & { return get_trace_impl<0>(*this); }
+    decltype(auto) best_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(*this);
+    }
     //!\overload
-    decltype(auto) best_trace() && { return get_trace_impl<0>(std::move(*this)); }
+    decltype(auto) best_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) best_trace() const &&
+    decltype(auto) best_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<0, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<0>(std::move(*this)));
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
-    decltype(auto) horizontal_trace() & { return get_trace_impl<1>(*this); }
+    decltype(auto) horizontal_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(*this);
+    }
     //!\overload
-    decltype(auto) horizontal_trace() const & { return get_trace_impl<1>(*this); }
+    decltype(auto) horizontal_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(*this);
+    }
     //!\overload
-    decltype(auto) horizontal_trace() && { return get_trace_impl<1>(std::move(*this)); }
+    decltype(auto) horizontal_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) horizontal_trace() const &&
+    decltype(auto) horizontal_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<1, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<1>(std::move(*this)));
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
-    decltype(auto) vertical_trace() & { return get_trace_impl<2>(*this); }
+    decltype(auto) vertical_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(*this);
+    }
     //!\overload
-    decltype(auto) vertical_trace() const & { return get_trace_impl<2>(*this); }
+    decltype(auto) vertical_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(*this);
+    }
     //!\overload
-    decltype(auto) vertical_trace() && { return get_trace_impl<2>(std::move(*this)); }
+    decltype(auto) vertical_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) vertical_trace() const &&
+    decltype(auto) vertical_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<2, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<2>(std::move(*this)));
@@ -345,11 +408,17 @@ namespace std
 {
 //!\cond
 template <typename tuple_t>
-struct tuple_size<seqan3::detail::affine_cell_proxy<tuple_t>> : tuple_size<tuple_t>
+//!\cond
+    requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
+//!\endcond
+struct tuple_size<seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_size<tuple_t>
 {};
 
 template <size_t index, typename tuple_t>
-struct tuple_element<index, seqan3::detail::affine_cell_proxy<tuple_t>> : tuple_element<index, tuple_t>
+//!\cond
+    requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
+//!\endcond
+struct tuple_element<index, seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_element<index, tuple_t>
 {};
 //!\endcond
 } // namespace std
