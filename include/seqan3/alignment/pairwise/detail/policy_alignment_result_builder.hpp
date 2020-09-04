@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -70,12 +71,14 @@ protected:
      * \tparam id_t The type of the id.
      * \tparam score_t The type of the score.
      * \tparam matrix_coordinate_t The type of the matrix coordinate.
+     * \tparam alignment_matrix_t The type of the alignment matrix.
      * \tparam callback_t The type of the callback to invoke.
      *
      * \param[in] sequence_pair The indexed sequence pair.
      * \param[in] id The associated id.
      * \param[in] score The best alignment score.
      * \param[in] end_positions The matrix coordinate of the best alignment score.
+     * \param[in] alignment_matrix The alignment matrix to obtain the trace back from.
      * \param[in] callback The callback to invoke with the generated result.
      *
      * \details
@@ -89,6 +92,7 @@ protected:
               typename index_t,
               typename score_t,
               typename matrix_coordinate_t,
+              typename alignment_matrix_t,
               typename callback_t>
     //!\cond
         requires std::invocable<callback_t, result_type>
@@ -97,6 +101,7 @@ protected:
                                 [[maybe_unused]] index_t && id,
                                 [[maybe_unused]] score_t score,
                                 [[maybe_unused]] matrix_coordinate_t end_positions,
+                                [[maybe_unused]] alignment_matrix_t const & alignment_matrix,
                                 callback_t && callback)
     {
         using std::get;
@@ -126,7 +131,17 @@ protected:
             result.data.end_positions.second = end_positions.row;
         }
 
-       // TODO: Add other result.data like sequence1_begin_position, sequence1_end_position, and so on.
+        if constexpr (traits_type::requires_trace_information)
+        {
+            aligned_sequence_builder builder{get<0>(sequence_pair), get<1>(sequence_pair)};
+            auto aligned_sequence_result = builder(alignment_matrix.trace_path(end_positions));
+
+            if constexpr (traits_type::compute_begin_positions)
+            {
+                result.data.begin_positions.first = aligned_sequence_result.first_sequence_slice_positions.first;
+                result.data.begin_positions.second = aligned_sequence_result.second_sequence_slice_positions.first;
+            }
+        }
 
         callback(std::move(result));
     }
