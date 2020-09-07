@@ -473,7 +473,7 @@ protected:
  *
  * The valid extensions can also be obtained from a seqan3 formatted file type, e.g. seqan3::sequence_input_file, if
  * it is given as template argument to this class. The following snippet demonstrates the different ways to instantiate
- * the seqan3::output_file_validator.
+ * the seqan3::input_file_validator.
  *
  * \include test/snippet/argument_parser/validators_input_file_ext_from_file.cpp
  *
