@@ -127,7 +127,9 @@ public:
      * Maintains a copy of the configuration object on the heap using a std::shared_ptr. In addition, the alignment
      * state is initialised.
      */
-    explicit constexpr alignment_algorithm(config_t const & cfg) : cfg_ptr{std::make_shared<config_t>(cfg)}
+    explicit constexpr alignment_algorithm(config_t const & cfg) :
+        invoke_deferred_crtp_base<algorithm_policies_t, alignment_algorithm<config_t, algorithm_policies_t...>>{cfg}...,
+        cfg_ptr{std::make_shared<config_t>(cfg)}
     {
         this->scoring_scheme = seqan3::get<align_cfg::scoring_scheme>(*cfg_ptr).value;
         this->initialise_alignment_state(*cfg_ptr);

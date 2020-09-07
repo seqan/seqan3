@@ -59,6 +59,11 @@ private:
     constexpr alignment_matrix_policy & operator=(alignment_matrix_policy const &) = default; //!< Defaulted.
     constexpr alignment_matrix_policy & operator=(alignment_matrix_policy &&) = default; //!< Defaulted.
     ~alignment_matrix_policy() = default; //!< Defaulted.
+
+    //!\brief Initialise the policy.
+    template <typename configuration_t>
+    alignment_matrix_policy(configuration_t const & /*config*/)
+    {}
     //!}
 
     /*!\brief Allocates the memory of the underlying matrices.
