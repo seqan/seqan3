@@ -248,11 +248,7 @@ TYPED_TEST(container_of_container, insert)
     t1 = {"GAGGA"_dna4, "ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     t0.insert(t0.cend(), t1.begin() + 1, t1.begin() + 3);
 
-    // remove the following after range-v3 is updated to 1.0
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     t0.insert(t0.cend(),   t1.cend() - 1, t1.cend());
-    #pragma GCC diagnostic pop
     t0.insert(t0.cbegin(), t1.cend() - 1, t1.cend());
     EXPECT_EQ(t0, t1);
 
