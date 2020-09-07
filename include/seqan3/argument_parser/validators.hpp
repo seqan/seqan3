@@ -40,7 +40,7 @@ namespace seqan3
  *
  * \details
  *
- * When adding (positional) options to the seqan3::argument_parser you may pass also pass a
+ * When adding (positional) options to the seqan3::argument_parser you may pass a
  * [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses) that models
  * seqan3::validator which checks the option value provided by the user for some constraint.
  *
