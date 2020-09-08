@@ -11,6 +11,8 @@ project (seqan3_test_unit CXX)
 include (../seqan3-test.cmake)
 include (GoogleTest OPTIONAL)
 
+option (SEQAN3_VERBOSE_TESTS "Run each test case individually" ON)
+
 macro (seqan3_test unit_test_cpp)
     file (RELATIVE_PATH unit_test "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/${unit_test_cpp}")
     seqan3_test_component (target "${unit_test}" TARGET_NAME)
@@ -18,7 +20,7 @@ macro (seqan3_test unit_test_cpp)
 
     add_executable (${target} ${unit_test_cpp})
     target_link_libraries (${target} seqan3::test::unit)
-    if (NOT CMAKE_VERSION VERSION_LESS 3.10) # cmake >= 3.10
+    if (SEQAN3_VERBOSE_TESTS AND NOT CMAKE_VERSION VERSION_LESS 3.10) # cmake >= 3.10
         gtest_discover_tests(${target} TEST_PREFIX "${test_name}::" PROPERTIES TIMEOUT "30")
     else ()
         add_test (NAME "${test_name}" COMMAND ${target})

@@ -82,7 +82,8 @@ protected:
     {
         derived_t * self = static_cast<derived_t *>(this);
 
-        max_errors = get<align_cfg::max_error>(self->config).value;
+        max_errors = -get<align_cfg::min_score>(self->config).score;
+
         assert(max_errors >= score_type{0});
 
         if (std::ranges::empty(self->query)) // [[unlikely]]
@@ -1041,7 +1042,7 @@ public:
      * \param[in] callback The callback function to be invoked with the alignment result.
      */
     template <typename callback_t>
-    void operator()(size_t const idx, callback_t && callback)
+    void operator()([[maybe_unused]] size_t const idx, callback_t && callback)
     {
         using traits_type = alignment_configuration_traits<align_config_t>;
         using result_value_type = typename alignment_result_value_type_accessor<alignment_result_type>::type;
@@ -1067,7 +1068,13 @@ public:
         // the correct information in the alignment result type. This information is stored in the alignment
         // configuration traits and not in the edit distance traits.
         result_value_type res_vt{};
-        res_vt.id = idx;
+
+        if constexpr (traits_type::output_sequence1_id)
+            res_vt.sequence1_id = idx;
+
+        if constexpr (traits_type::output_sequence2_id)
+            res_vt.sequence2_id = idx;
+
         if constexpr (traits_type::compute_score)
             res_vt.score = this->score().value_or(matrix_inf<score_type>);
 

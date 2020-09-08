@@ -36,14 +36,29 @@ class pairwise_alignment_collection_callback_test : public fixture_t
 
 TYPED_TEST_SUITE_P(pairwise_alignment_collection_callback_test);
 
+TYPED_TEST_P(pairwise_alignment_collection_callback_test, ids)
+{
+    auto const & fixture = this->fixture();
+    seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_sequence1_id |
+                                      seqan3::align_cfg::output_sequence2_id |
+                                      seqan3::align_cfg::on_result{[&] (auto && result)
+                                      {
+                                          EXPECT_EQ(result.sequence1_id(), result.sequence2_id());
+                                      }};
+    auto [database, query] = fixture.get_sequences();
+    seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
+}
+
 TYPED_TEST_P(pairwise_alignment_collection_callback_test, score)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_sequence1_id |
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
-                                          auto id = result.id();
+                                          auto id = result.sequence1_id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
                                       }};
     auto [database, query] = fixture.get_sequences();
@@ -54,11 +69,12 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, end_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_sequence1_id |
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
-                                          auto id = result.id();
+                                          auto id = result.sequence1_id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
                                           EXPECT_EQ(result.sequence1_end_position(),
                                                     fixture.get_end_positions()[id].first);
@@ -73,12 +89,13 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, begin_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_sequence1_id |
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_begin_position |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
-                                          auto id = result.id();
+                                          auto id = result.sequence1_id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
                                           EXPECT_EQ(result.sequence1_end_position(),
                                                     fixture.get_end_positions()[id].first);
@@ -97,13 +114,14 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, alignment)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
+                                      seqan3::align_cfg::output_sequence1_id |
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_begin_position |
                                       seqan3::align_cfg::output_alignment |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
-                                          auto id = result.id();
+                                          auto id = result.sequence1_id();
                                           EXPECT_EQ(result.score(), fixture.get_scores()[id]);
                                           EXPECT_EQ(result.sequence1_end_position(),
                                                     fixture.get_end_positions()[id].first);
@@ -126,6 +144,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, alignment)
 }
 
 REGISTER_TYPED_TEST_SUITE_P(pairwise_alignment_collection_callback_test,
+                            ids,
                             score,
                             end_positions,
                             begin_positions,

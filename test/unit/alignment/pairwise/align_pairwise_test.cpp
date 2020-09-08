@@ -28,7 +28,7 @@ struct align_pairwise_test : ::testing::Test
 {
     // two helper variables to check if the TypeParam contains vectorised.
     using dummy_cfg_t = std::conditional_t<std::is_same_v<void, t>,
-                                           decltype(seqan3::align_cfg::max_error{1}),
+                                           decltype(seqan3::align_cfg::min_score{-1}),
                                            t>;
     using config_t = decltype(seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | dummy_cfg_t{});
 
@@ -79,7 +79,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p1, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -109,7 +110,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(sequences, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -139,7 +141,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
         unsigned idx = 0;
         for (auto && res : call_alignment<TypeParam>(p2, cfg))
         {
-            EXPECT_EQ(res.id(), idx++);
+            EXPECT_EQ(res.sequence1_id(), idx);
+            EXPECT_EQ(res.sequence2_id(), idx++);
             EXPECT_EQ(res.score(), -4);
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
@@ -179,7 +182,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
             unsigned idx = 0;
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
-                EXPECT_EQ(res.id(), idx++);
+                EXPECT_EQ(res.sequence1_id(), idx);
+                EXPECT_EQ(res.sequence2_id(), idx++);
                 EXPECT_EQ(res.score(), -4);
                 EXPECT_EQ(res.sequence1_end_position(), 8u);
                 EXPECT_EQ(res.sequence2_end_position(), 9u);

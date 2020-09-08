@@ -104,9 +104,11 @@ protected:
 
         result_type result{};
 
-        static_assert(!std::same_as<decltype(result.data.id), invalid_t>,
-                      "Invalid configuration. Expected result with id!");
-        result.data.id = std::move(id);
+        if constexpr (traits_type::output_sequence1_id)
+            result.data.sequence1_id = id;
+
+        if constexpr (traits_type::output_sequence2_id)
+            result.data.sequence2_id = id;
 
         if constexpr (traits_type::compute_score)
         {

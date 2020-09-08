@@ -39,7 +39,7 @@ namespace seqan3::align_cfg
  * \ref seqan3::end_gaps::free_ends_first "semi-global alignments" with free ends in the first sequence.
  *
  * The performance of the algorithm can further be improved if the number of maximal errors (edits) is known by using
- * the align_cfg::max_error configuration.
+ * the align_cfg::min_score configuration.
  *
  * \include snippet/alignment/configuration/align_cfg_edit_example.cpp
  *
