@@ -80,19 +80,6 @@ struct fm_index_cursor_node
     }
     //!\endcond
 };
-
-// std::tuple get_suffix_array_range(fm_index_cursor<index_t> const & it)
-// {
-//     return {node.lb, node.rb};
-// }
-//
-// std::tuple get_suffix_array_range(bi_fm_index_cursor<index_t> const & it)
-// {
-//     return {node.lb, node.rb};
-// }
-
-//!\publicsection
-
 //!\}
 
 }
