@@ -57,6 +57,13 @@ inline constexpr auto config_free_gaps_sl_ft = seqan3::align_cfg::method_global{
                                                         seqan3::end_gaps{seqan3::front_end_second{std::true_type{}},
                                                                          seqan3::back_end_first{std::true_type{}}}};
 
+inline constexpr auto config_free_gaps_tlbr = seqan3::align_cfg::method_global{
+                                                   seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                                               } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
+
 inline constexpr auto config_scoring_m4_mm5 = seqan3::align_cfg::scoring_scheme{
                                                 seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                   seqan3::mismatch_score{-5}}};
@@ -279,6 +286,106 @@ static auto dna4_free_lb_with_band_tl2br_no_matches = []()
         /*T*/ INF,INF,INF,INF,INF,Du ,DuL,ul ,ul ,ul ,ul ,ul ,
         /*T*/ INF,INF,INF,INF,INF,INF,Du ,uL ,ul ,ul ,ul ,ul ,
         /*T*/ INF,INF,INF,INF,INF,INF,INF,u  ,uL ,ul ,ul ,ul
+        }
+    };
+}();
+
+// band starts in top left with lower diagonal exceeding size of sequence 2 and ends in the bottom.
+static auto dna4_free_tlbr_with_band_tl2b = [] ()
+{
+    return alignment_fixture
+    {
+        "AGATTTACTACGCAT"_dna4,
+        "GTAGCAT"_dna4,
+        config_free_gaps_tlbr | config_gap | config_scoring_m4_mm5 |
+        seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-10},
+                                           seqan3::align_cfg::upper_diagonal{4}},
+        5,
+        "AG-AT",
+        "AGCAT",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{2u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{4u}, seqan3::detail::row_index_type{7u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //    e  ,A  ,G  ,A  ,T  ,T  ,T  ,A  ,C  ,T  ,A  ,C  ,G  ,C  ,A  ,T  ,
+        /*e*/ 0  ,0  ,0  ,0  ,0  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ 0  ,-5 ,4  ,-5 ,-5 ,-5 ,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*T*/ 0  ,-5 ,-7 ,-1 ,-1 ,-1 ,-1 ,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/ 0  ,4  ,-7 ,-3 ,-6 ,-6 ,-6 ,3  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ 0  ,-5 ,8  ,-3 ,-4 ,-5 ,-6 ,-7 ,-2 ,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/ 0  ,-5 ,-3 ,3  ,-8 ,-9 ,-10,-9 ,-3 ,-7 ,INF,INF,INF,INF,INF,INF,
+        /*A*/ 0  ,4  ,-4 ,1  ,-2 ,-10,-11,-6 ,-13,-8 ,-3 ,INF,INF,INF,INF,INF,
+        /*T*/ 0  ,-5 ,-1 ,-9 ,5  ,2  ,-6 ,-8 ,-9 ,-9 ,-11,-8 ,INF,INF,INF,INF
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //    e  ,A  ,G  ,A  ,T  ,T  ,T  ,A  ,C  ,T  ,A  ,C  ,G  ,C  ,A  ,T  ,
+        /*e*/ N  ,N  ,N  ,N  ,N  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ N  ,DUL,DUl,DUL,DUl,D  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*T*/ N  ,DuL,Ul ,Dul,DuL,DUL,D  ,INF,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/ N  ,DuL,L  ,DUl,DUl,DUl,DUl,D  ,INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ N  ,DUL,Dul,L  ,l  ,l  ,l  ,l  ,D  ,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/ N  ,DuL,Ul ,Dul,DuL,Dul,Dul,ul ,DUl,D  ,INF,INF,INF,INF,INF,INF,
+        /*A*/ N  ,DuL,uL ,DUl,Dul,l  ,l  ,Dul,l  ,DUl,D  ,INF,INF,INF,INF,INF,
+        /*T*/ N  ,DUL,Dul,DuL,DUl,DuL,Dul,l  ,l  ,Dul,l  ,D  ,INF,INF,INF,INF
+        }
+    };
+}();
+
+// band starts in top left with upper diagonal exceeding size of sequence 1 and ends in the right side.
+static auto dna4_free_tlbr_with_band_tl2r = [] ()
+{
+    return alignment_fixture
+    {
+        "GTAGCAT"_dna4,
+        "AGATTTACTACGCAT"_dna4,
+        config_free_gaps_tlbr | config_gap | config_scoring_m4_mm5 |
+        seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},
+                                           seqan3::align_cfg::upper_diagonal{100}},
+        5,
+        "AGCAT",
+        "AG-AT",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{2u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{4u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //    e  ,G  ,T  ,A  ,G  ,C  ,A  ,T  ,
+        /*e*/ 0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,
+        /*A*/ 0  ,-5 ,-5 ,4  ,-5 ,-5 ,4  ,-5 ,
+        /*G*/ 0  ,4  ,-7 ,-7 ,8  ,-3 ,-4 ,-1 ,
+        /*A*/ 0  ,-5 ,-1 ,-3 ,-3 ,3  ,1  ,-9 ,
+        /*T*/ INF,-5 ,-1 ,-6 ,-4 ,-8 ,-2 ,5  ,
+        /*T*/ INF,INF,-1 ,-6 ,-5 ,-9 ,-10,2  ,
+        /*T*/ INF,INF,INF,-6 ,-6 ,-10,-11,-6 ,
+        /*A*/ INF,INF,INF,INF,-7 ,-11,-6 ,-8 ,
+        /*C*/ INF,INF,INF,INF,INF,-3 ,-13,-9 ,
+        /*T*/ INF,INF,INF,INF,INF,INF,-8 ,-9 ,
+        /*A*/ INF,INF,INF,INF,INF,INF,INF,-11,
+        /*C*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*T*/ INF,INF,INF,INF,INF,INF,INF,INF
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //    e  ,G  ,T  ,A  ,G  ,C  ,A  ,T  ,
+        /*e*/ N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,
+        /*A*/ N  ,DUL,DUl,DUl,DUL,DUl,DUl,DUL,
+        /*G*/ N  ,DuL,L  ,Ul ,Dul,L  ,l  ,Dul,
+        /*A*/ N  ,DUL,Dul,DuL,Ul ,Dul,DuL,DUl,
+        /*T*/ INF,Du ,DUL,DuL,ul ,DUl,Dul,DuL,
+        /*T*/ INF,INF,DU ,DuL,ul ,Dul,ul ,DUl,
+        /*T*/ INF,INF,INF,Du ,uL ,DuL,ul ,Dul,
+        /*A*/ INF,INF,INF,INF,u  ,DuL,Dul,uL ,
+        /*C*/ INF,INF,INF,INF,INF,Du ,uL ,ul ,
+        /*T*/ INF,INF,INF,INF,INF,INF,Du ,DuL,
+        /*A*/ INF,INF,INF,INF,INF,INF,INF,u  ,
+        /*C*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*G*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*C*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*A*/ INF,INF,INF,INF,INF,INF,INF,INF,
+        /*T*/ INF,INF,INF,INF,INF,INF,INF,INF
         }
     };
 }();

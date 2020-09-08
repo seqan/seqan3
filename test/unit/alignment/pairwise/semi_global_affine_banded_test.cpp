@@ -17,7 +17,9 @@ using pairwise_semiglobal_affine_banded_testing_types = ::testing::Types<
         // pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_02_semi_first>,
         pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_03_semi_second>,
         pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_04_semi_second>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_free_lb_with_band_tl2br_no_matches>
+        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_free_lb_with_band_tl2br_no_matches>,
+        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_free_tlbr_with_band_tl2b>,
+        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::semi_global::affine::banded::dna4_free_tlbr_with_band_tl2r>
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_semiglobal_affine_banded,
