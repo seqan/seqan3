@@ -39,7 +39,7 @@ namespace seqan3
  * | seq            |      ✅      |      ✅       |       ✅      |
  * | id             |      ✅      |      ✅       |       ✅      |
  * | qual           |      ✅      |      ✅       |       ✅      |
- * | seq_qual       |      ✅      |      ✅       |       ✅      |
+ * | seq_qual       |      ✅      |              |              |
  * | offset         |             |      ✅       |       ✅      |
  * | bpp            |             |              |       ✅      |
  * | structure      |             |              |       ✅      |
