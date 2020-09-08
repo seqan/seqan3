@@ -228,7 +228,7 @@ protected:
     }
 
     /*!\brief Computes a column of the band that does not start in the first row of the alignment matrix.
-     * \tparam alignment_column_t The type of the alignment column; must model std::ranges::input_range.
+     * \tparam alignment_column_t The type of the alignment column; must model std::ranges::forward_range.
      * \tparam cell_index_column_t The type of the indexed column; must model std::ranges::input_range.
      * \tparam sequence1_value_t The value type of sequence1; must model seqan3::semialphabet.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::input_range.
@@ -245,8 +245,40 @@ protected:
      * phase the first cell of the column is computed and in the iteration phase all remaining cells are computed.
      * In the final phase the last cell is possibly evaluated for a new alignment optimum.
      * Note that the length of `sequence2` determines the size of the column.
+     *
+     * ### Implementation with a score matrix using linear memory
+     *
+     * When the score matrix uses only linear memory, i.e. only one column is stored, the algorithm reuses the cells of
+     * the same column to compute the current one. This means, before the current cell is updated its value is
+     * cached and used as the previous diagonal value when computing the next cell below.
+     * In the banded case, however, the position of the referenced cell is shifted by one and needs a different
+     * handling.
+     *
+     * ```
+     *    0 1 2 3 4 5 6
+     *    _____________
+     * 0 |0|0|0|\      |
+     * 1 |1|1|1|0|\    |
+     * 2 |\|2|2|1|0|\  |
+     * 3 |  \|3|2|1|0|\|
+     * 4 |    \|3|2|1|0|
+     * 5 |      \|3|2|1|
+     *    –––––––––––––
+     *
+     * ```
+     * The picture above depicts the banded matrix with the indices of the column. As long as the band touches
+     * the first row (column 0 - 2), the indices of the actual stored column refer to the same position as the
+     * previous column. Hence, to compute these columns the regular algorithm
+     * seqan3::detail::pairwise_alignment_algorithm::compute_column can be used.
+     * Starting at column 3 the first cell of the band moves downwards, causing a shift in the position of the previous
+     * cell. In this state, the value of the current cell represents the previous diagonal value before it is updated.
+     * To read the previous horizontal value the next cell below has to be dereferenced.
+     * Accordingly, two iterators are used to point to the respective cells in the matrix. The first one points to the
+     * current cell (the one that is written to) and the second points to the next cell (the one where the
+     * horizontal and vertical scores are read from). After computing the last cell of the column the value of the
+     * current iterator can be used to track the score of the cell.
      */
-    template <std::ranges::input_range alignment_column_t,
+    template <std::ranges::forward_range alignment_column_t,
               std::ranges::input_range cell_index_column_t,
               semialphabet sequence1_value_t,
               std::ranges::input_range sequence2_t>
@@ -259,13 +291,15 @@ protected:
         // Initial phase: prepare column and initialise first cell
         // ---------------------------------------------------------------------
 
-        auto alignment_column_it = alignment_column.begin();
+        auto current_alignment_column_it = alignment_column.begin();
         auto cell_index_column_it = cell_index_column.begin();
 
-        auto cell = *alignment_column_it;
+        // Points to the last valid cell in the column.
+        decltype(current_alignment_column_it) next_alignment_column_it{current_alignment_column_it};
+        auto cell = *current_alignment_column_it;
         cell = this->track_cell(
                 this->initialise_band_first_cell(cell.best_score(),
-                                                 *++alignment_column_it,
+                                                 *++next_alignment_column_it,
                                                  this->scoring_scheme.score(sequence1_value,
                                                                             *std::ranges::begin(sequence2))),
                 *cell_index_column_it);
@@ -276,10 +310,11 @@ protected:
 
         for (auto && sequence2_value : sequence2 | views::drop(1))
         {
-            auto cell = *alignment_column_it;
+            current_alignment_column_it = next_alignment_column_it;
+            auto cell = *current_alignment_column_it;
             cell = this->track_cell(
                 this->compute_inner_cell(cell.best_score(),
-                                         *++alignment_column_it,
+                                         *++next_alignment_column_it,
                                          this->scoring_scheme.score(sequence1_value, sequence2_value)),
                 *++cell_index_column_it);
         }
@@ -288,7 +323,7 @@ protected:
         // Final phase: track last cell
         // ---------------------------------------------------------------------
 
-        this->track_last_row_cell(*alignment_column_it, *cell_index_column_it);
+        this->track_last_row_cell(*current_alignment_column_it, *cell_index_column_it);
     }
 };
 
