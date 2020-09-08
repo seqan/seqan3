@@ -24,7 +24,7 @@ int main()
         if (seqan3::get<seqan3::field::qual>(rec)[0] < seqan3::assign_char_to('@', seqan3::phred42{})) // low quality
         {
             // Set a flag value (bit):
-            seqan3::get<seqan3::field::flag>(rec) &= seqan3::sam_flag::failed_filter;
+            seqan3::get<seqan3::field::flag>(rec) |= seqan3::sam_flag::failed_filter;
             // Note that this does not affect other flag values (bits),
             // e.g. `seqan3::get<seqan3::field::flag>(rec) & seqan3::sam_flag::unmapped` may still be true
         }
