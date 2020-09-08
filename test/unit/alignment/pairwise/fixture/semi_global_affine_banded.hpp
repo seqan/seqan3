@@ -236,4 +236,51 @@ static auto dna4_04_semi_second = []()
     };
 }();
 
+static auto dna4_free_lb_with_band_tl2br_no_matches = []()
+{
+    return alignment_fixture
+    {
+        "AAAAAAAAAAA"_dna4,
+        "TTTTTTTTTTT"_dna4,
+        config_free_gaps_sl_ft | config_gap | config_band_m4_8 | config_scoring_m4_mm5,
+        -34,
+        "AAAAAAA-------",
+        "-------TTTTTTT",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{4u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{11u}},
+        std::vector<std::optional<int32_t>>
+        {
+        //      e,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,
+        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,INF,INF,INF,
+        /*T*/ 0  ,-5 ,-12,-13,-14,-15,-16,-17,-18,-19,INF,INF,
+        /*T*/ 0  ,-5 ,-10,-13,-14,-15,-16,-17,-18,-19,-20,INF,
+        /*T*/ 0  ,-5 ,-10,-13,-14,-15,-16,-17,-18,-19,-20,-21,
+        /*T*/ 0  ,-5 ,-10,-13,-14,-15,-16,-17,-18,-19,-20,-21,
+        /*T*/ INF,-5 ,-10,-15,-18,-19,-20,-21,-22,-23,-24,-25,
+        /*T*/ INF,INF,-10,-15,-20,-23,-24,-25,-26,-27,-28,-29,
+        /*T*/ INF,INF,INF,-15,-20,-25,-28,-29,-30,-31,-32,-33,
+        /*T*/ INF,INF,INF,INF,-20,-25,-30,-31,-32,-33,-34,-35,
+        /*T*/ INF,INF,INF,INF,INF,-25,-30,-32,-33,-34,-35,-36,
+        /*T*/ INF,INF,INF,INF,INF,INF,-30,-33,-34,-35,-36,-37,
+        /*T*/ INF,INF,INF,INF,INF,INF,INF,-34,-35,-36,-37,-38
+        },
+        std::vector<std::optional<seqan3::detail::trace_directions>>
+        {
+        //      e,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,
+        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,INF,
+        /*T*/ N  ,DUL,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,INF,
+        /*T*/ N  ,DUL,DUl,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,INF,
+        /*T*/ N  ,DUL,DUl,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*T*/ N  ,DUL,DUl,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*T*/ INF,DU ,DUL,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,
+        /*T*/ INF,INF,DU ,DuL,Dul,Dul,Dul,Dul,Dul,Dul,Dul,Dul,
+        /*T*/ INF,INF,INF,Du ,DuL,Dul,Dul,Dul,Dul,Dul,Dul,Dul,
+        /*T*/ INF,INF,INF,INF,Du ,DuL,Dul,ul ,ul ,ul ,ul ,ul ,
+        /*T*/ INF,INF,INF,INF,INF,Du ,DuL,ul ,ul ,ul ,ul ,ul ,
+        /*T*/ INF,INF,INF,INF,INF,INF,Du ,uL ,ul ,ul ,ul ,ul ,
+        /*T*/ INF,INF,INF,INF,INF,INF,INF,u  ,uL ,ul ,ul ,ul
+        }
+    };
+}();
+
 } // namespace seqan3::test::alignment::fixture::global::affine::banded

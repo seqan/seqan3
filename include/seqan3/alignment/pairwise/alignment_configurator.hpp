@@ -536,10 +536,14 @@ private:
         }
         else  // Use new alignment algorithm implementation.
         {
+            using scalar_optimum_updater_t = std::conditional_t<traits_t::is_banded,
+                                                                max_score_banded_updater,
+                                                                max_score_updater>;
+
             using optimum_tracker_policy_t =
                 lazy_conditional_t<traits_t::is_vectorised,
                                    lazy<policy_optimum_tracker_simd, config_t, max_score_updater_simd_global>,
-                                   lazy<policy_optimum_tracker, config_t, max_score_updater>>;
+                                   lazy<policy_optimum_tracker, config_t, scalar_optimum_updater_t>>;
 
             using gap_cost_policy_t = std::conditional_t<traits_t::is_banded,
                                                          policy_affine_gap_recursion_banded<config_t>,

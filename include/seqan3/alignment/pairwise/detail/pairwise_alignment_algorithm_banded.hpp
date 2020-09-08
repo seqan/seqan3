@@ -88,6 +88,10 @@ public:
             size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
             size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
 
+            // Initialise the cell updater with the dimensions of the regular matrix.
+            this->compare_and_set_optimum.set_target_indices(row_index_type{sequence2_size},
+                                                             column_index_type{sequence1_size});
+
             auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
                                                                               sequence2_size,
                                                                               this->lowest_viable_score());
