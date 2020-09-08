@@ -73,14 +73,19 @@ TEST(${header_test_name_safe}) {}")
 
             # test that seqan3 headers include platform.hpp
             if ("${component}" MATCHES "seqan3")
-                file (APPEND "${header_target_source}" "
+
+                # exclude seqan3/std/* and seqan3/contrib/* from platform test
+                if (NOT header MATCHES "seqan3/(std|contrib)/")
+                    file (APPEND "${header_target_source}" "
 #ifndef SEQAN3_DOXYGEN_ONLY
-#error \"Your header file is missing #include <seqan3/core/platform.hpp>\"
+#error \"Your header '${header}' file is missing #include <seqan3/core/platform.hpp>\"
 #endif")
+                endif ()
 
                 # test whether seqan3 has the visibility bug on lower gcc versions
                 # https://github.com/seqan/seqan3/issues/1317
                 file (APPEND "${header_target_source}" "
+#include <seqan3/core/platform.hpp>
 class A{ int i{5}; };
 
 template <typename t>
@@ -118,6 +123,7 @@ seqan3_require_ccache ()
 seqan3_require_benchmark ()
 seqan3_require_test ()
 
+# note: seqan3/std/* will not be tested, because the source files don't have any file extension
 seqan3_header_test (seqan3 "${SEQAN3_CLONE_DIR}/include" "")
 seqan3_header_test (seqan3_test "${SEQAN3_CLONE_DIR}/test/include" "")
 

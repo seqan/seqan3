@@ -5,71 +5,85 @@ on:
     branches:
       - master
 
+env:
+  CMAKE_VERSION: 3.7.2
+  DOXYGEN_VERSION: 1.8.20
+  TZ: Europe/Berlin
+
 jobs:
   deploy_documentation:
     name: Deploy Documentation
     runs-on: ubuntu-20.04
+    timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
-      - name: Print Current Branch
-        shell: bash
-        run: echo The target branch name is ${GITHUB_REF#refs/heads/}
+      - name: Get cached Doxygen
+        uses: actions/cache@v2
+        with:
+          path: /tmp/doxygen-download
+          key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
 
       - name: Setup Doxygen
-        env:
-          DOXYGEN_VER: 1.8.19
-        shell: bash
+        shell: bash -ex {0}
         run: |
           mkdir -p /tmp/doxygen-download
-          wget --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VER}/doxygen-${DOXYGEN_VER}.linux.bin.tar.gz
-          tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VER}.linux.bin.tar.gz
-          echo "::add-path::/tmp/doxygen-${DOXYGEN_VER}/bin" # Only available in subsequent steps!
+          wget --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          echo "::add-path::/tmp/doxygen-${DOXYGEN_VERSION}/bin" # Only available in subsequent steps!
+
+      - name: Get cached CMake
+        uses: actions/cache@v2
+        with:
+          path: /tmp/cmake-download
+          key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
 
       - name: Setup CMake
-        env:
-          CMAKE_VERSION: 3.7.2
-        shell: bash
+        shell: bash -ex {0}
         run: |
           mkdir -p /tmp/cmake-download
           wget --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
           tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
           echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" # Only available in subsequent steps!
 
-      - name: Install Dependencies # graphviz for dot, latex to parse formulas, libclang for doxygen
-        run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9
+      - name: Install Dependencies
+        run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
+
+      - name: Load cached documentation
+        uses: actions/cache@v2
+        with:
+          path: doc-build
+          key: ${{ runner.os }}-documentation
 
       - name: Build documentation
-        env:
-          TZ: Europe/Berlin
-        shell: bash
+        shell: bash -ex {0}
         run: |
-          mkdir doc-build
+          mkdir -p doc-build
           cd doc-build
           cmake ../test/documentation
           make -j 2 doc_usr doc_dev
 
       - name: Deploy User Documentation
-        uses: Pendect/action-rsyncer@master
+        uses: Pendect/action-rsyncer@v1.1.0
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_HOST_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-avzr --delete --timeout=60'
+          flags: '-avzr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_usr/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-user'
 
       - name: Deploy Developer Documentation
-        uses: Pendect/action-rsyncer@master
+        uses: Pendect/action-rsyncer@v1.1.0
         env:
           DEPLOY_KEY: ${{ secrets.DEPLOY_HOST_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.DEPLOY_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-avzr --delete --timeout=60'
+          flags: '-avzr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_dev/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-dev'

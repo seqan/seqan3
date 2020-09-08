@@ -18,8 +18,8 @@
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
+#include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>

@@ -106,9 +106,12 @@ struct version_check : public ::testing::Test
     std::tuple<std::string, std::string, bool> simulate_argument_parser(int argc, const char ** argv)
     {
         // make sure that the environment variable is not set
-        char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
-        if (env != nullptr)
+        std::string previous_value{};
+        if (char * env = std::getenv("SEQAN3_NO_VERSION_CHECK"))
+        {
+            previous_value = env;
             unsetenv("SEQAN3_NO_VERSION_CHECK");
+        }
 
         bool app_call_succeeded{false};
 
@@ -129,8 +132,8 @@ struct version_check : public ::testing::Test
         // any interference with following tests
         app_call_succeeded = wait_for(parser);
 
-        if (env != nullptr)
-            setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
+        if (!previous_value.empty())
+            setenv("SEQAN3_NO_VERSION_CHECK", previous_value.c_str(), 1);
 
         return {out, err, app_call_succeeded};
     }
@@ -277,7 +280,10 @@ TEST_F(version_check, time_out) // while implicitly on
 TEST_F(version_check, environment_variable_set)
 {
     // store variable for resetting it
-    char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
+    std::string previous_value{};
+    if (char * env = std::getenv("SEQAN3_NO_VERSION_CHECK"))
+        previous_value = env;
+
     setenv("SEQAN3_NO_VERSION_CHECK", "foo", 1);
 
     const char * argv[2] = {app_name.c_str(), "-f"};
@@ -304,10 +310,10 @@ TEST_F(version_check, environment_variable_set)
     EXPECT_FALSE(std::filesystem::exists(app_timestamp_filename())) << app_timestamp_filename();
     EXPECT_FALSE(std::filesystem::exists(app_version_filename()));
 
-    if (env == nullptr)
+    if (previous_value.empty())
         unsetenv("SEQAN3_NO_VERSION_CHECK");
     else
-        setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
+        setenv("SEQAN3_NO_VERSION_CHECK", previous_value.c_str(), 1);
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }
@@ -330,9 +336,12 @@ TEST_F(version_check, option_off)
     // Version check option always needs to be parsed, even if special formats get selected
     const char * argv2[4] = {app_name.c_str(), "-h", OPTION_VERSION_CHECK, OPTION_OFF};
 
-    char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
-    if (env != nullptr)
+    std::string previous_value{};
+    if (char * env = std::getenv("SEQAN3_NO_VERSION_CHECK"))
+    {
+        previous_value = env;
         unsetenv("SEQAN3_NO_VERSION_CHECK");
+    }
 
     seqan3::argument_parser parser{app_name, 4, argv2};
     parser.info.version = "2.3.4";
@@ -343,8 +352,8 @@ TEST_F(version_check, option_off)
     // any interference with following tests
     EXPECT_FALSE(wait_for(parser));
 
-    if (env != nullptr)
-        setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
+    if (!previous_value.empty())
+        setenv("SEQAN3_NO_VERSION_CHECK", previous_value.c_str(), 1);
 
     // no timestamp is written since the decision was made explicitly
     EXPECT_FALSE(std::filesystem::exists(app_version_filename())) << app_version_filename();
@@ -444,9 +453,12 @@ TEST_F(version_check, smaller_app_version)
 
 TEST_F(version_check, smaller_app_version_custom_url)
 {
-    char * env{std::getenv("SEQAN3_NO_VERSION_CHECK")};
-    if (env != nullptr)
+    std::string previous_value{};
+    if (char * env = std::getenv("SEQAN3_NO_VERSION_CHECK"))
+    {
+        previous_value = env;
         unsetenv("SEQAN3_NO_VERSION_CHECK");
+    }
 
     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
@@ -476,8 +488,8 @@ TEST_F(version_check, smaller_app_version_custom_url)
 
     EXPECT_TRUE(std::regex_match(read_file(app_timestamp_filename()), timestamp_regex));
 
-    if (env != nullptr)
-        setenv("SEQAN3_NO_VERSION_CHECK", env, 1);
+    if (!previous_value.empty())
+        setenv("SEQAN3_NO_VERSION_CHECK", previous_value.c_str(), 1);
 
     EXPECT_TRUE(remove_files_from_path()); // clear files again
 }

@@ -12,8 +12,8 @@
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_gap.hpp>
-#include <seqan3/alignment/configuration/align_config_max_error.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
+#include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
 #include <seqan3/alignment/configuration/align_config_result.hpp>
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
@@ -25,12 +25,12 @@ template <typename T>
 class alignment_configuration_test : public ::testing::Test
 {};
 
-using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int>>;
+using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int, int>>;
 
 using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
                                     seqan3::align_cfg::band_fixed_size,
                                     seqan3::align_cfg::gap<seqan3::gap_scheme<>>,
-                                    seqan3::align_cfg::max_error,
+                                    seqan3::align_cfg::min_score,
                                     seqan3::align_cfg::method_global,
                                     seqan3::detail::method_local_tag,
                                     seqan3::align_cfg::parallel,

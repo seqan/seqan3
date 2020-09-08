@@ -179,11 +179,19 @@ public:
     //!\brief Flag indicating whether the sequence alignment shall be computed.
     static constexpr bool compute_sequence_alignment =
         configuration_t::template exists<align_cfg::output_alignment_tag>();
+    //!\brief Flag indicating whether the id of the first sequence shall be returned.
+    static constexpr bool output_sequence1_id =
+        configuration_t::template exists<align_cfg::output_sequence1_id_tag>();
+    //!\brief Flag indicating whether the id of the second sequence shall be returned.
+    static constexpr bool output_sequence2_id =
+        configuration_t::template exists<align_cfg::output_sequence2_id_tag>();
     //!\brief Flag indicating if any output option was set.
     static constexpr bool has_output_configuration = compute_score ||
                                                      compute_end_positions ||
                                                      compute_begin_positions ||
-                                                     compute_sequence_alignment;
+                                                     compute_sequence_alignment ||
+                                                     output_sequence1_id ||
+                                                     output_sequence2_id;
     //!\brief The padding symbol to use for the computation of the alignment.
     static constexpr original_score_type padding_symbol =
         static_cast<original_score_type>(1u << (sizeof_bits<original_score_type> - 1));

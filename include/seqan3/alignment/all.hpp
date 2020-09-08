@@ -83,7 +83,7 @@
  * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"                      |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::band_fixed_size "1: Band"                           |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::gap "2: Gap scheme"                                 |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::max_error "3: Max error"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::min_score "3: Min score"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_global "4: Method global"                    |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_local "5: Method local"                      |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::output_alignment "6: Alignment output"              |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
@@ -143,6 +143,11 @@
  * by the user, then only the configured ones are available in the final seqan3::alignment_result.
  * Trying to access an output which has not been configured, will raise a static assertion
  * informing the developer about the invalid access.
+ *
+ * \note Currently, the sequence ids are represented by an internal mechanism and might not refer to the actual id
+ *       of the underlying sequences in the respective alignment, rather it is an ongoing number identifying the
+ *       computed pair of sequences. In the future, there will be a mechanism for the user to specify the id of
+ *       the sequences.
  *
  * ## Using scoring and gap schemes
  *
@@ -224,7 +229,7 @@
  * which can be used to safe some typing.
  *
  * The edit configuration can be further specialised with following configs:
- *  * Allow maximal number of errors, i.e specify the seqan3::align_cfg::max_error configuration
+ *  * Set a minimal score, i.e. specify the seqan3::align_cfg::min_score configuration
  *  * Compute a semi-global alignment, i.e seqan3::align_cfg::aligned_ends is initialised with seqan3::end_gaps::free_ends_first.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment

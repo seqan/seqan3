@@ -14,27 +14,12 @@
 
 #include <tuple>
 
+#include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
 {
-
-/*!\brief The default traits class for seqan3::detail::affine_gap_init_policy.
- * \ingroup alignment_policy
- *
- * \details
- *
- * Enables the behaviour of a global alignment where both sides of the dynamic programming matrix are
- * initialised with growing gap penalties.
- */
-struct default_affine_init_traits
-{
-    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the first sequence.
-    using free_first_leading_t  = std::false_type;
-    //!\brief A std::bool_constant to enable/disable free end gaps for the leading gaps of the second sequence.
-    using free_second_leading_t = std::false_type;
-};
 
 /*!\brief The CRTP-policy that implements the initialisation of the dynamic programming matrix with affine gaps.
  * \ingroup alignment_policy
@@ -47,12 +32,17 @@ struct default_affine_init_traits
  *          seqan3::detail::alignment_configurator::select_gap_init_policy when selecting the alignment for the given
  *          configuration.
  */
-template <typename alignment_algorithm_t, typename traits_type = default_affine_init_traits>
+template <typename alignment_algorithm_t>
 class affine_gap_init_policy
 {
 private:
     //!\brief Befriends the derived class to grant it access to the private members.
     friend alignment_algorithm_t;
+
+    //!\brief Initialisation state of the first row of the alignment.
+    bool first_row_is_free{};
+    //!\brief Initialisation state of the first column of the alignment.
+    bool first_column_is_free{};
 
     /*!\name Constructors, destructor and assignment
      * \brief Defaulted all standard constructor.
@@ -64,6 +54,16 @@ private:
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy const &) noexcept = default; //!< Defaulted
     constexpr affine_gap_init_policy & operator=(affine_gap_init_policy &&) noexcept = default;      //!< Defaulted
     ~affine_gap_init_policy() noexcept = default;                                                    //!< Defaulted
+
+    //!\brief Initialises the policy with the configuration.
+    template <typename config_t>
+    affine_gap_init_policy(config_t const & config)
+    {
+        bool is_local = config.template exists<method_local_tag>();
+        auto method_global_config = config.get_or(align_cfg::method_global{});
+        first_row_is_free = method_global_config.free_end_gaps_sequence1_leading | is_local;
+        first_column_is_free = method_global_config.free_end_gaps_sequence2_leading | is_local;
+    }
     //!\}
 
     /*!\brief Initialises the first cell of the dynamic programming matrix.
@@ -94,7 +94,7 @@ private:
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(origin_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if (first_column_is_free)
         {
             score_cell.up = convert_to_simd_maybe<score_t>(0);
             trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::none);
@@ -106,7 +106,7 @@ private:
         }
 
         // Initialise the horizontal matrix cell according to the traits settings.
-        if constexpr (traits_type::free_first_leading_t::value)
+        if (first_row_is_free)
         {
             score_cell.w_left = convert_to_simd_maybe<score_t>(0);
             trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);
@@ -145,7 +145,7 @@ private:
         static_cast<alignment_algorithm_t const &>(*this).check_score_of_cell(column_cell, state);
 
         // Initialise the vertical matrix cell according to the traits settings.
-        if constexpr (traits_type::free_second_leading_t::value)
+        if (first_column_is_free)
         {
             score_cell.up = convert_to_simd_maybe<score_t>(0);
         }
@@ -188,7 +188,7 @@ private:
         score_cell.up = score_cell.current + state.gap_open_score;
         trace_cell.up = convert_to_simd_maybe<score_t>(trace_directions::up_open);
 
-        if constexpr (traits_type::free_first_leading_t::value)
+        if (first_row_is_free)
         {
             score_cell.w_left = convert_to_simd_maybe<score_t>(0);
             trace_cell.w_left = convert_to_simd_maybe<score_t>(trace_directions::none);

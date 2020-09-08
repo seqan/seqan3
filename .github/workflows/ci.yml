@@ -4,22 +4,15 @@ on: [push, pull_request]
 
 env:
   CMAKE_VERSION: 3.7.2
-  DOXYGEN_VERSION: 1.8.19
+  DOXYGEN_VERSION: 1.8.20
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
 jobs:
-  cancel:
-    name: "Cancel previous runs"
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: styfle/cancel-workflow-action@0.4.1
-        with:
-          access_token: ${{ github.token }}
   build:
-    needs: cancel
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -174,8 +167,14 @@ jobs:
           ref: develop
           path: seqan3/submodules/seqan
 
+      - name: Get cached CMake
+        uses: actions/cache@v2
+        with:
+          path: /tmp/cmake-download
+          key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
+
       - name: Setup CMake
-        shell: bash
+        shell: bash -ex {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             OS="Linux"
@@ -187,9 +186,16 @@ jobs:
           tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
           echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" # Only available in subsequent steps!
 
+      - name: Get cached Doxygen
+        if: matrix.build == 'documentation'
+        uses: actions/cache@v2
+        with:
+          path: /tmp/doxygen-download
+          key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
+
       - name: Setup Doxygen
         if: matrix.build == 'documentation'
-        shell: bash
+        shell: bash -ex {0}
         run: |
           sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
           mkdir -p /tmp/doxygen-download
@@ -204,7 +210,7 @@ jobs:
 
       - name: Install ccache
         if: matrix.requires_ccache
-        shell: bash
+        shell: bash -ex {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install --yes ccache
@@ -214,7 +220,7 @@ jobs:
 
       - name: Install compiler ${{ matrix.cxx }}
         if: matrix.requires_toolchain
-        shell: bash
+        shell: bash -ex {0}
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install --yes ${{ matrix.cxx }}
@@ -224,7 +230,7 @@ jobs:
 
       - name: Install lcov
         if: matrix.build == 'coverage'
-        shell: bash
+        shell: bash -ex {0}
         run: |
           sudo apt-get install --yes lcov
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
@@ -239,22 +245,25 @@ jobs:
 
       - name: Load ccache
         if: matrix.requires_ccache
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v2
         with:
           path: .ccache
-          key: ${{ matrix.name }}-ccache-${{ steps.ccache_prepare.outputs.timestamp }}
+          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ steps.ccache_prepare.outputs.timestamp }}
+          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
           restore-keys: |
+            ${{ matrix.name }}-ccache-${{ github.ref }}
+            ${{ matrix.name }}-ccache-${{ github.base_ref }}
             ${{ matrix.name }}-ccache-
 
       - name: Configure tests
         env:
           CXX: ${{ matrix.cxx }}
           CC: ${{ matrix.cc }}
-        shell: bash
+        shell: bash -ex {0}
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}"
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF
           if [[ "${{ matrix.build }}" =~ ^(unit|header|snippet|coverage)$ ]]; then
             make gtest_project
           fi
@@ -269,7 +278,7 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
           CCACHE_MAXSIZE: 5G
-        shell: bash
+        shell: bash -ex {0}
         run: |
           ccache -p || true
           cd seqan3-build
@@ -277,7 +286,7 @@ jobs:
           ccache -s || true
 
       - name: Run tests
-        shell: bash
+        shell: bash -ex {0}
         run: |
           cd seqan3-build
           if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then

@@ -49,6 +49,11 @@ private:
     constexpr scoring_scheme_policy & operator=(scoring_scheme_policy &&) noexcept = default;
     //!\brief Defaulted.
     ~scoring_scheme_policy() noexcept = default;
+
+    //!\brief Initialise the policy.
+    template <typename configuration_t>
+    scoring_scheme_policy(configuration_t const & /*config*/)
+    {}
     //!\}
 
     //!\brief The scoring scheme used for this alignment algorithm.
