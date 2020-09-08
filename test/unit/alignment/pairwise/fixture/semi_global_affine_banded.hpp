@@ -27,27 +27,39 @@ using seqan3::operator""_dna4;
 namespace seqan3::test::alignment::fixture::semi_global::affine::banded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                               seqan3::gap_open_score{-10}}} |
-                                     seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
-                                                                        seqan3::align_cfg::upper_diagonal{8}};
+inline constexpr auto config_band_m4_8 = seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-4},
+                                                                            seqan3::align_cfg::upper_diagonal{8}};
 
-inline constexpr auto align_config_semi_seq1 = align_config |
-                                               seqan3::align_cfg::method_global{
-                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
-                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
-                                               } |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
-inline constexpr auto align_config_semi_seq2 = align_config |
-                                               seqan3::align_cfg::method_global{
-                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
-                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
-                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
-                                               } |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
+inline constexpr auto config_gap = seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
+                                                                             seqan3::gap_open_score{-10}}};
+
+inline constexpr auto config_semi_seq1 = seqan3::align_cfg::method_global{
+                                            seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                            seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                                            seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                            seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
+                                         } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+
+inline constexpr auto config_semi_seq2 = seqan3::align_cfg::method_global{
+                                            seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                                            seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                            seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
+                                            seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
+                                        } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
+
+// free gaps for the second leading and first trailing gaps.
+inline constexpr auto config_free_gaps_sl_ft = seqan3::align_cfg::method_global{
+                                                   seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                   seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
+                                               } | seqan3::align_cfg::aligned_ends{
+                                                        seqan3::end_gaps{seqan3::front_end_second{std::true_type{}},
+                                                                         seqan3::back_end_first{std::true_type{}}}};
+
+inline constexpr auto config_scoring_m4_mm5 = seqan3::align_cfg::scoring_scheme{
+                                                seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
+                                                                                  seqan3::mismatch_score{-5}}};
 
 static auto dna4_01_semi_first = []()
 {
@@ -55,9 +67,7 @@ static auto dna4_01_semi_first = []()
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq1
-            | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                  seqan3::mismatch_score{-5}}},
+        config_semi_seq1 | config_gap | config_band_m4_8 | config_scoring_m4_mm5,
         10,
         "ACGT---ATGT",
         "ACGTAAAACGT",
@@ -124,9 +134,7 @@ static auto dna4_03_semi_second = []()
     {
         "TTTTTACGTATGTCCCCC"_dna4,
         "ACGTAAAACGT"_dna4,
-        align_config_semi_seq2
-            | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                  seqan3::mismatch_score{-5}}},
+        config_semi_seq2 | config_gap | config_band_m4_8 | config_scoring_m4_mm5,
         -19,
         "TTTTTACGTATGTCCCCC",
         "GTAAAACGT---------",
@@ -173,9 +181,7 @@ static auto dna4_04_semi_second = []()
     {
         "ACGTAAAACGT"_dna4,
         "TTTTTACGTATGTCCCCC"_dna4,
-        align_config_semi_seq2
-            | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                                  seqan3::mismatch_score{-5}}},
+        config_semi_seq2 | config_gap | config_band_m4_8 | config_scoring_m4_mm5,
         -5,
         "ACGTAAAACGT",
         "------TACGT",
