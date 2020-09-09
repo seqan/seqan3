@@ -315,7 +315,7 @@ public:
 
     //!\brief Returns an iterator incremented by one.
     constexpr basic_iterator operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>()) &&
-                                             std::is_nothrow_copy_constructible_v<basic_iterator>)
+                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
     {
         basic_iterator cpy{*this};
         ++(*this);
@@ -335,7 +335,7 @@ public:
 
     //!\brief Returns an iterator decremented by one.
     constexpr basic_iterator operator--(int) noexcept(noexcept(--std::declval<basic_iterator &>()) &&
-                                             std::is_nothrow_copy_constructible_v<basic_iterator>)
+                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
     //!\cond
         requires std::bidirectional_iterator<base_base_t>
     //!\endcond
