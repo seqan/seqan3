@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/concept/core_language.hpp>
@@ -184,10 +184,11 @@ private:
     template <typename alignment_configuration_t>
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
-        auto scheme = config.get_or(align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}}).value;
+        auto scheme = config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10},
+                                                               align_cfg::extension_score{-1}});
 
-        alignment_state.gap_extension_score = static_cast<score_t>(scheme.get_gap_score());
-        alignment_state.gap_open_score = static_cast<score_t>(scheme.get_gap_score() + scheme.get_gap_open_score());
+        alignment_state.gap_extension_score = static_cast<score_t>(scheme.extension_score);
+        alignment_state.gap_open_score = static_cast<score_t>(scheme.extension_score + scheme.open_score);
     }
 
     alignment_state_t alignment_state{}; //!< The internal alignment state tracking the current alignment optimum.

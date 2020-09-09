@@ -18,6 +18,7 @@ TEST(align_config_gap, config_element_specialisation)
 
 TEST(align_config_gap, configuration)
 {
+    using seqan3::get;
     {
         seqan3::align_cfg::gap_cost_affine elem{}; // default construction
         seqan3::configuration cfg{elem};

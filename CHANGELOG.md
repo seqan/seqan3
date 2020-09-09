@@ -101,6 +101,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   The default behaviour when not specifying any output configuration has changed from computing only the score to
   computing everything. Please read the linked documentation above carefully to understand all implied changes
   ([\#2024](https://github.com/seqan/seqan3/pull/2024)) & ([\#2035](https://github.com/seqan/seqan3/pull/2035)).
+* The `seqan3::align_cfg::gap` configuration has been replaced by `seqan3::align_cfg::gap_cost_affine`
+  ([\#2037](https://github.com/seqan/seqan3/pull/2037)).
 
 ### Core
 

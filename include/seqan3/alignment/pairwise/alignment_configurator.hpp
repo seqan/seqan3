@@ -289,14 +289,15 @@ public:
         // ----------------------------------------------------------------------------
 
         // Use default edit distance if gaps are not set.
-        auto const & gaps = config_with_result_type.get_or(align_cfg::gap{gap_scheme{gap_score{-1}}}).value;
+        align_cfg::gap_cost_affine edit_gap_cost{};
+        auto const & gap_cost = config_with_result_type.get_or(edit_gap_cost);
         auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
         auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
         if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
             // Only use edit distance if ...
-            if (gaps.get_gap_open_score() == 0 &&  // gap open score is not set,
+            if (gap_cost.open_score == 0 &&  // gap open score is not set,
                 !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
                 align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
             {

@@ -26,7 +26,7 @@ enum struct align_config_id : uint8_t
     aligned_ends,          //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
     band,                  //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
     debug,                 //!< ID for the \ref seqan3::align_cfg::detail::debug "debug" option.
-    gap,                   //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
+    gap,                   //!< ID for the \ref seqan3::align_cfg::gap_cost_affine "gap_cost_affine" option.
     global,                //!< ID for the \ref seqan3::align_cfg::method_global "global alignment" option.
     local,                 //!< ID for the \ref seqan3::align_cfg::method_local "local alignment" option.
     min_score,             //!< ID for the \ref seqan3::align_cfg::min_score "min_score" option.

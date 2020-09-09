@@ -188,19 +188,19 @@ enumeration class.
 
 \note You can also provide your own scoring scheme implementation if it models seqan3::scoring_scheme.
 
-Similarly to the scoring scheme, you can use the seqan3::gap_scheme to set the gap penalties used for the alignment
-computation. The default constructed seqan3::gap_scheme sets the score for a gap to `-1` and for a gap opening to `0`.
-Note that the gap open score is added to the gap score when a gap is opened within the alignment computation.
-Therefore setting the gap open score to `0` disables affine gaps.
-You can pass a seqan3::gap_score and optionally a seqan3::gap_open_score object to initialise the scheme with
-custom gap penalties. The penalties can be changed later by using the respective member functions
-seqan3::gap_scheme::set_linear or seqan3::gap_scheme::set_affine.
+Similarly to the scoring scheme, you can use the seqan3::align_cfg::gap_cost_affine to set the gap penalties used for
+the alignment computation. The default initialised seqan3::align_cfg::gap_cost_affine sets the score for a gap to `-1`
+and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
+alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
+You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
+with custom gap penalties. The penalties can be assessed changed later by using the respective member variables  
+`extension_score` and `open_score`.
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
 positive value and the score for mismatch and gaps must be negative in order to maximise over the matching letters.
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_gap_scheme
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_scheme
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_gap_cost_affine
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_cost_affine
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
 seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap configurations. The
