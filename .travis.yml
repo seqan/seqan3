@@ -19,10 +19,10 @@ notifications:
           7YnteEjWhbOFrxQvZzbS61hOa4vx68DF8/8c78mfvOiSKLraVCgihwexOdw4V1/sPW/oBPvUF+qkANDTbvBJZXZSLOe69oKxBWzBEQeStHulKk
           Z5/P90Ehnzx6BiVk4FmMQ8UVCO2xAorh5bBFnK/kkhf8R1NALXK7ihWJyI0UJb8ZT4IB3JVLKWmodVC7N4gypY+0dNmbmNlx+skGRwxncjiHLV
           tWrfdl/7b0gg74vY2Zcq6t4=
-    on_success: change
+    on_success: always
     on_failure: always
-    on_start:   never
-    on_cancel:  never
+    on_start:   always
+    on_cancel:  always
     on_error:   always
 
 git:
@@ -78,7 +78,7 @@ install:
 before_script:
   - mkdir ../seqan3-build
   - cd ../seqan3-build
-  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSEQAN3_VERBOSE_TESTS=OFF
+  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_CXX_FLAGS="-fcompare-debug-second ${CXXFLAGS}" -DSEQAN3_VERBOSE_TESTS=OFF
   - |
     if [[ "${BUILD}" =~ ^(unit|header|snippet|coverage)$ ]]; then
       make gtest_project
