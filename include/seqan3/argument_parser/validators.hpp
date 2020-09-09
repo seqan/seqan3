@@ -40,6 +40,18 @@ namespace seqan3
  *
  * \details
  *
+ * When adding (positional) options to the seqan3::argument_parser you may pass a
+ * [function object](https://en.cppreference.com/w/cpp/named_req/FunctionObject) that models
+ * seqan3::validator which checks the option value provided by the user for some constraint.
+ *
+ * SeqAn provides several common-use-case validators, e.g. the seqan3::arithmetic_range_validator.
+ *
+ * \include test/snippet/argument_parser/validators_2.cpp
+ *
+ * You can learn more about SeqAn validators in our tutorial \ref section_validation.
+ *
+ * To implement your own validator please refer to the detailed concept description below.
+ *
  * ### Concepts and doxygen
  *
  * The requirements for this concept are given as related functions and type traits.
