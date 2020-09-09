@@ -401,4 +401,107 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_both_empty = []()
     };
 }();
 
+// ----------------------------------------------------------------------------
+// alignment fixtures using amino acid alphabet
+// ----------------------------------------------------------------------------
+
+inline constexpr auto config_blosum62_scheme =
+    seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62}};
+
+static auto aa27_blosum62_gap_1_open_10 = [] ()
+{
+    using seqan3::operator""_aa27;
+    return seqan3::test::alignment::fixture::alignment_fixture
+    {
+        "FNQSAEYPDISHCGVMQLKWRATLGT"_aa27,
+        "EIKSDVLLHRWSMKNPGNILMIDVGMQVAESYFAT"_aa27,
+        align_config | config_blosum62_scheme,
+        -26,
+        "--------FNQSAEYP-DISHCGVMQLKWRATLGT",
+        "EIKSDVLLHRWSMKNPGNILMIDVGMQVAESYFAT",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{26u}, seqan3::detail::row_index_type{35u}},
+        std::vector
+        {
+        //    e  ,F  ,N  ,Q  ,S  ,A  ,E  ,Y  ,P  ,D  ,I  ,S  ,H  ,C  ,G  ,V  ,M  ,Q  ,L  ,K  ,W  ,R  ,A  ,T  ,L  ,G  ,T  ,
+        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,-29,-30,-31,-32,-33,-34,-35,-36,
+        /*E*/ -11,-3 ,-11,-10,-13,-15,-10,-18,-18,-16,-22,-20,-21,-25,-25,-26,-27,-24,-30,-27,-32,-30,-32,-33,-36,-36,-36,
+        /*I*/ -12,-11,-6 ,-14,-12,-14,-18,-11,-21,-21,-12,-23,-23,-22,-26,-22,-25,-29,-22,-31,-30,-33,-31,-33,-31,-37,-37,
+        /*K*/ -13,-15,-11,-5 ,-14,-13,-13,-19,-12,-21,-22,-12,-23,-24,-24,-26,-23,-24,-29,-17,-28,-28,-30,-31,-32,-33,-34,
+        /*S*/ -14,-15,-14,-11,-1 ,-12,-13,-14,-15,-12,-17,-18,-13,-20,-21,-22,-23,-23,-25,-26,-20,-28,-27,-29,-31,-32,-32,
+        /*D*/ -15,-17,-14,-14,-11,-3 ,-10,-15,-15,-9 ,-15,-17,-19,-16,-21,-23,-24,-23,-26,-26,-28,-22,-30,-28,-32,-32,-33,
+        /*V*/ -16,-16,-20,-16,-13,-11,-5 ,-11,-17,-18,-6 ,-17,-18,-19,-19,-17,-22,-23,-22,-25,-26,-27,-22,-29,-27,-31,-32,
+        /*L*/ -17,-16,-19,-19,-14,-14,-14,-6 ,-14,-18,-16,-8 ,-19,-19,-21,-18,-15,-24,-19,-24,-27,-28,-28,-23,-25,-31,-32,
+        /*L*/ -18,-17,-19,-20,-15,-15,-17,-15,-9 ,-18,-16,-18,-11,-20,-23,-20,-16,-17,-20,-21,-26,-29,-29,-29,-19,-29,-31,
+        /*H*/ -19,-19,-16,-19,-16,-17,-15,-15,-17,-10,-19,-17,-10,-14,-22,-23,-22,-16,-20,-21,-23,-26,-30,-31,-30,-21,-31,
+        /*R*/ -20,-22,-19,-15,-17,-17,-17,-17,-17,-19,-13,-20,-17,-13,-16,-25,-24,-21,-18,-18,-24,-18,-27,-30,-31,-32,-22,
+        /*W*/ -21,-19,-25,-21,-18,-19,-20,-15,-21,-21,-21,-16,-22,-19,-15,-19,-26,-26,-23,-21,-7 ,-18,-19,-20,-21,-22,-23,
+        /*S*/ -22,-23,-18,-24,-17,-17,-19,-21,-16,-21,-22,-17,-17,-23,-19,-17,-20,-26,-28,-23,-18,-8 ,-17,-18,-21,-21,-21,
+        /*M*/ -23,-22,-25,-18,-20,-18,-19,-20,-23,-19,-20,-23,-19,-18,-26,-18,-12,-20,-24,-25,-19,-19,-9 ,-18,-16,-22,-22,
+        /*K*/ -24,-26,-22,-24,-18,-21,-17,-21,-21,-24,-22,-20,-24,-22,-20,-28,-19,-11,-22,-19,-20,-17,-20,-10,-20,-18,-23,
+        /*N*/ -25,-27,-20,-22,-22,-20,-21,-19,-23,-20,-25,-21,-19,-27,-22,-23,-24,-19,-14,-22,-21,-20,-19,-20,-13,-20,-18,
+        /*P*/ -26,-28,-29,-21,-23,-23,-21,-24,-12,-23,-23,-25,-23,-22,-28,-24,-25,-23,-22,-15,-22,-22,-21,-20,-23,-15,-21,
+        /*G*/ -27,-29,-28,-29,-21,-23,-25,-24,-23,-13,-24,-23,-26,-26,-16,-27,-26,-24,-26,-24,-17,-23,-22,-23,-24,-17,-17,
+        /*N*/ -28,-30,-23,-28,-25,-23,-23,-27,-24,-22,-16,-23,-22,-29,-26,-19,-27,-25,-27,-26,-24,-17,-24,-22,-26,-24,-17,
+        /*I*/ -29,-28,-33,-26,-26,-26,-26,-24,-25,-25,-18,-18,-26,-23,-28,-23,-18,-26,-23,-28,-25,-25,-18,-25,-20,-28,-25,
+        /*L*/ -30,-29,-31,-32,-27,-27,-29,-27,-26,-26,-23,-20,-21,-27,-27,-27,-21,-20,-22,-25,-26,-26,-26,-19,-21,-24,-29,
+        /*M*/ -31,-30,-31,-31,-28,-28,-29,-30,-27,-27,-25,-24,-22,-22,-30,-26,-22,-21,-18,-23,-26,-27,-27,-27,-17,-24,-25,
+        /*I*/ -32,-31,-33,-34,-29,-29,-31,-30,-28,-28,-23,-27,-27,-23,-26,-27,-25,-25,-19,-21,-26,-28,-28,-28,-25,-21,-25,
+        /*D*/ -33,-35,-30,-33,-30,-31,-27,-32,-29,-22,-31,-23,-28,-30,-24,-29,-30,-25,-29,-20,-25,-28,-29,-29,-29,-26,-22,
+        /*V*/ -34,-34,-38,-32,-31,-30,-33,-28,-30,-30,-19,-30,-26,-29,-33,-20,-28,-31,-24,-31,-23,-28,-28,-29,-28,-32,-26,
+        /*G*/ -35,-37,-34,-37,-32,-31,-32,-34,-30,-31,-30,-19,-30,-29,-23,-31,-23,-30,-32,-26,-31,-25,-28,-30,-31,-22,-33,
+        /*M*/ -36,-35,-39,-34,-33,-33,-33,-33,-32,-32,-30,-30,-21,-31,-32,-22,-26,-23,-28,-33,-27,-32,-26,-29,-28,-33,-23,
+        /*Q*/ -37,-39,-35,-34,-34,-34,-31,-34,-33,-32,-32,-30,-30,-24,-33,-33,-22,-21,-25,-27,-33,-26,-33,-27,-31,-30,-34,
+        /*V*/ -38,-38,-42,-37,-35,-34,-36,-32,-34,-34,-29,-32,-33,-31,-27,-29,-32,-24,-20,-27,-30,-33,-26,-33,-26,-34,-30,
+        /*A*/ -39,-40,-40,-41,-36,-31,-35,-38,-33,-35,-34,-28,-34,-33,-31,-27,-30,-33,-25,-21,-30,-31,-29,-26,-34,-26,-34,
+        /*E*/ -40,-42,-40,-38,-37,-37,-26,-37,-36,-31,-35,-34,-28,-37,-35,-33,-29,-28,-32,-24,-24,-30,-32,-30,-29,-36,-27,
+        /*S*/ -41,-42,-41,-40,-34,-36,-37,-28,-37,-36,-33,-31,-35,-29,-37,-37,-34,-29,-30,-32,-27,-25,-29,-31,-32,-29,-35,
+        /*Y*/ -42,-38,-44,-42,-39,-36,-38,-30,-31,-38,-37,-35,-29,-37,-32,-38,-37,-35,-30,-32,-30,-29,-27,-31,-32,-35,-31,
+        /*F*/ -43,-36,-41,-45,-40,-41,-39,-35,-34,-34,-38,-37,-36,-31,-40,-33,-38,-37,-35,-33,-31,-33,-31,-29,-31,-35,-37,
+        /*A*/ -44,-45,-38,-42,-41,-36,-40,-41,-36,-36,-35,-37,-39,-36,-31,-40,-34,-38,-36,-36,-36,-32,-29,-31,-30,-31,-35,
+        /*T*/ -45,-46,-45,-39,-41,-41,-37,-42,-41,-37,-37,-34,-39,-40,-38,-31,-40,-35,-37,-37,-38,-37,-32,-24,-32,-32,-26
+        },
+        std::vector
+        {
+        //    e  ,F  ,N  ,Q  ,S  ,A  ,E  ,Y  ,P  ,D  ,I  ,S  ,H  ,C  ,G  ,V  ,M  ,Q  ,L  ,K  ,W  ,R  ,A  ,T  ,L  ,G  ,T  ,
+        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*E*/ U  ,DUL,DUL,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,l  ,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,DUl,
+        /*I*/ u  ,DUL,DUL,DUL,DUl,DUl,DUl,Dul,DUl,DUl,Dul,L  ,DUl,Dul,l  ,Dul,Dul,l  ,Dul,l  ,Dul,l  ,DUl,DUl,Dul,l  ,DUl,
+        /*K*/ u  ,DuL,DUl,DuL,DUL,DUl,Dul,l  ,Dul,l  ,l  ,Dul,L  ,l  ,Dul,l  ,DUl,Dul,l  ,Dul,L  ,Dul,l  ,l  ,l  ,Dul,l  ,
+        /*S*/ u  ,DuL,Dul,DUL,DuL,L  ,Dul,l  ,l  ,Dul,l  ,DUl,Dul,l  ,l  ,l  ,l  ,DUl,l  ,l  ,DUl,l  ,DUl,DUl,l  ,DUl,DUl,
+        /*D*/ u  ,DuL,Dul,DuL,DUL,DUL,DuL,l  ,Dul,DUl,Dul,Dul,DUl,DUl,DUl,l  ,l  ,DUl,l  ,Dul,l  ,DUl,DUl,DUl,l  ,DUl,DUl,
+        /*V*/ u  ,DuL,DuL,Dul,uL ,DUL,DUL,DuL,Dul,DUl,Dul,DuL,l  ,l  ,DUl,Dul,Dul,l  ,Dul,l  ,l  ,l  ,Dul,l  ,Dul,l  ,Dul,
+        /*L*/ u  ,DuL,DuL,ul ,ul ,DuL,DUL,DUL,DuL,l  ,DUl,Dul,L  ,Dul,l  ,DUl,DUl,DUl,DUl,Dul,Dul,Dul,DUl,Dul,DUl,DUl,DUl,
+        /*L*/ u  ,DuL,DuL,ul ,ul ,DuL,DuL,DUl,DUL,DuL,Dul,DUl,Dul,DuL,Dul,Dul,DUl,Dul,DUl,Dul,Dul,Dul,Dul,DUl,DUl,DUL,l  ,
+        /*H*/ u  ,DuL,DuL,DuL,ul ,DuL,Dul,DuL,DUL,Dul,uL ,Dul,DUl,DuL,Dul,l  ,Dul,DUl,Dul,DUl,Dul,Dul,l  ,Dul,Ul ,DUl,DUL,
+        /*R*/ u  ,DuL,Dul,DuL,uL ,Dul,Dul,DuL,DuL,DUL,Dul,DuL,DUl,DUl,DuL,Dul,Dul,DUl,DUl,DUl,DUL,Dul,DuL,l  ,ul ,DUl,DUl,
+        /*W*/ u  ,DuL,uL ,Dul,Dul,uL ,Dul,Dul,DuL,Dul,ul ,Dul,DuL,DUl,DUl,DuL,Dul,Dul,DUl,DUl,Dul,L  ,l  ,l  ,l  ,l  ,l  ,
+        /*S*/ u  ,DuL,Dul,uL ,Dul,DuL,DuL,ul ,Dul,DuL,ul ,Dul,DuL,DuL,DUl,DUl,DuL,Dul,Dul,Dul,Ul ,DUL,DUL,DUl,l  ,DUl,Dul,
+        /*M*/ u  ,DuL,DuL,Dul,uL ,Dul,DuL,Dul,Dul,Dul,DuL,Dul,Dul,DuL,DuL,DUl,DuL,DuL,Dul,l  ,ul ,DUl,DUl,DUL,DUl,l  ,DUl,
+        /*K*/ u  ,DuL,Dul,DuL,Dul,DuL,Dul,DuL,Dul,Dul,Dul,Dul,DuL,Dul,Dul,DuL,DUl,DuL,DuL,Dul,ul ,Dul,DUl,DUl,DUL,Dul,Dul,
+        /*N*/ u  ,DuL,Dul,DuL,ul ,Dul,DuL,Dul,DuL,Dul,uL ,Dul,DuL,DuL,Dul,Dul,ul ,DUl,DuL,DUL,ul ,Dul,Dul,DUl,Dul,DUL,Dul,
+        /*P*/ u  ,uL ,Dul,Dul,DuL,Dul,Dul,DuL,Dul,L  ,Dul,l  ,Dul,Dul,l  ,Dul,Dul,ul ,DUl,Dul,uL ,ul ,Dul,Dul,DUl,Dul,DUL,
+        /*G*/ u  ,DuL,Dul,uL ,Dul,DuL,Dul,Dul,Ul ,DuL,L  ,Dul,l  ,Dul,Dul,L  ,ul ,ul ,ul ,DUl,Dul,uL ,Dul,Dul,Dul,DUl,DuL,
+        /*N*/ u  ,DuL,Dul,DuL,ul ,Dul,DuL,DuL,ul ,DUL,DuL,DuL,Dul,Dul,DUl,Dul,uL ,ul ,Dul,Dul,ul ,Dul,uL ,Dul,Dul,Dul,DUl,
+        /*I*/ u  ,DuL,DuL,Dul,uL ,DuL,DuL,DuL,uL ,ul ,DUL,DuL,DuL,Dul,ul ,DUl,Dul,uL ,Dul,ul ,ul ,ul ,Dul,DuL,Dul,ul ,DUl,
+        /*L*/ u  ,DuL,DuL,ul ,ul ,DuL,DuL,Dul,uL ,uL ,DuL,DUL,DuL,Dul,Dul,Dul,Dul,DuL,DuL,Dul,ul ,ul ,Dul,Dul,DuL,Dul,Dul,
+        /*M*/ u  ,DuL,DuL,Dul,uL ,DuL,DuL,Dul,ul ,uL ,DuL,DuL,DuL,DuL,DuL,Dul,Dul,DuL,DuL,DuL,Dul,Dul,Dul,Dul,Dul,DuL,Dul,
+        /*I*/ u  ,DuL,DuL,Dul,ul ,DuL,DuL,Dul,uL ,uL ,DuL,DuL,Dul,DUl,DuL,Dul,Dul,DuL,DUL,DuL,Dul,ul ,Dul,Dul,DUl,Dul,DuL,
+        /*D*/ u  ,DuL,Dul,DuL,ul ,DuL,Dul,uL ,ul ,Dul,DuL,Dul,DuL,Dul,Dul,DuL,Dul,Dul,DuL,Dul,DuL,Dul,ul ,Dul,ul ,Dul,Dul,
+        /*V*/ u  ,DuL,DuL,Dul,uL ,DuL,DuL,Dul,uL ,ul ,Dul,L  ,Dul,Dul,Dul,Dul,DuL,ul ,Dul,DUl,Dul,DuL,Dul,Dul,Dul,Dul,Dul,
+        /*G*/ u  ,DuL,Dul,uL ,Dul,DuL,DuL,ul ,Dul,DuL,Ul ,DuL,L  ,Dul,Dul,Ul ,Dul,DuL,ul ,Dul,ul ,Dul,DuL,Dul,ul ,Dul,L  ,
+        /*M*/ u  ,DuL,DuL,Dul,uL ,DuL,DuL,DuL,uL ,uL ,DuL,UL ,DuL,DuL,DUl,Dul,DUL,Dul,DuL,Dul,Dul,Dul,Dul,DuL,Dul,Ul ,Dul,
+        /*Q*/ u  ,DuL,Dul,DuL,DuL,DuL,DuL,DuL,ul ,Dul,uL ,DuL,DUL,DuL,DuL,ul ,Dul,DuL,DuL,Dul,ul ,Dul,Dul,Dul,Dul,Dul,DUl,
+        /*V*/ u  ,DuL,DuL,Dul,uL ,DuL,DuL,Dul,uL ,ul ,Dul,uL ,Dul,DUl,DuL,DuL,DUl,DUl,DuL,DuL,Dul,l  ,Dul,Dul,Dul,Dul,Dul,
+        /*A*/ u  ,DuL,Dul,uL ,Dul,DuL,DuL,Dul,Dul,uL ,ul ,DuL,DuL,Dul,Dul,Dul,DuL,Dul,DUl,DuL,DuL,Dul,Dul,Dul,Dul,Dul,DuL,
+        /*E*/ u  ,DuL,Dul,DuL,uL ,DuL,DuL,DuL,ul ,Dul,ul ,Dul,Dul,uL ,Dul,Dul,Dul,DuL,uL ,DUl,DuL,DuL,Dul,Dul,Dul,Dul,Dul,
+        /*S*/ u  ,DuL,Dul,DuL,DuL,DuL,DUl,Dul,uL ,Dul,Dul,Dul,DuL,Dul,DuL,Dul,Dul,Dul,DuL,Dul,DUl,DuL,DuL,Dul,Dul,Dul,Dul,
+        /*Y*/ u  ,DuL,DuL,Dul,ul ,DuL,DuL,DUl,DuL,ul ,Dul,Dul,Dul,DuL,Dul,Dul,ul ,Dul,Dul,DuL,Dul,DUL,DuL,DuL,Dul,Dul,Dul,
+        /*F*/ u  ,DuL,DuL,ul ,ul ,Dul,Dul,DuL,DuL,DuL,DuL,ul ,Dul,DuL,DuL,Dul,Dul,ul ,Dul,DuL,DuL,DuL,DUl,DuL,DuL,Dul,Dul,
+        /*A*/ u  ,DuL,Dul,DuL,ul ,Dul,uL ,Dul,Dul,DuL,DuL,DuL,Dul,Dul,DuL,DuL,Dul,ul ,ul ,Dul,Dul,DuL,DuL,DuL,Dul,DuL,Dul,
+        /*T*/ u  ,DuL,Dul,DuL,DuL,Dul,Dul,DuL,ul ,Dul,DuL,DuL,DuL,Dul,DUl,Dul,uL ,Dul,ul ,Dul,Dul,Dul,Dul,DuL,DuL,Dul,Dul
+        }
+    };
+}();
+
 } // namespace seqan3::test::alignment::fixture::global::affine::unbanded
