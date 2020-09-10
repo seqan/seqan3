@@ -261,6 +261,10 @@ private:
  * \{
  */
 
+// avoid deprecation warning of seqan3::gap_sheme
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 //!\brief Default constructed objects deduce to `int8_t`.
 gap_scheme() -> gap_scheme<int8_t>;
 
@@ -293,4 +297,5 @@ template <arithmetic score_arg_type>
 gap_scheme(gap_score<score_arg_type>) -> gap_scheme<int8_t>;
 //!\}
 
+#pragma GCC diagnostic pop
 } // namespace seqan3
