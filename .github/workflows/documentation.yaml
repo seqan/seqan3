@@ -29,7 +29,7 @@ jobs:
         shell: bash -ex {0}
         run: |
           mkdir -p /tmp/doxygen-download
-          wget --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "::add-path::/tmp/doxygen-${DOXYGEN_VERSION}/bin" # Only available in subsequent steps!
 
@@ -43,7 +43,7 @@ jobs:
         shell: bash -ex {0}
         run: |
           mkdir -p /tmp/cmake-download
-          wget --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
           tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
           echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" # Only available in subsequent steps!
 
