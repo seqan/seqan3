@@ -68,6 +68,10 @@ template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment
 //!\endcond
 class simd_match_mismatch_scoring_scheme
 {
+private:
+    //!\brief The type of the simd vector representing the alphabet ranks of one sequence batch.
+    using alphabet_ranks_type = simd_score_t;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -111,8 +115,8 @@ public:
      * \{
      */
     /*!\brief Computes the score for two simd vectors.
-     * \param[in] lhs The left operand to compare.
-     * \param[in] rhs The right operand to compare.
+     * \param[in] ranks1 The alphabet ranks of the first operand.
+     * \param[in] ranks2 The alphabet ranks of the second operand.
      *
      * \returns The simd score with match and mismatch scores after comparing both input operands.
      *
@@ -136,15 +140,16 @@ public:
      *
      * Thread-safe.
      */
-    constexpr simd_score_t score(simd_score_t const & lhs, simd_score_t const & rhs) const noexcept
+    constexpr simd_score_t score(alphabet_ranks_type const & ranks1, alphabet_ranks_type const & ranks2)
+        const noexcept
     {
         typename simd_traits<simd_score_t>::mask_type mask;
         // For global and local alignment there are slightly different formulas because
         // in global alignment padded characters always match
         if constexpr (std::same_as<alignment_t, align_cfg::method_global>)
-            mask = (lhs ^ rhs) <= simd::fill<simd_score_t>(0);
+            mask = (ranks1 ^ ranks2) <= simd::fill<simd_score_t>(0);
         else // and in local alignment type padded characters always mismatch.
-            mask = (lhs ^ rhs) == simd::fill<simd_score_t>(0);
+            mask = (ranks1 ^ ranks2) == simd::fill<simd_score_t>(0);
 
         return mask ? match_score : mismatch_score;
     }
@@ -154,6 +159,16 @@ public:
     constexpr auto padding_match_score() noexcept
     {
         return match_score[0];
+    }
+
+    //!\brief Returns the given simd vector without changing it (no-op).
+    template <typename alphabet_ranks_t>
+    //!\cond
+        requires std::same_as<std::remove_cvref_t<alphabet_ranks_t>, alphabet_ranks_type>
+    //!\endcond
+    constexpr alphabet_ranks_t make_score_profile(alphabet_ranks_t && ranks) const noexcept
+    {
+        return std::forward<alphabet_ranks_t>(ranks);
     }
 
 private:

@@ -57,7 +57,6 @@ protected:
 
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
 
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -274,8 +273,11 @@ protected:
         // Iteration phase: compute column-wise the alignment matrix.
         // ---------------------------------------------------------------------
 
-        for (auto sequence1_value : sequence1)
-            compute_column(*++alignment_matrix_it, *++indexed_matrix_it, sequence1_value, sequence2);
+        for (auto alphabet1 : sequence1)
+            compute_column(*++alignment_matrix_it,
+                           *++indexed_matrix_it,
+                           this->scoring_scheme_profile_column(alphabet1),
+                           sequence2);
 
         // ---------------------------------------------------------------------
         // Final phase: track score of last column
@@ -349,13 +351,13 @@ protected:
     /*!\brief Initialise any column of the alignment matrix except the first one.
      * \tparam alignment_column_t The type of the alignment column; must model std::ranges::input_range.
      * \tparam cell_index_column_t The type of the indexed column; must model std::ranges::input_range.
-     * \tparam sequence1_value_t The value type of sequence1; must model seqan3::semialphabet.
+     * \tparam alphabet1_t The type of the current symbol of sequence1.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::input_range.
      *
      * \param[in] alignment_column The current alignment matrix column to compute.
      * \param[in] cell_index_column The current index matrix column to get the respective cell indices.
-     * \param[in] sequence1_value The current symbol of sequence1.
-     * \param[in] sequence2 The second sequence to align against `sequence1_value`.
+     * \param[in] alphabet1 The current symbol of sequence1.
+     * \param[in] sequence2 The second sequence to align against `alphabet1`.
      *
      * \details
      *
@@ -366,14 +368,14 @@ protected:
      */
     template <std::ranges::input_range alignment_column_t,
               std::ranges::input_range cell_index_column_t,
-              typename sequence1_value_t,
+              typename alphabet1_t,
               std::ranges::input_range sequence2_t>
     //!\cond
-        requires semialphabet<sequence1_value_t> || simd_concept<sequence1_value_t>
+        requires semialphabet<alphabet1_t> || simd_concept<alphabet1_t>
     //!\endcond
     void compute_column(alignment_column_t && alignment_column,
                         cell_index_column_t && cell_index_column,
-                        sequence1_value_t const & sequence1_value,
+                        alphabet1_t const & alphabet1,
                         sequence2_t && sequence2)
     {
         using score_type = typename traits_type::score_type;
@@ -393,12 +395,12 @@ protected:
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for (auto const & sequence2_value : sequence2)
+        for (auto const & alphabet2 : sequence2)
         {
             auto cell = *++alignment_column_it;
             score_type next_diagonal = cell.best_score();
             *alignment_column_it = this->track_cell(
-                this->compute_inner_cell(diagonal, cell, this->scoring_scheme.score(sequence1_value, sequence2_value)),
+                this->compute_inner_cell(diagonal, cell, this->scoring_scheme.score(alphabet1, alphabet2)),
                 *++cell_index_column_it);
             diagonal = next_diagonal;
         }

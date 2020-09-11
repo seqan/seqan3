@@ -46,6 +46,18 @@ TYPED_TEST(simd_match_mismatch_scoring_scheme_test, basic_construction)
     EXPECT_TRUE(std::semiregular<scheme_t>);
 }
 
+TYPED_TEST(simd_match_mismatch_scoring_scheme_test, make_score_profile)
+{
+    using scheme_t = seqan3::detail::simd_match_mismatch_scoring_scheme<TypeParam,
+                                                                        seqan3::dna4,
+                                                                        seqan3::align_cfg::method_global>;
+
+    scheme_t simd_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}};
+
+    TypeParam original = seqan3::simd::fill<TypeParam>(2);
+    SIMD_EQ(simd_scheme.make_score_profile(original), original);
+}
+
 TYPED_TEST(simd_match_mismatch_scoring_scheme_test, construct_from_scoring_scheme_nothrow)
 {
     using scheme_t = seqan3::detail::simd_match_mismatch_scoring_scheme<TypeParam,
