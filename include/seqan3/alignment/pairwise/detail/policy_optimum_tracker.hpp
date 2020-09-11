@@ -32,6 +32,8 @@ namespace seqan3::detail
  *
  * Updates the current alignment optimum with the new score and the respective coordinate if the new score
  * compares greater or equal to the score of the current optimum.
+ *
+ * \see seqan3::detail::max_score_banded_updater
  */
 struct max_score_updater
 {
@@ -63,6 +65,100 @@ struct max_score_updater
         bool const is_better_score = current_score >= optimal_score;
         optimal_score = (is_better_score) ? std::move(current_score) : optimal_score;
         optimal_coordinate = (is_better_score) ? std::move(current_coordinate) : optimal_coordinate;
+    }
+};
+
+/*!\brief A function object that compares and possibly updates the alignment optimum with the current cell.
+ * \ingroup pairwise_alignment
+ *
+ * \details
+ *
+ * This special function object is used for global alignments including free end-gaps.
+ * It updates the current alignment optimum with the new score and the respective coordinate if the new score
+ * is greater or equal to the score of the current optimum and the cell is either in the target row or column.
+ * For the banded alignment this additional check is needed because the band might not reach the last row of the matrix
+ * for all columns.
+ * Thus, the last cell of a column will only be checked if the corresponding coordinate points to the last row of the
+ * matrix.
+ *
+ * ### Example
+ *
+ * Consider the following banded matrix:
+ *
+ * ```
+ *    0         1
+ *    012345678901
+ *    ____________
+ * 0 |       \    |
+ * 1 |        \   |
+ * 2 |\        \  |
+ * 3 | \        \ |
+ * 4 |  \        *|
+ * 5 |   \       *|
+ * 6 |    ********|
+ *    ––––––––––––
+ * ```
+ *
+ * When computing the columns from index 0 to 3 the last row of the matrix is not covered by the band.
+ * But the algorithm that computes the column does not know if the last computed cell of it is in fact also the last
+ * cell of the matrix (row index 6). Thus, by comparing the cell coordinate, which corresponds to the absolute
+ * matrix coordinate, with the initialised target row and column index of this function object, it can be guaranteed
+ * that only the scores of the cells are tracked that are in the last row or column (cells marked with an `*`
+ * in the picture above).
+ *
+ * \see seqan3::detail::max_score_updater
+ */
+struct max_score_banded_updater
+{
+private:
+    //!\brief The row index indicating the last row of the alignment matrix.
+    size_t target_row_index{};
+    //!\brief The column index indicating the last column of the alignment matrix.
+    size_t target_col_index{};
+
+public:
+    /*!\brief Compares and updates the optimal score-coordinate pair.
+     * \tparam score_t The type of the score to track; must model std::totally_ordered and
+     *                 std::assignable_from `const & score_t`.
+     * \tparam coordinate_t The type of the coordinate to track; must model std::assignable_from `const & coordinate_t`.
+     *
+     * \param[in,out] optimal_score The optimal score to update.
+     * \param[in,out] optimal_coordinate The optimal coordinate to update.
+     * \param[in] current_score The score of the current cell.
+     * \param[in] current_coordinate The coordinate of the current cell.
+     *
+     * \details
+     *
+     * First, checks if the coordinate of the current alignment cell is either in the target row or column, i.e.
+     * the last row/column of the alignment matrix. If this is not the case the score won't be updated.
+     * Otherwise, compares the current_score with the optimal score and updates the optimal score and coordinate
+     * accordingly.
+     */
+    template <typename score_t, typename coordinate_t>
+    //!\cond
+        requires (std::totally_ordered<score_t> && std::assignable_from<score_t &, score_t const &> &&
+                  std::assignable_from<coordinate_t &, coordinate_t const &>)
+    //!\endcond
+    void operator()(score_t & optimal_score,
+                    coordinate_t & optimal_coordinate,
+                    score_t current_score,
+                    coordinate_t current_coordinate) const noexcept
+    {
+        bool const is_better_score = (target_row_index == current_coordinate.row ||
+                                      target_col_index == current_coordinate.col) &&
+                                      (current_score >= optimal_score);
+        optimal_score = (is_better_score) ? std::move(current_score) : optimal_score;
+        optimal_coordinate = (is_better_score) ? std::move(current_coordinate) : optimal_coordinate;
+    }
+
+    /*!\brief Sets the target index for the last row and column of the matrix.
+     * \param row_index The target index of the last row.
+     * \param col_index The target index of the last column.
+     */
+    void set_target_indices(row_index_type<size_t> row_index, column_index_type<size_t> col_index) noexcept
+    {
+        target_row_index = row_index.get();
+        target_col_index = col_index.get();
     }
 };
 
