@@ -1014,10 +1014,7 @@ public:
         return std::views::iota(fwd_lb, fwd_lb + count())
              | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
-                   return _offset - index->fwd_fm.index[sa_pos];
-               })
-             | std::views::transform([*this] (auto loc)
-               {
+                   auto loc = _offset - index->fwd_fm.index[sa_pos];
                    size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);
                    return locate_result_value_type{sequence_rank-1, sequence_position};

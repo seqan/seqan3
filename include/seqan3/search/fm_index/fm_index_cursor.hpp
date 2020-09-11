@@ -613,10 +613,7 @@ public:
         return std::views::iota(node.lb, node.lb + count())
              | std::views::transform([*this, _offset = offset()] (auto sa_pos)
                {
-                   return _offset - index->index[sa_pos];
-               })
-             | std::views::transform([*this] (auto loc)
-               {
+                   auto loc = _offset - index->index[sa_pos];
                    size_type sequence_rank = index->text_begin_rs.rank(loc + 1);
                    size_type sequence_position = loc - index->text_begin_ss.select(sequence_rank);
                    return locate_result_value_type{sequence_rank - 1, sequence_position};
