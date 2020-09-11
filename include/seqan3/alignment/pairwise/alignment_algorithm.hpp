@@ -250,7 +250,7 @@ private:
 
         std::vector<simd_score_t, aligned_allocator<simd_score_t, alignof(simd_score_t)>> simd_sequence{};
 
-        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>(traits_t::padding_symbol))
+        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>(this->scoring_scheme.padding_symbol))
             for (auto && simd_vector : simd_vector_chunk)
                 simd_sequence.push_back(std::move(simd_vector));
 

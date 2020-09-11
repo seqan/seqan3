@@ -15,6 +15,7 @@
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
@@ -69,10 +70,15 @@ template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment
 class simd_match_mismatch_scoring_scheme
 {
 private:
+    //!\brief The underlying scalar type of the simd vector.
+    using scalar_type = typename simd_traits<simd_score_t>::scalar_type;
     //!\brief The type of the simd vector representing the alphabet ranks of one sequence batch.
     using alphabet_ranks_type = simd_score_t;
 
 public:
+    //!\brief The padding symbol used to fill up smaller sequences in a simd batch.
+    static constexpr scalar_type padding_symbol = static_cast<scalar_type>(1u << (sizeof_bits<scalar_type> - 1));
+
     /*!\name Constructors, destructor and assignment
      * \{
      */

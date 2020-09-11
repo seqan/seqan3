@@ -81,6 +81,9 @@ private:
     std::vector<scalar_type> scoring_scheme_data{};
 
 public:
+    //!\brief The padding symbol used to fill up smaller sequences in a simd batch.
+    static constexpr scalar_type padding_symbol = static_cast<scalar_type>(seqan3::alphabet_size<alphabet_t>);
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -147,7 +150,7 @@ public:
     //!\brief Returns the score used when aligning a padding symbol.
     constexpr scalar_type padding_match_score() const noexcept
     {
-        return 1;
+        return score_for_padding_symbol;
     }
 
     /*!\brief Converts the simd alphabet ranks into a score profile used for scoring it later with the alphabet ranks

@@ -169,8 +169,12 @@ public:
         thread_local simd_collection_t simd_seq1_collection{};
         thread_local simd_collection_t simd_seq2_collection{};
 
-        convert_batch_of_sequences_to_simd_vector(simd_seq1_collection, seq1_collection, traits_type::padding_symbol);
-        convert_batch_of_sequences_to_simd_vector(simd_seq2_collection, seq2_collection, traits_type::padding_symbol);
+        convert_batch_of_sequences_to_simd_vector(simd_seq1_collection,
+                                                  seq1_collection,
+                                                  this->scoring_scheme.padding_symbol);
+        convert_batch_of_sequences_to_simd_vector(simd_seq2_collection,
+                                                  seq2_collection,
+                                                  this->scoring_scheme.padding_symbol);
 
         size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
         size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
