@@ -166,8 +166,9 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
     for (auto _ : state)
     {
         auto results = search(reads, index, cfg);
-        benchmark::DoNotOptimize(sum += std::ranges::distance(results));
+        sum += std::ranges::distance(results);
     }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -191,8 +192,9 @@ void unidirectional_search_all(benchmark::State & state, options && o)
     for (auto _ : state)
     {
         auto results = search(reads, index, cfg);
-        benchmark::DoNotOptimize(sum += std::ranges::distance(results));
+        sum += std::ranges::distance(results);
     }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -216,8 +218,9 @@ void bidirectional_search_all(benchmark::State & state, options && o)
     for (auto _ : state)
     {
         auto results = search(reads, index, cfg);
-        benchmark::DoNotOptimize(sum += std::ranges::distance(results));
+        sum += std::ranges::distance(results);
     }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -242,8 +245,9 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
     for (auto _ : state)
     {
         auto results = search(reads, index, cfg);
-        benchmark::DoNotOptimize(sum += std::ranges::distance(results));
+        sum += std::ranges::distance(results);
     }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -268,8 +272,9 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
     for (auto _ : state)
     {
         auto results = search(reads, index, cfg);
-        benchmark::DoNotOptimize(sum += std::ranges::distance(results));
+        sum += std::ranges::distance(results);
     }
+    benchmark::DoNotOptimize(sum);
 }
 
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch0,
