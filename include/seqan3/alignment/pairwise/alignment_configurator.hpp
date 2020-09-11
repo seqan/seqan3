@@ -48,7 +48,9 @@
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/detail/simd_matrix_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
@@ -550,21 +552,49 @@ private:
                                                          policy_affine_gap_recursion<config_t>>;
             using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
-            using alignment_method_t = typename std::conditional_t<traits_t::is_global,
-                                                                   seqan3::align_cfg::method_global,
-                                                                   seqan3::detail::method_local_tag>;
+            // ----------------------------------------------------------------------------
+            // Configure scoring scheme policy
+            // ----------------------------------------------------------------------------
+
+            using alignment_method_t = std::conditional_t<traits_t::is_global,
+                                                          seqan3::align_cfg::method_global,
+                                                          seqan3::detail::method_local_tag>;
 
             using score_t = typename traits_t::score_type;
-            using alignment_scoring_scheme_t =
-                lazy_conditional_t<traits_t::is_vectorised,
-                                   lazy<simd_match_mismatch_scoring_scheme,
-                                        score_t,
-                                        typename traits_t::scoring_scheme_alphabet_type,
-                                        alignment_method_t>,
-                                   typename traits_t::scoring_scheme_type>;
+            using scoring_scheme_t = typename traits_t::scoring_scheme_type;
+            constexpr bool is_aminoacid_scheme = is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
+
+            using simple_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
+                                                            lazy<simd_match_mismatch_scoring_scheme,
+                                                                 score_t,
+                                                                 typename traits_t::scoring_scheme_alphabet_type,
+                                                                 alignment_method_t>,
+                                                            void>;
+            using matrix_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
+                                                            lazy<simd_matrix_scoring_scheme,
+                                                                 score_t,
+                                                                 typename traits_t::scoring_scheme_alphabet_type,
+                                                                 alignment_method_t,
+                                                                 scoring_scheme_t>,
+                                                            void>;
+
+            using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,
+                                                                  std::conditional_t<is_aminoacid_scheme,
+                                                                                     matrix_simd_scheme_t,
+                                                                                     simple_simd_scheme_t>,
+                                                                  scoring_scheme_t>;
 
             using scoring_scheme_policy_t = policy_scoring_scheme<config_t, alignment_scoring_scheme_t>;
+
+            // ----------------------------------------------------------------------------
+            // Configure alignment matrix policy
+            // ----------------------------------------------------------------------------
+
             using alignment_matrix_policy_t = policy_alignment_matrix<traits_t, score_matrix_single_column<score_t>>;
+
+            // ----------------------------------------------------------------------------
+            // Configure alignment algorithm
+            // ----------------------------------------------------------------------------
 
             using algorithm_t = select_alignment_algorithm_t<traits_t,
                                                              config_t,
@@ -584,15 +614,29 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
 {
     using traits_t = alignment_configuration_traits<config_t>;
 
-    using alignment_scoring_scheme_t =
-        lazy_conditional_t<traits_t::is_vectorised,
-                           lazy<simd_match_mismatch_scoring_scheme,
-                                typename traits_t::score_type,
-                                typename traits_t::scoring_scheme_alphabet_type,
-                                typename std::conditional_t<traits_t::is_global,
-                                                            seqan3::align_cfg::method_global,
-                                                            seqan3::detail::method_local_tag>>,
-                            typename traits_t::scoring_scheme_type>;
+    using scoring_scheme_t = typename traits_t::scoring_scheme_type;
+    constexpr bool is_aminoacid_scheme = is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
+    using alignment_type_t = typename std::conditional_t<traits_t::is_global,
+                                                         seqan3::align_cfg::method_global,
+                                                         seqan3::detail::method_local_tag>;
+
+    using simple_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
+                                                    lazy<simd_match_mismatch_scoring_scheme,
+                                                         typename traits_t::score_type,
+                                                         typename traits_t::scoring_scheme_alphabet_type,
+                                                         alignment_type_t>,
+                                                    void>;
+    using matrix_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
+                                                    lazy<simd_matrix_scoring_scheme,
+                                                         typename traits_t::score_type,
+                                                         typename traits_t::scoring_scheme_alphabet_type,
+                                                         alignment_type_t,
+                                                         scoring_scheme_t>,
+                                                    void>;
+
+    using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,
+                                                          std::conditional_t<is_aminoacid_scheme, matrix_simd_scheme_t, simple_simd_scheme_t>,
+                                                          scoring_scheme_t>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;
     return configure_free_ends<function_wrapper_t, scoring_scheme_policy_t>(cfg);

@@ -18,52 +18,28 @@ inline constexpr size_t deviation_step = 8;
 // SeqAn3
 // ----------------------------------------------------------------------------
 
-constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                   seqan3::mismatch_score{-5}};
+constexpr auto aa_score_scheme = seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62};
 constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
                             seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
                                                                       seqan3::gap_open_score{-10}}} |
-                            seqan3::align_cfg::scoring_scheme{nt_score_scheme};
+                            seqan3::align_cfg::scoring_scheme{aa_score_scheme};
 
 BENCHMARK_CAPTURE(seqan3_affine_accelerated,
                   simd_with_score,
-                  seqan3::dna4{},
+                  seqan3::aa27{},
                   affine_cfg,
                   seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<int16_t>},
                   seqan3::align_cfg::output_score,
-                  seqan3::align_cfg::vectorised)
-                        ->UseRealTime()
-                        ->DenseRange(deviation_begin, deviation_end, deviation_step);
-
-BENCHMARK_CAPTURE(seqan3_affine_accelerated,
-                  simd_with_end_position,
-                  seqan3::dna4{},
-                  affine_cfg,
-                  seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<int16_t>},
-                  seqan3::align_cfg::output_score,
-                  seqan3::align_cfg::output_end_position,
                   seqan3::align_cfg::vectorised)
                         ->UseRealTime()
                         ->DenseRange(deviation_begin, deviation_end, deviation_step);
 
 BENCHMARK_CAPTURE(seqan3_affine_accelerated,
                   simd_parallel_with_score,
-                  seqan3::dna4{},
+                  seqan3::aa27{},
                   affine_cfg,
                   seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<int16_t>},
-                  seqan3::align_cfg::vectorised,
                   seqan3::align_cfg::output_score,
-                  seqan3::align_cfg::parallel{get_number_of_threads()})
-                        ->UseRealTime()
-                        ->DenseRange(deviation_begin, deviation_end, deviation_step);
-
-BENCHMARK_CAPTURE(seqan3_affine_accelerated,
-                  simd_parallel_with_end_position,
-                  seqan3::dna4{},
-                  affine_cfg,
-                  seqan3::align_cfg::result{seqan3::with_end_positions, seqan3::using_score_type<int16_t>},
-                  seqan3::align_cfg::output_score,
-                  seqan3::align_cfg::output_end_position,
                   seqan3::align_cfg::vectorised,
                   seqan3::align_cfg::parallel{get_number_of_threads()})
                         ->UseRealTime()
@@ -75,11 +51,13 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
 // SeqAn2
 // ----------------------------------------------------------------------------
 
+using scoring_scheme_t = seqan::Score<int16_t, seqan::ScoreMatrix<seqan::AminoAcid, seqan::ScoreSpecBlosum62>>;
+
 // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
 BENCHMARK_CAPTURE(seqan2_affine_accelerated,
                   simd_with_score,
-                  seqan::Dna{},
-                  seqan::Score<int16_t>{4, -5, -1, -11},
+                  seqan::AminoAcid{},
+                  scoring_scheme_t{-1, -11},
                   seqan::ExecutionPolicy<seqan::Serial, seqan::Vectorial>{},
                   1,
                   affine_cfg)
@@ -88,8 +66,8 @@ BENCHMARK_CAPTURE(seqan2_affine_accelerated,
 
 BENCHMARK_CAPTURE(seqan2_affine_accelerated,
                   simd_parallel_with_score,
-                  seqan::Dna{},
-                  seqan::Score<int16_t>{4, -5, -1, -11},
+                  seqan::AminoAcid{},
+                  scoring_scheme_t{-1, -11},
                   seqan::ExecutionPolicy<seqan::Parallel, seqan::Vectorial>{},
                   get_number_of_threads(),
                   affine_cfg)
