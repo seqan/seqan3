@@ -28,7 +28,11 @@
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 150;
+#ifndef NDEBUG
+inline constexpr size_t set_size        = 128;
+#else
 inline constexpr size_t set_size        = 1024;
+#endif // NDEBUG
 
 // We don't know if the system supports hyper-threading so we use only half the threads so that the
 // simd benchmark is likely to run on physical cores only.
