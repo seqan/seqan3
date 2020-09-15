@@ -51,8 +51,8 @@ BENCHMARK_CAPTURE(seqan3_affine_accelerated,
                   seqan3::dna4{},
                   affine_cfg,
                   seqan3::align_cfg::result{seqan3::with_score, seqan3::using_score_type<int16_t>},
-                  seqan3::align_cfg::vectorised,
                   seqan3::align_cfg::output_score,
+                  seqan3::align_cfg::vectorised,
                   seqan3::align_cfg::parallel{get_number_of_threads()})
                         ->UseRealTime()
                         ->DenseRange(deviation_begin, deviation_end, deviation_step);
