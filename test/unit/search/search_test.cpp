@@ -483,6 +483,15 @@ TYPED_TEST(search_test, parallel_without_parameter)
     EXPECT_THROW(search("AAAA"_dna4, this->index, cfg), std::runtime_error);
 }
 
+TYPED_TEST(search_test, debug_streaming)
+{
+    std::ostringstream oss;
+    seqan3::debug_stream_type stream{oss};
+    stream << search("TAC"_dna4, this->index);
+    EXPECT_EQ(oss.str(), "[<query_id:0, reference_id:0, reference_pos:3>"
+                         ",<query_id:0, reference_id:0, reference_pos:7>]");
+}
+
 // https://github.com/seqan/seqan3/issues/2115
 TYPED_TEST(search_test, issue_2115)
 {
