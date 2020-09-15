@@ -15,8 +15,11 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
 
+#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
+#include <seqan3/range/views/convert.hpp>
+#include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
@@ -24,7 +27,6 @@
 #include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
-#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 
 namespace seqan3::detail
 {
@@ -100,7 +102,8 @@ template <fm_index_specialisation index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 //!\cond
-    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>>
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
+             std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>
 //!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
@@ -165,6 +168,26 @@ inline auto search(queries_t && queries,
 }
 
 //!\cond DEV
+// Convert query sequence if it does not match the alphabet type of the index.
+//!\overload
+template <fm_index_specialisation index_t,
+          std::ranges::forward_range queries_t,
+          typename configuration_t = decltype(search_cfg::default_configuration)>
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
+             (!std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>)
+inline auto search(queries_t && queries,
+                   index_t const & index,
+                   configuration_t const & cfg = search_cfg::default_configuration)
+{
+    static_assert(std::convertible_to<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>,
+                  "The alphabet of the text collection must be convertible to the alphabet of the index.");
+
+    if constexpr (range_dimension_v<queries_t> == 2u)
+        return search(queries | views::deep{views::convert<typename index_t::alphabet_type>}, index, cfg);
+    else
+        return search(queries | views::convert<typename index_t::alphabet_type>, index, cfg);
+}
+
 // Overload for a single query (not a collection of queries)
 //!\overload
 template <fm_index_specialisation index_t,

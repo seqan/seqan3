@@ -483,6 +483,38 @@ TYPED_TEST(search_test, parallel_without_parameter)
     EXPECT_THROW(search("AAAA"_dna4, this->index, cfg), std::runtime_error);
 }
 
+TYPED_TEST(search_test, debug_streaming)
+{
+    std::ostringstream oss;
+    seqan3::debug_stream_type stream{oss};
+    stream << search("TAC"_dna4, this->index);
+    EXPECT_EQ(oss.str(), "[<query_id:0, reference_id:0, reference_pos:3>"
+                         ",<query_id:0, reference_id:0, reference_pos:7>]");
+}
+
+// https://github.com/seqan/seqan3/issues/2115
+TYPED_TEST(search_test, issue_2115)
+{
+    std::vector<seqan3::dna4> const genome{"ACAG"_dna4};
+    TypeParam const index{genome};
+
+    // One substitution error, report all best hits
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
+                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
+                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
+                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}} |
+                                      seqan3::search_cfg::hit_all_best;
+
+    std::vector<seqan3::dna4> const dna4_query{"ACGG"_dna4};
+    std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> const dna4q_query{{'A'_dna4, seqan3::phred42{0}},
+                                                                                    {'C'_dna4, seqan3::phred42{15}},
+                                                                                    {'G'_dna4, seqan3::phred42{30}},
+                                                                                    {'G'_dna4, seqan3::phred42{41}}};
+
+    // Quality should not alter search results.
+    EXPECT_RANGE_EQ(seqan3::search(dna4q_query, index, cfg), seqan3::search(dna4_query, index, cfg));
+}
+
 TYPED_TEST(search_string_test, error_free_string)
 {
     // successful and unsuccesful exact search without cfg
