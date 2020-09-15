@@ -1,0 +1,13 @@
+# See https://docs.codecov.io/docs/codecovyml-reference
+codecov:
+  require_ci_to_pass: no
+  notify:
+    wait_for_ci: no
+
+coverage:
+  status:
+    project:
+      default:
+        if_ci_failed: success
+        target: auto
+        threshold: 0.01%
