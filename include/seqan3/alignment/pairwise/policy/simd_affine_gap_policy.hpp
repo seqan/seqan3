@@ -15,11 +15,10 @@
 #include <limits>
 #include <tuple>
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/simd/concept.hpp>
@@ -164,11 +163,12 @@ private:
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
         using scalar_t = typename simd_traits<score_t>::scalar_type;
-        auto scheme = config.get_or(align_cfg::gap{gap_scheme{gap_score{-1}, gap_open_score{-10}}}).value;
+        auto scheme = config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10},
+                                                               align_cfg::extension_score{-1}});
 
-        alignment_state.gap_extension_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.get_gap_score()));
-        alignment_state.gap_open_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.get_gap_score() +
-                                                                                   scheme.get_gap_open_score()));
+        alignment_state.gap_extension_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.extension_score));
+        alignment_state.gap_open_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.extension_score +
+                                                                                   scheme.open_score));
     }
 
     /*!\brief Converts a trace direction into a simd vector.

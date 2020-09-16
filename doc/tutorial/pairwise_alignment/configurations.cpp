@@ -11,9 +11,9 @@
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 //! [include_scoring_scheme]
 
-//! [include_gap_scheme]
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
-//! [include_gap_scheme]
+//! [include_gap_cost_affine]
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
+//! [include_gap_cost_affine]
 
 //! [include_output]
 #include <seqan3/alignment/configuration/align_config_output.hpp>
@@ -66,16 +66,17 @@ auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
 }
 
 {
-//! [gap_scheme]
+//! [gap_cost_affine]
 
 // Define a gap scheme with custom gap scores.
-seqan3::gap_scheme g{seqan3::gap_score{-1}, seqan3::gap_open_score{-10}};
+seqan3::align_cfg::gap_cost_affine affine_scheme{seqan3::align_cfg::open_score{-10},
+                                                 seqan3::align_cfg::extension_score{-1}};
 
-auto gap = g.get_gap_score();  // gap == -1
-auto gap_open = g.get_gap_open_score(); // gap_open == -10
-//! [gap_scheme]
-(void) gap;
-(void) gap_open;
+int open_score = affine_scheme.open_score; // == -10
+int extension_score = affine_scheme.extension_score; // == -1
+//! [gap_cost_affine]
+(void) open_score;
+(void) extension_score;
 }
 
 {

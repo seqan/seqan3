@@ -14,11 +14,10 @@
 
 #include <tuple>
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail

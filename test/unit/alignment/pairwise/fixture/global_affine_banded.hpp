@@ -11,10 +11,9 @@
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
@@ -28,8 +27,8 @@ namespace seqan3::test::alignment::fixture::global::affine::banded
 {
 
 inline constexpr auto align_config = seqan3::align_cfg::method_global{} |
-                                     seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                               seqan3::gap_open_score{-10}}};
+                                     seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
+                                                                        seqan3::align_cfg::extension_score{-1}};
 inline constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                           seqan3::mismatch_score{-5}};
 

@@ -32,8 +32,8 @@ struct pairwise_semiglobal_affine_banded : public ::testing::Test
 
     auto base_config() const
     {
-        return seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                         seqan3::gap_open_score{-10}}} |
+        return seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
+                                                  seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                    seqan3::mismatch_score{-5}}};
     }
