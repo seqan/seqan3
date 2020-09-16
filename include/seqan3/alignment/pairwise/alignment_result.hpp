@@ -246,7 +246,7 @@ public:
      * \return The calculated alignment end of sequence 1 (inclusive).
      *
      * \note This function is only available if the end position of the first sequence was requested via the
-     * alignment configuration (see seqan3::align_cfg::result).
+     * alignment configuration (see seqan3::align_cfg::output_end_position).
      */
     constexpr auto sequence1_end_position() const noexcept
     {
@@ -260,7 +260,7 @@ public:
      * \return A pair of positions in the respective sequences, where the calculated alignment ends (inclusive).
      *
      * \note This function is only available if the end position of the second sequence was requested via the
-     * alignment configuration (see seqan3::align_cfg::result).
+     * alignment configuration (see seqan3::align_cfg::output_end_position).
      */
     constexpr auto sequence2_end_position() const noexcept
     {
@@ -278,7 +278,7 @@ public:
      * Guaranteed to be smaller than or equal to `sequence1_end_position()`.
      *
      * \note This function is only available if the begin position of the first sequence was requested via the
-     * alignment configuration (see seqan3::align_cfg::result).
+     * alignment configuration (see seqan3::align_cfg::output_begin_position).
      */
     constexpr auto sequence1_begin_position() const noexcept
     {
@@ -296,7 +296,7 @@ public:
      * Guaranteed to be smaller than or equal to `sequence2_end_position()`.
      *
      * \note This function is only available if the begin position of the second sequence was requested via the
-     * alignment configuration (see seqan3::align_cfg::result).
+     * alignment configuration (see seqan3::align_cfg::output_begin_position).
      */
     constexpr auto sequence2_begin_position() const noexcept
     {
@@ -310,7 +310,7 @@ public:
      * \return At least two aligned sequences, which represent the alignment.
      *
      * \note This function is only available if the alignment was requested via the alignment configuration
-     * (see seqan3::align_cfg::result).
+     * (see seqan3::align_cfg::output_alignment).
      */
     constexpr alignment_t const & alignment() const noexcept
     {
@@ -348,7 +348,7 @@ public:
      * seqan3::align_cfg::detail::debug.
      *
      * \note This function is only available if the debug mode and the alignment was requested via the alignment
-     * configuration (see seqan3::align_cfg::detail::debug and seqan3::align_cfg::result).
+     * configuration (see seqan3::align_cfg::detail::debug and seqan3::align_cfg::output_alignment).
      */
     constexpr auto const & trace_matrix() const noexcept
     {

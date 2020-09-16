@@ -25,7 +25,6 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::align_cfg::method_global,
                                     seqan3::detail::method_local_tag,
                                     seqan3::align_cfg::parallel,
-                                    seqan3::align_cfg::result<>,
                                     seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
                                     seqan3::detail::vectorised_tag,
                                     seqan3::detail::result_type_tag<alignment_result_t>>;
