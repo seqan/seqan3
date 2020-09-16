@@ -35,7 +35,7 @@ namespace seqan3
  */
 template <typename char_t, typename variant_type>
 //!\cond
-    requires detail::is_type_specialisation_of_v<remove_cvref_t<variant_type>, std::variant>
+    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<variant_type>, std::variant>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, variant_type && v)
 {

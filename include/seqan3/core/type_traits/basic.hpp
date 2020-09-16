@@ -13,6 +13,7 @@
 #pragma once
 
 #include <tuple>
+#include <seqan3/std/type_traits>
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
@@ -42,7 +43,7 @@ namespace seqan3
  * \tparam t The type to operate on.
  */
 template <typename t>
-using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<t>>;
+using remove_cvref_t SEQAN3_DEPRECATED_310 = std::remove_cv_t<std::remove_reference_t<t>>;
 
 // ----------------------------------------------------------------------------
 // remove_rvalue_reference
@@ -138,14 +139,14 @@ using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
 // ----------------------------------------------------------------------------
 
 //!\brief Return the type of std::ignore with `const`, `volatile` and references removed (type trait).
-using ignore_t = remove_cvref_t<decltype(std::ignore)>;
+using ignore_t = std::remove_cvref_t<decltype(std::ignore)>;
 
 /*!\brief Return whether the input type with `const`, `volatile` and references removed is std::ignore's type.
  * (type trait).
  * \tparam t The type to operate on.
  */
 template <typename t>
-constexpr bool decays_to_ignore_v = std::is_same_v<remove_cvref_t<t>, ignore_t>;
+constexpr bool decays_to_ignore_v = std::is_same_v<std::remove_cvref_t<t>, ignore_t>;
 
 //!\}
 

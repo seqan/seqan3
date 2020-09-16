@@ -36,8 +36,8 @@ namespace seqan3::detail
  */
  template <typename trace_matrix_t>
  //!\cond
-     requires matrix<remove_cvref_t<trace_matrix_t>> &&
-              std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
+     requires matrix<std::remove_cvref_t<trace_matrix_t>> &&
+              std::same_as<typename std::remove_cvref_t<trace_matrix_t>::value_type, trace_directions>
  //!\endcond
 inline alignment_coordinate alignment_begin_positions(trace_matrix_t && matrix,
                                                       alignment_coordinate const end_positions)
@@ -99,8 +99,8 @@ template <
     typename query_t,
     typename trace_matrix_t>
 //!\cond
-    requires matrix<remove_cvref_t<trace_matrix_t>> &&
-             std::same_as<typename remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
+    requires matrix<std::remove_cvref_t<trace_matrix_t>> &&
+             std::same_as<typename std::remove_cvref_t<trace_matrix_t>::value_type, trace_directions> &&
              detail::all_model_writable_aligned_seq<detail::tuple_type_list_t<alignment_t>>
 //!\endcond
 inline alignment_t alignment_trace(database_t && database,

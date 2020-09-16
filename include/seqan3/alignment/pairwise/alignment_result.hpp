@@ -394,13 +394,13 @@ namespace seqan3
  */
 template <typename char_t, typename alignment_result_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<remove_cvref_t<alignment_result_t>, alignment_result>
+    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<alignment_result_t>, alignment_result>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_result_t && result)
 {
     using disabled_t = std::nullopt_t *;
     using result_data_t =
-        typename detail::alignment_result_value_type_accessor<remove_cvref_t<alignment_result_t>>::type;
+        typename detail::alignment_result_value_type_accessor<std::remove_cvref_t<alignment_result_t>>::type;
 
     constexpr bool has_sequence1_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence1_id), disabled_t>;
     constexpr bool has_sequence2_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence2_id), disabled_t>;

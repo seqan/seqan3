@@ -123,7 +123,7 @@ private:
     //!\cond
     //NOTE(h-2): it is entirely unclear to me why we need this
     template <typename t>
-        requires std::is_same_v<std::ranges::range_value_t<remove_cvref_t<t>>, alphabet_type>
+        requires std::is_same_v<std::ranges::range_value_t<std::remove_cvref_t<t>>, alphabet_type>
     static constexpr bool has_same_value_type_v = true;
     //!\endcond
 

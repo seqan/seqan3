@@ -56,7 +56,7 @@ void do_cerealisation(value_t && l)
     }
 
     {
-        remove_cvref_t<value_t> in_l{};
+        std::remove_cvref_t<value_t> in_l{};
         std::ifstream is{filename.get_path(), std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(in_l);

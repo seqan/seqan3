@@ -148,9 +148,9 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
 template <typename pivot_t, tuple_like tuple_t>
 constexpr auto tuple_split(tuple_t && t)
 {
-    constexpr size_t pivot_c = list_traits::find<pivot_t, detail::tuple_type_list_t<remove_cvref_t<tuple_t>>>;
+    constexpr size_t pivot_c = list_traits::find<pivot_t, detail::tuple_type_list_t<std::remove_cvref_t<tuple_t>>>;
 
-    static_assert(pivot_c <= std::tuple_size_v<remove_cvref_t<tuple_t>>);
+    static_assert(pivot_c <= std::tuple_size_v<std::remove_cvref_t<tuple_t>>);
 
     return tuple_split<pivot_c>(std::forward<tuple_t>(t));
 }
@@ -178,7 +178,7 @@ constexpr auto tuple_split(tuple_t && t)
 template <tuple_like tuple_t>
 constexpr auto tuple_pop_front(tuple_t && t)
 {
-    static_assert(std::tuple_size_v<remove_cvref_t<tuple_t>> > 0);
+    static_assert(std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 0);
 
     return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
 }

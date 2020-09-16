@@ -40,7 +40,7 @@ struct search_configuration_validator
     template <typename query_t>
     static void validate_query_type()
     {
-        using pure_query_t = remove_cvref_t<query_t>;
+        using pure_query_t = std::remove_cvref_t<query_t>;
         if constexpr(range_dimension_v<pure_query_t> == 1u)
         {
             static_assert(std::ranges::random_access_range<pure_query_t>,

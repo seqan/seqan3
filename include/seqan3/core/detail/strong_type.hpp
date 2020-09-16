@@ -111,9 +111,9 @@ SEQAN3_CONCEPT strong_type_specialisation = requires (strong_type_t && obj)
     //!\endcond
 
     //!\cond
-    requires std::derived_from<remove_cvref_t<strong_type_t>,
+    requires std::derived_from<std::remove_cvref_t<strong_type_t>,
                                strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
-                                           remove_cvref_t<strong_type_t>,
+                                           std::remove_cvref_t<strong_type_t>,
                                            std::remove_reference_t<strong_type_t>::skills>>;
     //!\endcond
 //!\cond

@@ -303,7 +303,7 @@ public:
             {
                 // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
                 //       option via the scheme.
-                if constexpr (is_type_specialisation_of_v<remove_cvref_t<decltype(scoring_scheme)>,
+                if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<decltype(scoring_scheme)>,
                                                           nucleotide_scoring_scheme>)
                 {
                     if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
@@ -378,16 +378,16 @@ private:
 
         // Get the value for the sequence ends configuration.
         auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-        using align_ends_cfg_t = remove_cvref_t<decltype(align_ends_cfg)>;
+        using align_ends_cfg_t = std::remove_cvref_t<decltype(align_ends_cfg)>;
 
         auto configure_edit_traits = [&] (auto is_semi_global)
         {
             struct edit_traits_type
             {
-                using is_semi_global_type [[maybe_unused]] = remove_cvref_t<decltype(is_semi_global)>;
+                using is_semi_global_type [[maybe_unused]] = std::remove_cvref_t<decltype(is_semi_global)>;
             };
 
-            edit_distance_algorithm<remove_cvref_t<config_t>, edit_traits_type> algorithm{cfg};
+            edit_distance_algorithm<std::remove_cvref_t<config_t>, edit_traits_type> algorithm{cfg};
             return function_wrapper_t{std::move(algorithm)};
         };
 

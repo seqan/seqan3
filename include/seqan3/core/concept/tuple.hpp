@@ -175,18 +175,18 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && requires(t v)
 {
-    typename detail::tuple_type_list<remove_cvref_t<t>>::type;
+    typename detail::tuple_type_list<std::remove_cvref_t<t>>::type;
 
     // NOTE(rrahn): To check the full tuple_concept including the get interface and the std::totally_ordered
     //              we need to make some assumptions. In general these checks can only be executed if the tuple is not
     //              empty. Furthermore, the std::totally_ordered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-                (detail::tuple_get<remove_cvref_t<t>> &&
-                (!meta::fold<detail::tuple_type_list_t<remove_cvref_t<t>>,
+                (detail::tuple_get<std::remove_cvref_t<t>> &&
+                (!meta::fold<detail::tuple_type_list_t<std::remove_cvref_t<t>>,
                              std::true_type,
                              meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
-                std::totally_ordered<remove_cvref_t<t>>));
+                std::totally_ordered<std::remove_cvref_t<t>>));
 };
 //!\endcond
 

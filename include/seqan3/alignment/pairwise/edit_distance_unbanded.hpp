@@ -591,7 +591,7 @@ public:
     //!       Only available if default_edit_distance_trait_type::compute_sequence_alignment is true.
     auto alignment() const noexcept
     {
-        using alignment_t = remove_cvref_t<decltype(std::declval<alignment_result_type &>().alignment())>;
+        using alignment_t = std::remove_cvref_t<decltype(std::declval<alignment_result_type &>().alignment())>;
 
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_sequence_alignment, "alignment() can only be computed if you specify the "

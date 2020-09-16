@@ -131,7 +131,7 @@ public:
     //!\overload
     template <typename other_urng_t>
     //!\cond
-    requires (!std::same_as<remove_cvref_t<other_urng_t>, view_to_simd>) &&
+    requires (!std::same_as<std::remove_cvref_t<other_urng_t>, view_to_simd>) &&
              (!std::same_as<other_urng_t, urng_t>) &&
              std::ranges::viewable_range<other_urng_t>
     //!\endcond

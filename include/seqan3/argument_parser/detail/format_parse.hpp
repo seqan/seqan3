@@ -153,7 +153,7 @@ public:
     template <typename id_type>
     static bool is_empty_id(id_type const & id)
     {
-        if constexpr (std::same_as<remove_cvref_t<id_type>, std::string>)
+        if constexpr (std::same_as<std::remove_cvref_t<id_type>, std::string>)
             return id.empty();
         else // char
             return is_char<'\0'>(id);
