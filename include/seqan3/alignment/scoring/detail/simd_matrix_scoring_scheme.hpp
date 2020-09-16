@@ -23,7 +23,7 @@
 namespace seqan3::detail
 {
 
-/*!\brief A vectorised scoring scheme to handle scoring matrices.
+/*!\brief A vectorised scoring scheme to handle scoring matrices using gather strategy.
  * \ingroup scoring
  * \tparam simd_score_t The type of the simd vector; must model seqan3::simd::simd_concept.
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet.
@@ -67,6 +67,10 @@ private:
     using simd_alphabet_ranks_type = simd_score_t;
 
     static_assert(seqan3::alphabet_size<alphabet_t> <= std::numeric_limits<scalar_type>::max(),
+                  "The selected simd scalar type is not large enough to represent the given alphabet including an "
+                  "additional padding symbol!");
+
+    static_assert(seqan3::alphabet_size<alphabet_t> < std::numeric_limits<scalar_type>::max(),
                   "The selected simd scalar type is not large enough to represent the given alphabet including an "
                   "additional padding symbol!");
 
