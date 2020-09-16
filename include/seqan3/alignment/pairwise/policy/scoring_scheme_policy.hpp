@@ -38,17 +38,17 @@ private:
      * \{
      */
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy() noexcept = default;
+    constexpr scoring_scheme_policy() = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy(scoring_scheme_policy const &) noexcept = default;
+    constexpr scoring_scheme_policy(scoring_scheme_policy const &) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy(scoring_scheme_policy &&) noexcept = default;
+    constexpr scoring_scheme_policy(scoring_scheme_policy &&) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy const &) noexcept = default;
+    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy const &) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy &&) noexcept = default;
+    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy &&) = default;
     //!\brief Defaulted.
-    ~scoring_scheme_policy() noexcept = default;
+    ~scoring_scheme_policy() = default;
 
     //!\brief Initialise the policy.
     template <typename configuration_t>
