@@ -2,10 +2,6 @@
 #include <seqan3/alignment/configuration/all.hpp>
 //! [include]
 
-//! [include_aligned_ends]
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
-//! [include_aligned_ends]
-
 //! [include_scoring_scheme]
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>

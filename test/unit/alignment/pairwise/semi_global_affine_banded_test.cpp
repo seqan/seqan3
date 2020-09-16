@@ -49,11 +49,7 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_greater_0)
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
                   } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{1},
-                                                     seqan3::align_cfg::upper_diagonal{8}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::false_type{}},
-                                                                   seqan3::back_end_first{std::true_type{}},
-                                                                   seqan3::front_end_second{std::true_type{}},
-                                                                   seqan3::back_end_second{std::true_type{}}}};
+                                                     seqan3::align_cfg::upper_diagonal{8}};
 
     EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config | seqan3::align_cfg::output_score{})),
                  seqan3::invalid_alignment_configuration);
@@ -69,11 +65,7 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_0)
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
                   } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
-                                                     seqan3::align_cfg::upper_diagonal{-1}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
-                                                                   seqan3::back_end_first{std::true_type{}},
-                                                                   seqan3::front_end_second{std::false_type{}},
-                                                                   seqan3::back_end_second{std::true_type{}}}};
+                                                     seqan3::align_cfg::upper_diagonal{-1}};
 
     EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config | seqan3::align_cfg::output_score{})),
                  seqan3::invalid_alignment_configuration);
@@ -89,8 +81,7 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_smaller_lo
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
                   } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{3},
-                                                     seqan3::align_cfg::upper_diagonal{-3}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
+                                                     seqan3::align_cfg::upper_diagonal{-3}};
 
     EXPECT_THROW((align_pairwise(std::tie(sequence1, sequence2), config | seqan3::align_cfg::output_score{})),
                  seqan3::invalid_alignment_configuration);
@@ -106,11 +97,7 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_lower_diagonal_ends_in_la
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
                   } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{4},
-                                                     seqan3::align_cfg::upper_diagonal{8}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
-                                                                   seqan3::back_end_first{std::true_type{}},
-                                                                   seqan3::front_end_second{std::true_type{}},
-                                                                   seqan3::back_end_second{std::false_type{}}}};
+                                                     seqan3::align_cfg::upper_diagonal{8}};
     auto alignment_range = align_pairwise(std::tie(sequence1, sequence2), config | seqan3::align_cfg::output_score{});
     EXPECT_THROW((alignment_range.begin()),
                  seqan3::invalid_alignment_configuration);
@@ -126,11 +113,7 @@ TEST_F(pairwise_semiglobal_affine_banded, invalid_band_upper_diagonal_ends_in_la
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
                   } |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-8},
-                                                     seqan3::align_cfg::upper_diagonal{-4}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::end_gaps{seqan3::front_end_first{std::true_type{}},
-                                                                   seqan3::back_end_first{std::false_type{}},
-                                                                   seqan3::front_end_second{std::true_type{}},
-                                                                   seqan3::back_end_second{std::true_type{}}}};
+                                                     seqan3::align_cfg::upper_diagonal{-4}};
 
     auto alignment_range = align_pairwise(std::tie(sequence1, sequence2), config | seqan3::align_cfg::output_score{});
     EXPECT_THROW((alignment_range.begin()),

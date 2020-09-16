@@ -12,7 +12,6 @@
 
  #pragma once
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
