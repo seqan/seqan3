@@ -61,20 +61,20 @@ private:
 
     //!\brief The forward declared iterator type.
     template <typename rng_t>
-    class iterator_type;
+    class basic_iterator;
 
 private:
     /*!\name Associated types
      * \{
      */
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator = iterator_type<urng_t>;
+    using iterator = basic_iterator<urng_t>;
     /*!\brief Note that this declaration does not give any compiler errors for non-const iterable ranges. Although
-     * `iterator_type` inherits from std::ranges::iterator_t which is not defined on a const-range, i.e. `urng_t const,
+     * `basic_iterator` inherits from std::ranges::iterator_t which is not defined on a const-range, i.e. `urng_t const,
      *  if it is not const-iterable. We only just declare this type and never instantiate it, i.e. use this type within
      *  this class, if the underlying range is not const-iterable.
      */
-    using const_iterator = iterator_type<urng_t const>;
+    using const_iterator = basic_iterator<urng_t const>;
     //!\}
 
 public:
@@ -230,14 +230,14 @@ view_take(urng_t && , size_t) -> view_take<std::views::all_t<urng_t>, exactly, o
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, bool exactly, bool or_throw>
 template <typename rng_t>
-class view_take<urng_t, exactly, or_throw>::iterator_type :
-    public inherited_iterator_base<iterator_type<rng_t>, std::ranges::iterator_t<rng_t>>
+class view_take<urng_t, exactly, or_throw>::basic_iterator :
+    public inherited_iterator_base<basic_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
     using base_base_t = std::ranges::iterator_t<rng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t = inherited_iterator_base<iterator_type, std::ranges::iterator_t<rng_t>>;
+    using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
 
     //!\brief The sentinel type is identical to that of the underlying range.
     using sentinel_type = std::ranges::sentinel_t<urng_t>;
@@ -256,23 +256,23 @@ public:
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    iterator_type() = default; //!< Defaulted.
-    iterator_type(iterator_type const & rhs) = default; //!< Defaulted.
-    iterator_type(iterator_type && rhs) = default; //!< Defaulted.
-    iterator_type & operator=(iterator_type const & rhs) = default; //!< Defaulted.
-    iterator_type & operator=(iterator_type && rhs) = default; //!< Defaulted.
-    ~iterator_type() = default; //!< Defaulted.
+    basic_iterator() = default; //!< Defaulted.
+    basic_iterator(basic_iterator const & rhs) = default; //!< Defaulted.
+    basic_iterator(basic_iterator && rhs) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator const & rhs) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator && rhs) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer.
-    constexpr iterator_type(base_base_t const & it) noexcept(noexcept(base_t{it})) :
+    constexpr basic_iterator(base_base_t const & it) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}
     {}
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the members.
-    constexpr iterator_type(base_base_t it,
-                            size_t const _pos,
-                            size_t const _max_pos,
-                            view_take * host = nullptr) noexcept(noexcept(base_t{it})) :
+    constexpr basic_iterator(base_base_t it,
+                             size_t const _pos,
+                             size_t const _max_pos,
+                             view_take * host = nullptr) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
     {
         host_ptr = host;
@@ -304,7 +304,7 @@ public:
      */
 
     //!\brief Increments the iterator by one.
-    constexpr iterator_type & operator++() noexcept(noexcept(++std::declval<base_t &>()))
+    constexpr basic_iterator & operator++() noexcept(noexcept(++std::declval<base_t &>()))
     {
         base_t::operator++();
         ++pos;
@@ -314,16 +314,16 @@ public:
     }
 
     //!\brief Returns an iterator incremented by one.
-    constexpr iterator_type operator++(int) noexcept(noexcept(++std::declval<iterator_type &>()) &&
-                                           std::is_nothrow_copy_constructible_v<iterator_type>)
+    constexpr basic_iterator operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>()) &&
+                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
     {
-        iterator_type cpy{*this};
+        basic_iterator cpy{*this};
         ++(*this);
         return cpy;
     }
 
     //!\brief Decrements the iterator by one.
-    constexpr iterator_type & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
+    constexpr basic_iterator & operator--() noexcept(noexcept(--std::declval<base_base_t &>()))
     //!\cond
         requires std::bidirectional_iterator<base_base_t>
     //!\endcond
@@ -334,19 +334,20 @@ public:
     }
 
     //!\brief Returns an iterator decremented by one.
-    constexpr iterator_type operator--(int) noexcept(noexcept(--std::declval<iterator_type &>()) &&
-                                           std::is_nothrow_copy_constructible_v<iterator_type>)
+    constexpr basic_iterator operator--(int) noexcept(noexcept(--std::declval<basic_iterator &>()) &&
+                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
     //!\cond
         requires std::bidirectional_iterator<base_base_t>
     //!\endcond
     {
-        iterator_type cpy{*this};
+        basic_iterator cpy{*this};
         --(*this);
         return cpy;
     }
 
     //!\brief Advances the iterator by skip positions.
-    constexpr iterator_type & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() += skip))
+    constexpr basic_iterator & operator+=(difference_type const skip)
+        noexcept(noexcept(std::declval<base_t &>() += skip))
     //!\cond
         requires std::random_access_iterator<base_base_t>
     //!\endcond
@@ -357,7 +358,8 @@ public:
     }
 
     //!\brief Advances the iterator by -skip positions.
-    constexpr iterator_type & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -= skip))
+    constexpr basic_iterator & operator-=(difference_type const skip)
+        noexcept(noexcept(std::declval<base_t &>() -= skip))
     //!\cond
         requires std::random_access_iterator<base_base_t>
     //!\endcond
@@ -374,7 +376,7 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    constexpr bool operator==(iterator_type const & rhs) const
+    constexpr bool operator==(basic_iterator const & rhs) const
         noexcept(!or_throw && noexcept(std::declval<base_base_t &>() == std::declval<base_base_t &>()))
     //!\cond
         requires std::forward_iterator<base_base_t>
@@ -404,21 +406,22 @@ public:
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    constexpr friend bool operator==(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs == lhs))
+    constexpr friend bool operator==(sentinel_type const & lhs, basic_iterator const & rhs)
+        noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
     constexpr bool operator!=(sentinel_type const & rhs) const
-        noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+        noexcept(noexcept(std::declval<basic_iterator &>() == rhs))
     {
         return !(*this == rhs);
     }
 
     //!\copydoc operator!=()
-    constexpr bool operator!=(iterator_type const & rhs) const
-        noexcept(noexcept(std::declval<iterator_type &>() == rhs))
+    constexpr bool operator!=(basic_iterator const & rhs) const
+        noexcept(noexcept(std::declval<basic_iterator &>() == rhs))
     //!\cond
         requires std::forward_iterator<base_base_t>
     //!\endcond
@@ -427,7 +430,8 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    constexpr friend bool operator!=(sentinel_type const & lhs, iterator_type const & rhs) noexcept(noexcept(rhs != lhs))
+    constexpr friend bool operator!=(sentinel_type const & lhs, basic_iterator const & rhs) 
+        noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
     }

@@ -69,15 +69,15 @@ private:
 
     //!\brief The forward declared iterator type for views::repeat (a random access iterator).
     template <typename parent_type>
-    class repeat_view_iterator;
+    class basic_iterator;
 
     /*!\name Associated types
     * \{
     */
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator = repeat_view_iterator<repeat_view>;
+    using iterator = basic_iterator<repeat_view>;
     //!\brief The const_iterator type is equal to the iterator type but over the const qualified type.
-    using const_iterator = repeat_view_iterator<repeat_view const>;
+    using const_iterator = basic_iterator<repeat_view const>;
     //!\}
 
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
@@ -199,11 +199,11 @@ private:
 //!\brief The iterator type for views::repeat (a random access iterator).
 template <std::copy_constructible value_t>
 template <typename parent_type>
-class repeat_view<value_t>::repeat_view_iterator :
-    public detail::random_access_iterator_base<parent_type, repeat_view_iterator>
+class repeat_view<value_t>::basic_iterator :
+    public detail::random_access_iterator_base<parent_type, basic_iterator>
 {
     //!\brief The CRTP base type.
-    using base_t = detail::random_access_iterator_base<parent_type, repeat_view_iterator>;
+    using base_t = detail::random_access_iterator_base<parent_type, basic_iterator>;
 
     //!\brief The base position type.
     using typename base_t::position_type;
@@ -223,27 +223,27 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    repeat_view_iterator() = default; //!< Defaulted.
-    repeat_view_iterator(repeat_view_iterator const &) = default; //!< Defaulted.
-    repeat_view_iterator & operator=(repeat_view_iterator const &) = default; //!< Defaulted.
-    repeat_view_iterator (repeat_view_iterator &&) = default; //!< Defaulted.
-    repeat_view_iterator & operator=(repeat_view_iterator &&) = default; //!< Defaulted.
-    ~repeat_view_iterator() = default; //!< Defaulted.
+    basic_iterator() = default; //!< Defaulted.
+    basic_iterator(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator (basic_iterator &&) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
 
     /*!\brief Construct by host range.
      * \param host The host range.
      */
-    explicit constexpr repeat_view_iterator(parent_type & host) noexcept : base_t{host} {}
+    explicit constexpr basic_iterator(parent_type & host) noexcept : base_t{host} {}
 
     /*!\brief Constructor for const version from non-const version.
-     * \param rhs a non-const version of repeat_view_iterator to construct from.
+     * \param rhs a non-const version of basic_iterator to construct from.
      */
     template <typename parent_type2>
     //!\cond
         requires std::is_const_v<parent_type> && (!std::is_const_v<parent_type2>) &&
                  std::is_same_v<std::remove_const_t<parent_type>, parent_type2>
     //!\endcond
-    constexpr repeat_view_iterator(repeat_view_iterator<parent_type2> const & rhs) noexcept :
+    constexpr basic_iterator(basic_iterator<parent_type2> const & rhs) noexcept :
         base_t{rhs}
     {}
     //!\}
@@ -270,14 +270,14 @@ public:
 
     //!\brief Equality comparison to the sentinel always returns false on an infinite view.
     friend constexpr bool operator==(std::default_sentinel_t const &,
-                                     repeat_view_iterator const &) noexcept
+                                     basic_iterator const &) noexcept
     {
         return false;
     }
 
     //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
     friend constexpr bool operator!=(std::default_sentinel_t const &,
-                                     repeat_view_iterator const &) noexcept
+                                     basic_iterator const &) noexcept
     {
         return true;
     }
