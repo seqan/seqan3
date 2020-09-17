@@ -22,12 +22,8 @@
 #include <seqan3/core/platform.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/basic.h>
 #include <seqan/graph_msa.h>
-#include <seqan/modifier.h>
 #include <seqan/reduced_aminoacid.h>
-#include <seqan/seq_io.h>
-#include <seqan/stream.h>
 #endif
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
