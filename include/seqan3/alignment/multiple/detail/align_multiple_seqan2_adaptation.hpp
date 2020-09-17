@@ -79,7 +79,7 @@ public:
 
     /*!\brief Create the SeqAn2 configuration object based on the given SeqAn3 configuration.
      * \tparam seqan3_configuration_t The type of the SeqAn3 configuration object.
-     * \param config The SeqAn3 configuration object.
+     * \param[in] config The SeqAn3 configuration object.
      * \return A SeqAn2 *MsaOptions* object equivalent to the SeqAn3 configuration.
      */
     template <typename seqan3_configuration_t>
@@ -221,7 +221,7 @@ private:
         constexpr auto scoring_scheme_alphabet_index = list_traits::find<scoring_scheme_alphabet_type, seqan3_types>;
         // SeqAn2 alphabet type to use accordingly:
         using score_matrix_alphabet_type = list_traits::at<scoring_scheme_alphabet_index, seqan2_types>;
-        using score_matrix_type = seqan::Score<int, seqan::ScoreMatrix<score_matrix_alphabet_type>>;
+        using score_matrix_type = seqan::Score<int32_t, seqan::ScoreMatrix<score_matrix_alphabet_type>>;
 
         seqan::MsaOptions<alphabet_type, score_matrix_type> msa_options{};
         score_matrix_type score_matrix;

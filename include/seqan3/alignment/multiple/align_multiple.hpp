@@ -56,10 +56,11 @@ namespace seqan3
  * \ingroup multiple_alignment
  * \tparam range_t Type of the input sequences, must model std::ranges::forward_range.
  * \tparam config_t Type of the configuration; defaults to the type of seqan3::align_cfg::msa_default_configuration.
- * \param input A vector of sequences that you want to align.
- * \param config A configuration object that stores the settings for the algorithm;
+ * \param[in] input A vector of sequences that you want to align.
+ * \param[in] config A configuration object that stores the settings for the algorithm;
  *               defaults to seqan3::align_cfg::msa_default_configuration.
  * \return The multiple sequence alignment as a vector of gapped sequences.
+ *
  * \details
  *
  * Computes a multiple sequence alignment from the given input sequences, using a consistency-based progressive
