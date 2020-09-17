@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------
 // This is the path a value takes when using this views::
 //   urange
-// → async_input_buffer_view.buffer               [size n]
+// → async_input_buffer_view.buffer [size n]
 // → iterator.cached_value [size 1]
 // → user
 //-----------------------------------------------------------------------------
