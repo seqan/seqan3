@@ -144,6 +144,9 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
 //  undirectional; trivial_search, collection, dna4, all-mapping
 //============================================================================
 
+// Note: We force the actual computation of the search() by going through the lazy algorithm result range (input_range)
+//       using std::ranges::distance within the for loop.
+
 void unidirectional_search_all_collection(benchmark::State & state, options && o)
 {
     size_t set_size = 10;
