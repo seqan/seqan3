@@ -62,7 +62,8 @@ jobs:
           mkdir -p doc-build
           cd doc-build
           cmake ../test/documentation
-          make -j 2 doc_usr doc_dev
+          make download-cppreference-doxygen-web-tag
+          ctest . -j 2 --output-on-failure
 
       - name: Deploy User Documentation
         uses: Pendect/action-rsyncer@v1.1.0
