@@ -242,27 +242,6 @@ struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1
  */
 inline constexpr output_sequence1_id_tag output_sequence1_id{};
 
-/*!\brief Tag representing sequence2 id output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_sequence2_id_tag : public pipeable_config_element<output_sequence2_id_tag>
-{
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr output_sequence2_id_tag() = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag(output_sequence2_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag(output_sequence2_id_tag &&) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag & operator=(output_sequence2_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag & operator=(output_sequence2_id_tag &&) = default; //!< Defaulted.
-    ~output_sequence2_id_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
-};
-
 /*!\brief Configures the alignment result to output the id of the second sequence.
  * \ingroup alignment_configuration
  *
@@ -283,6 +262,11 @@ struct output_sequence2_id_tag : public pipeable_config_element<output_sequence2
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence1_id
  */
-inline constexpr output_sequence2_id_tag output_sequence2_id{};
+struct output_sequence2_id : public pipeable_config_element<output_sequence2_id>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
+};
 
 } // namespace seqan3::align_cfg

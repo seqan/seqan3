@@ -41,7 +41,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, ids)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_sequence1_id |
-                                      seqan3::align_cfg::output_sequence2_id |
+                                      seqan3::align_cfg::output_sequence2_id{} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           EXPECT_EQ(result.sequence1_id(), result.sequence2_id());
