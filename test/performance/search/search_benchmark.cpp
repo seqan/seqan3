@@ -144,6 +144,9 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
 //  undirectional; trivial_search, collection, dna4, all-mapping
 //============================================================================
 
+// Note: We force the actual computation of the search() by going through the lazy algorithm result range (input_range)
+//       using std::ranges::distance within the for loop.
+
 void unidirectional_search_all_collection(benchmark::State & state, options && o)
 {
     size_t set_size = 10;
@@ -162,8 +165,13 @@ void unidirectional_search_all_collection(benchmark::State & state, options && o
     seqan3::fm_index index{collection};
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
+    size_t sum{};
     for (auto _ : state)
+    {
         auto results = search(reads, index, cfg);
+        sum += std::ranges::distance(results);
+    }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -183,8 +191,13 @@ void unidirectional_search_all(benchmark::State & state, options && o)
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
+    size_t sum{};
     for (auto _ : state)
+    {
         auto results = search(reads, index, cfg);
+        sum += std::ranges::distance(results);
+    }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -204,8 +217,13 @@ void bidirectional_search_all(benchmark::State & state, options && o)
                                                                   o.prob_deletion, o.stddev);
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}};
 
+    size_t sum{};
     for (auto _ : state)
+    {
         auto results = search(reads, index, cfg);
+        sum += std::ranges::distance(results);
+    }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -226,8 +244,13 @@ void unidirectional_search_stratified(benchmark::State & state, options && o)
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
                                 seqan3::search_cfg::hit_strata{o.strata};
 
+    size_t sum{};
     for (auto _ : state)
+    {
         auto results = search(reads, index, cfg);
+        sum += std::ranges::distance(results);
+    }
+    benchmark::DoNotOptimize(sum);
 }
 
 //============================================================================
@@ -248,8 +271,13 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
     seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{o.searched_errors}} |
                                 seqan3::search_cfg::hit_strata{o.strata};
 
+    size_t sum{};
     for (auto _ : state)
+    {
         auto results = search(reads, index, cfg);
+        sum += std::ranges::distance(results);
+    }
+    benchmark::DoNotOptimize(sum);
 }
 
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch0,
