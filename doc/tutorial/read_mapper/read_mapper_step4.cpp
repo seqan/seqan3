@@ -60,7 +60,7 @@ void map_reads(std::filesystem::path const & query_path,
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{
                                                     seqan3::search_cfg::error_count{errors}} |
-                                                seqan3::search_cfg::hit_all_best;
+                                                seqan3::search_cfg::hit_all_best{};
 
     seqan3::configuration const align_config = seqan3::align_cfg::method_global{
                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{true},

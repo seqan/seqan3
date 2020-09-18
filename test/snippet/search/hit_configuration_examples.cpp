@@ -16,7 +16,7 @@ int main()
                                        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Report all hits with the least number of errors (either 0 or 1 errors).
-    seqan3::configuration const cfg4 = seqan3::search_cfg::hit_all_best |
+    seqan3::configuration const cfg4 = seqan3::search_cfg::hit_all_best{} |
                                        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Report all hits with best + 1 error but no more than 2 (errors).

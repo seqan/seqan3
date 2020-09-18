@@ -35,16 +35,6 @@ struct hit_all_tag : public pipeable_config_element<hit_all_tag>
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
 };
 
-/*!\brief Configuration element to receive all hits with the lowest number of errors within the error bounds.
- * \ingroup search_configuration
- */
-struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::hit};
-};
-
 /*!\brief Configuration element to receive a single best hit with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
  */
@@ -67,12 +57,16 @@ namespace seqan3::search_cfg
  */
 inline constexpr detail::hit_all_tag hit_all{};
 
-/*!\brief \copybrief seqan3::detail::hit_all_best_tag
+/*!\brief Configuration element to receive all hits with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
- * \hideinitializer
  */
-inline constexpr detail::hit_all_best_tag hit_all_best{};
+struct hit_all_best : public pipeable_config_element<hit_all_best>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::hit};
+};
 
 /*!\brief \copybrief seqan3::detail::hit_single_best_tag
  * \ingroup search_configuration
@@ -107,7 +101,7 @@ public:
      */
     using hit_variant_type = std::variant<detail::empty_type,
                                           detail::hit_all_tag,
-                                          detail::hit_all_best_tag,
+                                          hit_all_best,
                                           detail::hit_single_best_tag,
                                           hit_strata>;
 
@@ -134,7 +128,7 @@ public:
     template <typename hit_config_t>
     //!\cond
         requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
-                                                     detail::hit_all_best_tag,
+                                                     hit_all_best,
                                                      detail::hit_single_best_tag,
                                                      hit_strata>
     //!\endcond
@@ -145,7 +139,7 @@ public:
     template <typename hit_config_t>
     //!\cond
         requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
-                                                     detail::hit_all_best_tag,
+                                                     hit_all_best,
                                                      detail::hit_single_best_tag,
                                                      hit_strata>
     //!\endcond

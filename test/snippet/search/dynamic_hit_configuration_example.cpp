@@ -19,7 +19,7 @@ int main()
                                       seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Directly initialised.
-    seqan3::search_cfg::hit dynamic_hit2{seqan3::search_cfg::hit_all_best};
+    seqan3::search_cfg::hit dynamic_hit2{seqan3::search_cfg::hit_all_best{}};
 
     // You cannot combine the dynamic hit configuration with the static ones.
     // auto fail = seqan3::search_cfg::hit_single_best | seqan3::search_cfg::hit; // doesn't compile
