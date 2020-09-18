@@ -85,18 +85,24 @@ public:
 
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            size_t const sequence1_size = std::ranges::distance(get<0>(sequence_pair));
+            size_t sequence1_size = std::ranges::distance(get<0>(sequence_pair));
             size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
-
-            // Initialise the cell updater with the dimensions of the regular matrix.
-            this->compare_and_set_optimum.set_target_indices(row_index_type{sequence2_size},
-                                                             column_index_type{sequence1_size});
 
             auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
                                                                               sequence2_size,
                                                                               this->lowest_viable_score());
 
-            compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
+            // Initialise the cell updater with the dimensions of the regular matrix.
+            this->compare_and_set_optimum.set_target_indices(row_index_type{sequence2_size},
+                                                             column_index_type{sequence1_size});
+
+            // Shrink the first sequence if the band ends before its actual end.
+            sequence1_size = std::min(sequence1_size, this->upper_diagonal + sequence2_size);
+
+            compute_matrix(get<0>(sequence_pair) | views::take(sequence1_size),
+                           get<1>(sequence_pair),
+                           alignment_matrix,
+                           index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          this->optimal_score,
