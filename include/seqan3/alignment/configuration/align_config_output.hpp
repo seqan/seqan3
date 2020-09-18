@@ -62,27 +62,6 @@ struct output_score_tag : public pipeable_config_element<output_score_tag>
  */
 inline constexpr output_score_tag output_score{};
 
-/*!\brief Tag representing end position output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_end_position_tag : public pipeable_config_element<output_end_position_tag>
-{
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr output_end_position_tag() = default; //!< Defaulted.
-    constexpr output_end_position_tag(output_end_position_tag const &) = default; //!< Defaulted.
-    constexpr output_end_position_tag(output_end_position_tag &&) = default; //!< Defaulted.
-    constexpr output_end_position_tag & operator=(output_end_position_tag const &) = default; //!< Defaulted.
-    constexpr output_end_position_tag & operator=(output_end_position_tag &&) = default; //!< Defaulted.
-    ~output_end_position_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_end_position};
-};
-
 /*!\brief Configures the alignment result to output the end position.
  * \ingroup alignment_configuration
  *
@@ -107,7 +86,12 @@ struct output_end_position_tag : public pipeable_config_element<output_end_posit
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_end_position_tag output_end_position{};
+struct output_end_position : public pipeable_config_element<output_end_position>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_end_position};
+};
 
 /*!\brief Configures the alignment result to output the begin positions.
  * \ingroup alignment_configuration
