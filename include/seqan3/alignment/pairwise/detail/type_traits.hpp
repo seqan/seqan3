@@ -135,7 +135,7 @@ public:
     //!\brief Flag indicating whether a user provided callback was given.
     static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
     //!\brief The selected scoring scheme.
-    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).value);
+    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).scheme);
     //!\brief The alphabet of the selected scoring scheme.
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
     //!\brief The original score type selected by the user.
