@@ -54,19 +54,25 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_score{} |
                                       seqan3::align_cfg::output_end_position{};
-    auto [database, query] = fixture.get_sequences();
-    auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
-                 | seqan3::views::to<std::vector>;
 
-    EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
-    EXPECT_RANGE_EQ(res_vec |
-                    std::views::transform([] (auto res)
-                    {
-                        return seqan3::alignment_coordinate{
-                                   seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                   seqan3::detail::row_index_type{res.sequence2_end_position()}};
-                    }),
-                    fixture.get_end_positions());
+    using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
+
+    if constexpr (!(traits_t::is_vectorised && traits_t::is_banded))
+    {
+        auto [database, query] = fixture.get_sequences();
+        auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
+                     | seqan3::views::to<std::vector>;
+
+        EXPECT_RANGE_EQ(res_vec | std::views::transform([] (auto res) { return res.score(); }), fixture.get_scores());
+        EXPECT_RANGE_EQ(res_vec |
+                        std::views::transform([] (auto res)
+                        {
+                            return seqan3::alignment_coordinate{
+                                    seqan3::detail::column_index_type{res.sequence1_end_position()},
+                                    seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                        }),
+                        fixture.get_end_positions());
+    }
 }
 
 TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
