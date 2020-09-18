@@ -17,7 +17,6 @@
 #include <utility>
 #include <vector>
 
-
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
@@ -25,6 +24,8 @@
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
+#include <seqan3/alignment/pairwise/detail/concept.hpp>
+#include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm_banded.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_alignment_matrix.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
@@ -33,6 +34,8 @@
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker_simd.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_scoring_scheme.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
@@ -43,10 +46,6 @@
 #include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
-#include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
-#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/alignment/pairwise/detail/concept.hpp>
-#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>
@@ -292,14 +291,17 @@ public:
         align_cfg::gap_cost_affine edit_gap_cost{};
         auto const & gap_cost = config_with_result_type.get_or(edit_gap_cost);
         auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
-        auto align_ends_cfg = config_with_result_type.get_or(align_cfg::aligned_ends{free_ends_none}).value;
 
         if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
             // Only use edit distance if ...
+            auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
+            // Only use edit distance if ...
             if (gap_cost.open_score == 0 &&  // gap open score is not set,
-                !(align_ends_cfg[2] || align_ends_cfg[3]) && // none of the free end gaps are set for second seq,
-                align_ends_cfg[0] == align_ends_cfg[1]) // free ends for leading and trailing gaps are equal in first seq.
+                !(method_global_cfg.free_end_gaps_sequence2_leading ||
+                  method_global_cfg.free_end_gaps_sequence2_trailing) && // none of the free end gaps are set for second seq,
+                (method_global_cfg.free_end_gaps_sequence1_leading ==
+                 method_global_cfg.free_end_gaps_sequence1_trailing)) // free ends for leading and trailing gaps are equal in first seq.
             {
                 // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
                 //       option via the scheme.
@@ -377,8 +379,7 @@ private:
         // ----------------------------------------------------------------------------
 
         // Get the value for the sequence ends configuration.
-        auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-        using align_ends_cfg_t = std::remove_cvref_t<decltype(align_ends_cfg)>;
+        auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
 
         auto configure_edit_traits = [&] (auto is_semi_global)
         {
@@ -398,18 +399,9 @@ private:
             {
                 return configure_edit_traits(std::false_type{});
             }
-            else if constexpr (align_ends_cfg_t::template is_static<1>())
-            {
-#if defined(__GNUC__) && __GNUC__ >= 9
-                constexpr bool free_ends_trailing = align_ends_cfg_t::template get_static<1>();
-                return configure_edit_traits(std::integral_constant<bool, free_ends_trailing>{});
-#else // ^^^ workaround / no workaround vvv
-                return configure_edit_traits(std::integral_constant<bool, align_ends_cfg_t::template get_static<1>()>{});
-#endif // defined(__GNUC__) && __GNUC__ >= 9
-            }
             else // Resolve correct property at runtime.
             {
-                if (align_ends_cfg[1])
+                if (method_global_cfg.free_end_gaps_sequence1_trailing)
                     return configure_edit_traits(std::true_type{});
                 else
                     return configure_edit_traits(std::false_type{});
@@ -417,36 +409,11 @@ private:
         };
 
         // Check if it has free ends set for the first sequence leading gaps.
-        // If possible use static information.
-        if constexpr (align_ends_cfg_t::template is_static<0>())
-            return has_free_ends_trailing(std::integral_constant<bool, align_ends_cfg_t::template get_static<0>()>{});
-        else // Resolve correct property at runtime.
-        {
-            if (align_ends_cfg[0])
-                return has_free_ends_trailing(std::true_type{});
-            else
-                return has_free_ends_trailing(std::false_type{});
-        }
+        if (method_global_cfg.free_end_gaps_sequence1_leading)
+            return has_free_ends_trailing(std::true_type{});
+        else
+            return has_free_ends_trailing(std::false_type{});
     }
-
-    /*!\brief Configures the free-gaps for the dynamic programming matrix according to seqan3::align_cfg::aligned_ends
-     *        settings.
-     *
-     * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
-     * \tparam policies_t A template parameter pack for the already configured policy types.
-     * \tparam config_t The alignment configuration type.
-     *
-     * \param[in] cfg The passed configuration object.
-     *
-     * \returns the configured alignment algorithm.
-     *
-     * \details
-     *
-     * The free ends from aligned_ends are converted to the configuration mechanism using align_cfg::method_global.
-     * This is a temporary function and will be removed when replacement of the aligned_ends config is completed.
-     */
-    template <typename function_wrapper_t, typename ...policies_t, typename config_t>
-    static constexpr function_wrapper_t configure_free_ends(config_t const & cfg);
 
     /*!\brief Configures the scoring scheme to use for the alignment computation.
      *
@@ -562,31 +529,7 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                             typename traits_t::scoring_scheme_type>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;
-    return configure_free_ends<function_wrapper_t, scoring_scheme_policy_t>(cfg);
-}
-
-// This function returns a std::function object which can capture runtime dependent alignment algorithm types through
-// a fixed invocation interface which is already defined by the caller of this function.
-template <typename function_wrapper_t, typename ...policies_t, typename config_t>
-constexpr function_wrapper_t alignment_configurator::configure_free_ends(config_t const & cfg)
-{
-    using traits_t = alignment_configuration_traits<config_t>;
-    // Get the value for the sequence ends configuration.
-    auto align_ends_cfg = cfg.get_or(align_cfg::aligned_ends{free_ends_none}).value;
-
-    auto maybe_modified_cfg = [&] (auto const & config)
-    {
-        if constexpr (traits_t::is_local)
-            return config;
-        else
-            return config.template remove<align_cfg::method_global>() |
-                        align_cfg::method_global{align_cfg::free_end_gaps_sequence1_leading{align_ends_cfg[0]},
-                                                 align_cfg::free_end_gaps_sequence2_leading{align_ends_cfg[2]},
-                                                 align_cfg::free_end_gaps_sequence1_trailing{align_ends_cfg[1]},
-                                                 align_cfg::free_end_gaps_sequence2_trailing{align_ends_cfg[3]}};
-    }(cfg);
-
-    return make_algorithm<function_wrapper_t, policies_t...>(maybe_modified_cfg);
+    return make_algorithm<function_wrapper_t, scoring_scheme_policy_t>(cfg);
 }
 //!\endcond
 } // namespace seqan3::detail
