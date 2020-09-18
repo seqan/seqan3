@@ -272,7 +272,7 @@ TEST(alignment_configurator, configure_result_score_type)
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::output_end_position |
                seqan3::align_cfg::output_score |
-               seqan3::align_cfg::score_type<double>;
+               seqan3::align_cfg::score_type<double>{};
     auto result = run_test(cfg);
 
     EXPECT_DOUBLE_EQ(result.score(), 0.0);
