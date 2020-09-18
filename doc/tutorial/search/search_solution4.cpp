@@ -15,7 +15,7 @@ int main()
 
     seqan3::debug_stream << "Searching all hits\n";
     seqan3::configuration const cfg_all = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                          seqan3::search_cfg::hit_all;
+                                          seqan3::search_cfg::hit_all{};
     auto results_all = search(query, index, cfg_all);
     // Attention: results_all is a pure std::ranges::input_range,
     //            so after calling std::ranges::distance, you cannot iterate over it again!

@@ -36,5 +36,5 @@ inline const configuration default_configuration = max_error_total{error_count{0
                                                    output_query_id{} |
                                                    output_reference_id |
                                                    output_reference_begin_position{} |
-                                                   hit_all;
+                                                   hit_all{};
 } // namespace seqan3::search_cfg

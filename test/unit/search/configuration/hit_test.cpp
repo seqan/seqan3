@@ -16,7 +16,7 @@
 // test template : pipeable_config_element_test
 // ---------------------------------------------------------------------------------------------------------------------
 
-using test_types = ::testing::Types<seqan3::detail::hit_all_tag,
+using test_types = ::testing::Types<seqan3::search_cfg::hit_all,
                                     seqan3::search_cfg::hit_all_best,
                                     seqan3::detail::hit_single_best_tag,
                                     seqan3::search_cfg::hit_strata,
@@ -30,8 +30,8 @@ INSTANTIATE_TYPED_TEST_SUITE_P(mode_elements, pipeable_config_element_test, test
 
 TEST(config_element_test, tags)
 {
-    seqan3::configuration elem_all = seqan3::search_cfg::hit_all;
-    EXPECT_TRUE((std::same_as<decltype(elem_all), seqan3::configuration<seqan3::detail::hit_all_tag>>));
+    seqan3::configuration elem_all = seqan3::search_cfg::hit_all{};
+    EXPECT_TRUE((std::same_as<decltype(elem_all), seqan3::configuration<seqan3::search_cfg::hit_all>>));
 
     seqan3::configuration elem_all_best = seqan3::search_cfg::hit_all_best{};
     EXPECT_TRUE((std::same_as<decltype(elem_all_best), seqan3::configuration<seqan3::search_cfg::hit_all_best>>));
@@ -68,8 +68,8 @@ TEST(hit_dynamic, empty)
 TEST(hit_dynamic, construction)
 {
     {
-        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all};
-        EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_tag>(dynamic_hit.hit_variant));
+        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all{}};
+        EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all>(dynamic_hit.hit_variant));
     }
 
     {
@@ -92,8 +92,8 @@ TEST(hit_dynamic, construction)
 TEST(hit_dynamic, assignment)
 {
     seqan3::search_cfg::hit dynamic_hit{};
-    dynamic_hit = seqan3::search_cfg::hit_all;
-    EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_tag>(dynamic_hit.hit_variant));
+    dynamic_hit = seqan3::search_cfg::hit_all{};
+    EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all>(dynamic_hit.hit_variant));
 
     dynamic_hit = seqan3::search_cfg::hit_all_best{};
     EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all_best>(dynamic_hit.hit_variant));

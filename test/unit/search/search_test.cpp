@@ -304,13 +304,13 @@ TYPED_TEST(search_test, search_strategy_all)
 
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                          seqan3::search_cfg::hit_all;
+                                          seqan3::search_cfg::hit_all{};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all};
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all{}};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position, (std::vector{0, 1, 4, 5, 8, 9}));
     }
 }
