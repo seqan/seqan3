@@ -170,7 +170,7 @@ public:
         configuration_t::template exists<align_cfg::output_end_position_tag>();
     //!\brief Flag indicating whether the begin positions shall be computed.
     static constexpr bool compute_begin_positions =
-        configuration_t::template exists<align_cfg::output_begin_position_tag>();
+        configuration_t::template exists<align_cfg::output_begin_position>();
     //!\brief Flag indicating whether the sequence alignment shall be computed.
     static constexpr bool compute_sequence_alignment =
         configuration_t::template exists<align_cfg::output_alignment>();
