@@ -27,7 +27,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::align_cfg::parallel,
                                     seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
                                     seqan3::align_cfg::vectorised,
-                                    seqan3::detail::result_type_tag<alignment_result_t>>;
+                                    seqan3::align_cfg::detail::result_type<alignment_result_t>>;
 
 TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
 
