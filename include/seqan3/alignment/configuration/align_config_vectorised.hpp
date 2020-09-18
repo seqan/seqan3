@@ -17,20 +17,6 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 
-namespace seqan3::detail
-{
-
-/*!\brief A tag to select the vectorised alignment algorithm.
- * \ingroup alignment_configuration
- */
-struct vectorised_tag : public pipeable_config_element<vectorised_tag>
-{
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::vectorised};
-};
-
-} // namespace seqan3::detail
-
 namespace seqan3::align_cfg
 {
 
@@ -52,6 +38,11 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-inline constexpr seqan3::detail::vectorised_tag vectorised{};
+struct vectorised : public pipeable_config_element<vectorised>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::vectorised};
+};
 
 } // namespace seqan3::align_cfg

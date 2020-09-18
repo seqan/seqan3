@@ -35,7 +35,7 @@ struct align_pairwise_test : ::testing::Test
                                            t>;
     using config_t = decltype(seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | dummy_cfg_t{});
 
-    static constexpr bool is_vectorised = config_t::template exists<seqan3::detail::vectorised_tag>();
+    static constexpr bool is_vectorised = config_t::template exists<seqan3::align_cfg::vectorised>();
 };
 
 using testing_types = ::testing::Types<void,
