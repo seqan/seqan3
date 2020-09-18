@@ -12,7 +12,7 @@ int main()
     if (true)
         dynamic_hit = seqan3::search_cfg::hit_strata{4};
     else
-        dynamic_hit = seqan3::search_cfg::hit_single_best;
+        dynamic_hit = seqan3::search_cfg::hit_single_best{};
 
     // Combine it with other configurations.
     seqan3::configuration const cfg = dynamic_hit |
@@ -22,7 +22,7 @@ int main()
     seqan3::search_cfg::hit dynamic_hit2{seqan3::search_cfg::hit_all_best{}};
 
     // You cannot combine the dynamic hit configuration with the static ones.
-    // auto fail = seqan3::search_cfg::hit_single_best | seqan3::search_cfg::hit; // doesn't compile
+    // auto fail = seqan3::search_cfg::hit_single_best{} | seqan3::search_cfg::hit; // doesn't compile
 
     return 0;
 }

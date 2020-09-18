@@ -252,7 +252,7 @@ algorithm_t search_configurator::configure_hit_strategy(configuration_t const & 
         return std::visit(multi_invocable
         {
             [&] (search_cfg::hit_all_best) { return next_config_step(cfg_without_hit | search_cfg::hit_all_best{}); },
-            [&] (hit_single_best_tag) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best); },
+            [&] (search_cfg::hit_single_best) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best{}); },
             [&] (search_cfg::hit_strata const & strata) { return next_config_step(cfg_without_hit | strata); },
             [&] (auto) { return next_config_step(cfg_without_hit | search_cfg::hit_all{}); }
         }, hit_variant);

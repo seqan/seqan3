@@ -12,7 +12,7 @@ int main()
                                        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Report the single best hit with the least number of errors (up to 1 error is allowed).
-    seqan3::configuration const cfg3 = seqan3::search_cfg::hit_single_best |
+    seqan3::configuration const cfg3 = seqan3::search_cfg::hit_single_best{} |
                                        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Report all hits with the least number of errors (either 0 or 1 errors).
@@ -26,7 +26,7 @@ int main()
                                        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}};
 
     // you must choose only one mode
-    // auto fail = seqan3::search_cfg::hit_single_best | seqan3::search_cfg::hit_all{}; // doesn't compile
+    // auto fail = seqan3::search_cfg::hit_single_best{} | seqan3::search_cfg::hit_all{}; // doesn't compile
 
     return 0;
 }

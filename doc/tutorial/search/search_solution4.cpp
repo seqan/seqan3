@@ -31,7 +31,7 @@ int main()
 
     seqan3::debug_stream << "Searching best hit\n";
     seqan3::configuration const cfg_best = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                           seqan3::search_cfg::hit_single_best;
+                                           seqan3::search_cfg::hit_single_best{};
     auto results_best = search(query, index, cfg_best);
     // Attention: results_best is a pure std::ranges::input_range,
     //            so after calling std::ranges::distance, you cannot iterate over it again!
