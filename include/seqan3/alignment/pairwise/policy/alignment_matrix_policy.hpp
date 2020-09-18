@@ -152,15 +152,15 @@ private:
 
         auto trim_sequence1 = [&] () constexpr
         {
-            size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_diagonal.get() - 1, 0);
-            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_diagonal.get() + seq2_size, seq1_size);
+            size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_diagonal - 1, 0);
+            size_t end_pos = std::min<std::ptrdiff_t>(band.upper_diagonal + seq2_size, seq1_size);
             return sequence1 | views::slice(begin_pos, end_pos);
         };
 
         auto trim_sequence2 = [&] () constexpr
         {
-            size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal.get() + 1, 0));
-            size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_diagonal.get(), seq2_size);
+            size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal + 1, 0));
+            size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_diagonal, seq2_size);
             return sequence2 | views::slice(begin_pos, end_pos);
         };
 

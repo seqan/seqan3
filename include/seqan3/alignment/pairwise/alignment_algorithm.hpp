@@ -335,7 +335,7 @@ private:
         using diff_type = std::iter_difference_t<std::ranges::iterator_t<sequence1_t>>;
         static_assert(std::is_signed_v<diff_type>,  "Only signed types can be used to test the band parameters.");
 
-        if (static_cast<diff_type>(band.lower_diagonal.get()) > std::ranges::distance(sequence1))
+        if (static_cast<diff_type>(band.lower_diagonal) > std::ranges::distance(sequence1))
         {
             throw invalid_alignment_configuration
             {
@@ -343,7 +343,7 @@ private:
             };
         }
 
-        if (static_cast<diff_type>(band.upper_diagonal.get()) < -std::ranges::distance(sequence2))
+        if (static_cast<diff_type>(band.upper_diagonal) < -std::ranges::distance(sequence2))
         {
             throw invalid_alignment_configuration
             {

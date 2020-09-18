@@ -95,8 +95,8 @@ protected:
 
         auto band = config.get_or(seqan3::align_cfg::band_fixed_size{});
 
-        lower_diagonal = band.lower_diagonal.get();
-        upper_diagonal = band.upper_diagonal.get();
+        lower_diagonal = band.lower_diagonal;
+        upper_diagonal = band.upper_diagonal;
 
         bool invalid_band = upper_diagonal < lower_diagonal;
         std::string error_cause = (invalid_band) ? " The upper diagonal is smaller than the lower diagonal." : "";
