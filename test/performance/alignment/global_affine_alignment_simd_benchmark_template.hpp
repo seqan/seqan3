@@ -87,16 +87,34 @@ void seqan2_affine_accelerated(benchmark::State & state, alphabet_t, args_t && .
     auto exec = std::get<1>(captured_args);
     setNumThreads(exec, std::get<2>(captured_args));
 
+    // Possibly enable banded alignment.
+    auto seqan3_align_cfg = std::get<3>(captured_args);
+    static constexpr bool execute_with_band = seqan3_align_cfg.template exists<seqan3::align_cfg::band_fixed_size>();
+    [[maybe_unused]] int lower_diagonal{};
+    [[maybe_unused]] int upper_diagonal{};
+
+    if constexpr (execute_with_band)
+    {
+        using std::get;
+        auto band_cfg = get<seqan3::align_cfg::band_fixed_size>(seqan3_align_cfg);
+        lower_diagonal = band_cfg.lower_diagonal;
+        upper_diagonal = band_cfg.upper_diagonal;
+    }
+
     int64_t total = 0;
     for (auto _ : state)
     {
         // In SeqAn2 the gap open contains already the gap extension costs, that's why we use -11 here.
-        auto res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
+        seqan::String<int> res;
+        if constexpr (execute_with_band)
+            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme, lower_diagonal, upper_diagonal);
+        else
+            res = seqan::globalAlignmentScore(exec, vec1, vec2, scoring_scheme);
+
         total = std::accumulate(seqan::begin(res), seqan::end(res), total);
     }
 
-    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2),
-                                                                  std::get<3>(captured_args));
+    state.counters["cells"] = seqan3::test::pairwise_cell_updates(seqan3::views::zip(vec1, vec2), seqan3_align_cfg);
     state.counters["CUPS"] = seqan3::test::cell_updates_per_second(state.counters["cells"]);
     state.counters["total"] = total;
 }
