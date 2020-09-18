@@ -19,13 +19,13 @@ int main()
         seqan3::debug_stream << res << "\n";  // prints: {score: -4}
 
     // Compute only the alignment:
-    for (auto res : seqan3::align_pairwise(p, config | seqan3::align_cfg::output_alignment))
+    for (auto res : seqan3::align_pairwise(p, config | seqan3::align_cfg::output_alignment{}))
         seqan3::debug_stream << res << "\n"; // prints: {alignment: (ACGTA-G-C-,A-GTACGACG)}
 
     // Compute the score and the alignment:
     for (auto res : seqan3::align_pairwise(p, config |
                                               seqan3::align_cfg::output_score |
-                                              seqan3::align_cfg::output_alignment))
+                                              seqan3::align_cfg::output_alignment{}))
         seqan3::debug_stream << res << "\n"; // prints: {score: -4, alignment: (ACGTA-G-C-,A-GTACGACG)}
 
     // By default compute everything:

@@ -173,7 +173,7 @@ public:
         configuration_t::template exists<align_cfg::output_begin_position_tag>();
     //!\brief Flag indicating whether the sequence alignment shall be computed.
     static constexpr bool compute_sequence_alignment =
-        configuration_t::template exists<align_cfg::output_alignment_tag>();
+        configuration_t::template exists<align_cfg::output_alignment>();
     //!\brief Flag indicating whether the id of the first sequence shall be returned.
     static constexpr bool output_sequence1_id =
         configuration_t::template exists<align_cfg::output_sequence1_id_tag>();

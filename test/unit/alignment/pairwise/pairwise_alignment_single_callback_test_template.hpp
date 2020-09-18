@@ -99,7 +99,7 @@ TYPED_TEST_P(pairwise_alignment_callback_test, alignment)
                                       seqan3::align_cfg::output_score |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_begin_position |
-                                      seqan3::align_cfg::output_alignment |
+                                      seqan3::align_cfg::output_alignment{} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           EXPECT_EQ(result.score(), fixture.score);

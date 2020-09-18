@@ -50,7 +50,7 @@ static std::string create_sam_file_string(size_t const n_queries)
                                                          seqan3::align_cfg::extension_score{-1}} |
                       seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                       seqan3::align_cfg::output_begin_position |
-                      seqan3::align_cfg::output_alignment |
+                      seqan3::align_cfg::output_alignment{} |
                       seqan3::align_cfg::output_score;
 
         using sam_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::offset,

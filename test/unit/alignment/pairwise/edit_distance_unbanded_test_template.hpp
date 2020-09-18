@@ -126,7 +126,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_score |
-                                      seqan3::align_cfg::output_alignment ;
+                                      seqan3::align_cfg::output_alignment{};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -143,7 +143,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, score_matrix)
 TYPED_TEST_P(edit_distance_unbanded_test, trace_matrix)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment{};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -187,7 +187,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_alignment{};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
