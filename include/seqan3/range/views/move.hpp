@@ -67,7 +67,7 @@ namespace seqan3::views
  */
 inline auto const move = std::views::transform(detail::multi_invocable
 {
-    [] (auto && arg) -> remove_cvref_t<decltype(arg)> { return std::move(arg); },
+    [] (auto && arg) -> std::remove_cvref_t<decltype(arg)> { return std::move(arg); },
     [] (auto  & arg) -> decltype(auto)                { return std::move(arg); }
 });
 //!\}

@@ -46,7 +46,7 @@ private:
 
     // Iterator declaration.
     template <typename underlying_iter_t>
-    class enforced_random_access_iterator;
+    class basic_iterator;
 
 public:
 
@@ -67,7 +67,7 @@ public:
     //!\brief Construction from the underlying viewable range.
     template <typename viewable_rng_t>
     //!\cond
-     requires (!std::same_as<remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
+     requires (!std::same_as<std::remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
               std::ranges::viewable_range<viewable_rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
     //!\endcond
@@ -82,7 +82,7 @@ public:
     //!\brief Returns the iterator to the begin of the range.
     constexpr auto begin() noexcept
     {
-        return enforced_random_access_iterator<decltype(std::ranges::begin(urng))>{std::ranges::begin(urng)};
+        return basic_iterator<decltype(std::ranges::begin(urng))>{std::ranges::begin(urng)};
     }
 
     //!\copydoc seqan3::detail::view_enforce_random_access::begin
@@ -91,7 +91,7 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return enforced_random_access_iterator<decltype(std::ranges::cbegin(urng))>{std::ranges::cbegin(urng)};
+        return basic_iterator<decltype(std::ranges::cbegin(urng))>{std::ranges::cbegin(urng)};
     }
 
     /*!\brief Returns the sentinel to the end of the range.
@@ -99,13 +99,13 @@ public:
      * \details
      *
      * If the underlying range is a common range this functions returns
-     * seqan3::detail::view_enforce_random_access::enforced_random_access_iterator initialised with the end of the
+     * seqan3::detail::view_enforce_random_access::basic_iterator initialised with the end of the
      * underlying range. Otherwise it returns the sentinel of the underlying range.
      */
     constexpr auto end() noexcept
     {
         if constexpr (std::ranges::common_range<urng_t>)
-            return enforced_random_access_iterator<decltype(std::ranges::end(urng))>{std::ranges::end(urng)};
+            return basic_iterator<decltype(std::ranges::end(urng))>{std::ranges::end(urng)};
         else
             return urng.end();
     }
@@ -117,7 +117,7 @@ public:
     //!\endcond
     {
         if constexpr (std::ranges::common_range<urng_t>)
-            return enforced_random_access_iterator<decltype(std::ranges::cend(urng))>{std::ranges::cend(urng)};
+            return basic_iterator<decltype(std::ranges::cend(urng))>{std::ranges::cend(urng)};
         else
             return std::ranges::cend(urng);
     }
@@ -139,12 +139,12 @@ template <std::ranges::view urng_t>
     requires pseudo_random_access_range<urng_t>
 //!\endcond
 template <typename underlying_iter_t>
-class view_enforce_random_access<urng_t>::enforced_random_access_iterator :
-    public inherited_iterator_base<enforced_random_access_iterator<underlying_iter_t>, underlying_iter_t>
+class view_enforce_random_access<urng_t>::basic_iterator :
+    public inherited_iterator_base<basic_iterator<underlying_iter_t>, underlying_iter_t>
 {
 private:
     //!\brief The type of the base class.
-    using base_t = inherited_iterator_base<enforced_random_access_iterator<underlying_iter_t>, underlying_iter_t>;
+    using base_t = inherited_iterator_base<basic_iterator<underlying_iter_t>, underlying_iter_t>;
 
 public:
 
@@ -159,17 +159,17 @@ public:
     // Importing base's constructors.
     using base_t::base_t;
     //!\brief Defaulted.
-    constexpr enforced_random_access_iterator() = default;
+    constexpr basic_iterator() = default;
     //!\brief Defaulted.
-    constexpr enforced_random_access_iterator(enforced_random_access_iterator const &) = default;
+    constexpr basic_iterator(basic_iterator const &) = default;
     //!\brief Defaulted.
-    constexpr enforced_random_access_iterator(enforced_random_access_iterator &&) = default;
+    constexpr basic_iterator(basic_iterator &&) = default;
     //!\brief Defaulted.
-    constexpr enforced_random_access_iterator & operator=(enforced_random_access_iterator const &) = default;
+    constexpr basic_iterator & operator=(basic_iterator const &) = default;
     //!\brief Defaulted.
-    constexpr enforced_random_access_iterator & operator=(enforced_random_access_iterator &&) = default;
+    constexpr basic_iterator & operator=(basic_iterator &&) = default;
     //!\brief Defaulted.
-    ~enforced_random_access_iterator() = default;
+    ~basic_iterator() = default;
     //!\}
 
     /*!\name Comparison operators
@@ -180,8 +180,7 @@ public:
     using base_t::operator==;
     using base_t::operator!=;
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(enforced_random_access_iterator const & lhs,
-                                     std::ranges::sentinel_t<urng_t> const & rhs)
+    friend constexpr bool operator==(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
@@ -189,8 +188,7 @@ public:
     }
 
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs,
-                                     enforced_random_access_iterator const & rhs)
+    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
@@ -198,8 +196,7 @@ public:
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(enforced_random_access_iterator const & lhs,
-                                     std::ranges::sentinel_t<urng_t> const & rhs)
+    friend constexpr bool operator!=(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() !=
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
@@ -207,8 +204,7 @@ public:
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs,
-                                     enforced_random_access_iterator const & rhs)
+    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
         noexcept(noexcept(std::declval<underlying_iter_t const &>() !=
                           std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
@@ -233,7 +229,7 @@ public:
 
     //!\brief Computes the distance betwen this iterator and the sentinel of the underlying range.
     constexpr friend typename base_t::difference_type operator-(std::ranges::sentinel_t<urng_t> const & lhs,
-                                                                enforced_random_access_iterator const & rhs)
+                                                                basic_iterator const & rhs)
         noexcept(noexcept(std::declval<std::ranges::sentinel_t<urng_t> const &>() -
                           std::declval<underlying_iter_t const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>

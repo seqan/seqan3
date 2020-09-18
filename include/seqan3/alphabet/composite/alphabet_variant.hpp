@@ -440,7 +440,7 @@ public:
 
         meta::for_each(alternatives{}, [&] (auto && alt)
         {
-            if (char_is_valid_for<remove_cvref_t<decltype(alt)>>(chr))
+            if (char_is_valid_for<std::remove_cvref_t<decltype(alt)>>(chr))
                 is_valid = true;
         });
 
@@ -572,7 +572,7 @@ protected:
 
             meta::for_each(alternatives{}, [&] (auto && alt)
             {
-                using alt_type = remove_cvref_t<decltype(alt)>;
+                using alt_type = std::remove_cvref_t<decltype(alt)>;
 
                 if (there_was_no_valid_representation && char_is_valid_for<alt_type>(chr))
                 {

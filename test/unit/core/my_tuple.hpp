@@ -113,7 +113,7 @@ struct tuple_size<seqan3::my_tuple>
 template <size_t elem_no>
 struct tuple_element<elem_no, seqan3::my_tuple>
 {
-    using type = seqan3::remove_cvref_t<decltype(get<elem_no>(std::declval<seqan3::my_tuple>()))>;
+    using type = std::remove_cvref_t<decltype(get<elem_no>(std::declval<seqan3::my_tuple>()))>;
 };
 
 } // namespace std

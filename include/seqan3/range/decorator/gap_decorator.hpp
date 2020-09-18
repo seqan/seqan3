@@ -132,7 +132,7 @@ public:
     template <typename other_range_t>
     //!\cond
          requires (!std::same_as<other_range_t, gap_decorator>) &&
-                  std::same_as<remove_cvref_t<other_range_t>, remove_cvref_t<inner_type>> &&
+                  std::same_as<std::remove_cvref_t<other_range_t>, std::remove_cvref_t<inner_type>> &&
                   std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
     //!\endcond
     gap_decorator(other_range_t && range) : ungapped_view{views::type_reduce(std::forward<inner_type>(range))}

@@ -68,7 +68,7 @@ struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_sc
 
 //!\brief Deduces the scoring scheme type from the constructor argument.
 template <typename scheme_t>
-scoring_scheme(scheme_t) -> scoring_scheme<remove_cvref_t<scheme_t>>;
+scoring_scheme(scheme_t) -> scoring_scheme<std::remove_cvref_t<scheme_t>>;
 //!\}
 
 } // namespace seqan3::align_cfg

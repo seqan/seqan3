@@ -15,10 +15,9 @@
 
 #include <tuple>
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
@@ -84,18 +83,18 @@ protected:
     explicit policy_affine_gap_recursion(alignment_configuration_t const & config)
     {
         // Get the gap scheme from the config or choose -1 and -10 as default.
-        auto const & selected_gap_scheme = config.get_or(align_cfg::gap{gap_scheme{seqan3::gap_score{-1},
-                                                                                   seqan3::gap_open_score{-10}}}).value;
+        auto const & selected_gap_scheme = config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10},
+                                                                                    align_cfg::extension_score{-1}});
 
         if constexpr (simd::simd_concept<score_type>)
         {
-            gap_extension_score = simd::fill<score_type>(selected_gap_scheme.get_gap_score());
-            gap_open_score = simd::fill<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
+            gap_extension_score = simd::fill<score_type>(selected_gap_scheme.extension_score);
+            gap_open_score = simd::fill<score_type>(selected_gap_scheme.open_score) + gap_extension_score;
         }
         else
         {
-            gap_extension_score = static_cast<score_type>(selected_gap_scheme.get_gap_score());
-            gap_open_score = static_cast<score_type>(selected_gap_scheme.get_gap_open_score()) + gap_extension_score;
+            gap_extension_score = static_cast<score_type>(selected_gap_scheme.extension_score);
+            gap_open_score = static_cast<score_type>(selected_gap_scheme.open_score) + gap_extension_score;
         }
 
         auto method_global_config = config.get_or(align_cfg::method_global{});

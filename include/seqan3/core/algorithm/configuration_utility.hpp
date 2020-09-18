@@ -54,10 +54,10 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
 template <config_element_specialisation query_t, config_element_specialisation ... compare_types>
 struct is_configuration_valid :
     public std::conditional_t<
-        (std::is_same_v<remove_cvref_t<decltype(query_t::id)>, remove_cvref_t<decltype(compare_types::id)>> && ...) &&
-        (compatibility_table<remove_cvref_t<decltype(query_t::id)>>
-                [static_cast<std::underlying_type_t<remove_cvref_t<decltype(query_t::id)>>>(query_t::id)]
-                [static_cast<std::underlying_type_t<remove_cvref_t<decltype(query_t::id)>>>(compare_types::id)] && ...),
+        (std::is_same_v<std::remove_cvref_t<decltype(query_t::id)>, std::remove_cvref_t<decltype(compare_types::id)>> && ...) &&
+        (compatibility_table<std::remove_cvref_t<decltype(query_t::id)>>
+                [static_cast<std::underlying_type_t<std::remove_cvref_t<decltype(query_t::id)>>>(query_t::id)]
+                [static_cast<std::underlying_type_t<std::remove_cvref_t<decltype(query_t::id)>>>(compare_types::id)] && ...),
         std::true_type,  // If condition is true.
         std::false_type  // If condition is false.
     >

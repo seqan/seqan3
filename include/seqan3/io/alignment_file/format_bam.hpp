@@ -640,16 +640,16 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
     {
         static_assert((std::ranges::forward_range<ref_id_type> ||
                        std::integral<std::remove_reference_t<ref_id_type>> ||
-                       detail::is_type_specialisation_of_v<remove_cvref_t<ref_id_type>, std::optional>),
+                       detail::is_type_specialisation_of_v<std::remove_cvref_t<ref_id_type>, std::optional>),
                       "The ref_id object must be a std::ranges::forward_range "
                       "over letters that model seqan3::alphabet or an integral or a std::optional<integral>.");
     }
 
-    static_assert(tuple_like<remove_cvref_t<align_type>>,
+    static_assert(tuple_like<std::remove_cvref_t<align_type>>,
                   "The align object must be a std::pair of two ranges whose "
                   "value_type is comparable to seqan3::gap");
 
-    static_assert((std::tuple_size_v<remove_cvref_t<align_type>> == 2 &&
+    static_assert((std::tuple_size_v<std::remove_cvref_t<align_type>> == 2 &&
                    std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<0>(align))>> &&
                    std::equality_comparable_with<gap, std::ranges::range_reference_t<decltype(std::get<1>(align))>>),
                   "The align object must be a std::pair of two ranges whose "
@@ -660,24 +660,24 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
                   "The qual object must be a std::ranges::forward_range "
                   "over letters that model seqan3::alphabet.");
 
-    static_assert(tuple_like<remove_cvref_t<mate_type>>,
+    static_assert(tuple_like<std::remove_cvref_t<mate_type>>,
                   "The mate object must be a std::tuple of size 3 with "
                   "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
                   "2) a std::integral or std::optional<std::integral>, and "
                   "3) a std::integral.");
 
     static_assert(((std::ranges::forward_range<decltype(std::get<0>(mate))>     ||
-                    std::integral<remove_cvref_t<decltype(std::get<0>(mate))>> ||
-                    detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
-                  (std::integral<remove_cvref_t<decltype(std::get<1>(mate))>> ||
-                   detail::is_type_specialisation_of_v<remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
-                  std::integral<remove_cvref_t<decltype(std::get<2>(mate))>>),
+                    std::integral<std::remove_cvref_t<decltype(std::get<0>(mate))>> ||
+                    detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<0>(mate))>, std::optional>) &&
+                  (std::integral<std::remove_cvref_t<decltype(std::get<1>(mate))>> ||
+                   detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(std::get<1>(mate))>, std::optional>) &&
+                  std::integral<std::remove_cvref_t<decltype(std::get<2>(mate))>>),
                   "The mate object must be a std::tuple of size 3 with "
                   "1) a std::ranges::forward_range with a value_type modelling seqan3::alphabet, "
                   "2) a std::integral or std::optional<std::integral>, and "
                   "3) a std::integral.");
 
-    static_assert(std::same_as<remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
+    static_assert(std::same_as<std::remove_cvref_t<tag_dict_type>, sam_tag_dictionary>,
                   "The tag_dict object must be of type seqan3::sam_tag_dictionary.");
 
     if constexpr (detail::decays_to_ignore_v<header_type>)
@@ -1137,7 +1137,7 @@ inline std::string format_bam::get_tag_dict_str(sam_tag_dictionary const & tag_d
     auto stream_variant_fn = [&result] (auto && arg) // helper to print an std::variant
     {
         // T is either char, int32_t, float, std::string, or a std::vector<some int>
-        using T = remove_cvref_t<decltype(arg)>;
+        using T = std::remove_cvref_t<decltype(arg)>;
 
         if constexpr (std::same_as<T, int32_t>)
         {

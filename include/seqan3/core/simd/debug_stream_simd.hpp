@@ -29,11 +29,11 @@ namespace seqan3
  */
 template <typename char_t, typename simd_t>
 //!\cond
-    requires simd::simd_concept<remove_cvref_t<simd_t>>
+    requires simd::simd_concept<std::remove_cvref_t<simd_t>>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
 {
-    using simd_type = remove_cvref_t<simd_t>;
+    using simd_type = std::remove_cvref_t<simd_t>;
     constexpr size_t length = simd::simd_traits<simd_type>::length;
     using scalar_type = typename simd::simd_traits<simd_type>::scalar_type;
 

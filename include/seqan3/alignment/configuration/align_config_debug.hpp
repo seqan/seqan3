@@ -27,7 +27,7 @@ namespace seqan3::align_cfg::detail
  * Using this configuration allows to output the alignment matrices from the DP algorithm using the
  * returned seqan3::alignment_result.
  * The score matrix is always accessible, while the trace matrix can only be computed if an alignment was
- * requested via the seqan3::align_cfg::result configuration.
+ * requested via the seqan3::align_cfg::output_alignment configuration.
  *
  * \note This configuration is only useful for debugging purposes as it can have a significant impact on the
  *       performance.

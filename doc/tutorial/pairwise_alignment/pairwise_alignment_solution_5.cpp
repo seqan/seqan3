@@ -26,7 +26,8 @@ int main()
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
                   seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
-                  seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-4}}} |
+                  seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{0},
+                                                     seqan3::align_cfg::extension_score{-4}} |
                   seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
                   output_config |
                   seqan3::align_cfg::band_fixed_size{seqan3::align_cfg::lower_diagonal{-3},

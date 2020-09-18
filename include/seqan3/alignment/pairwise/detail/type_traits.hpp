@@ -22,7 +22,7 @@
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
-#include <seqan3/alignment/configuration/align_config_result.hpp>
+#include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
@@ -118,7 +118,7 @@ private:
 public:
     //!\brief Flag to indicate vectorised mode.
     static constexpr bool is_vectorised =
-        configuration_t::template exists<remove_cvref_t<decltype(align_cfg::vectorised)>>();
+        configuration_t::template exists<std::remove_cvref_t<decltype(align_cfg::vectorised)>>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
     //!\brief Flag indicating whether global alignment method is enabled.
@@ -138,11 +138,9 @@ public:
     using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).value);
     //!\brief The alphabet of the selected scoring scheme.
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
-    //!\brief The selected result type.
-    using result_type =
-        std::remove_reference_t<decltype(seqan3::get<align_cfg::result>(std::declval<configuration_t>()))>;
     //!\brief The original score type selected by the user.
-    using original_score_type = typename result_type::score_type;
+    using original_score_type = typename std::remove_reference_t<decltype(
+        std::declval<configuration_t>().get_or(align_cfg::score_type<int32_t>))>::score_type;
     //!\brief The score type for the alignment algorithm.
     using score_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, original_score_type>;
     //!\brief The trace directions type for the alignment algorithm.
@@ -166,8 +164,6 @@ public:
                                                         else
                                                             return 1;
                                                     }();
-    //!\brief The rank of the selected result type.
-    static constexpr int8_t result_type_rank = static_cast<int8_t>(decltype(std::declval<result_type>().value)::rank);
     //!\brief Flag indicating whether the score shall be computed.
     static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
     //!\brief Flag indicating whether the end positions shall be computed.

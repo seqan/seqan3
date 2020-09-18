@@ -31,7 +31,7 @@ namespace seqan3::detail
 
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT has_range_value_type = requires { typename std::ranges::range_value_t<remove_cvref_t<t>>; };
+SEQAN3_CONCEPT has_range_value_type = requires { typename std::ranges::range_value_t<std::remove_cvref_t<t>>; };
 //!\endcond
 
 //!\brief Makes range_t const if const_range is true; otherwise keeps range_t as is.
@@ -222,15 +222,15 @@ template <typename t>
 struct range_innermost_value
 {
     //!\brief The return type (recursion not shown).
-    using type = std::ranges::range_value_t<remove_cvref_t<t>>;
+    using type = std::ranges::range_value_t<std::remove_cvref_t<t>>;
 };
 
 //!\cond
 template <typename t>
-    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>
+    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
 struct range_innermost_value<t>
 {
-    using type = typename range_innermost_value<std::ranges::range_value_t<remove_cvref_t<t>>>::type;
+    using type = typename range_innermost_value<std::ranges::range_value_t<std::remove_cvref_t<t>>>::type;
 };
 //!\endcond
 
@@ -261,8 +261,8 @@ constexpr size_t range_dimension_v = 1;
 
 //!\cond
 template <typename t>
-    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<remove_cvref_t<t>>>
-constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<remove_cvref_t<t>>> + 1;
+    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
+constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<std::remove_cvref_t<t>>> + 1;
 //!\endcond
 
 // ----------------------------------------------------------------------------

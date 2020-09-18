@@ -53,7 +53,7 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
 template <typename tuple_t>
 SEQAN3_CONCEPT debug_streamable_tuple = !std::ranges::input_range<tuple_t> &&
                                         !alphabet<tuple_t> &&  // exclude alphabet_tuple_base
-                                        tuple_like<remove_cvref_t<tuple_t>>;
+                                        tuple_like<std::remove_cvref_t<tuple_t>>;
 //!\endcond
 } // namespace seqan3::detail
 
@@ -73,7 +73,7 @@ template <typename char_t, typename tuple_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
 {
     detail::print_tuple(s, std::forward<tuple_t>(t),
-                        std::make_index_sequence<std::tuple_size_v<remove_cvref_t<tuple_t>>>{});
+                        std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
     return s;
 }
 

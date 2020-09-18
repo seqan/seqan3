@@ -12,9 +12,8 @@
 
 #pragma once
 
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/gap_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 
@@ -48,7 +47,7 @@ namespace seqan3::align_cfg
  * trigger the slower algorithm which can handle the case if the ends are free in the second sequence instead of the
  * first sequence.
  */
-inline constexpr configuration edit_scheme = scoring_scheme{nucleotide_scoring_scheme{}}
-                                                            | gap{gap_scheme{gap_score{-1}}};
+inline constexpr configuration edit_scheme = scoring_scheme{nucleotide_scoring_scheme{}} |
+                                             gap_cost_affine{open_score{0}, extension_score{-1}};
 
 } // namespace seqan3

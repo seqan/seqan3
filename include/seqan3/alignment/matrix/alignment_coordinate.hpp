@@ -398,8 +398,8 @@ public:
  */
 template <typename char_t, typename coordinate_type>
 //!\cond
-    requires std::same_as<remove_cvref_t<coordinate_type>, alignment_coordinate> ||
-             detail::is_value_specialisation_of_v<remove_cvref_t<coordinate_type>,
+    requires std::same_as<std::remove_cvref_t<coordinate_type>, alignment_coordinate> ||
+             detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)

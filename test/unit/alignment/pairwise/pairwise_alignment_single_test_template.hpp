@@ -9,6 +9,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
@@ -49,10 +50,9 @@ TYPED_TEST_P(pairwise_alignment_test, end_positions)
 {
     auto const & fixture = this->fixture();
 
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::result{seqan3::with_score,
-                                                                                 seqan3::using_score_type<double>} |
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_end_position |
                                                        seqan3::align_cfg::output_score |
-                                                       seqan3::align_cfg::output_end_position;
+                                                       seqan3::align_cfg::score_type<double>;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;
@@ -69,9 +69,9 @@ TYPED_TEST_P(pairwise_alignment_test, end_positions)
 TYPED_TEST_P(pairwise_alignment_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_score |
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_begin_position |
                                                        seqan3::align_cfg::output_end_position |
-                                                       seqan3::align_cfg::output_begin_position;
+                                                       seqan3::align_cfg::output_score;
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

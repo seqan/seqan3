@@ -85,16 +85,14 @@ template <template <bool, typename...> typename edit_traits_type,
           typename align_cfg_t>
 auto edit_distance(database_t && database, query_t && query, align_cfg_t && align_cfg)
 {
-    auto align_cfg_with_score_type = align_cfg | seqan3::align_cfg::result{seqan3::with_score}; // TODO remove once score type can be configured separately.
-    using align_cfg_with_score_type_t = decltype(align_cfg_with_score_type);
+    using align_cfg_with_score_type_t = decltype(align_cfg);
 
     using alignment_result_value_t =
         typename seqan3::detail::align_result_selector<database_t,
                                                        query_t,
                                                        std::remove_reference_t<align_cfg_with_score_type_t>>::type;
     using alignment_result_t = seqan3::alignment_result<alignment_result_value_t>;
-    auto align_cfg_with_result_type = align_cfg_with_score_type |
-                                      seqan3::align_cfg::detail::result_type<alignment_result_t>;
+    auto align_cfg_with_result_type = align_cfg | seqan3::align_cfg::detail::result_type<alignment_result_t>;
     using align_config_with_result_type_t = decltype(align_cfg_with_result_type);
     using edit_traits = edit_traits_type<compute_score_matrix,
                                          database_t,

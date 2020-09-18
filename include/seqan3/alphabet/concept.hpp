@@ -438,13 +438,13 @@ struct char_is_valid_for_fn
 {
 public:
     //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>>,
-                                        remove_cvref_t<alph_t>,
+    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>>,
+                                        std::remove_cvref_t<alph_t>,
                                         std::type_identity<alph_t>>;
 
     SEQAN3_CPO_IMPL(3, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::char_is_valid(v))) // expl. cst.
     SEQAN3_CPO_IMPL(2, (char_is_valid_for(v, s_alph_t{})                                                )) // ADL
-    SEQAN3_CPO_IMPL(1, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v)          )) // member
+    SEQAN3_CPO_IMPL(1, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v)          )) // member
     SEQAN3_CPO_IMPL(0, (seqan3::to_char(seqan3::assign_char_to(v, s_alph_t{})) == v                     )) // fallback
 
 public:
@@ -619,14 +619,14 @@ struct alphabet_size_fn
 {
 public:
     //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>> &&
-                                        seqan3::is_constexpr_default_constructible_v<remove_cvref_t<alph_t>>,
-                                        remove_cvref_t<alph_t>,
+    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>> &&
+                                        seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alph_t>>,
+                                        std::remove_cvref_t<alph_t>,
                                         std::type_identity<alph_t>>;
 
     SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::alphabet_size)) // expl. cst.
     SEQAN3_CPO_IMPL(1, (alphabet_size(v)                                                             )) // ADL
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::alphabet_size          )) // member
+    SEQAN3_CPO_IMPL(0, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::alphabet_size          )) // member
 
 public:
     //!\brief Operator definition.
@@ -636,7 +636,7 @@ public:
         {
             { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) };
             requires noexcept(impl(priority_tag<2>{}, s_alph_t{}, dummy{}));
-            requires std::integral<remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
+            requires std::integral<std::remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
         }
     //!\endcond
     constexpr auto operator()() const noexcept

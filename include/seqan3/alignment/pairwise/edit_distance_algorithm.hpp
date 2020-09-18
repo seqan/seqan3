@@ -131,7 +131,7 @@ private:
     }
 
     //!\brief The alignment configuration stored on the heap.
-    std::shared_ptr<remove_cvref_t<config_t>> cfg_ptr{};
+    std::shared_ptr<std::remove_cvref_t<config_t>> cfg_ptr{};
 };
 
 } // namespace seqan3::detail
