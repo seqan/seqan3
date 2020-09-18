@@ -59,7 +59,7 @@ private:
     template <typename configuration_t>
     find_optimum_policy(configuration_t const & config)
     {
-        if constexpr (configuration_t::template exists<method_local_tag>())
+        if constexpr (configuration_t::template exists<align_cfg::method_local>())
             test_every_cell =  true;
 
         auto method_global_config = config.get_or(align_cfg::method_global{});

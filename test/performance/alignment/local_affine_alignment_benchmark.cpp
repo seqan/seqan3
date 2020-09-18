@@ -27,7 +27,7 @@
     #include <seqan/align.h>
 #endif
 
-constexpr auto local_affine_cfg = seqan3::align_cfg::method_local |
+constexpr auto local_affine_cfg = seqan3::align_cfg::method_local{} |
                                   seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                                      seqan3::align_cfg::extension_score{-1}} |
                                   seqan3::align_cfg::scoring_scheme{

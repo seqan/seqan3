@@ -221,7 +221,7 @@ TEST(alignment_configurator, configure_affine_global_semi)
 
 TEST(alignment_configurator, configure_affine_local)
 {
-    auto cfg = seqan3::align_cfg::method_local |
+    auto cfg = seqan3::align_cfg::method_local{} |
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
@@ -232,7 +232,7 @@ TEST(alignment_configurator, configure_affine_local)
 
 TEST(alignment_configurator, configure_affine_local_end_positions)
 {
-    auto cfg = seqan3::align_cfg::method_local |
+    auto cfg = seqan3::align_cfg::method_local{} |
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
@@ -244,7 +244,7 @@ TEST(alignment_configurator, configure_affine_local_end_positions)
 
 TEST(alignment_configurator, configure_affine_local_begin_positions)
 {
-    auto cfg = seqan3::align_cfg::method_local |
+    auto cfg = seqan3::align_cfg::method_local{} |
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
@@ -256,7 +256,7 @@ TEST(alignment_configurator, configure_affine_local_begin_positions)
 
 TEST(alignment_configurator, configure_affine_local_alignment)
 {
-    auto cfg = seqan3::align_cfg::method_local |
+    auto cfg = seqan3::align_cfg::method_local{} |
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |

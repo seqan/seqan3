@@ -23,7 +23,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_
                                     seqan3::align_cfg::gap_cost_affine,
                                     seqan3::align_cfg::min_score,
                                     seqan3::align_cfg::method_global,
-                                    seqan3::detail::method_local_tag,
+                                    seqan3::align_cfg::method_local,
                                     seqan3::align_cfg::parallel,
                                     seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
                                     seqan3::align_cfg::vectorised,

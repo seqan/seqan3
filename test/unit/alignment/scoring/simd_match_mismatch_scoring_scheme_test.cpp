@@ -143,7 +143,7 @@ TYPED_TEST(simd_match_mismatch_scoring_scheme_test, score_local)
     // In local alignment we always want to mismatch.
     using scheme_t = seqan3::detail::simd_match_mismatch_scoring_scheme<TypeParam,
                                                                         seqan3::dna4,
-                                                                        seqan3::detail::method_local_tag>;
+                                                                        seqan3::align_cfg::method_local>;
 
     scheme_t scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}};
 
@@ -176,7 +176,7 @@ TYPED_TEST(simd_match_mismatch_scoring_scheme_test, score_local_with_padding)
     // In local alignment we always want to mismatch.
     using scheme_t = seqan3::detail::simd_match_mismatch_scoring_scheme<TypeParam,
                                                                         seqan3::dna4,
-                                                                        seqan3::detail::method_local_tag>;
+                                                                        seqan3::align_cfg::method_local>;
 
     scheme_t scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}}};
 
