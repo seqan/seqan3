@@ -46,6 +46,8 @@ class policy_affine_gap_recursion
 protected:
     //!\brief The configuration traits type.
     using traits_type = alignment_configuration_traits<alignment_configuration_t>;
+    //!\brief The configured original score type.
+    using original_score_type = typename traits_type::original_score_type;
     //!\brief The configured score type.
     using score_type = typename traits_type::score_type;
     //!\brief The affine cell type returned by the functions.
@@ -219,8 +221,13 @@ protected:
      */
     score_type lowest_viable_score() const noexcept
     {
-        assert(gap_open_score <= 0 && gap_extension_score <= 0);
-        return std::numeric_limits<score_type>::lowest() - (gap_open_score + gap_extension_score);
+        if constexpr (simd_concept<score_type>)
+            assert(gap_open_score[0] <= 0 && gap_extension_score[0] <= 0);
+        else
+            assert(gap_open_score <= 0 && gap_extension_score <= 0);
+
+        return maybe_convert_to_simd(std::numeric_limits<original_score_type>::lowest()) -
+               (gap_open_score + gap_extension_score);
     }
 
     /*!\brief Converts the given score type to a simd vector if the alignment is executed in vectorised mode.

@@ -110,6 +110,58 @@ public:
                                          callback);
         }
     }
+
+    //!\overload
+    template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
+    //!\cond
+        requires traits_type::is_vectorised && std::invocable<callback_t, alignment_result_type>
+    //!\endcond
+    auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
+    {
+        using simd_collection_t = std::vector<score_type, aligned_allocator<score_type, alignof(score_type)>>;
+        using original_score_t = typename traits_type::original_score_type;
+
+        // Extract the batch of sequences for the first and the second sequence.
+        auto seq1_collection = indexed_sequence_pairs | views::get<0> | views::get<0>;
+        auto seq2_collection = indexed_sequence_pairs | views::get<0> | views::get<1>;
+
+        this->initialise_tracker(seq1_collection, seq2_collection);
+
+        // Convert batch of sequences to sequence of simd vectors.
+        thread_local simd_collection_t simd_seq1_collection{};
+        thread_local simd_collection_t simd_seq2_collection{};
+
+        this->convert_batch_of_sequences_to_simd_vector(simd_seq1_collection,
+                                                        seq1_collection,
+                                                        traits_type::padding_symbol);
+        this->convert_batch_of_sequences_to_simd_vector(simd_seq2_collection,
+                                                        seq2_collection,
+                                                        traits_type::padding_symbol);
+
+        size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
+        size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
+
+        auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
+                                                                          sequence2_size,
+                                                                          this->lowest_viable_score());
+
+        compute_matrix(simd_seq1_collection, simd_seq2_collection, alignment_matrix, index_matrix);
+
+        size_t index = 0;
+        for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
+        {
+            original_score_t score = this->optimal_score[index] -
+                                     (this->padding_offsets[index] * this->scoring_scheme.padding_match_score());
+            matrix_coordinate coordinate{row_index_type{size_t{this->optimal_coordinate.row[index]}},
+                                         column_index_type{size_t{this->optimal_coordinate.col[index]}}};
+            this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
+                                         std::move(idx),
+                                         std::move(score),
+                                         std::move(coordinate),
+                                         callback);
+            ++index;
+        }
+    }
     //!\}
 
 protected:
@@ -290,7 +342,7 @@ protected:
      */
     template <std::ranges::forward_range alignment_column_t,
               std::ranges::input_range cell_index_column_t,
-              semialphabet sequence1_value_t,
+              typename sequence1_value_t,
               std::ranges::input_range sequence2_t>
     void compute_band_column(alignment_column_t && alignment_column,
                              cell_index_column_t && cell_index_column,

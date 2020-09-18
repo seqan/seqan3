@@ -464,7 +464,6 @@ private:
                       traits_t::is_debug ||                                                         // it runs in debug mode,
                      (traits_t::compute_begin_positions || traits_t::compute_sequence_alignment) || // it computes more than the end position.
                      (traits_t::is_banded && traits_t::compute_begin_positions) ||                  // banded
-                     (traits_t::is_vectorised && traits_t::is_banded) ||                            // it is vectorised and banded,
                      (traits_t::is_vectorised && traits_t::compute_end_positions))                  // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
