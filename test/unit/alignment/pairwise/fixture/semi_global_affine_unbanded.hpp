@@ -10,7 +10,7 @@
 #include <vector>
 
 #include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
-#include <seqan3/alignment/configuration/align_config_gap.hpp>
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
@@ -25,9 +25,8 @@ using seqan3::operator""_dna4;
 
 namespace seqan3::test::alignment::fixture::semi_global::affine::unbanded
 {
-
-inline constexpr auto align_config = seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                               seqan3::gap_open_score{-10}}};
+inline constexpr auto align_config = seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
+                                                                        seqan3::align_cfg::extension_score{-1}};
 
 inline constexpr auto align_config_semi_seq1 = align_config |
                                                seqan3::align_cfg::method_global{

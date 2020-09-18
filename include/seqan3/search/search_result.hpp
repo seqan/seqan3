@@ -194,11 +194,11 @@ public:
  */
 template <typename char_t, typename search_result_t>
 //!\cond
-    requires detail::is_type_specialisation_of_v<remove_cvref_t<search_result_t>, search_result>
+    requires detail::is_type_specialisation_of_v<std::remove_cvref_t<search_result_t>, search_result>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, search_result_t && result)
 {
-    using result_type_list = detail::transfer_template_args_onto_t<remove_cvref_t<search_result_t>, type_list>;
+    using result_type_list = detail::transfer_template_args_onto_t<std::remove_cvref_t<search_result_t>, type_list>;
 
     stream << "<";
     if constexpr (!std::same_as<list_traits::at<0, result_type_list>, detail::empty_type>)

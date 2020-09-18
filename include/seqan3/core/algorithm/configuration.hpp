@@ -417,7 +417,7 @@ private:
     template <tuple_like tuple_t>
     static constexpr auto make_configuration(tuple_t && tpl)
     {
-        if constexpr (std::tuple_size_v<remove_cvref_t<tuple_t>> == 0)
+        if constexpr (std::tuple_size_v<std::remove_cvref_t<tuple_t>> == 0)
         {
             return configuration<>{};
         }
@@ -426,7 +426,7 @@ private:
             auto impl = [](auto & impl_ref, auto && config, auto && head, auto && tail)
             {
                 using cfg_t = decltype(config);
-                if constexpr (std::tuple_size_v<remove_cvref_t<decltype(tail)>> == 0)
+                if constexpr (std::tuple_size_v<std::remove_cvref_t<decltype(tail)>> == 0)
                 {
                     return std::forward<cfg_t>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
                 }
@@ -472,7 +472,7 @@ private:
     template <detail::config_element_specialisation config_element_t>
     constexpr auto push_back(config_element_t elem) const &
     {
-        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
+        static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
                                                             configs_t...>,
                       "Configuration error: The passed element cannot be combined with one or more elements in the "
                       "current configuration.");
@@ -486,7 +486,7 @@ private:
     template <detail::config_element_specialisation config_element_t>
     constexpr auto push_back(config_element_t elem) &&
     {
-        static_assert(detail::is_configuration_valid_v<remove_cvref_t<config_element_t>,
+        static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
                                                             configs_t...>,
                       "Configuration error: The passed element cannot be combined with one or more elements in the "
                       "current configuration.");
@@ -573,13 +573,13 @@ private:
  * \relates seqan3::configuration
  */
 template <typename derived_t, typename value_t>
-configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<remove_cvref_t<derived_t>>;
+configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<std::remove_cvref_t<derived_t>>;
 
 /*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
  * \relates seqan3::configuration
  */
 template <typename derived_t, typename value_t>
-configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<remove_cvref_t<derived_t>>;
+configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<std::remove_cvref_t<derived_t>>;
 //!\}
 
 /*!\name Tuple interface

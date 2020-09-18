@@ -140,7 +140,7 @@ template <tuple_like alignment_type>
                                                          uint32_t const query_end_pos = 0,
                                                          bool const extended_cigar = false)
 //!\cond
-    requires (std::tuple_size_v<remove_cvref_t<alignment_type>> == 2)
+    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2)
 //!\endcond
 {
     using std::get;
@@ -249,7 +249,7 @@ template <tuple_like alignment_type>
                                                   uint32_t const query_end_pos = 0,
                                                   bool const extended_cigar = false)
 //!\cond
-    requires (std::tuple_size_v<remove_cvref_t<alignment_type>> == 2)
+    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2)
 //!\endcond
 {
     return get_cigar_string(get_cigar_vector(alignment, query_start_pos, query_end_pos, extended_cigar));
@@ -330,7 +330,7 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
  */
 template <tuple_like alignment_type>
 //!\cond
-    requires (std::tuple_size_v<remove_cvref_t<alignment_type>> == 2) &&
+    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2) &&
              detail::all_model_writable_aligned_seq<detail::tuple_type_list_t<alignment_type>>
 //!\endcond
 inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> const & cigar_vector)

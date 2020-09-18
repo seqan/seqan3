@@ -262,7 +262,7 @@ public:
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
-        requires (!std::same_as<remove_cvref_t<other_range_t>, dynamic_bitset>)
+        requires (!std::same_as<std::remove_cvref_t<other_range_t>, dynamic_bitset>)
     //!\endcond
     explicit constexpr dynamic_bitset(other_range_t && range) noexcept :
         dynamic_bitset{std::ranges::begin(range), std::ranges::end(range)}

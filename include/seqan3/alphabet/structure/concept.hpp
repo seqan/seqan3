@@ -273,16 +273,16 @@ void max_pseudoknot_depth(args_t ...) = delete;
  * \ingroup structure
  */
 template <typename alph_t,
-          typename s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<remove_cvref_t<alph_t>> &&
-                                                 seqan3::is_constexpr_default_constructible_v<remove_cvref_t<alph_t>>,
-                                                 remove_cvref_t<alph_t>,
+          typename s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>> &&
+                                                 seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alph_t>>,
+                                                 std::remove_cvref_t<alph_t>,
                                                  std::type_identity<alph_t>>>
 struct max_pseudoknot_depth_fn
 {
 public:
     SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::max_pseudoknot_depth)) // custom
     SEQAN3_CPO_IMPL(1, (max_pseudoknot_depth(v)                                                             )) // ADL
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth          )) // member
+    SEQAN3_CPO_IMPL(0, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth          )) // member
 
 public:
     //!\brief Operator definition.

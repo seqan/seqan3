@@ -177,7 +177,7 @@ constexpr auto align_pairwise(sequence_t && sequences,
     // Configure the alignment algorithm.
     auto && [algorithm, complete_config] = detail::alignment_configurator::configure<decltype(seq_view)>(config);
 
-    using complete_config_t = remove_cvref_t<decltype(complete_config)>;
+    using complete_config_t = std::remove_cvref_t<decltype(complete_config)>;
     using traits_t = detail::alignment_configuration_traits<complete_config_t>;
 
     auto indexed_sequence_chunk_view = views::zip(seq_view, std::views::iota(0))

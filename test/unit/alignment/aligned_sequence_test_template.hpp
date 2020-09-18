@@ -36,7 +36,7 @@ TYPED_TEST_P(aligned_sequence, fulfills_concept)
 
 TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
 {
-    using unaligned_seq_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
+    using unaligned_seq_type = std::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned_seq{};
 
     if constexpr (seqan3::sequence_container<unaligned_seq_type>)
@@ -57,7 +57,7 @@ TYPED_TEST_P(aligned_sequence, assign_unaligned_sequence)
 
 TYPED_TEST_P(aligned_sequence, assign_empty_unaligned_sequence)
 {
-    using unaligned_seq_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
+    using unaligned_seq_type = std::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned_seq{};
     TypeParam aligned_seq{};
 
@@ -221,7 +221,7 @@ TYPED_TEST_P(aligned_sequence, erase_multiple_gaps)
 
 TYPED_TEST_P(aligned_sequence, insert_erase_on_empty_sequence)
 {
-    using unaligned_seq_type = seqan3::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
+    using unaligned_seq_type = std::remove_cvref_t<seqan3::detail::unaligned_seq_t<TypeParam>>;
     unaligned_seq_type unaligned{};
     TypeParam aligned_seq{};
 

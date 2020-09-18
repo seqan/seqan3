@@ -36,7 +36,7 @@ struct search_traits
     using empty_search_result_type = search_result<empty_type, empty_type, empty_type, empty_type>;
     //!\brief The configured search result type.
     using search_result_type =
-        typename remove_cvref_t<decltype(std::declval<search_configuration_t>().get_or(
+        typename std::remove_cvref_t<decltype(std::declval<search_configuration_t>().get_or(
                 search_cfg::detail::result_type<empty_search_result_type>))
         >::type;
 

@@ -81,9 +81,9 @@ protected:
      * \details
      *
      * Generates a seqan3::alignment_result object with the results computed during the alignment. Depending on the
-     * seqan3::align_cfg::result configuration only the requested values are stored. In some cases some additional
-     * work is done to generate the requested result. For example computing the associated alignment from the traceback
-     * matrix.
+     * \ref seqan3_align_cfg_output_configurations "seqan3::align_cfg::output_*" configuration only the requested values
+     * are stored. In some cases some additional work is done to generate the requested result. For example computing
+     * the associated alignment from the traceback matrix.
      */
     template <typename sequence_pair_t,
               typename index_t,

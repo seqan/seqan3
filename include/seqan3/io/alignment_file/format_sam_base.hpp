@@ -317,7 +317,7 @@ inline void format_sam_base::construct_alignment(align_type                     
         }
         else
         {
-            using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+            using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
             auto dummy_seq    = views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, ref_length)
                               | std::views::transform(detail::access_restrictor_fn{});
             static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
@@ -341,7 +341,7 @@ inline void format_sam_base::construct_alignment(align_type                     
         }
         else
         {
-            using unaligned_t = remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
+            using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
             assign_unaligned(get<0>(align), views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, 0)
                                             | std::views::transform(detail::access_restrictor_fn{}));
         }

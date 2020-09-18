@@ -23,18 +23,18 @@
 
 TEST(type_trait, remove_cvref_t)
 {
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int const>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int volatile>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int &>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int &&>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int const &>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int const &&>>));
-    EXPECT_TRUE((std::is_same_v<int, seqan3::remove_cvref_t<int const volatile &&>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int const>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int volatile>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int &>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int &&>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int const &>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int const &&>>));
+    EXPECT_TRUE((std::is_same_v<int, std::remove_cvref_t<int const volatile &&>>));
     // don't decay pointers and arrays:
-    EXPECT_FALSE((std::is_same_v<int, seqan3::remove_cvref_t<int*>>));      // type stays same
-    EXPECT_FALSE((std::is_same_v<int, seqan3::remove_cvref_t<int[3]>>));    // type stays same
-    EXPECT_FALSE((std::is_same_v<int*, seqan3::remove_cvref_t<int[3]>>));   // type stays same
+    EXPECT_FALSE((std::is_same_v<int, std::remove_cvref_t<int*>>));      // type stays same
+    EXPECT_FALSE((std::is_same_v<int, std::remove_cvref_t<int[3]>>));    // type stays same
+    EXPECT_FALSE((std::is_same_v<int*, std::remove_cvref_t<int[3]>>));   // type stays same
     // the last example would be true for std::decay_t
 }
 

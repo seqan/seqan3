@@ -50,7 +50,7 @@ private:
     shape shape_;
 
     template <typename rng_t>
-    class shape_iterator;
+    class basic_iterator;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -82,7 +82,7 @@ public:
      */
     template <typename rng_t>
     //!\cond
-     requires (!std::same_as<remove_cvref_t<rng_t>, kmer_hash_view>) &&
+     requires (!std::same_as<std::remove_cvref_t<rng_t>, kmer_hash_view>) &&
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
@@ -115,7 +115,7 @@ public:
      */
     auto begin() noexcept
     {
-        return shape_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
+        return basic_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
     //!\copydoc begin()
@@ -124,7 +124,7 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return shape_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
+        return basic_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -144,9 +144,9 @@ public:
      */
     auto end() noexcept
     {
-        // Assigning the end iterator to the text_right iterator of the shape_iterator only works for common ranges.
+        // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t>)
-            return shape_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
+            return basic_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
         else
             return std::ranges::end(urange);
     }
@@ -157,9 +157,9 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        // Assigning the end iterator to the text_right iterator of the shape_iterator only works for common ranges.
+        // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t const>)
-            return shape_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
+            return basic_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
         else
             return std::ranges::cend(urange);
     }
@@ -193,29 +193,29 @@ public:
  *
  * \details
  *
- * The shape_iterator can be used to iterate over the hash values of a text. A shape_iterator needs an iterator of
+ * The basic_iterator can be used to iterate over the hash values of a text. The basic_iterator needs an iterator of
  * the text and a seqan3::shape that defines how to hash the text.
  *
- * Depending on the type of the iterator passed to the shape_iterator, different functionality is available:
+ * Depending on the type of the iterator passed to the basic_iterator, different functionality is available:
  *
  * | Concept modelled by passed text iterator | Available functions             |
  * |------------------------------------------|---------------------------------|
- * | std::forward_iterator                    | \ref shape_iterator_comparison "Comparison operators"<br>\ref operator++ "Pre-increment (++it)"<br>\ref operator++(int) "Post-increment (it++)"<br>\ref operator* "Indirection operator (*it)" |
+ * | std::forward_iterator                    | \ref basic_iterator_comparison_kmer_hash "Comparison operators"<br>\ref operator++ "Pre-increment (++it)"<br>\ref operator++(int) "Post-increment (it++)"<br>\ref operator* "Indirection operator (*it)" |
  * | std::bidirectional_iterator              | \ref operator-- "Pre-decrement (--it)"<br>\ref operator--(int) "Post-decrement (it--)" |
- * | std::random_access_iterator              | \ref operator+= "Forward (it +=)"<br>\ref operator+ "Forward copy (it +)"<br>\ref operator-= "Decrement(it -=)"<br>\ref shape_iterator_operator-decrement "Decrement copy (it -)"<br>\ref shape_iterator_operator-difference "Difference (it1 - it2)"<br>\ref operator[] "Subscript (it[])" |
+ * | std::random_access_iterator              | \ref operator+= "Forward (it +=)"<br>\ref operator+ "Forward copy (it +)"<br>\ref operator-= "Decrement(it -=)"<br>\ref basic_iterator_operator-decrement "Decrement copy (it -)"<br>\ref basic_iterator_operator-difference "Difference (it1 - it2)"<br>\ref operator[] "Subscript (it[])" |
  *
  * When using a gapped seqan3::shape, the `0`s of the seqan3::shape are virtually removed from the hashed k-mer.
  * Note that any shape is expected to start with a `1` and end with a `1`.
  *
  * ### Implementation detail
  *
- * To avoid dereferencing the sentinel when iterating, the shape_iterator computes the hash value up until
+ * To avoid dereferencing the sentinel when iterating, the basic_iterator computes the hash value up until
  * the second to last position and performs the addition of the last position upon
  * access (\ref operator* and \ref operator[]).
  */
 template <std::ranges::view urng_t>
 template <typename rng_t>
-class kmer_hash_view<urng_t>::shape_iterator
+class kmer_hash_view<urng_t>::basic_iterator
 {
 private:
     //!\brief The iterator type of the underlying range.
@@ -224,7 +224,7 @@ private:
     using sentinel_t = std::ranges::sentinel_t<rng_t>;
 
     template <typename urng2_t>
-    friend class shape_iterator;
+    friend class basic_iterator;
 
 public:
     /*!\name Associated types
@@ -249,19 +249,19 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr shape_iterator()                                   = default; //!< Defaulted.
-    constexpr shape_iterator(shape_iterator const &)             = default; //!< Defaulted.
-    constexpr shape_iterator(shape_iterator &&)                  = default; //!< Defaulted.
-    constexpr shape_iterator & operator=(shape_iterator const &) = default; //!< Defaulted.
-    constexpr shape_iterator & operator=(shape_iterator &&)      = default; //!< Defaulted.
-    ~shape_iterator()                                            = default; //!< Defaulted.
+    constexpr basic_iterator()                                   = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const &)             = default; //!< Defaulted.
+    constexpr basic_iterator(basic_iterator &&)                  = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator &&)      = default; //!< Defaulted.
+    ~basic_iterator()                                            = default; //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     template <typename urng2_t>
     //!\cond
         requires std::same_as<std::remove_const_t<urng_t>, urng2_t>
     //!\endcond
-    shape_iterator(shape_iterator<urng2_t> it) :
+    basic_iterator(basic_iterator<urng2_t> it) :
         hash_value{std::move(it.hash_value)},
         roll_factor{std::move(it.roll_factor)},
         shape_{std::move(it.shape_)},
@@ -280,7 +280,7 @@ public:
     *
     * Linear in size of shape.
     */
-    shape_iterator(it_t it_start, sentinel_t it_end, shape s_) :
+    basic_iterator(it_t it_start, sentinel_t it_end, shape s_) :
         shape_{s_}, text_left{it_start}, text_right{std::ranges::next(text_left, shape_.size() - 1, it_end)}
     {
         assert(std::ranges::size(shape_) > 0);
@@ -306,7 +306,7 @@ public:
     * \details
     *
     * If we have a common_range as underlying range, we want to preserve this property.
-    * This means that we need to have a shape_iterator that can act as end for the kmer_hash_view, i.e.
+    * This means that we need to have a basic_iterator that can act as end for the kmer_hash_view, i.e.
     * the text_right iterator is equal to the end iterator of the underlying range.
     * However, we still need to do some initialisation via hash_full:
     * When using `std::views::reverse`, we start iterating from the end and decrement the iterator.
@@ -320,7 +320,7 @@ public:
     *
     * Linear in size of shape.
     */
-    shape_iterator(it_t it_start, sentinel_t it_end, shape s_, bool SEQAN3_DOXYGEN_ONLY(is_end)) : shape_{s_}
+    basic_iterator(it_t it_start, sentinel_t it_end, shape s_, bool SEQAN3_DOXYGEN_ONLY(is_end)) : shape_{s_}
     {
         assert(std::ranges::size(shape_) > 0);
 
@@ -344,66 +344,66 @@ public:
     }
     //!\}
 
-    //!\anchor shape_iterator_comparison
+    //!\anchor basic_iterator_comparison_kmer_hash
     //!\name Comparison operators
     //!\{
 
     //!\brief Compare to iterator on text.
-    friend bool operator==(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
+    friend bool operator==(basic_iterator const & lhs, sentinel_t const & rhs) noexcept
     {
         return lhs.text_right == rhs;
     }
 
     //!\brief Compare to iterator on text.
-    friend bool operator==(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
+    friend bool operator==(sentinel_t const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs == rhs.text_right;
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator==(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator==(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return std::tie(lhs.text_right, lhs.shape_) == std::tie(rhs.text_right, rhs.shape_);
     }
 
     //!\brief Compare to iterator on text.
-    friend bool operator!=(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
+    friend bool operator!=(basic_iterator const & lhs, sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compare to iterator on text.
-    friend bool operator!=(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
+    friend bool operator!=(sentinel_t const & lhs, basic_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator!=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator!=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator<(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator<(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return (lhs.shape_ <= rhs.shape_) && (lhs.text_right < rhs.text_right);
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator>(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator>(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return (lhs.shape_ >= rhs.shape_) && (lhs.text_right > rhs.text_right);
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator<=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator<=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return (lhs.shape_ <= rhs.shape_) && (lhs.text_right <= rhs.text_right);
     }
 
-    //!\brief Compare to another shape_iterator.
-    friend bool operator>=(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    //!\brief Compare to another basic_iterator.
+    friend bool operator>=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return (lhs.shape_ >= rhs.shape_) && (lhs.text_right >= rhs.text_right);
     }
@@ -411,16 +411,16 @@ public:
     //!\}
 
     //!\brief Pre-increment.
-    shape_iterator & operator++() noexcept
+    basic_iterator & operator++() noexcept
     {
         hash_forward();
         return *this;
     }
 
     //!\brief Post-increment.
-    shape_iterator operator++(int) noexcept
+    basic_iterator operator++(int) noexcept
     {
-        shape_iterator tmp{*this};
+        basic_iterator tmp{*this};
         hash_forward();
         return tmp;
     }
@@ -428,7 +428,7 @@ public:
     /*!\brief Pre-decrement.
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
-    shape_iterator & operator--() noexcept
+    basic_iterator & operator--() noexcept
     //!\cond
         requires std::bidirectional_iterator<it_t>
     //!\endcond
@@ -440,12 +440,12 @@ public:
     /*!\brief Post-decrement.
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
-    shape_iterator operator--(int) noexcept
+    basic_iterator operator--(int) noexcept
     //!\cond
         requires std::bidirectional_iterator<it_t>
     //!\endcond
     {
-        shape_iterator tmp{*this};
+        basic_iterator tmp{*this};
         hash_backward();
         return tmp;
     }
@@ -453,7 +453,7 @@ public:
     /*!\brief Forward this iterator.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    shape_iterator & operator+=(difference_type const skip) noexcept
+    basic_iterator & operator+=(difference_type const skip) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
@@ -465,19 +465,19 @@ public:
     /*!\brief Forward copy of this iterator.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    shape_iterator operator+(difference_type const skip) const noexcept
+    basic_iterator operator+(difference_type const skip) const noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
     {
-        shape_iterator tmp{*this};
+        basic_iterator tmp{*this};
         return tmp += skip;
     }
 
     /*!\brief Non-member operator+ delegates to non-friend operator+.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    friend shape_iterator operator+(difference_type const skip, shape_iterator const & it) noexcept
+    friend basic_iterator operator+(difference_type const skip, basic_iterator const & it) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
@@ -488,7 +488,7 @@ public:
     /*!\brief Decrement iterator by `skip`.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    shape_iterator & operator-=(difference_type const skip) noexcept
+    basic_iterator & operator-=(difference_type const skip) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
@@ -497,23 +497,23 @@ public:
         return *this;
     }
 
-    /*!\anchor shape_iterator_operator-decrement
+    /*!\anchor basic_iterator_operator-decrement
      * \brief Return decremented copy of this iterator.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    shape_iterator operator-(difference_type const skip) const noexcept
+    basic_iterator operator-(difference_type const skip) const noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
     {
-        shape_iterator tmp{*this};
+        basic_iterator tmp{*this};
         return tmp -= skip;
     }
 
     /*!\brief Non-member operator- delegates to non-friend operator-.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    friend shape_iterator operator-(difference_type const skip, shape_iterator const & it) noexcept
+    friend basic_iterator operator-(difference_type const skip, basic_iterator const & it) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
@@ -521,11 +521,11 @@ public:
         return it - skip;
     }
 
-    /*!\anchor shape_iterator_operator-difference
+    /*!\anchor basic_iterator_operator-difference
      * \brief Return offset between two iterator's positions.
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
-    friend difference_type operator-(shape_iterator const & lhs, shape_iterator const & rhs) noexcept
+    friend difference_type operator-(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     //!\cond
         requires std::random_access_iterator<it_t>
     //!\endcond
@@ -536,7 +536,7 @@ public:
     /*!\brief Return offset between remote sentinel's position and this.
      * \attention This function is only available if sentinel_t and it_t model std::sized_sentinel_for.
      */
-    friend difference_type operator-(sentinel_t const & lhs, shape_iterator const & rhs) noexcept
+    friend difference_type operator-(sentinel_t const & lhs, basic_iterator const & rhs) noexcept
     //!\cond
         requires std::sized_sentinel_for<sentinel_t, it_t>
     //!\endcond
@@ -547,7 +547,7 @@ public:
     /*!\brief Return offset this and remote sentinel's position.
      * \attention This function is only available if it_t and sentinel_t model std::sized_sentinel_for.
      */
-    friend difference_type operator-(shape_iterator const & lhs, sentinel_t const & rhs) noexcept
+    friend difference_type operator-(basic_iterator const & lhs, sentinel_t const & rhs) noexcept
     //!\cond
         requires std::sized_sentinel_for<it_t, sentinel_t>
     //!\endcond

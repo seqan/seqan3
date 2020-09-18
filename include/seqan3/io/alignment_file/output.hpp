@@ -483,7 +483,7 @@ public:
     void push_back(record_t && r)
     //!\cond
         requires tuple_like<record_t> &&
-                 requires { requires detail::is_type_specialisation_of_v<remove_cvref_t<record_t>, record>; }
+                 requires { requires detail::is_type_specialisation_of_v<std::remove_cvref_t<record_t>, record>; }
     //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;

@@ -34,13 +34,13 @@
 constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                    seqan3::mismatch_score{-5}};
 constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
-                            seqan3::align_cfg::gap{seqan3::gap_scheme{seqan3::gap_score{-1},
-                                                                      seqan3::gap_open_score{-10}}} |
+                            seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
+                                                               seqan3::align_cfg::extension_score{-1}} |
                             seqan3::align_cfg::scoring_scheme{nt_score_scheme};
 
 // Aliases to beautify the benchmark output
-using score = seqan3::detail::with_score_type;
-using trace = seqan3::detail::with_alignment_type;
+using score = seqan3::align_cfg::output_score_tag;
+using trace = decltype(seqan3::align_cfg::output_score | seqan3::align_cfg::output_alignment);
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 100;
@@ -94,8 +94,8 @@ void seqan3_affine_dna4_parallel(benchmark::State & state)
     for (auto _ : state)
     {
         for (auto && res : align_pairwise(data, affine_cfg |
-                                          seqan3::align_cfg::result{result_t{}} |
-                                          seqan3::align_cfg::parallel{std::thread::hardware_concurrency()}))
+                                                result_t{} |
+                                                seqan3::align_cfg::parallel{std::thread::hardware_concurrency()}))
         {
             total += res.score();
         }
@@ -121,7 +121,7 @@ void seqan3_affine_dna4_omp_for(benchmark::State & state)
         #pragma omp parallel for num_threads(std::thread::hardware_concurrency()) schedule(guided)
         for (size_t i = 0; i < zip.size(); ++i)
         {
-            auto rng = align_pairwise(zip[i], affine_cfg | seqan3::align_cfg::result{result_t{}});
+            auto rng = align_pairwise(zip[i], affine_cfg | result_t{});
             auto res = *rng.begin();
             total += res.score();
         }

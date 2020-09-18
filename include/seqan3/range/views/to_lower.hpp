@@ -65,7 +65,7 @@ namespace seqan3::views
  */
 inline auto const to_lower = deep{std::views::transform([] (auto const in) noexcept
 {
-    static_assert(builtin_character<remove_cvref_t<decltype(in)>>,
+    static_assert(builtin_character<std::remove_cvref_t<decltype(in)>>,
                   "The value type of seqan3::views::to_lower must model seqan3::builtin_character.");
     return seqan3::to_lower(in);
 })};

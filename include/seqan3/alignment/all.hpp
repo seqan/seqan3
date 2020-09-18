@@ -82,7 +82,7 @@
  * |:----------------------------------------------------------------------------|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:------:|:------:|:------:|:------:|:------:|:------:|
  * | \ref seqan3::align_cfg::aligned_ends "0: Aligned ends"                      |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::band_fixed_size "1: Band"                           |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::gap "2: Gap scheme"                                 |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::gap_cost_affine "2: Gap scheme affine"              |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::min_score "3: Min score"                            |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_global "4: Method global"                    |  ❌   |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::method_local "5: Method local"                      |  ✅   |  ✅   |  ✅   |  ❌   |  ❌   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
@@ -93,9 +93,10 @@
  * | \ref seqan3::align_cfg::output_sequence1_id "10: Sequence1 id output"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::output_sequence2_id "11: Sequence2 id output"       |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::parallel "12: Parallel"                             |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |  ✅   |
- * | \ref seqan3::align_cfg::result "13: Result"                                 |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
+ * | \ref seqan3::align_cfg::score_type "13: Score type"                         |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |  ✅   |
  * | \ref seqan3::align_cfg::scoring_scheme "14: Scoring scheme"                 |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |  ✅   |
  * | \ref seqan3::align_cfg::vectorised "15: Vectorised"                         |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ✅   |  ❌   |
+
  *
  * \if DEV
  * There is an additional configuration element \ref seqan3::align_cfg::detail::debug "Debug", which enables the output
@@ -190,10 +191,8 @@
  * that single character gaps are not common due to other biological factors like frame preservation in protein-coding
  * sequences.
  *
- * SeqAn offers the additional seqan3::gap_scheme which can be used to set the scores for opening or extending a gap.
- *
- * The gap scheme can be configured with the seqan3::align_cfg::gap element. If the configuration is not specified,
- * the algorithm uses edit distance scores (`-1`) for deletion/insertion.
+ * SeqAn offers the additional seqan3::gap_cost_affine which can be used to set the scores for opening
+ * (seqan3::align_cfg::open_score) or extending a gap (seqan3::align_cfg::extension_score).
  *
  * ## Computing banded alignments
  *
@@ -220,7 +219,7 @@
  * By default a generic alignment algorithm is used that supports all valid alignment configurations, but for some
  * special combinations of parameters a notably faster algorithm is available.
  * It is automatically selected if all of the following requirements are satisfied:
- *  * Edit distance gaps, i.e. seqan3::align_cfg::gap is initialised with default initialised seqan3::gap_scheme
+ *  * Edit distance gaps, i.e. default initialised seqan3::align_cfg::gap_cost_affine gap scheme.
  *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
  *   initialised with default initialised seqan3::nucleotide_scoring_scheme.
  *  * Global alignment, i.e. seqan3::align_cfg::method_global.

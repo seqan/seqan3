@@ -47,7 +47,7 @@ TEST(align_config_sequence_ends, invoke)
     EXPECT_NE(free_ends_at::none, get<0>(cfg).value & free_ends_at::seq1_back);
     EXPECT_EQ(free_ends_at::none, get<0>(cfg).value & free_ends_at::seq2_back);
 
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>,
+    EXPECT_TRUE((std::is_same_v<std::remove_cvref_t<decltype(cfg)>,
                                 seqan3::detail::configuration<seqan3::detail::align_config_sequence_ends_deferred>>));
 }
 
@@ -62,7 +62,7 @@ TEST(align_config_sequence_ends, invoke_static)
 
     using free_ends_align_config = seqan3::detail::align_config_sequence_ends<free_ends_at::seq1>>;
 
-    EXPECT_TRUE((std::is_same_v<remove_cvref_t<decltype(cfg)>, seqan3::detail::configuration<free_ends_align_config>));
+    EXPECT_TRUE((std::is_same_v<std::remove_cvref_t<decltype(cfg)>, seqan3::detail::configuration<free_ends_align_config>));
 }
 
 TEST(align_config_sequence_ends, get_by_enum)

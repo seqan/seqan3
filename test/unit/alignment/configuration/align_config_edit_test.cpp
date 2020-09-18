@@ -30,7 +30,9 @@ TEST(align_cfg_edit, is_hamming)
 
 TEST(align_cfg_edit, is_simple_gap)
 {
-    auto scheme = seqan3::get<seqan3::align_cfg::gap>(seqan3::align_cfg::edit_scheme).value;
-    EXPECT_EQ(scheme.get_gap_score(), -1);
-    EXPECT_EQ(scheme.get_gap_open_score(), 0);
+    using seqan3::get;
+
+    auto gap_cost_scheme = get<seqan3::align_cfg::gap_cost_affine>(seqan3::align_cfg::edit_scheme);
+    EXPECT_EQ(gap_cost_scheme.extension_score, -1);
+    EXPECT_EQ(gap_cost_scheme.open_score, 0);
 }

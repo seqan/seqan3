@@ -26,7 +26,7 @@ enum struct align_config_id : uint8_t
     aligned_ends,          //!< ID for the \ref seqan3::align_cfg::aligned_ends "aligned_ends" option.
     band,                  //!< ID for the \ref seqan3::align_cfg::band_fixed_size "band" option.
     debug,                 //!< ID for the \ref seqan3::align_cfg::detail::debug "debug" option.
-    gap,                   //!< ID for the \ref seqan3::align_cfg::gap "gap" option.
+    gap,                   //!< ID for the \ref seqan3::align_cfg::gap_cost_affine "gap_cost_affine" option.
     global,                //!< ID for the \ref seqan3::align_cfg::method_global "global alignment" option.
     local,                 //!< ID for the \ref seqan3::align_cfg::method_local "local alignment" option.
     min_score,             //!< ID for the \ref seqan3::align_cfg::min_score "min_score" option.
@@ -38,8 +38,8 @@ enum struct align_config_id : uint8_t
     output_sequence2_id,   //!< ID for the \ref seqan3::align_cfg::output_sequence2_id "sequence2 id output" option.
     output_score,          //!< ID for the \ref seqan3::align_cfg::output_score "score output" option.
     parallel,              //!< ID for the \ref seqan3::align_cfg::parallel "parallel" option.
-    result,                //!< ID for the \ref seqan3::align_cfg::result "result" option.
     result_type,           //!< ID for the \ref seqan3::align_cfg::detail::result_type "result_type" option.
+    score_type,            //!< ID for the \ref seqan3::align_cfg::score_type "score_type" option.
     scoring,               //!< ID for the \ref seqan3::align_cfg::scoring_scheme "scoring_scheme" option.
     vectorised,            //!< ID for the \ref seqan3::align_cfg::vectorised "vectorised" option.
     SIZE                   //!< Represents the number of configuration elements.
@@ -73,8 +73,8 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         //|  |  |  |  |  |  |  |  |  |  |  |  output_sequence2_id
         //|  |  |  |  |  |  |  |  |  |  |  |  |  output_score
         //|  |  |  |  |  |  |  |  |  |  |  |  |  |  parallel
-        //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  result
-        //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  result_type
+        //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  result_type
+        //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | score_type
         //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  scoring
         //|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  vectorised
         { 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  0: aligned_ends
@@ -83,7 +83,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         { 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  3: gap
         { 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  4: global
         { 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  5: local
-        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  6: min_score
+        { 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  6: max_error
         { 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  7: on_result
         { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  8: output_alignment
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //  9: output_begin_position
@@ -92,8 +92,8 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(align_config_i
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1}, // 12: output_sequence2_id
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1}, // 13: output_score
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1}, // 14: parallel
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // 15: result
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 16: result_type
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1}, // 15: result_type
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}, // 16: score_type
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, // 17: scoring
         { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}  // 18: vectorised
     }
