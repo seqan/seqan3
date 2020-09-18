@@ -14,6 +14,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/platform.hpp>
@@ -36,11 +37,42 @@ inline benchmark::Counter bytes_per_second(size_t bytes)
 
 //!\brief Calculates the number of cell updates for given sequences for a specific alignment config.
 template <typename sequences_range_t>
-inline size_t pairwise_cell_updates(sequences_range_t const & sequences_range, auto && /*align_cfg*/)
+inline size_t pairwise_cell_updates(sequences_range_t const & sequences_range, [[maybe_unused]] auto && align_cfg)
 {
+    auto count_cells = [&] (auto && seq1, auto && seq2)
+    {
+        size_t const columns = std::ranges::size(seq1) + 1;
+        size_t const rows = std::ranges::size(seq2) + 1;
+
+        if constexpr (align_cfg.template exists<seqan3::align_cfg::band_fixed_size>())
+        {
+            using std::get;
+            auto const band_cfg = get<seqan3::align_cfg::band_fixed_size>(align_cfg);
+
+            int32_t const lower_diagonal = band_cfg.lower_diagonal;
+            int32_t const upper_diagonal = band_cfg.upper_diagonal;
+            size_t matrix_cells = 0;
+            for (int32_t column_id = 0; column_id < static_cast<int32_t>(columns); ++column_id)
+            {
+                // the position of the upper-row (inclusive)
+                int32_t upper_row_id = std::clamp<int32_t>(column_id - upper_diagonal, 0, rows);
+                // the position of the lower-row (exclusive)
+                int32_t lower_row_id = std::clamp<int32_t>(column_id - lower_diagonal + 1, 0, rows);
+                matrix_cells += lower_row_id - upper_row_id;
+            }
+
+            return matrix_cells;
+        }
+        else
+        {
+            return columns * rows;
+        }
+    };
+
     size_t matrix_cells = 0u;
     for (auto && [seq1, seq2]: sequences_range)
-        matrix_cells += (std::ranges::size(seq1) + 1) * (std::ranges::size(seq2) + 1);
+        matrix_cells += count_cells(seq1, seq2);
+
     return matrix_cells;
 }
 
