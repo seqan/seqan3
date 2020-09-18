@@ -353,7 +353,7 @@ private:
                             align_cfg::output_begin_position{} |
                             align_cfg::output_end_position{} |
                             align_cfg::output_alignment{} |
-                            align_cfg::output_sequence1_id |
+                            align_cfg::output_sequence1_id{} |
                             align_cfg::output_sequence2_id{};
     }
 

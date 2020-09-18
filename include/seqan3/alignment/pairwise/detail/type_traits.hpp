@@ -178,7 +178,7 @@ public:
         configuration_t::template exists<align_cfg::output_alignment>();
     //!\brief Flag indicating whether the id of the first sequence shall be returned.
     static constexpr bool output_sequence1_id =
-        configuration_t::template exists<align_cfg::output_sequence1_id_tag>();
+        configuration_t::template exists<align_cfg::output_sequence1_id>();
     //!\brief Flag indicating whether the id of the second sequence shall be returned.
     static constexpr bool output_sequence2_id =
         configuration_t::template exists<align_cfg::output_sequence2_id>();

@@ -135,27 +135,6 @@ struct output_alignment : public pipeable_config_element<output_alignment>
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_alignment};
 };
 
-/*!\brief Tag representing sequence1 id output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1_id_tag>
-{
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr output_sequence1_id_tag() = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag(output_sequence1_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag(output_sequence1_id_tag &&) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag & operator=(output_sequence1_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag & operator=(output_sequence1_id_tag &&) = default; //!< Defaulted.
-    ~output_sequence1_id_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
-};
-
 /*!\brief Configures the alignment result to output the id of the first sequence.
  * \ingroup alignment_configuration
  *
@@ -176,7 +155,13 @@ struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_sequence1_id_tag output_sequence1_id{};
+struct output_sequence1_id : public pipeable_config_element<output_sequence1_id>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
+};
+
 
 /*!\brief Configures the alignment result to output the id of the second sequence.
  * \ingroup alignment_configuration
