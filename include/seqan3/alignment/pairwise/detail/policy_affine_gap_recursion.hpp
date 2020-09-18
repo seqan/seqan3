@@ -86,16 +86,8 @@ protected:
         auto const & selected_gap_scheme = config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10},
                                                                                     align_cfg::extension_score{-1}});
 
-        if constexpr (simd::simd_concept<score_type>)
-        {
-            gap_extension_score = simd::fill<score_type>(selected_gap_scheme.extension_score);
-            gap_open_score = simd::fill<score_type>(selected_gap_scheme.open_score) + gap_extension_score;
-        }
-        else
-        {
-            gap_extension_score = static_cast<score_type>(selected_gap_scheme.extension_score);
-            gap_open_score = static_cast<score_type>(selected_gap_scheme.open_score) + gap_extension_score;
-        }
+        gap_extension_score = maybe_convert_to_simd(selected_gap_scheme.extension_score);
+        gap_open_score = maybe_convert_to_simd(selected_gap_scheme.open_score) + gap_extension_score;
 
         auto method_global_config = config.get_or(align_cfg::method_global{});
         first_row_is_free = method_global_config.free_end_gaps_sequence1_leading;
@@ -187,7 +179,7 @@ protected:
         return {previous_cell.vertical_score(),
                 previous_cell.vertical_score() + gap_open_score,
                 first_column_is_free ? previous_cell.vertical_score() : new_vertical};
-               }
+    }
 
     /*!\brief Initialises the first cell of a alignment matrix column.
      *
@@ -229,6 +221,25 @@ protected:
     {
         assert(gap_open_score <= 0 && gap_extension_score <= 0);
         return std::numeric_limits<score_type>::lowest() - (gap_open_score + gap_extension_score);
+    }
+
+    /*!\brief Converts the given score type to a simd vector if the alignment is executed in vectorised mode.
+     *
+     * \tparam score_t The score type to convert; must model seqan3::arithmetic.
+     * \param[in] score The score to convert.
+     *
+     * \returns The score converted to the target simd vector or the unmodified value if in scalar mode.
+     */
+    template <typename score_t>
+    //!\cond
+        requires arithmetic<std::remove_cvref_t<score_t>>
+    //!\endcond
+    constexpr auto maybe_convert_to_simd(score_t && score) const noexcept
+    {
+        if constexpr (simd_concept<score_type>)
+            return simd::fill<score_type>(std::forward<score_t>(score));
+        else // Return unmodified.
+            return std::forward<score_t>(score);
     }
 };
 } // namespace seqan3::detail
