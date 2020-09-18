@@ -83,7 +83,7 @@ int extension_score = affine_scheme.extension_score; // == -1
 //! [output]
 
 // Configure the alignment to only compute the score.
-auto cfg = seqan3::align_cfg::output_score;
+auto cfg = seqan3::align_cfg::output_score{};
 //! [output]
 (void) cfg;
 }

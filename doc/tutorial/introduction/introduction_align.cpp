@@ -39,7 +39,7 @@ int main()
                                       seqan3::align_cfg::method_global{} |
                                       seqan3::align_cfg::edit_scheme |
                                       seqan3::align_cfg::output_alignment{} |
-                                      seqan3::align_cfg::output_score))
+                                      seqan3::align_cfg::output_score{}))
     {
         // Print the resulting score and the alignment.
         seqan3::debug_stream << res.score() << '\n';      // => -4

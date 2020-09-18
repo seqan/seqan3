@@ -19,7 +19,7 @@ template <typename test_t>
 struct align_cfg_output_test : public ::testing::Test
 {};
 
-using test_types = ::testing::Types<seqan3::align_cfg::output_score_tag,
+using test_types = ::testing::Types<seqan3::align_cfg::output_score,
                                     seqan3::align_cfg::output_end_position,
                                     seqan3::align_cfg::output_begin_position,
                                     seqan3::align_cfg::output_alignment,
@@ -30,8 +30,8 @@ INSTANTIATE_TYPED_TEST_SUITE_P(output, pipeable_config_element_test, test_types,
 
 TEST(align_config_output, score)
 {
-    EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::output_score)>,
-                              seqan3::align_cfg::output_score_tag>));
+    EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::output_score{})>,
+                              seqan3::align_cfg::output_score>));
 }
 
 TEST(align_config_output, end_position)
@@ -66,7 +66,7 @@ TEST(align_config_output, sequence2_id)
 
 TEST(align_config_output, combine_outputs)
 {
-    seqan3::configuration cfg = seqan3::align_cfg::output_score |
+    seqan3::configuration cfg = seqan3::align_cfg::output_score{} |
                                 seqan3::align_cfg::output_end_position{} |
                                 seqan3::align_cfg::output_begin_position{} |
                                 seqan3::align_cfg::output_alignment{} |
@@ -74,7 +74,7 @@ TEST(align_config_output, combine_outputs)
                                 seqan3::align_cfg::output_sequence2_id{};
 
 
-    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_score_tag>());
+    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_score>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_end_position>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_begin_position>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_alignment>());

@@ -5,7 +5,7 @@ int main()
     using sequences_t = std::vector<std::pair<std::string, std::string>>;
     using config_t = decltype(seqan3::align_cfg::method_global{} |
                               seqan3::align_cfg::edit_scheme |
-                              seqan3::align_cfg::output_score);
+                              seqan3::align_cfg::output_score{});
 
     using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequences_t>>;
     using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;

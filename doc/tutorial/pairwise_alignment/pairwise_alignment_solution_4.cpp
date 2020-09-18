@@ -13,7 +13,7 @@ int main()
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 
     // Configure the output:
-    auto output_config = seqan3::align_cfg::output_score |
+    auto output_config = seqan3::align_cfg::output_score{} |
                          seqan3::align_cfg::output_begin_position{} |
                          seqan3::align_cfg::output_end_position{} |
                          seqan3::align_cfg::output_alignment{};
