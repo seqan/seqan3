@@ -44,18 +44,18 @@ TEST(hit_strata_test, member_variable)
 {
     {   // default construction
         seqan3::search_cfg::hit_strata strata_mode{};
-        EXPECT_EQ(strata_mode.value, 0);
+        EXPECT_EQ(strata_mode.stratum, 0);
     }
 
     {   // construct with value
         seqan3::search_cfg::hit_strata strata_mode{3};
-        EXPECT_EQ(strata_mode.value, 3);
+        EXPECT_EQ(strata_mode.stratum, 3);
     }
 
     {   // assign value
         seqan3::search_cfg::hit_strata strata_mode{};
-        strata_mode.value = 3;
-        EXPECT_EQ(strata_mode.value, 3);
+        strata_mode.stratum = 3;
+        EXPECT_EQ(strata_mode.stratum, 3);
     }
 }
 
@@ -85,7 +85,7 @@ TEST(hit_dynamic, construction)
     {
         seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_strata{4}};
         EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant));
-        EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).value, 4);
+        EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).stratum, 4);
     }
 }
 
@@ -103,5 +103,5 @@ TEST(hit_dynamic, assignment)
 
     dynamic_hit = seqan3::search_cfg::hit_strata{4};
     EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant));
-    EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).value, 4);
+    EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).stratum, 4);
 }

@@ -86,8 +86,28 @@ inline constexpr detail::hit_single_best_tag hit_single_best{};
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
+struct hit_strata : public pipeable_config_element<hit_strata>
 {
+    //!\brief The stratum value [default: 0].
+    uint8_t stratum{};
+
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    constexpr hit_strata() = default; //!< Defaulted.
+    constexpr hit_strata(hit_strata const &) = default; //!< Defaulted.
+    constexpr hit_strata(hit_strata &&) = default; //!< Defaulted.
+    constexpr hit_strata & operator=(hit_strata const &) = default; //!< Defaulted.
+    constexpr hit_strata & operator=(hit_strata &&) = default; //!< Defaulted.
+    ~hit_strata() = default; //!< Defaulted.
+
+    /*!\brief Initialises the strata config.
+     * \param[in] stratum The stratum to include in the search.
+     */
+    hit_strata(uint32_t stratum) : stratum{static_cast<uint8_t>(stratum)}
+    {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
