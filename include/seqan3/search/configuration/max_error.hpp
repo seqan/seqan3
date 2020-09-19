@@ -50,11 +50,34 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_substitution : public pipeable_config_element<max_error_substitution,
-                                                              std::variant<error_count,
-                                                              error_rate>>
+struct max_error_substitution : public pipeable_config_element<max_error_substitution>
 {
-public:
+    //!\brief  The number of substitution errors allowed for the search.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_substitution() = default; //!< Defaulted.
+    max_error_substitution(max_error_substitution const &) = default; //!< Defaulted.
+    max_error_substitution(max_error_substitution &&) = default; //!< Defaulted.
+    max_error_substitution & operator=(max_error_substitution const &) = default; //!< Defaulted.
+    max_error_substitution & operator=(max_error_substitution &&) = default; //!< Defaulted.
+    ~max_error_substitution() = default; //!< Defaulted.
+
+    /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The error count used for the search.
+     */
+    explicit max_error_substitution(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The error rate used for the search.
+     */
+    explicit max_error_substitution(error_rate error) : error{std::move(error)}
+    {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_substitution};
