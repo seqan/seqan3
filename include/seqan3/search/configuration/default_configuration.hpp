@@ -33,7 +33,7 @@ inline const configuration default_configuration = max_error_total{error_count{0
                                                    max_error_substitution{error_count{0}} |
                                                    max_error_insertion{error_count{0}} |
                                                    max_error_deletion{error_count{0}} |
-                                                   output_query_id |
+                                                   output_query_id{} |
                                                    output_reference_id |
                                                    output_reference_begin_position |
                                                    hit_all;
