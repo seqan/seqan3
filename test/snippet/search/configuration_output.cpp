@@ -12,6 +12,6 @@ int main()
                                        seqan3::search_cfg::output_reference_begin_position;
 
     // Only return cursors of the index.
-    seqan3::configuration const cfg3 = seqan3::search_cfg::output_index_cursor;
+    seqan3::configuration const cfg3 = seqan3::search_cfg::output_index_cursor{};
     return 0;
 }
