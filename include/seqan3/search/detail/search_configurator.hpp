@@ -120,7 +120,7 @@ public:
             return cfg |
                    search_cfg::output_query_id{} |
                    search_cfg::output_reference_id |
-                   search_cfg::output_reference_begin_position;
+                   search_cfg::output_reference_begin_position{};
         else
             return cfg;
     }

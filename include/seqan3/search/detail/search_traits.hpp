@@ -81,7 +81,7 @@ struct search_traits
                               search_configuration_t::template exists<detail::output_reference_id_tag>();
     //!\brief A flag indicating whether search should return the reference_begin_position.
     static constexpr bool output_reference_begin_position =
-                              search_configuration_t::template exists<detail::output_reference_begin_position_tag>();
+                              search_configuration_t::template exists<search_cfg::output_reference_begin_position>();
     //!\brief A flag indicating whether search should return the index_cursor.
     static constexpr bool output_index_cursor =
                               search_configuration_t::template exists<search_cfg::output_index_cursor>();
