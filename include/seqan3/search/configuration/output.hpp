@@ -19,20 +19,6 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
-namespace seqan3::detail
-{
-
-//!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_reference_id_tag : public pipeable_config_element<output_reference_id_tag>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
-};
-
-} // namespace seqan3::detail
-
 namespace seqan3::search_cfg
 {
 
@@ -47,12 +33,16 @@ struct output_query_id : public pipeable_config_element<output_query_id>
     static constexpr detail::search_config_id id{detail::search_config_id::output_query_id};
 };
 
-/*!\brief \copybrief seqan3::detail::output_reference_id_tag
+/*!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
  */
-inline constexpr detail::output_reference_id_tag output_reference_id{};
+struct output_reference_id : public pipeable_config_element<output_reference_id>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
+};
 
 /*!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration

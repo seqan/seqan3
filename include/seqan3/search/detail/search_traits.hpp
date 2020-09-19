@@ -78,7 +78,7 @@ struct search_traits
     static constexpr bool output_query_id = search_configuration_t::template exists<search_cfg::output_query_id>();
     //!\brief A flag indicating whether search should return the reference_id.
     static constexpr bool output_reference_id =
-                              search_configuration_t::template exists<detail::output_reference_id_tag>();
+                              search_configuration_t::template exists<search_cfg::output_reference_id>();
     //!\brief A flag indicating whether search should return the reference_begin_position.
     static constexpr bool output_reference_begin_position =
                               search_configuration_t::template exists<search_cfg::output_reference_begin_position>();

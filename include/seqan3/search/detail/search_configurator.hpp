@@ -119,7 +119,7 @@ public:
         if constexpr (!seqan3::detail::search_traits<configuration_t>::has_output_configuration)
             return cfg |
                    search_cfg::output_query_id{} |
-                   search_cfg::output_reference_id |
+                   search_cfg::output_reference_id{} |
                    search_cfg::output_reference_begin_position{};
         else
             return cfg;
