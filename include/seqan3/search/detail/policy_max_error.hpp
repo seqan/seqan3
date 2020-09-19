@@ -94,7 +94,7 @@ protected:
         errors.total = to_error_count(total.value, query_size);
         errors.substitution = to_error_count(substitution.error, query_size);
         errors.insertion = to_error_count(insertion.error, query_size);
-        errors.deletion = to_error_count(deletion.value, query_size);
+        errors.deletion = to_error_count(deletion.error, query_size);
 
         // If only total is set, we set all other errors to the total limit.
         if (only_max_error_total)

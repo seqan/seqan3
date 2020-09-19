@@ -85,8 +85,8 @@ TEST(search_configuration_test, max_error_defaults)
     EXPECT_EQ((seqan3::search_cfg::max_error_insertion{}.error),
               (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.error));
 
     // empty config defaults to 0 for every error_count
     EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{}}.value),
@@ -98,8 +98,8 @@ TEST(search_configuration_test, max_error_defaults)
     EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{}}.error),
               (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{}}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{}}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.error));
 
     // empty config defaults to 0 for every error_rate
     EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{}}.value),
@@ -111,6 +111,6 @@ TEST(search_configuration_test, max_error_defaults)
     EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{}}.error),
               (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{}}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{}}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{0}}.error));
 }
