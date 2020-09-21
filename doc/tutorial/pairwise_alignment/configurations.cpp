@@ -35,7 +35,7 @@ int main()
 {
 //! [method_global_free_end_gaps]
     // Example of a semi-global alignment where leading and trailing gaps in the
-    // second sequence are not penelised:
+    // second sequence are not penalised:
     auto config = seqan3::align_cfg::method_global{
                       seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
                       seqan3::align_cfg::free_end_gaps_sequence2_leading{true},

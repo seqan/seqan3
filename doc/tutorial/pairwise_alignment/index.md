@@ -174,7 +174,7 @@ the alignment computation. The default initialised seqan3::align_cfg::gap_cost_a
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
 alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
-with custom gap penalties. The penalties can be assessed changed later by using the respective member variables  
+with custom gap penalties. The penalties can be assessed changed later by using the respective member variables
 `extension_score` and `open_score`.
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
@@ -296,17 +296,16 @@ global alignment configuration with the edit scheme:
 - no free end gaps (all free end gap specifiers are set to `false`)
 - free end gaps for the first sequence (free end gaps are set to `true` for the first and
   to `false` for the second sequence)
-Using any other free end gap configuration will
-disable the edit distance and fall back to the standard pairwise alignment and will not use the fast bitvector
-algorithm.
+Using any other free end gap configuration will disable the edit distance and fall back to the standard pairwise
+alignment and will not use the fast bitvector algorithm.
 
 ### Refine edit distance
 
-The edit distance can be further refined using the seqan3::align_cfg::min_score configuration to fix an edit score (a limit of the allowed number of edits).. If the
-respective alignment could not find a solution within the given error bound, the resulting score is infinity
-(corresponds to std::numeric_limits::max). Also the alignment and the begin and end positions of the alignment can be
-computed using a combination of the align_cfg::output_alignment, align_cfg::output_begin_position and
-align_cfg::output_end_position options.
+The edit distance can be further refined using the seqan3::align_cfg::min_score configuration to fix an edit score
+(a limit of the allowed number of edits).. If the respective alignment could not find a solution within the given error
+bound, the resulting score is infinity (corresponds to std::numeric_limits::max). Also the alignment and the begin and
+end positions of the alignment can be computed using a combination of the align_cfg::output_alignment,
+align_cfg::output_begin_position and align_cfg::output_end_position options.
 
 \assignment{Assignment 6}
 
