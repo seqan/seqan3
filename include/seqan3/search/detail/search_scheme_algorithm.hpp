@@ -66,7 +66,7 @@ public:
      */
     search_scheme_algorithm(configuration_t const & cfg, index_t const & index) : policies_t{cfg}...
     {
-        stratum = cfg.get_or(search_cfg::hit_strata{0}).value;
+        stratum = cfg.get_or(search_cfg::hit_strata{0}).stratum;
         index_ptr = std::addressof(index);
     }
     //!\}
