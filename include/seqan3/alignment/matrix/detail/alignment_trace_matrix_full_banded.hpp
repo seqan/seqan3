@@ -133,9 +133,9 @@ public:
         matrix_base_t::num_cols = static_cast<size_type>(std::ranges::distance(first) + 1);
         matrix_base_t::num_rows = static_cast<size_type>(std::ranges::distance(second) + 1);
 
-        band_col_index = std::min<int32_t>(std::max<int32_t>(band.upper_diagonal.get(), 0),
+        band_col_index = std::min<int32_t>(std::max<int32_t>(band.upper_diagonal, 0),
                                            matrix_base_t::num_cols - 1);
-        band_row_index = std::min<int32_t>(std::abs(std::min<int32_t>(band.lower_diagonal.get(), 0)),
+        band_row_index = std::min<int32_t>(std::abs(std::min<int32_t>(band.lower_diagonal, 0)),
                                            matrix_base_t::num_rows - 1);
         band_size = band_col_index + band_row_index + 1;
 

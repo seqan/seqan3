@@ -76,9 +76,9 @@ private:
 
 public:
     //!\brief The selected lower diagonal. Defaults to `std::%numeric_limits<int32_t>::%lowest()`.
-    seqan3::align_cfg::lower_diagonal lower_diagonal{std::numeric_limits<int32_t>::lowest()};
+    int32_t lower_diagonal{std::numeric_limits<int32_t>::lowest()};
     //!\brief The selected upper diagonal. Defaults to `std::%numeric_limits<int32_t>::%max()`.
-    seqan3::align_cfg::upper_diagonal upper_diagonal{std::numeric_limits<int32_t>::max()};
+    int32_t upper_diagonal{std::numeric_limits<int32_t>::max()};
 
     /*!\name Constructor, destructor and assignment
      * \{
@@ -104,8 +104,8 @@ public:
      */
     constexpr band_fixed_size(seqan3::align_cfg::lower_diagonal const lower_diagonal,
                               seqan3::align_cfg::upper_diagonal const upper_diagonal) :
-        lower_diagonal{std::move(lower_diagonal)},
-        upper_diagonal{std::move(upper_diagonal)}
+        lower_diagonal{lower_diagonal.get()},
+        upper_diagonal{upper_diagonal.get()}
     {}
     //!\}
 
