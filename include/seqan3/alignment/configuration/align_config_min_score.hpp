@@ -36,8 +36,8 @@ namespace seqan3::align_cfg
 struct min_score : public pipeable_config_element<min_score>
 {
 public:
-    //!\brief Minimal score for the distance computation.
-    int32_t score{};
+    //!\brief Minimal score for the distance computation [default: -infinity].
+    int32_t score{std::numeric_limits<int32_t>::lowest()};
 
     constexpr min_score() noexcept = default; //!< Defaulted
     constexpr min_score(min_score const &) noexcept = default; //!< Defaulted
