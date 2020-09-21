@@ -52,7 +52,7 @@ TYPED_TEST_P(pairwise_alignment_test, end_positions)
 
     seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_end_position |
                                                        seqan3::align_cfg::output_score |
-                                                       seqan3::align_cfg::score_type<double>;
+                                                       seqan3::align_cfg::score_type<double>{};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

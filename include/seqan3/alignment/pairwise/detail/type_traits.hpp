@@ -139,7 +139,7 @@ public:
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
     //!\brief The original score type selected by the user.
     using original_score_type = typename std::remove_reference_t<decltype(
-        std::declval<configuration_t>().get_or(align_cfg::score_type<int32_t>))>::score_type;
+        std::declval<configuration_t>().get_or(align_cfg::score_type<int32_t>{}))>::type;
     //!\brief The score type for the alignment algorithm.
     using score_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, original_score_type>;
     //!\brief The trace directions type for the alignment algorithm.
