@@ -52,7 +52,7 @@ public:
  */
 struct max_error_substitution : public pipeable_config_element<max_error_substitution>
 {
-    //!\brief  The number of substitution errors allowed for the search.
+    //!\brief The error count or error rate.
     std::variant<error_count, error_rate> error{error_count{0}};
 
     /*!\name Constructors, destructor and assignment
@@ -66,13 +66,13 @@ struct max_error_substitution : public pipeable_config_element<max_error_substit
     ~max_error_substitution() = default; //!< Defaulted.
 
     /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_count.
-     * \param[in] error The error count used for the search.
+     * \param[in] error The maximal number of substitution errors allowed in the search.
      */
     explicit max_error_substitution(error_count error) : error{std::move(error)}
     {}
 
     /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_rate.
-     * \param[in] error The error rate used for the search.
+     * \param[in] error The maximal error rate for substitutions allowed in the search.
      */
     explicit max_error_substitution(error_rate error) : error{std::move(error)}
     {}
