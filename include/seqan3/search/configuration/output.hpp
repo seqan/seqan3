@@ -31,15 +31,6 @@ struct output_reference_id_tag : public pipeable_config_element<output_reference
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
 };
 
-//!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_reference_begin_position_tag : public pipeable_config_element<output_reference_begin_position_tag>
-{
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_position};
-};
-
 } // namespace seqan3::detail
 
 namespace seqan3::search_cfg
@@ -63,12 +54,16 @@ struct output_query_id : public pipeable_config_element<output_query_id>
  */
 inline constexpr detail::output_reference_id_tag output_reference_id{};
 
-/*!\brief \copybrief seqan3::detail::output_reference_begin_position_tag
+/*!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
  */
-inline constexpr detail::output_reference_begin_position_tag output_reference_begin_position{};
+struct output_reference_begin_position : public pipeable_config_element<output_reference_begin_position>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_position};
+};
 
 /*!\brief Include the index_cursor in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
