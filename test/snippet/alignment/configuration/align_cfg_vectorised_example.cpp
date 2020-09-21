@@ -3,5 +3,5 @@
 int main()
 {
     // Enable SIMD vectorised alignment computation.
-    auto cfg = seqan3::align_cfg::vectorised;
+    auto cfg = seqan3::align_cfg::vectorised{};
 }
