@@ -75,7 +75,7 @@ struct search_traits
                                                   search_configuration_t::template exists<search_cfg::hit>();
 
     //!\brief A flag indicating whether search should return the query_id.
-    static constexpr bool output_query_id = search_configuration_t::template exists<detail::output_query_id_tag>();
+    static constexpr bool output_query_id = search_configuration_t::template exists<search_cfg::output_query_id>();
     //!\brief A flag indicating whether search should return the reference_id.
     static constexpr bool output_reference_id =
                               search_configuration_t::template exists<detail::output_reference_id_tag>();
