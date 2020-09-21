@@ -43,7 +43,7 @@ namespace seqan3::align_cfg
 template <std::semiregular scoring_scheme_t>
 struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_scheme_t>>
 {
-    //!\brief The stored scheme.
+    //!\brief The scoring scheme to be used in the alignment algorithm.
     scoring_scheme_t scheme{};
 
     /*!\name Constructors, destructor and assignment
@@ -57,7 +57,7 @@ struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_sc
     ~scoring_scheme() = default; //!< Defaulted
 
     /*!\brief Initialises the scoring scheme config with the given scheme.
-     * \param[in] scheme The scheme to set.
+     * \param[in] scheme The scoring scheme to be used in the alignment algorithm.
      *
      * \details
      *
