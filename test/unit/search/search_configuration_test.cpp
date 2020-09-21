@@ -38,7 +38,7 @@ using test_types = ::testing::Types<seqan3::search_cfg::max_error_total,
                                     seqan3::detail::output_query_id_tag,
                                     seqan3::detail::output_reference_id_tag,
                                     seqan3::detail::output_reference_begin_position_tag,
-                                    seqan3::detail::output_index_cursor_tag,
+                                    seqan3::search_cfg::output_index_cursor,
                                     seqan3::search_cfg::parallel,
                                     seqan3::search_cfg::detail::result_type<search_result_t>>;
 

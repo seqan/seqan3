@@ -84,7 +84,7 @@ struct search_traits
                               search_configuration_t::template exists<detail::output_reference_begin_position_tag>();
     //!\brief A flag indicating whether search should return the index_cursor.
     static constexpr bool output_index_cursor =
-                              search_configuration_t::template exists<detail::output_index_cursor_tag>();
+                              search_configuration_t::template exists<search_cfg::output_index_cursor>();
     //!\brief A flag indicating whether it is required to call cursor.locate() to retrieve the respective information.
     static constexpr bool output_requires_locate_call = output_reference_id | output_reference_begin_position;
 
