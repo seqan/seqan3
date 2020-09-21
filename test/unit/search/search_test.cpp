@@ -411,7 +411,7 @@ TYPED_TEST(search_test, search_strategy_all_best)
 {
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                          seqan3::search_cfg::hit_all_best;
+                                          seqan3::search_cfg::hit_all_best{};
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position,
                         (std::vector{0, 4, 8})); // 1, 5, 9 are not best hits
@@ -421,7 +421,7 @@ TYPED_TEST(search_test, search_strategy_all_best)
 
     {
         seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all_best};
+                                          seqan3::search_cfg::hit{seqan3::search_cfg::hit_all_best{}};
 
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | position,
                         (std::vector{0, 4, 8})); // 1, 5, 9 are not best hits
