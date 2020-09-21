@@ -6,7 +6,7 @@ int main()
     seqan3::search_cfg::hit dynamic_hit{};
 
     // Select hit_all
-    dynamic_hit = seqan3::search_cfg::hit_all;
+    dynamic_hit = seqan3::search_cfg::hit_all{};
 
     // If condition is true choose strata strategy, otherwise find the single best hit.
     if (true)
