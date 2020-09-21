@@ -37,7 +37,7 @@ struct search_traits
     //!\brief The configured search result type.
     using search_result_type =
         typename std::remove_cvref_t<decltype(std::declval<search_configuration_t>().get_or(
-                search_cfg::detail::result_type<empty_search_result_type>))
+                search_cfg::detail::result_type<empty_search_result_type>{}))
         >::type;
 
     //!\brief A flag indicating whether search should be invoked with total errors.

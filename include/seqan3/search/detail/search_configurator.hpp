@@ -172,7 +172,7 @@ public:
         using callback_t = std::function<void(search_result_t)>;
         using type_erased_algorithm_t = std::function<void(query_t, callback_t)>;
 
-        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>;
+        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>{};
         return std::pair{configure_hit_strategy<type_erased_algorithm_t>(complete_config, index), complete_config};
     }
 

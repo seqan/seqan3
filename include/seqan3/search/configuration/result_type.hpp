@@ -22,31 +22,6 @@
 namespace seqan3::search_cfg::detail
 {
 
-/*!\brief The configuration element storing the configured search result type.
- * \ingroup search_configuration
- *
- * \tparam search_result_t The type of the search result to capture; must be a type specialisation of
- *                         seqan3::search_result.
- *
- * \details
- *
- * Implementation of the search result type configuration element.
- *
- * \see seqan3::search_cfg::result_type
- */
-template <typename search_result_t>
-//!\cond
-    requires seqan3::detail::is_type_specialisation_of_v<search_result_t, search_result>
-//!\endcond
-struct result_type_tag : public pipeable_config_element<result_type_tag<search_result_t>, seqan3::detail::empty_type>
-{
-    //!\brief The configured seqan3::search_result type.
-    using type = search_result_t;
-
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::result_type};
-};
-
 /*!\brief Configuration element storing the configured seqan3::search_result for the search algorithm.
  * \ingroup search_configuration
  * \tparam search_result_t The search result type to store; must be a type specialisation of seqan3::search_result.
@@ -67,5 +42,12 @@ template <typename search_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<search_result_t, search_result>
 //!\endcond
-inline constexpr detail::result_type_tag<search_result_t> result_type{};
+struct result_type : public pipeable_config_element<result_type<search_result_t>>
+{
+    //!\brief The configured seqan3::search_result type.
+    using type = search_result_t;
+
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::result_type};
+};
 }  // namespace seqan3::search_cfg::detail
