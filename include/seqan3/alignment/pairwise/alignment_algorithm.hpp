@@ -130,7 +130,7 @@ public:
         invoke_deferred_crtp_base<algorithm_policies_t, alignment_algorithm<config_t, algorithm_policies_t...>>{cfg}...,
         cfg_ptr{std::make_shared<config_t>(cfg)}
     {
-        this->scoring_scheme = seqan3::get<align_cfg::scoring_scheme>(*cfg_ptr).value;
+        this->scoring_scheme = seqan3::get<align_cfg::scoring_scheme>(*cfg_ptr).scheme;
         this->initialise_alignment_state(*cfg_ptr);
     }
     //!\}

@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
@@ -23,23 +25,48 @@ namespace seqan3::align_cfg
 
 /*!\brief Sets the scoring scheme for the alignment algorithm.
  * \ingroup configuration
- * \tparam scoring_scheme_t The type of the scoring scheme. Must satisfy seqan3::scoring_scheme.
+ * \tparam scoring_scheme_t The type of the scoring scheme; must model std::semiregular.
  *
  * \details
  *
  * The scoring scheme allows to specify how two symbols of an alphabet are scored inside of the alignment algorithm.
  * The scheme depends on the alphabet type of the passed sequences and must be chosen accordingly.
  * During the configuration of the pairwise alignment algorithm a static assert is triggered if the scoring scheme
- * is not compatible with the given alphabet types. Accordingly, this configuration cannot
- * be defaulted since it depends on the sequences and must be given as a minimal configuration.
+ * is not compatible with the given alphabet types (see seqan3::scoring_scheme_for). Accordingly,
+ * this configuration cannot be defaulted since it depends on the sequences and must be given as a minimal
+ * configuration.
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
-template <typename scoring_scheme_t>
-struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_scheme_t>, scoring_scheme_t>
+template <std::semiregular scoring_scheme_t>
+struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_scheme_t>>
 {
+    //!\brief The scoring scheme to be used in the alignment algorithm.
+    scoring_scheme_t scheme{};
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr scoring_scheme() = default; //!< Defaulted
+    constexpr scoring_scheme(scoring_scheme const &) = default; //!< Defaulted
+    constexpr scoring_scheme(scoring_scheme &&) = default; //!< Defaulted
+    constexpr scoring_scheme & operator=(scoring_scheme const &) = default; //!< Defaulted
+    constexpr scoring_scheme & operator=(scoring_scheme &&) = default; //!< Defaulted
+    ~scoring_scheme() = default; //!< Defaulted
+
+    /*!\brief Initialises the scoring scheme config with the given scheme.
+     * \param[in] scheme The scoring scheme to be used in the alignment algorithm.
+     *
+     * \details
+     *
+     * This config stores a copy of the provided scheme.
+     */
+    explicit constexpr scoring_scheme(scoring_scheme_t scheme) : scheme{std::move(scheme)}
+    {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::scoring};

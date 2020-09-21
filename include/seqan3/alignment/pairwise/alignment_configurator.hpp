@@ -98,9 +98,9 @@ public:
     {
         if constexpr (alignment_config_type::template exists<align_cfg::scoring_scheme>())
         {
-            using scoring_type = std::remove_reference_t<
-                                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).value)
-                                 >;
+            using scoring_type =
+                std::remove_reference_t<
+                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).scheme)>;
             return static_cast<bool>(scoring_scheme_for<scoring_type,
                                                         std::ranges::range_value_t<first_seq_t>,
                                                         std::ranges::range_value_t<second_seq_t>>);
@@ -290,7 +290,7 @@ public:
         // Use default edit distance if gaps are not set.
         align_cfg::gap_cost_affine edit_gap_cost{};
         auto const & gap_cost = config_with_result_type.get_or(edit_gap_cost);
-        auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
+        auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).scheme;
 
         if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
