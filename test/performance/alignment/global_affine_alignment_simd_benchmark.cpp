@@ -36,7 +36,11 @@ constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 150;
-inline constexpr size_t set_size        = 1024;
+#ifndef NDEBUG
+inline constexpr size_t set_size = 128;
+#else // assume release
+inline constexpr size_t set_size = 1024;
+#endif // NDEBUG
 
 // Range to test for sequence length variance
 inline constexpr size_t deviation_begin = 0;
