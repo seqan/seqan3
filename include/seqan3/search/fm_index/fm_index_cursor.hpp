@@ -32,6 +32,39 @@ namespace seqan3
  * \{
  */
 
+//!\brief The underlying suffix array interval.
+struct suffix_array_interval
+{
+    //!\brief The begin position of the interval ("left boundary").
+    size_t begin_position;
+    //!\brief The exclusive end position of the interval ("right boundary").
+    size_t end_position;
+
+    /*!\name Comparison operators
+     * \{
+     */
+    /*!\brief Test for equality.
+     * \param[in] lhs A `seqan3::suffix_array_interval`.
+     * \param[in] rhs `seqan3::suffix_array_interval` to compare to.
+     * \returns `true` if equal, `false` otherwise.
+     */
+    friend bool operator==(suffix_array_interval const & lhs, suffix_array_interval const & rhs) noexcept
+    {
+        return lhs.begin_position == rhs.begin_position && lhs.end_position == rhs.end_position;
+    }
+
+    /*!\brief Test for inequality.
+     * \param[in] lhs A `seqan3::suffix_array_interval`.
+     * \param[in] rhs `seqan3::suffix_array_interval` to compare to.
+     * \returns `true` if unequal, `false` otherwise.
+     */
+    friend bool operator!=(suffix_array_interval const & lhs, suffix_array_interval const & rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+    //!\}
+};
+
 /*!\brief The SeqAn FM Index Cursor.
  * \implements seqan3::fm_index_cursor_specialisation
  * \tparam index_t The type of the underlying index; must model seqan3::fm_index_specialisation.
@@ -168,7 +201,9 @@ public:
         index(&_index),
         node({0, _index.index.size() - 1, 0, 0}),
         sigma(_index.index.sigma - index_t::text_layout_mode)
-    {}
+    {
+        assert(_index.index.size() != 0);
+    }
     //\}
 
     /*!\brief Compares two cursors.
@@ -364,7 +399,7 @@ public:
      * \returns `true` if there exists a query in the text where the rightmost character of the query is
      *          lexicographically larger than the current rightmost character of the query.
      *
-     * Example:
+     * ### Example
      *
      * \include test/snippet/search/fm_index_cursor.cpp
      *
@@ -404,7 +439,7 @@ public:
     /*!\brief Outputs the rightmost rank.
      * \returns Rightmost rank.
      *
-     * Example:
+     * ### Example
      *
      * \include test/snippet/search/fm_index_cursor.cpp
      *
@@ -424,11 +459,37 @@ public:
         return index->index.comp2char[node.last_char] - 1; // text is not allowed to contain ranks of 0
     }
 
+    /*!\brief Returns the half-open suffix array interval.
+     * \returns A seqan3::suffix_array_interval contains the half-open interval.
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/fm_index_cursor.cpp
+     *
+     * ### Complexity
+     *
+     * Constant.
+     *
+     * ### Exceptions
+     *
+     * No-throw guarantee.
+     */
+    seqan3::suffix_array_interval suffix_array_interval() const noexcept
+    {
+        assert(index != nullptr);
+
+        return {node.lb, node.rb + 1};
+    }
+
     /*!\brief Returns the length of the searched query.
      *        \if DEV
      *            Returns the depth of the cursor node in the implicit suffix tree.
      *        \endif
      * \returns Length of query.
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/fm_index_cursor.cpp
      *
      * ### Complexity
      *

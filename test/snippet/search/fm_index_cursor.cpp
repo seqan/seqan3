@@ -14,15 +14,27 @@ int main()
     auto cur = index.cursor();                                      // create a cursor
     // cur.cycle_back();                                            // cycle_back on begin() is undefined behaviour!
     cur.extend_right("AAC"_dna4);                                   // search the sequence "AAC"
-    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAC"
-    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 1
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // prints "AAC"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // prints 1
+    seqan3::debug_stream << cur.query_length() << '\n';             // prints 3
+    auto [left_bound, right_bound] = cur.suffix_array_interval();   // Get the half-open suffix array interval.
+    seqan3::debug_stream << '[' << left_bound
+                         << ',' << right_bound << ")\n";            // prints "[7,8)"
 
     cur.cycle_back();                                               // search the sequence "AAT"
-    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAT"
-    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 3
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // prints "AAT"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // prints 3
+    seqan3::debug_stream << cur.query_length() << '\n';             // prints 3
+    auto interval = cur.suffix_array_interval();                    // Get the half-open suffix array interval.
+    seqan3::debug_stream << '[' << interval.begin_position
+                         << ',' << interval.end_position << ")\n";  // prints "[8,10)"
 
     cur.cycle_back();                                               // "cur" doesn't change because the rightmost char
                                                                     // is already the largest dna4 char.
-    seqan3::debug_stream << cur.path_label(genome) << '\n';         // outputs "AAT"
-    seqan3::debug_stream << cur.last_rank() << '\n';                // outputs 3
+    seqan3::debug_stream << cur.path_label(genome) << '\n';         // prints "AAT"
+    seqan3::debug_stream << cur.last_rank() << '\n';                // prints 3
+    seqan3::debug_stream << cur.query_length() << '\n';             // prints 3
+    auto && [lb, rb] = cur.suffix_array_interval();                 // Get the half-open suffix array interval.
+    seqan3::debug_stream << '[' << lb
+                         << ',' << rb << ")\n";                     // prints "[8,10)"
 }
