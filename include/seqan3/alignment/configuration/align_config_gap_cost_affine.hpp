@@ -70,7 +70,7 @@ struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::det
  * \include test/snippet/alignment/configuration/align_cfg_gap_cost_affine_example.cpp
  *
  */
-struct gap_cost_affine : public pipeable_config_element<gap_cost_affine>
+class gap_cost_affine : public pipeable_config_element<gap_cost_affine>
 {
 public:
     //!\brief The score per consecutive sequence of gaps. Defaults to 0.
