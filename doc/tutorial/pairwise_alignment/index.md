@@ -46,7 +46,8 @@ In line 16-17 we configure the alignment job with the most simplistic configurat
 In this case it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
-The minimum requirement for computing a pairwise alignment is to specify the alignment method (seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
+The minimum requirement for computing a pairwise alignment is to specify the alignment method
+(seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
 seqan3::align_cfg::scoring_scheme configuration elements. The first one selects the internal algorithm and the second one
 provides the scoring scheme that should be used to score a pair of sequence characters.
 
@@ -193,7 +194,7 @@ the alignment computation. The default initialised seqan3::align_cfg::gap_cost_a
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
 alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
-with custom gap penalties. The penalties can be assessed changed later by using the respective member variables  
+with custom gap penalties. The penalties can be assessed changed later by using the respective member variables
 `extension_score` and `open_score`.
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a

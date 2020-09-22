@@ -26,7 +26,7 @@ using seqan3::operator""_rna5;
 namespace seqan3::test::alignment::fixture::local::affine::unbanded
 {
 
-inline constexpr auto align_config = seqan3::align_cfg::method_local |
+inline constexpr auto align_config = seqan3::align_cfg::method_local{} |
                                      seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                                         seqan3::align_cfg::extension_score{-1}};
 
@@ -161,7 +161,7 @@ static auto dna4_03 = []()
     {
         "ataagcgtctcg"_dna4,
         "tcatagagttgc"_dna4,
-        seqan3::align_cfg::method_local
+        seqan3::align_cfg::method_local{}
             | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-1},
                                                  seqan3::align_cfg::extension_score{-1}}
             | seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{2},

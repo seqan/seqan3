@@ -104,7 +104,7 @@ private:
     template <typename configuration_t>
     simd_find_optimum_policy(configuration_t const & config)
     {
-        if constexpr (configuration_t::template exists<method_local_tag>())
+        if constexpr (configuration_t::template exists<align_cfg::method_local>())
             test_every_cell = true;
 
         is_global_alignment = configuration_t::template exists<align_cfg::method_global>();

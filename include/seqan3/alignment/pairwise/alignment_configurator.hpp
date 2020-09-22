@@ -115,7 +115,7 @@ public:
     constexpr static bool expects_alignment_configuration()
     {
         const bool is_global = alignment_config_type::template exists<seqan3::align_cfg::method_global>();
-        const bool is_local = alignment_config_type::template exists<seqan3::detail::method_local_tag>();
+        const bool is_local = alignment_config_type::template exists<seqan3::align_cfg::method_local>();
 
         return (is_global || is_local);
     }
@@ -486,7 +486,7 @@ private:
 
             using alignment_method_t = typename std::conditional_t<traits_t::is_global,
                                                                    seqan3::align_cfg::method_global,
-                                                                   seqan3::detail::method_local_tag>;
+                                                                   seqan3::align_cfg::method_local>;
 
             using score_t = typename traits_t::score_type;
             using alignment_scoring_scheme_t =
@@ -525,7 +525,7 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                                 typename traits_t::scoring_scheme_alphabet_type,
                                 typename std::conditional_t<traits_t::is_global,
                                                             seqan3::align_cfg::method_global,
-                                                            seqan3::detail::method_local_tag>>,
+                                                            seqan3::align_cfg::method_local>>,
                             typename traits_t::scoring_scheme_type>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;

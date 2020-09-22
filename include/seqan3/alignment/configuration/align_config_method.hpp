@@ -20,20 +20,6 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 
-namespace seqan3::detail
-{
-
-//!\brief A strong type to select the local alignment method.
-//!\ingroup alignment_configuration
-struct method_local_tag : public pipeable_config_element<method_local_tag>
-{
-    //!\privatesection
-    //!\brief An internal id used to check for a valid alignment configuration.
-    static constexpr detail::align_config_id id{detail::align_config_id::local};
-};
-
-} // namespace seqan3::detail
-
 namespace seqan3::align_cfg
 {
 
@@ -51,9 +37,14 @@ namespace seqan3::align_cfg
  *
  * ### Example
  *
- * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
+ * \include test/snippet/alignment/configuration/align_cfg_method_local.cpp
  */
-inline constexpr seqan3::detail::method_local_tag method_local{};
+struct method_local : public pipeable_config_element<method_local>
+{
+    //!\privatesection
+    //!\brief An internal id used to check for a valid alignment configuration.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::local};
+};
 
 /*!\brief A strong type representing free_end_gaps_sequence1_leading of the seqan3::align_cfg::method_global.
  * \ingroup alignment_configuration
