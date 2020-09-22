@@ -39,8 +39,20 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_method_local.cpp
  */
-struct method_local : public pipeable_config_element<method_local>
+class method_local : public pipeable_config_element<method_local>
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    method_local() = default; //!< Defaulted.
+    method_local(method_local const &) = default; //!< Defaulted.
+    method_local(method_local &&) = default; //!< Defaulted.
+    method_local & operator=(method_local const &) = default; //!< Defaulted.
+    method_local & operator=(method_local &&) = default; //!< Defaulted.
+    ~method_local() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief An internal id used to check for a valid alignment configuration.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::local};
@@ -90,8 +102,9 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
  * \ingroup alignment_configuration
  * \copydetails seqan3::align_cfg::method_local
  */
-struct method_global : public pipeable_config_element<method_global>
+class method_global : public pipeable_config_element<method_global>
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
