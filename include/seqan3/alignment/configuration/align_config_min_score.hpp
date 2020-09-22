@@ -33,12 +33,15 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_min_score_example.cpp
  */
-struct min_score : public pipeable_config_element<min_score>
+class min_score : public pipeable_config_element<min_score>
 {
 public:
     //!\brief Minimal score for the distance computation [default: -infinity].
     int32_t score{std::numeric_limits<int32_t>::lowest()};
 
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
     constexpr min_score() noexcept = default; //!< Defaulted
     constexpr min_score(min_score const &) noexcept = default; //!< Defaulted
     constexpr min_score(min_score &&) noexcept = default; //!< Defaulted
@@ -53,6 +56,7 @@ public:
     constexpr min_score(const int32_t score) :
         score{score}
     {}
+    //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::min_score};
