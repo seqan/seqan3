@@ -11,7 +11,6 @@
 
 #include "alignment_fixture.hpp"
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
@@ -30,8 +29,7 @@ static constexpr auto semi_global_edit_distance = seqan3::align_cfg::method_glob
                                                       seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
                                                       seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                                                  seqan3::align_cfg::edit_scheme |
-                                                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+                                                  seqan3::align_cfg::edit_scheme;
 
 static auto dna4_01 = []()
 {

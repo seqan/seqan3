@@ -14,7 +14,6 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
@@ -125,8 +124,6 @@ public:
     //!\brief Flag indicating whether global alignment method is enabled.
     static constexpr bool is_global =
         configuration_t::template exists<seqan3::align_cfg::method_global>();
-    //!\brief Flag indicating whether global alignment mode with free ends is enabled.
-    static constexpr bool with_free_end_gaps = configuration_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.
     static constexpr bool is_local = configuration_t::template exists<seqan3::align_cfg::method_local>();
     //!\brief Flag indicating whether banded alignment mode is enabled.

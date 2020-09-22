@@ -48,7 +48,6 @@ static std::string create_sam_file_string(size_t const n_queries)
                       seqan3::align_cfg::scoring_scheme{nt_score_scheme} |
                       seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                          seqan3::align_cfg::extension_score{-1}} |
-                      seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                       seqan3::align_cfg::output_begin_position{} |
                       seqan3::align_cfg::output_alignment{} |
                       seqan3::align_cfg::output_score{};
