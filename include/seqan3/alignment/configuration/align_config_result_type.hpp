@@ -42,10 +42,22 @@ template <typename alignment_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<alignment_result_t, seqan3::alignment_result>
 //!\endcond
-struct result_type : public pipeable_config_element<result_type<alignment_result_t>>
+class result_type : public pipeable_config_element<result_type<alignment_result_t>>
 {
+public:
     //!\brief The result type.
     using type = alignment_result_t;
+
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr result_type() = default; //!< Defaulted.
+    constexpr result_type(result_type const &) = default; //!< Defaulted.
+    constexpr result_type(result_type &&) = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type const &) = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type &&) = default; //!< Defaulted.
+    ~result_type() = default; //!< Defaulted.
+    //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::result_type};
