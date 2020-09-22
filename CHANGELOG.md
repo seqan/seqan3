@@ -54,6 +54,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * `seqan3::argument_parser::add_line`
   * `seqan3::argument_parser::add_list_item`
   Note that other `seqan3::argument_parser::option_spec`s like `REQUIRED` are ignored.
+* We expanded the `seqan3::output_file_validator`, with a parameter `seqan3::output_file_open_options` to allow overwriting
+  output files ([\#2009](https://github.com/seqan/seqan3/pull/2009)).
 
 #### I/O
 

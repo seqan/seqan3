@@ -9,8 +9,15 @@ int main(int argc, const char ** argv)
     //! [validator_call]
     std::filesystem::path myfile{};
 
-    myparser.add_option(myfile,'f',"file","Output file containing the processed sequences.",
-                        seqan3::option_spec::DEFAULT, seqan3::output_file_validator{{"fa","fasta"}});
+    // Use the seqan3::output_file_open_options to indicate that you allow overwriting existing output files, ...
+    myparser.add_option(myfile, 'f', "file", "Output file containing the processed sequences.",
+                        seqan3::option_spec::DEFAULT,
+                        seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create, {"fa","fasta"}});
+
+    // ... or that you will throw a seqan3::validation_error if the user specified output file already exists
+    myparser.add_option(myfile, 'g', "file2", "Output file containing the processed sequences.",
+                        seqan3::option_spec::DEFAULT,
+                        seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"fa","fasta"}});
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a filename

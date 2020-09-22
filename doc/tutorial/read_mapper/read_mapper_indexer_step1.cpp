@@ -24,7 +24,7 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
                       seqan3::input_file_validator{{"fa","fasta"}});
     parser.add_option(args.index_path, 'o', "output", "The output index file path.",
                       seqan3::option_spec::DEFAULT,
-                      seqan3::output_file_validator{{"index"}});
+                      seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"index"}});
 }
 
 //![main]

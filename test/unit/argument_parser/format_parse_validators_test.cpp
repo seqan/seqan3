@@ -201,34 +201,45 @@ TEST(validator_test, input_file_ext_from_file)
 TEST(validator_test, output_file)
 {
     seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
+    std::filesystem::path not_existing_path{tmp_name.get_path()};
     seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    std::ofstream tmp_file_2(tmp_name_2.get_path());    // create file
+    std::filesystem::path existing_path{tmp_name_2.get_path()};
     seqan3::test::tmp_filename tmp_name_3{"testbox_3.fa"};
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
 
     { // single file
 
-        { // empty list of file.
-            seqan3::output_file_validator my_validator{};
-            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+        { // file does not exist (& no formats given)
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::open_or_create};
+            EXPECT_NO_THROW(my_validator(not_existing_path));
+            seqan3::output_file_validator my_validator2{seqan3::output_file_open_options::create_new};
+            EXPECT_NO_THROW(my_validator2(not_existing_path));
+            seqan3::output_file_validator my_validator3{}; // default: create_new
+            EXPECT_NO_THROW(my_validator3(not_existing_path));
         }
 
-        { // file does not exist.
-            std::ofstream tmp_file_2(tmp_name_2.get_path());
-            std::filesystem::path does_not_exist{tmp_name_2.get_path()};
-            seqan3::output_file_validator my_validator{formats};
-            EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
+        { // file does exist & overwriting is prohibited
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
+            EXPECT_THROW(my_validator(existing_path), seqan3::validation_error);
+        }
+
+        { // file does exist but allow to overwrite it
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::open_or_create, formats};
+            EXPECT_NO_THROW(my_validator(existing_path));
         }
 
         { // file has wrong format.
-            seqan3::output_file_validator my_validator{std::vector{std::string{"sam"}}};
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new,
+                                                       std::vector{std::string{"sam"}}};
             EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
         }
 
         { // file has no extension.
             std::filesystem::path no_extension{tmp_name.get_path()};
             no_extension.replace_extension();
-            seqan3::output_file_validator my_validator{formats};
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
             EXPECT_THROW(my_validator(no_extension), seqan3::validation_error);
         }
 
@@ -245,7 +256,8 @@ TEST(validator_test, output_file)
         seqan3::argument_parser parser{"test_parser", 3, argv, false};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(file_out_path, 'o', "out-option", "desc",
-                          seqan3::option_spec::DEFAULT, seqan3::output_file_validator{formats});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::output_file_validator{seqan3::output_file_open_options::create_new, formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(file_out_path.string(), path);
@@ -261,7 +273,8 @@ TEST(validator_test, output_file)
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, false};
         test_accessor::set_terminal_width(parser, 80);
-        parser.add_positional_option(output_files, "desc", seqan3::output_file_validator{formats});
+        parser.add_positional_option(output_files, "desc",
+                                     seqan3::output_file_validator{seqan3::output_file_open_options::create_new, formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(output_files.size(), 2u);
@@ -269,13 +282,14 @@ TEST(validator_test, output_file)
         EXPECT_EQ(output_files[1].string(), path_3);
     }
 
-    // get help page message
+    // get help page message (overwriting prohibited)
     {
         std::filesystem::path path;
         const char * argv[] = {"./argument_parser_test", "-h"};
         seqan3::argument_parser parser{"test_parser", 2, argv, false};
         test_accessor::set_terminal_width(parser, 80);
-        parser.add_positional_option(path, "desc", seqan3::output_file_validator{formats});
+        parser.add_positional_option(path, "desc",
+                                     seqan3::output_file_validator{seqan3::output_file_open_options::create_new, formats});
 
         testing::internal::CaptureStdout();
         EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -293,18 +307,60 @@ TEST(validator_test, output_file)
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
     }
+
+    // get help page message (overwriting allowed)
+    {
+        std::filesystem::path path;
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_positional_option(path, "desc",
+                                     seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create,
+                                                                   formats});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser\n"
+                               "===========\n"
+                               "\n"
+                               "POSITIONAL ARGUMENTS\n"
+                               "    ARGUMENT-1 (std::filesystem::path)\n"
+                               "          desc Write permissions must be granted. Valid file extensions are:\n"
+                               "          [fa, sam, fasta].\n"
+                               "\n"} +
+                               basic_options_str +
+                               "\n" +
+                               basic_version_str;
+        EXPECT_EQ(my_stdout, expected);
+    }
 }
 
 TEST(validator_test, output_file_ext_from_file)
 {
     // Give as a template argument the seqan3 file type to get all valid extensions for this file.
-    seqan3::output_file_validator<dummy_file> validator{};
-    EXPECT_EQ(validator.get_help_page_message(), "The output file must not exist already and write permissions must "
-                                                 "be granted. Valid file extensions are: [fa, fasta, sam, bam].");
+    seqan3::output_file_validator<dummy_file> validator1{};
+    EXPECT_EQ(validator1.get_help_page_message(), "The output file must not exist already and write permissions must "
+                                                  "be granted. Valid file extensions are: [fa, fasta, sam, bam].");
 
-    seqan3::output_file_validator validator2{};
+    seqan3::output_file_validator<dummy_file> validator2{seqan3::output_file_open_options::create_new};
     EXPECT_EQ(validator2.get_help_page_message(), "The output file must not exist already and write permissions must "
+                                                  "be granted. Valid file extensions are: [fa, fasta, sam, bam].");
+
+    seqan3::output_file_validator<dummy_file> validator3{seqan3::output_file_open_options::open_or_create};
+    EXPECT_EQ(validator3.get_help_page_message(), "Write permissions must be granted. Valid file extensions are: [fa, "
+                                                  "fasta, sam, bam].");
+
+    seqan3::output_file_validator validator4{};
+    EXPECT_EQ(validator4.get_help_page_message(), "The output file must not exist already and write permissions must "
                                                   "be granted.");
+
+    seqan3::output_file_validator validator5{seqan3::output_file_open_options::create_new};
+    EXPECT_EQ(validator5.get_help_page_message(), "The output file must not exist already and write permissions must "
+                                                  "be granted.");
+
+    seqan3::output_file_validator validator6{seqan3::output_file_open_options::open_or_create};
+    EXPECT_EQ(validator6.get_help_page_message(), "Write permissions must be granted.");
 }
 
 TEST(validator_test, input_directory)
@@ -387,7 +443,8 @@ TEST(validator_test, output_directory)
         seqan3::argument_parser parser{"test_parser", 3, argv, false};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(dir_out_path, 'o', "output-option", "desc",
-                          seqan3::option_spec::DEFAULT, seqan3::output_directory_validator{});
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::output_directory_validator{});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(path, dir_out_path.string());
@@ -505,7 +562,7 @@ TEST(validator_test, outputfile_not_writable)
     seqan3::test::tmp_filename tmp_name{"my_file.test"};
     std::filesystem::path tmp_file{tmp_name.get_path()};
 
-    EXPECT_NO_THROW(seqan3::output_file_validator{}(tmp_file));
+    EXPECT_NO_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_file));
 
     // Parent path is not writable.
     std::filesystem::permissions(tmp_file.parent_path(),
@@ -515,7 +572,8 @@ TEST(validator_test, outputfile_not_writable)
 
     if (!write_access(tmp_file))
     {
-        EXPECT_THROW(seqan3::output_file_validator{}(tmp_file), seqan3::validation_error);
+        EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_file),
+                     seqan3::validation_error);
     }
 
     // make sure we can remove the directory.
@@ -531,7 +589,7 @@ TEST(validator_test, outputdir_not_writable)
         seqan3::test::tmp_filename tmp_name{"dir"};
         std::filesystem::path tmp_dir{tmp_name.get_path()};
 
-        EXPECT_NO_THROW(seqan3::output_directory_validator{}(tmp_dir));
+        EXPECT_NO_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir));
         EXPECT_FALSE(std::filesystem::exists(tmp_dir));
         // Parent path is not writable.
         std::filesystem::permissions(tmp_dir.parent_path(),
@@ -541,7 +599,8 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(seqan3::output_directory_validator{}(tmp_dir), seqan3::validation_error);
+            EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir),
+                         seqan3::validation_error);
         }
 
         // make sure we can remove the directory.
@@ -566,7 +625,8 @@ TEST(validator_test, outputdir_not_writable)
 
         if (!write_access(tmp_dir))
         {
-            EXPECT_THROW(seqan3::output_directory_validator{}(tmp_dir), seqan3::validation_error);
+            EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir),
+                         seqan3::validation_error);
         }
 
         // make sure we can remove the directory.
@@ -1067,7 +1127,7 @@ TEST(validator_test, chaining_validators)
     std::string option_value{};
     std::vector<std::string> option_vector{};
     seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
-    seqan3::output_file_validator my_file_ext_validator{{"sa", "so"}};
+    seqan3::output_file_validator my_file_ext_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}};
 
     seqan3::test::tmp_filename tmp_name{"file.sa"};
     std::filesystem::path invalid_extension{tmp_name.get_path()};
@@ -1119,7 +1179,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           seqan3::option_spec::DEFAULT,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          seqan3::output_file_validator{{"sa", "so"}});
+                          seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1136,7 +1196,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           seqan3::option_spec::DEFAULT,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          seqan3::output_file_validator{{"sa", "so"}} |
+                          seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}} |
                           seqan3::regex_validator{".*"});
 
         testing::internal::CaptureStderr();
@@ -1154,7 +1214,7 @@ TEST(validator_test, chaining_validators)
         parser.add_option(option_value, 's', "string-option", "desc",
                           seqan3::option_spec::DEFAULT,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
-                          seqan3::output_file_validator{{"sa", "so"}} |
+                          seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}} |
                           seqan3::regex_validator{".*"});
 
         testing::internal::CaptureStdout();
@@ -1174,6 +1234,34 @@ TEST(validator_test, chaining_validators)
         EXPECT_EQ(my_stdout, expected);
     }
 
+    // help page message (allow overwriting)
+    {
+        option_value.clear();
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, false};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          seqan3::option_spec::DEFAULT,
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create, {"sa", "so"}} |
+                          seqan3::regex_validator{".*"});
+
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string{"test_parser\n"
+                               "===========\n"
+                               "\n" +
+                               basic_options_str +
+                               "    -s, --string-option (std::string)\n"
+                               "          desc Default: . Value must match the pattern '(/[^/]+)+/.*\\.[^/\\.]+$'.\n"
+                               "          Write permissions must be granted. Valid file extensions are: [sa,\n"
+                               "          so]. Value must match the pattern '.*'.\n"
+                               "\n"} +
+                               basic_version_str;
+        EXPECT_EQ(my_stdout, expected);
+    }
+
     // chaining with a container option value type
     {
         std::vector<std::string> option_list_value{};
@@ -1183,8 +1271,8 @@ TEST(validator_test, chaining_validators)
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_list_value, 's', "string-option", "desc",
                           seqan3::option_spec::DEFAULT,
-                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} | seqan3::output_file_validator{{"sa",
-                                                                                                               "so"}});
+                          seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
+                          seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}});
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());

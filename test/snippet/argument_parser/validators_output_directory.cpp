@@ -10,7 +10,8 @@ int main(int argc, const char ** argv)
     std::filesystem::path mydir{};
 
     myparser.add_option(mydir, 'd', "dir", "The output directory for storing the files.",
-                        seqan3::option_spec::DEFAULT, seqan3::output_directory_validator{});
+                        seqan3::option_spec::DEFAULT,
+                        seqan3::output_file_validator{seqan3::output_file_open_options::create_new});
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a directory that cannot be created by the filesystem either
