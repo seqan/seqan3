@@ -32,9 +32,34 @@ namespace seqan3::search_cfg
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_total : public pipeable_config_element<max_error_total, std::variant<error_count, error_rate>>
+struct max_error_total : public pipeable_config_element<max_error_total>
 {
-public:
+    //!\brief The error count or error rate.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    max_error_total() = default; //!< Defaulted.
+    max_error_total(max_error_total const &) = default; //!< Defaulted.
+    max_error_total(max_error_total &&) = default; //!< Defaulted.
+    max_error_total & operator=(max_error_total const &) = default; //!< Defaulted.
+    max_error_total & operator=(max_error_total &&) = default; //!< Defaulted.
+    ~max_error_total() = default; //!< Defaulted.
+
+    /*!\brief Initialises the total error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The maximal number of total errors allowed in the search.
+     */
+    explicit max_error_total(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the total error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The maximal total error rate allowed in the search.
+     */
+    explicit max_error_total(error_rate error) : error{std::move(error)}
+    {}
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::max_error_total};
