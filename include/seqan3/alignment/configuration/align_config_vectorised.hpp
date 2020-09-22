@@ -38,8 +38,20 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-struct vectorised : public pipeable_config_element<vectorised>
+class vectorised : public pipeable_config_element<vectorised>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr vectorised() = default; //!< Defaulted.
+    constexpr vectorised(vectorised const &) = default; //!< Defaulted.
+    constexpr vectorised(vectorised &&) = default; //!< Defaulted.
+    constexpr vectorised & operator=(vectorised const &) = default; //!< Defaulted.
+    constexpr vectorised & operator=(vectorised &&) = default; //!< Defaulted.
+    ~vectorised() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::vectorised};
