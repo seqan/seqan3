@@ -32,7 +32,7 @@ namespace seqan3
  * \{
  */
 
-//!\brief The underlying suffix array intervals.
+//!\brief The underlying suffix array interval.
 struct suffix_array_interval
 {
     //!\brief The begin position of the interval ("left boundary").
