@@ -103,11 +103,13 @@ private:
     //!\brief Helper function to determine the alignment result type.
     static constexpr auto determine_alignment_result_type() noexcept
     {
-        if constexpr (configuration_t::template exists<result_type_tag>())
+        if constexpr (configuration_t::template exists<align_cfg::detail::result_type>())
         {
-            using wrapped_result_t =
-                decltype(seqan3::get<result_type_tag>(std::declval<configuration_t>()).value);
-            return typename wrapped_result_t::type{};  // Unwrap the type_identity.
+            using result_type_cfg_t =
+                std::remove_cvref_t<
+                    decltype(seqan3::get<align_cfg::detail::result_type>(std::declval<configuration_t>()))
+                >;
+            return typename result_type_cfg_t::type{};  // Access the stored result_type.
         }
         else
         {
