@@ -70,10 +70,6 @@ struct upper_diagonal : public seqan3::detail::strong_type<int32_t, upper_diagon
  */
 class band_fixed_size : public pipeable_config_element<band_fixed_size>
 {
-private:
-    //!\brief The base class type.
-    using base_t = pipeable_config_element<band_fixed_size>;
-
 public:
     //!\brief The selected lower diagonal. Defaults to `std::%numeric_limits<int32_t>::%lowest()`.
     int32_t lower_diagonal{std::numeric_limits<int32_t>::lowest()};
