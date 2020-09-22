@@ -23,7 +23,7 @@ using test_types = ::testing::Types<seqan3::align_cfg::output_score,
                                     seqan3::align_cfg::output_end_position,
                                     seqan3::align_cfg::output_begin_position,
                                     seqan3::align_cfg::output_alignment,
-                                    seqan3::align_cfg::output_sequence1_id_tag,
+                                    seqan3::align_cfg::output_sequence1_id,
                                     seqan3::align_cfg::output_sequence2_id>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(output, pipeable_config_element_test, test_types, );
@@ -54,8 +54,8 @@ TEST(align_config_output, alignment)
 
 TEST(align_config_output, sequence1_id)
 {
-    EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::output_sequence1_id)>,
-                              seqan3::align_cfg::output_sequence1_id_tag>));
+    EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::output_sequence1_id{})>,
+                              seqan3::align_cfg::output_sequence1_id>));
 }
 
 TEST(align_config_output, sequence2_id)
@@ -70,7 +70,7 @@ TEST(align_config_output, combine_outputs)
                                 seqan3::align_cfg::output_end_position{} |
                                 seqan3::align_cfg::output_begin_position{} |
                                 seqan3::align_cfg::output_alignment{} |
-                                seqan3::align_cfg::output_sequence1_id |
+                                seqan3::align_cfg::output_sequence1_id{} |
                                 seqan3::align_cfg::output_sequence2_id{};
 
 
@@ -78,6 +78,6 @@ TEST(align_config_output, combine_outputs)
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_end_position>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_begin_position>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_alignment>());
-    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_sequence1_id_tag>());
+    EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_sequence1_id>());
     EXPECT_TRUE(cfg.exists<seqan3::align_cfg::output_sequence2_id>());
 }
