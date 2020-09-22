@@ -26,8 +26,20 @@ namespace seqan3::detail
  * trace matrix of the alignment algorithm.
  */
 template <typename wrapped_config_id_t>
-struct debug_mode : public pipeable_config_element<debug_mode<wrapped_config_id_t>, bool>
+class debug_mode : public pipeable_config_element<debug_mode<wrapped_config_id_t>>
 {
+public:
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    constexpr debug_mode() = default;  //!< Defaulted.
+    constexpr debug_mode(debug_mode const &) = default; //!< Defaulted.
+    constexpr debug_mode(debug_mode &&) = default; //!< Defaulted.
+    constexpr debug_mode & operator=(debug_mode const &) = default; //!< Defaulted.
+    constexpr debug_mode & operator=(debug_mode &&) = default; //!< Defaulted.
+    ~debug_mode() = default; //!< Defaulted.
+    //!\}
+
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr typename wrapped_config_id_t::value_type id{wrapped_config_id_t::value};
 };
