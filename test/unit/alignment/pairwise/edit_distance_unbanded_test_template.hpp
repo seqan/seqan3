@@ -173,7 +173,7 @@ TYPED_TEST_P(edit_distance_unbanded_test, end_positions)
 TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_begin_position;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_begin_position{};
 
     std::vector database = fixture.sequence1;
     std::vector query = fixture.sequence2;

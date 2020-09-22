@@ -109,27 +109,6 @@ struct output_end_position_tag : public pipeable_config_element<output_end_posit
  */
 inline constexpr output_end_position_tag output_end_position{};
 
-/*!\brief Tag representing begin position output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_begin_position_tag : public pipeable_config_element<output_begin_position_tag>
-{
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr output_begin_position_tag() = default; //!< Defaulted.
-    constexpr output_begin_position_tag(output_begin_position_tag const &) = default; //!< Defaulted.
-    constexpr output_begin_position_tag(output_begin_position_tag &&) = default; //!< Defaulted.
-    constexpr output_begin_position_tag & operator=(output_begin_position_tag const &) = default; //!< Defaulted.
-    constexpr output_begin_position_tag & operator=(output_begin_position_tag &&) = default; //!< Defaulted.
-    ~output_begin_position_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_begin_position};
-};
-
 /*!\brief Configures the alignment result to output the begin positions.
  * \ingroup alignment_configuration
  *
@@ -154,7 +133,12 @@ struct output_begin_position_tag : public pipeable_config_element<output_begin_p
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_begin_position_tag output_begin_position{};
+struct output_begin_position : public pipeable_config_element<output_begin_position>
+{
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_begin_position};
+};
 
 /*!\brief Configures the alignment result to output the alignment.
  * \ingroup alignment_configuration

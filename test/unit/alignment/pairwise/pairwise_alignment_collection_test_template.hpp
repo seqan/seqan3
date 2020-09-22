@@ -73,7 +73,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::output_begin_position |
+                                      seqan3::align_cfg::output_begin_position{} |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_score;
 
@@ -111,7 +111,7 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_alignment{} |
-                                      seqan3::align_cfg::output_begin_position |
+                                      seqan3::align_cfg::output_begin_position{} |
                                       seqan3::align_cfg::output_end_position |
                                       seqan3::align_cfg::output_score;
 
