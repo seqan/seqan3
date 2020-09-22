@@ -62,7 +62,7 @@ struct search_traits
     //!\brief A flag indicating whether search should find all hits.
     static constexpr bool search_all_hits = search_configuration_t::template exists<search_cfg::hit_all>();
     //!\brief A flag indicating whether search should find best hits.
-    static constexpr bool search_single_best_hit = search_configuration_t::template exists<hit_single_best_tag>();
+    static constexpr bool search_single_best_hit = search_configuration_t::template exists<search_cfg::hit_single_best>();
     //!\brief A flag indicating whether search should find all best hits.
     static constexpr bool search_all_best_hits = search_configuration_t::template exists<search_cfg::hit_all_best>();
     //!\brief A flag indicating whether search should find strata hits.
