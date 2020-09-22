@@ -3,5 +3,5 @@
 int main()
 {
     // Output only the id of the second sequence.
-    seqan3::configuration cfg = seqan3::align_cfg::output_sequence2_id;
+    seqan3::configuration cfg = seqan3::align_cfg::output_sequence2_id{};
 }

@@ -184,7 +184,7 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
                                         seqan3::align_cfg::output_alignment |
                                         seqan3::align_cfg::output_end_position |
                                         seqan3::align_cfg::output_sequence1_id |
-                                        seqan3::align_cfg::output_sequence2_id |
+                                        seqan3::align_cfg::output_sequence2_id{} |
                                         seqan3::align_cfg::output_score |
                                         seqan3::align_cfg::score_type<double>{};
             unsigned idx = 0;
