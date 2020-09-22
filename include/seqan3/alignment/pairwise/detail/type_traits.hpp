@@ -166,7 +166,7 @@ public:
                                                             return 1;
                                                     }();
     //!\brief Flag indicating whether the score shall be computed.
-    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
+    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score>();
     //!\brief Flag indicating whether the end positions shall be computed.
     static constexpr bool compute_end_positions =
         configuration_t::template exists<align_cfg::output_end_position>();

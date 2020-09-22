@@ -71,7 +71,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::output_alignment{} |
                                                seqan3::align_cfg::output_begin_position{} |
-                                               seqan3::align_cfg::output_score;
+                                               seqan3::align_cfg::output_score{};
 
     for (auto && record : query_file_in)
     {

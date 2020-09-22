@@ -349,7 +349,7 @@ private:
         if constexpr (traits_t::has_output_configuration)
             return config;
         else
-            return config | align_cfg::output_score |
+            return config | align_cfg::output_score{} |
                             align_cfg::output_begin_position{} |
                             align_cfg::output_end_position{} |
                             align_cfg::output_alignment{} |

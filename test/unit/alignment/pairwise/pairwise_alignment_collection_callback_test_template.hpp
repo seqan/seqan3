@@ -55,7 +55,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, score)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_sequence1_id |
-                                      seqan3::align_cfg::output_score |
+                                      seqan3::align_cfg::output_score{} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           auto id = result.sequence1_id();
@@ -70,7 +70,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, end_positions)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_sequence1_id |
-                                      seqan3::align_cfg::output_score |
+                                      seqan3::align_cfg::output_score{} |
                                       seqan3::align_cfg::output_end_position{} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
@@ -90,7 +90,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, begin_positions)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_sequence1_id |
-                                      seqan3::align_cfg::output_score |
+                                      seqan3::align_cfg::output_score{} |
                                       seqan3::align_cfg::output_end_position{} |
                                       seqan3::align_cfg::output_begin_position{} |
                                       seqan3::align_cfg::on_result{[&] (auto && result)
@@ -115,7 +115,7 @@ TYPED_TEST_P(pairwise_alignment_collection_callback_test, alignment)
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
                                       seqan3::align_cfg::output_sequence1_id |
-                                      seqan3::align_cfg::output_score |
+                                      seqan3::align_cfg::output_score{} |
                                       seqan3::align_cfg::output_end_position{} |
                                       seqan3::align_cfg::output_begin_position{} |
                                       seqan3::align_cfg::output_alignment{} |

@@ -45,7 +45,7 @@ void seqan3_affine_dna4(benchmark::State & state)
 
     for (auto _ : state)
     {
-        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | seqan3::align_cfg::output_score);
+        auto rng = align_pairwise(std::tie(seq1, seq2), affine_cfg | seqan3::align_cfg::output_score{});
         *std::ranges::begin(rng);
     }
 
@@ -141,7 +141,7 @@ void seqan3_affine_dna4_collection(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (auto && rng : align_pairwise(vec, affine_cfg | seqan3::align_cfg::output_score))
+        for (auto && rng : align_pairwise(vec, affine_cfg | seqan3::align_cfg::output_score{}))
             rng.score();
     }
 

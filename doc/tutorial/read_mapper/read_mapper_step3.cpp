@@ -61,7 +61,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::edit_scheme |
                                                seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
                                                seqan3::align_cfg::output_alignment{} |
-                                               seqan3::align_cfg::output_score;
+                                               seqan3::align_cfg::output_score{};
 //! [alignment_config]
 
 #if SEQAN3_WORKAROUND_GCC_93983
