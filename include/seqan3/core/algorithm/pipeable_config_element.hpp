@@ -25,18 +25,24 @@ namespace seqan3
 /*!\brief Adds pipe interface to configuration elements.
  * \ingroup algorithm
  * \tparam derived_t The type of the derived class.
- * \tparam value_t   The type of the wrapped value (defaults to void).
  */
 template <typename derived_t>
-struct pipeable_config_element<derived_t, void>
-{};
-
-//! \overload
-template <typename derived_t, typename value_t>
-struct pipeable_config_element
+class pipeable_config_element<derived_t>
 {
-    //!\brief The stored config value.
-    value_t value;
+private:
+    //!\brief Befriend the derived class.
+    friend derived_t;
+
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr pipeable_config_element() = default; //!< Defaulted.
+    constexpr pipeable_config_element(pipeable_config_element const &) = default; //!< Defaulted.
+    constexpr pipeable_config_element(pipeable_config_element &&) = default; //!< Defaulted.
+    constexpr pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
+    constexpr pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
+    ~pipeable_config_element() = default; //!< Defaulted.
+    //!\}
 };
 
 } // namespace seqan3

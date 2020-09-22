@@ -36,23 +36,75 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(::test_algo_id
 
 }  // namespace seqan3::detail
 
-struct bar : public seqan3::pipeable_config_element<bar, int>
+class bar : public seqan3::pipeable_config_element<bar>
 {
+public:
+    int value{};
+
+    constexpr bar() = default;
+    constexpr bar(bar const &) = default;
+    constexpr bar(bar &&) = default;
+    constexpr bar & operator=(bar const &) = default;
+    constexpr bar & operator=(bar &&) = default;
+    ~bar() = default;
+
+    constexpr bar(int v) : value{v}
+    {}
+
     static constexpr test_algo_id id{test_algo_id::bar_id};
 };
 
-struct bax : public seqan3::pipeable_config_element<bax, float>
+class bax : public seqan3::pipeable_config_element<bax>
 {
+public:
+    float value{};
+
+    constexpr bax() = default;
+    constexpr bax(bax const &) = default;
+    constexpr bax(bax &&) = default;
+    constexpr bax & operator=(bax const &) = default;
+    constexpr bax & operator=(bax &&) = default;
+    ~bax() = default;
+
+    constexpr bax(float v) : value{v}
+    {}
+
     static constexpr test_algo_id id{test_algo_id::bax_id};
 };
 
-struct foo : public seqan3::pipeable_config_element<foo, std::string>
+class foo : public seqan3::pipeable_config_element<foo>
 {
+public:
+    std::string value{};
+
+    foo() = default;
+    foo(foo const &) = default;
+    foo(foo &&) = default;
+    foo & operator=(foo const &) = default;
+    foo & operator=(foo &&) = default;
+    ~foo() = default;
+
+    foo(std::string v) : value{v}
+    {}
+
     static constexpr test_algo_id id{test_algo_id::foo_id};
 };
 
 template <typename t = std::vector<int>>
-struct foobar : public seqan3::pipeable_config_element<foobar<t>, t>
+class foobar : public seqan3::pipeable_config_element<foobar<t>>
 {
+public:
+    t value{};
+
+    constexpr foobar() = default;
+    constexpr foobar(foobar const &) = default;
+    constexpr foobar(foobar &&) = default;
+    constexpr foobar & operator=(foobar const &) = default;
+    constexpr foobar & operator=(foobar &&) = default;
+    ~foobar() = default;
+
+    constexpr foobar(t v) : value{v}
+    {}
+
     static constexpr test_algo_id id{test_algo_id::foobar_id};
 };
