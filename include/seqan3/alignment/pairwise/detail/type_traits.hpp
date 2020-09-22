@@ -169,7 +169,7 @@ public:
     static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
     //!\brief Flag indicating whether the end positions shall be computed.
     static constexpr bool compute_end_positions =
-        configuration_t::template exists<align_cfg::output_end_position_tag>();
+        configuration_t::template exists<align_cfg::output_end_position>();
     //!\brief Flag indicating whether the begin positions shall be computed.
     static constexpr bool compute_begin_positions =
         configuration_t::template exists<align_cfg::output_begin_position>();

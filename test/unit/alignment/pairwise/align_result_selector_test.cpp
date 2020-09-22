@@ -52,7 +52,7 @@ TEST_F(alignment_selector_test, align_result_selector_all)
     auto cfg = base_config |
                 seqan3::align_cfg::output_score |
                 seqan3::align_cfg::output_begin_position{} |
-                seqan3::align_cfg::output_end_position |
+                seqan3::align_cfg::output_end_position{} |
                 seqan3::align_cfg::output_alignment{} |
                 seqan3::align_cfg::output_sequence1_id |
                 seqan3::align_cfg::output_sequence2_id{};
@@ -74,7 +74,7 @@ TEST_F(alignment_selector_test, align_result_selector_using_score_type)
     auto cfg = seqan3::align_cfg::method_global{} |  // TODO: Change to base_config once using_score_type has been fixed.
                seqan3::align_cfg::edit_scheme |
                seqan3::align_cfg::output_score |
-               seqan3::align_cfg::output_end_position |
+               seqan3::align_cfg::output_end_position{} |
                seqan3::align_cfg::score_type<double>{};
 
     using result_t = alignment_result_t<decltype(cfg)>;
@@ -95,7 +95,7 @@ TEST_F(alignment_selector_test, output_score_only)
 
 TEST_F(alignment_selector_test, output_end_positions_only)
 {
-    auto cfg = base_config | seqan3::align_cfg::output_end_position;
+    auto cfg = base_config | seqan3::align_cfg::output_end_position{};
 
     using result_t = alignment_result_t<decltype(cfg)>;
 

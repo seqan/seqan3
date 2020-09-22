@@ -86,7 +86,7 @@ BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
 
 BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
                   simd_with_end_position,
-                  seqan3::align_cfg::output_end_position,
+                  seqan3::align_cfg::output_end_position{},
                   seqan3::align_cfg::output_score,
                   seqan3::align_cfg::score_type<int16_t>{},
                   seqan3::align_cfg::vectorised{})
@@ -104,7 +104,7 @@ BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
 
 BENCHMARK_CAPTURE(seqan3_affine_dna4_accelerated,
                   simd_parallel_with_end_position,
-                  seqan3::align_cfg::output_end_position,
+                  seqan3::align_cfg::output_end_position{},
                   seqan3::align_cfg::output_score,
                   seqan3::align_cfg::score_type<int16_t>{},
                   seqan3::align_cfg::vectorised{},

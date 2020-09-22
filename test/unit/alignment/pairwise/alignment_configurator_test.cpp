@@ -55,7 +55,7 @@ TEST(alignment_configurator, configure_edit_end_position)
 {
     EXPECT_EQ(run_test(seqan3::align_cfg::method_global{} |
                        seqan3::align_cfg::edit_scheme |
-                       seqan3::align_cfg::output_end_position |
+                       seqan3::align_cfg::output_end_position{} |
                        seqan3::align_cfg::output_score).score(), 0);
 }
 
@@ -129,7 +129,7 @@ TEST(alignment_configurator, configure_affine_global_end_position)
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
-               seqan3::align_cfg::output_end_position |
+               seqan3::align_cfg::output_end_position{} |
                seqan3::align_cfg::output_score;
 
     EXPECT_EQ(run_test(cfg).score(), 0);
@@ -197,7 +197,7 @@ TEST(alignment_configurator, configure_affine_global_banded_with_alignment)
 
     auto cfg_trace = cfg | seqan3::align_cfg::output_alignment{} | seqan3::align_cfg::output_score;
     auto cfg_begin = cfg | seqan3::align_cfg::output_begin_position{} | seqan3::align_cfg::output_score;
-    auto cfg_end = cfg | seqan3::align_cfg::output_end_position | seqan3::align_cfg::output_score;
+    auto cfg_end = cfg | seqan3::align_cfg::output_end_position{} | seqan3::align_cfg::output_score;
 
     EXPECT_EQ(run_test(cfg_end).score(), 0);
     EXPECT_EQ(run_test(cfg_trace).score(), 0);
@@ -236,7 +236,7 @@ TEST(alignment_configurator, configure_affine_local_end_positions)
                seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                   seqan3::align_cfg::extension_score{-1}} |
                seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
-               seqan3::align_cfg::output_end_position |
+               seqan3::align_cfg::output_end_position{} |
                seqan3::align_cfg::output_score;
 
     EXPECT_EQ(run_test(cfg).score(), 0);
@@ -270,7 +270,7 @@ TEST(alignment_configurator, configure_result_score_type)
 {
     auto cfg = seqan3::align_cfg::method_global{} |
                seqan3::align_cfg::edit_scheme |
-               seqan3::align_cfg::output_end_position |
+               seqan3::align_cfg::output_end_position{} |
                seqan3::align_cfg::output_score |
                seqan3::align_cfg::score_type<double>{};
     auto result = run_test(cfg);
