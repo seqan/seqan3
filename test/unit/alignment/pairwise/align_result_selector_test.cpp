@@ -53,7 +53,7 @@ TEST_F(alignment_selector_test, align_result_selector_all)
                 seqan3::align_cfg::output_score |
                 seqan3::align_cfg::output_begin_position |
                 seqan3::align_cfg::output_end_position |
-                seqan3::align_cfg::output_alignment |
+                seqan3::align_cfg::output_alignment{} |
                 seqan3::align_cfg::output_sequence1_id |
                 seqan3::align_cfg::output_sequence2_id{};
 
@@ -115,7 +115,7 @@ TEST_F(alignment_selector_test, output_begin_positions_only)
 
 TEST_F(alignment_selector_test, output_alignment_only)
 {
-    auto cfg = base_config | seqan3::align_cfg::output_alignment;
+    auto cfg = base_config | seqan3::align_cfg::output_alignment{};
 
     using result_t = alignment_result_t<decltype(cfg)>;
 

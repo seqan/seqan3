@@ -38,7 +38,7 @@ int main()
     for (auto && res : align_pairwise(std::tie(sequences[0], sequences[1]),
                                       seqan3::align_cfg::method_global{} |
                                       seqan3::align_cfg::edit_scheme |
-                                      seqan3::align_cfg::output_alignment |
+                                      seqan3::align_cfg::output_alignment{} |
                                       seqan3::align_cfg::output_score))
     {
         // Print the resulting score and the alignment.

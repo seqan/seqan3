@@ -3,5 +3,5 @@
 int main()
 {
     // Compute only the alignment.
-    seqan3::configuration cfg = seqan3::align_cfg::output_alignment;
+    seqan3::configuration cfg = seqan3::align_cfg::output_alignment{};
 }
