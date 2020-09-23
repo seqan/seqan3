@@ -26,8 +26,20 @@ namespace seqan3::search_cfg
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-struct output_query_id : public pipeable_config_element<output_query_id>
+class output_query_id : public pipeable_config_element<output_query_id>
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr output_query_id() = default; //!< Defaulted.
+    constexpr output_query_id(output_query_id const &) = default; //!< Defaulted.
+    constexpr output_query_id(output_query_id &&) = default; //!< Defaulted.
+    constexpr output_query_id & operator=(output_query_id const &) = default; //!< Defaulted.
+    constexpr output_query_id & operator=(output_query_id &&) = default; //!< Defaulted.
+    ~output_query_id() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_query_id};
@@ -37,8 +49,20 @@ struct output_query_id : public pipeable_config_element<output_query_id>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-struct output_reference_id : public pipeable_config_element<output_reference_id>
+class output_reference_id : public pipeable_config_element<output_reference_id>
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr output_reference_id() = default; //!< Defaulted.
+    constexpr output_reference_id(output_reference_id const &) = default; //!< Defaulted.
+    constexpr output_reference_id(output_reference_id &&) = default; //!< Defaulted.
+    constexpr output_reference_id & operator=(output_reference_id const &) = default; //!< Defaulted.
+    constexpr output_reference_id & operator=(output_reference_id &&) = default; //!< Defaulted.
+    ~output_reference_id() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
@@ -48,8 +72,20 @@ struct output_reference_id : public pipeable_config_element<output_reference_id>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-struct output_reference_begin_position : public pipeable_config_element<output_reference_begin_position>
+class output_reference_begin_position : public pipeable_config_element<output_reference_begin_position>
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr output_reference_begin_position() = default; //!< Defaulted.
+    constexpr output_reference_begin_position(output_reference_begin_position const &) = default; //!< Defaulted.
+    constexpr output_reference_begin_position(output_reference_begin_position &&) = default; //!< Defaulted.
+    constexpr output_reference_begin_position & operator=(output_reference_begin_position const &) = default; //!< Defaulted.
+    constexpr output_reference_begin_position & operator=(output_reference_begin_position &&) = default; //!< Defaulted.
+    ~output_reference_begin_position() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_position};
@@ -59,8 +95,20 @@ struct output_reference_begin_position : public pipeable_config_element<output_r
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-struct output_index_cursor : public pipeable_config_element<output_index_cursor>
+class output_index_cursor : public pipeable_config_element<output_index_cursor>
 {
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr output_index_cursor() = default; //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor const &) = default; //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor &&) = default; //!< Defaulted.
+    constexpr output_index_cursor & operator=(output_index_cursor const &) = default; //!< Defaulted.
+    constexpr output_index_cursor & operator=(output_index_cursor &&) = default; //!< Defaulted.
+    ~output_index_cursor() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_index_cursor};
