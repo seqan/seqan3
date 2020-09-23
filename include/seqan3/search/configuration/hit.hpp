@@ -29,8 +29,20 @@ namespace seqan3::search_cfg
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_all : public pipeable_config_element<hit_all>
+class hit_all : public pipeable_config_element<hit_all>
 {
+public:
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    constexpr hit_all() = default; //!< Defaulted.
+    constexpr hit_all(hit_all const &) = default; //!< Defaulted.
+    constexpr hit_all(hit_all &&) = default; //!< Defaulted.
+    constexpr hit_all & operator=(hit_all const &) = default; //!< Defaulted.
+    constexpr hit_all & operator=(hit_all &&) = default; //!< Defaulted.
+    ~hit_all() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::hit};
@@ -40,8 +52,20 @@ struct hit_all : public pipeable_config_element<hit_all>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_all_best : public pipeable_config_element<hit_all_best>
+class hit_all_best : public pipeable_config_element<hit_all_best>
 {
+public:
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    constexpr hit_all_best() = default; //!< Defaulted.
+    constexpr hit_all_best(hit_all_best const &) = default; //!< Defaulted.
+    constexpr hit_all_best(hit_all_best &&) = default; //!< Defaulted.
+    constexpr hit_all_best & operator=(hit_all_best const &) = default; //!< Defaulted.
+    constexpr hit_all_best & operator=(hit_all_best &&) = default; //!< Defaulted.
+    ~hit_all_best() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::hit};
@@ -51,8 +75,20 @@ struct hit_all_best : public pipeable_config_element<hit_all_best>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_single_best : public pipeable_config_element<hit_single_best>
+class hit_single_best : public pipeable_config_element<hit_single_best>
 {
+public:
+    /*!\name Constructors, assignment and destructor
+     * \{
+     */
+    constexpr hit_single_best() = default; //!< Defaulted.
+    constexpr hit_single_best(hit_single_best const &) = default; //!< Defaulted.
+    constexpr hit_single_best(hit_single_best &&) = default; //!< Defaulted.
+    constexpr hit_single_best & operator=(hit_single_best const &) = default; //!< Defaulted.
+    constexpr hit_single_best & operator=(hit_single_best &&) = default; //!< Defaulted.
+    ~hit_single_best() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::hit};
@@ -63,8 +99,9 @@ struct hit_single_best : public pipeable_config_element<hit_single_best>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_strata : public pipeable_config_element<hit_strata>
+class hit_strata : public pipeable_config_element<hit_strata>
 {
+public:
     //!\brief The stratum value [default: 0].
     uint8_t stratum{};
 
@@ -94,7 +131,7 @@ struct hit_strata : public pipeable_config_element<hit_strata>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit : public pipeable_config_element<hit, seqan3::detail::empty_type>
+class hit : public pipeable_config_element<hit>
 {
 public:
     /*!\brief The type of the std::variant holding the hit configuration element alternatives
