@@ -32,8 +32,9 @@ namespace seqan3::search_cfg
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-struct max_error_total : public pipeable_config_element<max_error_total>
+class max_error_total : public pipeable_config_element<max_error_total>
 {
+public:
     //!\brief The error count or error rate.
     std::variant<error_count, error_rate> error{error_count{0}};
 
@@ -75,8 +76,9 @@ struct max_error_total : public pipeable_config_element<max_error_total>
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-struct max_error_substitution : public pipeable_config_element<max_error_substitution>
+class max_error_substitution : public pipeable_config_element<max_error_substitution>
 {
+public:
     //!\brief The error count or error rate.
     std::variant<error_count, error_rate> error{error_count{0}};
 
@@ -118,8 +120,9 @@ struct max_error_substitution : public pipeable_config_element<max_error_substit
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-struct max_error_insertion : public pipeable_config_element<max_error_insertion>
+class max_error_insertion : public pipeable_config_element<max_error_insertion>
 {
+public:
     //!\brief The error count or error rate.
     std::variant<error_count, error_rate> error{error_count{0}};
 
@@ -162,8 +165,9 @@ struct max_error_insertion : public pipeable_config_element<max_error_insertion>
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-struct max_error_deletion : public pipeable_config_element<max_error_deletion>
+class max_error_deletion : public pipeable_config_element<max_error_deletion>
 {
+public:
     //!\brief The error count or error rate.
     std::variant<error_count, error_rate> error{error_count{0}};
 
