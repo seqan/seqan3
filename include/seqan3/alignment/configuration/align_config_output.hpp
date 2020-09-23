@@ -39,8 +39,20 @@ namespace seqan3::align_cfg
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-struct output_score : public pipeable_config_element<output_score>
+class output_score : public pipeable_config_element<output_score>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_score() = default; //!< Defaulted.
+    constexpr output_score(output_score const &) = default; //!< Defaulted.
+    constexpr output_score(output_score &&) = default; //!< Defaulted.
+    constexpr output_score & operator=(output_score const &) = default; //!< Defaulted.
+    constexpr output_score & operator=(output_score &&) = default; //!< Defaulted.
+    ~output_score() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_score};
@@ -70,8 +82,20 @@ struct output_score : public pipeable_config_element<output_score>
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-struct output_end_position : public pipeable_config_element<output_end_position>
+class output_end_position : public pipeable_config_element<output_end_position>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_end_position() = default; //!< Defaulted.
+    constexpr output_end_position(output_end_position const &) = default; //!< Defaulted.
+    constexpr output_end_position(output_end_position &&) = default; //!< Defaulted.
+    constexpr output_end_position & operator=(output_end_position const &) = default; //!< Defaulted.
+    constexpr output_end_position & operator=(output_end_position &&) = default; //!< Defaulted.
+    ~output_end_position() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_end_position};
@@ -101,8 +125,20 @@ struct output_end_position : public pipeable_config_element<output_end_position>
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-struct output_begin_position : public pipeable_config_element<output_begin_position>
+class output_begin_position : public pipeable_config_element<output_begin_position>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_begin_position() = default; //!< Defaulted.
+    constexpr output_begin_position(output_begin_position const &) = default; //!< Defaulted.
+    constexpr output_begin_position(output_begin_position &&) = default; //!< Defaulted.
+    constexpr output_begin_position & operator=(output_begin_position const &) = default; //!< Defaulted.
+    constexpr output_begin_position & operator=(output_begin_position &&) = default; //!< Defaulted.
+    ~output_begin_position() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_begin_position};
@@ -128,8 +164,20 @@ struct output_begin_position : public pipeable_config_element<output_begin_posit
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-struct output_alignment : public pipeable_config_element<output_alignment>
+class output_alignment : public pipeable_config_element<output_alignment>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_alignment() = default; //!< Defaulted.
+    constexpr output_alignment(output_alignment const &) = default; //!< Defaulted.
+    constexpr output_alignment(output_alignment &&) = default; //!< Defaulted.
+    constexpr output_alignment & operator=(output_alignment const &) = default; //!< Defaulted.
+    constexpr output_alignment & operator=(output_alignment &&) = default; //!< Defaulted.
+    ~output_alignment() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_alignment};
@@ -155,8 +203,19 @@ struct output_alignment : public pipeable_config_element<output_alignment>
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence2_id
  */
-struct output_sequence1_id : public pipeable_config_element<output_sequence1_id>
+class output_sequence1_id : public pipeable_config_element<output_sequence1_id>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_sequence1_id() = default; //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id const &) = default; //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id &&) = default; //!< Defaulted.
+    constexpr output_sequence1_id & operator=(output_sequence1_id const &) = default; //!< Defaulted.
+    constexpr output_sequence1_id & operator=(output_sequence1_id &&) = default; //!< Defaulted.
+    ~output_sequence1_id() = default; //!< Defaulted.
+    //!\}
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
@@ -183,8 +242,20 @@ struct output_sequence1_id : public pipeable_config_element<output_sequence1_id>
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence1_id
  */
-struct output_sequence2_id : public pipeable_config_element<output_sequence2_id>
+class output_sequence2_id : public pipeable_config_element<output_sequence2_id>
 {
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_sequence2_id() = default; //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id const &) = default; //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id &&) = default; //!< Defaulted.
+    constexpr output_sequence2_id & operator=(output_sequence2_id const &) = default; //!< Defaulted.
+    constexpr output_sequence2_id & operator=(output_sequence2_id &&) = default; //!< Defaulted.
+    ~output_sequence2_id() = default; //!< Defaulted.
+    //!\}
+
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
