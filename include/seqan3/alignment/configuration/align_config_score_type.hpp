@@ -32,13 +32,26 @@ namespace seqan3::align_cfg
  * \include test/snippet/alignment/configuration/align_cfg_score_type.cpp
  */
 template <arithmetic score_t>
-struct score_type : public pipeable_config_element<score_type<score_t>>
+class score_type : public pipeable_config_element<score_type<score_t>>
 {
+public:
+
     static_assert(std::floating_point<score_t> || std::signed_integral<score_t>,
                   "The selected score type must be a signed integral type or floating point type.");
 
     //!\brief The selected score type.
     using type = score_t;
+
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr score_type() = default; //!< Defaulted.
+    constexpr score_type(score_type const &) = default; //!< Defaulted.
+    constexpr score_type(score_type &&) = default; //!< Defaulted.
+    constexpr score_type & operator=(score_type const &) = default; //!< Defaulted.
+    constexpr score_type & operator=(score_type &&) = default; //!< Defaulted.
+    ~score_type() = default; //!< Defaulted.
+    //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
