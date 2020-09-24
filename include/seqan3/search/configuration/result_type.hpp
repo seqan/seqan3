@@ -42,10 +42,22 @@ template <typename search_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<search_result_t, search_result>
 //!\endcond
-struct result_type : public pipeable_config_element<result_type<search_result_t>>
+class result_type : public pipeable_config_element<result_type<search_result_t>>
 {
+public:
     //!\brief The configured seqan3::search_result type.
     using type = search_result_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    constexpr result_type() = default; //!< Defaulted.
+    constexpr result_type(result_type const &) = default; //!< Defaulted.
+    constexpr result_type(result_type &&) = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type const &) = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type &&) = default; //!< Defaulted.
+    ~result_type() = default; //!< Defaulted.
+    //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::result_type};
