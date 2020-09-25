@@ -59,7 +59,7 @@ private:
     template <typename config_t>
     affine_gap_init_policy(config_t const & config)
     {
-        bool is_local = config.template exists<method_local_tag>();
+        bool is_local = config.template exists<align_cfg::method_local>();
         auto method_global_config = config.get_or(align_cfg::method_global{});
         first_row_is_free = method_global_config.free_end_gaps_sequence1_leading | is_local;
         first_column_is_free = method_global_config.free_end_gaps_sequence2_leading | is_local;

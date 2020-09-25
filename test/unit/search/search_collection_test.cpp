@@ -233,7 +233,7 @@ TYPED_TEST(search_test, issue_2115)
                                       seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
                                       seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
                                       seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}} |
-                                      seqan3::search_cfg::hit_all_best;
+                                      seqan3::search_cfg::hit_all_best{};
 
     std::vector<seqan3::dna4> const dna4_query{"ACGG"_dna4};
     std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> const dna4q_query{{'A'_dna4, seqan3::phred42{0}},

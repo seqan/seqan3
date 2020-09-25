@@ -20,27 +20,6 @@
 namespace seqan3::align_cfg
 {
 
-/*!\brief Tag representing score output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_score_tag : public pipeable_config_element<output_score_tag>
-{
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr output_score_tag() = default; //!< Defaulted.
-    constexpr output_score_tag(output_score_tag const &) = default; //!< Defaulted.
-    constexpr output_score_tag(output_score_tag &&) = default; //!< Defaulted.
-    constexpr output_score_tag & operator=(output_score_tag const &) = default; //!< Defaulted.
-    constexpr output_score_tag & operator=(output_score_tag &&) = default; //!< Defaulted.
-    ~output_score_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_score};
-};
-
 /*!\brief Configures the alignment result to output the score.
  * \ingroup alignment_configuration
  *
@@ -60,27 +39,23 @@ struct output_score_tag : public pipeable_config_element<output_score_tag>
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_score_tag output_score{};
-
-/*!\brief Tag representing end position output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_end_position_tag : public pipeable_config_element<output_end_position_tag>
+class output_score : public pipeable_config_element<output_score>
 {
+public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_end_position_tag() = default; //!< Defaulted.
-    constexpr output_end_position_tag(output_end_position_tag const &) = default; //!< Defaulted.
-    constexpr output_end_position_tag(output_end_position_tag &&) = default; //!< Defaulted.
-    constexpr output_end_position_tag & operator=(output_end_position_tag const &) = default; //!< Defaulted.
-    constexpr output_end_position_tag & operator=(output_end_position_tag &&) = default; //!< Defaulted.
-    ~output_end_position_tag() = default; //!< Defaulted.
+    constexpr output_score() = default; //!< Defaulted.
+    constexpr output_score(output_score const &) = default; //!< Defaulted.
+    constexpr output_score(output_score &&) = default; //!< Defaulted.
+    constexpr output_score & operator=(output_score const &) = default; //!< Defaulted.
+    constexpr output_score & operator=(output_score &&) = default; //!< Defaulted.
+    ~output_score() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_end_position};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_score};
 };
 
 /*!\brief Configures the alignment result to output the end position.
@@ -107,27 +82,23 @@ struct output_end_position_tag : public pipeable_config_element<output_end_posit
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_end_position_tag output_end_position{};
-
-/*!\brief Tag representing begin position output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_begin_position_tag : public pipeable_config_element<output_begin_position_tag>
+class output_end_position : public pipeable_config_element<output_end_position>
 {
+public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_begin_position_tag() = default; //!< Defaulted.
-    constexpr output_begin_position_tag(output_begin_position_tag const &) = default; //!< Defaulted.
-    constexpr output_begin_position_tag(output_begin_position_tag &&) = default; //!< Defaulted.
-    constexpr output_begin_position_tag & operator=(output_begin_position_tag const &) = default; //!< Defaulted.
-    constexpr output_begin_position_tag & operator=(output_begin_position_tag &&) = default; //!< Defaulted.
-    ~output_begin_position_tag() = default; //!< Defaulted.
+    constexpr output_end_position() = default; //!< Defaulted.
+    constexpr output_end_position(output_end_position const &) = default; //!< Defaulted.
+    constexpr output_end_position(output_end_position &&) = default; //!< Defaulted.
+    constexpr output_end_position & operator=(output_end_position const &) = default; //!< Defaulted.
+    constexpr output_end_position & operator=(output_end_position &&) = default; //!< Defaulted.
+    ~output_end_position() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_begin_position};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_end_position};
 };
 
 /*!\brief Configures the alignment result to output the begin positions.
@@ -154,27 +125,23 @@ struct output_begin_position_tag : public pipeable_config_element<output_begin_p
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_begin_position_tag output_begin_position{};
-
-/*!\brief Tag representing alignment output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_alignment_tag : public pipeable_config_element<output_alignment_tag>
+class output_begin_position : public pipeable_config_element<output_begin_position>
 {
+public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_alignment_tag() = default; //!< Defaulted.
-    constexpr output_alignment_tag(output_alignment_tag const &) = default; //!< Defaulted.
-    constexpr output_alignment_tag(output_alignment_tag &&) = default; //!< Defaulted.
-    constexpr output_alignment_tag & operator=(output_alignment_tag const &) = default; //!< Defaulted.
-    constexpr output_alignment_tag & operator=(output_alignment_tag &&) = default; //!< Defaulted.
-    ~output_alignment_tag() = default; //!< Defaulted.
+    constexpr output_begin_position() = default; //!< Defaulted.
+    constexpr output_begin_position(output_begin_position const &) = default; //!< Defaulted.
+    constexpr output_begin_position(output_begin_position &&) = default; //!< Defaulted.
+    constexpr output_begin_position & operator=(output_begin_position const &) = default; //!< Defaulted.
+    constexpr output_begin_position & operator=(output_begin_position &&) = default; //!< Defaulted.
+    ~output_begin_position() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_alignment};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_begin_position};
 };
 
 /*!\brief Configures the alignment result to output the alignment.
@@ -197,27 +164,23 @@ struct output_alignment_tag : public pipeable_config_element<output_alignment_ta
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_alignment_tag output_alignment{};
-
-/*!\brief Tag representing sequence1 id output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1_id_tag>
+class output_alignment : public pipeable_config_element<output_alignment>
 {
+public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_sequence1_id_tag() = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag(output_sequence1_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag(output_sequence1_id_tag &&) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag & operator=(output_sequence1_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id_tag & operator=(output_sequence1_id_tag &&) = default; //!< Defaulted.
-    ~output_sequence1_id_tag() = default; //!< Defaulted.
+    constexpr output_alignment() = default; //!< Defaulted.
+    constexpr output_alignment(output_alignment const &) = default; //!< Defaulted.
+    constexpr output_alignment(output_alignment &&) = default; //!< Defaulted.
+    constexpr output_alignment & operator=(output_alignment const &) = default; //!< Defaulted.
+    constexpr output_alignment & operator=(output_alignment &&) = default; //!< Defaulted.
+    ~output_alignment() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_alignment};
 };
 
 /*!\brief Configures the alignment result to output the id of the first sequence.
@@ -240,28 +203,24 @@ struct output_sequence1_id_tag : public pipeable_config_element<output_sequence1
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence2_id
  */
-inline constexpr output_sequence1_id_tag output_sequence1_id{};
-
-/*!\brief Tag representing sequence2 id output for the alignment algorithms.
- * \ingroup alignment_configuration
- */
-struct output_sequence2_id_tag : public pipeable_config_element<output_sequence2_id_tag>
+class output_sequence1_id : public pipeable_config_element<output_sequence1_id>
 {
+public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_sequence2_id_tag() = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag(output_sequence2_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag(output_sequence2_id_tag &&) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag & operator=(output_sequence2_id_tag const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id_tag & operator=(output_sequence2_id_tag &&) = default; //!< Defaulted.
-    ~output_sequence2_id_tag() = default; //!< Defaulted.
+    constexpr output_sequence1_id() = default; //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id const &) = default; //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id &&) = default; //!< Defaulted.
+    constexpr output_sequence1_id & operator=(output_sequence1_id const &) = default; //!< Defaulted.
+    constexpr output_sequence1_id & operator=(output_sequence1_id &&) = default; //!< Defaulted.
+    ~output_sequence1_id() = default; //!< Defaulted.
     //!\}
-
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
 };
+
 
 /*!\brief Configures the alignment result to output the id of the second sequence.
  * \ingroup alignment_configuration
@@ -283,6 +242,23 @@ struct output_sequence2_id_tag : public pipeable_config_element<output_sequence2
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence1_id
  */
-inline constexpr output_sequence2_id_tag output_sequence2_id{};
+class output_sequence2_id : public pipeable_config_element<output_sequence2_id>
+{
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr output_sequence2_id() = default; //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id const &) = default; //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id &&) = default; //!< Defaulted.
+    constexpr output_sequence2_id & operator=(output_sequence2_id const &) = default; //!< Defaulted.
+    constexpr output_sequence2_id & operator=(output_sequence2_id &&) = default; //!< Defaulted.
+    ~output_sequence2_id() = default; //!< Defaulted.
+    //!\}
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence2_id};
+};
 
 } // namespace seqan3::align_cfg

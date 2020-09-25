@@ -9,8 +9,8 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
+#include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
@@ -26,16 +26,16 @@ class alignment_configuration_test : public ::testing::Test
 
 using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int, int>>;
 
-using test_types = ::testing::Types<seqan3::align_cfg::aligned_ends<std::remove_const_t<decltype(seqan3::free_ends_all)>>,
-                                    seqan3::align_cfg::band_fixed_size,
+using test_types = ::testing::Types<seqan3::align_cfg::band_fixed_size,
                                     seqan3::align_cfg::gap_cost_affine,
                                     seqan3::align_cfg::min_score,
                                     seqan3::align_cfg::method_global,
-                                    seqan3::detail::method_local_tag,
+                                    seqan3::align_cfg::method_local,
                                     seqan3::align_cfg::parallel,
                                     seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
-                                    seqan3::detail::vectorised_tag,
-                                    seqan3::detail::result_type_tag<alignment_result_t>>;
+                                    seqan3::align_cfg::vectorised,
+                                    seqan3::align_cfg::detail::result_type<alignment_result_t>,
+                                    seqan3::align_cfg::detail::debug>;
 
 TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
 
@@ -60,7 +60,7 @@ TEST(alignment_configuration_test, symmetric_configuration)
 TEST(alignment_configuration_test, number_of_configs)
 {
     // NOTE(rrahn): You must update this test if you add a new value to seqan3::align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 19);
+    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 18);
 }
 
 TYPED_TEST(alignment_configuration_test, config_element_specialisation)

@@ -7,14 +7,32 @@ enum struct my_id : int
     foo_id
 };
 
-struct bar : public seqan3::pipeable_config_element<bar, float>
+class bar : public seqan3::pipeable_config_element<bar>
 {
+public:
+
+    bar() = default;
+    bar(bar const &) = default;
+    bar(bar &&) = default;
+    bar & operator=(bar const &) = default;
+    bar & operator=(bar &&) = default;
+    ~bar() = default;
+
     static constexpr my_id id{my_id::bar_id};
 };
 
 template <typename t>
-struct foo : public seqan3::pipeable_config_element<foo<t>, t>
+struct foo : public seqan3::pipeable_config_element<foo<t>>
 {
+public:
+
+    foo() = default;
+    foo(foo const &) = default;
+    foo(foo &&) = default;
+    foo & operator=(foo const &) = default;
+    foo & operator=(foo &&) = default;
+    ~foo() = default;
+
     static constexpr my_id id{my_id::foo_id};
 };
 

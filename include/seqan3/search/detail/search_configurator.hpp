@@ -99,7 +99,7 @@ public:
     static auto add_default_hit_configuration(configuration_t const & cfg)
     {
         if constexpr (!detail::search_traits<configuration_t>::has_hit_configuration)
-            return cfg | search_cfg::hit_all;
+            return cfg | search_cfg::hit_all{};
         else
             return cfg;
     }
@@ -118,9 +118,9 @@ public:
     {
         if constexpr (!seqan3::detail::search_traits<configuration_t>::has_output_configuration)
             return cfg |
-                   search_cfg::output_query_id |
-                   search_cfg::output_reference_id |
-                   search_cfg::output_reference_begin_position;
+                   search_cfg::output_query_id{} |
+                   search_cfg::output_reference_id{} |
+                   search_cfg::output_reference_begin_position{};
         else
             return cfg;
     }
@@ -172,7 +172,7 @@ public:
         using callback_t = std::function<void(search_result_t)>;
         using type_erased_algorithm_t = std::function<void(query_t, callback_t)>;
 
-        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>;
+        auto complete_config = cfg | search_cfg::detail::result_type<search_result_t>{};
         return std::pair{configure_hit_strategy<type_erased_algorithm_t>(complete_config, index), complete_config};
     }
 
@@ -251,10 +251,10 @@ algorithm_t search_configurator::configure_hit_strategy(configuration_t const & 
         // Apply the correct static configuration element.
         return std::visit(multi_invocable
         {
-            [&] (hit_all_best_tag) { return next_config_step(cfg_without_hit | search_cfg::hit_all_best); },
-            [&] (hit_single_best_tag) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best); },
+            [&] (search_cfg::hit_all_best) { return next_config_step(cfg_without_hit | search_cfg::hit_all_best{}); },
+            [&] (search_cfg::hit_single_best) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best{}); },
             [&] (search_cfg::hit_strata const & strata) { return next_config_step(cfg_without_hit | strata); },
-            [&] (auto) { return next_config_step(cfg_without_hit | search_cfg::hit_all); }
+            [&] (auto) { return next_config_step(cfg_without_hit | search_cfg::hit_all{}); }
         }, hit_variant);
     }
     else // Already statically configured.

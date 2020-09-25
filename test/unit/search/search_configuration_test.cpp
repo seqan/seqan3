@@ -33,14 +33,14 @@ using test_types = ::testing::Types<seqan3::search_cfg::max_error_total,
                                     seqan3::search_cfg::max_error_substitution,
                                     seqan3::search_cfg::max_error_insertion,
                                     seqan3::search_cfg::max_error_deletion,
-                                    seqan3::detail::hit_single_best_tag,
+                                    seqan3::search_cfg::hit_single_best,
                                     seqan3::search_cfg::on_result<decltype(on_result_caller)>,
-                                    seqan3::detail::output_query_id_tag,
-                                    seqan3::detail::output_reference_id_tag,
-                                    seqan3::detail::output_reference_begin_position_tag,
-                                    seqan3::detail::output_index_cursor_tag,
+                                    seqan3::search_cfg::output_query_id,
+                                    seqan3::search_cfg::output_reference_id,
+                                    seqan3::search_cfg::output_reference_begin_position,
+                                    seqan3::search_cfg::output_index_cursor,
                                     seqan3::search_cfg::parallel,
-                                    seqan3::search_cfg::detail::result_type_tag<search_result_t>>;
+                                    seqan3::search_cfg::detail::result_type<search_result_t>>;
 
 TYPED_TEST_SUITE(search_configuration_test, test_types, );
 
@@ -76,41 +76,41 @@ TYPED_TEST(search_configuration_test, configuration_exists)
 TEST(search_configuration_test, max_error_defaults)
 {
     // empty config defaults to 0 for every empty error configuration
-    EXPECT_EQ((seqan3::search_cfg::max_error_total{}.value),
-              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_total{}.error),
+              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{}.value),
-              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{}.error),
+              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{}.value),
-              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{}.error),
+              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.error));
 
     // empty config defaults to 0 for every error_count
-    EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{}}.value),
-              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{}}.error),
+              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{}}.value),
-              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{}}.error),
+              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{}}.value),
-              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{}}.error),
+              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{}}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{}}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}.error));
 
     // empty config defaults to 0 for every error_rate
-    EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{}}.value),
-              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{}}.error),
+              (seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{}}.value),
-              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{}}.error),
+              (seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{}}.value),
-              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{}}.error),
+              (seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{0}}.error));
 
-    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{}}.value),
-              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{0}}.value));
+    EXPECT_EQ((seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{}}.error),
+              (seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{0}}.error));
 }

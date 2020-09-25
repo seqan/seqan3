@@ -14,7 +14,6 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
@@ -103,11 +102,13 @@ private:
     //!\brief Helper function to determine the alignment result type.
     static constexpr auto determine_alignment_result_type() noexcept
     {
-        if constexpr (configuration_t::template exists<result_type_tag>())
+        if constexpr (configuration_t::template exists<align_cfg::detail::result_type>())
         {
-            using wrapped_result_t =
-                decltype(seqan3::get<result_type_tag>(std::declval<configuration_t>()).value);
-            return typename wrapped_result_t::type{};  // Unwrap the type_identity.
+            using result_type_cfg_t =
+                std::remove_cvref_t<
+                    decltype(seqan3::get<align_cfg::detail::result_type>(std::declval<configuration_t>()))
+                >;
+            return typename result_type_cfg_t::type{};  // Access the stored result_type.
         }
         else
         {
@@ -117,17 +118,14 @@ private:
 
 public:
     //!\brief Flag to indicate vectorised mode.
-    static constexpr bool is_vectorised =
-        configuration_t::template exists<std::remove_cvref_t<decltype(align_cfg::vectorised)>>();
+    static constexpr bool is_vectorised = configuration_t::template exists<align_cfg::vectorised>();
     //!\brief Flag indicating whether parallel alignment mode is enabled.
     static constexpr bool is_parallel = configuration_t::template exists<align_cfg::parallel>();
     //!\brief Flag indicating whether global alignment method is enabled.
     static constexpr bool is_global =
         configuration_t::template exists<seqan3::align_cfg::method_global>();
-    //!\brief Flag indicating whether global alignment mode with free ends is enabled.
-    static constexpr bool with_free_end_gaps = configuration_t::template exists<align_cfg::aligned_ends>();
     //!\brief Flag indicating whether local alignment mode is enabled.
-    static constexpr bool is_local = configuration_t::template exists<seqan3::detail::method_local_tag>();
+    static constexpr bool is_local = configuration_t::template exists<seqan3::align_cfg::method_local>();
     //!\brief Flag indicating whether banded alignment mode is enabled.
     static constexpr bool is_banded = configuration_t::template exists<align_cfg::band_fixed_size>();
     //!\brief Flag indicating whether debug mode is enabled.
@@ -135,12 +133,12 @@ public:
     //!\brief Flag indicating whether a user provided callback was given.
     static constexpr bool is_one_way_execution = configuration_t::template exists<align_cfg::on_result>();
     //!\brief The selected scoring scheme.
-    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).value);
+    using scoring_scheme_type = decltype(get<align_cfg::scoring_scheme>(std::declval<configuration_t>()).scheme);
     //!\brief The alphabet of the selected scoring scheme.
     using scoring_scheme_alphabet_type = typename scoring_scheme_type::alphabet_type;
     //!\brief The original score type selected by the user.
     using original_score_type = typename std::remove_reference_t<decltype(
-        std::declval<configuration_t>().get_or(align_cfg::score_type<int32_t>))>::score_type;
+        std::declval<configuration_t>().get_or(align_cfg::score_type<int32_t>{}))>::type;
     //!\brief The score type for the alignment algorithm.
     using score_type = std::conditional_t<is_vectorised, simd_type_t<original_score_type>, original_score_type>;
     //!\brief The trace directions type for the alignment algorithm.
@@ -165,22 +163,22 @@ public:
                                                             return 1;
                                                     }();
     //!\brief Flag indicating whether the score shall be computed.
-    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score_tag>();
+    static constexpr bool compute_score = configuration_t::template exists<align_cfg::output_score>();
     //!\brief Flag indicating whether the end positions shall be computed.
     static constexpr bool compute_end_positions =
-        configuration_t::template exists<align_cfg::output_end_position_tag>();
+        configuration_t::template exists<align_cfg::output_end_position>();
     //!\brief Flag indicating whether the begin positions shall be computed.
     static constexpr bool compute_begin_positions =
-        configuration_t::template exists<align_cfg::output_begin_position_tag>();
+        configuration_t::template exists<align_cfg::output_begin_position>();
     //!\brief Flag indicating whether the sequence alignment shall be computed.
     static constexpr bool compute_sequence_alignment =
-        configuration_t::template exists<align_cfg::output_alignment_tag>();
+        configuration_t::template exists<align_cfg::output_alignment>();
     //!\brief Flag indicating whether the id of the first sequence shall be returned.
     static constexpr bool output_sequence1_id =
-        configuration_t::template exists<align_cfg::output_sequence1_id_tag>();
+        configuration_t::template exists<align_cfg::output_sequence1_id>();
     //!\brief Flag indicating whether the id of the second sequence shall be returned.
     static constexpr bool output_sequence2_id =
-        configuration_t::template exists<align_cfg::output_sequence2_id_tag>();
+        configuration_t::template exists<align_cfg::output_sequence2_id>();
     //!\brief Flag indicating if any output option was set.
     static constexpr bool has_output_configuration = compute_score ||
                                                      compute_end_positions ||

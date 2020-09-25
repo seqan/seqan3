@@ -36,80 +36,75 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(::test_algo_id
 
 }  // namespace seqan3::detail
 
-struct bar : public seqan3::pipeable_config_element<bar, int>
+class bar : public seqan3::pipeable_config_element<bar>
 {
+public:
+    int value{};
 
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    bar() = default; //!< Defaulted.
-    bar(bar const &) = default; //!< Defaulted.
-    bar(bar &&) = default; //!< Defaulted.
-    bar & operator=(bar const &) = default; //!< Defaulted.
-    bar & operator=(bar &&) = default; //!< Defaulted.
-    ~bar() = default; //!< Defaulted.
+    constexpr bar() = default;
+    constexpr bar(bar const &) = default;
+    constexpr bar(bar &&) = default;
+    constexpr bar & operator=(bar const &) = default;
+    constexpr bar & operator=(bar &&) = default;
+    ~bar() = default;
 
-    //!\brief Construct from base type.
-    constexpr bar(int const & i) : seqan3::pipeable_config_element<bar, int>(i) {}
-    //!\}
+    constexpr bar(int v) : value{v}
+    {}
 
     static constexpr test_algo_id id{test_algo_id::bar_id};
 };
 
-struct bax : public seqan3::pipeable_config_element<bax, float>
+class bax : public seqan3::pipeable_config_element<bax>
 {
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    bax() = default; //!< Defaulted.
-    bax(bax const &) = default; //!< Defaulted.
-    bax(bax &&) = default; //!< Defaulted.
-    bax & operator=(bax const &) = default; //!< Defaulted.
-    bax & operator=(bax &&) = default; //!< Defaulted.
-    ~bax() = default; //!< Defaulted.
+public:
+    float value{};
 
-    //!\brief Construct from base type.
-    constexpr bax(float const & f) : seqan3::pipeable_config_element<bax, float>(f) {}
-    //!\}
+    constexpr bax() = default;
+    constexpr bax(bax const &) = default;
+    constexpr bax(bax &&) = default;
+    constexpr bax & operator=(bax const &) = default;
+    constexpr bax & operator=(bax &&) = default;
+    ~bax() = default;
+
+    constexpr bax(float v) : value{v}
+    {}
 
     static constexpr test_algo_id id{test_algo_id::bax_id};
 };
 
-struct foo : public seqan3::pipeable_config_element<foo, std::string>
+class foo : public seqan3::pipeable_config_element<foo>
 {
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    foo() = default; //!< Defaulted.
-    foo(foo const &) = default; //!< Defaulted.
-    foo(foo &&) = default; //!< Defaulted.
-    foo & operator=(foo const &) = default; //!< Defaulted.
-    foo & operator=(foo &&) = default; //!< Defaulted.
-    ~foo() = default; //!< Defaulted.
+public:
+    std::string value{};
 
-    //!\brief Construct from base type.
-    constexpr foo(std::string const & s) : seqan3::pipeable_config_element<foo, std::string>(s) {}
-    //!\}
+    foo() = default;
+    foo(foo const &) = default;
+    foo(foo &&) = default;
+    foo & operator=(foo const &) = default;
+    foo & operator=(foo &&) = default;
+    ~foo() = default;
+
+    foo(std::string v) : value{v}
+    {}
 
     static constexpr test_algo_id id{test_algo_id::foo_id};
 };
 
 template <typename t = std::vector<int>>
-struct foobar : public seqan3::pipeable_config_element<foobar<t>, t>
+class foobar : public seqan3::pipeable_config_element<foobar<t>>
 {
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    foobar() = default; //!< Defaulted.
-    foobar(foobar const &) = default; //!< Defaulted.
-    foobar(foobar &&) = default; //!< Defaulted.
-    foobar & operator=(foobar const &) = default; //!< Defaulted.
-    foobar & operator=(foobar &&) = default; //!< Defaulted.
-    ~foobar() = default; //!< Defaulted.
+public:
+    t value{};
 
-    //!\brief Construct from base type.
-    constexpr foobar(t const & e) : seqan3::pipeable_config_element<foobar<t>, t>(e) {}
-    //!\}
+    constexpr foobar() = default;
+    constexpr foobar(foobar const &) = default;
+    constexpr foobar(foobar &&) = default;
+    constexpr foobar & operator=(foobar const &) = default;
+    constexpr foobar & operator=(foobar &&) = default;
+    ~foobar() = default;
+
+    constexpr foobar(t v) : value{v}
+    {}
 
     static constexpr test_algo_id id{test_algo_id::foobar_id};
 };

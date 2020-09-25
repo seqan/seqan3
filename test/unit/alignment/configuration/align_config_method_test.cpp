@@ -19,7 +19,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 using config_element_types = ::testing::Types<seqan3::align_cfg::method_global,
-                                              seqan3::detail::method_local_tag>;
+                                              seqan3::align_cfg::method_local>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(method, pipeable_config_element_test, config_element_types, );
 

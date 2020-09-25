@@ -26,7 +26,7 @@ static auto aa27_all_same = []()
     for (size_t i = 0; i < 100; ++i)
         data.push_back(base_fixture);
 
-    return alignment_fixture_collection{base_fixture.config | seqan3::align_cfg::vectorised, data};
+    return alignment_fixture_collection{base_fixture.config | seqan3::align_cfg::vectorised{}, data};
 }();
 } // namespace seqan3::test::alignment::collection::simd::global::affine::unbanded
 

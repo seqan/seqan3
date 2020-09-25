@@ -51,8 +51,9 @@ namespace seqan3::search_cfg
  * \include test/snippet/search/configuration_on_result.cpp
  */
 template <std::move_constructible callback_t>
-struct on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
+class on_result : public seqan3::pipeable_config_element<on_result<callback_t>>
 {
+public:
     //!\brief The stored callable which will be invoked with the search result.
     seqan3::semiregular_box_t<callback_t> callback{}; // Allow lambdas with capture block which are not copy_assignable.
 

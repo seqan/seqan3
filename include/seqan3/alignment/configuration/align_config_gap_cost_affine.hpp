@@ -70,13 +70,13 @@ struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::det
  * \include test/snippet/alignment/configuration/align_cfg_gap_cost_affine_example.cpp
  *
  */
-struct gap_cost_affine : public pipeable_config_element<gap_cost_affine>
+class gap_cost_affine : public pipeable_config_element<gap_cost_affine>
 {
 public:
     //!\brief The score per consecutive sequence of gaps. Defaults to 0.
-    int open_score{0};
+    int32_t open_score{0};
     //!\brief The cost per gap character. Defaults to -1.
-    int extension_score{-1};
+    int32_t extension_score{-1};
 
     /*!\name Constructors, destructor and assignment
      * \{

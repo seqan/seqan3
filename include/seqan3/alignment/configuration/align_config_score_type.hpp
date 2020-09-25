@@ -18,34 +18,6 @@
 
 namespace seqan3::align_cfg
 {
-
-/*!\brief Tag to configure the score type of the alignment algorithm.
- * \ingroup alignment_configuration
- */
-template <arithmetic score_t>
-struct score_type_tag : public pipeable_config_element<score_type_tag<score_t>>
-{
-    static_assert(std::floating_point<score_t> || std::signed_integral<score_t>,
-                  "The selected score type must be a signed integral type or floating point type.");
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    score_type_tag() = default; //!< Defaulted.
-    score_type_tag(score_type_tag const &) = default; //!< Defaulted.
-    score_type_tag(score_type_tag &&) = default; //!< Defaulted.
-    score_type_tag & operator=(score_type_tag const &) = default; //!< Defaulted.
-    score_type_tag & operator=(score_type_tag &&) = default; //!< Defaulted.
-    ~score_type_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\brief The selected score type.
-    using score_type = score_t;
-    //!\privatesection
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::score_type};
-};
-
 /*!\brief A configuration element to set the score type used in the alignment algorithm.
  * \ingroup alignment_configuration
  * \tparam score_t The type to use for the computed alignment score; must model seqan3::arithmetic.
@@ -60,6 +32,30 @@ struct score_type_tag : public pipeable_config_element<score_type_tag<score_t>>
  * \include test/snippet/alignment/configuration/align_cfg_score_type.cpp
  */
 template <arithmetic score_t>
-inline constexpr score_type_tag<score_t> score_type{};
+class score_type : public pipeable_config_element<score_type<score_t>>
+{
+public:
+
+    static_assert(std::floating_point<score_t> || std::signed_integral<score_t>,
+                  "The selected score type must be a signed integral type or floating point type.");
+
+    //!\brief The selected score type.
+    using type = score_t;
+
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr score_type() = default; //!< Defaulted.
+    constexpr score_type(score_type const &) = default; //!< Defaulted.
+    constexpr score_type(score_type &&) = default; //!< Defaulted.
+    constexpr score_type & operator=(score_type const &) = default; //!< Defaulted.
+    constexpr score_type & operator=(score_type &&) = default; //!< Defaulted.
+    ~score_type() = default; //!< Defaulted.
+    //!\}
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::score_type};
+};
 
 } // namespace seqan3::align_cfg

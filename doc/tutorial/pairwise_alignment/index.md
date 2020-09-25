@@ -46,7 +46,8 @@ In line 16-17 we configure the alignment job with the most simplistic configurat
 In this case it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
-The minimum requirement for computing a pairwise alignment is to specify the alignment method (seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
+The minimum requirement for computing a pairwise alignment is to specify the alignment method
+(seqan3::align_cfg::method_local or seqan3::align_cfg::method_global) and the
 seqan3::align_cfg::scoring_scheme configuration elements. The first one selects the internal algorithm and the second one
 provides the scoring scheme that should be used to score a pair of sequence characters.
 
@@ -110,45 +111,26 @@ seqan3::align_cfg::method_global.
 \remark The method configuration must be given by the user as it strongly depends on the application context.
 It would be wrong for us to assume what the intended default behaviour should be.
 
-The global alignment can be further refined by setting the seqan3::align_cfg::aligned_ends option.
-The seqan3::align_cfg::aligned_ends class specifies whether or not gaps at the end of the sequences are penalised.
-In SeqAn you can configure this behaviour for every end (front and back of the first sequence and second sequence)
-separately using the seqan3::end_gaps class.
-This class is constructed with up to 4 end gap specifiers (one for every end):
+The global alignment can be further refined by initialising the seqan3::align_cfg::method_global configuration element
+with the free end gap specifiers. They specify whether gaps at the end of the sequences are penalised.
+In SeqAn you can configure this behaviour for every end, namely for leading and trailing gaps of the first and second
+sequence. seqan3::align_cfg::method_global is constructed with 4 free end gap specifiers (one for every end):
 
- - seqan3::front_end_first - aligning front of first sequence with a gap.
- - seqan3::back_end_first - aligning back of first sequence with a gap.
- - seqan3::front_end_second - aligning front of second sequence with a gap.
- - seqan3::back_end_second - aligning back of second sequence with a gap.
+ - seqan3::align_cfg::free_end_gaps_sequence1_leading - If set to true, aligning leading gaps in first sequence is
+                                                        not penalised.
+ - seqan3::align_cfg::free_end_gaps_sequence2_leading - If set to true, aligning leading gaps in second sequence is
+                                                        not penalised.
+ - seqan3::align_cfg::free_end_gaps_sequence1_trailing - If set to true, aligning trailing gaps in first sequence is
+                                                        not penalised.
+ - seqan3::align_cfg::free_end_gaps_sequence2_trailing - If set to true, aligning trailing gaps in second sequence is
+                                                        not penalised.
 
-These classes can be constructed with either a constant boolean (std::true_type or std::false_type) or a regular `bool`
-argument. The former enables static configuration of the respective features in the alignment algorithm. The
-latter allows to configure these features at runtime. This makes setting these values from runtime dependent parameters,
-e.g. user input, much easier. The following code snippet demonstrates the different use cases:
+The following code snippet demonstrates the different use cases:
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_aligned_ends
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp aligned_ends
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_method
+\snippet doc/tutorial/pairwise_alignment/configurations.cpp method_global_free_end_gaps
 
-The `cfg_1` and the `cfg_2` will result in the exact same configuration of the alignment where aligning the front of
-either sequence with gaps is not penalised while the back of both sequences is. The order of the arguments is
-irrelevant. Specifiers initialised with constant booleans can be mixed with those initialised with `bool` values.
-If a specifier for a particular sequence end is not given, it defaults to the specifier initialised with
-`std::false_type`.
-
-\note You should always prefer initialising the end-gaps specifiers using the boolean constants if possible
-as it reduces the compile time. The reason for this is that the runtime information is converted into static types
-for the alignment algorithm. For every end-gap specifier the compiler will generate two versions for the `true` and the
-`false` case. This adds up to 16 different paths the compiler needs to instantiate.
-
-SeqAn also offers \ref predefined_end_gap_configurations "predefined" seqan3::end_gaps configurations that
-cover the typical use cases.
-
-| Entity                                                             | Meaning                                                                                                |
-| -------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| \ref seqan3::end_gaps::free_ends_none  "free_ends_none"            | Enables the typical global alignment.                                                                  |
-| \ref seqan3::end_gaps::free_ends_all  "free_ends_all"              | Enables overlap alignment, where the end of one sequence can overlap the end of the other sequence.    |
-| \ref seqan3::end_gaps::free_ends_first  "free_ends_first"          | Enables semi global alignment, where the second sequence is aligned as an infix of the first sequence. |
-| \ref seqan3::end_gaps::free_ends_second  "free_ends_second"        | Enables semi global alignment, where the first sequence is aligned as an infix of the second sequence. |
+The order of arguments is fixed and must always be as shown in the example.
 
 \assignment{Assignment 2}
 
@@ -161,8 +143,8 @@ would be aligned as an infix of the second sequence.
 
 \include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_2.cpp
 
-To accomplish our goal we simply add the align_cfg::aligned_ends option initialised with `free_ends_first` to the
-existing configuration.
+To accomplish our goal we initialise the `method_global` option with the free end specifiers
+for sequence 1 set to `true`, and those for sequence 2 with `false`.
 
 \endsolution
 
@@ -193,7 +175,7 @@ the alignment computation. The default initialised seqan3::align_cfg::gap_cost_a
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
 alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
-with custom gap penalties. The penalties can be assessed changed later by using the respective member variables  
+with custom gap penalties. The penalties can be assessed changed later by using the respective member variables
 `extension_score` and `open_score`.
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
@@ -306,19 +288,25 @@ To make the configuration easier, we added a shortcut called seqan3::align_cfg::
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_edit
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp edit
 
+The `edit_scheme` still has to be combined with an alignment method. When combining it
+with the seqan3::align_cfg::method_global configuration element, the edit distance algorithm
+can be further refined with free end gaps (see section `Global and semi-global alignment`).
+
+\attention Only the following free end gap configurations are supported for the
+global alignment configuration with the edit scheme:
+- no free end gaps (all free end gap specifiers are set to `false`)
+- free end gaps for the first sequence (free end gaps are set to `true` for the first and
+  to `false` for the second sequence)
+Using any other free end gap configuration will disable the edit distance and fall back to the standard pairwise
+alignment and will not use the fast bitvector algorithm.
+
 ### Refine edit distance
 
-The edit distance can be further refined using seqan3::align_cfg::aligned_ends to also compute a semi-global alignment
-and the seqan3::align_cfg::min_score configuration to fix an edit score (a limit of the allowed number of edits). If the
-respective alignment could not find a solution within the given error bound, the resulting score is infinity
-(corresponds to std::numeric_limits::max). Also the alignment and the begin and end positions of the alignment can be
-computed using a combination of the align_cfg::output_alignment, align_cfg::output_begin_position and
-align_cfg::output_end_position options.
-
-\attention Only the options seqan3::free_ends_none and seqan3::free_ends_first
-are supported for the aligned ends configuration with the edit distance. Using any other aligned ends configuration will
-disable the edit distance and fall back to the standard pairwise alignment and will not use the fast bitvector
-algorithm.
+The edit distance can be further refined using the seqan3::align_cfg::min_score configuration to fix an edit score
+(a limit of the allowed number of edits).. If the respective alignment could not find a solution within the given error
+bound, the resulting score is infinity (corresponds to std::numeric_limits::max). Also the alignment and the begin and
+end positions of the alignment can be computed using a combination of the align_cfg::output_alignment,
+align_cfg::output_begin_position and align_cfg::output_end_position options.
 
 \assignment{Assignment 6}
 

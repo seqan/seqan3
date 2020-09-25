@@ -37,7 +37,7 @@ struct search_traits
     //!\brief The configured search result type.
     using search_result_type =
         typename std::remove_cvref_t<decltype(std::declval<search_configuration_t>().get_or(
-                search_cfg::detail::result_type<empty_search_result_type>))
+                search_cfg::detail::result_type<empty_search_result_type>{}))
         >::type;
 
     //!\brief A flag indicating whether search should be invoked with total errors.
@@ -60,11 +60,11 @@ struct search_traits
                                                  !has_max_error_deletion;
 
     //!\brief A flag indicating whether search should find all hits.
-    static constexpr bool search_all_hits = search_configuration_t::template exists<hit_all_tag>();
+    static constexpr bool search_all_hits = search_configuration_t::template exists<search_cfg::hit_all>();
     //!\brief A flag indicating whether search should find best hits.
-    static constexpr bool search_single_best_hit = search_configuration_t::template exists<hit_single_best_tag>();
+    static constexpr bool search_single_best_hit = search_configuration_t::template exists<search_cfg::hit_single_best>();
     //!\brief A flag indicating whether search should find all best hits.
-    static constexpr bool search_all_best_hits = search_configuration_t::template exists<hit_all_best_tag>();
+    static constexpr bool search_all_best_hits = search_configuration_t::template exists<search_cfg::hit_all_best>();
     //!\brief A flag indicating whether search should find strata hits.
     static constexpr bool search_strata_hits = search_configuration_t::template exists<search_cfg::hit_strata>();
     //!\brief A flag indicating whether hit configuration was set in the search configuration.
@@ -75,16 +75,16 @@ struct search_traits
                                                   search_configuration_t::template exists<search_cfg::hit>();
 
     //!\brief A flag indicating whether search should return the query_id.
-    static constexpr bool output_query_id = search_configuration_t::template exists<detail::output_query_id_tag>();
+    static constexpr bool output_query_id = search_configuration_t::template exists<search_cfg::output_query_id>();
     //!\brief A flag indicating whether search should return the reference_id.
     static constexpr bool output_reference_id =
-                              search_configuration_t::template exists<detail::output_reference_id_tag>();
+                              search_configuration_t::template exists<search_cfg::output_reference_id>();
     //!\brief A flag indicating whether search should return the reference_begin_position.
     static constexpr bool output_reference_begin_position =
-                              search_configuration_t::template exists<detail::output_reference_begin_position_tag>();
+                              search_configuration_t::template exists<search_cfg::output_reference_begin_position>();
     //!\brief A flag indicating whether search should return the index_cursor.
     static constexpr bool output_index_cursor =
-                              search_configuration_t::template exists<detail::output_index_cursor_tag>();
+                              search_configuration_t::template exists<search_cfg::output_index_cursor>();
     //!\brief A flag indicating whether it is required to call cursor.locate() to retrieve the respective information.
     static constexpr bool output_requires_locate_call = output_reference_id | output_reference_begin_position;
 

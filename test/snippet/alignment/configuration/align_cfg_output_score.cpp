@@ -3,5 +3,5 @@
 int main()
 {
     // Compute only the score.
-    seqan3::configuration cfg = seqan3::align_cfg::output_score;
+    seqan3::configuration cfg = seqan3::align_cfg::output_score{};
 }

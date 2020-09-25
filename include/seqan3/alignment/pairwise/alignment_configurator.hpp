@@ -100,9 +100,9 @@ public:
     {
         if constexpr (alignment_config_type::template exists<align_cfg::scoring_scheme>())
         {
-            using scoring_type = std::remove_reference_t<
-                                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).value)
-                                 >;
+            using scoring_type =
+                std::remove_reference_t<
+                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).scheme)>;
             return static_cast<bool>(scoring_scheme_for<scoring_type,
                                                         std::ranges::range_value_t<first_seq_t>,
                                                         std::ranges::range_value_t<second_seq_t>>);
@@ -117,7 +117,7 @@ public:
     constexpr static bool expects_alignment_configuration()
     {
         const bool is_global = alignment_config_type::template exists<seqan3::align_cfg::method_global>();
-        const bool is_local = alignment_config_type::template exists<seqan3::detail::method_local_tag>();
+        const bool is_local = alignment_config_type::template exists<seqan3::align_cfg::method_local>();
 
         return (is_global || is_local);
     }
@@ -263,7 +263,7 @@ public:
         using function_wrapper_t = std::function<void(indexed_sequence_pair_chunk_t, callback_on_result_t)>;
 
         // Capture the alignment result type.
-        auto config_with_result_type = config_with_output | align_cfg::detail::result_type<alignment_result_t>;
+        auto config_with_result_type = config_with_output | align_cfg::detail::result_type<alignment_result_t>{};
 
         // ----------------------------------------------------------------------------
         // Test some basic preconditions
@@ -292,7 +292,7 @@ public:
         // Use default edit distance if gaps are not set.
         align_cfg::gap_cost_affine edit_gap_cost{};
         auto const & gap_cost = config_with_result_type.get_or(edit_gap_cost);
-        auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).value;
+        auto const & scoring_scheme = get<align_cfg::scoring_scheme>(cfg).scheme;
 
         if constexpr (config_t::template exists<seqan3::align_cfg::method_global>())
         {
@@ -351,12 +351,12 @@ private:
         if constexpr (traits_t::has_output_configuration)
             return config;
         else
-            return config | align_cfg::output_score |
-                            align_cfg::output_begin_position |
-                            align_cfg::output_end_position |
-                            align_cfg::output_alignment |
-                            align_cfg::output_sequence1_id |
-                            align_cfg::output_sequence2_id;
+            return config | align_cfg::output_score{} |
+                            align_cfg::output_begin_position{} |
+                            align_cfg::output_end_position{} |
+                            align_cfg::output_alignment{} |
+                            align_cfg::output_sequence1_id{} |
+                            align_cfg::output_sequence2_id{};
     }
 
     /*!\brief Configures the edit distance algorithm.
@@ -493,10 +493,9 @@ private:
             // ----------------------------------------------------------------------------
             // Configure scoring scheme policy
             // ----------------------------------------------------------------------------
-
             using alignment_method_t = std::conditional_t<traits_t::is_global,
                                                           seqan3::align_cfg::method_global,
-                                                          seqan3::detail::method_local_tag>;
+                                                          seqan3::align_cfg::method_local>;
 
             using score_t = typename traits_t::score_type;
             using scoring_scheme_t = typename traits_t::scoring_scheme_type;
@@ -556,7 +555,7 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
     constexpr bool is_aminoacid_scheme = is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
     using alignment_type_t = typename std::conditional_t<traits_t::is_global,
                                                          seqan3::align_cfg::method_global,
-                                                         seqan3::detail::method_local_tag>;
+                                                         seqan3::align_cfg::method_local>;
 
     using simple_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
                                                     lazy<simd_match_mismatch_scoring_scheme,

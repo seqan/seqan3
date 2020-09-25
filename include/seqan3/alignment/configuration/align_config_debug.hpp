@@ -18,7 +18,6 @@
 
 namespace seqan3::align_cfg::detail
 {
-//!\cond DEV
 /*!\brief Configuration element for debugging the alignment algorithm.
  * \ingroup alignment_configuration
  *
@@ -32,7 +31,6 @@ namespace seqan3::align_cfg::detail
  * \note This configuration is only useful for debugging purposes as it can have a significant impact on the
  *       performance.
  */
-inline constexpr seqan3::detail::debug_mode<std::integral_constant<seqan3::detail::align_config_id,
-                                                                   seqan3::detail::align_config_id::debug>> debug{};
-//!\endcond
+using debug = seqan3::detail::debug_mode<std::integral_constant<seqan3::detail::align_config_id,
+                                                                seqan3::detail::align_config_id::debug>>;
 }  // namespace seqan3::align_cfg::detail

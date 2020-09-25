@@ -17,31 +17,6 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 
-namespace seqan3::detail
-{
-
-/*!\brief A tag to select the vectorised alignment algorithm.
- * \ingroup alignment_configuration
- */
-struct vectorised_tag : public pipeable_config_element<vectorised_tag>
-{
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    vectorised_tag() = default; //!< Defaulted.
-    vectorised_tag(vectorised_tag const &) = default; //!< Defaulted.
-    vectorised_tag(vectorised_tag &&) = default; //!< Defaulted.
-    vectorised_tag & operator=(vectorised_tag const &) = default; //!< Defaulted.
-    vectorised_tag & operator=(vectorised_tag &&) = default; //!< Defaulted.
-    ~vectorised_tag() = default; //!< Defaulted.
-    //!\}
-
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::align_config_id id{detail::align_config_id::vectorised};
-};
-
-} // namespace seqan3::detail
-
 namespace seqan3::align_cfg
 {
 
@@ -63,6 +38,23 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-inline constexpr seqan3::detail::vectorised_tag vectorised{};
+class vectorised : public pipeable_config_element<vectorised>
+{
+public:
+    /*!\name Constructor, destructor and assignment
+     * \{
+     */
+    constexpr vectorised() = default; //!< Defaulted.
+    constexpr vectorised(vectorised const &) = default; //!< Defaulted.
+    constexpr vectorised(vectorised &&) = default; //!< Defaulted.
+    constexpr vectorised & operator=(vectorised const &) = default; //!< Defaulted.
+    constexpr vectorised & operator=(vectorised &&) = default; //!< Defaulted.
+    ~vectorised() = default; //!< Defaulted.
+    //!\}
+
+    //!\privatesection
+    //!\brief Internal id to check for consistent configuration settings.
+    static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::vectorised};
+};
 
 } // namespace seqan3::align_cfg

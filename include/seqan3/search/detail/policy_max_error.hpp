@@ -91,10 +91,10 @@ protected:
 
         [[maybe_unused]] auto query_size = std::ranges::size(query);
 
-        errors.total = to_error_count(total.value, query_size);
-        errors.substitution = to_error_count(substitution.value, query_size);
-        errors.insertion = to_error_count(insertion.value, query_size);
-        errors.deletion = to_error_count(deletion.value, query_size);
+        errors.total = to_error_count(total.error, query_size);
+        errors.substitution = to_error_count(substitution.error, query_size);
+        errors.insertion = to_error_count(insertion.error, query_size);
+        errors.deletion = to_error_count(deletion.error, query_size);
 
         // If only total is set, we set all other errors to the total limit.
         if (only_max_error_total)

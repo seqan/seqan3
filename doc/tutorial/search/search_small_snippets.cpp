@@ -100,7 +100,7 @@ seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::se
                                   seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
                                   seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
                                   seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
-                                  seqan3::search_cfg::hit_single_best;
+                                  seqan3::search_cfg::hit_single_best{};
 //![hit_best]
 }
 

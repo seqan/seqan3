@@ -25,50 +25,24 @@ namespace seqan3
 /*!\brief Adds pipe interface to configuration elements.
  * \ingroup algorithm
  * \tparam derived_t The type of the derived class.
- * \tparam value_t   The type of the wrapped value (defaults to void).
  */
 template <typename derived_t>
-struct pipeable_config_element<derived_t, void>
+class pipeable_config_element<derived_t>
 {
 private:
-    /*!\name Constructors, destructor and assignment
+    //!\brief Befriend the derived class.
+    friend derived_t;
+
+    /*!\name Constructor, destructor and assignment
      * \{
      */
-    pipeable_config_element() = default; //!< Defaulted.
-    pipeable_config_element(pipeable_config_element const &) = default; //!< Defaulted.
-    pipeable_config_element(pipeable_config_element &&) = default; //!< Defaulted.
-    pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
-    pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
+    constexpr pipeable_config_element() = default; //!< Defaulted.
+    constexpr pipeable_config_element(pipeable_config_element const &) = default; //!< Defaulted.
+    constexpr pipeable_config_element(pipeable_config_element &&) = default; //!< Defaulted.
+    constexpr pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
+    constexpr pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
     ~pipeable_config_element() = default; //!< Defaulted.
     //!\}
-
-    //!\brief Only the derived class is allowed to construct the element
-    friend derived_t;
-};
-
-//! \overload
-template <typename derived_t, typename value_t>
-struct pipeable_config_element
-{
-    //!\brief The stored config value.
-    value_t value{};
-private:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-    pipeable_config_element() = default; //!< Defaulted.
-    pipeable_config_element(pipeable_config_element const &) = default; //!< Defaulted.
-    pipeable_config_element(pipeable_config_element &&) = default; //!< Defaulted.
-    pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
-    pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
-    ~pipeable_config_element() = default; //!< Defaulted.
-
-    //!\brief Construction from the value type.
-    constexpr pipeable_config_element(value_t const & val) : value(val) {}
-    //!\}
-
-    //!\brief Only the derived class is allowed to construct the element
-    friend derived_t;
 };
 
 } // namespace seqan3
