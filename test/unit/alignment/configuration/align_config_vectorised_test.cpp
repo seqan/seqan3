@@ -15,6 +15,6 @@
 
 TEST(align_config_vectorised, config_element)
 {
-    seqan3::configuration cfg{seqan3::align_cfg::vectorised};
-    EXPECT_TRUE(decltype(cfg)::template exists<seqan3::detail::vectorised_tag>());
+    seqan3::configuration cfg{seqan3::align_cfg::vectorised{}};
+    EXPECT_TRUE(decltype(cfg)::template exists<seqan3::align_cfg::vectorised>());
 }

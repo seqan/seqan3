@@ -22,8 +22,7 @@ int main()
                       seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
                       seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+                  seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{}};
 
     for (auto const & res : seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config))
         seqan3::debug_stream << "Score: " << res.score() << '\n';

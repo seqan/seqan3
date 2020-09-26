@@ -39,8 +39,8 @@ constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
                             seqan3::align_cfg::scoring_scheme{nt_score_scheme};
 
 // Aliases to beautify the benchmark output
-using score = seqan3::align_cfg::output_score_tag;
-using trace = decltype(seqan3::align_cfg::output_score | seqan3::align_cfg::output_alignment);
+using score = seqan3::align_cfg::output_score;
+using trace = decltype(seqan3::align_cfg::output_score{} | seqan3::align_cfg::output_alignment{});
 
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 100;

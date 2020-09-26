@@ -32,16 +32,16 @@ TEST(band_fixed_size, construct)
 
     { // Default construct
         seqan3::align_cfg::band_fixed_size band_config{};
-        EXPECT_EQ(band_config.lower_diagonal.get(), minus_infinity);
-        EXPECT_EQ(band_config.upper_diagonal.get(), plus_infinity);
+        EXPECT_EQ(band_config.lower_diagonal, minus_infinity);
+        EXPECT_EQ(band_config.upper_diagonal, plus_infinity);
     }
 
     { // Construct with parameter
         seqan3::align_cfg::band_fixed_size band_config{seqan3::align_cfg::lower_diagonal{-5},
                                                        seqan3::align_cfg::upper_diagonal{5}};
 
-        EXPECT_EQ(band_config.lower_diagonal.get(), -5);
-        EXPECT_EQ(band_config.upper_diagonal.get(), 5);
+        EXPECT_EQ(band_config.lower_diagonal, -5);
+        EXPECT_EQ(band_config.upper_diagonal, 5);
     }
 }
 
@@ -49,11 +49,11 @@ TEST(band_fixed_size, assign)
 {
     seqan3::align_cfg::band_fixed_size band_config{};
 
-    band_config.lower_diagonal = seqan3::align_cfg::lower_diagonal{-5};
-    band_config.upper_diagonal = seqan3::align_cfg::upper_diagonal{5};
+    band_config.lower_diagonal = -5;
+    band_config.upper_diagonal = 5;
 
-    EXPECT_EQ(band_config.lower_diagonal.get(), -5);
-    EXPECT_EQ(band_config.upper_diagonal.get(), 5);
+    EXPECT_EQ(band_config.lower_diagonal, -5);
+    EXPECT_EQ(band_config.upper_diagonal, 5);
 }
 
 TEST(band_fixed_size, get_and_assign)
@@ -66,12 +66,12 @@ TEST(band_fixed_size, get_and_assign)
 
     auto & selected_band_config = get<seqan3::align_cfg::band_fixed_size>(config);
 
-    EXPECT_EQ(selected_band_config.lower_diagonal.get(), -5);
-    EXPECT_EQ(selected_band_config.upper_diagonal.get(), 5);
+    EXPECT_EQ(selected_band_config.lower_diagonal, -5);
+    EXPECT_EQ(selected_band_config.upper_diagonal, 5);
 
-    selected_band_config.lower_diagonal = seqan3::align_cfg::lower_diagonal{-4};
-    selected_band_config.upper_diagonal = seqan3::align_cfg::upper_diagonal{8};
+    selected_band_config.lower_diagonal = -4;
+    selected_band_config.upper_diagonal = 8;
 
-    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).lower_diagonal.get(), -4);
-    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).upper_diagonal.get(), 8);
+    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).lower_diagonal, -4);
+    EXPECT_EQ(get<seqan3::align_cfg::band_fixed_size>(config).upper_diagonal, 8);
 }

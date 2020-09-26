@@ -40,7 +40,7 @@ TYPED_TEST_SUITE_P(pairwise_alignment_collection_test);
 TYPED_TEST_P(pairwise_alignment_collection_test, score)
 {
     auto const & fixture = this->fixture();
-    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_score;
+    seqan3::configuration align_cfg = fixture.config | seqan3::align_cfg::output_score{};
     auto [database, query] = fixture.get_sequences();
     auto alignment_rng = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg);
 
@@ -52,8 +52,8 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::output_score |
-                                      seqan3::align_cfg::output_end_position;
+                                      seqan3::align_cfg::output_score{} |
+                                      seqan3::align_cfg::output_end_position{};
     auto [database, query] = fixture.get_sequences();
     auto res_vec = seqan3::align_pairwise(seqan3::views::zip(database, query), align_cfg)
                  | seqan3::views::to<std::vector>;
@@ -73,9 +73,9 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::output_begin_position |
-                                      seqan3::align_cfg::output_end_position |
-                                      seqan3::align_cfg::output_score;
+                                      seqan3::align_cfg::output_begin_position{} |
+                                      seqan3::align_cfg::output_end_position{} |
+                                      seqan3::align_cfg::output_score{};
 
     using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 
@@ -110,10 +110,10 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
 {
     auto const & fixture = this->fixture();
     seqan3::configuration align_cfg = fixture.config |
-                                      seqan3::align_cfg::output_alignment |
-                                      seqan3::align_cfg::output_begin_position |
-                                      seqan3::align_cfg::output_end_position |
-                                      seqan3::align_cfg::output_score;
+                                      seqan3::align_cfg::output_alignment{} |
+                                      seqan3::align_cfg::output_begin_position{} |
+                                      seqan3::align_cfg::output_end_position{} |
+                                      seqan3::align_cfg::output_score{};
 
     using traits_t = seqan3::detail::alignment_configuration_traits<decltype(align_cfg)>;
 

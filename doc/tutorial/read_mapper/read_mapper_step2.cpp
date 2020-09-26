@@ -49,7 +49,7 @@ void map_reads(std::filesystem::path const & query_path,
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{
                                                     seqan3::search_cfg::error_count{errors}} |
-                                                seqan3::search_cfg::hit_all_best;
+                                                seqan3::search_cfg::hit_all_best{};
 
 #if SEQAN3_WORKAROUND_GCC_93983
     for (auto && record : query_file_in /*| seqan3::views::take(20)*/)

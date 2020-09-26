@@ -13,10 +13,10 @@ int main()
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 
     // Configure the output:
-    auto output_config = seqan3::align_cfg::output_score |
-                         seqan3::align_cfg::output_begin_position |
-                         seqan3::align_cfg::output_end_position |
-                         seqan3::align_cfg::output_alignment;
+    auto output_config = seqan3::align_cfg::output_score{} |
+                         seqan3::align_cfg::output_begin_position{} |
+                         seqan3::align_cfg::output_end_position{} |
+                         seqan3::align_cfg::output_alignment{};
 
     // Configure the alignment kernel together with the previous output configuration.
     auto config = seqan3::align_cfg::method_global{
@@ -28,7 +28,6 @@ int main()
                       seqan3::match_score{4}, seqan3::mismatch_score{-2}}} |
                   seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{0},
                                                      seqan3::align_cfg::extension_score{-4}} |
-                  seqan3::align_cfg::aligned_ends{seqan3::free_ends_all} |
                   output_config;
 
     for (auto const & res : seqan3::align_pairwise(std::tie(seq1, seq2), config))

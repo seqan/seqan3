@@ -16,9 +16,9 @@
 // test template : pipeable_config_element_test
 // ---------------------------------------------------------------------------------------------------------------------
 
-using test_types = ::testing::Types<seqan3::detail::hit_all_tag,
-                                    seqan3::detail::hit_all_best_tag,
-                                    seqan3::detail::hit_single_best_tag,
+using test_types = ::testing::Types<seqan3::search_cfg::hit_all,
+                                    seqan3::search_cfg::hit_all_best,
+                                    seqan3::search_cfg::hit_single_best,
                                     seqan3::search_cfg::hit_strata,
                                     seqan3::search_cfg::hit>;
 
@@ -30,32 +30,32 @@ INSTANTIATE_TYPED_TEST_SUITE_P(mode_elements, pipeable_config_element_test, test
 
 TEST(config_element_test, tags)
 {
-    seqan3::configuration elem_all = seqan3::search_cfg::hit_all;
-    EXPECT_TRUE((std::same_as<decltype(elem_all), seqan3::configuration<seqan3::detail::hit_all_tag>>));
+    seqan3::configuration elem_all = seqan3::search_cfg::hit_all{};
+    EXPECT_TRUE((std::same_as<decltype(elem_all), seqan3::configuration<seqan3::search_cfg::hit_all>>));
 
-    seqan3::configuration elem_all_best = seqan3::search_cfg::hit_all_best;
-    EXPECT_TRUE((std::same_as<decltype(elem_all_best), seqan3::configuration<seqan3::detail::hit_all_best_tag>>));
+    seqan3::configuration elem_all_best = seqan3::search_cfg::hit_all_best{};
+    EXPECT_TRUE((std::same_as<decltype(elem_all_best), seqan3::configuration<seqan3::search_cfg::hit_all_best>>));
 
-    seqan3::configuration elem_single_best = seqan3::search_cfg::hit_single_best;
-    EXPECT_TRUE((std::same_as<decltype(elem_single_best), seqan3::configuration<seqan3::detail::hit_single_best_tag>>));
+    seqan3::configuration elem_single_best = seqan3::search_cfg::hit_single_best{};
+    EXPECT_TRUE((std::same_as<decltype(elem_single_best), seqan3::configuration<seqan3::search_cfg::hit_single_best>>));
 }
 
 TEST(hit_strata_test, member_variable)
 {
     {   // default construction
         seqan3::search_cfg::hit_strata strata_mode{};
-        EXPECT_EQ(strata_mode.value, 0);
+        EXPECT_EQ(strata_mode.stratum, 0);
     }
 
     {   // construct with value
         seqan3::search_cfg::hit_strata strata_mode{3};
-        EXPECT_EQ(strata_mode.value, 3);
+        EXPECT_EQ(strata_mode.stratum, 3);
     }
 
     {   // assign value
         seqan3::search_cfg::hit_strata strata_mode{};
-        strata_mode.value = 3;
-        EXPECT_EQ(strata_mode.value, 3);
+        strata_mode.stratum = 3;
+        EXPECT_EQ(strata_mode.stratum, 3);
     }
 }
 
@@ -68,40 +68,40 @@ TEST(hit_dynamic, empty)
 TEST(hit_dynamic, construction)
 {
     {
-        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all};
-        EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_tag>(dynamic_hit.hit_variant));
+        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all{}};
+        EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all>(dynamic_hit.hit_variant));
     }
 
     {
-        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all_best};
-        EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_best_tag>(dynamic_hit.hit_variant));
+        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_all_best{}};
+        EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all_best>(dynamic_hit.hit_variant));
     }
 
     {
-        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_single_best};
-        EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_single_best_tag>(dynamic_hit.hit_variant));
+        seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_single_best{}};
+        EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_single_best>(dynamic_hit.hit_variant));
     }
 
     {
         seqan3::search_cfg::hit dynamic_hit{seqan3::search_cfg::hit_strata{4}};
         EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant));
-        EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).value, 4);
+        EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).stratum, 4);
     }
 }
 
 TEST(hit_dynamic, assignment)
 {
     seqan3::search_cfg::hit dynamic_hit{};
-    dynamic_hit = seqan3::search_cfg::hit_all;
-    EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_tag>(dynamic_hit.hit_variant));
+    dynamic_hit = seqan3::search_cfg::hit_all{};
+    EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all>(dynamic_hit.hit_variant));
 
-    dynamic_hit = seqan3::search_cfg::hit_all_best;
-    EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_all_best_tag>(dynamic_hit.hit_variant));
+    dynamic_hit = seqan3::search_cfg::hit_all_best{};
+    EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_all_best>(dynamic_hit.hit_variant));
 
-    dynamic_hit = seqan3::search_cfg::hit_single_best;
-    EXPECT_TRUE(std::holds_alternative<seqan3::detail::hit_single_best_tag>(dynamic_hit.hit_variant));
+    dynamic_hit = seqan3::search_cfg::hit_single_best{};
+    EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_single_best>(dynamic_hit.hit_variant));
 
     dynamic_hit = seqan3::search_cfg::hit_strata{4};
     EXPECT_TRUE(std::holds_alternative<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant));
-    EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).value, 4);
+    EXPECT_EQ(std::get<seqan3::search_cfg::hit_strata>(dynamic_hit.hit_variant).stratum, 4);
 }

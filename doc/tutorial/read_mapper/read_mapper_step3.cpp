@@ -50,7 +50,7 @@ void map_reads(std::filesystem::path const & query_path,
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{
                                                     seqan3::search_cfg::error_count{errors}} |
-                                                seqan3::search_cfg::hit_all_best;
+                                                seqan3::search_cfg::hit_all_best{};
 
 //! [alignment_config]
     seqan3::configuration const align_config = seqan3::align_cfg::method_global{
@@ -59,9 +59,8 @@ void map_reads(std::filesystem::path const & query_path,
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
                                                seqan3::align_cfg::edit_scheme |
-                                               seqan3::align_cfg::aligned_ends{seqan3::free_ends_first} |
-                                               seqan3::align_cfg::output_alignment |
-                                               seqan3::align_cfg::output_score;
+                                               seqan3::align_cfg::output_alignment{} |
+                                               seqan3::align_cfg::output_score{};
 //! [alignment_config]
 
 #if SEQAN3_WORKAROUND_GCC_93983

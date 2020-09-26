@@ -29,7 +29,7 @@ namespace seqan3::detail
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet
  *                    and must have an alphabet size of at least 2.
  * \tparam alignment_t The type of the alignment to compute; must be either seqan3::align_cfg::method_global or
- *                     seqan3::detail::method_local_tag.
+ *                     seqan3::align_cfg::method_local.
  *
  * \details
  *
@@ -63,7 +63,7 @@ namespace seqan3::detail
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t>
 //!\cond
     requires (seqan3::alphabet_size<alphabet_t> > 1) &&
-             (std::same_as<alignment_t, detail::method_local_tag> ||
+             (std::same_as<alignment_t, align_cfg::method_local> ||
               std::same_as<alignment_t, align_cfg::method_global>)
 //!\endcond
 class simd_match_mismatch_scoring_scheme

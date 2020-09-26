@@ -19,22 +19,25 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
-namespace seqan3::detail
+namespace seqan3::search_cfg
 {
 
-//!\brief Include the query_id in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_query_id_tag : public pipeable_config_element<output_query_id_tag>
+/*!\brief Include the query_id in the seqan3::search_result returned by a call to seqan3::search.
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ */
+class output_query_id : public pipeable_config_element<output_query_id>
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    output_query_id_tag() = default; //!< Defaulted.
-    output_query_id_tag(output_query_id_tag const &) = default; //!< Defaulted.
-    output_query_id_tag(output_query_id_tag &&) = default; //!< Defaulted.
-    output_query_id_tag & operator=(output_query_id_tag const &) = default; //!< Defaulted.
-    output_query_id_tag & operator=(output_query_id_tag &&) = default; //!< Defaulted.
-    ~output_query_id_tag() = default; //!< Defaulted.
+    constexpr output_query_id() = default; //!< Defaulted.
+    constexpr output_query_id(output_query_id const &) = default; //!< Defaulted.
+    constexpr output_query_id(output_query_id &&) = default; //!< Defaulted.
+    constexpr output_query_id & operator=(output_query_id const &) = default; //!< Defaulted.
+    constexpr output_query_id & operator=(output_query_id &&) = default; //!< Defaulted.
+    ~output_query_id() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
@@ -42,19 +45,22 @@ struct output_query_id_tag : public pipeable_config_element<output_query_id_tag>
     static constexpr detail::search_config_id id{detail::search_config_id::output_query_id};
 };
 
-//!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_reference_id_tag : public pipeable_config_element<output_reference_id_tag>
+/*!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ */
+class output_reference_id : public pipeable_config_element<output_reference_id>
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    output_reference_id_tag() = default; //!< Defaulted.
-    output_reference_id_tag(output_reference_id_tag const &) = default; //!< Defaulted.
-    output_reference_id_tag(output_reference_id_tag &&) = default; //!< Defaulted.
-    output_reference_id_tag & operator=(output_reference_id_tag const &) = default; //!< Defaulted.
-    output_reference_id_tag & operator=(output_reference_id_tag &&) = default; //!< Defaulted.
-    ~output_reference_id_tag() = default; //!< Defaulted.
+    constexpr output_reference_id() = default; //!< Defaulted.
+    constexpr output_reference_id(output_reference_id const &) = default; //!< Defaulted.
+    constexpr output_reference_id(output_reference_id &&) = default; //!< Defaulted.
+    constexpr output_reference_id & operator=(output_reference_id const &) = default; //!< Defaulted.
+    constexpr output_reference_id & operator=(output_reference_id &&) = default; //!< Defaulted.
+    ~output_reference_id() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
@@ -62,21 +68,22 @@ struct output_reference_id_tag : public pipeable_config_element<output_reference
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_id};
 };
 
-//!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_reference_begin_position_tag : public pipeable_config_element<output_reference_begin_position_tag>
+/*!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ */
+class output_reference_begin_position : public pipeable_config_element<output_reference_begin_position>
 {
-
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    output_reference_begin_position_tag() = default; //!< Defaulted.
-    output_reference_begin_position_tag(output_reference_begin_position_tag const &) = default; //!< Defaulted.
-    output_reference_begin_position_tag(output_reference_begin_position_tag &&) = default; //!< Defaulted.
-    output_reference_begin_position_tag & operator=(output_reference_begin_position_tag const &) =
-     default; //!< Defaulted.
-    output_reference_begin_position_tag & operator=(output_reference_begin_position_tag &&) = default; //!< Defaulted.
-    ~output_reference_begin_position_tag() = default; //!< Defaulted.
+    constexpr output_reference_begin_position() = default; //!< Defaulted.
+    constexpr output_reference_begin_position(output_reference_begin_position const &) = default; //!< Defaulted.
+    constexpr output_reference_begin_position(output_reference_begin_position &&) = default; //!< Defaulted.
+    constexpr output_reference_begin_position & operator=(output_reference_begin_position const &) = default; //!< Defaulted.
+    constexpr output_reference_begin_position & operator=(output_reference_begin_position &&) = default; //!< Defaulted.
+    ~output_reference_begin_position() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
@@ -84,57 +91,27 @@ struct output_reference_begin_position_tag : public pipeable_config_element<outp
     static constexpr detail::search_config_id id{detail::search_config_id::output_reference_begin_position};
 };
 
-//!\brief Include the index_cursor in the seqan3::search_result returned by a call to seqan3::search.
-//!\ingroup search_configuration
-struct output_index_cursor_tag : public pipeable_config_element<output_index_cursor_tag>
+/*!\brief Include the index_cursor in the seqan3::search_result returned by a call to seqan3::search.
+ * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_output "Section on Output"
+ */
+class output_index_cursor : public pipeable_config_element<output_index_cursor>
 {
+public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    output_index_cursor_tag() = default; //!< Defaulted.
-    output_index_cursor_tag(output_index_cursor_tag const &) = default; //!< Defaulted.
-    output_index_cursor_tag(output_index_cursor_tag &&) = default; //!< Defaulted.
-    output_index_cursor_tag & operator=(output_index_cursor_tag const &) = default; //!< Defaulted.
-    output_index_cursor_tag & operator=(output_index_cursor_tag &&) = default; //!< Defaulted.
-    ~output_index_cursor_tag() = default; //!< Defaulted.
+    constexpr output_index_cursor() = default; //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor const &) = default; //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor &&) = default; //!< Defaulted.
+    constexpr output_index_cursor & operator=(output_index_cursor const &) = default; //!< Defaulted.
+    constexpr output_index_cursor & operator=(output_index_cursor &&) = default; //!< Defaulted.
+    ~output_index_cursor() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr detail::search_config_id id{detail::search_config_id::output_index_cursor};
 };
-
-} // namespace seqan3::detail
-
-namespace seqan3::search_cfg
-{
-
-/*!\brief \copybrief seqan3::detail::output_query_id_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
- */
-inline constexpr detail::output_query_id_tag output_query_id{};
-
-/*!\brief \copybrief seqan3::detail::output_reference_id_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
- */
-inline constexpr detail::output_reference_id_tag output_reference_id{};
-
-/*!\brief \copybrief seqan3::detail::output_reference_begin_position_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
- */
-inline constexpr detail::output_reference_begin_position_tag output_reference_begin_position{};
-
-/*!\brief \copybrief seqan3::detail::output_index_cursor_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_output "Section on Output"
- * \hideinitializer
- */
-inline constexpr detail::output_index_cursor_tag output_index_cursor{};
 
 } // namespace seqan3::search_cfg

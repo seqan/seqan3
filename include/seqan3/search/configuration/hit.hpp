@@ -22,23 +22,25 @@
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
-namespace seqan3::detail
+namespace seqan3::search_cfg
 {
 
 /*!\brief Configuration element to receive all hits within the error bounds.
  * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_all_tag : public pipeable_config_element<hit_all_tag>
+class hit_all : public pipeable_config_element<hit_all>
 {
-    /*!\name Constructors, destructor and assignment
+public:
+    /*!\name Constructors, assignment and destructor
      * \{
      */
-    hit_all_tag() = default; //!< Defaulted.
-    hit_all_tag(hit_all_tag const &) = default; //!< Defaulted.
-    hit_all_tag(hit_all_tag &&) = default; //!< Defaulted.
-    hit_all_tag & operator=(hit_all_tag const &) = default; //!< Defaulted.
-    hit_all_tag & operator=(hit_all_tag &&) = default; //!< Defaulted.
-    ~hit_all_tag() = default; //!< Defaulted.
+    constexpr hit_all() = default; //!< Defaulted.
+    constexpr hit_all(hit_all const &) = default; //!< Defaulted.
+    constexpr hit_all(hit_all &&) = default; //!< Defaulted.
+    constexpr hit_all & operator=(hit_all const &) = default; //!< Defaulted.
+    constexpr hit_all & operator=(hit_all &&) = default; //!< Defaulted.
+    ~hit_all() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
@@ -48,80 +50,62 @@ struct hit_all_tag : public pipeable_config_element<hit_all_tag>
 
 /*!\brief Configuration element to receive all hits with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_all_best_tag : public pipeable_config_element<hit_all_best_tag>
+class hit_all_best : public pipeable_config_element<hit_all_best>
 {
-    /*!\name Constructors, destructor and assignment
+public:
+    /*!\name Constructors, assignment and destructor
      * \{
      */
-    hit_all_best_tag() = default; //!< Defaulted.
-    hit_all_best_tag(hit_all_best_tag const &) = default; //!< Defaulted.
-    hit_all_best_tag(hit_all_best_tag &&) = default; //!< Defaulted.
-    hit_all_best_tag & operator=(hit_all_best_tag const &) = default; //!< Defaulted.
-    hit_all_best_tag & operator=(hit_all_best_tag &&) = default; //!< Defaulted.
-    ~hit_all_best_tag() = default; //!< Defaulted.
+    constexpr hit_all_best() = default; //!< Defaulted.
+    constexpr hit_all_best(hit_all_best const &) = default; //!< Defaulted.
+    constexpr hit_all_best(hit_all_best &&) = default; //!< Defaulted.
+    constexpr hit_all_best & operator=(hit_all_best const &) = default; //!< Defaulted.
+    constexpr hit_all_best & operator=(hit_all_best &&) = default; //!< Defaulted.
+    ~hit_all_best() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::hit};
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::hit};
 };
 
 /*!\brief Configuration element to receive a single best hit with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
+ * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_single_best_tag : public pipeable_config_element<hit_single_best_tag>
+class hit_single_best : public pipeable_config_element<hit_single_best>
 {
-    /*!\name Constructors, destructor and assignment
+public:
+    /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr hit_single_best_tag() = default; //!< Defaulted.
-    constexpr hit_single_best_tag(hit_single_best_tag const &) = default; //!< Defaulted.
-    constexpr hit_single_best_tag(hit_single_best_tag &&) = default; //!< Defaulted.
-    constexpr hit_single_best_tag & operator=(hit_single_best_tag const &) = default; //!< Defaulted.
-    constexpr hit_single_best_tag & operator=(hit_single_best_tag &&) = default; //!< Defaulted.
-    ~hit_single_best_tag() = default; //!< Defaulted.
+    constexpr hit_single_best() = default; //!< Defaulted.
+    constexpr hit_single_best(hit_single_best const &) = default; //!< Defaulted.
+    constexpr hit_single_best(hit_single_best &&) = default; //!< Defaulted.
+    constexpr hit_single_best & operator=(hit_single_best const &) = default; //!< Defaulted.
+    constexpr hit_single_best & operator=(hit_single_best &&) = default; //!< Defaulted.
+    ~hit_single_best() = default; //!< Defaulted.
     //!\}
 
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
-    static constexpr detail::search_config_id id{detail::search_config_id::hit};
+    static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::hit};
 };
-
-} // namespace seqan3::detail
-
-namespace seqan3::search_cfg
-{
-
-/*!\brief \copybrief seqan3::detail::hit_all_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
- * \hideinitializer
- */
-inline constexpr detail::hit_all_tag hit_all{};
-
-/*!\brief \copybrief seqan3::detail::hit_all_best_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
- * \hideinitializer
- */
-inline constexpr detail::hit_all_best_tag hit_all_best{};
-
-/*!\brief \copybrief seqan3::detail::hit_single_best_tag
- * \ingroup search_configuration
- * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
- * \hideinitializer
- */
-inline constexpr detail::hit_single_best_tag hit_single_best{};
 
 /*!\brief Configuration element to receive all hits with the best number of errors plus the given stratum.
  *        All hits are found with the fewest number of errors plus 'stratum'.
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
+class hit_strata : public pipeable_config_element<hit_strata>
 {
-    /*!\name Constructors, destructor and assignment
+public:
+    //!\brief The stratum value [default: 0].
+    uint8_t stratum{};
+
+    /*!\name Constructors, assignment and destructor
      * \{
      */
     constexpr hit_strata() = default; //!< Defaulted.
@@ -131,8 +115,11 @@ struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
     constexpr hit_strata & operator=(hit_strata &&) = default; //!< Defaulted.
     ~hit_strata() = default; //!< Defaulted.
 
-    //!\brief Construct from base type.
-    constexpr hit_strata(uint8_t const & u) : pipeable_config_element<hit_strata, uint8_t>(u) {}
+    /*!\brief Initialises the strata config.
+     * \param[in] stratum The stratum to include in the search.
+     */
+    hit_strata(uint32_t stratum) : stratum{static_cast<uint8_t>(stratum)}
+    {}
     //!\}
 
     //!\privatesection
@@ -144,7 +131,7 @@ struct hit_strata : public pipeable_config_element<hit_strata, uint8_t>
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit : public pipeable_config_element<hit, seqan3::detail::empty_type>
+class hit : public pipeable_config_element<hit>
 {
 public:
     /*!\brief The type of the std::variant holding the hit configuration element alternatives
@@ -152,11 +139,7 @@ public:
      * The additional detail::empty_type marks the seqan3::search_cfg::hit as default constructed, with no selected hit
      * configuration which can be checked within the search algorithm.
      */
-    using hit_variant_type = std::variant<detail::empty_type,
-                                          detail::hit_all_tag,
-                                          detail::hit_all_best_tag,
-                                          detail::hit_single_best_tag,
-                                          hit_strata>;
+    using hit_variant_type = std::variant<detail::empty_type, hit_all, hit_all_best, hit_single_best, hit_strata>;
 
     /*!\name Constructors, assignment and destructor
      * \{
@@ -180,10 +163,7 @@ public:
      */
     template <typename hit_config_t>
     //!\cond
-        requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
-                                                     detail::hit_all_best_tag,
-                                                     detail::hit_single_best_tag,
-                                                     hit_strata>
+        requires pack_traits::contains<hit_config_t, hit_all, hit_all_best, hit_single_best, hit_strata>
     //!\endcond
     explicit hit(hit_config_t hit_config) noexcept : hit_variant{std::move(hit_config)}
     {}
@@ -191,10 +171,7 @@ public:
     //!\copydoc seqan3::search_cfg::hit::hit(hit_config_t hit_config)
     template <typename hit_config_t>
     //!\cond
-        requires pack_traits::contains<hit_config_t, detail::hit_all_tag,
-                                                     detail::hit_all_best_tag,
-                                                     detail::hit_single_best_tag,
-                                                     hit_strata>
+        requires pack_traits::contains<hit_config_t, hit_all, hit_all_best, hit_single_best, hit_strata>
     //!\endcond
     hit & operator=(hit_config_t hit_config) noexcept
     {

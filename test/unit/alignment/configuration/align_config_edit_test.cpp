@@ -12,7 +12,7 @@
 
 TEST(align_cfg_edit, is_hamming)
 {
-    auto scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(seqan3::align_cfg::edit_scheme).value;
+    auto scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(seqan3::align_cfg::edit_scheme).scheme;
 
     for (unsigned i = 0; i < decltype(scheme)::matrix_size; ++i)
     {

@@ -40,20 +40,20 @@ TYPED_TEST(align_confg_scoring_test, configuration)
         seqan3::align_cfg::scoring_scheme elem{scheme_t{}};
         seqan3::configuration cfg{elem};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).value.score(seqan3::assign_char_to('a',
-                                                                                                          alph_t{}),
-                                                                                   seqan3::assign_char_to('a',
-                                                                                                          alph_t{}))),
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme.score(seqan3::assign_char_to('a',
+                                                                                                           alph_t{}),
+                                                                                    seqan3::assign_char_to('a',
+                                                                                                           alph_t{}))),
                   0);
     }
 
     {
         seqan3::configuration cfg{seqan3::align_cfg::scoring_scheme{scheme_t{}}};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).value.score(seqan3::assign_char_to('a',
-                                                                                                          alph_t{}),
-                                                                                   seqan3::assign_char_to('c',
-                                                                                                          alph_t{}))),
+        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme.score(seqan3::assign_char_to('a',
+                                                                                                           alph_t{}),
+                                                                                    seqan3::assign_char_to('c',
+                                                                                                           alph_t{}))),
                   -1);
     }
 }

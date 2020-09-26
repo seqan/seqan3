@@ -32,9 +32,12 @@ namespace seqan3::search_cfg
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_total : public pipeable_config_element<max_error_total, std::variant<error_count, error_rate>>
+class max_error_total : public pipeable_config_element<max_error_total>
 {
 public:
+    //!\brief The error count or error rate.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -45,9 +48,17 @@ public:
     max_error_total & operator=(max_error_total &&) = default; //!< Defaulted.
     ~max_error_total() = default; //!< Defaulted.
 
-    //!\brief Construct from base type.
-    max_error_total(std::variant<error_count, error_rate> const & e) :
-        pipeable_config_element<max_error_total, std::variant<error_count, error_rate>>(e) {}
+    /*!\brief Initialises the total error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The maximal number of total errors allowed in the search.
+     */
+    explicit max_error_total(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the total error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The maximal total error rate allowed in the search.
+     */
+    explicit max_error_total(error_rate error) : error{std::move(error)}
+    {}
     //!\}
 
     //!\privatesection
@@ -65,11 +76,12 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_substitution : public pipeable_config_element<max_error_substitution,
-                                                              std::variant<error_count,
-                                                              error_rate>>
+class max_error_substitution : public pipeable_config_element<max_error_substitution>
 {
 public:
+    //!\brief The error count or error rate.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -80,9 +92,17 @@ public:
     max_error_substitution & operator=(max_error_substitution &&) = default; //!< Defaulted.
     ~max_error_substitution() = default; //!< Defaulted.
 
-    //!\brief Construct from base type.
-    max_error_substitution(std::variant<error_count, error_rate> const & e) :
-        pipeable_config_element<max_error_substitution, std::variant<error_count, error_rate>>(e) {}
+    /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The maximal number of substitution errors allowed in the search.
+     */
+    explicit max_error_substitution(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The maximal error rate for substitutions allowed in the search.
+     */
+    explicit max_error_substitution(error_rate error) : error{std::move(error)}
+    {}
     //!\}
 
     //!\privatesection
@@ -100,9 +120,12 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_insertion : public pipeable_config_element<max_error_insertion, std::variant<error_count, error_rate>>
+class max_error_insertion : public pipeable_config_element<max_error_insertion>
 {
 public:
+    //!\brief The error count or error rate.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -113,9 +136,17 @@ public:
     max_error_insertion & operator=(max_error_insertion &&) = default; //!< Defaulted.
     ~max_error_insertion() = default; //!< Defaulted.
 
-    //!\brief Construct from base type.
-    max_error_insertion(std::variant<error_count, error_rate> const & e) :
-        pipeable_config_element<max_error_insertion, std::variant<error_count, error_rate>>(e) {}
+    /*!\brief Initialises the insertion error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The maximal number of insertion errors allowed in the search.
+     */
+    explicit max_error_insertion(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the insertion error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The maximal error rate for insertions allowed in the search.
+     */
+    explicit max_error_insertion(error_rate error) : error{std::move(error)}
+    {}
     //!\}
 
     //!\privatesection
@@ -134,9 +165,12 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_deletion : public pipeable_config_element<max_error_deletion, std::variant<error_count, error_rate>>
+class max_error_deletion : public pipeable_config_element<max_error_deletion>
 {
 public:
+    //!\brief The error count or error rate.
+    std::variant<error_count, error_rate> error{error_count{0}};
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -147,9 +181,17 @@ public:
     max_error_deletion & operator=(max_error_deletion &&) = default; //!< Defaulted.
     ~max_error_deletion() = default; //!< Defaulted.
 
-    //!\brief Construct from base type.
-    constexpr max_error_deletion(std::variant<error_count, error_rate> const & e) :
-        pipeable_config_element<max_error_deletion, std::variant<error_count, error_rate>>(e) {}
+    /*!\brief Initialises the deletion error with the given seqan3::search_cfg::error_count.
+     * \param[in] error The maximal number of deletion errors allowed in the search.
+     */
+    explicit max_error_deletion(error_count error) : error{std::move(error)}
+    {}
+
+    /*!\brief Initialises the deletion error with the given seqan3::search_cfg::error_rate.
+     * \param[in] error The maximal error rate for deletions allowed in the search.
+     */
+    explicit max_error_deletion(error_rate error) : error{std::move(error)}
+    {}
     //!\}
 
     //!\privatesection

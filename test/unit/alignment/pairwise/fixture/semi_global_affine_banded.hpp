@@ -9,7 +9,6 @@
 
 #include <vector>
 
-#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
@@ -38,14 +37,14 @@ inline constexpr auto config_semi_seq1 = seqan3::align_cfg::method_global{
                                             seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
                                             seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                             seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
-                                         } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_first};
+                                         };
 
 inline constexpr auto config_semi_seq2 = seqan3::align_cfg::method_global{
                                             seqan3::align_cfg::free_end_gaps_sequence1_leading{false},
                                             seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
                                             seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
                                             seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
-                                        } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_second};
+                                        };
 
 // free gaps for the second leading and first trailing gaps.
 inline constexpr auto config_free_gaps_sl_ft = seqan3::align_cfg::method_global{
@@ -53,16 +52,14 @@ inline constexpr auto config_free_gaps_sl_ft = seqan3::align_cfg::method_global{
                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}
-                                               } | seqan3::align_cfg::aligned_ends{
-                                                        seqan3::end_gaps{seqan3::front_end_second{std::true_type{}},
-                                                                         seqan3::back_end_first{std::true_type{}}}};
+                                               };
 
 inline constexpr auto config_free_gaps_tlbr = seqan3::align_cfg::method_global{
                                                    seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_leading{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
                                                    seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}
-                                               } | seqan3::align_cfg::aligned_ends{seqan3::free_ends_all};
+                                               };
 
 inline constexpr auto config_scoring_m4_mm5 = seqan3::align_cfg::scoring_scheme{
                                                 seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
