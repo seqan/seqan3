@@ -87,6 +87,14 @@ TYPED_TEST(nucleotide, view_translate_single)
             | std::views::reverse;
     // == [A,H,M,C]
     EXPECT_RANGE_EQ(v6, cmp3);
+
+    // Construct with multiple frames
+    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::FWD), std::invalid_argument);
+
+    // Construct with default (empty) frame
+    auto v7 = seqan3::views::translate_single(vec, seqan3::translation_frames{});
+    EXPECT_THROW(v7.size(), std::invalid_argument);
+    EXPECT_THROW(v7[0], std::invalid_argument);
 }
 
 TYPED_TEST(nucleotide, view_translate)
