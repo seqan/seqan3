@@ -12,8 +12,12 @@
 
 #pragma once
 
-#include <regex>
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
+#include <seqan3/std/filesystem>
 #include <fstream>
+#include <seqan3/std/ranges>
+#include <regex>
 #include <sstream>
 
 #include <seqan3/argument_parser/exceptions.hpp>
@@ -26,10 +30,6 @@
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/join.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -384,9 +384,8 @@ protected:
 
         // Check if extension is available.
         if (!path.has_extension())
-            throw validation_error{detail::to_string("The given filename ", path.string(),
-                                                            " has no extension. Expected one of the following valid"
-                                                            " extensions:", extensions, "!")};
+            throw validation_error{detail::to_string("The given filename ", path.string(), " has no extension. Expected"
+                                                     " one of the following valid extensions:", extensions, "!")};
 
         // Drop the dot.
         std::string drop_less_ext = path.extension().string().substr(1);
@@ -403,8 +402,8 @@ protected:
         // Check if requested extension is present.
         if (std::ranges::find_if(extensions, case_insensitive_equal_to) == extensions.end())
         {
-            throw validation_error{detail::to_string("Expected one of the following valid extensions: ",
-                                                             extensions, "! Got ", drop_less_ext, " instead!")};
+            throw validation_error{detail::to_string("Expected one of the following valid extensions: ", extensions,
+                                                     "! Got ", drop_less_ext, " instead!")};
         }
     }
 
@@ -587,6 +586,15 @@ public:
     }
 };
 
+//!\brief Mode of an output file: Determines whether an existing file can be (silently) overwritten.
+enum class output_file_open_options
+{
+    //!\brief Allow to overwrite the output file
+    open_or_create,
+    //!\brief Forbid overwriting the output file
+    create_new
+};
+
 /*!\brief A validator that checks if a given path is a valid output file.
  * \ingroup argument_parser
  * \implements seqan3::validator
@@ -595,9 +603,13 @@ public:
  * \details
  *
  * On construction, the validator can receive a list (std::vector over std::string) of valid file extensions.
- * The class acts as a functor that throws a seqan3::validation_error exception whenever a given filename's
- * extension (sts::string) is not in the given list of valid file extensions, if the file already exist, or if the
- * parent path does not have the proper writer permissions.
+ * The class acts as a functor that throws a seqan3::validation_error exception whenever a given filename's extension
+ * (std::string) is not in the given list of valid file extensions, or if the parent path does not have the proper
+ * writer permissions.
+ * In addition, the validator receives a seqan3::output_file_open_options which allows you to specify what to do if your
+ * output file already exists. seqan3::output_file_open_options::create_new will throw a seqan3::validation_error
+ * exception if it already exists and seqan3::output_file_open_options::open_or_create will skip this check (that means
+ * you are allowed to overwrite the existing file).
  *
  * \include test/snippet/argument_parser/validators_output_file.cpp
  *
@@ -613,7 +625,6 @@ template <typename file_t = void>
 class output_file_validator : public file_validator_base
 {
 public:
-
     static_assert(std::same_as<file_t, void> || detail::has_type_valid_formats<file_t>,
                 "Expected either a template type with a static member called valid_formats (a file type) or void.");
 
@@ -625,24 +636,24 @@ public:
      */
 
     //!\copydoc seqan3::input_file_validator::input_file_validator()
-    output_file_validator()
-    {
-        if constexpr (!std::same_as<file_t, void>)
-            file_validator_base::extensions = detail::valid_file_extensions<typename file_t::valid_formats>();
-    }
+    output_file_validator() : output_file_validator{output_file_open_options::create_new}
+    {}
 
-    output_file_validator(output_file_validator const &) = default;               //!< Defaulted.
-    output_file_validator(output_file_validator &&) = default;                    //!< Defaulted.
-    output_file_validator & operator=(output_file_validator const &) = default;   //!< Defaulted.
-    output_file_validator & operator=(output_file_validator &&) = default;        //!< Defaulted.
-    virtual ~output_file_validator() = default;                                   //!< Virtual Destructor.
+    output_file_validator(output_file_validator const &) = default; //!< Defaulted.
+    output_file_validator(output_file_validator &&) = default; //!< Defaulted.
+    output_file_validator & operator=(output_file_validator const &) = default; //!< Defaulted.
+    output_file_validator & operator=(output_file_validator &&) = default; //!< Defaulted.
+    virtual ~output_file_validator() = default; //!< Virtual Destructor.
 
-    //!\copydoc seqan3::input_file_validator::input_file_validator(std::vector<std::string>)
-    explicit output_file_validator(std::vector<std::string> extensions)
-    //!\cond
-        requires std::same_as<file_t, void>
-    //!\endcond
-        : file_validator_base{}
+    /*!\brief Constructs from a given overwrite mode and a list of valid extensions.
+     * \param[in] mode A seqan3::output_file_open_options indicating whether the validator throws if a file already
+                       exists.
+     * \param[in] extensions The valid extensions to validate for. Defaults to
+     *                       seqan3::output_file_validator::default_extensions.
+     */
+    explicit output_file_validator(output_file_open_options const mode,
+                                   std::vector<std::string> extensions = default_extensions())
+        : file_validator_base{}, mode{mode}
     {
         file_validator_base::extensions = std::move(extensions);
     }
@@ -650,6 +661,21 @@ public:
     // Import base constructor.
     using file_validator_base::file_validator_base;
     //!\}
+
+    /*!\brief The default extensions of `file_t`.
+     * \returns A list of default extensions for `file_t`, will be empty if `file_t` is `void`.
+     *
+     * \details
+     *
+     * If `file_t` does name a valid seqan3 file type that contains a static member `valid_formats` returns the
+     * extensions of that `file_t` type. Otherwise returns an empty list.
+     */
+    static std::vector<std::string> default_extensions()
+    {
+        if constexpr (!std::same_as<file_t, void>)
+            return detail::valid_file_extensions<typename file_t::valid_formats>();
+        return {};
+    }
 
     // Import the base::operator()
     using file_validator_base::operator();
@@ -663,7 +689,7 @@ public:
     {
         try
         {
-            if (std::filesystem::exists(file))
+            if ((mode == output_file_open_options::create_new) && std::filesystem::exists(file))
                 throw validation_error{detail::to_string("The file ", file, " already exists!")};
 
             // Check if file has any write permissions.
@@ -684,9 +710,16 @@ public:
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
     {
-        return "The output file must not exist already and write permissions must be granted." +
-               valid_extensions_help_page_message();
+        if (mode == output_file_open_options::open_or_create)
+            return "Write permissions must be granted." + valid_extensions_help_page_message();
+        else // mode == create_new
+            return "The output file must not exist already and write permissions must be granted." +
+                   valid_extensions_help_page_message();
     }
+
+private:
+    //!\brief Stores the current mode of whether it is valid to overwrite the output file.
+    output_file_open_options mode{output_file_open_options::create_new};
 };
 
 /*!\brief A validator that checks if a given path is a valid input directory.

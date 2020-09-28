@@ -390,8 +390,8 @@ of the parsed option value.
 The validator throws a seqan3::validation_error exception whenever a given filename's extension is not in the
 given list of valid extensions. In addition, the seqan3::input_file_validator checks if the file exists, is a regular
 file and is readable.
-The seqan3::output_file_validator on the other hand ensures that the output does not already exist (in order to prevent
-overwriting an already existing file) and that it can be created.
+Moreover, you have to add an additional flag seqan3::output_file_open_options to the seqan3::output_file_validator,
+which you can use to indicate whether you want to allow the output files to be overwritten.
 
 \note If you want to allow any extension just use a default constructed file validator.
 
