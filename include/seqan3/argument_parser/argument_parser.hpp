@@ -186,8 +186,9 @@ public:
         version_check_dev_decision{version_check}
     {
         if (!std::regex_match(app_name, app_name_regex))
-            throw design_error{"The application name must only contain alpha-numeric characters "
-                                               "or '_' and '-' (regex: \"^[a-zA-Z0-9_-]+$\")."};
+            throw design_error{"The application name must only contain alpha-numeric characters or '_' and '-' "
+                               "(regex: \"^[a-zA-Z0-9_-]+$\")."};
+
         for (auto & sub : subcommands)
             if (!std::regex_match(sub, std::regex{"^[a-zA-Z0-9_]+$"}))
                 throw design_error{"The subcommand name must only contain alpha-numeric characters or '_'."};
@@ -409,8 +410,7 @@ public:
     {
         if (sub_parser == nullptr)
         {
-            throw design_error("You did not enable subcommand parsing on construction "
-                                      "so you cannot access the sub-parser!");
+            throw design_error("No subcommand was provided at the construction of the argument parser!");
         }
 
         return *sub_parser;
@@ -600,7 +600,8 @@ private:
 
         bool special_format_was_set{false};
 
-        for(int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
+
+        for (int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
         {
             std::string arg{argv[i]};
 
@@ -609,6 +610,7 @@ private:
                 sub_parser = std::make_unique<argument_parser>(info.app_name + "-" + arg, argc - i, argv + i, false);
                 break;
             }
+
             if (arg == "-h" || arg == "--help")
             {
                 format = detail::format_help{subcommands, false};
