@@ -183,18 +183,20 @@ public:
                     char const * const * const  argv,
                     bool version_check = true,
                     std::vector<std::string> subcommands = {}) :
-        version_check_dev_decision{version_check}
+        version_check_dev_decision{version_check},
+        subcommands{std::move(subcommands)}
     {
         if (!std::regex_match(app_name, app_name_regex))
             throw design_error{"The application name must only contain alpha-numeric characters or '_' and '-' "
                                "(regex: \"^[a-zA-Z0-9_-]+$\")."};
 
-        for (auto & sub : subcommands)
+        for (auto & sub : this->subcommands)
             if (!std::regex_match(sub, std::regex{"^[a-zA-Z0-9_]+$"}))
                 throw design_error{"The subcommand name must only contain alpha-numeric characters or '_'."};
 
         info.app_name = std::move(app_name);
-        init(argc, argv, std::move(subcommands));
+
+        init(argc, argv);
     }
 
     //!\brief The destructor.
@@ -392,6 +394,13 @@ public:
 
         detail::version_checker app_version{info.app_name, info.version, info.url};
 
+        if (std::holds_alternative<detail::format_parse>(format) && !subcommands.empty() && sub_parser == nullptr)
+        {
+            throw too_few_arguments{detail::to_string("You either forgot or misspelled the subcommand! Please specify"
+                                                      " which sub-program you want to use: one of ", subcommands,
+                                                      ". Use -h/--help for more information.")};
+        }
+
         if (app_version.decide_if_check_is_performed(version_check_dev_decision, version_check_user_decision))
         {
             // must be done before calling parse on the format because this might std::exit
@@ -554,11 +563,13 @@ private:
     //!\brief Stores the sub-parser in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
     std::unique_ptr<argument_parser> sub_parser{nullptr};
 
+    //!\brief Stores the sub-parser names in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
+    std::vector<std::string> subcommands{};
+
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
      * \param[in] argc        The number of command line arguments.
      * \param[in] argv        The command line arguments.
-     * \param[in] subcommands The subcommand key words to split command line arguments into top-level and sub-parser.
      *
      * \throws seqan3::too_few_arguments if option --export-help was specified without a value
      * \throws seqan3::too_few_arguments if option --version-check was specified without a value
@@ -587,7 +598,7 @@ private:
      * If `--export-help` is specified with a value other than html/man or ctd
      * an seqan3::argument_parser_error is thrown.
      */
-    void init(int argc, char const * const * const argv, std::vector<std::string> const & subcommands)
+    void init(int argc, char const * const * const argv)
     {
         // cash command line input, in case --version-check is specified but shall not be passed to format_parse()
         std::vector<std::string> argv_new{};
@@ -685,12 +696,6 @@ private:
 
         if (!special_format_was_set)
         {
-            if (!subcommands.empty() && sub_parser == nullptr)
-            {
-                throw too_few_arguments{detail::to_string("Please specify which sub program you want to use ",
-                                        "(one of ", subcommands, "). Use -h/--help for more information.")};
-            }
-
             format = detail::format_parse(argc, std::move(argv_new));
         }
     }

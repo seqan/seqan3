@@ -920,10 +920,11 @@ TEST(parse_test, subcommand_argument_parser_success)
     }
 
     // incorrect sub command
-    {
-        const char * argv[]{"./top_level", "-f", "2", "subiddysub", "foo"};
-        EXPECT_THROW((seqan3::argument_parser{"top_level", 5, argv, false, {"sub1", "sub2"}}),
-                     seqan3::argument_parser_error);
+    { // see issue https://github.com/seqan/seqan3/issues/2172
+        const char * argv[]{"./top_level", "subiddysub", "-f"};
+        seqan3::argument_parser top_level_parser{"top_level", 3, argv, false, {"sub1", "sub2"}};
+
+        EXPECT_THROW(top_level_parser.parse(), seqan3::argument_parser_error);
     }
 }
 
