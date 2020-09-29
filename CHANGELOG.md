@@ -37,6 +37,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 
+## Notable Bug-fixes
+
+### Argument Parser
+
+* Argument parsing with subcommands: If the user forgets or misspells the subcommand, the error is thrown when calling
+  `seqan3::argument_parser::parse()` and not on construction of the `seqan3::argument_parser`
+  ([\#2179](https://github.com/seqan/seqan3/pull/2179)).
+
 # 3.0.2
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
