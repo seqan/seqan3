@@ -499,7 +499,11 @@ TEST(parse_test, subcommand_argument_parser)
     std::string option_value2{};
 
     const char * argv[]{"./test_parser", "-h"};
-    seqan3::argument_parser top_level_parser{"test_parser", 2, argv, true, {"sub1", "sub2"}};
+    seqan3::argument_parser top_level_parser{"test_parser",
+                                             2,
+                                             argv,
+                                             seqan3::update_notifications::on,
+                                             {"sub1", "sub2"}};
     test_accessor::set_terminal_width(top_level_parser, 80);
     top_level_parser.info.description.push_back("description");
     top_level_parser.add_option(option_value, 'f', "foo", "foo bar.");

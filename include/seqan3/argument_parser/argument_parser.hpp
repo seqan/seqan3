@@ -164,11 +164,11 @@ public:
 
     /*!\brief Initializes an seqan3::argument_parser object from the command line arguments.
      *
-     * \param[in] app_name       The name of the app that is displayed on the help page.
-     * \param[in] argc           The number of command line arguments.
-     * \param[in] argv           The command line arguments to parse.
-     * \param[in] version_check  Notify users about app version updates (default true).
-     * \param[in] subcommands    A list of subcommands (see \link subcommand_arg_parse subcommand parsing \endlink).
+     * \param[in] app_name The name of the app that is displayed on the help page.
+     * \param[in] argc The number of command line arguments.
+     * \param[in] argv The command line arguments to parse.
+     * \param[in] version_updates Notify users about version updates (default seqan3::update_notifications::on).
+     * \param[in] subcommands A list of subcommands (see \link subcommand_arg_parse subcommand parsing \endlink).
      *
      * \throws seqan3::design_error if the application name contains illegal characters.
      *
@@ -181,9 +181,9 @@ public:
     argument_parser(std::string const app_name,
                     int const argc,
                     char const * const * const  argv,
-                    bool version_check = true,
+                    update_notifications version_updates = update_notifications::on,
                     std::vector<std::string> subcommands = {}) :
-        version_check_dev_decision{version_check},
+        version_check_dev_decision{version_updates},
         subcommands{std::move(subcommands)}
     {
         if (!std::regex_match(app_name, app_name_regex))
@@ -546,7 +546,7 @@ private:
     bool has_positional_list_option{false};
 
     //!\brief Set on construction and indicates whether the developer deactivates the version check calls completely.
-    bool version_check_dev_decision{};
+    update_notifications version_check_dev_decision{};
 
     //!\brief Whether the **user** specified to perform the version check (true) or not (false), default unset.
     std::optional<bool> version_check_user_decision;
@@ -618,7 +618,10 @@ private:
 
             if (std::ranges::find(subcommands, arg) != subcommands.end())
             {
-                sub_parser = std::make_unique<argument_parser>(info.app_name + "-" + arg, argc - i, argv + i, false);
+                sub_parser = std::make_unique<argument_parser>(info.app_name + "-" + arg,
+                                                               argc - i,
+                                                               argv + i,
+                                                               update_notifications::off);
                 break;
             }
 
@@ -711,7 +714,7 @@ private:
         add_list_item("\\fB--copyright\\fP", "Prints the copyright/license information.");
         add_list_item("\\fB--export-help\\fP (std::string)",
                                     "Export the help page information. Value must be one of [html, man].");
-        if (version_check_dev_decision)
+        if (version_check_dev_decision == update_notifications::on)
             add_list_item("\\fB--version-check\\fP (bool)", "Whether to to check for the newest app version. Default: 1.");
         add_subsection(""); // add a new line (todo smehringer) add a add_newline() function
     }

@@ -248,6 +248,13 @@ enum option_spec
                    */
 };
 
+//!\brief Indicates whether application allows automatic update notifications by the seqan3::argument_parser.
+enum class update_notifications
+{
+    on, //!< Automatic update notifications should be enabled.
+    off //!< Automatic update notifications should be disabled.
+};
+
 /*!\brief Stores all parser related meta information of the seqan3::argument_parser.
  * \ingroup argument_parser
  *
