@@ -129,7 +129,7 @@ TEST(view_slice, underlying_is_shorter)
     EXPECT_EQ("oob", v);
 }
 
-TEST(view_slice, throw)
+TEST(view_slice, end_before_begin)
 {
     std::string vec{"foobar"};
     EXPECT_THROW(seqan3::views::slice(vec, 4, 1), std::invalid_argument);
