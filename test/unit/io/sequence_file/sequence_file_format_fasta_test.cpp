@@ -180,6 +180,31 @@ TEST_F(read, mixed_issues)
     do_read_test(input);
 }
 
+TEST_F(read, fail_no_newline_after_id)
+{
+    std::string input{
+        ">ID1"
+        "ACGTTTTTTTTTTTTTTT"
+    };
+    std::stringstream istream{input};
+
+    seqan3::sequence_file_input fin{istream, seqan3::format_fasta{}};
+    EXPECT_THROW(fin.begin(), seqan3::unexpected_end_of_input);
+}
+
+TEST_F(read, fail_no_newline_after_truncate_id)
+{
+    std::string input{
+        ">ID1 to_be_truncated"
+        "ACGTTTTTTTTTTTTTTT"
+    };
+    std::stringstream istream{input};
+
+    seqan3::sequence_file_input fin{istream, seqan3::format_fasta{}};
+    fin.options.truncate_ids = true;
+    EXPECT_THROW(fin.begin(), seqan3::unexpected_end_of_input);
+}
+
 // ----------------------------------------------------------------------------
 // writing
 // ----------------------------------------------------------------------------
