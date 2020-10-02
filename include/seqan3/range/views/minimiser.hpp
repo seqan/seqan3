@@ -76,7 +76,7 @@ private:
     //!\brief The number of values in one window.
     size_t window_size{};
 
-    template <typename rng1_t, typename rng2_t>
+    template <bool const_range>
     class basic_iterator;
 
     //!\brief The sentinel type of the minimiser_view.
@@ -186,7 +186,7 @@ public:
      *
      * Strong exception guarantee.
      */
-    basic_iterator<urng1_t, urng2_t> begin()
+    basic_iterator<false> begin()
     {
         return {std::ranges::begin(urange1),
                 std::ranges::end(urange1),
@@ -195,7 +195,7 @@ public:
     }
 
     //!\copydoc begin()
-    basic_iterator<urng1_t const, urng2_t const> begin() const
+    basic_iterator<true> begin() const
     //!\cond
         requires const_iterable
     //!\endcond
@@ -230,18 +230,18 @@ public:
 
 //!\brief Iterator for calculating minimisers.
 template <std::ranges::view urng1_t, std::ranges::view urng2_t>
-template <typename rng1_t, typename rng2_t>
+template <bool const_range>
 class minimiser_view<urng1_t, urng2_t>::basic_iterator
 {
 private:
     //!\brief The sentinel type of the first underlying range.
-    using urng1_sentinel_t = std::ranges::sentinel_t<rng1_t>;
+    using urng1_sentinel_t = maybe_const_sentinel_t<const_range, urng1_t>;
     //!\brief The iterator type of the first underlying range.
-    using urng1_iterator_t = std::ranges::iterator_t<rng1_t>;
+    using urng1_iterator_t = maybe_const_iterator_t<const_range, urng1_t>;
     //!\brief The iterator type of the second underlying range.
-    using urng2_iterator_t = std::ranges::iterator_t<rng2_t>;
+    using urng2_iterator_t = maybe_const_iterator_t<const_range, urng2_t>;
 
-    template <typename, typename>
+    template <bool>
     friend class basic_iterator;
 
 public:
@@ -249,9 +249,9 @@ public:
      * \{
      */
     //!\brief Type for distances between iterators.
-    using difference_type = std::ranges::range_difference_t<rng1_t>;
+    using difference_type = std::ranges::range_difference_t<urng1_t>;
     //!\brief Value type of this iterator.
-    using value_type = std::ranges::range_value_t<rng1_t>;
+    using value_type = std::ranges::range_value_t<urng1_t>;
     //!\brief The pointer type.
     using pointer = void;
     //!\brief Reference to `value_type`.
@@ -273,17 +273,15 @@ public:
     ~basic_iterator() = default; //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
-    template <typename non_const_rng1_t, typename non_const_rng2_t>
+    basic_iterator(basic_iterator<!const_range> const & it)
     //!\cond
-        requires ((std::is_const_v<rng1_t> && std::same_as<std::remove_const_t<rng1_t>, non_const_rng1_t>) &&
-                  (std::is_const_v<rng1_t> && std::same_as<std::remove_const_t<rng2_t>, non_const_rng2_t>))
-     //!\endcond
-    basic_iterator(basic_iterator<non_const_rng1_t, non_const_rng2_t> it) :
-        minimiser_value{std::move(it.minimiser_value)},
-        urng1_iterator{std::move(it.urng1_iterator)},
-        urng1_sentinel{std::move(it.urng1_sentinel)},
-        urng2_iterator{std::move(it.urng2_iterator)},
-        window_values{std::move(it.window_values)}
+        requires const_range
+    //!\endcond
+        : minimiser_value{std::move(it.minimiser_value)},
+          urng1_iterator{std::move(it.urng1_iterator)},
+          urng1_sentinel{std::move(it.urng1_sentinel)},
+          urng2_iterator{std::move(it.urng2_iterator)},
+          window_values{std::move(it.window_values)}
     {}
 
     /*!\brief Construct from begin and end iterators of a given range over std::totally_ordered values, and the number
