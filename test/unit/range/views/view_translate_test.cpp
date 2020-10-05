@@ -95,6 +95,10 @@ TYPED_TEST(nucleotide, view_translate_single)
     auto v7 = seqan3::views::translate_single(vec, seqan3::translation_frames{});
     EXPECT_THROW(v7.size(), std::invalid_argument);
     EXPECT_THROW(v7[0], std::invalid_argument);
+    
+    auto const v8 = seqan3::views::translate_single(vec, seqan3::translation_frames{});
+    EXPECT_THROW(v8.size(), std::invalid_argument);
+    EXPECT_THROW(v8[0], std::invalid_argument);
 }
 
 TYPED_TEST(nucleotide, view_translate)
