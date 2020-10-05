@@ -371,11 +371,23 @@ inline void format_sam_base::read_field(stream_view_type && stream_view,
 template <typename stream_view_type, std::ranges::forward_range target_range_type>
 inline void format_sam_base::read_field(stream_view_type && stream_view, target_range_type & target)
 {
-    if (!is_char<'*'>(*std::ranges::begin(stream_view)))
-        std::ranges::copy(stream_view | views::char_to<std::ranges::range_value_t<target_range_type>>,
-                          std::cpp20::back_inserter(target));
-    else
-        std::ranges::next(std::ranges::begin(stream_view)); // skip '*'
+    using target_range_value_t = std::ranges::range_value_t<target_range_type>;
+    using begin_iterator_t = std::ranges::iterator_t<stream_view_type>;
+    using end_iterator_t = std::ranges::sentinel_t<stream_view_type>;
+
+    // Note that we need to cache the begin iterator since the stream_view is an input range that may be consuming
+    // and in that case might read `past-the-end` on a second call of std::ranges::begin.
+    if (auto it = std::ranges::begin(stream_view); it != std::ranges::end(stream_view))
+    {
+        // Write to target if field does not represent an empty string, denoted as single '*' character.
+        if (char c = *it; !(++it == std::ranges::end(stream_view) && c == '*'))
+        {
+            target.push_back(seqan3::assign_char_to(c, target_range_value_t{}));
+            std::ranges::copy(std::ranges::subrange<begin_iterator_t, end_iterator_t>{it, std::ranges::end(stream_view)}
+                              | views::char_to<target_range_value_t>,
+                              std::cpp20::back_inserter(target));
+        }
+    }
 }
 
 /*!\brief Reads arithmetic fields using std::from_chars.
