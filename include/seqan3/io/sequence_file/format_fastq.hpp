@@ -178,12 +178,6 @@ protected:
             }
         }
 
-        /* 2nd ID line */
-        if (*stream_it != '+') // [[unlikely]]
-        {
-            throw parse_error{std::string{"Expected '+' on beginning of 2nd ID line, got: "} +
-                              detail::make_printable(*stream_it)};
-        }
         detail::consume(stream_view | views::take_line_or_throw);
 
         /* Qualities */
