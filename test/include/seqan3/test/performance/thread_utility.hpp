@@ -16,7 +16,7 @@ namespace seqan3::test
 
 // We don't know if the system supports hyper-threading so we use only half the threads so that the
 // simd benchmark is likely to run on physical cores only.
-uint32_t get_number_of_threads()
+inline uint32_t get_number_of_physical_threads()
 {
     uint32_t thread_count = std::thread::hardware_concurrency();
     return (thread_count == 1) ? thread_count : thread_count >> 1;
