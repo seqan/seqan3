@@ -184,7 +184,7 @@ jobs:
           mkdir -p /tmp/cmake-download
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
           tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
-          echo "::add-path::/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" # Only available in subsequent steps!
+          echo "/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" >> $GITHUB_PATH # Only available in subsequent steps!
 
       - name: Get cached Doxygen
         if: matrix.build == 'documentation'
@@ -201,7 +201,7 @@ jobs:
           mkdir -p /tmp/doxygen-download
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-          echo "::add-path::/tmp/doxygen-${DOXYGEN_VERSION}/bin" # Only available in subsequent steps!
+          echo "/tmp/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH # Only available in subsequent steps!
 
       - name: Add package source
         if: matrix.requires_toolchain && runner.os == 'Linux'
