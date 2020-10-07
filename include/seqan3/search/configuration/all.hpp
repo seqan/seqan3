@@ -81,10 +81,10 @@
  * First, if seqan3::search_cfg::max_error_total is specified, then all error types are set to
  * the value of the total error configuration. For any other specified error configuration the value is set accordingly,
  * but will not exceed the total error if given. For example, if a configuration profile sets the total max error to 3
- * and the insertion error to 1, then the search will at most consider one insertion but allow up to 3 deletions,
- * respectively substitutions during the search, while allowing at most 3 errors in total.
+ * and the insertion error to 1, then the search will at most consider one insertion but allow up to 3 deletions
+ * and 3 substitutions during the search, while allowing at most 3 errors in total.
  * On the other hand, if the total error is not specified in the search configuration, it will be set to the sum of the
- * other configurations. This means in the default case, all errors are set to 0 and therefore an exact search is
+ * other configurations. This means that in the default case all errors are set to 0 and therefore an exact search is
  * conducted.
  *
  * The configuration elements can be initialised by an absolute error count or an error rate:
@@ -103,7 +103,7 @@
  *
  * The seqan3::search interface returns a seqan3::algorithm_result_generator_range. This range is a lazy single
  * pass input range over the computed hits and the range's element types are seqan3::search_result objects.
- * Even if only a single query is searched a range will be returned since it could be possible that
+ * Even if only a single query is searched, a range will be returned since it could be possible that
  * one search produces multiple hits, e.g. to find all best hits.
  * The following table shows the different output configurations:
  *
@@ -114,7 +114,7 @@
  *
  * Each of the configuration elements corresponds to a member access function inside of the returned
  * seqan3::search_result object. If you do not specify any output configuration in the search configuration, then the
- * default output contains the query and reference id, and the reference begin position. If you customise the output
+ * default output contains the query and reference id as well as the reference begin position. If you customise the output
  * configuration, then only those are available in the final seqan3::search_result that are specified.
  *
  * \note If you try to call a function for an entity that was not configured a static
