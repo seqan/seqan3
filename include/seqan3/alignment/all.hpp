@@ -70,7 +70,7 @@
  * alignment algorithm with configurations from other algorithms in SeqAn.
  * To compute a pairwise alignment at least two configuration elements must be provided: The alignment method and the
  * scoring scheme. Thus, a valid alignment configuration must specify what kind of alignment is to be computed, since
- * this strongly depends on the used context and a default wouldn't make much sense here. For similar reasons the,
+ * this strongly depends on the used context and a default wouldn't make much sense here. For similar reasons the
  * scoring scheme has to be always provided by the user.
  *
  * ### Combining configuration elements
@@ -203,7 +203,7 @@
  * helpful if the region in which the optimal alignment exists is known a priori. To specify the banded alignment
  * the developer can use the seqan3::align_cfg::band_fixed_size option.
  * This band configuration is initialised with a seqan3::align_cfg::lower_diagonal and a
- * seqan3::align_cfg::upper_diagonal. The term diagonal is used to describe the position of the band border within the
+ * seqan3::align_cfg::upper_diagonal. The term diagonal is used to describe the position of the band boundary within the
  * alignment matrix. The given value represents the offset the lower, respectively upper, diagonal is shifted from the
  * main diagonal which starts in the origin of the alignment matrix. Accordingly, a negative value shifts the band
  * boundary downwards in the alignment matrix and a positive value shifts the band boundary to the right.
@@ -215,10 +215,9 @@
  *
  * ## Global and local alignments
  *
- * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and .
+ * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and
  * seqan3::align_cfg::method_local, respectively.
- * The global alignment can be further refined to define a semi-global alignment with free end-gaps via specific
- * constructor arguments. These parameters enable, respectively disable the scoring of leading and trailing gaps at the
+ * A semi-global alignment can be computed by specifying the free end-gaps in the constructor of seqan3::align_cfg::method_global. The parameters enable, respectively disable, the scoring of leading and trailing gaps at the
  * respective sequence ends. The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
  * algorithm.
  * This option, however, is not available for the local alignment where scoring gaps at the ends of the
@@ -239,8 +238,7 @@
  *
  * The edit configuration can be further specialised with following configs:
  *  * Set a minimal score, i.e. specify the seqan3::align_cfg::min_score configuration
- *  * Compute a semi-global alignment where the first sequence is contained in the second sequence and vice versa but
- *    not any arbitrary free end-gap configuration.
+ *  * Compute a semi-global alignment where either the end-gaps of the first sequence are free or the end-gaps of the second sequence.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment
  *       algorithm is executed as a fallback.
