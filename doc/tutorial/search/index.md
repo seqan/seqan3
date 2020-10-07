@@ -309,7 +309,7 @@ There are 25 hits.
 
 ## Controlling the search output
 
-When calling the search algorithm, a lazy range over seqan3::search_result objects is returned each representing a
+When calling the search algorithm, a lazy range over seqan3::search_result objects is returned. Each result object represents a
 single hit. This means that merely calling the seqan3::search algorithm will do nothing except configuring the search
 algorithm based on the given search configuration, query and index. Only when iterating over the lazy search result
 range, the actual search for every query is triggered. We have done this automatically in the previous examples when
@@ -329,19 +329,19 @@ The following output configurations exists:
 - seqan3::search_cfg::output_reference_begin_position
 - seqan3::search_cfg::output_index_cursor
 
-Similar to the max error configurations you can arbitrarily combine the configurations to customise the final output.
-For example, if you are only interested in the position of the hit within the reference sequence you can use the
+Similarly to the max error configurations, you can arbitrarily combine the configurations to customise the final output.
+For example, if you are only interested in the position of the hit within the reference sequence, you can use the
 seqan3::search_cfg::output_reference_begin_position configuration. If instead, you need access to the index where the
-hit was found you can use the seqan3::search_cfg::output_index_cursor configuration.
+hit was found, you can use the seqan3::search_cfg::output_index_cursor configuration.
 
-\note If you do not provide any output configuration, then automatically the query id and reference_id, and the
-      reference begin position will be reported. If you select only one in your search configuration then only this one
+\note If you do not provide any output configuration, then the query id and reference_id as well as the
+      reference begin position will be automatically reported. If you select only one in your search configuration, then only this one
       will be available in the final search result.
 
 ## One last exercise
 
-In the final example we will extend our previous search examples to also compute the alignment of the found hits their
-respective reference infixes. To do so we recommend to work through the \ref tutorial_pairwise_alignment tutorial
+In the final example we will extend our previous search examples to also compute the alignment of the found hits and their
+respective reference infixes. To do so, we recommend to work through the \ref tutorial_pairwise_alignment tutorial
 first.
 
 \assignment{Assignment 5}
