@@ -161,8 +161,8 @@ The following hits were found:
 Up until now, we have seen that we can call the search with the query sequences and the index. In addition, we
 can provide a third parameter to provide a user defined
 \ref search_configuration_section_introduction "search configuration".
-If we do not provide a user defined search configuration, the seqan3::search_cfg::default_configuration will be used
-which triggers an exact search finding all hits for a particular query. In the following we will see how we can
+If we do not provide a user defined search configuration, the seqan3::search_cfg::default_configuration will be used,
+which triggers an exact search, finding all hits for a particular query. In the following we will see how we can
 change the behaviour of the search algorithm by providing a user defined search configuration.
 
 ### Max error configuration
@@ -184,7 +184,7 @@ depending on the context. These are represented by the following types:
 
 By combining the different error types using the `|`-operator, we give you full control over the error distribution.
 Thus, it is possible to set an upper limit of allowed errors but also to refine the error distribution by specifying the
-allowed errors for either substitutions, insertions, or deletions.
+allowed errors for substitutions, insertions, or deletions.
 
 \note When using >= 2 errors it is advisable to use a Bi-FM-Index since searches will be faster.
 
@@ -198,11 +198,11 @@ This basically means that the error counts/rates do not have to sum up to the to
 
 \snippet doc/tutorial/search/search_small_snippets.cpp error_sum
 
-In the above example we allow 2 errors which can be any combination of 2 substitutions, 1 insertion and 1 deletion.
-Defining only the total will set all error types to this value, i.e. if total error is set to an error count of 2 any
-combinations of 2 substitutions, 2 insertions and 2 deletions is allowed.
-On the other hand, when defining any of the error types, but no total, the total will be set to the sum of all error
-types. For example, if we would not specify an total error of 1 in the first example above the total error would be set
+In the above example we allow 2 errors, which can be any combination of 2 substitutions, 1 insertion and 1 deletion.
+Defining only the total will set all error types to this value, i.e. if total error is set to an error count of 2, any
+combination of 2 substitutions, 2 insertions and 2 deletions is allowed.
+On the other hand, when defining any of the error types but no total, the total will be set to the sum of all error
+types. For example, if we would not specify a total error of 1 in the first example above, the total error would be set
 to 2 automatically. Hence, the search will also include approximate hits containing one insertion and one deletion.
 
 <a name="assignment_approximate_search"></a>
@@ -246,7 +246,7 @@ configurations:
 - seqan3::search_cfg::hit_all_best: Report all hits with the lowest edit distance.
 - seqan3::search_cfg::hit_strata: best+x strategy. Report all hits within the x-neighbourhood of the best hit.
 
-Opposed to the max error configuration, which allows a combination of the different error configuration objects, the hit
+In contrast to the max error configuration, which allows a combination of the different error configuration objects, the hit
 configuration can only exists once within one search configuration. Trying to specify more than one hit configuration
 in one search configuration will fail at compile time with a static assertion.
 Sometimes the program you write requires to choose between different hit configurations depending on a user given
@@ -256,30 +256,30 @@ runtime. The following snippet gives an example for this scenario:
 
 \snippet doc/tutorial/search/search_small_snippets.cpp hit_dynamic
 
-Note that the same rules apply to the dynamic as for the static hit configurations. Meaning, it can be added via the
+Note that the same rules apply to both the dynamic and static hit configuration. That is, it can be added via the
 `|`-operator to the search configuration but cannot be combined with any other hit configuration.
 
-A closer look to the strata configuration reveals that it is initialised with an additional parameter called the
+A closer look at the strata configuration reveals that it is initialised with an additional parameter called the
 `stratum`. The `stratum` can be modified even after it was added to the search configuration like the following example
 demonstrates:
 
 \snippet doc/tutorial/search/search_small_snippets.cpp hit_strata
 
-We introduced here a new concept when working with the seqan3::configuration object, which is much like the access
+Here we introduced a new concept when working with the seqan3::configuration object, which is much like the access
 interface of a std::tuple. Concretely, it is possible to access the stored
-configuration using the `get<cfg_type>(cfg)` interface, where `cfg_type` it the name of the configuration type we like
+configuration using the `get<cfg_type>(cfg)` interface, where `cfg_type` is the name of the configuration type we would like
 to access. The `get` interface returns a reference to the stored object that is identified by the given name. If you
-try to access an object which does not exist within the search configuration a static assert will be omitted at compile
-time, such that no invalid code can be generated.
+try to access an object which does not exist within the search configuration, a static assert will be emitted at compile
+time such that no invalid code can be generated.
 
 \note We need to use the expression `using seqan3::get;` before we can call the `get` interface in order to allow the
       compiler to find the correct implementation of it based on the passed argument. This is related to how C++
       resolves unqualified lookup of free functions in combination with function templates using an explicit template
       argument such as the `get` interface does.
 
-So it remains the open question of what does the stratum actually do? In the above example, if the best hit found by
+So, the open question remains what the stratum actually does. In the above example, if the best hit found by
 the search for a particular query had an edit distance of 1, the strata strategy would report all hits with up to an
-edit distance of 3 before modifying the stratum and 2 after setting it to 1.
+edit distance of 2.
 Since in this example the total error number is set to 2, all hits with 1 or 2 errors would be reported.
 
 \assignment{Assignment 4}
