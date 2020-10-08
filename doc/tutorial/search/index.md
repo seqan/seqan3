@@ -287,8 +287,8 @@ Search for all occurrences of `GCT` in the text from [assignment 1](#assignment_
 Allow up to 1 error of any type and print the number of hits for each hit strategy (use
 `seqan3::search_cfg::strata{1}`).
 \hint
-    You can use std::ranges::distance to get the size of any range. Depending on the underlying range properties this
-    algorithm, will use the most optimal way to compute the number of elements contained in the range.
+    You can use std::ranges::distance to get the size of any range. Depending on the underlying range properties, this
+    algorithm will use the optimal way to compute the number of elements contained in the range.
 \endhint
 \endassignment
 
@@ -331,7 +331,7 @@ The following output configurations exists:
 
 Similarly to the max error configurations, you can arbitrarily combine the configurations to customise the final output.
 For example, if you are only interested in the position of the hit within the reference sequence, you can use the
-seqan3::search_cfg::output_reference_begin_position configuration. If instead, you need access to the index where the
+seqan3::search_cfg::output_reference_begin_position configuration. Instead, if you need access to the index where the
 hit was found, you can use the seqan3::search_cfg::output_index_cursor configuration.
 
 \note If you do not provide any output configuration, then the query id and reference_id as well as the
