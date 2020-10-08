@@ -160,12 +160,13 @@ void seqan2_affine_dna4_parallel(benchmark::State & state)
 
 // Note SeqAn2 has no parallel interface yet for computing the traceback as well.
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_parallel, score)->UseRealTime();
+#endif // SEQAN3_HAS_SEQAN2
 
-#if defined(_OPENMP)
+#if defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP)
 template <typename result_t>
 void seqan2_affine_dna4_omp_for(benchmark::State & state)
 {
-    constexpr bool score_only = std::is_same_v<result_t, seqan3::seqan3::detail::with_score_type>;
+    constexpr bool score_only = std::is_same_v<result_t, seqan3::align_cfg::output_score>;
 
     auto [vec1, vec2] = generate_data_seqan2<seqan::Dna>();
 
@@ -202,9 +203,7 @@ void seqan2_affine_dna4_omp_for(benchmark::State & state)
 
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_omp_for, score)->UseRealTime();
 BENCHMARK_TEMPLATE(seqan2_affine_dna4_omp_for, trace)->UseRealTime();
-
-#endif // defined(_OPENMP)
-#endif // SEQAN3_HAS_SEQAN2
+#endif // defined(SEQAN3_HAS_SEQAN2) && defined(_OPENMP)
 
 // ============================================================================
 //  instantiate tests
