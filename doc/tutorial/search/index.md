@@ -334,7 +334,7 @@ For example, if you are only interested in the position of the hit within the re
 seqan3::search_cfg::output_reference_begin_position configuration. Instead, if you need access to the index where the
 hit was found, you can use the seqan3::search_cfg::output_index_cursor configuration.
 
-\note If you do not provide any output configuration, then the query id and reference_id as well as the
+\note If you do not provide any output configuration, then the query id and reference id as well as the
       reference begin position will be automatically reported. If you select only one in your search configuration, then only this one
       will be available in the final search result.
 
