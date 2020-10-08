@@ -44,7 +44,7 @@
  * where all can be given as an \ref seqan3::search_cfg::error_count "absolute number"
  * or a \ref seqan3::search_cfg::error_rate "rate" of \ref search_configuration_subsection_error "errors".
  * Furthermore, it can be configured what hits are reported based on a \ref search_configuration_subsection_hit_strategy
- * "strategy" and which information should the \ref search_configuration_subsection_output "result" contain.
+ * "strategy", and which information should the \ref search_configuration_subsection_output "result" contain.
  * These configurations exist in their own namespace, namely seqan3::search_cfg, to disambiguate them from the
  * configuration of other algorithms.
  *
