@@ -69,9 +69,9 @@
  * namespace called seqan3::align_cfg. This namespace is used to disambiguate configurations for the
  * alignment algorithm with configurations from other algorithms in SeqAn.
  * To compute a pairwise alignment at least two configuration elements must be provided: The alignment method and the
- * scoring scheme. Thus, a valid alignment configuration must specify what kind of alignment is to be computed, since
- * this strongly depends on the used context and a default wouldn't make much sense here. For similar reasons the
- * scoring scheme has to be always provided by the user.
+ * scoring scheme. Thus, a valid alignment configuration must specify what kind of alignment shall be computed, as
+ * it strongly depends on the corresponding context. A default wouldn't make much sense here. For similar
+ * reasons the scoring scheme has to be always provided by the user.
  *
  * ### Combining configuration elements
  *
@@ -217,8 +217,10 @@
  *
  * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and
  * seqan3::align_cfg::method_local, respectively.
- * A semi-global alignment can be computed by specifying the free end-gaps in the constructor of seqan3::align_cfg::method_global. The parameters enable, respectively disable, the scoring of leading and trailing gaps at the
- * respective sequence ends. The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
+ * A semi-global alignment can be computed by specifying the free end-gaps in the constructor of
+ * seqan3::align_cfg::method_global. The parameters enable, respectively disable, the scoring of
+ * leading and trailing gaps at the respective sequence ends.
+ * The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
  * algorithm.
  * This option, however, is not available for the local alignment where scoring gaps at the ends of the
  * sequences is always disabled.
@@ -238,7 +240,7 @@
  *
  * The edit configuration can be further specialised with following configs:
  *  * Set a minimal score, i.e. specify the seqan3::align_cfg::min_score configuration
- *  * Compute a semi-global alignment where either the end-gaps of the first sequence are free or the end-gaps of the second sequence.
+ *  * Compute a semi-global alignment where the end-gaps of the first sequence are free.
  *
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment
  *       algorithm is executed as a fallback.
