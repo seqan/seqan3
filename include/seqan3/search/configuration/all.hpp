@@ -105,7 +105,7 @@
  * pass input range over the computed hits and the range's element types are seqan3::search_result objects.
  * Even if only a single query is searched, a range will be returned since it could be possible that
  * one search produces multiple hits, e.g. to find all best hits.
- * The following table shows the different output configurations:
+ * The following output configurations exists:
  *
  * * seqan3::search_cfg::output_query_id
  * * seqan3::search_cfg::output_reference_id
