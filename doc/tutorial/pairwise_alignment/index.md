@@ -245,7 +245,7 @@ a simple scoring scheme with mismatch `-2` and match `4`.
  -  GGACGACATGACGTACGACTTTACGTACGACTAGC
 
 \hint
-An alignment is called overlap alignment if it allows free end-gaps at each sequence end. In this configuration
+An alignment is called overlap alignment if it allows free end-gaps at each sequence end. With this configuration
 overlaps between two sequences can be computed which is a common use case during the overlap layout consensus assembly.
 \endhint
 \endassignment
@@ -302,7 +302,8 @@ global alignment configuration with the edit scheme:
 - no free end-gaps (all free end-gap specifiers are set to `false`)
 - free end-gaps for the first sequence (free end-gaps are set to `true` for the first and
   to `false` for the second sequence)
-Using any other free end-gap configuration will disable the edit distance algorithm, i.e. the fast bitvector algorithm, and will fall back to the standard pairwise alignment.
+Using any other free end-gap configuration will disable the edit distance algorithm, i.e. the fast bitvector
+algorithm, and will fall back to the standard pairwise alignment.
 
 ### Refine edit distance
 
