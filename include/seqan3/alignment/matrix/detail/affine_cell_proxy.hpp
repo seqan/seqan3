@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <tuple>
 #include <type_traits>
 
@@ -131,16 +132,75 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    affine_cell_proxy()= default; //!< Defaulted.
+    affine_cell_proxy() = default; //!< Defaulted.
     affine_cell_proxy(affine_cell_proxy const &) = default; //!< Defaulted.
     affine_cell_proxy(affine_cell_proxy &&) = default; //!< Defaulted.
     affine_cell_proxy & operator=(affine_cell_proxy const &) = default; //!< Defaulted.
     affine_cell_proxy & operator=(affine_cell_proxy &&) = default; //!< Defaulted.
     ~affine_cell_proxy() = default; //!< Defaulted.
 
-    // Inherit the tuple constructors and assignment.
+    // Inherit the base class's constructor to enable element-wise initialisation (direct and converting constructor).
     using tuple_t::tuple_t;
-    using tuple_t::operator=;
+
+    //!\brief Converting constructor. Initialises from another tuple type.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t &&>
+    //!\endcond
+    explicit affine_cell_proxy(other_tuple_t && other) :
+        tuple_t{std::forward<other_tuple_t>(other)}
+    {}
+
+    //!\brief Converting copy-constructor.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t const &>
+    //!\endcond
+    explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> const & other) :
+        tuple_t{static_cast<other_tuple_t const &>(other)}
+    {}
+
+    //!\brief Converting move-constructor.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::constructible_from<tuple_t, other_tuple_t>
+    //!\endcond
+    explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> && other) :
+        tuple_t{static_cast<other_tuple_t &&>(std::move(other))}
+    {}
+
+    //!\brief Converting assignment. Initialises from another tuple type.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t &&>
+    //!\endcond
+    affine_cell_proxy & operator=(other_tuple_t && other)
+    {
+        as_base() = std::forward<other_tuple_t>(other);
+        return *this;
+    }
+
+    //!\brief Converting copy-assignment.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t const &>
+    //!\endcond
+    affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> const & other)
+    {
+        as_base() = static_cast<other_tuple_t const &>(other);
+        return *this;
+    }
+
+    //!\brief Converting move-assignment.
+    template <typename other_tuple_t>
+    //!\cond
+        requires std::assignable_from<tuple_t &, other_tuple_t>
+    //!\endcond
+    affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> && other)
+    {
+        as_base() = static_cast<other_tuple_t &&>(std::move(other));
+        return *this;
+    }
     //!\}
 
     /*!\name Score value accessor
@@ -192,39 +252,102 @@ public:
      * \{
      */
     //!\brief Access the optimal score of the wrapped score matrix cell.
-    decltype(auto) best_trace() & { return get_trace_impl<0>(*this); }
+    decltype(auto) best_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(*this);
+    }
     //!\overload
-    decltype(auto) best_trace() const & { return get_trace_impl<0>(*this); }
+    decltype(auto) best_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(*this);
+    }
     //!\overload
-    decltype(auto) best_trace() && { return get_trace_impl<0>(std::move(*this)); }
+    decltype(auto) best_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<0>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) best_trace() const &&
+    decltype(auto) best_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<0, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<0>(std::move(*this)));
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
-    decltype(auto) horizontal_trace() & { return get_trace_impl<1>(*this); }
+    decltype(auto) horizontal_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(*this);
+    }
     //!\overload
-    decltype(auto) horizontal_trace() const & { return get_trace_impl<1>(*this); }
+    decltype(auto) horizontal_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(*this);
+    }
     //!\overload
-    decltype(auto) horizontal_trace() && { return get_trace_impl<1>(std::move(*this)); }
+    decltype(auto) horizontal_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<1>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) horizontal_trace() const &&
+    decltype(auto) horizontal_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<1, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<1>(std::move(*this)));
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
-    decltype(auto) vertical_trace() & { return get_trace_impl<2>(*this); }
+    decltype(auto) vertical_trace() & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(*this);
+    }
     //!\overload
-    decltype(auto) vertical_trace() const & { return get_trace_impl<2>(*this); }
+    decltype(auto) vertical_trace() const & noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(*this);
+    }
     //!\overload
-    decltype(auto) vertical_trace() && { return get_trace_impl<2>(std::move(*this)); }
+    decltype(auto) vertical_trace() && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
+    {
+        return get_trace_impl<2>(std::move(*this));
+    }
     //!\overload
-    decltype(auto) vertical_trace() const &&
+    decltype(auto) vertical_trace() const && noexcept
+    //!\cond
+        requires affine_score_and_trace_cell<tuple_t>
+    //!\endcond
     { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
         using return_t = std::tuple_element_t<2, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<2>(std::move(*this)));
@@ -272,6 +395,12 @@ private:
 
         return get<index>(get<1>(std::forward<this_t>(me)));
     }
+
+    //!\brief Casts `this` to the base class type.
+    tuple_t & as_base() & noexcept
+    {
+        return static_cast<tuple_t &>(*this);
+    }
 };
 } // namespace seqan3::detail
 
@@ -279,11 +408,17 @@ namespace std
 {
 //!\cond
 template <typename tuple_t>
-struct tuple_size<seqan3::detail::affine_cell_proxy<tuple_t>> : tuple_size<tuple_t>
+//!\cond
+    requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
+//!\endcond
+struct tuple_size<seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_size<tuple_t>
 {};
 
 template <size_t index, typename tuple_t>
-struct tuple_element<index, seqan3::detail::affine_cell_proxy<tuple_t>> : tuple_element<index, tuple_t>
+//!\cond
+    requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
+//!\endcond
+struct tuple_element<index, seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_element<index, tuple_t>
 {};
 //!\endcond
 } // namespace std
