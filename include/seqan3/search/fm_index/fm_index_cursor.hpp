@@ -22,8 +22,8 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
-#include <seqan3/search/fm_index/fm_index.hpp>
 
 namespace seqan3
 {
