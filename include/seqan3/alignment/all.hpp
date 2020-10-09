@@ -176,8 +176,8 @@
  * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
  * add completely different types, as long as they model seqan3::scoring_scheme_for for the respective sequence
  * alphabet type. In fact, when invoking the seqan3::align_pairwise interface it will be checked at compile time if
- * the provided scoring scheme can be used in combination with the passed sequences and if not raises a static
- * assertion.
+ * the provided scoring scheme can be used in combination with the passed sequences and if not a static
+ * assertion is raised.
  *
  * The scoring scheme can be configured with the seqan3::align_cfg::scoring_scheme element. Since the scoring scheme is
  * strongly coupled on the sequences to be aligned it can not be defaulted. Thus, it is mandatory for
@@ -204,8 +204,8 @@
  * the developer can use the seqan3::align_cfg::band_fixed_size option.
  * This band configuration is initialised with a seqan3::align_cfg::lower_diagonal and a
  * seqan3::align_cfg::upper_diagonal. The term diagonal is used to describe the position of the band boundary within the
- * alignment matrix. The given value represents the offset the lower, respectively upper, diagonal is shifted from the
- * main diagonal which starts in the origin of the alignment matrix. Accordingly, a negative value shifts the band
+ * alignment matrix. The given value represents the offset that the lower, respectively upper, diagonal is shifted from the
+ * main diagonal, which starts in the origin of the alignment matrix. Accordingly, a negative value shifts the band
  * boundary downwards in the alignment matrix and a positive value shifts the band boundary to the right.
  *
  * The band parameters might be restricted depending on the configured alignment algorithm, e.g. the origin of the
@@ -222,7 +222,7 @@
  * leading and trailing gaps at the respective sequence ends.
  * The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
  * algorithm.
- * This option, however, is not available for the local alignment where scoring gaps at the ends of the
+ * This option, however, is not available for the local alignment where penalising gaps at the ends of the
  * sequences is always disabled.
  *
  * ## Algorithmic details
