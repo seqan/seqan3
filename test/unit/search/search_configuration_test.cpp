@@ -64,7 +64,7 @@ TEST(search_configuration_test, symmetric_configuration)
 
 TYPED_TEST(search_configuration_test, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<TypeParam>));
 }
 
 TYPED_TEST(search_configuration_test, configuration_exists)

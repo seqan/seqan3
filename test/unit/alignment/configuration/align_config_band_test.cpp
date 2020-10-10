@@ -20,7 +20,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(band_elements, pipeable_config_element_test, test
 
 TEST(band_fixed_size, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::band_fixed_size>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<seqan3::align_cfg::band_fixed_size>));
 }
 
 TEST(band_fixed_size, construct)

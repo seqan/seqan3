@@ -65,7 +65,7 @@ TEST(alignment_configuration_test, number_of_configs)
 
 TYPED_TEST(alignment_configuration_test, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<TypeParam>));
 }
 
 TYPED_TEST(alignment_configuration_test, configuration_exists)

@@ -16,8 +16,8 @@
 
 TEST(configuration, concept_check)
 {
-    EXPECT_TRUE(seqan3::detail::config_element_specialisation<bar>);
-    EXPECT_FALSE(seqan3::detail::config_element_specialisation<int>);
+    EXPECT_TRUE(seqan3::config_element_specialisation<bar>);
+    EXPECT_FALSE(seqan3::config_element_specialisation<int>);
 
     EXPECT_TRUE((seqan3::tuple_like<seqan3::configuration<bax, bar>>));
 }

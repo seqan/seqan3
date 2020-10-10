@@ -26,7 +26,7 @@
  * ### Usage
  *
  * The basis of any algorithm configuration are configuration elements. These are objects that handle a specific
- * setting and must satisfy the seqan3::detail::config_element_specialisation. The following snippet demonstrates a
+ * setting and must satisfy the seqan3::config_element_specialisation. The following snippet demonstrates a
  * basic setup for such configuration elements.
  *
  * \include test/snippet/core/algorithm/configuration_setup.cpp

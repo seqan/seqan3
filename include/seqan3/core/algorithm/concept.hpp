@@ -20,14 +20,6 @@
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
-namespace seqan3
-{
-//!\cond
-// Forward declarations
-struct pipeable_config_element;
-//!\endcond
-}
-
 namespace seqan3::detail
 {
 
@@ -115,8 +107,16 @@ public:
     static constexpr bool has_id = has_id_member<config_t>(0);
 };
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+} // namespace seqan3::detail
 
-/*!\interface seqan3::detail::config_element_specialisation <>
+namespace seqan3
+{
+//!\cond
+// Forward declarations
+struct pipeable_config_element;
+//!\endcond
+
+/*!\interface seqan3::config_element_specialisation <>
  * \brief Concept for an algorithm configuration element.
  * \ingroup algorithm
  *
@@ -124,9 +124,9 @@ public:
  * \implements seqan3::pipeable_config_element
  */
 
-/*!\name Requirements for seqan3::detail::config_element_specialisation
- * \relates seqan3::detail::config_element_specialisation
- * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_specialisation.
+/*!\name Requirements for seqan3::config_element_specialisation
+ * \relates seqan3::config_element_specialisation
+ * \brief   You can expect this member on all types that satisfy seqan3::config_element_specialisation.
  * \{
  */
 /*!\var id
@@ -140,14 +140,14 @@ SEQAN3_CONCEPT config_element_specialisation = requires
     requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
     requires std::semiregular<config_t>;
 #ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-    requires config_id_accessor::has_id<config_t>;
+    requires detail::config_id_accessor::has_id<config_t>;
 #else // ^^^ workaround / no workaround vvv
     { config_t::id };
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 };
 //!\endcond
 
-/*!\interface seqan3::detail::config_element_pipeable_with <>
+/*!\interface seqan3::config_element_pipeable_with <>
  * \brief Concept to check if one configuration element can be combined with another configuration element.
  * \ingroup algorithm
  *
@@ -157,7 +157,7 @@ SEQAN3_CONCEPT config_element_specialisation = requires
  * \details
  *
  * This concept is fulfilled if:
- *  * both configurations model seqan3::detail::config_element_specialisation,
+ *  * both configurations model seqan3::config_element_specialisation,
  *  * are defined within the same algorithm configuration domain,
  *  * a seqan3::detail::compatibility_table is defined for the configuration elements and
  *    returns `true` for both configurations.
@@ -168,22 +168,18 @@ SEQAN3_CONCEPT config_element_pipeable_with =
     config_element_specialisation<config1_t> &&
     config_element_specialisation<config2_t> &&
 #ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-    std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>> &&
-    decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
+    std::same_as<detail::config_id_accessor::id_type<config1_t>, detail::config_id_accessor::id_type<config2_t>> &&
+    decltype(detail::config_id_accessor::is_compatible<config1_t, config2_t>())::value;
 #else // ^^^ workaround / no workaround vvv
     std::same_as<std::remove_cvref_t<decltype(config1_t::id)>, std::remove_cvref_t<decltype(config2_t::id)>> &&
-    compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>[static_cast<int32_t>(config1_t::id)]
-                                                                     [static_cast<int32_t>(config2_t::id)];
+    detail::compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>[static_cast<int32_t>(config1_t::id)]
+                                                                             [static_cast<int32_t>(config2_t::id)];
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 //!\endcond
 
-} // namespace seqan3::detail
-
-namespace seqan3
-{
 //!\cond
 // Forward declaration.
-template <detail::config_element_specialisation ... configs_t>
+template <config_element_specialisation ... configs_t>
 class configuration;
 //!\endcond
 
@@ -197,7 +193,7 @@ class configuration;
  * \details
  *
  * This helper variable template checks if `config1_t` fulfills the concept requirements
- * seqan3::detail::config_element_pipeable_with `config2_t`. If `config2_t` is a seqan3::configuration, the check will
+ * seqan3::config_element_pipeable_with `config2_t`. If `config2_t` is a seqan3::configuration, the check will
  * be expanded to every configuration element contained in the configuration type. Only if `config1_t` is combineable
  * with every element stored inside of the given configuration, this helper variable template evaluates to `true`,
  * otherwise `false`.
@@ -206,18 +202,18 @@ class configuration;
  * configuration elements of the first configuration and the second configuration are tested.
  */
 template <typename config1_t, typename config2_t>
-inline constexpr bool is_config_element_combineable_v = detail::config_element_pipeable_with<config1_t, config2_t>;
+inline constexpr bool is_config_element_combineable_v = config_element_pipeable_with<config1_t, config2_t>;
 
 //!\cond
 // Specialised for config2_t == seqan3::configuration
 template <typename config1_t, typename ...configs2_t>
 inline constexpr bool is_config_element_combineable_v<config1_t, configuration<configs2_t...>> =
-    (detail::config_element_pipeable_with<config1_t, configs2_t> && ...);
+    (config_element_pipeable_with<config1_t, configs2_t> && ...);
 
 // Specialised for config1_t == seqan3::configuration
 template <typename ...configs1_t, typename config2_t>
 inline constexpr bool is_config_element_combineable_v<configuration<configs1_t...>, config2_t> =
-    (detail::config_element_pipeable_with<configs1_t, config2_t> && ...);
+    (config_element_pipeable_with<configs1_t, config2_t> && ...);
 
 // Specialised for config1_t == seqan3::configuration && config2_t == seqan3::configuration
 template <typename ...configs1_t, typename ...configs2_t>
