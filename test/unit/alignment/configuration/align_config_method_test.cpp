@@ -12,17 +12,6 @@
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 
-#include "../../core/configuration/pipeable_config_element_test_template.hpp"
-
-// ---------------------------------------------------------------------------------------------------------------------
-// pipeable_config_element_test template
-// ---------------------------------------------------------------------------------------------------------------------
-
-using config_element_types = ::testing::Types<seqan3::align_cfg::method_global,
-                                              seqan3::align_cfg::method_local>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(method, pipeable_config_element_test, config_element_types, );
-
 TEST(method_global, access_member_variables)
 {
     seqan3::align_cfg::method_global opt{}; // default construction

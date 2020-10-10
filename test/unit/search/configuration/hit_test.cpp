@@ -7,23 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/test/expect_same_type.hpp>
-
-#include "../../core/configuration/pipeable_config_element_test_template.hpp"
-
-// ---------------------------------------------------------------------------------------------------------------------
-// test template : pipeable_config_element_test
-// ---------------------------------------------------------------------------------------------------------------------
-
-using test_types = ::testing::Types<seqan3::search_cfg::hit_all,
-                                    seqan3::search_cfg::hit_all_best,
-                                    seqan3::search_cfg::hit_single_best,
-                                    seqan3::search_cfg::hit_strata,
-                                    seqan3::search_cfg::hit>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(mode_elements, pipeable_config_element_test, test_types, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // individual tests
