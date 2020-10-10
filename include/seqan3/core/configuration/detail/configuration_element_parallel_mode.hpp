@@ -27,7 +27,7 @@ namespace seqan3::detail
  * This type is used to enable the parallel mode of the algorithms.
  */
 template <typename wrapped_config_id_t>
-class parallel_mode : public pipeable_config_element<parallel_mode<wrapped_config_id_t>>
+class parallel_mode : private pipeable_config_element
 {
 public:
     /*!\name Constructors, assignment and destructor

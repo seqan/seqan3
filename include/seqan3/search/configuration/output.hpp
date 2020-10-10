@@ -26,7 +26,7 @@ namespace seqan3::search_cfg
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-class output_query_id : public pipeable_config_element<output_query_id>
+class output_query_id : public pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment
@@ -50,7 +50,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-class output_reference_id : public pipeable_config_element<output_reference_id>
+class output_reference_id : public pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment
@@ -74,7 +74,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-class output_reference_begin_position : public pipeable_config_element<output_reference_begin_position>
+class output_reference_begin_position : public pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment
@@ -98,7 +98,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
-class output_index_cursor : public pipeable_config_element<output_index_cursor>
+class output_index_cursor : public pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment

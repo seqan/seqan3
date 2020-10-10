@@ -32,7 +32,7 @@ namespace seqan3::align_cfg
  * \include test/snippet/alignment/configuration/align_cfg_score_type.cpp
  */
 template <arithmetic score_t>
-class score_type : public pipeable_config_element<score_type<score_t>>
+class score_type : private pipeable_config_element
 {
 public:
 

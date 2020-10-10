@@ -36,7 +36,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(::test_algo_id
 
 }  // namespace seqan3::detail
 
-class bar : public seqan3::pipeable_config_element<bar>
+class bar : private seqan3::pipeable_config_element
 {
 public:
     int value{};
@@ -54,7 +54,7 @@ public:
     static constexpr test_algo_id id{test_algo_id::bar_id};
 };
 
-class bax : public seqan3::pipeable_config_element<bax>
+class bax : private seqan3::pipeable_config_element
 {
 public:
     float value{};
@@ -72,7 +72,7 @@ public:
     static constexpr test_algo_id id{test_algo_id::bax_id};
 };
 
-class foo : public seqan3::pipeable_config_element<foo>
+class foo : private seqan3::pipeable_config_element
 {
 public:
     std::string value{};
@@ -91,7 +91,7 @@ public:
 };
 
 template <typename t = std::vector<int>>
-class foobar : public seqan3::pipeable_config_element<foobar<t>>
+class foobar : private seqan3::pipeable_config_element
 {
 public:
     t value{};
