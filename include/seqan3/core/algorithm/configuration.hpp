@@ -19,9 +19,10 @@
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3
@@ -262,92 +263,10 @@ private:
     {}
     //!\}
 
-    /*!\brief Creates a new configuration object by recursively adding the configs from the tuple.
-     * \tparam tuple_t The tuple from which to create a new configuration object; must model seqan3::tuple_like.
-     * \param[in] tpl The tuple to create the configuration from.
-     * \returns A new configuration object.
-     */
-    template <tuple_like tuple_t>
-    static constexpr auto make_configuration(tuple_t && tpl)
-    {
-        if constexpr (std::tuple_size_v<std::remove_cvref_t<tuple_t>> == 0)
-        {
-            return configuration<>{};
-        }
-        else
-        {
-            auto impl = [](auto & impl_ref, auto && config, auto && head, auto && tail)
-            {
-                using cfg_t = decltype(config);
-                if constexpr (std::tuple_size_v<std::remove_cvref_t<decltype(tail)>> == 0)
-                {
-                    return std::forward<cfg_t>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
-                }
-                else
-                {
-                    auto [_head, _tail] = tuple_split<1>(std::forward<decltype(tail)>(tail));
-                    auto tmp = std::forward<cfg_t>(config).push_back(std::get<0>(std::forward<decltype(head)>(head)));
-                    return impl_ref(impl_ref, std::move(tmp), std::move(_head), std::move(_tail));
-                }
-            };
-
-            auto [head, tail] = tuple_split<1>(std::forward<decltype(tpl)>(tpl));
-            return impl(impl, configuration<>{}, std::move(head), std::move(tail));
-        }
-    }
-
     /*!\name Modifiers
      * \brief Note that modifications return new configurations and do not modify `this`.
      * \{
      */
-
-    /*!\brief Adds a new config element to the end of the configuration.
-     *
-     * \param[in] elem The configuration element to add.
-     *
-     * \returns A new seqan3::detail::configuration containing the added element.
-     *
-     * \details
-     *
-     * Creates a new seqan3::detail::configuration from `this` and appends the passed config element.
-     * Note, that `this` is not modified by this operation.
-     * Further the configuration checks for an invalid configuration using an algorithm specific lookup table
-     * for the configuration elements and tests whether configuration elements are from the same algorithm.
-     *
-     * ### Complexity
-     *
-     * Linear in the number of elements.
-     *
-     * ### Exception
-     *
-     * Strong exception guarantee.
-     */
-    template <detail::config_element_specialisation config_element_t>
-    constexpr auto push_back(config_element_t elem) const &
-    {
-        static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
-                                                            configs_t...>,
-                      "Configuration error: The passed element cannot be combined with one or more elements in the "
-                      "current configuration.");
-
-        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
-            std::tuple_cat(static_cast<base_type>(*this),
-                           std::tuple{std::move(elem)})};
-    }
-
-    //!\copydoc push_back
-    template <detail::config_element_specialisation config_element_t>
-    constexpr auto push_back(config_element_t elem) &&
-    {
-        static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
-                                                            configs_t...>,
-                      "Configuration error: The passed element cannot be combined with one or more elements in the "
-                      "current configuration.");
-
-        return configuration<configs_t..., std::remove_reference_t<config_element_t>>{
-            std::tuple_cat(std::move(static_cast<base_type>(*this)),
-                           std::tuple{std::move(elem)})};
-    }
 
     /*!\brief Remove a config element from the configuration.
      * \tparam index The config element at `index` is removed from the config.
@@ -361,7 +280,12 @@ private:
         auto [head, middle] = tuple_split<index>(static_cast<base_type>(*this));
         auto tail = tuple_pop_front(middle);
 
-        return make_configuration(std::tuple_cat(head, tail));
+        using head_list_t = detail::transfer_template_args_onto_t<decltype(head), type_list>;
+        using tail_list_t = detail::transfer_template_args_onto_t<decltype(tail), type_list>;
+        using concat_list_t = list_traits::concat<head_list_t, tail_list_t>;
+        using new_configuration_t = detail::transfer_template_args_onto_t<concat_list_t, configuration>;
+
+        return new_configuration_t{std::tuple_cat(std::move(head), std::move(tail))};
     }
     //!\}
 
