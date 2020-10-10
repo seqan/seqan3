@@ -13,16 +13,6 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
-
-template <typename test_t>
-struct align_cfg_output_test : public ::testing::Test
-{};
-
-using test_types = ::testing::Types<seqan3::align_cfg::score_type<int32_t>>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(score_type, pipeable_config_element_test, test_types, );
-
 TEST(align_config_score_type, score_type)
 {
     EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::score_type<int32_t>{})>,

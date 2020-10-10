@@ -12,16 +12,6 @@
 
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
-
-// -----------------------------------------------------------------------------
-// test template : pipeable_config_element_test
-// -----------------------------------------------------------------------------
-
-using test_types = ::testing::Types<seqan3::align_cfg::on_result<std::function<void(int)>>>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(on_result_element, pipeable_config_element_test, test_types, );
-
 // -----------------------------------------------------------------------------
 // Test capturing various callbacks
 // -----------------------------------------------------------------------------
