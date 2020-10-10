@@ -13,9 +13,6 @@
 #pragma once
 
 #include <seqan3/std/concepts>
-#include <tuple>
-
-#include <meta/meta.hpp>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/detail/concept.hpp>
@@ -101,19 +98,17 @@ public:
     ~configuration()                                           = default; //!< Defaulted.
 
     /*!\brief Constructs a configuration from a single configuration element.
-     * \param elem The element to store.
+     * \tparam config_element_t The configuration element to add; must model
+     *                          seqan3::detail::config_element_specialisation.
+     * \param[in] config_element The configuration element to construct the configuration from.
      */
-    template <typename derived_t, typename value_t>
-    constexpr configuration(pipeable_config_element<derived_t, value_t> && elem) :
-        base_type{static_cast<derived_t &&>(std::move(elem))}
-    {}
-
-    /*!\brief Constructs a configuration from a single configuration element.
-     * \param elem The element to store.
-     */
-    template <typename derived_t, typename value_t>
-    constexpr configuration(pipeable_config_element<derived_t, value_t> const & elem) :
-        base_type{static_cast<derived_t const &>(elem)}
+    template <typename config_element_t>
+    //!\cond
+        requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>) &&
+                 detail::config_element_specialisation<std::remove_cvref_t<config_element_t>>
+    //!\endcond
+    constexpr configuration(config_element_t && config_element) :
+        base_type{std::forward<config_element_t>(config_element)}
     {}
     //!\}
 
@@ -572,14 +567,8 @@ private:
 /*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
  * \relates seqan3::configuration
  */
-template <typename derived_t, typename value_t>
-configuration(pipeable_config_element<derived_t, value_t> &&) -> configuration<std::remove_cvref_t<derived_t>>;
-
-/*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
- * \relates seqan3::configuration
- */
-template <typename derived_t, typename value_t>
-configuration(pipeable_config_element<derived_t, value_t> const &) -> configuration<std::remove_cvref_t<derived_t>>;
+template <detail::config_element_specialisation config_t>
+configuration(config_t) -> configuration<config_t>;
 //!\}
 
 /*!\name Tuple interface
