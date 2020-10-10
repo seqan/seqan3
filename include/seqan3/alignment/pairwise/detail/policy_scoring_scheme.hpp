@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
+#include <seqan3/core/algorithm/configuration.hpp>
 
 namespace seqan3::detail
 {

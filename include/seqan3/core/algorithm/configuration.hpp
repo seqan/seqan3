@@ -12,18 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <tuple>
-
-#include <meta/meta.hpp>
 
 #include <seqan3/core/algorithm/concept.hpp>
 #include <seqan3/core/algorithm/configuration_utility.hpp>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3
 {

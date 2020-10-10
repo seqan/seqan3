@@ -6,57 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides functionality to access get function by enum values.
+ * \brief Provides functionality to access get function by template template configs.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <array>
-#include <type_traits>
-
-#include <meta/meta.hpp>
-
-#include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {
-
-// ----------------------------------------------------------------------------
-// Type trait is_configuration_valid
-// ----------------------------------------------------------------------------
-
-/*!\brief Checks if a given type is compatible with a list of other types.
- * \implements seqan3::unary_type_trait
- * \ingroup algorithm
- * \tparam query_t       The type to check for compatibility.
- * \tparam compare_types The types to compare against.
- *
- * \details
- *
- * Checks if the type is from the same algorithm configuration and if it can be combined with any of the
- * existing elements in the current configuration.
- */
-template <config_element_specialisation query_t, config_element_specialisation ... compare_types>
-struct is_configuration_valid :
-    public std::conditional_t<
-        (std::is_same_v<std::remove_cvref_t<decltype(query_t::id)>, std::remove_cvref_t<decltype(compare_types::id)>> && ...) &&
-        (compatibility_table<std::remove_cvref_t<decltype(query_t::id)>>
-                [static_cast<std::underlying_type_t<std::remove_cvref_t<decltype(query_t::id)>>>(query_t::id)]
-                [static_cast<std::underlying_type_t<std::remove_cvref_t<decltype(query_t::id)>>>(compare_types::id)] && ...),
-        std::true_type,  // If condition is true.
-        std::false_type  // If condition is false.
-    >
-{};
-
-/*!\brief Helper variable template to check for valid configuration composites (unary_type_trait shortcut).
- * \relates seqan3::detail::is_configuration_valid
- * \ingroup algorithm
- */
-template <typename query_t, typename ...compare_types>
-inline constexpr bool is_configuration_valid_v = is_configuration_valid<query_t, compare_types...>::value;
 
 // ----------------------------------------------------------------------------
 // Metafunction is_same_configuration_f

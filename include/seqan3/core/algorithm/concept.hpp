@@ -12,13 +12,12 @@
 
 #pragma once
 
+#include <array>
+#include <seqan3/std/concepts>
 #include <functional>
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {
