@@ -192,8 +192,8 @@ class configuration;
  *        or configuration.
  * \ingroup algorithm
  *
- * \tparam config1_t The type of the configuration element to test.
- * \tparam config2_t Either the type of another configuration element or another configuration.
+ * \tparam config1_t Either the type of a configuration element or a configuration.
+ * \tparam config2_t Either the type of a configuration element or a configuration.
  *
  * \details
  *
@@ -202,16 +202,28 @@ class configuration;
  * be expanded to every configuration element contained in the configuration type. Only if `config1_t` is combineable
  * with every element stored inside of the given configuration, this helper variable template evaluates to `true`,
  * otherwise `false`.
+ * If `config1_t` is a seqan3::configuration the same applies in combination with the configuration element `config2_t`.
+ * If both `config1_t` and `config2_t` are seqan3::configuration types, then the cartesian product between the
+ * configuration elements of the first configuration and the second configuration are tested.
  */
 template <typename config1_t, typename config2_t>
 inline constexpr bool is_config_element_combineable_v = detail::config_element_pipeable_with<config1_t, config2_t>;
 
 //!\cond
-// Specialised for configs2_t == seqan3::configuration
-template <typename config1_t, typename ...configs_t>
-    requires (sizeof...(configs_t) > 0)
-inline constexpr bool is_config_element_combineable_v<config1_t, configuration<configs_t...>> =
-    (detail::config_element_pipeable_with<config1_t, configs_t> && ...);
+// Specialised for config2_t == seqan3::configuration
+template <typename config1_t, typename ...configs2_t>
+inline constexpr bool is_config_element_combineable_v<config1_t, configuration<configs2_t...>> =
+    (detail::config_element_pipeable_with<config1_t, configs2_t> && ...);
+
+// Specialised for config1_t == seqan3::configuration
+template <typename ...configs1_t, typename config2_t>
+inline constexpr bool is_config_element_combineable_v<configuration<configs1_t...>, config2_t> =
+    (detail::config_element_pipeable_with<configs1_t, config2_t> && ...);
+
+// Specialised for config1_t == seqan3::configuration && config2_t == seqan3::configuration
+template <typename ...configs1_t, typename ...configs2_t>
+inline constexpr bool is_config_element_combineable_v<configuration<configs1_t...>, configuration<configs2_t...>> =
+    (is_config_element_combineable_v<configs1_t, configuration<configs2_t...>> && ...);
 //!\endcond
 
 } // namespace seqan3
