@@ -275,6 +275,16 @@
 #   endif
 #endif
 
+//!\brief Workaround to access the static id of the configuration elements inside of the concept definition
+//!       (fixed in gcc11).
+#ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#   if defined(__GNUC__) && (__GNUC__ < 11)
+#       define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
+#   endif
+#endif
+
 // ============================================================================
 //  Backmatter
 // ============================================================================
