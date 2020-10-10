@@ -36,7 +36,7 @@ namespace seqan3
  * \ingroup algorithm
  *
  * \tparam configs_t Template parameter pack containing all configuration elements; Must model
- *                   seqan3::detail::config_element_specialisation
+ *                   seqan3::config_element_specialisation
  *
  * \details
  *
@@ -44,11 +44,11 @@ namespace seqan3
  * configurations for a specific algorithm. It extends the standard tuple interface with some useful functions to modify
  * and query the user configurations.
  */
-template <detail::config_element_specialisation ... configs_t>
+template <config_element_specialisation ... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <detail::config_element_specialisation ... _configs_t>
+    template <config_element_specialisation ... _configs_t>
     friend class configuration;
 
 public:
@@ -69,13 +69,13 @@ public:
 
     /*!\brief Constructs a configuration from a single configuration element.
      * \tparam config_element_t The configuration element to add; must model
-     *                          seqan3::detail::config_element_specialisation.
+     *                          seqan3::config_element_specialisation.
      * \param[in] config_element The configuration element to construct the configuration from.
      */
     template <typename config_element_t>
     //!\cond
         requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>) &&
-                 detail::config_element_specialisation<std::remove_cvref_t<config_element_t>>
+                 config_element_specialisation<std::remove_cvref_t<config_element_t>>
     //!\endcond
     constexpr configuration(config_element_t && config_element) :
         base_type{std::forward<config_element_t>(config_element)}
@@ -200,7 +200,7 @@ public:
     /*!\brief Returns a new configuration by appending the given configuration to the current one.
      *
      * \tparam other_configuration_t Another configuration type or configuration element type; each configuration
-     *                               element must model seqan3::detail::config_element_pipeable_with each of the
+     *                               element must model seqan3::config_element_pipeable_with each of the
      *                               configurations elements of the current configuration.
      *
      * \param[in] other_config The other configuration to append to the current one.
@@ -218,7 +218,7 @@ public:
     //!\endcond
     constexpr auto append(other_configuration_t && other_config) const
     {
-        if constexpr (detail::config_element_specialisation<std::remove_cvref_t<other_configuration_t>>)
+        if constexpr (config_element_specialisation<std::remove_cvref_t<other_configuration_t>>)
         {
             return configuration<configs_t..., std::remove_cvref_t<other_configuration_t>>
             {
@@ -358,7 +358,7 @@ private:
  * \details
  *
  * The the two operands can be either a seqan3::configuration object or a
- * \ref seqan3::detail::config_element_specialisation "configuration element". The right hand side operand is then
+ * \ref seqan3::config_element_specialisation "configuration element". The right hand side operand is then
  * appended to the left hand side operand by creating a new seqan3::configuration object. Neither `lhs` nor `rhs` will
  * be modified.
  */
@@ -371,8 +371,8 @@ constexpr auto operator|(lhs_config_t && lhs, rhs_config_t && rhs)
     using pure_lhs_t = std::remove_cvref_t<lhs_config_t>;
     using pure_rhs_t = std::remove_cvref_t<rhs_config_t>;
 
-    constexpr bool lhs_is_config_element = detail::config_element_specialisation<pure_lhs_t>;
-    constexpr bool rhs_is_config_element = detail::config_element_specialisation<pure_rhs_t>;
+    constexpr bool lhs_is_config_element = config_element_specialisation<pure_lhs_t>;
+    constexpr bool rhs_is_config_element = config_element_specialisation<pure_rhs_t>;
 
     if constexpr (lhs_is_config_element && rhs_is_config_element)
         return configuration{std::forward<lhs_config_t>(lhs)}.append(std::forward<rhs_config_t>(rhs));
@@ -393,7 +393,7 @@ constexpr auto operator|(lhs_config_t && lhs, rhs_config_t && rhs)
  */
 template <typename config_t>
 //!\cond
-    requires detail::config_element_specialisation<std::remove_cvref_t<config_t>>
+    requires config_element_specialisation<std::remove_cvref_t<config_t>>
 //!\endcond
 configuration(config_t &&) -> configuration<std::remove_cvref_t<config_t>>;
 //!\}
@@ -482,7 +482,7 @@ namespace std
  * \see std::tuple_size_v
  * \ingroup algorithm
  */
-template <seqan3::detail::config_element_specialisation ... configs_t>
+template <seqan3::config_element_specialisation ... configs_t>
 struct tuple_size<seqan3::configuration<configs_t...>>
 {
     //!\brief The number of elements.
@@ -494,7 +494,7 @@ struct tuple_size<seqan3::configuration<configs_t...>>
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  * \ingroup algorithm
  */
-template <size_t pos, seqan3::detail::config_element_specialisation ... configs_t>
+template <size_t pos, seqan3::config_element_specialisation ... configs_t>
 struct tuple_element<pos, seqan3::configuration<configs_t...>>
 {
     //!\brief The type of the config at position `pos`

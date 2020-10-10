@@ -13,7 +13,7 @@
 
 TEST(align_config_gap, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::gap_cost_affine>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<seqan3::align_cfg::gap_cost_affine>));
 }
 
 TEST(align_config_gap, configuration)

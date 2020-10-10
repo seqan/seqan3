@@ -29,7 +29,7 @@ TYPED_TEST_SUITE(align_confg_scoring_test, test_types, );
 TYPED_TEST(align_confg_scoring_test, config_element_specialisation)
 {
     using scheme_t = typename TestFixture::scheme_t;
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
 }
 
 TYPED_TEST(align_confg_scoring_test, configuration)

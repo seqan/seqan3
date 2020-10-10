@@ -46,7 +46,7 @@ TEST(search_config_parallel, member_variable)
 
 TEST(search_config_parallel, config_element_specialisation)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::search_cfg::parallel>));
+    EXPECT_TRUE((seqan3::config_element_specialisation<seqan3::search_cfg::parallel>));
 }
 
 TEST(search_config_parallel, configuration)
