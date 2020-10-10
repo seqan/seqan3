@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/configuration_utility.hpp>
+#include <seqan3/core/algorithm/concept.hpp>
 
 namespace seqan3::detail
 {
