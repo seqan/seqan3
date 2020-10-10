@@ -14,13 +14,12 @@
 
 #include <seqan3/std/concepts>
 
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/detail/concept.hpp>
 #include <seqan3/core/configuration/detail/configuration_utility.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/detail/transfer_type_modifier_onto.hpp>
 #include <seqan3/utility/tuple/pop_front.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
-#include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3
 {

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/core/configuration/detail/configuration_utility.hpp>
+#include <seqan3/core/configuration/detail/concept.hpp>
 
 namespace seqan3::detail
 {
