@@ -36,16 +36,45 @@ namespace seqan3::detail
 // Concept config_element_specialisation
 // ----------------------------------------------------------------------------
 
-//!\cond
-template <typename derived_t>
-class config_element_base;
-//!\endcond
-
-/*!\interface seqan3::detail::config_element_specialisation <>
- * \brief Concept for an algorithm configuration.
+#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+/*!\brief A helper class to check if a type has a static member called `id`.
  * \ingroup algorithm
  *
- * \extends    std::semiregular
+ * \details
+ *
+ * This class is needed for gcc versions older than 11. It adds a SFINAE check to test if a type
+ * has a static member called `id`, which is needed for the concept defintions around the
+ * pipeable configuration element concepts.
+ */
+struct config_id_accessor
+{
+private:
+    //!\brief Helper function to check if static id member exists.
+    template <typename config_t>
+    static constexpr auto has_id_member(int) -> decltype((static_cast<void>(config_t::id), true))
+    {
+        return true;
+    }
+
+    //!\overload
+    template <typename config_t>
+    static constexpr bool has_id_member(...)
+    {
+        return false;
+    }
+
+public:
+    //!\brief Variable template that evaluates to `true` if the type has a static id member, otherwise `false`.
+    template <typename config_t>
+    static constexpr bool has_id = has_id_member<config_t>(0);
+};
+#endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+
+/*!\interface seqan3::detail::config_element_specialisation <>
+ * \brief Concept for an algorithm configuration element.
+ * \ingroup algorithm
+ *
+ * \extends std::semiregular
  * \implements seqan3::pipeable_config_element
  */
 
@@ -60,10 +89,15 @@ class config_element_base;
 //!\}
 //!\cond
 template <typename config_t>
-SEQAN3_CONCEPT config_element_specialisation = std::semiregular<std::remove_reference_t<config_t>> &&
-requires (config_t c)
+SEQAN3_CONCEPT config_element_specialisation = requires
 {
-    { std::remove_reference_t<config_t>::id };
+    requires std::is_base_of_v<seqan3::pipeable_config_element<config_t>, config_t>;
+    requires std::semiregular<config_t>;
+#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+    requires config_id_accessor::has_id<config_t>;
+#else // ^^^ workaround / no workaround vvv
+    { config_t::id };
+#endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 };
 //!\endcond
 
