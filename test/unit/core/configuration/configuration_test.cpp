@@ -171,6 +171,72 @@ TEST(configuration, exists_by_type_template)
     EXPECT_FALSE(decltype(cfg)::exists<foo>());
 }
 
+TEST(configuration, append_configuration_element)
+{
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        auto new_cfg = cfg.append(bax{});
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        bax b{};
+        auto new_cfg = cfg.append(b);
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        bax b{};
+        auto new_cfg = cfg.append(std::as_const(b));
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<> cfg{};
+        bax b{};
+        auto new_cfg = cfg.append(std::as_const(b));
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<bax>>));
+    }
+}
+
+TEST(configuration, append_configuration)
+{
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        auto new_cfg = cfg.append(seqan3::configuration{bax{}});
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        seqan3::configuration cfg2{bax{}};
+        auto new_cfg = cfg.append(cfg2);
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<foo, bar> cfg{};
+        seqan3::configuration cfg2{bax{}};
+        auto new_cfg = cfg.append(std::as_const(cfg2));
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<foo, bar, bax>>));
+    }
+
+    {
+        seqan3::configuration<> cfg{};
+        seqan3::configuration cfg2{bax{}};
+        auto new_cfg = cfg.append(std::as_const(cfg2));
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<bax>>));
+    }
+
+    {
+        seqan3::configuration<> cfg{};
+        auto new_cfg = cfg.append(seqan3::configuration<>{});
+        EXPECT_TRUE((std::same_as<decltype(new_cfg), seqan3::configuration<>>));
+    }
+}
+
 TEST(configuration, remove_by_type)
 {
     {

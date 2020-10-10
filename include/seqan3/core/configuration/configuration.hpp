@@ -196,6 +196,69 @@ public:
     /*!\name Modifiers
      * \{
      */
+
+    /*!\brief Returns a new configuration by appending the given configuration to the current one.
+     *
+     * \tparam other_configuration_t Another configuration type or configuration element type; each configuration
+     *                               element must model seqan3::detail::config_element_pipeable_with each of the
+     *                               configurations elements of the current configuration.
+     *
+     * \param[in] other_config The other configuration to append to the current one.
+     *
+     * \returns A new configuration containing the appended configuration elements.
+     *
+     * \details
+     *
+     * This function generates a new configuration object containing the appended configuration elements. The current
+     * configuration will not be modified.
+     */
+    template <typename other_configuration_t>
+    //!\cond
+        requires (is_config_element_combineable_v<configs_t, std::remove_cvref_t<other_configuration_t>> && ...)
+    //!\endcond
+    constexpr auto append(other_configuration_t && other_config) const
+    {
+        if constexpr (detail::config_element<std::remove_cvref_t<other_configuration_t>>)
+        {
+            return configuration<configs_t..., std::remove_cvref_t<other_configuration_t>>
+            {
+                std::tuple_cat(static_cast<base_type>(*this),
+                               std::tuple{std::forward<other_configuration_t>(other_config)})
+            };
+        }
+        else
+        {
+            // The following type aliases are needed to extract the correct reference and const qualifiers for the
+            // given `other_configuration_t` type (input parameter).
+            // Note the alternative would be to repeat multiple interfaces with `other_config_t &`,
+            // `other_config_t const &`, `other_config_t &&` and `other_config_t const &&`.
+
+            // Get the actual base tuple type from the other configuration.
+            using other_base_t = typename std::remove_cvref_t<other_configuration_t>::base_type;
+            // The other base tuple type matching the const qualifier of the input parameter.
+            using other_base_maybe_const_t =
+                std::conditional_t<std::is_const_v<std::remove_reference_t<other_configuration_t>>,
+                                   std::add_const_t<other_base_t>,
+                                   other_base_t>;
+            // The other base tuple type matching the reference type and the const qualifier of the input parameter.
+            using fwd_other_base_t = std::conditional_t<std::is_lvalue_reference_v<other_configuration_t>,
+                                                        std::add_lvalue_reference_t<other_base_maybe_const_t>,
+                                                        std::add_rvalue_reference_t<other_base_maybe_const_t>>;
+
+            // Form a new seqan3::configuration type with the concatenated configuration element types of this and the
+            // other configuration.
+            using other_configs_list_t = detail::transfer_template_args_onto_t<other_base_t, type_list>;
+            using appended_configuration_t =
+                    detail::transfer_template_args_onto_t<list_traits::concat<type_list<configs_t...>,
+                                                                              other_configs_list_t>,
+                                                          configuration>;
+
+            // Concatenate the two configurations using their base tuple types.
+            return appended_configuration_t{std::tuple_cat(static_cast<base_type>(*this),
+                                                           static_cast<fwd_other_base_t>(other_config))};
+        }
+    }
+
     /*!\brief Remove a config element from the configuration.
      * \tparam query_t The config element type to remove from the configuration.
      * \returns A new configuration object without the config element identified by `query_t`.

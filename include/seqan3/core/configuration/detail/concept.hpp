@@ -181,3 +181,39 @@ SEQAN3_CONCEPT config_element_pipeable_with =
 //!\endcond
 
 } // namespace seqan3::detail
+
+namespace seqan3
+{
+//!\cond
+// Forward declaration.
+template <detail::config_element ... configs_t>
+class configuration;
+//!\endcond
+
+/*!\brief Helper variable template to test if a configuration element is combineable with another configuration element
+ *        or configuration.
+ * \ingroup algorithm
+ *
+ * \tparam config1_t The type of the configuration element to test.
+ * \tparam config2_t Either the type of another configuration element or another configuration.
+ *
+ * \details
+ *
+ * This helper variable template checks if `config1_t` fulfills the concept requirements
+ * seqan3::detail::config_element_pipeable_with `config2_t`. If `config2_t` is a seqan3::configuration, the check will
+ * be expanded to every configuration element contained in the configuration type. Only if `config1_t` is combineable
+ * with every element stored inside of the given configuration, this helper variable template evaluates to `true`,
+ * otherwise `false`.
+ */
+template <typename config1_t, typename config2_t>
+inline constexpr bool is_config_element_combineable_v = detail::config_element_pipeable_with<config1_t, config2_t>;
+
+//!\cond
+// Specialised for configs2_t == seqan3::configuration
+template <typename config1_t, typename ...configs_t>
+    requires (sizeof...(configs_t) > 0)
+inline constexpr bool is_config_element_combineable_v<config1_t, configuration<configs_t...>> =
+    (detail::config_element_pipeable_with<config1_t, configs_t> && ...);
+//!\endcond
+
+} // namespace seqan3
