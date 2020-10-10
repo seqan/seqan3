@@ -12,6 +12,40 @@
 
 #include "configuration_mock.hpp"
 
+namespace seqan3::detail
+{
+
+enum struct incompatible_id : uint8_t
+{
+    incompatible
+};
+
+} // namespace seqan3::detail
+
+class incompatible_config : private seqan3::pipeable_config_element
+{
+public:
+
+    incompatible_config() = default;
+    incompatible_config(incompatible_config const &) = default;
+    incompatible_config(incompatible_config &&) = default;
+    incompatible_config & operator=(incompatible_config const &) = default;
+    incompatible_config & operator=(incompatible_config &&) = default;
+    ~incompatible_config() = default;
+
+    static constexpr seqan3::detail::incompatible_id id = seqan3::detail::incompatible_id::incompatible;
+};
+
+TEST(pipeable_config_element, pipeable_concepts)
+{
+    EXPECT_TRUE(seqan3::detail::config_element<bar>);
+    EXPECT_TRUE(seqan3::detail::config_element<bax>);
+    EXPECT_TRUE(seqan3::detail::config_element<incompatible_config>);
+    EXPECT_TRUE((seqan3::detail::config_element_pipeable_with<bar, bax>));
+    EXPECT_FALSE((seqan3::detail::config_element_pipeable_with<bar, incompatible_config>));
+    EXPECT_FALSE((seqan3::detail::config_element_pipeable_with<incompatible_config, bax>));
+}
+
 TEST(pipeable_config_element, two_elements)
 {
     bar b1{};
