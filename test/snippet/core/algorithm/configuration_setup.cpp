@@ -7,7 +7,7 @@ enum struct my_id : int
     foo_id
 };
 
-class bar : public seqan3::pipeable_config_element<bar>
+class bar : private seqan3::pipeable_config_element
 {
 public:
 
@@ -22,7 +22,7 @@ public:
 };
 
 template <typename t>
-struct foo : public seqan3::pipeable_config_element<foo<t>>
+struct foo : private seqan3::pipeable_config_element
 {
 public:
 

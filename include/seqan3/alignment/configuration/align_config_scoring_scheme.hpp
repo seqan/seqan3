@@ -41,8 +41,9 @@ namespace seqan3::align_cfg
  * \include test/snippet/alignment/configuration/minimal_alignment_config.cpp
  */
 template <std::semiregular scoring_scheme_t>
-struct scoring_scheme : public pipeable_config_element<scoring_scheme<scoring_scheme_t>>
+class scoring_scheme : private pipeable_config_element
 {
+public:
     //!\brief The scoring scheme to be used in the alignment algorithm.
     scoring_scheme_t scheme{};
 

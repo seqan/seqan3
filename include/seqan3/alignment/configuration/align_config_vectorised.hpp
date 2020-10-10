@@ -38,7 +38,7 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_vectorised_example.cpp
  */
-class vectorised : public pipeable_config_element<vectorised>
+class vectorised : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment

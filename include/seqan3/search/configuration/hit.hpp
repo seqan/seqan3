@@ -29,7 +29,7 @@ namespace seqan3::search_cfg
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit_all : public pipeable_config_element<hit_all>
+class hit_all : private pipeable_config_element
 {
 public:
     /*!\name Constructors, assignment and destructor
@@ -52,7 +52,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit_all_best : public pipeable_config_element<hit_all_best>
+class hit_all_best : private pipeable_config_element
 {
 public:
     /*!\name Constructors, assignment and destructor
@@ -75,7 +75,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit_single_best : public pipeable_config_element<hit_single_best>
+class hit_single_best : private pipeable_config_element
 {
 public:
     /*!\name Constructors, assignment and destructor
@@ -99,7 +99,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit_strata : public pipeable_config_element<hit_strata>
+class hit_strata : private pipeable_config_element
 {
 public:
     //!\brief The stratum value [default: 0].
@@ -131,7 +131,7 @@ public:
  * \ingroup search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
-class hit : public pipeable_config_element<hit>
+class hit : private pipeable_config_element
 {
 public:
     /*!\brief The type of the std::variant holding the hit configuration element alternatives
