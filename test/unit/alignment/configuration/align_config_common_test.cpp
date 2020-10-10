@@ -11,75 +11,75 @@
 
 #include <seqan3/alignment/configuration/all.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
+#include <seqan3/core/type_list/traits.hpp>
 
-template <typename T>
-class alignment_configuration_test : public ::testing::Test
-{};
+#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+
+// Define some aliases to make the list below more readable.
+namespace cfg = seqan3::align_cfg;
 
 using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_result_value_type<int, int, int>>;
+using nt_scheme = seqan3::nucleotide_scoring_scheme<int8_t>;
 
-using test_types = ::testing::Types<seqan3::align_cfg::band_fixed_size,
-                                    seqan3::align_cfg::gap_cost_affine,
-                                    seqan3::align_cfg::min_score,
-                                    seqan3::align_cfg::method_global,
-                                    seqan3::align_cfg::method_local,
-                                    seqan3::align_cfg::parallel,
-                                    seqan3::align_cfg::scoring_scheme<seqan3::nucleotide_scoring_scheme<int8_t>>,
-                                    seqan3::align_cfg::vectorised,
-                                    seqan3::align_cfg::detail::result_type<alignment_result_t>,
-                                    seqan3::align_cfg::detail::debug>;
+// Needed for the on result config
+auto on_result_callback = [] ([[maybe_unused]] auto && res) { };
+using callback_t = decltype(on_result_callback);
 
-TYPED_TEST_SUITE(alignment_configuration_test, test_types, );
+// A list of config types to test, associated with their incompatible config classes defined as a tabu-list.
+// We later use this tabu-list to generate a configuration object containing only the valid combinations for each
+// test type.
+using align_config_and_tabu_types = seqan3::type_list<
+    // method configs
+    std::pair<cfg::method_global, seqan3::type_list<cfg::method_global, cfg::method_local>>,
+    std::pair<cfg::method_local, seqan3::type_list<cfg::method_local, cfg::method_global, cfg::min_score>>,
+    // output configs
+    std::pair<cfg::output_sequence1_id, seqan3::type_list<cfg::output_sequence1_id>>,
+    std::pair<cfg::output_sequence2_id, seqan3::type_list<cfg::output_sequence2_id>>,
+    std::pair<cfg::output_score, seqan3::type_list<cfg::output_score>>,
+    std::pair<cfg::output_begin_position, seqan3::type_list<cfg::output_begin_position>>,
+    std::pair<cfg::output_end_position, seqan3::type_list<cfg::output_end_position>>,
+    std::pair<cfg::output_alignment, seqan3::type_list<cfg::output_alignment>>,
+    // other configs
+    std::pair<cfg::band_fixed_size, seqan3::type_list<cfg::band_fixed_size>>,
+    std::pair<cfg::detail::debug, seqan3::type_list<cfg::detail::debug>>,
+    std::pair<cfg::gap_cost_affine, seqan3::type_list<cfg::gap_cost_affine>>,
+    std::pair<cfg::min_score, seqan3::type_list<cfg::min_score, cfg::method_local>>,
+    std::pair<cfg::on_result<callback_t>, seqan3::type_list<cfg::on_result<callback_t>>>,
+    std::pair<cfg::parallel, seqan3::type_list<cfg::parallel>>,
+    std::pair<cfg::detail::result_type<alignment_result_t>, seqan3::type_list<cfg::detail::result_type<alignment_result_t>>>,
+    std::pair<cfg::score_type<int32_t>, seqan3::type_list<cfg::score_type<int32_t>>>,
+    std::pair<cfg::scoring_scheme<nt_scheme>, seqan3::type_list<cfg::scoring_scheme<nt_scheme>>>,
+    std::pair<cfg::vectorised, seqan3::type_list<cfg::vectorised>>
+    >;
 
-// TODO: this should go to a typed configuration test that also checks the alignment configuration
-TEST(alignment_configuration_test, symmetric_configuration)
+// The pure list of configuration elements to instantiate the typed test case with.
+using align_config_types = pure_config_type_list<align_config_and_tabu_types>;
+
+template <typename config_t>
+class test_fixture
 {
-    for (uint8_t i = 0; i < static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE); ++i)
-    {
-        // no element can occur twice in a configuration
-        EXPECT_FALSE(seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[i][i])
-            << "There is a TRUE value on the diagonal of the search configuration matrix.";
-        for (uint8_t j = 0; j < i; ++j)
-        {
-            // symmetric matrix
-            EXPECT_EQ(seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[i][j],
-                      seqan3::detail::compatibility_table<seqan3::detail::align_config_id>[j][i])
-                << "Search configuration matrix is not symmetric.";
-        }
-    }
-}
+public:
+    // The actual config type that is tested.
+    using config_type = config_t;
+    // The tabu list associated with the given TypeParam element.
+    using tabu_list_type =
+        typename seqan3::list_traits::at<seqan3::list_traits::find<config_type, align_config_types>, // determine the index
+                                         align_config_and_tabu_types>::second_type; // extract the tabu list.
 
-TEST(alignment_configuration_test, number_of_configs)
-{
-    // NOTE(rrahn): You must update this test if you add a new value to seqan3::align_cfg::id
-    EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 18);
-}
+    // A compatible configuration type for the current configuration element to test.
+    using compatible_configuration_type = make_pipeable_configuration<align_config_types, tabu_list_type>;
 
-TYPED_TEST(alignment_configuration_test, config_element_specialisation)
-{
-    EXPECT_TRUE((seqan3::config_element_specialisation<TypeParam>));
-}
+    using config_id_type = seqan3::detail::align_config_id;
 
-TYPED_TEST(alignment_configuration_test, configuration_exists)
-{
-    seqan3::configuration cfg{TypeParam{}};
-    EXPECT_TRUE(decltype(cfg)::template exists<TypeParam>());
-}
+    // NOTE: You must update this number if you add a new entity to seqan3::align_cfg::id.
+    static constexpr int8_t config_count = 18;
+};
 
-template <typename t, typename cfg_t>
-void helper_exists()
-{
-    EXPECT_TRUE(cfg_t::template exists<t>());
-}
+// Configuration element type list as gtest suitable testing::Types
+using fixture_types = seqan3::list_traits::transform<test_fixture, align_config_types>;
+using test_types = seqan3::detail::transfer_template_args_onto_t<fixture_types, ::testing::Types>;
 
-template <template <typename ...> typename t, typename cfg_t>
-void helper_exists()
-{
-    EXPECT_TRUE(cfg_t::template exists<t>());
-}
+TYPED_TEST_SUITE(alignment_configuration_fixture, test_types, );
 
-TYPED_TEST(alignment_configuration_test, configuration_exists_template)
-{
-    seqan3::configuration cfg{TypeParam{}};
-    helper_exists<TypeParam, decltype(cfg)>();
-}
+INSTANTIATE_TYPED_TEST_SUITE_P(alignment_configuration_test, pipeable_config_element_test, test_types, );
