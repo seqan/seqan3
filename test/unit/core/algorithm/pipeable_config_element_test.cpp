@@ -14,9 +14,9 @@
 
 TEST(pipeable_config_element, two_elements)
 {
-    // lvalue | lvalue
     bar b1{};
     bax b2{};
+    // lvalue | lvalue
     {
         auto cfg = b1 | b2;
         EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
@@ -79,25 +79,25 @@ TEST(pipeable_config_element, element_with_configuration)
     // lvalue | lvalue
     {
         auto cfg = b2 | tmp;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
     }
 
     // rvalue | lvalue
     {
         auto cfg = bax{} | tmp;
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
     }
 
     // lvalue | rvalue
     {
         auto cfg = b2 | seqan3::configuration<bar>{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
     }
 
     // rvalue | rvalue
     {
         auto cfg = bax{} | seqan3::configuration<bar>{};
-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
     }
 }
 
@@ -127,6 +127,39 @@ TEST(pipeable_config_element, configuration_with_configuration)
     {
         auto cfg = seqan3::configuration<bar>{} | seqan3::configuration<bax>{};
         EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
+    }
+}
+
+TEST(pipeable_config_element, special_cases)
+{
+    // with empty configuration on left hand side
+    {
+        auto cfg = seqan3::configuration<>{} | bax{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax>>));
+    }
+
+    // with empty configuration on left hand side
+    {
+        auto cfg = seqan3::configuration<>{} | seqan3::configuration{bax{}};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax>>));
+    }
+
+    // with empty configuration on right hand side
+    {
+        auto cfg = bax{} | seqan3::configuration<>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax>>));
+    }
+
+    // with empty configuration on right hand side
+    {
+        auto cfg = seqan3::configuration{bax{}} | seqan3::configuration<>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax>>));
+    }
+
+    // with two empty configurations
+    {
+        auto cfg = seqan3::configuration<>{} | seqan3::configuration<>{};
+        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<>>));
     }
 }
 
