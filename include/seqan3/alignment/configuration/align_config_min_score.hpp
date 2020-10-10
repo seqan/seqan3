@@ -33,7 +33,7 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_min_score_example.cpp
  */
-class min_score : public pipeable_config_element<min_score>
+class min_score : private pipeable_config_element
 {
 public:
     //!\brief Minimal score for the distance computation [default: -infinity].

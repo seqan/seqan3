@@ -13,36 +13,20 @@
 
 #pragma once
 
-#include <tuple>
-#include <type_traits>
-
-#include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3
 {
 
 /*!\brief Adds pipe interface to configuration elements.
  * \ingroup algorithm
- * \tparam derived_t The type of the derived class.
+ *
+ * \details
+ *
+ * An empty base class which is used by the algorithm configurations to be identified as a configuration element and
+ * to compose an algorithm configuration using the pipe-operator.
  */
-template <typename derived_t>
-class pipeable_config_element<derived_t>
-{
-private:
-    //!\brief Befriend the derived class.
-    friend derived_t;
-
-    /*!\name Constructor, destructor and assignment
-     * \{
-     */
-    constexpr pipeable_config_element() = default; //!< Defaulted.
-    constexpr pipeable_config_element(pipeable_config_element const &) = default; //!< Defaulted.
-    constexpr pipeable_config_element(pipeable_config_element &&) = default; //!< Defaulted.
-    constexpr pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
-    constexpr pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
-    ~pipeable_config_element() = default; //!< Defaulted.
-    //!\}
-};
+struct pipeable_config_element
+{};
 
 } // namespace seqan3

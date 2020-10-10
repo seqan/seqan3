@@ -42,7 +42,7 @@ template <typename alignment_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<alignment_result_t, seqan3::alignment_result>
 //!\endcond
-class result_type : public pipeable_config_element<result_type<alignment_result_t>>
+class result_type : private pipeable_config_element
 {
 public:
     //!\brief The result type.

@@ -39,7 +39,7 @@ namespace seqan3::align_cfg
  *
  * \include test/snippet/alignment/configuration/align_cfg_method_local.cpp
  */
-class method_local : public pipeable_config_element<method_local>
+class method_local : private pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment
@@ -102,7 +102,7 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
  * \ingroup alignment_configuration
  * \copydetails seqan3::align_cfg::method_local
  */
-class method_global : public pipeable_config_element<method_global>
+class method_global : private pipeable_config_element
 {
 public:
     /*!\name Constructors, destructor and assignment
