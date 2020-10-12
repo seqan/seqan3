@@ -19,7 +19,7 @@ The following API changes should be documented as such:
   * a previously experimental interface now being marked as stable
   * an interface being removed
   * syntactical changes to an interface (e.g. renaming or reordering of files, functions, parameters)
-  * semantical changes to an interface (e.g. a function's result is now always one larger) [DANGEROUS!]
+  * semantic changes to an interface (e.g. a function's result is now always one larger) [DANGEROUS!]
 
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
@@ -28,22 +28,24 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
 
-* Check out our new \ref cookbook "SeqAn3 Cookbook". It contains a listing of code examples on how to perform
-  particular tasks using the library.
+* Check out our new [SeqAn3 Cookbook](https://docs.seqan.de/seqan/3.0.2/cookbook.html). It contains a listing of code
+  examples on how to perform particular tasks using the library.
+
+* SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
+  but weren’t yet available at the time of this release.
 
 ## New features
 
 #### Alignment
 
-* The alignment algorithm can now be invoked with a user defined callback function
-  ([\#1876](https://github.com/seqan/seqan3/pull/1876)).
-* The function `seqan3::align_pairwise` accepts a std::pair of sequences as input
+* The alignment algorithm can now be invoked with a user defined callback function using the alignment configuration
+  `seqan3::align_cfg::on_result` ([\#1876](https://github.com/seqan/seqan3/pull/1876)).
+* The function `seqan3::align_pairwise` accepts a `std::pair` of sequences as input
   ([\#1913](https://github.com/seqan/seqan3/pull/1913)).
 * We lowered the requirements of the `seqan3::aligned_sequence` concept by removing everything that needs write
   access to the object. We then added a new `seqan3::writable_aligned_sequence` concept which extends
-  `seqan3::aligned_sequence` by the requirements that need write access (e.g. `insert_gap`).
-* Configuration: Change the `align_cfg::max_error` to `align_cfg::min_score` and thus prepare it for non-edit scoring
-  schemes in the future as well ([\#2021](https://github.com/seqan/seqan3/pull/2021)).
+  `seqan3::aligned_sequence` with the requirements that need write access (e.g. `insert_gap`)
+  ([\#1933](https://github.com/seqan/seqan3/pull/1933)).
 
 #### Argument Parser
 
@@ -53,19 +55,25 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * `seqan3::argument_parser::add_subsection`
   * `seqan3::argument_parser::add_line`
   * `seqan3::argument_parser::add_list_item`
-  Note that other `seqan3::argument_parser::option_spec`s like `REQUIRED` are ignored.
+  Note that other `seqan3::argument_parser::option_spec`s like `REQUIRED` are ignored
+  ([\#1652](https://github.com/seqan/seqan3/pull/1652)).
 
 #### I/O
 
-* The `seqan3::format_fasta` accepts the file extenstion `.fas` as a valid extension for the FASTA format
+* The `seqan3::format_fasta` accepts the file extension `.fas` as a valid extension for the FASTA format
   ([\#1599](https://github.com/seqan/seqan3/pull/1599)).
 
 #### Build system
 
-* Add top-level `CMakeLists.txt`
-  ([\#1475](https://github.com/seqan/seqan3/pull/1475)).
-* We now use Doxygen version 1.8.20 to build our documentation
-  ([\#1500](https://github.com/seqan/seqan3/pull/2081)).
+* Add top-level `CMakeLists.txt` ([\#1475](https://github.com/seqan/seqan3/pull/1475)).
+* We now use Doxygen version 1.8.20 to build our documentation ([\#2081](https://github.com/seqan/seqan3/pull/2081)).
+
+#### Range
+
+* The `seqan3::views::minimiser` has been added. This is a view that computes the minimum in a window shifted over a
+  range of comparable values ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
+* The `seqan3::views::minimiser_hash` has been added. This is a view that computes the minimisers of a range of type
+  `seqan3::semialphabet` ([\#1721](https://https://github.com/seqan/seqan3/pull/1721)).
 
 #### Search
 
@@ -82,109 +90,147 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   We now support the versions >= 0.11.0 and < 0.12.0, increasing the previous requirement of >= 0.10.0 and < 0.11.0
   ([\#2014](https://github.com/seqan/seqan3/pull/2014)).
 
-### Alignment
+#### Alignment
 
-* The alignment configuration elements were refactored:
-  * The option `seqan3::align_cfg::band` is now renamed to `seqan3::align_cfg::band_fixed_size` and directly initialised
-    with a `seqan3::align_cfg::lower_diagonal` and `seqan3::align_cfg::upper_diagonal` instead of `seqan3::static_band`.
-    It also directly exposes the lower_diagonal and upper_diagonal as public members
-    ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
-* The seqan3::align_cfg::mode configuration has been adapted. The algorithm can now be configured using one of the
-  pipeable configuration elements seqan3::align_cfg::method_global or seqan3::align_cfg::method_local
-  ([\#1918](https://github.com/seqan/seqan3/pull/1918)).
-* The `seqan3::align_cfg::vectorise` configuration has been renamed to `seqan3::align_cfg::vectorised`
-  ([\#2026](https://github.com/seqan/seqan3/pull/2026)).
-* The `seqan3::align_cfg::scoring` configuration has been renamed to `seqan3::align_cfg::scoring_scheme`
-  ([\#2027](https://github.com/seqan/seqan3/pull/2027)).
-* The `seqan3::align_cfg::result` configuration has been replaced by
-  [`seqan3::align_cfg::output_*` options](http://docs.seqan.de/seqan/3.0.2/group__alignment.html).
-  The default behaviour when not specifying any output configuration has changed from computing only the score to
-  computing everything. Please read the linked documentation above carefully to understand all implied changes
-  ([\#2024](https://github.com/seqan/seqan3/pull/2024)) & ([\#2035](https://github.com/seqan/seqan3/pull/2035)).
-* The `seqan3::align_cfg::gap` configuration has been replaced by `seqan3::align_cfg::gap_cost_affine`
-  ([\#2037](https://github.com/seqan/seqan3/pull/2037)).
+* The alignment configuration elements have been refactored:
+  * All options are now classes and must be constructed explicitly even if they don’t take any arguments,
+    e.g. `seqan3::align_cfg::vectorise` -> `seqan3::align_cfg::vectorised{}`.
+  * The configuration `seqan3::align_cfg::band` has been replaced by `seqan3::align_cfg::band_fixed_size`,
+    and will directly be initialised with a `seqan3::align_cfg::lower_diagonal` and `seqan3::align_cfg::upper_diagonal`
+    instead of a `seqan3::static_band` class. It also directly exposes the `lower_diagonal` and `upper_diagonal` as
+    public members ([\#1873](https://github.com/seqan/seqan3/pull/1873)).
+  * The configuration `seqan3::align_cfg::mode` has been replaced by two separate configuration elements
+    `seqan3::align_cfg::method_global` and `seqan3::align_cfg::method_local`
+    ([\#1918](https://github.com/seqan/seqan3/pull/1918)).
+  * The configuration `seqan3::align_cfg::aligned_ends` has been replaced by `seqan3::align_cfg::method_global`. The
+    free end-gaps are now initialised via constructor arguments to the `seqan3::align_cfg::method_global` configuration
+    ([\#2119](https://github.com/seqan/seqan3/pull/2119)).
+  * The configuration `seqan3::align_cfg::vectorise` has been replaced by `seqan3::align_cfg::vectorised`
+    ([\#2026](https://github.com/seqan/seqan3/pull/2026)).
+  * The configuration `seqan3::align_cfg::scoring` has been replaced by `seqan3::align_cfg::scoring_scheme`
+    ([\#2027](https://github.com/seqan/seqan3/pull/2027)).
+  * The configuration `seqan3::align_cfg::result` has been replaced by
+    [`seqan3::align_cfg::output_*` options](https://docs.seqan.de/seqan/3.0.2/group__alignment.html).
+    When no output configuration was configured, the default behaviour changed from computing only the score to
+    all possible outputs. Please read the linked documentation above carefully to understand all implied changes
+    ([\#2024](https://github.com/seqan/seqan3/pull/2024) & [\#2035](https://github.com/seqan/seqan3/pull/2035)).
+  * The configuration `seqan3::align_cfg::gap` has been replaced by `seqan3::align_cfg::gap_cost_affine`, which is
+    directly initialised with the relevant gap scores ([\#2037](https://github.com/seqan/seqan3/pull/2037)).
+  * The configuration `seqan3::align_cfg::max_error` has been replaced by `seqan3::align_cfg::min_score`, and thus
+    prepares it for non-edit scoring schemes in the future as well
+    ([\#2021](https://github.com/seqan/seqan3/pull/2021)).
 
-### Core
+Header Changes:
 
-* In accordance with the standard, the following concepts are renamed:
-  * `default_constructible` to `default_initializable`
-  * `readable` to `indirectly_readable`
-  * `writable` to `indirectly_writable` ([\#1860](https://github.com/seqan/seqan3/pull/1860)).
+```cpp
+#include <seqan3/alignment/configuration/{align_config_max_error.hpp => align_config_min_score.hpp}>
+#include <seqan3/alignment/configuration/{align_config_scoring.hpp => align_config_scoring_scheme.hpp}>
+#include <seqan3/alignment/configuration/{align_config_vectorise.hpp => align_config_vectorised.hpp}>
+#include <seqan3/alignment/configuration/{align_config_gap.hpp => align_config_gap_cost_affine.hpp}>
+#include <seqan3/alignment/configuration/{align_config_mode.hpp => align_config_method.hpp}>
+#include <seqan3/alignment/configuration/{align_config_result.hpp => align_config_score_type.hpp}>
+
+#include <seqan3/alignment/configuration/align_config_aligned_ends.hpp> [deleted without replacement; is now part of seqan3::align_cfg::method_global]
+
+#include <seqan3/{alignment/pairwise => core/algorithm}/alignment_range.hpp>
+```
+
+#### Core
+
+* In accordance with the standard, the following concepts have been renamed:
+  * `std::default_constructible` to `std::default_initializable`
+  * `std::readable` to `std::indirectly_readable`
+  * `std::writable` to `std::indirectly_writable` ([\#1860](https://github.com/seqan/seqan3/pull/1860)).
+* The `seqan3::remove_cvref_t` has been replaced by `std::remove_cvref_t`
+  ([\#2079](https://github.com/seqan/seqan3/pull/2079)).
 
 #### Range
 
 * The `seqan3::begin()`, `seqan3::end()`, `seqan3::cbegin()`, `seqan3::cend()`, `seqan3::size()`, `seqan3::empty()`
-  functions have been deprecated:
-  Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
-* We removed `seqan3::forward_range`. Use `std::ranges::borrowed_range` instead ([\#2038](https://github.com/seqan/seqan3/pull/2038)).
-* Added `seqan3::views::minimiser`, a view that computes the minimum in a window shifted over a range of comparable values.
-  ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
-* Added `seqan3::views::minimiser_hash`, a view that computes the minimisers of a range of type seqan3::semialphabet.
-  ([\#1721](https://https://github.com/seqan/seqan3/pull/1721)).
-* `seqan3::views:trim` has been renamed to `seqan3::views:trim_quality`.
+  functions have been deprecated. Use `std::ranges::{begin|end|cbegin|cend|size|empty}()` instead
+  ([\#1663](https://github.com/seqan/seqan3/pull/1663)).
+* The `seqan3::forward_range` has been removed. Use `std::ranges::borrowed_range` instead
+  ([\#2038](https://github.com/seqan/seqan3/pull/2038)).
+* The `seqan3::views:trim` has been renamed to `seqan3::views:trim_quality`
+  ([\#2025](https://https://github.com/seqan/seqan3/pull/2025)).
+
+Header Changes:
+
+```cpp
+#include <seqan3/range/views/{trim.hpp => trim_quality.hpp}>
+```
 
 #### Search
 
 * Moved `seqan3::search` from `search/algorithm/` to `search/` ([\#1696](https://github.com/seqan/seqan3/pull/1696)).
-* The `seqan3::search_result_range` returns now a `seqan3::search_result` which unifies the interface for all search
+* The `seqan3::search_result_range` returns now a `seqan3::search_result` which unifies the interface for all the search
   instances, e.g. using an index over a single text or a text collection
   ([\#1706](https://github.com/seqan/seqan3/pull/1706)).
 * Configuration refactoring:
-  * The structure of the max error configuration has changed and is now splitted in individual config elements. You can
-    also combine error counts and error rates now ([\#1861](https://github.com/seqan/seqan3/pull/1861)):
-    `seqan3::search_cfg::max_error` and `seqan3::search_cfg::max_error_rate` which could be `seqan3::search_cfg::total`,
-    `seqan3::search_cfg::substitution`, `seqan3::search_cfg::insertion` or `seqan3::search_cfg::deletion` to
-    `seqan3::search_cfg::max_error_total`, `seqan3::search_cfg::max_error_substitution`,
-    `seqan3::search_cfg::max_error_insertion` or `seqan3::search_cfg::max_error_deletion`which can be
-    `seqan3::search_cfg::error_count` or `seqan3::search_cfg::error_rate`.
-  * The names for the search mode configuration have changed and are now individual config elements
-    that are pipeable ([\#1639](https://github.com/seqan/seqan3/pull/1639)):
-    `seqan3::search_cfg::all` to `seqan3::search_cfg::hit_all`
-    `seqan3::search_cfg::best` to `seqan3::search_cfg::hit_single_best`
-    `seqan3::search_cfg::all_best` to `seqan3::search_cfg::hit_all_best`
-    `seqan3::search_cfg::strata{5}` to `seqan3::search_cfg::hit_strata{5}`
-  * The configuration element `seqan3::search_cfg::mode` does not exist anymore.
-    You can replace it by directly using one of the above mentioned "hit strategy" configuration elements
-    ([\#1639](https://github.com/seqan/seqan3/pull/1639)).
-  * The configuration element `seqan3::search_cfg::output` does not exist anymore. It has been replaced by the
-    individual configuration elements
-    * `seqan3::search_cfg::output_query_id`
-    * `seqan3::search_cfg::output_reference_id`
-    * `seqan3::search_cfg::output_reference_begin_position`
-    * `seqan3::search_cfg::output_index_cursor`
-    see the \ref search_configuration_subsection_output "output configuration" for further details.
+  * The configuration `seqan3::search_cfg::max_error` has been replaced by individual configuration elements:
+    * `seqan3::search_cfg::max_error{seqan3::search_cfg::total}` to `seqan3::search_cfg::max_error_total{}`
+    * `seqan3::search_cfg::max_error{seqan3::search_cfg::insertion}` to `seqan3::search_cfg::max_error_insertion{}`
+    * `seqan3::search_cfg::max_error{seqan3::search_cfg::deletion}` to `seqan3::search_cfg::max_error_deletion{}`
+    * `seqan3::search_cfg::max_error{seqan3::search_cfg::substitution}` to
+      `seqan3::search_cfg::max_error_substitution{}` ([\#1861](https://github.com/seqan/seqan3/pull/1861)).
+  * The max error configurations can be initialised with either a `seqan3::search_cfg::error_rate` or
+    `seqan3::search_cfg::error_count`, and can be reassigned ([\#1861](https://github.com/seqan/seqan3/pull/1861)).
+  * The configuration `seqan3::search_cfg::mode` has been replaced by individual configuration elements
+    ([\#1639](https://github.com/seqan/seqan3/pull/1639)):
+    * `seqan3::search_cfg::mode{seqan3::search_cfg::all}` to `seqan3::search_cfg::hit_all{}`
+    * `seqan3::search_cfg::mode{seqan3::search_cfg::best}` to `seqan3::search_cfg::hit_single_best{}`
+    * `seqan3::search_cfg::mode{seqan3::search_cfg::all_best}` to `seqan3::search_cfg::hit_all_best{}`
+    * `seqan3::search_cfg::mode{seqan3::search_cfg::strata{5}}` to `seqan3::search_cfg::hit_strata{5}`
+    * The `seqan3::search_cfg::hit_strata` member variable `value` has been replaced to `stratum`
+  * The configuration`seqan3::search_cfg::output` has been replaced by individual configuration elements
+    ([\#1862](https://github.com/seqan/seqan3/pull/1862)):
+    * `seqan3::search_cfg::output{seqan3::search_cfg::text_position}` to `seqan3::search_cfg::output_reference_begin_position{}`
+    * `seqan3::search_cfg::output{seqan3::search_cfg::text_position}` to `seqan3::search_cfg::output_index_cursor`
+    * `seqan3::search_cfg::output_query_id{}` has been added
+    * `seqan3::search_cfg::output_reference_id{}` has been added
 * Removed `seqan3::bi_fm_index_cursor::to_rev_cursor()` and `seqan3::bi_fm_index::rev_cursor()`
   ([\#1892](https://github.com/seqan/seqan3/pull/1892)).
 
+Header Changes:
+
+```cpp
+#include <seqan3/search/{algorithm => }/search.hpp>
+#include <seqan3/{search/search_result_range.hpp => core/algorithm/algorithm_result_generator_range.hpp}>
+
+#include <seqan3/search/configuration/{mode.hpp => hit.hpp}>
+#include <seqan3/search/configuration/{max_error_rate.hpp => max_error.hpp AND max_error_common.hpp}>
+```
+
 ## Notable Bug-fixes
 
-### Alignment
+#### Alignment
 
 * When invoking the alignment algorithm with a user defined thread count using the `seqan3::align_cfg::parallel`
-  configuration element, `std::thread::hardware_concurrency()` many threads were always spawned. This is now fixed and
+  configuration element, all available threads were used. This is now fixed and
   only the specified number of threads will be spawned ([\#1854](https://github.com/seqan/seqan3/pull/1854)).
-* Using an unsigned `score_type` is prevented with a static assert, since gaps and mismatches have negative scores and
-  thus need a signed score type ([\#1891](https://github.com/seqan/seqan3/pull/1891)).
+* Using an unsigned score type via the `seqan3::align_cfg::score_type` configuration is prevented with a static assert,
+  since gaps and mismatches have negative scores and thus need a signed score type
+  ([\#1891](https://github.com/seqan/seqan3/pull/1891)).
 
-### Argument Parser
+#### Argument Parser
 
 * Long option identifiers and their value must be separated by a space or equal sign `=`.
-  Handling this restriction resolves the ambiguity if one long option identifier is the prefix of
+  Applying this restriction resolves an ambiguity that occurs if one long option identifier is the prefix of
   another ([\#1792](https://github.com/seqan/seqan3/pull/1792)).
 
   Valid short id value pairs: `-iValue`, `-i=Value`, `-i Value`
   Valid long id value pairs: `--id=Value`, `--id Value` (prohibited now: `--idValue`)
 
-### I/O
+#### I/O
 
 * The `seqan3::field::cigar` was added to the default fields for reading and writing alignment files
   ([\#1642](https://github.com/seqan/seqan3/pull/1642)).
   This has the following impact:
-   1. Reading and writing in one line is now possible without additional reference information:
+    1. Reading and writing in one line is now possible without additional reference information:
       `seqan3::alignment_file_output{"foo.sam"} = seqan3::alignment_file_input{"bar.sam"};`
-   2. The `seqan3::alignment_file_output` now accepts `seqan3::field::cigar` and `seqan3::field::alignment`
-      although they store redundant information. For the SAM/BAM format this ambiguity is handled by favoring the CIGAR
-      information at all times if present.
+    2. The `seqan3::alignment_file_output` now accepts `seqan3::field::cigar` and `seqan3::field::alignment`
+       although they store redundant information. For the SAM/BAM format this ambiguity is handled by favouring the
+       CIGAR information at all times if present.
   Note that this breaks your code if you have not selected custom fields and used structural bindings!
 
 #### Search
@@ -197,7 +243,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 
 #### Range
 
-* Added size() function to `seqan3::views::kmer_hash`
+* Added `size()` function to `seqan3::views::kmer_hash`
   ([\#1722](https://github.com/seqan/seqan3/pull/1722)).
 * `operator[](difference_type const n)` of the iterator of the `seqan3::views::kmer_hash` is declared `const`
   and returns value `n` steps after the current position without jumping to that position
@@ -223,7 +269,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1340](https://github.com/seqan/seqan3/pull/1340)).
 * The function`seqan3::align_pairwise` can be parallelised using the`seqan3::align_cfg::parallel` configuration
   ([\#1379](https://github.com/seqan/seqan3/pull/1379),
-   [\#1444](https://github.com/seqan/seqan3/pull/1444)).
+  [\#1444](https://github.com/seqan/seqan3/pull/1444)).
 
 #### Argument parser
 
@@ -250,8 +296,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1141](https://github.com/seqan/seqan3/pull/1141)).
 * Added traits for "metaprogramming" with `seqan3::type_list` and type packs
   ([\#1204](https://github.com/seqan/seqan3/pull/1204),
-   [\#1214](https://github.com/seqan/seqan3/pull/1214),
-   [\#1273](https://github.com/seqan/seqan3/pull/1273)).
+  [\#1214](https://github.com/seqan/seqan3/pull/1214),
+  [\#1273](https://github.com/seqan/seqan3/pull/1273)).
 * Added SIMD functions `seqan3::upcast` and `seqan3::upcast_signed`
   ([\#1190](https://github.com/seqan/seqan3/pull/1190)).
 
@@ -270,7 +316,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * Asynchronous input (background file reading) supported via `seqan3::view::async_input_buffer`
   ([\#1205](https://github.com/seqan/seqan3/pull/1205)).
 
-### Range
+#### Range
 
 * Added `seqan3::views::kmer_hash`, a view that computes hash values of an alphabet sequence given a
   `seqan3::shape`
@@ -295,7 +341,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The memory footprint of FM-indices over text collections was reduced
   ([\#1363](https://github.com/seqan/seqan3/pull/1363)).
 
-### Std
+#### Std
 
 * We provide a `std::to_chars` overload for floating point data types in our `seqan3/std/from_chars` header
   ([\#1160](https://github.com/seqan/seqan3/pull/1160)).
