@@ -1,6 +1,13 @@
 name: SeqAn3 CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      # Push events to branches matching refs/heads/seqan/seqan3
+      - 'seqan/seqan3'
+      # Push events to branches matching refs/heads/releases/*
+      - 'releases/**'
+  pull_request:
 
 env:
   CMAKE_VERSION: 3.7.2
