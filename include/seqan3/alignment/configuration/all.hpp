@@ -5,14 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
- /*!\file
-  * \brief Meta-header for the \link configuration alignment configuration module \endlink.
-  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  */
+/*!\file
+ * \brief Meta-header for the \link configuration alignment configuration module \endlink.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
 
- #pragma once
+#pragma once
 
-#include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
@@ -22,8 +21,9 @@
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
-#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
+#include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
+#include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/configuration/detail.hpp>
 

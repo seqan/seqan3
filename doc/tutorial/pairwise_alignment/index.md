@@ -108,13 +108,13 @@ for the alignment are defined in the special namespace seqan3::align_cfg.
 The most straightforward algorithm is the global alignment which can be configured using the
 seqan3::align_cfg::method_global.
 
-\remark The method configuration must be given by the user as it strongly depends on the application context.
-It would be wrong for us to assume what the intended default behaviour should be.
+\note The method configuration must be given by the user as it strongly depends on the application context.
+      It would be wrong for us to assume what the intended default behaviour should be.
 
 The global alignment can be further refined by initialising the seqan3::align_cfg::method_global configuration element
-with the free end gap specifiers. They specify whether gaps at the end of the sequences are penalised.
+with the free end-gap specifiers. They specify whether gaps at the end of the sequences are penalised.
 In SeqAn you can configure this behaviour for every end, namely for leading and trailing gaps of the first and second
-sequence. seqan3::align_cfg::method_global is constructed with 4 free end gap specifiers (one for every end):
+sequence. seqan3::align_cfg::method_global is constructed with 4 free end-gap specifiers (one for every end):
 
  - seqan3::align_cfg::free_end_gaps_sequence1_leading - If set to true, aligning leading gaps in first sequence is
                                                         not penalised.
@@ -151,14 +151,14 @@ for sequence 1 set to `true`, and those for sequence 2 with `false`.
 ## Scoring schemes and gap schemes
 
 A scoring scheme can be queried to get the score for substituting two alphabet values using the `score` member function.
-SeqAn currently supports currently two scoring schemes: seqan3::nucleotide_scoring_scheme and
+Currently, SeqAn supports two scoring schemes: seqan3::nucleotide_scoring_scheme and
 seqan3::aminoacid_scoring_scheme. You can import them with the following includes:
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_scoring_scheme
 
 As the names suggests, you need to use the former when scoring \ref nucleotide "nucleotides" and the latter when working
 with \ref aminoacid "aminoacids". You have already used the seqan3::nucleotide_scoring_scheme in the assignments before.
-The scoring scheme was default initialised which will result in using the
+The scoring scheme was default initialised using the
 [Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance). The scoring schemes can also be configured by either
 setting a \ref seqan3::scoring_scheme_base::set_simple_scheme "simple scheme" consisting of seqan3::match_score and
 seqan3::mismatch_score or by providing a \ref seqan3::scoring_scheme_base::set_custom_matrix "custom matrix".
@@ -175,7 +175,7 @@ the alignment computation. The default initialised seqan3::align_cfg::gap_cost_a
 and for a gap opening to `0`. Note that the gap open score is added to the gap score when a gap is opened within the
 alignment computation. Therefore setting the gap open score to `0` disables affine gaps.
 You can pass a seqan3::align_cfg::extension_score and a seqan3::align_cfg::open_score object to initialise the scheme
-with custom gap penalties. The penalties can be assessed changed later by using the respective member variables
+with custom gap penalties. The penalties can be changed later by using the respective member variables
 `extension_score` and `open_score`.
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
@@ -230,7 +230,7 @@ The following table shows the different outcomes that can be configured:
 
 The final result is returned as a seqan3::alignment_result object. This object offers special member functions to access
 the stored values. If you try to access a value, e.g. the alignment, although you didn't specify
-seqan3::align_cfg::output_alignment in the result configuration, a static assertion will be triggered during
+seqan3::align_cfg::output_alignment in the output configuration, a static assertion will be triggered during
 compilation.
 
 \note If you don't specify any of the above mentioned output configurations then by default all options are enabled and
@@ -243,6 +243,11 @@ a simple scoring scheme with mismatch `-2` and match `4`.
 
  -  TTACGTACGGACTAGCTACAACATTACGGACTAC
  -  GGACGACATGACGTACGACTTTACGTACGACTAGC
+
+\hint
+An alignment is called overlap alignment if it allows free end-gaps at each sequence end. With this configuration
+overlaps between two sequences can be computed which is a common use case during the overlap layout consensus assembly.
+\endhint
 \endassignment
 \solution
 
@@ -257,7 +262,7 @@ positive impacts on the performance. To limit the computation space the alignmen
 Thus, only the alignment is computed that fits in this band. Note that this must not be the optimal alignment but in
 many cases we can give a rough bound on how similar the sequences will be and therefor use the banded alignment.
 To do so, you can configure the alignment using the seqan3::align_cfg::band_fixed_size option. This configuration
-element will be initialised with a seqan3::align_cfg::lower_diagonal and seqan3::align_cfg::upper_diagonal.
+element will be initialised with a seqan3::align_cfg::lower_diagonal and seqan3::align_cfg::upper_diagonal parameter.
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_band
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp band
@@ -290,23 +295,23 @@ To make the configuration easier, we added a shortcut called seqan3::align_cfg::
 
 The `edit_scheme` still has to be combined with an alignment method. When combining it
 with the seqan3::align_cfg::method_global configuration element, the edit distance algorithm
-can be further refined with free end gaps (see section `Global and semi-global alignment`).
+can be further refined with free end-gaps (see section `Global and semi-global alignment`).
 
-\attention Only the following free end gap configurations are supported for the
+\attention Only the following free end-gap configurations are supported for the
 global alignment configuration with the edit scheme:
-- no free end gaps (all free end gap specifiers are set to `false`)
-- free end gaps for the first sequence (free end gaps are set to `true` for the first and
+- no free end-gaps (all free end-gap specifiers are set to `false`)
+- free end-gaps for the first sequence (free end-gaps are set to `true` for the first and
   to `false` for the second sequence)
-Using any other free end gap configuration will disable the edit distance and fall back to the standard pairwise
-alignment and will not use the fast bitvector algorithm.
+Using any other free end-gap configuration will disable the edit distance algorithm, i.e. the fast bitvector
+algorithm, and will fall back to the standard pairwise alignment.
 
 ### Refine edit distance
 
 The edit distance can be further refined using the seqan3::align_cfg::min_score configuration to fix an edit score
-(a limit of the allowed number of edits).. If the respective alignment could not find a solution within the given error
+(a limit of the allowed number of edits). If the respective alignment could not find a solution within the given error
 bound, the resulting score is infinity (corresponds to std::numeric_limits::max). Also the alignment and the begin and
-end positions of the alignment can be computed using a combination of the align_cfg::output_alignment,
-align_cfg::output_begin_position and align_cfg::output_end_position options.
+end positions of the alignment can be computed using a combination of the seqan3::align_cfg::output_alignment,
+seqan3::align_cfg::output_begin_position and seqan3::align_cfg::output_end_position options.
 
 \assignment{Assignment 6}
 
@@ -331,7 +336,8 @@ some combinations would result in an invalid alignment configuration. To explici
 details. First, if a combination is invalid (for example by providing the same configuration more than once) a static
 assert will inform you about the invalid combination. \ref configuration "Here" you can find a
 table depicting the valid configurations. Further, if the seqan3::align_pairwise is called, it checks if the input
-data can be used with the given configuration. For example, a static assertion is emitted if the alphabet types of the sequences together with the provided scoring scheme do not model seqan3::scoring_scheme.
+data can be used with the given configuration. For example, a static assertion is emitted if the alphabet types of the
+sequences together with the provided scoring scheme do not model the concept seqan3::scoring_scheme_for.
 Other possible errors are invalid band settings where the initialised band does not intersect with the actual alignment
 matrix (the lower diagonal starts beyond the end of the first sequence).
 

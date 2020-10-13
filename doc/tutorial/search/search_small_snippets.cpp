@@ -106,12 +106,28 @@ seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::se
 
 {
 //![hit_strata]
+seqan3::configuration cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}} |
+                            seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
+                            seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
+                            seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
+                            seqan3::search_cfg::hit_strata{2};
+using seqan3::get; // Required to be able to find the correct get function.
+get<seqan3::search_cfg::hit_strata>(cfg).stratum = 1; // The stratum is now 1 and not 2 anymore.
+//![hit_strata]
+}
+
+//![hit_dynamic]
+seqan3::search_cfg::hit hit_dynamic{seqan3::search_cfg::hit_all{}};  // Initialise with hit_all configuration.
+
+bool hit_with_strata = static_cast<bool>(std::rand() & 1); // Either false or true.
+if (hit_with_strata)
+    hit_dynamic = seqan3::search_cfg::hit_strata{2}; // Search instead with strata mode.
+
 seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{2}} |
                                   seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{0}} |
                                   seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{1}} |
                                   seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{1}} |
-                                  seqan3::search_cfg::hit_strata{2};
-//![hit_strata]
-}
+                                  hit_dynamic; // Build the configuration by adding the dynamic hit configuration.
+//![hit_dynamic]
 
 }

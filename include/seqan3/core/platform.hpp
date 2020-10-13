@@ -18,8 +18,8 @@
 
 // macro cruft
 //!\cond
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
+#define SEQAN3_STR_HELPER(x) #x
+#define SEQAN3_STR(x) SEQAN3_STR_HELPER(x)
 //!\endcond
 
 // ============================================================================
@@ -79,18 +79,18 @@
 #   define RANGE_V3_MINVERSION 1100
 #   define RANGE_V3_MAXVERSION 1199
 // TODO the following doesn't actually show the current version, only its formula. How'd you do it?
-#   define MSG "Your version: " STR(RANGE_V3_VERSION) \
-                "; minimum version: " STR(RANGE_V3_MINVERSION) \
-                "; expected maximum version: " STR(RANGE_V3_MAXVERSION)
+#   define SEQAN3_MSG "Your version: " SEQAN3_STR(RANGE_V3_VERSION) \
+                      "; minimum version: " SEQAN3_STR(RANGE_V3_MINVERSION) \
+                      "; expected maximum version: " SEQAN3_STR(RANGE_V3_MAXVERSION)
 #   include <range/v3/version.hpp>
 #   if RANGE_V3_VERSION < RANGE_V3_MINVERSION
 #       error Your range-v3 library is too old.
-#       pragma message(MSG)
+#       pragma message(SEQAN3_MSG)
 #   elif RANGE_V3_VERSION > RANGE_V3_MAXVERSION
 #       pragma GCC warning "Your range-v3 library is possibly too new. Some features might not work correctly."
-#       pragma message(MSG)
+#       pragma message(SEQAN3_MSG)
 #   endif
-#   undef MSG
+#   undef SEQAN3_MSG
 #else
 #   error The range-v3 library was not included correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
@@ -268,8 +268,7 @@
 
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070 and https://github.com/seqan/product_backlog/issues/151
 #ifndef SEQAN3_WORKAROUND_GCC_96070 // not yet fixed, this is a defect within the standard lib
-// remind us of this issue once gcc-11 was released.
-#   if defined(__GNUC__) && ((__GNUC__ < 11) || (__GNUC__ == 11 && __GNUC_MINOR__ < 1))
+#   if defined(__GNUC__)
 #       define SEQAN3_WORKAROUND_GCC_96070 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_96070 0
@@ -281,5 +280,5 @@
 // ============================================================================
 
 // macro cruft undefine
-#undef STR
-#undef STR_HELPER
+#undef SEQAN3_STR
+#undef SEQAN3_STR_HELPER

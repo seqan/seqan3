@@ -8,6 +8,16 @@
 
 using seqan3::operator""_dna4;
 
+// Define the pairwise alignment configuration globally.
+inline constexpr auto align_config = seqan3::align_cfg::method_global{
+                                         seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                         seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                                         seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                         seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
+                                     seqan3::align_cfg::edit_scheme |
+                                     seqan3::align_cfg::output_alignment{} |
+                                     seqan3::align_cfg::output_score{};
+
 void run_text_single()
 {
     seqan3::dna4_vector
@@ -19,15 +29,6 @@ void run_text_single()
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                                 seqan3::search_cfg::hit_all_best{};
-
-    seqan3::configuration const align_config = seqan3::align_cfg::method_global{
-                                                   seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
-                                                   seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
-                                                   seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                                                   seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                                               seqan3::align_cfg::edit_scheme |
-                                               seqan3::align_cfg::output_alignment{} |
-                                               seqan3::align_cfg::output_score{};
 
     auto search_results = search(query, index, search_config);
 
@@ -43,7 +44,7 @@ void run_text_single()
             auto && [aligned_database, aligned_query] = res.alignment();
             seqan3::debug_stream << "score:    " << res.score() << '\n';
             seqan3::debug_stream << "database: " << aligned_database << '\n';
-            seqan3::debug_stream << "query:    "  << aligned_query << '\n';
+            seqan3::debug_stream << "query:    " << aligned_query << '\n';
             seqan3::debug_stream << "=============\n";
         }
     }
@@ -62,15 +63,6 @@ void run_text_collection()
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
                                                 seqan3::search_cfg::hit_all_best{};
 
-    seqan3::configuration const align_config = seqan3::align_cfg::method_global{
-                                                   seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
-                                                   seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
-                                                   seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                                                   seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                                               seqan3::align_cfg::edit_scheme |
-                                               seqan3::align_cfg::output_alignment{} |
-                                               seqan3::align_cfg::output_score{};
-
     seqan3::debug_stream << "-----------------\n";
 
     for (auto && hit : search(query, index, search_config))
@@ -83,7 +75,7 @@ void run_text_collection()
             auto && [aligned_database, aligned_query] = res.alignment();
             seqan3::debug_stream << "score:    " << res.score() << '\n';
             seqan3::debug_stream << "database: " << aligned_database << '\n';
-            seqan3::debug_stream << "query:    "  << aligned_query << '\n';
+            seqan3::debug_stream << "query:    " << aligned_query << '\n';
             seqan3::debug_stream << "=============\n";
         }
     }
