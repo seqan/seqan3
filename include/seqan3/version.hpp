@@ -21,7 +21,7 @@
 //!\brief The minor version as MACRO.
 #define SEQAN3_VERSION_MINOR 0
 //!\brief The patch version as MACRO.
-#define SEQAN3_VERSION_PATCH 2
+#define SEQAN3_VERSION_PATCH 3
 
 //!\brief The full version as MACRO (number).
 #define SEQAN3_VERSION (SEQAN3_VERSION_MAJOR * 10000 \
