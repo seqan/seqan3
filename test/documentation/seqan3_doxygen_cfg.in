@@ -44,6 +44,7 @@ TOC_INCLUDE_HEADINGS   = 2
 HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
 HTML_FOOTER            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_footer.html
 INPUT_ENCODING         = UTF-8
+EXTRA_PACKAGES         = {amsfonts}
 
 PREDEFINED             = "CEREAL_SERIALIZE_FUNCTION_NAME=serialize" \
                          "CEREAL_LOAD_FUNCTION_NAME=load" \
