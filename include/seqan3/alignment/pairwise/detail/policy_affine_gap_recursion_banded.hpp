@@ -12,13 +12,7 @@
 
 #pragma once
 
-#include <tuple>
-
-#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
-#include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
-#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3::detail
 {
@@ -32,15 +26,15 @@ class policy_affine_gap_recursion_banded : protected policy_affine_gap_recursion
 {
 protected:
     //!\brief The type of the base policy.
-    using base_policy_t = policy_affine_gap_recursion<alignment_configuration_t>;
+    using base_t = policy_affine_gap_recursion<alignment_configuration_t>;
     // Import base types
-    using typename base_policy_t::traits_type;
-    using typename base_policy_t::score_type;
-    using typename base_policy_t::affine_cell_type;
+    using typename base_t::traits_type;
+    using typename base_t::score_type;
+    using typename base_t::affine_cell_type;
 
     //Import member types.
-    using base_policy_t::gap_extension_score;
-    using base_policy_t::gap_open_score;
+    using base_t::gap_extension_score;
+    using base_t::gap_open_score;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -61,7 +55,7 @@ protected:
      * If no gap cost model was provided by the user the default gap costs `-10` and `-1` are set for the gap open score
      * and the gap extension score respectively.
      */
-    explicit policy_affine_gap_recursion_banded(alignment_configuration_t const & config) : base_policy_t{config}
+    explicit policy_affine_gap_recursion_banded(alignment_configuration_t const & config) : base_t{config}
     {}
     //!\}
 
@@ -82,18 +76,13 @@ protected:
      * * \f$ M[i, j] = \max \{M[i - 1, j - 1] + \delta, H[i, j]\}\f$
      */
     template <typename affine_cell_t>
-    //!\cond
-        requires is_type_specialisation_of_v<affine_cell_t, affine_cell_proxy>
-    //!\endcond
     affine_cell_type initialise_band_first_cell(score_type diagonal_score,
                                                 affine_cell_t previous_cell,
                                                 score_type const sequence_score) const noexcept
     {
         diagonal_score += sequence_score;
         score_type horizontal_score = previous_cell.horizontal_score();
-
         diagonal_score = (diagonal_score < horizontal_score) ? horizontal_score : diagonal_score;
-
         score_type from_optimal_score = diagonal_score + gap_open_score;
         horizontal_score += gap_extension_score;
         horizontal_score = (horizontal_score < from_optimal_score) ? from_optimal_score : horizontal_score;
