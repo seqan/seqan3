@@ -372,7 +372,7 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
     if (min_error_left_in_block == 0)
     {
         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
-        bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
+        bool const go_right2 = block_id2 == 0 ? true : search.pi[block_id2] > search.pi[block_id2 - 1];
 
         if (search_ss<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
                                     error_left, delegate) && abort_on_hit)
@@ -462,7 +462,7 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
                     else
                     {
                         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
-                        bool const go_right2 = search.pi[block_id2] > search.pi[block_id2 - 1];
+                        bool const go_right2 = block_id2 == 0 ? true : search.pi[block_id2] > search.pi[block_id2 - 1];
 
                         if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id2, go_right2,
                                                     search, blocks_length, error_left2, delegate) &&
