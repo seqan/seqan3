@@ -108,7 +108,8 @@ public:
                                          this->optimal_score,
                                          this->optimal_coordinate,
                                          alignment_matrix,
-                                         callback);
+                                         callback,
+                                         this->transfer_log());
         }
     }
 
@@ -160,7 +161,8 @@ public:
                                          std::move(score),
                                          std::move(coordinate),
                                          alignment_matrix,
-                                         callback);
+                                         callback,
+                                         this->transfer_log());
             ++index;
         }
     }

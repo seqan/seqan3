@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_algorithm_logger.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -47,6 +48,7 @@ protected:
 
     static_assert(!std::same_as<result_type, empty_type>, "The alignment result type was not configured.");
 
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -73,6 +75,7 @@ protected:
      * \tparam matrix_coordinate_t The type of the matrix coordinate.
      * \tparam alignment_matrix_t The type of the alignment matrix.
      * \tparam callback_t The type of the callback to invoke.
+     * \tparam transfer_log_fn_t The type of the function which transfers the logged alignment matrix.
      *
      * \param[in] sequence_pair The indexed sequence pair.
      * \param[in] id The associated id.
@@ -80,6 +83,7 @@ protected:
      * \param[in] end_positions The matrix coordinate of the best alignment score.
      * \param[in] alignment_matrix The alignment matrix to obtain the trace back from.
      * \param[in] callback The callback to invoke with the generated result.
+     * \param[in] transfer_log The invocable to transfer the logged alignment matrix.
      *
      * \details
      *
@@ -87,13 +91,17 @@ protected:
      * \ref seqan3_align_cfg_output_configurations "seqan3::align_cfg::output_*" configuration only the requested values
      * are stored. In some cases some additional work is done to generate the requested result. For example computing
      * the associated alignment from the traceback matrix.
+     *
+     * The first parameter is the logger and is only available if the alignment was run in debug mode. It stores the
+     * debug score and, if applicable, the debug trace matrix, which are then stored in the created alignment result.
      */
     template <typename sequence_pair_t,
               typename index_t,
               typename score_t,
               typename matrix_coordinate_t,
               typename alignment_matrix_t,
-              typename callback_t>
+              typename callback_t,
+              typename transfer_log_fn_t>
     //!\cond
         requires std::invocable<callback_t, result_type>
     //!\endcond
@@ -102,7 +110,8 @@ protected:
                                 [[maybe_unused]] score_t score,
                                 [[maybe_unused]] matrix_coordinate_t end_positions,
                                 [[maybe_unused]] alignment_matrix_t const & alignment_matrix,
-                                callback_t && callback)
+                                callback_t && callback,
+                                [[maybe_unused]] transfer_log_fn_t && transfer_log)
     {
         using std::get;
         using invalid_t = std::nullopt_t *;
@@ -141,9 +150,17 @@ protected:
                 result.data.begin_positions.first = aligned_sequence_result.first_sequence_slice_positions.first;
                 result.data.begin_positions.second = aligned_sequence_result.second_sequence_slice_positions.first;
             }
+
+            if constexpr (traits_type::compute_sequence_alignment)
+                result.data.alignment = std::move(aligned_sequence_result.alignment);
         }
+
+        // In case we run in debug mode, we need to store the score and possibly trace matrix.
+        if constexpr (traits_type::is_debug)
+            transfer_log(result.data);
 
         callback(std::move(result));
     }
+
 };
 } // namespace seqan3::detail

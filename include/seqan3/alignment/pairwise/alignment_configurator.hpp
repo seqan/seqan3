@@ -13,6 +13,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -26,6 +27,7 @@
 #include <seqan3/alignment/matrix/detail/combined_score_and_trace_matrix.hpp>
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
 #include <seqan3/alignment/matrix/detail/trace_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm_banded.hpp>
@@ -35,6 +37,7 @@
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion_banded.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_with_trace_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_with_trace_recursion_banded.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_algorithm_logger.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker_simd.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_scoring_scheme.hpp>
@@ -55,6 +58,7 @@
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
+#include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
@@ -489,13 +493,13 @@ private:
         // Temporarily we will use the new and the old alignment implementation in order to
         // refactor step-by-step to the new implementation. The new implementation will be tested in
         // macrobenchmarks to show that it maintains a high performance.
-
+        constexpr bool more_than_score = traits_t::compute_end_positions ||
+                                         traits_t::compute_begin_positions ||
+                                         traits_t::compute_sequence_alignment;
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                          // it is a local alignment,
-                      traits_t::is_debug ||                                          // it runs in debug mode,
-                      traits_t::compute_sequence_alignment ||                        // it computes more than the begin position.
-                     (traits_t::is_banded && traits_t::compute_begin_positions) ||   // banded && more than end positions.
-                     (traits_t::is_vectorised && traits_t::compute_end_positions))   // simd and more than the score.
+        if constexpr (traits_t::is_local ||                                                            // it is a local alignment,
+                     (traits_t::is_banded && (more_than_score || traits_t::compute_end_positions)) ||  // banded
+                     (traits_t::is_vectorised && more_than_score))                                     // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;
@@ -581,14 +585,53 @@ private:
             // Configure the final alignment algorithm.
             //----------------------------------------------------------------------------------------------------------
 
-            using algorithm_t = select_alignment_algorithm_t<traits_t,
-                                                             config_t,
-                                                             gap_cost_policy_t,
-                                                             optimum_tracker_policy_t,
-                                                             result_builder_policy_t,
-                                                             scoring_scheme_policy_t,
-                                                             alignment_matrix_policy_t>;
-            return algorithm_t{cfg};
+            return configure_debug_build<function_wrapper_t,
+                                         gap_cost_policy_t,
+                                         optimum_tracker_policy_t,
+                                         result_builder_policy_t,
+                                         scoring_scheme_policy_t,
+                                         alignment_matrix_policy_t>(cfg);
+        }
+    }
+
+    /*!\brief Enables the debug policy if the alignment is run in debug mode.
+     *
+     * \tparam function_wrapper_t The invocable alignment function type-erased via std::function.
+     * \tparam policies_t A template parameter pack for the already configured policy types.
+     * \tparam config_t The alignment configuration type.
+     *
+     * \returns The configured type-erased alignment algorithm.
+     *
+     * \details
+     *
+     * Activates the debug logger inside of the alignment algorithm.
+     */
+    template <typename function_wrapper_t, typename ...policies_t, typename config_t>
+    static constexpr function_wrapper_t configure_debug_build(config_t const & cfg)
+    {
+        using traits_t = alignment_configuration_traits<config_t>;
+
+        if constexpr (traits_t::is_debug)
+        {
+            using debug_score_t = std::optional<typename traits_t::score_type>;
+            using debug_trace_t = std::optional<typename traits_t::trace_type>;
+            using debug_score_matrix_t = two_dimensional_matrix<debug_score_t,
+                                                                std::allocator<debug_score_t>,
+                                                                matrix_major_order::column>;
+
+            using debug_trace_matrix_t = std::conditional_t<traits_t::compute_sequence_alignment,
+                                                            two_dimensional_matrix<debug_trace_t,
+                                                                                   std::allocator<debug_trace_t>,
+                                                                                   matrix_major_order::column>,
+                                                            empty_type>;
+
+            using logger_t = policy_alignment_algorithm_logger<debug_score_matrix_t, debug_trace_matrix_t>;
+
+            return select_alignment_algorithm_t<traits_t, config_t, logger_t, policies_t...>{cfg};
+        }
+        else
+        {
+            return select_alignment_algorithm_t<traits_t, config_t, policies_t...>{cfg};
         }
     }
 };

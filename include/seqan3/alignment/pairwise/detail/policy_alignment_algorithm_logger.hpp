@@ -51,13 +51,15 @@ private:
     //!\brief Whether the trace information is required.
     static constexpr bool with_trace = !std::same_as<debug_trace_matrix_t, empty_type>;
 
-public:
+protected:
     //!\brief The debug score matrix.
     debug_score_matrix_t debug_score_matrix{};
     //!\brief The debug trace matrix.
     debug_trace_matrix_t debug_trace_matrix{};
 
-protected:
+    template <typename>
+    friend class alignment_log_transfer;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -145,6 +147,43 @@ protected:
             std::ranges::copy(alignment_column | std::views::transform([] (auto && cell) { return cell.best_trace(); }),
                               debug_trace_matrix.begin() + column_coordinate_begin);
         }
+    }
+};
+
+/*!\brief Helper function object to transfer the logging information.
+ * \ingroup pairwise_alignment
+ *
+ * \tparam result_data_t The seqan3::detail::alignment_result_value_type.
+ */
+template <typename result_data_t>
+struct alignment_log_transfer
+{
+    result_data_t & result_data; //!< The result data to receive the logged alignment matrix.
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    alignment_log_transfer() = delete; //!< Delete.
+    alignment_log_transfer(alignment_log_transfer const &) = default; //!< Default.
+    alignment_log_transfer(alignment_log_transfer &&) = default; //!< Default.
+    alignment_log_transfer & operator=(alignment_log_transfer const &) = default; //!< Default.
+    alignment_log_transfer & operator=(alignment_log_transfer &&) = default; //!< Default.
+    ~alignment_log_transfer() = default; //!< Default.
+
+    //!\brief Initialises the result data reference.
+    alignment_log_transfer(result_data_t & result) : result_data{result}
+    {}
+    //!\}
+
+    //!\brief Transfers the logged matrix information to the linked alignment result data.
+    template <typename score_matrix_t, typename trace_matrix_t>
+    void operator()(policy_alignment_algorithm_logger<score_matrix_t, trace_matrix_t> & logger)
+    {
+        using std::swap;
+        swap(result_data.score_debug_matrix, logger.debug_score_matrix);
+
+        if constexpr (!std::same_as<trace_matrix_t, empty_type>)
+            swap(result_data.trace_debug_matrix, logger.debug_trace_matrix);
     }
 };
 

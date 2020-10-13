@@ -18,12 +18,18 @@
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
+#include <seqan3/utility/detail/multi_invocable.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
 #include <seqan3/utility/views/elements.hpp>
 
 namespace seqan3::detail
 {
+
+//!\cond
+template <typename result_data_t>
+struct alignment_log_transfer;
+//!\endcond
 
 /*!\brief The alignment algorithm type to compute standard pairwise alignment using dynamic programming.
  * \implements std::invocable
@@ -139,13 +145,17 @@ public:
 
             auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size, sequence2_size);
 
+            if constexpr (traits_type::is_debug)
+                this->initialise_debug_matrices(sequence1_size, sequence2_size);
+
             compute_matrix(get<0>(sequence_pair), get<1>(sequence_pair), alignment_matrix, index_matrix);
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
                                          std::move(idx),
                                          this->optimal_score,
                                          this->optimal_coordinate,
                                          alignment_matrix,
-                                         callback);
+                                         callback,
+                                         transfer_log());
         }
     }
     //!\}
@@ -196,12 +206,42 @@ public:
                                          std::move(score),
                                          std::move(coordinate),
                                          alignment_matrix,
-                                         callback);
+                                         callback,
+                                         transfer_log());
             ++index;
         }
     }
 
 protected:
+    /*!\brief Transfers the logged alignment matrix to the given alignment result data object.
+     *
+     * \returns A lambda that can be invoked later to transfer the logged alignment matrices.
+     *
+     * \details
+     *
+     * Returns a lambda function that is called by the alignment result builder if the alignment was executed in
+     * debug modus. Since the logger policy is only available if the debug modus was activated, it is possible that
+     * the respective policy is not present, and thus the respective members cannot be accessed. The compiler error
+     * is resolved by using a seqan3::detail::multi_invocable object. This object is specialised with two
+     * function objects: the actual implementation of transferring the logged matrices and a noop fallback function in
+     * case the debug modus was not activated.
+     *
+     * If the algorithm inherits from the logger policy the appropriate overload will be selected since a derived class
+     * is implicitly convertible to its base class in a function call. If this is not a valid overload, then the
+     * fallback function is selected resulting in an noop operation.
+     */
+    auto transfer_log()
+    {
+        return [this] (auto & result_data)
+        {
+            multi_invocable
+            {
+                alignment_log_transfer{result_data},  // transfer the log.
+                [] (...) {} // noop fallback if the alignment logger is not activated.
+            }(*this);
+        };
+    }
+
     /*!\brief Converts a batch of sequences to a sequence of simd vectors.
      * \tparam simd_sequence_t The type of the simd sequence; must model std::ranges::output_range for the `score_type`.
      * \tparam sequence_collection_t The type of the collection containing the sequences; must model
@@ -352,6 +392,9 @@ protected:
         // ---------------------------------------------------------------------
 
         this->track_last_row_cell(*first_column_it, *cell_index_column_it);
+
+        if constexpr (traits_type::is_debug)
+            this->log_alignment_matrix_column(cell_index_column, alignment_column);
     }
 
     /*!\brief Initialise any column of the alignment matrix except the first one.
@@ -416,6 +459,9 @@ protected:
         // ---------------------------------------------------------------------
 
         this->track_last_row_cell(*alignment_column_it, *cell_index_column_it);
+
+        if constexpr (traits_type::is_debug)
+            this->log_alignment_matrix_column(cell_index_column, alignment_column);
     }
 };
 
