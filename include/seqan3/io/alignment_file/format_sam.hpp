@@ -272,16 +272,13 @@ private:
     void read_field(stream_view_type && stream_view, sam_tag_dictionary & target);
 
     template <typename stream_it_t, std::ranges::forward_range field_type>
-    void write_range(stream_it_t & stream_it, field_type && field_value);
+    void write_range_or_asterisk(stream_it_t & stream_it, field_type && field_value);
 
     template <typename stream_it_t>
-    void write_range(stream_it_t & stream_it, char const * const field_value);
+    void write_range_or_asterisk(stream_it_t & stream_it, char const * const field_value);
 
-    template <typename stream_t, arithmetic field_type>
-    void write_field(stream_t & stream, field_type field_value);
-
-    template <typename stream_t>
-    void write_tag_fields(stream_t & stream, sam_tag_dictionary const & tag_dict, char const separator);
+    template <typename stream_it_t>
+    void write_tag_fields(stream_it_t & stream, sam_tag_dictionary const & tag_dict, char const separator);
 };
 
 //!\copydoc sequence_file_input_format::read_sequence_record
@@ -793,49 +790,52 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     // ---------------------------------------------------------------------
     // Writing the Record
     // ---------------------------------------------------------------------
-    std::cpp20::ostreambuf_iterator stream_it{stream};
-    char const separator{'\t'};
 
-    write_range(stream_it, std::forward<id_type>(id));
+    detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
+    constexpr char separator{'\t'};
 
-    stream << separator;
+    write_range_or_asterisk(stream_it, id);
+    *stream_it = separator;
 
-    stream << static_cast<uint16_t>(flag) << separator;
+    stream_it.write_number(static_cast<uint16_t>(flag));
+    *stream_it = separator;
 
     if constexpr (!detail::decays_to_ignore_v<ref_id_type>)
     {
         if constexpr (std::integral<std::remove_reference_t<ref_id_type>>)
         {
-            write_range(stream_it, (header.ref_ids())[ref_id]);
+            write_range_or_asterisk(stream_it, (header.ref_ids())[ref_id]);
         }
         else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<ref_id_type>, std::optional>)
         {
             if (ref_id.has_value())
-                write_range(stream_it, (header.ref_ids())[ref_id.value()]);
+                write_range_or_asterisk(stream_it, (header.ref_ids())[ref_id.value()]);
             else
-                stream << '*';
+                *stream_it = '*';
         }
         else
         {
-            write_range(stream_it, std::forward<ref_id_type>(ref_id));
+            write_range_or_asterisk(stream_it, ref_id);
         }
     }
     else
     {
-        stream << '*';
+        *stream_it = '*';
     }
 
-    stream << separator;
+    *stream_it = separator;
 
     // SAM is 1 based, 0 indicates unmapped read if optional is not set
-    stream << (ref_offset.value_or(-1) + 1) << separator;
+    stream_it.write_number(ref_offset.value_or(-1) + 1);
+    *stream_it = separator;
 
-    stream << static_cast<unsigned>(mapq) << separator;
+    stream_it.write_number(static_cast<unsigned>(mapq));
+    *stream_it = separator;
 
     if (!std::ranges::empty(cigar_vector))
     {
-        for (auto & c : cigar_vector)
-            stream << c.to_string(); // returns a small_vector instead of char so write_range doesn't work
+        for (auto & c : cigar_vector) //TODO THIS IS PROBABLY TERRIBLE PERFORMANCE_WISE
+            stream_it.write_range(c.to_string());
     }
     else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
     {
@@ -849,56 +849,58 @@ inline void format_sam::write_alignment_record(stream_type & stream,
                 ++off_end;
         off_end -= std::ranges::size(get<1>(align));
 
-        write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));
+        write_range_or_asterisk(stream_it, detail::get_cigar_string(align, offset, off_end));
     }
     else
     {
-        stream << '*';
+        *stream_it = '*';
     }
 
-    stream << separator;
+    *stream_it = separator;
 
     if constexpr (std::integral<std::remove_reference_t<decltype(get<0>(mate))>>)
     {
-        write_range(stream_it, (header.ref_ids())[get<0>(mate)]);
+        write_range_or_asterisk(stream_it, (header.ref_ids())[get<0>(mate)]);
     }
     else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
     {
         if (get<0>(mate).has_value())
             // value_or(0) instead of value() (which is equivalent here) as a
             // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
-            write_range(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
+            write_range_or_asterisk(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
         else
-            stream << '*';
+            *stream_it = '*';
     }
     else
     {
-        write_range(stream_it, get<0>(mate));
+        write_range_or_asterisk(stream_it, get<0>(mate));
     }
 
-    stream << separator;
+    *stream_it = separator;
 
     if constexpr (detail::is_type_specialisation_of_v<std::remove_cvref_t<decltype(get<1>(mate))>, std::optional>)
     {
         // SAM is 1 based, 0 indicates unmapped read if optional is not set
-        stream << (get<1>(mate).value_or(-1) + 1) << separator;
+        stream_it.write_number(get<1>(mate).value_or(-1) + 1);
+        *stream_it = separator;
     }
     else
     {
-        stream << get<1>(mate) << separator;
+        stream_it.write_number(get<1>(mate));
+        *stream_it = separator;
     }
 
-    stream << get<2>(mate) << separator;
+    stream_it.write_number(get<2>(mate));
+    *stream_it = separator;
 
-    write_range(stream_it, std::forward<seq_type>(seq));
+    write_range_or_asterisk(stream_it, seq);
+    *stream_it = separator;
 
-    stream << separator;
+    write_range_or_asterisk(stream_it, qual);
 
-    write_range(stream_it, std::forward<qual_type>(qual));
+    write_tag_fields(stream_it, tag_dict, separator);
 
-    write_tag_fields(stream, std::forward<tag_dict_type>(tag_dict), separator);
-
-    detail::write_eol(stream_it, options.add_carriage_return);
+    stream_it.write_end_of_line(options.add_carriage_return);
 }
 
 
@@ -1052,85 +1054,95 @@ inline void format_sam::read_field(stream_view_type && stream_view, sam_tag_dict
  * \param[in]     field_value The value to print.
  */
 template <typename stream_it_t, std::ranges::forward_range field_type>
-inline void format_sam::write_range(stream_it_t & stream_it, field_type && field_value)
+inline void format_sam::write_range_or_asterisk(stream_it_t & stream_it, field_type && field_value)
 {
     if (std::ranges::empty(field_value))
-        stream_it = '*';
+    {
+        *stream_it = '*';
+    }
     else
-        std::ranges::copy(field_value | views::to_char, stream_it);
+    {
+        if constexpr (std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<field_type>>, char>)
+            stream_it.write_range(field_value);
+        else // convert from alphabets to their character representation
+            stream_it.write_range(field_value | views::to_char);
+    }
 }
 
 /*!\brief Writes a field value to the stream.
  * \tparam stream_it_t The stream iterator type.
  *
  * \param[in,out] stream_it   The stream iterator to print to.
- * \param[in]     field_value The value to print.
+ * \param[in]     field_value The value to print; a null-terminated CString.
  */
 template <typename stream_it_t>
-inline void format_sam::write_range(stream_it_t & stream_it, char const * const field_value)
+inline void format_sam::write_range_or_asterisk(stream_it_t & stream_it, char const * const field_value)
 {
-    write_range(stream_it, std::string_view{field_value});
-}
-
-/*!\brief Writes a field value to the stream.
- * \tparam stream_t           The stream type.
- * \param[in,out] stream      The stream to print to.
- * \param[in]     field_value The value to print.
- */
-template <typename stream_t, arithmetic field_type>
-inline void format_sam::write_field(stream_t & stream, field_type field_value)
-{
-    // TODO: replace this with to_chars for efficiency
-    if constexpr (std::same_as<field_type, int8_t> || std::same_as<field_type, uint8_t>)
-        stream << static_cast<int16_t>(field_value);
-    else
-        stream << field_value;
+    write_range_or_asterisk(stream_it, std::string_view{field_value});
 }
 
 /*!\brief Writes the optional fields of the seqan3::sam_tag_dictionary.
- * \tparam stream_t   The stream type.
+ * \tparam stream_it_t      The stream iterator's type.
  *
- * \param[in,out] stream    The stream to print to.
+ * \param[in,out] stream_it The stream iterator to print to.
  * \param[in]     tag_dict  The tag dictionary to print.
  * \param[in]     separator The field separator to append.
  */
-template <typename stream_t>
-inline void format_sam::write_tag_fields(stream_t & stream, sam_tag_dictionary const & tag_dict, char const separator)
+template <typename stream_it_t>
+inline void format_sam::write_tag_fields(stream_it_t & stream_it, sam_tag_dictionary const & tag_dict, char const separator)
 {
-    auto stream_variant_fn = [this, &stream] (auto && arg) // helper to print an std::variant
+    auto const stream_variant_fn = [&stream_it] (auto && arg) // helper to print an std::variant
     {
         using T = std::remove_cvref_t<decltype(arg)>;
 
-        if constexpr (!container<T> || std::same_as<T, std::string>)
+        if constexpr (std::ranges::input_range<T>)
         {
-            stream << arg;
-        }
-        else
-        {
-            if (arg.begin() != arg.end())
+            if constexpr (std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<T>>, char>)
             {
-                for (auto it = arg.begin(); it != (arg.end() - 1); ++it)
-                {
-                    write_field(stream, *it);
-                    stream << ',';
-                }
-
-                write_field(stream, *(arg.end() - 1)); // write last value without trailing ','
+                stream_it.write_range(arg);
             }
+            else
+            {
+                if (!std::ranges::empty(arg))
+                {
+                    stream_it.write_number(*std::ranges::begin(arg));
+
+                    for (auto && elem : arg | views::drop(1))
+                    {
+                        *stream_it = ',';
+                        stream_it.write_number(elem);
+                    }
+                }
+            }
+        }
+        else if constexpr (std::same_as<std::remove_cvref_t<T>, char>)
+        {
+            *stream_it = arg;
+        }
+        else // number
+        {
+            stream_it.write_number(arg);
         }
     };
 
     for (auto & [tag, variant] : tag_dict)
     {
-        stream << separator;
+        *stream_it = separator;
 
-        char char0 = tag / 256;
-        char char1 = tag % 256;
+        char const char0 = tag / 256;
+        char const char1 = tag % 256;
 
-        stream << char0 << char1 << ':' << detail::sam_tag_type_char[variant.index()] << ':';
+        *stream_it = char0;
+        *stream_it = char1;
+        *stream_it = ':';
+        *stream_it = detail::sam_tag_type_char[variant.index()];
+        *stream_it = ':';
 
         if (detail::sam_tag_type_char_extra[variant.index()] != '\0')
-            stream << detail::sam_tag_type_char_extra[variant.index()] << ',';
+        {
+            *stream_it = detail::sam_tag_type_char_extra[variant.index()];
+            *stream_it = ',';
+        }
 
         std::visit(stream_variant_fn, variant);
     }

@@ -447,165 +447,175 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                                          alignment_file_header<ref_ids_type> & hdr,
                                          ref_seqs_type & /*ref_id_to_pos_map*/)
 {
-    auto parse_tag_value = [&stream_view, this] (auto & value) // helper function to parse the next tag value
+    auto it = std::ranges::begin(stream_view);
+
+    auto parse_tag_value = [&stream_view, &it, this] (auto & value) // helper function to parse the next tag value
     {
         detail::consume(stream_view | views::take_until_or_throw(is_char<':'>)); // skip tag name
         std::ranges::next(std::ranges::begin(stream_view));                     // skip ':'
         read_field(stream_view | views::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
+        it = std::ranges::begin(stream_view);                                    // make sure iterator is up2date
     };
 
-    while (is_char<'@'>(*std::ranges::begin(stream_view)))
+    while (is_char<'@'>(*it))
     {
-        std::ranges::next(std::ranges::begin(stream_view)); // skip @
+        ++it;                                                           // skip @
 
-        if (is_char<'H'>(*std::ranges::begin(stream_view))) // HD (header) tag
+        switch (*it)
         {
-            parse_tag_value(hdr.format_version); // parse required VN (version) tag
-
-            // The SO, SS and GO tag are optional and can appear in any order
-            while (is_char<'\t'>(*std::ranges::begin(stream_view)))
+            case 'H': /* HD (header) tag */
             {
-                std::ranges::next(std::ranges::begin(stream_view)); // skip tab
-                std::string * who = std::addressof(hdr.grouping);
+                parse_tag_value(hdr.format_version);                    // parse required VN (version) tag
 
-                if (is_char<'S'>(*std::ranges::begin(stream_view)))
+                // The SO, SS and GO tag are optional and can appear in any order
+                while (is_char<'\t'>(*it))
                 {
-                    std::ranges::next(std::ranges::begin(stream_view)); // skip S
+                    ++it;                                               // skip tab
+                    std::string * who = std::addressof(hdr.grouping);
 
-                    if (is_char<'O'>(*std::ranges::begin(stream_view))) // SO (sorting) tag
-                        who = std::addressof(hdr.sorting);
-                    else if (is_char<'S'>(*std::ranges::begin(stream_view))) // SS (sub-order) tag
-                        who = std::addressof(hdr.subsorting);
-                    else
-                        throw format_error{std::string{"Illegal SAM header tag: S"} +
-                                           std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                    if (is_char<'S'>(*it))
+                    {
+                        ++it;                                           // skip S
+
+                        if (is_char<'O'>(*it))                          // SO (sorting) tag
+                            who = std::addressof(hdr.sorting);
+                        else if (is_char<'S'>(*it))                     // SS (sub-order) tag
+                            who = std::addressof(hdr.subsorting);
+                        else
+                            throw format_error{std::string{"Illegal SAM header tag: S"} + *it};
+                    }
+                    else if (!is_char<'G'>(*it))                        // GO (grouping) tag
+                    {
+                        throw format_error{std::string{"Illegal SAM header tag in @HG starting with: "} + *it};
+                    }
+
+                    parse_tag_value(*who);
                 }
-                else if (!is_char<'G'>(*std::ranges::begin(stream_view))) // GO (grouping) tag
-                {
-                    throw format_error{std::string{"Illegal SAM header tag in @HG starting with:"} +
-                                       std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
-                }
+                ++it;                                                   // skip newline
+            } break;
 
-                parse_tag_value(*who);
-            }
-            std::ranges::next(std::ranges::begin(stream_view));                  // skip newline
-        }
-        else if (is_char<'S'>(*std::ranges::begin(stream_view)))              // SQ (sequence dictionary) tag
-        {
-            ref_info_present_in_header = true;
-            std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
-            std::tuple<int32_t, std::string> info{};
-
-            parse_tag_value(id);                                         // parse required SN (sequence name) tag
-            std::ranges::next(std::ranges::begin(stream_view));          // skip tab or newline
-            parse_tag_value(get<0>(info));                               // parse required LN (length) tag
-
-            if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
+            case 'S': /* SQ (sequence dictionary) tag */
             {
-                std::ranges::next(std::ranges::begin(stream_view));      // skip tab
-                read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(info));
-            }
-            std::ranges::next(std::ranges::begin(stream_view));          // skip newline
+                ref_info_present_in_header = true;
+                std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
+                std::tuple<int32_t, std::string> info{};
 
-            /* If reference information were given, the ids exist and we can fill ref_dict directly.
-             * If not, wee need to update the ids first and fill the reference dictionary afterwards. */
-            if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
-            {
-                auto id_it = hdr.ref_dict.find(id);
+                parse_tag_value(id);                                    // parse required SN (sequence name) tag
+                ++it;                                                   // skip tab or newline
+                parse_tag_value(get<0>(info));                          // parse required LN (length) tag
 
-                if (id_it == hdr.ref_dict.end())
-                    throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM header ",
-                                                         "(header.ref_ids(): ", hdr.ref_ids(), ").")};
-
-                auto & given_ref_info = hdr.ref_id_info[id_it->second];
-
-                if (std::get<0>(given_ref_info) != std::get<0>(info))
-                    throw format_error{"Provided reference has unequal length as specified in the header."};
-
-                hdr.ref_id_info[id_it->second] = std::move(info);
-            }
-            else
-            {
-                static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
-                              "The range over reference ids must be of type std::deque such that "
-                              "pointers are not invalidated.");
-
-                hdr.ref_ids().push_back(id);
-                hdr.ref_id_info.push_back(info);
-                hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
-            }
-        }
-        else if (is_char<'R'>(*std::ranges::begin(stream_view)))         // RG (read group) tag
-        {
-            std::pair<std::string, std::string> tmp{};
-
-            parse_tag_value(get<0>(tmp));                                // read required ID tag
-
-            if (is_char<'\t'>(*std::ranges::begin(stream_view)))         // read rest of the tags
-            {
-                std::ranges::next(std::ranges::begin(stream_view));
-                read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
-            }
-            std::ranges::next(std::ranges::begin(stream_view));          // skip newline
-
-            hdr.read_groups.emplace_back(std::move(tmp));
-        }
-        else if (is_char<'P'>(*std::ranges::begin(stream_view)))         // PG (program) tag
-        {
-            typename alignment_file_header<ref_ids_type>::program_info_t tmp{};
-
-            parse_tag_value(tmp.id);                                     // read required ID tag
-
-            // The PN, CL, PP, DS, VN are optional tags and can be given in any order.
-            while (is_char<'\t'>(*std::ranges::begin(stream_view)))
-            {
-                std::ranges::next(std::ranges::begin(stream_view));      // skip tab
-                std::string * who = &tmp.version;
-
-                if (is_char<'P'>(*std::ranges::begin(stream_view)))
+                if (is_char<'\t'>(*it))                                 // read rest of the tags
                 {
-                    std::ranges::next(std::ranges::begin(stream_view));  // skip P
-
-                    if (is_char<'N'>(*std::ranges::begin(stream_view)))  // PN (program name) tag
-                        who = &tmp.name;
-                    else                                                 // PP (previous program) tag
-                        who = &tmp.previous;
+                    ++it;                                               // skip tab
+                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(info));
                 }
-                else if (is_char<'C'>(*std::ranges::begin(stream_view))) // CL (command line) tag
+                ++it;                                                   // skip newline
+
+                /* If reference information was given, the ids exist and we can fill ref_dict directly.
+                 * If not, wee need to update the ids first and fill the reference dictionary afterwards. */
+                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
                 {
-                    who = &tmp.command_line_call;
+                    auto id_it = hdr.ref_dict.find(id);
+
+                    if (id_it == hdr.ref_dict.end())
+                        throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM header ",
+                                                            "(header.ref_ids(): ", hdr.ref_ids(), ").")};
+
+                    auto & given_ref_info = hdr.ref_id_info[id_it->second];
+
+                    if (std::get<0>(given_ref_info) != std::get<0>(info))
+                        throw format_error{"Provided reference has unequal length as specified in the header."};
+
+                    hdr.ref_id_info[id_it->second] = std::move(info);
                 }
-                else if (is_char<'D'>(*std::ranges::begin(stream_view))) // DS (description) tag
+                else
                 {
-                    who = &tmp.description;
+                    static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
+                                "The range over reference ids must be of type std::deque such that "
+                                "pointers are not invalidated.");
+
+                    hdr.ref_ids().push_back(id);
+                    hdr.ref_id_info.push_back(info);
+                    hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
                 }
-                else if (!is_char<'V'>(*std::ranges::begin(stream_view))) // VN (version) tag
+            } break;
+
+            case 'R': /* RG (read group) tag */
+            {
+                std::pair<std::string, std::string> tmp{};
+
+                parse_tag_value(get<0>(tmp));                           // read required ID tag
+
+                if (is_char<'\t'>(*it))                                 // read rest of the tags
                 {
-                    throw format_error{std::string{"Illegal SAM header tag starting with:"} +
-                                       std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                    ++it;
+                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
                 }
+                ++it;                                                   // skip newline
 
-                parse_tag_value(*who);
-            }
-            std::ranges::next(std::ranges::begin(stream_view));          // skip newline
+                hdr.read_groups.emplace_back(std::move(tmp));
+            } break;
 
-            hdr.program_infos.emplace_back(std::move(tmp));
-        }
-        else if (is_char<'C'>(*std::ranges::begin(stream_view)))         // CO (comment) tag
-        {
-            std::string tmp;
-            std::ranges::next(std::ranges::begin(stream_view)); // skip C
-            std::ranges::next(std::ranges::begin(stream_view)); // skip O
-            std::ranges::next(std::ranges::begin(stream_view)); // skip :
-            read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), tmp);
-            std::ranges::next(std::ranges::begin(stream_view)); // skip newline
+            case 'P': /* PG (program) tag */
+            {
+                typename alignment_file_header<ref_ids_type>::program_info_t tmp{};
 
-            hdr.comments.emplace_back(std::move(tmp));
-        }
-        else
-        {
-            throw format_error{std::string{"Illegal SAM header tag starting with:"} +
-                               std::string{static_cast<char>(*std::ranges::begin(stream_view))}};
+                parse_tag_value(tmp.id);                                // read required ID tag
+
+                // The PN, CL, PP, DS, VN are optional tags and can be given in any order.
+                while (is_char<'\t'>(*it))
+                {
+                    ++it;                                               // skip tab
+                    std::string * who = &tmp.version;
+
+                    switch (*it)
+                    {
+                        case 'P':
+                            ++it;                                       // skip P
+
+                            if (is_char<'N'>(*it))                      // PN (program name) tag
+                                who = &tmp.name;
+                            else                                        // PP (previous program) tag
+                                who = &tmp.previous;
+                            break;
+
+                        case 'C': // CL (command line) tag
+                            who = &tmp.command_line_call;
+                            break;
+
+                        case 'D': // DS (description) tag
+                            who = &tmp.description;
+                            break;
+
+                        case 'V': // VN (version) tag
+                            // already set as default above
+                            break;
+
+                        default:
+                            throw format_error{std::string{"Illegal SAM header tag starting with: "} + *it};
+                    }
+
+                    parse_tag_value(*who);
+                }
+                ++it;                                                   // skip newline
+
+                hdr.program_infos.emplace_back(std::move(tmp));
+            } break;
+
+            case 'C': /* CO (comment) tag */
+            {
+                std::string tmp;
+                ++it;                                                   // skip C
+                ++it;                                                   // skip O
+                ++it;                                                   // skip :
+                read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), tmp);
+                ++it;                                                   // skip newline
+
+                hdr.comments.emplace_back(std::move(tmp));
+            } break;
+
+            default:
+                throw format_error{std::string{"Illegal SAM header tag starting with:"} + *it};
         }
     }
 }
