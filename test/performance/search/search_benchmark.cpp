@@ -64,7 +64,14 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     std::vector<std::vector<alphabet_t>> reads;
     std::mt19937_64 gen{seed};
 
-    std::normal_distribution<> dis_error_count{static_cast<double>(simulated_errors), stddev};
+    auto error_count_distribution = [simulated_errors, stddev] (auto & generator) -> uint8_t
+    {
+        if (stddev <= 0)
+            return simulated_errors;
+
+        std::normal_distribution<> distribution{static_cast<double>(simulated_errors), stddev};
+        return std::abs(std::rint(distribution(generator)));
+    };
 
     // mutation distributions
     std::uniform_real_distribution<double> mutation_type_prob{0.0, 1.0};
@@ -78,7 +85,7 @@ std::vector<std::vector<alphabet_t>> generate_reads(std::vector<alphabet_t> cons
     for (size_t i = 0; i < number_of_reads; ++i)
     {
         // simulate concrete error number or use normal distribution
-        simulated_errors = (stddev == 0) ? simulated_errors : std::abs(std::round(dis_error_count(gen)));
+        simulated_errors = error_count_distribution(gen);
 
         std::uniform_int_distribution<size_t> random_read_pos{0, std::ranges::size(ref) - read_length - simulated_errors};
         size_t rpos = random_read_pos(gen);
