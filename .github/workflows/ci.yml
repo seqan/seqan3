@@ -289,7 +289,11 @@ jobs:
         run: |
           ccache -p || true
           cd seqan3-build
-          make -k -j2
+          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
+            make download-cppreference-doxygen-web-tag
+          else
+            make -k -j2
+          fi
           ccache -s || true
 
       - name: Run tests
