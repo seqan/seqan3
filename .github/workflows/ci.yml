@@ -293,15 +293,14 @@ jobs:
           ccache -s || true
 
       - name: Run tests
+        if: matrix.build != 'coverage' # Already ran by the make call
         shell: bash -ex {0}
         run: |
           cd seqan3-build
-          if [[ "${{ matrix.build }}" =~ ^(coverage)$ ]]; then
-            : ; else
-            if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
-              ctest . --output-on-failure]; else
-              ctest . -j2 --output-on-failure
-            fi
+          if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
+            ctest . --output-on-failure
+          else
+            ctest . -j2 --output-on-failure
           fi
 
       - name: Submit coverage build
