@@ -1059,6 +1059,20 @@ TEST(validator_test, regex_validator_success)
         EXPECT_EQ(option_vector[1], "tina@rambo.com");
     }
 
+    { // option - std::filesystem::path
+        std::filesystem::path path_option;
+        const char * argv[] = {"./argument_parser_test", "-s", "rita@rambo.com"};
+        seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_option(path_option, 's', "string-option", "desc",
+                          seqan3::option_spec::DEFAULT, email_vector_validator);
+
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(path_option, "rita@rambo.com");
+    }
+
     { // get help page message
         option_vector.clear();
         const char * argv[] = {"./argument_parser_test", "-h"};
