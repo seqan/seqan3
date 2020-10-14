@@ -3,10 +3,10 @@ name: SeqAn3 CI
 on:
   push:
     branches:
-      # Push events to branches matching refs/heads/seqan/seqan3
-      - 'seqan/seqan3'
-      # Push events to branches matching refs/heads/releases/*
-      - 'releases/**'
+      # Push events to branches matching refs/heads/master
+      - 'master'
+      # Push events to branches matching refs/heads/release*
+      - 'release*'
   pull_request:
 
 env:
