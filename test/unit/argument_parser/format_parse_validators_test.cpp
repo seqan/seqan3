@@ -1003,80 +1003,85 @@ TEST(validator_test, regex_validator_success)
     seqan3::regex_validator email_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
     seqan3::regex_validator email_vector_validator("[a-zA-Z]+@[a-zA-Z]+\\.com");
 
-    // option
-    const char * argv[] = {"./argument_parser_test", "-s", "ballo@rollo.com"};
-    seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser, 80);
-    parser.add_option(option_value, 's', "string-option", "desc",
-                      seqan3::option_spec::DEFAULT, email_validator);
+    { // option
+        const char * argv[] = {"./argument_parser_test", "-s", "ballo@rollo.com"};
+        seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_option(option_value, 's', "string-option", "desc",
+                          seqan3::option_spec::DEFAULT, email_validator);
 
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser.parse());
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, "ballo@rollo.com");
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "ballo@rollo.com");
+    }
 
-    // positional option
-    const char * argv2[] = {"./argument_parser_test", "chr1"};
-    seqan3::argument_parser parser2{"test_parser", 2, argv2, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser2, 80);
-    parser2.add_positional_option(option_value, "desc",
-                                  seqan3::regex_validator{"^chr[0-9]+"});
+    { // positional option
+        const char * argv[] = {"./argument_parser_test", "chr1"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_positional_option(option_value, "desc",
+                                      seqan3::regex_validator{"^chr[0-9]+"});
 
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser2.parse());
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value, "chr1");
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_value, "chr1");
+    }
 
-    // positional option - vector
-    const char * argv3[] = {"./argument_parser_test", "rollo", "bollo", "lollo"};
-    seqan3::argument_parser parser3{"test_parser", 4, argv3, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser3, 80);
-    parser3.add_positional_option(option_vector, "desc",
-                                  seqan3::regex_validator{".*oll.*"});
+    { // positional option - vector
+        const char * argv[] = {"./argument_parser_test", "rollo", "bollo", "lollo"};
+        seqan3::argument_parser parser{"test_parser", 4, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_positional_option(option_vector, "desc",
+                                      seqan3::regex_validator{".*oll.*"});
 
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser3.parse());
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_vector[0], "rollo");
-    EXPECT_EQ(option_vector[1], "bollo");
-    EXPECT_EQ(option_vector[2], "lollo");
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_vector[0], "rollo");
+        EXPECT_EQ(option_vector[1], "bollo");
+        EXPECT_EQ(option_vector[2], "lollo");
+    }
 
-    // option - vector
-    option_vector.clear();
-    const char * argv4[] = {"./argument_parser_test", "-s", "rita@rambo.com", "-s", "tina@rambo.com"};
-    seqan3::argument_parser parser4{"test_parser", 5, argv4, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser4, 80);
-    parser4.add_option(option_vector, 's', "string-option", "desc",
-                       seqan3::option_spec::DEFAULT, email_vector_validator);
+    { // option - vector
+        option_vector.clear();
+        const char * argv[] = {"./argument_parser_test", "-s", "rita@rambo.com", "-s", "tina@rambo.com"};
+        seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_option(option_vector, 's', "string-option", "desc",
+                           seqan3::option_spec::DEFAULT, email_vector_validator);
 
-    testing::internal::CaptureStderr();
-    EXPECT_NO_THROW(parser4.parse());
-    EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_vector[0], "rita@rambo.com");
-    EXPECT_EQ(option_vector[1], "tina@rambo.com");
+        testing::internal::CaptureStderr();
+        EXPECT_NO_THROW(parser.parse());
+        EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
+        EXPECT_EQ(option_vector[0], "rita@rambo.com");
+        EXPECT_EQ(option_vector[1], "tina@rambo.com");
+    }
 
-    // get help page message
-    option_vector.clear();
-    const char * argv7[] = {"./argument_parser_test", "-h"};
-    seqan3::argument_parser parser7{"test_parser", 2, argv7, seqan3::update_notifications::off};
-    test_accessor::set_terminal_width(parser7, 80);
-    parser7.add_option(option_vector, 's', "string-option", "desc",
-                       seqan3::option_spec::DEFAULT, email_vector_validator);
+    { // get help page message
+        option_vector.clear();
+        const char * argv[] = {"./argument_parser_test", "-h"};
+        seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
+        test_accessor::set_terminal_width(parser, 80);
+        parser.add_option(option_vector, 's', "string-option", "desc",
+                           seqan3::option_spec::DEFAULT, email_vector_validator);
 
-    option_vector.clear();
-    testing::internal::CaptureStdout();
-    EXPECT_EXIT(parser7.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
-    std::string my_stdout = testing::internal::GetCapturedStdout();
-    std::string expected = std::string("test_parser\n"
-                           "===========\n"
-                           "\n" +
-                           basic_options_str +
-                           "    -s, --string-option (List of std::string's)\n"
-                           "          desc Default: []. Value must match the pattern\n"
-                           "          '[a-zA-Z]+@[a-zA-Z]+\\.com'.\n"
-                           "\n" +
-                           basic_version_str);
-    EXPECT_EQ(my_stdout, expected);
+        option_vector.clear();
+        testing::internal::CaptureStdout();
+        EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+        std::string my_stdout = testing::internal::GetCapturedStdout();
+        std::string expected = std::string("test_parser\n"
+                               "===========\n"
+                               "\n" +
+                               basic_options_str +
+                               "    -s, --string-option (List of std::string's)\n"
+                               "          desc Default: []. Value must match the pattern\n"
+                               "          '[a-zA-Z]+@[a-zA-Z]+\\.com'.\n"
+                               "\n" +
+                               basic_version_str);
+        EXPECT_EQ(my_stdout, expected);
+    }
 }
 
 TEST(validator_test, regex_validator_error)
