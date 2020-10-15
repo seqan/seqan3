@@ -28,12 +28,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
-### Argument Parser
+#### Argument Parser
 
 * We expanded the `seqan3::output_file_validator`, with a parameter `seqan3::output_file_open_options` to allow overwriting
   output files ([\#2009](https://github.com/seqan/seqan3/pull/2009)).
 
-### Search
+#### Search
 
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 
