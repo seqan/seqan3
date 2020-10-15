@@ -96,9 +96,11 @@ script:
   - make -k -j2
   - |
     if [[ "${BUILD}" =~ ^(coverage)$ ]]; then
-      : ; else
+      : # no-op
+    else
       if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
-        ctest . --output-on-failure]; else
+        ctest . --output-on-failure
+      else
         ctest . -j2 --output-on-failure
       fi
     fi
