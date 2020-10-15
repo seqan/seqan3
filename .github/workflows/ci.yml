@@ -16,15 +16,6 @@ env:
   TZ: Europe/Berlin
 
 jobs:
-  # leak:
-  #   name: Leak payload
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Print payload
-  #     env:
-  #       PAYLOAD: ${{ toJSON(github.event.commits.*.message) }}
-  #     run: |
-  #       echo $PAYLOAD
   get_commit_message:
     runs-on: ubuntu-20.04
     outputs:
@@ -45,6 +36,7 @@ jobs:
 
   foo:
     needs: get_commit_message
+    if: "!contains(needs.get_commit_message.outputs.message, 'ci skip') && !contains(needs.get_commit_message.outputs.message, 'skip ci')"
     runs-on: ubuntu-20.04
     steps:
       - name: Print
