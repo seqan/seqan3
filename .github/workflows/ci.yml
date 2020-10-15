@@ -16,322 +16,330 @@ env:
   TZ: Europe/Berlin
 
 jobs:
-  leak:
-    name: Leak payload
-    runs-on: ubuntu-latest
-    steps:
-    - name: Print payload
-      env:
-        PAYLOAD: ${{ toJSON(github.event.commits.*.message) }}
-      run: |
-        echo $PAYLOAD
-
-  # build:
-  #   if: ${{ github.event_name == 'push' }}
-  #   name: ${{ matrix.name }}
-  #   runs-on: ${{ matrix.os }}
-  #   timeout-minutes: 120
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       include:
-  #         - name: "Coverage gcc7"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: coverage
-  #           build_type: Debug
-
-  #         - name: "Unit gcc9 (c++2a) on Linux"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-9"
-  #           cc: "gcc-9"
-  #           build: unit
-  #           build_type: Release
-  #           cxx_flags: "-std=c++2a"
-
-  #         - name: "Unit gcc9 (c++2a) on macOS"
-  #           os: macos-10.15
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-9"
-  #           cc: "gcc-9"
-  #           build: unit
-  #           build_type: Release
-  #           cxx_flags: "-std=c++2a"
-
-  #         - name: "Unit gcc10 (c++17) on Linux"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-10"
-  #           cc: "gcc-10"
-  #           build: unit
-  #           build_type: Release
-  #           cxx_flags: "-std=c++17 -fconcepts"
-
-  #         - name: "Unit gcc10 (c++17) on macOS"
-  #           os: macos-10.15
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-10"
-  #           cc: "gcc-10"
-  #           build: unit
-  #           build_type: Release
-  #           cxx_flags: "-std=c++17 -fconcepts"
-
-  #         - name: "Unit gcc10 (c++20) on Linux"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-10"
-  #           cc: "gcc-10"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Unit gcc10 (c++20) on macOS"
-  #           os: macos-10.15
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-10"
-  #           cc: "gcc-10"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Unit gcc8 on Linux"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-8"
-  #           cc: "gcc-8"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Unit gcc8 on macOS"
-  #           os: macos-10.15
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-8"
-  #           cc: "gcc-8"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Unit gcc7 on Linux"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Unit gcc7 on macOS"
-  #           os: macos-10.15
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: unit
-  #           build_type: Release
-
-  #         - name: "Performance gcc7"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: performance
-  #           build_type: Release
-
-  #         - name: "Header gcc7"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: header
-  #           build_type: Release
-
-  #         - name: "Snippet gcc7"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: true
-  #           requires_ccache: true
-  #           cxx: "g++-7"
-  #           cc: "gcc-7"
-  #           build: snippet
-  #           build_type: Release
-
-  #         - name: "Documentation"
-  #           os: ubuntu-20.04
-  #           requires_toolchain: false
-  #           requires_ccache: false
-  #           build: documentation
-
+  # leak:
+  #   name: Leak payload
+  #   runs-on: ubuntu-latest
   #   steps:
-  #     - name: Checkout SeqAn3
-  #       uses: actions/checkout@v2
-  #       with:
-  #         path: seqan3
-  #         submodules: true
+  #   - name: Print payload
+  #     env:
+  #       PAYLOAD: ${{ toJSON(github.event.commits.*.message) }}
+  #     run: |
+  #       echo $PAYLOAD
+  get_commit_message:
+    runs-on: ubuntu-20.04
+    outputs:
+      message: ${{ steps.get_commit_message.get_commit.message }}
+    steps:
+      - name: Get commit message
+        id: get_commit
+        run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
 
-  #     - name: Checkout SeqAn2
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: seqan/seqan
-  #         ref: develop
-  #         path: seqan3/submodules/seqan
+  build:
+    if: github.event_name == 'push' || "!contains(steps.get_commit_message.outputs.message, 'ci skip') && !contains(steps.get_commit_message.outputs.message, 'skip ci')"
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Coverage gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: coverage
+            build_type: Debug
 
-  #     - name: Get cached CMake
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: /tmp/cmake-download
-  #         key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
+          - name: "Unit gcc9 (c++2a) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-9"
+            cc: "gcc-9"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++2a"
 
-  #     - name: Setup CMake
-  #       shell: bash -ex {0}
-  #       run: |
-  #         if [ "$RUNNER_OS" == "Linux" ]; then
-  #           OS="Linux"
-  #         else
-  #           OS="Darwin"
-  #         fi
-  #         mkdir -p /tmp/cmake-download
-  #         wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
-  #         tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
-  #         echo "/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" >> $GITHUB_PATH # Only available in subsequent steps!
+          - name: "Unit gcc9 (c++2a) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-9"
+            cc: "gcc-9"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++2a"
 
-  #     - name: Get cached Doxygen
-  #       if: matrix.build == 'documentation'
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: /tmp/doxygen-download
-  #         key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
+          - name: "Unit gcc10 (c++17) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++17 -fconcepts"
 
-  #     - name: Setup Doxygen
-  #       if: matrix.build == 'documentation'
-  #       shell: bash -ex {0}
-  #       run: |
-  #         sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
-  #         mkdir -p /tmp/doxygen-download
-  #         wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-  #         tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-  #         echo "/tmp/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH # Only available in subsequent steps!
+          - name: "Unit gcc10 (c++17) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
+            cxx_flags: "-std=c++17 -fconcepts"
 
-  #     - name: Add package source
-  #       if: matrix.requires_toolchain && runner.os == 'Linux'
-  #       shell: bash
-  #       run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
+          - name: "Unit gcc10 (c++20) on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
 
-  #     - name: Install ccache
-  #       if: matrix.requires_ccache
-  #       shell: bash -ex {0}
-  #       run: |
-  #         if [ "$RUNNER_OS" == "Linux" ]; then
-  #           sudo apt-get install --yes ccache
-  #         else
-  #           brew install --force-bottle ccache
-  #         fi
+          - name: "Unit gcc10 (c++20) on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
 
-  #     - name: Install compiler ${{ matrix.cxx }}
-  #       if: matrix.requires_toolchain
-  #       shell: bash -ex {0}
-  #       run: |
-  #         if [ "$RUNNER_OS" == "Linux" ]; then
-  #           sudo apt-get install --yes ${{ matrix.cxx }}
-  #         else
-  #           brew install --force-bottle $(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
-  #         fi
+          - name: "Unit gcc8 on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-8"
+            cc: "gcc-8"
+            build: unit
+            build_type: Release
 
-  #     - name: Install lcov
-  #       if: matrix.build == 'coverage'
-  #       shell: bash -ex {0}
-  #       run: |
-  #         sudo apt-get install --yes lcov
-  #         sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
+          - name: "Unit gcc8 on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-8"
+            cc: "gcc-8"
+            build: unit
+            build_type: Release
 
-  #     - name: Prepare ccache
-  #       if: matrix.requires_ccache
-  #       id: ccache_prepare
-  #       shell: cmake -P {0}
-  #       run: |
-  #         string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S")
-  #         message("::set-output name=timestamp::${current_date}")
+          - name: "Unit gcc7 on Linux"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Release
 
-  #     - name: Load ccache
-  #       if: matrix.requires_ccache
-  #       uses: actions/cache@v2
-  #       with:
-  #         path: .ccache
-  #         key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ steps.ccache_prepare.outputs.timestamp }}
-  #         # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
-  #         restore-keys: |
-  #           ${{ matrix.name }}-ccache-${{ github.ref }}
-  #           ${{ matrix.name }}-ccache-${{ github.base_ref }}
-  #           ${{ matrix.name }}-ccache-
+          - name: "Unit gcc7 on macOS"
+            os: macos-10.15
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Release
 
-  #     - name: Configure tests
-  #       env:
-  #         CXX: ${{ matrix.cxx }}
-  #         CC: ${{ matrix.cc }}
-  #       shell: bash -ex {0}
-  #       run: |
-  #         mkdir seqan3-build
-  #         cd seqan3-build
-  #         cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-  #         if [[ "${{ matrix.build }}" =~ ^(unit|header|snippet|coverage)$ ]]; then
-  #           make gtest_project
-  #         fi
-  #         if [[ "${{ matrix.build }}" =~ ^(performance)$ ]]; then
-  #           make gbenchmark_project
-  #         fi
+          - name: "Performance gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: performance
+            build_type: Release
 
-  #     - name: Build tests
-  #       env:
-  #         CCACHE_BASEDIR: ${{ github.workspace }}
-  #         CCACHE_DIR: ${{ github.workspace }}/.ccache
-  #         CCACHE_COMPRESS: true
-  #         CCACHE_COMPRESSLEVEL: 6
-  #         CCACHE_MAXSIZE: 5G
-  #       shell: bash -ex {0}
-  #       run: |
-  #         ccache -p || true
-  #         cd seqan3-build
-  #         if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
-  #           make download-cppreference-doxygen-web-tag
-  #         else
-  #           make -k -j2
-  #         fi
-  #         ccache -s || true
+          - name: "Header gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: header
+            build_type: Release
 
-  #     - name: Run tests
-  #       if: matrix.build != 'coverage' # Already ran by the make call
-  #       shell: bash -ex {0}
-  #       run: |
-  #         cd seqan3-build
-  #         if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
-  #           ctest . --output-on-failure
-  #         else
-  #           ctest . -j2 --output-on-failure
-  #         fi
+          - name: "Snippet gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: snippet
+            build_type: Release
 
-  #     - name: Submit coverage build
-  #       if: matrix.build == 'coverage'
-  #       shell: bash
-  #       run: bash <(curl -s https://codecov.io/bash) -f ./seqan3-build/seqan3_coverage -R ./seqan3 || echo 'Codecov failed to upload'
+          - name: "Documentation"
+            os: ubuntu-20.04
+            requires_toolchain: false
+            requires_ccache: false
+            build: documentation
 
-  #     - name: Package documentation
-  #       if: matrix.build == 'documentation'
-  #       continue-on-error: true
-  #       run: tar -zcf documentation.tar.gz seqan3-build
+    steps:
+      - name: Checkout SeqAn3
+        uses: actions/checkout@v2
+        with:
+          path: seqan3
+          submodules: true
 
-  #     - name: Upload documentation
-  #       if: matrix.build == 'documentation'
-  #       continue-on-error: true
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: documentation
-  #         path: documentation.tar.gz
+      - name: Checkout SeqAn2
+        uses: actions/checkout@v2
+        with:
+          repository: seqan/seqan
+          ref: develop
+          path: seqan3/submodules/seqan
+
+      - name: Get cached CMake
+        uses: actions/cache@v2
+        with:
+          path: /tmp/cmake-download
+          key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
+
+      - name: Setup CMake
+        shell: bash -ex {0}
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            OS="Linux"
+          else
+            OS="Darwin"
+          fi
+          mkdir -p /tmp/cmake-download
+          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
+          tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-${OS}-x86_64.tar.gz
+          echo "/tmp/cmake-${CMAKE_VERSION}-${OS}-x86_64/bin" >> $GITHUB_PATH # Only available in subsequent steps!
+
+      - name: Get cached Doxygen
+        if: matrix.build == 'documentation'
+        uses: actions/cache@v2
+        with:
+          path: /tmp/doxygen-download
+          key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
+
+      - name: Setup Doxygen
+        if: matrix.build == 'documentation'
+        shell: bash -ex {0}
+        run: |
+          sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
+          mkdir -p /tmp/doxygen-download
+          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          echo "/tmp/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH # Only available in subsequent steps!
+
+      - name: Add package source
+        if: matrix.requires_toolchain && runner.os == 'Linux'
+        shell: bash
+        run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
+
+      - name: Install ccache
+        if: matrix.requires_ccache
+        shell: bash -ex {0}
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install --yes ccache
+          else
+            brew install --force-bottle ccache
+          fi
+
+      - name: Install compiler ${{ matrix.cxx }}
+        if: matrix.requires_toolchain
+        shell: bash -ex {0}
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get install --yes ${{ matrix.cxx }}
+          else
+            brew install --force-bottle $(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
+          fi
+
+      - name: Install lcov
+        if: matrix.build == 'coverage'
+        shell: bash -ex {0}
+        run: |
+          sudo apt-get install --yes lcov
+          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
+
+      - name: Prepare ccache
+        if: matrix.requires_ccache
+        id: ccache_prepare
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S")
+          message("::set-output name=timestamp::${current_date}")
+
+      - name: Load ccache
+        if: matrix.requires_ccache
+        uses: actions/cache@v2
+        with:
+          path: .ccache
+          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ steps.ccache_prepare.outputs.timestamp }}
+          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
+          restore-keys: |
+            ${{ matrix.name }}-ccache-${{ github.ref }}
+            ${{ matrix.name }}-ccache-${{ github.base_ref }}
+            ${{ matrix.name }}-ccache-
+
+      - name: Configure tests
+        env:
+          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.cc }}
+        shell: bash -ex {0}
+        run: |
+          mkdir seqan3-build
+          cd seqan3-build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+          if [[ "${{ matrix.build }}" =~ ^(unit|header|snippet|coverage)$ ]]; then
+            make gtest_project
+          fi
+          if [[ "${{ matrix.build }}" =~ ^(performance)$ ]]; then
+            make gbenchmark_project
+          fi
+
+      - name: Build tests
+        env:
+          CCACHE_BASEDIR: ${{ github.workspace }}
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+          CCACHE_COMPRESS: true
+          CCACHE_COMPRESSLEVEL: 6
+          CCACHE_MAXSIZE: 5G
+        shell: bash -ex {0}
+        run: |
+          ccache -p || true
+          cd seqan3-build
+          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
+            make download-cppreference-doxygen-web-tag
+          else
+            make -k -j2
+          fi
+          ccache -s || true
+
+      - name: Run tests
+        if: matrix.build != 'coverage' # Already ran by the make call
+        shell: bash -ex {0}
+        run: |
+          cd seqan3-build
+          if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
+            ctest . --output-on-failure
+          else
+            ctest . -j2 --output-on-failure
+          fi
+
+      - name: Submit coverage build
+        if: matrix.build == 'coverage'
+        shell: bash
+        run: bash <(curl -s https://codecov.io/bash) -f ./seqan3-build/seqan3_coverage -R ./seqan3 || echo 'Codecov failed to upload'
+
+      - name: Package documentation
+        if: matrix.build == 'documentation'
+        continue-on-error: true
+        run: tar -zcf documentation.tar.gz seqan3-build
+
+      - name: Upload documentation
+        if: matrix.build == 'documentation'
+        continue-on-error: true
+        uses: actions/upload-artifact@v2
+        with:
+          name: documentation
+          path: documentation.tar.gz
