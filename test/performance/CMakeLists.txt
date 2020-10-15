@@ -10,6 +10,8 @@ project (seqan3_test_performance CXX)
 
 include (../seqan3-test.cmake)
 
+option (SEQAN3_BENCHMARK_MIN_TIME "Set --benchmark_min_time= for each bechmark. Timings are unreliable in CI." 1)
+
 macro (seqan3_benchmark benchmark_cpp)
     file (RELATIVE_PATH benchmark "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/${benchmark_cpp}")
     seqan3_test_component (target "${benchmark}" TARGET_NAME)
@@ -17,7 +19,7 @@ macro (seqan3_benchmark benchmark_cpp)
 
     add_executable (${target} ${benchmark_cpp})
     target_link_libraries (${target} seqan3::test::performance)
-    add_test (NAME "${test_name}" COMMAND ${target})
+    add_test (NAME "${test_name}" COMMAND ${target} "--benchmark_min_time=${SEQAN3_BENCHMARK_MIN_TIME}")
 
     unset (benchmark)
     unset (target)

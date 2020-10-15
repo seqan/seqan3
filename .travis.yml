@@ -78,7 +78,7 @@ install:
 before_script:
   - mkdir ../seqan3-build
   - cd ../seqan3-build
-  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_CXX_FLAGS="-fcompare-debug-second ${CXXFLAGS}" -DSEQAN3_VERBOSE_TESTS=OFF
+  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_CXX_FLAGS="-fcompare-debug-second ${CXXFLAGS}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
   - |
     if [[ "${BUILD}" =~ ^(unit|header|snippet|coverage)$ ]]; then
       make gtest_project
