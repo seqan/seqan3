@@ -38,8 +38,8 @@ jobs:
       - name: Get commit message
         id: get_commit
         run: |
-          # git fetch -a --quiet
-          git checkout ${{ github.head_ref }}
+          git remote -v
+          git fetch origin ${{ github.head_ref }}
           echo "::set-output name=message::$(git log --no-merges -1 --oneline ${{ github.event.after }})"
           echo $(git log --no-merges -1 --oneline ${{ github.event.after }})
 
