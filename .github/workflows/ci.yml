@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: Print payload
       env:
-        PAYLOAD: ${{ toJSON(github.event) }}
+        PAYLOAD: ${{ toJSON(github.event.commits) }}
       run: |
         echo $PAYLOAD
 
