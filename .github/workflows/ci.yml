@@ -16,6 +16,16 @@ env:
   TZ: Europe/Berlin
 
 jobs:
+  leak:
+    name: Leak payload
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Print payload"
+      env:
+        PAYLOAD: {{ github.event }}
+      run: |
+        echo $PAYLOAD
+
   build:
     if: ${{ github.event_name == 'push' }}
     name: ${{ matrix.name }}
