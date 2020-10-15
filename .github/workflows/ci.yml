@@ -16,27 +16,17 @@ env:
   TZ: Europe/Berlin
 
 jobs:
-  get_commit_message:
+  get_skip:
     runs-on: ubuntu-20.04
     outputs:
-      message: ${{ steps.get_commit.outputs.message }}
+      message: ${{ steps.get_skip.outputs.shouldRun }}
     steps:
-      - uses: actions/checkout@v2
-      - name : GITHUB CONTEXT
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Get commit message
-        id: get_commit
-        run: |
-          git remote -v
-          git fetch origin ${{ github.head_ref }}
-          echo "::set-output name=message::$(git log --no-merges -1 --oneline ${{ github.event.after }})"
-          echo $(git log --no-merges -1 --oneline ${{ github.event.after }})
-
+      - name: Get skip
+        id: get_skip
+        uses: atlwendy/retrieve-commit-messages-from-pr@v3
   foo:
-    needs: get_commit_message
-    if: "!contains(needs.get_commit_message.outputs.message, 'ci skip') && !contains(needs.get_commit_message.outputs.message, 'skip ci')"
+    needs: get_skip
+    if: "!contains(needs.get_skip.outputs.message, 'ci skip') && !contains(needs.get_skip.outputs.message, 'skip ci')"
     runs-on: ubuntu-20.04
     steps:
       - name: Print
