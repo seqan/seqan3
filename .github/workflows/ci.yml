@@ -38,6 +38,7 @@ jobs:
       - name: Get commit message
         id: get_commit
         run: |
+          git fetch -a
           echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
           echo $(git log --no-merges -1 --oneline)
           echo $(git log ${{ github.event.after }})
