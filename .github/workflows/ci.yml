@@ -38,6 +38,8 @@ jobs:
           echo $(git log --no-merges -1 --oneline)
           echo $(git log)
           echo $(git log --format=%B -n 1 ${{ github.event.after }})
+          echo ""
+          echo "${{ github.context }}"
 
   build:
     needs: get_commit_message
