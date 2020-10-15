@@ -38,12 +38,9 @@ jobs:
       - name: Get commit message
         id: get_commit
         run: |
-          git fetch -a
-          echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
-          echo $(git log --no-merges -1 --oneline)
-          echo $(git log ${{ github.event.after }})
-          echo $(git log --format=%B -n 1 ${{ github.event.after }})
-          echo $(git status)
+          git fetch ${{ github.head_ref }}
+          echo "::set-output name=message::$(git log --no-merges -1 --oneline ${{ github.event.after }})"
+          echo $(git log --no-merges -1 --oneline ${{ github.event.after }})
 
   build:
     needs: get_commit_message
