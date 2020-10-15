@@ -1,6 +1,13 @@
 name: Cancel workflows
 
-on: [push, pull_request_target]
+on:
+  push:
+    branches:
+      # Push events to branches matching refs/heads/master
+      - 'master'
+      # Push events to branches matching refs/heads/release*
+      - 'release*'
+  pull_request_target:
 
 env:
   TZ: Europe/Berlin
