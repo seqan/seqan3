@@ -31,6 +31,10 @@ jobs:
       message: ${{ steps.get_commit.message }}
     steps:
       - uses: actions/checkout@v2
+      - name : GITHUB CONTEXT
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Get commit message
         id: get_commit
         run: |
