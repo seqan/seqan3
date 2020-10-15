@@ -28,7 +28,7 @@ jobs:
   get_commit_message:
     runs-on: ubuntu-20.04
     outputs:
-      message: ${{ steps.get_commit_message.get_commit.message }}
+      message: ${{ steps.get_commit.message }}
     steps:
       - uses: actions/checkout@v2
       - name: Get commit message
