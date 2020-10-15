@@ -30,6 +30,7 @@ jobs:
     outputs:
       message: ${{ steps.get_commit_message.get_commit.message }}
     steps:
+      - uses: actions/checkout@v2
       - name: Get commit message
         id: get_commit
         run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
