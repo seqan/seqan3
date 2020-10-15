@@ -17,6 +17,7 @@ env:
 
 jobs:
   build:
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip-ci]') || github.event == 'push'"
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
