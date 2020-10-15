@@ -22,7 +22,7 @@ jobs:
     steps:
     - name: "Print payload"
       env:
-        PAYLOAD: {{ github.event }}
+        PAYLOAD: ${{ github.event }}
       run: |
         echo $PAYLOAD
 
