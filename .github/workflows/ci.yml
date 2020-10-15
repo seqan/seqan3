@@ -36,6 +36,7 @@ jobs:
         run: |
           echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
           echo $(git log --no-merges -1 --oneline)
+          echo $(git log)
 
   build:
     needs: get_commit_message
