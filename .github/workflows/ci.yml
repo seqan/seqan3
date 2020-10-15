@@ -35,7 +35,8 @@ jobs:
         run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
 
   build:
-    if: "!contains(steps.get_commit_message.outputs.message, 'ci skip') && !contains(steps.get_commit_message.outputs.message, 'skip ci')"
+    needs: get_commit_message
+    if: "!contains(needs.get_commit_message.outputs.message, 'ci skip') && !contains(needs.get_commit_message.outputs.message, 'skip ci')"
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 120
