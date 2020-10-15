@@ -37,6 +37,7 @@ jobs:
           echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
           echo $(git log --no-merges -1 --oneline)
           echo $(git log)
+          echo $(git log --format=%B -n 1 ${{ github.event.after }})
 
   build:
     needs: get_commit_message
