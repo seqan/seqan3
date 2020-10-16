@@ -847,6 +847,9 @@ inline void format_sam::write_alignment_record(stream_type & stream,
         for (auto chr : get<1>(align))
             if (chr == gap{})
                 ++off_end;
+
+        // Might happen if get<1>(align) doesn't correspond to the reference.
+        assert(off_end >= std::ranges::size(get<1>(align)));
         off_end -= std::ranges::size(get<1>(align));
 
         write_range(stream_it, detail::get_cigar_string(std::forward<align_type>(align), offset, off_end));

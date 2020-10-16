@@ -63,15 +63,15 @@ static std::string create_sam_file_string(size_t const n_queries)
         {
             auto query = seqan3::test::generate_sequence<seqan3::dna4>(read_size, length_variance, seed + i);
             auto qualities = seqan3::test::generate_sequence<seqan3::phred42>(read_size, length_variance, seed + i);
-            auto align_result = *(seqan3::align_pairwise(std::tie(query, reference), config).begin());
+            auto align_result = *(seqan3::align_pairwise(std::tie(reference, query), config).begin());
             std::string const current_query_id = query_prefix + std::to_string(i);
 
             sam_out.emplace_back(query,                                   // field::seq
                                  current_query_id,                        // field::id
-                                 align_result.sequence1_begin_position(), // field::offset
+                                 align_result.sequence2_begin_position(), // field::offset
                                  reference,                               // field::ref_seq
                                  reference_id,                            // field::ref_id
-                                 align_result.sequence2_begin_position(), // field::ref_offset
+                                 align_result.sequence1_begin_position(), // field::ref_offset
                                  align_result.alignment(),                // field::alignment
                                  align_result.score(),                    // field::mapq
                                  qualities,                               // field::qual
