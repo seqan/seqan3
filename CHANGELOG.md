@@ -55,6 +55,13 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
   but weren’t yet available at the time of this release.
 
+## Notable Bug-fixes
+
+#### I/O
+
+* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
+  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
+
 ## New features
 
 #### Alignment

@@ -328,3 +328,34 @@ TEST_F(sam_format, write_different_header)
     EXPECT_EQ(ostream.str(),
               "@HD\tVN:1.6\tSO:coordinate\tSS:query\tGO:reference\n@SQ\tSN:ref\tLN:34\n*\t0\tref\t1\t0\t*\t*\t0\t0\t*\t*\n");
 }
+
+TEST_F(sam_format, issue2195)
+{ // see issue https://github.com/seqan/seqan3/issues/2195
+    {
+        std::istringstream istream
+        {
+            "*r1\t4\t1\t10\t0\t5M\t=\t136097\t-121\tACTGA\t*9<9;\tNM:i:1\tMQ:i:0\n"
+        };
+        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+
+        using seqan3::operator""_phred42;
+        std::vector<seqan3::phred42> expected_quality = "*9<9;"_phred42;
+
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"*r1"});
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*fin.begin()), expected_quality);
+    }
+
+    {
+        std::istringstream istream
+        {
+            "*\t4\t1\t10\t0\t2M\t=\t136097\t-121\tAC\t*1\tNM:i:1\tMQ:i:0\n"
+        };
+        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+
+        using seqan3::operator""_phred42;
+        std::vector<seqan3::phred42> expected_quality = "*1"_phred42;
+
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{""});
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*fin.begin()), expected_quality);
+    }
+}
