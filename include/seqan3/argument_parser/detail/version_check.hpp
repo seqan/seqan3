@@ -20,6 +20,7 @@
 #include <iostream>
 #include <regex>
 
+#include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
@@ -268,7 +269,8 @@ public:
     }
 
     /*!\brief The central decision whether to perform the version check or not.
-     * \param[in] developer_approval Whether the developer approved (true) or not (false).
+     * \param[in] developer_approval Whether the developer approved (update_notifications::on) or not
+     *                               (update_notifications::off).
      * \param[in] user_approval      Whether the user approved (true) or not (false) or did not decide (unset optional).
      *
      * The following rules apply:
@@ -291,9 +293,9 @@ public:
      * if possible (seqan3::detail::is_terminal()), what he wants to do, set the according cookie for the next time
      * and continue. If we cannot ask the user, the default kicks in (do the check).
      */
-    bool decide_if_check_is_performed(bool developer_approval, std::optional<bool> user_approval)
+    bool decide_if_check_is_performed(update_notifications developer_approval, std::optional<bool> user_approval)
     {
-        if (!developer_approval)
+        if (developer_approval == update_notifications::off)
             return false;
 
         if (std::getenv("SEQAN3_NO_VERSION_CHECK") != nullptr) // environment variable was set

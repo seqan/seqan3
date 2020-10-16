@@ -121,7 +121,7 @@ TEST(parse_test, subcommand_argument_parser_error)
     // subcommand parsing was not enabled on construction but get_sub_parser() is called
     {
         const char * argv[]{"./top_level", "-f"};
-        seqan3::argument_parser top_level_parser{"top_level", 2, argv, false};
+        seqan3::argument_parser top_level_parser{"top_level", 2, argv, seqan3::update_notifications::off};
         top_level_parser.add_flag(flag_value, 'f', "foo", "foo bar");
 
         EXPECT_NO_THROW(top_level_parser.parse());
@@ -133,14 +133,22 @@ TEST(parse_test, subcommand_argument_parser_error)
     // subcommand key word must only contain alpha numeric characters
     {
         const char * argv[]{"./top_level", "-f"};
-        EXPECT_THROW((seqan3::argument_parser{"top_level", 2, argv, false, {"with space"}}), seqan3::design_error);
-        EXPECT_THROW((seqan3::argument_parser{"top_level", 2, argv, false, {"-dash"}}), seqan3::design_error);
+        EXPECT_THROW((seqan3::argument_parser{"top_level",
+                                              2,
+                                              argv,
+                                              seqan3::update_notifications::off,
+                                              {"with space"}}), seqan3::design_error);
+        EXPECT_THROW((seqan3::argument_parser{"top_level",
+                                              2,
+                                              argv,
+                                              seqan3::update_notifications::off,
+                                              {"-dash"}}), seqan3::design_error);
     }
 
     // no positional/options are allowed
     {
         const char * argv[]{"./top_level", "foo"};
-        seqan3::argument_parser top_level_parser{"top_level", 2, argv, false, {"foo"}};
+        seqan3::argument_parser top_level_parser{"top_level", 2, argv, seqan3::update_notifications::off, {"foo"}};
 
         EXPECT_THROW((top_level_parser.add_option(flag_value, 'f', "foo", "foo bar")), seqan3::design_error);
         EXPECT_THROW((top_level_parser.add_positional_option(flag_value, "foo bar")), seqan3::design_error);

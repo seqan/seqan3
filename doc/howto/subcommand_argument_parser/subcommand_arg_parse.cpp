@@ -74,7 +74,11 @@ int run_git_push(seqan3::argument_parser & parser)
 int main(int argc, char const ** argv)
 {
     //![construction]
-    seqan3::argument_parser top_level_parser{"mygit", argc, argv, true, {"push", "pull"}};
+    seqan3::argument_parser top_level_parser{"mygit",
+                                             argc,
+                                             argv,
+                                             seqan3::update_notifications::on,
+                                             {"push", "pull"}};
     //![construction]
 
     // Add information and flags, but no (positional) options to your top-level parser.
