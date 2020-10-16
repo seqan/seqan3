@@ -44,6 +44,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Argument parsing with subcommands: If the user forgets or misspells the subcommand, the error is thrown when calling
   `seqan3::argument_parser::parse()` and not on construction of the `seqan3::argument_parser`
   ([\#2179](https://github.com/seqan/seqan3/pull/2179)).
+* The `seqan3::regex_validator` parses `std::filesystem::path`'s correctly now
+  ([\#2216](https://github.com/seqan/seqan3/pull/2216)).
 
 # 3.0.2
 

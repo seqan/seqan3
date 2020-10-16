@@ -929,7 +929,8 @@ public:
     //!\endcond
     void operator()(range_type const & v) const
     {
-         std::for_each(v.begin(), v.end(), [&] (auto cmp) { (*this)(cmp); });
+        for (option_value_type const & file_name : v)
+            (*this)(file_name);
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
