@@ -301,12 +301,12 @@ protected:
                 if constexpr (builtin_character<value_type_t<seq_type>>)
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
-                                      std::ranges::back_inserter(id));
+                                      std::cpp20::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
-                                              | views::char_to<std::ranges::range_value_t<id_type>>,
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
                 }
                 detail::consume(stream_view | views::take_line_or_throw);
@@ -316,13 +316,13 @@ protected:
                 if constexpr (builtin_character<value_type_t<seq_type>>)
                 {
                     std::ranges::copy(stream_view | views::take_line_or_throw,
-                                      std::ranges::back_inserter(id));
+                                      std::cpp20::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | views::take_line_or_throw
-                                              | views::char_to<std::ranges::range_value_t<id_type>>,
-                                  std::cpp20::back_inserter(id));
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::cpp20::back_inserter(id));
                 }
             }
         }
@@ -333,12 +333,12 @@ protected:
 
         /* Sequence */
         auto seq_view = stream_view | views::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
-                                    | std::views::filter(!is_space);           // ignore whitespace
+                                    | std::views::filter(!is_space);              // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             if constexpr (builtin_character<seq_legal_alph_type> && builtin_character<value_type_t<seq_type>>)
             {
-                std::ranges::copy(seq_view, std::ranges::back_inserter(sequence));
+                std::ranges::copy(seq_view, std::cpp20::back_inserter(sequence));
             }
             else
             {
@@ -352,8 +352,9 @@ protected:
                                                  }
                                                  return c;
                                               })
-                                        | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
-                              std::cpp20::back_inserter(sequence));
+                                            | views::char_to<std::ranges::range_value_t<seq_type>>,
+                                              // convert to actual target alphabet
+                                   std::cpp20::back_inserter(sequence));
             }
             sequence_size_after = size(sequence);
         }
