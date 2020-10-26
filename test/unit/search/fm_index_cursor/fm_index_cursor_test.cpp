@@ -13,7 +13,9 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/range/views/char_to.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 
 #include "fm_index_cursor_test_template.hpp"

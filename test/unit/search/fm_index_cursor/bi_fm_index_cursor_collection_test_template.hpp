@@ -26,10 +26,11 @@ TYPED_TEST_SUITE_P(bi_fm_index_cursor_collection_test);
 
 TYPED_TEST_P(bi_fm_index_cursor_collection_test, cursor)
 {
-    typename TypeParam::index_type bi_fm{this->text_col1};  // {"AACGATCGGA", "AACGATCGGA"}
+    using index_type = typename TypeParam::index_type;
+    index_type bi_fm{this->text_col1};  // {"AACGATCGGA", "AACGATCGGA"}
 
-    seqan3::bi_fm_index fm_fwd{this->text_col1};
-    seqan3::bi_fm_index fm_rev{this->rev_text1};
+    index_type fm_fwd{this->text_col1};
+    index_type fm_rev{this->rev_text1};
 
     TypeParam bi_it = bi_fm.cursor();
     EXPECT_EQ(seqan3::uniquify(bi_it.locate()), seqan3::uniquify(bi_fm.fwd_cursor().locate()));

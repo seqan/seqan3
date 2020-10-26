@@ -12,11 +12,10 @@ include (../seqan3-test.cmake)
 
 option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of external libraries" OFF)
 
-# We compile each header twice in separate compilation units. Each alone is
-# sufficient to test that the header is functional, but both are needed to check
-# for link errors, which can happen if the header accidentally defines a
-# variable, e.g. a global or class static member. Furthermore this tests that
-# header guards are working by including the same header twice.
+# We compile each header twice in separate compilation units, where the second compilation omits the header guard (check
+# for cyclic includes). Each alone is sufficient to test that the header is functional, but both are needed to check for
+# link errors, which can happen if the header accidentally defines a variable, e.g. a global or class static member.
+# Furthermore this tests that header guards are working by including the same header twice.
 #
 # example invocation:
 #     seqan3_header_test (seqan3 "<path>/include/seqan3" "test.hpp|/folder/|test2.hpp")
@@ -28,6 +27,39 @@ option (SEQAN3_FULL_HEADER_TEST "Test seqan3 headers as well as the headers of e
 #
 # \sa Modified version from Bio-Formats
 # https://github.com/openmicroscopy/bioformats/blob/d3bb33eeda23e81f78fd25f658bfc14a4363805f/cpp/cmake/HeaderTest.cmake#L81-L113
+#
+# \sa https://en.cppreference.com/w/cpp/language/storage_duration#external_linkage
+#
+# ======== Detailed Explanation ========
+#
+# `test/header/generate_header_source.cmake` generates for each given header file two `.cpp` files.
+#
+# Let header be `include/seqan3/search/fm_index/bi_fm_index_cursor.hpp` and component be `seqan3`.
+#
+# * `<build_dir>/seqan3_header_test/seqan3/search/fm_index/bi_fm_index_cursor.hpp-header-guard.cpp`
+#   which checks if the header implements a header guard.
+#
+#   This will be checked by including the header twice, if the header guard is missing the second include will produce
+#   redeclaration errors, i.e.
+#
+#   ```c++
+#   #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#   #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp> // redeclaration errors if bi_fm_index_cursor.hpp has no header-guards
+#   ```
+#
+# * `<build_dir>/seqan3_header_test/seqan3/search/fm_index/bi_fm_index_cursor.hpp-no-self-include.cpp`
+#   which checks if the header will not be included itself (cyclic include). For this we copy the content of the header
+#   file into the source file and if any included header includes the header itself again, we would get redeclaration
+#   errors, i.e.
+#   ```c++
+#   // This is file bi_fm_index_cursor.hpp without #pragma once
+#
+#   // ...
+#   #include <seqan3/search/fm_index/fm_index.hpp> // redeclaration errors if fm_index.hpp includes bi_fm_index_cursor.hpp
+#   ```
+#
+# Each `.cpp` file generates an object file which will be linked into one big binary. This ensures that we don't have
+# any leaking symbols (e.g. https://en.cppreference.com/w/cpp/language/storage_duration#external_linkage).
 macro (seqan3_header_test component header_base_path exclude_regex)
     set (target "${component}_header_test")
 
@@ -56,54 +88,31 @@ macro (seqan3_header_test component header_base_path exclude_regex)
     add_test (NAME "header/${target}" COMMAND ${target})
 
     foreach (header ${header_files})
-        foreach (repeat 1 2)
-            seqan3_test_component (header_test_name "${header}" TEST_NAME)
-            seqan3_test_component (header_target_name "${header}" TARGET_UNIQUE_NAME)
-            set (header_target_source "${PROJECT_BINARY_DIR}/${target}_files/${header_test_name}-${repeat}.cpp")
-            set (header_target_name "${header_target_name}-${repeat}")
-            set (header_target "${target}--${header_target_name}")
+        seqan3_test_component (header_test_name "${header}" TEST_NAME)
+        seqan3_test_component (header_target_name "${header}" TARGET_UNIQUE_NAME)
+
+        foreach (header_sub_test "header-guard" "no-self-include")
+            set (header_target_source "${PROJECT_BINARY_DIR}/${target}_files/${header_test_name}.hpp-${header_sub_test}.cpp")
+            set (header_target "${target}--${header_target_name}-${header_sub_test}")
 
             string (REPLACE "-" "__" header_test_name_safe "${target}, ${header_target}")
-            file (WRITE "${header_target_source}" "
-#include <${header}>
-#include <${header}>
-#include <gtest/gtest.h>
-#include <benchmark/benchmark.h>
-TEST(${header_test_name_safe}) {}")
 
-            # test that seqan3 headers include platform.hpp
-            if ("${component}" MATCHES "seqan3")
-
-                # exclude seqan3/std/* and seqan3/contrib/* from platform test
-                if (NOT header MATCHES "seqan3/(std|contrib)/")
-                    file (APPEND "${header_target_source}" "
-#ifndef SEQAN3_DOXYGEN_ONLY
-#error \"Your header '${header}' file is missing #include <seqan3/core/platform.hpp>\"
-#endif")
-                endif ()
-
-                # seqan3/std/* must not include platform.hpp (and therefore any other seqan3 header)
-                # See https://github.com/seqan/product_backlog/issues/135
-                if (header MATCHES "seqan3/std/")
-                    file (APPEND "${header_target_source}" "
-#ifdef SEQAN3_DOXYGEN_ONLY
-#error \"The standard header '${header}' file MUST NOT include any other seqan3 header (except for seqan3/contrib)\"
-#endif")
-                endif ()
-
-                # test whether seqan3 has the visibility bug on lower gcc versions
-                # https://github.com/seqan/seqan3/issues/1317
-                file (APPEND "${header_target_source}" "
-#include <seqan3/core/platform.hpp>
-class A{ int i{5}; };
-
-template <typename t>
-SEQAN3_CONCEPT private_bug = requires(t a){a.i;};
-
-static_assert(!private_bug<A>, \"See https://github.com/seqan/seqan3/issues/1317\");")
-            endif ()
+            # we use add_custom_command to detect changes to a header file, which will update the generated source file
+            add_custom_command (OUTPUT "${header_target_source}"
+                                COMMAND "${CMAKE_COMMAND}"
+                                        "-DHEADER_FILE_ABSOLUTE=${header_base_path}/${header}"
+                                        "-DHEADER_FILE_INCLUDE=${header}"
+                                        "-DHEADER_TARGET_SOURCE=${header_target_source}"
+                                        "-DHEADER_TEST_NAME_SAFE=${header_test_name_safe}"
+                                        "-DHEADER_COMPONENT=${component}"
+                                        "-DHEADER_SUB_TEST=${header_sub_test}"
+                                        "-P"
+                                        "${CMAKE_CURRENT_SOURCE_DIR}/generate_header_source.cmake"
+                                DEPENDS "${header_base_path}/${header}"
+                                        "${CMAKE_CURRENT_SOURCE_DIR}/generate_header_source.cmake")
 
             add_library (${header_target} OBJECT "${header_target_source}")
+
             # NOTE: a simple target_link_libraries (${header_target} seqan3::test::header)
             # is not possible for OBJECT libraries before cmake 3.12
             if (CMAKE_VERSION VERSION_LESS 3.12)

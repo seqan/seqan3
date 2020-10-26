@@ -12,6 +12,7 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
 
 #include "bi_fm_index_cursor_collection_test_template.hpp"
 
@@ -37,7 +38,6 @@ struct bi_fm_index_cursor_collection_test : public ::testing::Test
     std::vector<text_type> text_col4{text, text2};
 
     std::vector<text_type> rev_text1 = text_col1 | seqan3::views::deep{std::views::reverse}
-                                                 | seqan3::views::deep{seqan3::views::persist}
                                                  | seqan3::views::to<std::vector<text_type>>;
     std::vector<text_type> rev_text2 = text_col4 | seqan3::views::deep{std::views::reverse}
                                                  | std::views::reverse
