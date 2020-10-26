@@ -604,7 +604,7 @@ template <semialphabet alphabet_t,
 class reverse_fm_index : public fm_index<alphabet_t, text_layout_mode, sdsl_index_type>
 {
 private:
-    //!\copydoc fm_index::construct()
+    //!\copydoc seqan3::fm_index::construct()
     template <std::ranges::range text_t>
     void construct_(text_t && text)
     {
@@ -623,7 +623,7 @@ private:
 public:
     using fm_index<alphabet_t, text_layout_mode, sdsl_index_type>::fm_index;
 
-    //!\copydoc fm_index::fm_index(text_t && text)
+    //!\copydoc seqan3::fm_index::fm_index(text_t && text)
     template <std::ranges::bidirectional_range text_t>
     explicit reverse_fm_index(text_t && text)
     {

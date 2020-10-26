@@ -275,13 +275,13 @@ public:
     {
         return {*this, storage.begin()};
     }
-    //!\copydoc two_dimensional_matrix::begin
+    //!\copydoc seqan3::detail::two_dimensional_matrix::begin
     constexpr const_iterator begin() const noexcept
     {
         return {*this, storage.begin()};
     }
 
-    //!\copydoc two_dimensional_matrix::begin
+    //!\copydoc seqan3::detail::two_dimensional_matrix::begin
     constexpr const_iterator cbegin() const noexcept
     {
         return begin();
@@ -293,13 +293,13 @@ public:
         return {*this, storage.end()};
     }
 
-    //!\copydoc two_dimensional_matrix::end
+    //!\copydoc seqan3::detail::two_dimensional_matrix::end
     constexpr const_iterator end() const noexcept
     {
         return {*this, storage.end()};
     }
 
-    //!\copydoc two_dimensional_matrix::end
+    //!\copydoc seqan3::detail::two_dimensional_matrix::end
     constexpr const_iterator cend() const noexcept
     {
         return end();
