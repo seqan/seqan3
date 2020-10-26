@@ -7,7 +7,7 @@
 
 # This file describes where and which parts of SeqAn3 should be installed to.
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.14)
 
 include (GNUInstallDirs)
 
