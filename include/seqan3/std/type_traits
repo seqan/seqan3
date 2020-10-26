@@ -20,7 +20,7 @@
 #ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
 #   if defined(__cpp_lib_remove_cvref)
 #       define SEQAN3_CPP_LIB_REMOVE_CVREF 1
-#   elif defined(__GNUC__) && ((__GNUC__ == 9) && (__GNUC_MINOR__ < 4)) && __cplusplus > 201703L
+#   elif defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE == 9 && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_REMOVE_CVREF 1
 #   endif
 #endif
