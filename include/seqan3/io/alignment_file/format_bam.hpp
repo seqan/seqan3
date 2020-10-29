@@ -38,6 +38,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/range/detail/misc.hpp>
+#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
@@ -313,9 +314,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     static_assert(detail::decays_to_ignore_v<flag_type> || std::same_as<flag_type, sam_flag>,
                   "The type of field::flag must be seqan3::sam_flag.");
 
-    using stream_buf_t = std::istreambuf_iterator<typename stream_type::char_type>;
-    auto stream_view = std::ranges::subrange<decltype(stream_buf_t{stream}), decltype(stream_buf_t{})>
-                           {stream_buf_t{stream}, stream_buf_t{}};
+    auto stream_view = seqan3::views::istreambuf(stream);
 
     // these variables need to be stored to compute the ALIGNMENT
     [[maybe_unused]] int32_t offset_tmp{};
@@ -373,7 +372,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
         header_was_read = true;
 
-        if (stream_buf_t{stream} == stream_buf_t{}) // no records follow
+        if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // no records follow
             return;
     }
 
@@ -695,7 +694,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
             throw format_error{detail::to_string("The ref_offset object must be >= -1 but is: ", ref_offset)};
 
-        std::cpp20::ostreambuf_iterator stream_it{stream};
+        detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
 
         // ---------------------------------------------------------------------
         // Writing the BAM Header on first call
@@ -959,19 +958,22 @@ inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dict
        VALUE's and the inner value type is identified by the next character, one of [cCsSiIf], followed
        by the length (int32_t) of the array, followed by the values.
     */
-    uint16_t tag = static_cast<uint16_t>(*std::ranges::begin(stream_view)) << 8;
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
-    tag += static_cast<uint16_t>(*std::ranges::begin(stream_view));
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
-    char type_id = static_cast<char>(*std::ranges::begin(stream_view));
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+    auto it = std::ranges::begin(stream_view);
+    uint16_t tag = static_cast<uint16_t>(*it) << 8;
+    ++it; // skip char read before
+
+    tag += static_cast<uint16_t>(*it);
+    ++it; // skip char read before
+
+    char type_id = *it;
+    ++it; // skip char read before
 
     switch (type_id)
     {
         case 'A' : // char
         {
-            target[tag] = static_cast<char>(*std::ranges::begin(stream_view));
-            std::ranges::next(std::ranges::begin(stream_view)); // skip char that has been read
+            target[tag] = *it;
+            ++it; // skip char that has been read
             break;
         }
         // all integer sizes are possible
@@ -1027,24 +1029,25 @@ inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dict
         case 'Z' : // string
         {
             string_buffer.clear();
-            while (!is_char<'\0'>(*std::ranges::begin(stream_view)))
+            while (!is_char<'\0'>(*it))
             {
-                string_buffer.push_back(*std::ranges::begin(stream_view));
-                std::ranges::next(std::ranges::begin(stream_view));
+                string_buffer.push_back(*it);
+                ++it;
             }
-            std::ranges::next(std::ranges::begin(stream_view)); // skip \0
+            ++it; // skip \0
             target[tag] = string_buffer;
             break;
         }
         case 'H' :
         {
             // TODO
+            throw format_error{"'H' not implemented yet."};
             break;
         }
         case 'B' : // Array. Value type depends on second char [cCsSiIf]
         {
-            char array_value_type_id = *std::ranges::begin(stream_view);
-            std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+            char array_value_type_id = *it;
+            ++it; // skip char read before
 
             switch (array_value_type_id)
             {
