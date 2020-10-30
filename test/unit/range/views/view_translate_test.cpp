@@ -108,6 +108,10 @@ TYPED_TEST(nucleotide, view_translate_single_const)
     std::string const in{"ACGTACGTACGTA"};
     std::vector<TypeParam> vec = in | seqan3::views::char_to<TypeParam> | seqan3::views::to<std::vector>;
     seqan3::aa27_vector cmp1{"TYVR"_aa27};
+    seqan3::aa27_vector cmp1_rev{"YVRT"_aa27};
+    seqan3::aa27_vector cmp1b{"RTYV"_aa27};
+    seqan3::aa27_vector cmp1c{"VRT"_aa27};
+    seqan3::aa27_vector cmp1c_rev{"RTY"_aa27};
     seqan3::aa27_vector cmp2{"CMHA"_aa27};
     seqan3::aa27_vector cmp3{"AHMC"_aa27};
 
@@ -128,6 +132,26 @@ TYPED_TEST(nucleotide, view_translate_single_const)
     // == [T,Y,V,R]
     EXPECT_EQ(v3.size(), cmp1.size());
     EXPECT_RANGE_EQ(v3, cmp1);
+    auto const v3_rev = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_0);
+    // == [Y,V,R,T]
+    EXPECT_EQ(v3_rev.size(), cmp1_rev.size());
+    EXPECT_RANGE_EQ(v3_rev, cmp1_rev);
+    auto const v3b = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_1);
+    // == [R,T,Y,V]
+    EXPECT_EQ(v3b.size(), cmp1b.size());
+    EXPECT_RANGE_EQ(v3b, cmp1b);
+    auto const v3b_rev = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_1);
+    // == [T,Y,V,R]
+    EXPECT_EQ(v3b_rev.size(), cmp1.size());
+    EXPECT_RANGE_EQ(v3b_rev, cmp1);
+    auto const v3c = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_2);
+    // == [V,R,T]
+    EXPECT_EQ(v3c.size(), cmp1c.size());
+    EXPECT_RANGE_EQ(v3c, cmp1c);
+    auto const v3c_rev = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_2);
+    // == [R,T,Y]
+    EXPECT_EQ(v3c_rev.size(), cmp1c_rev.size());
+    EXPECT_RANGE_EQ(v3c_rev, cmp1c_rev);
 
     // function syntax
     auto const v4 = seqan3::views::translate_single(vec, seqan3::translation_frames::FWD_FRAME_0);
