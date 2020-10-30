@@ -232,3 +232,10 @@ TEST_F(minimiser_test, non_arithmetic_value)
     // just compute the minimizer directly on the alphabet
     EXPECT_RANGE_EQ("ACACA"_dna4, text3 | minimiser_no_rev_view);
 }
+
+TEST_F(minimiser_test, two_ranges_unequal_size)
+{
+    EXPECT_THROW((seqan3::detail::minimiser_view{text1 | kmer_view,
+                                                text3 | rev_kmer_view,
+                                                5}), std::invalid_argument);
+}
