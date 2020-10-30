@@ -66,7 +66,7 @@ public:
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, std::vector<std::string> && argv_) :
+    format_parse(int const argc_, std::vector<std::string> argv_) :
         argc{argc_ - 1}, argv{std::move(argv_)}
     {}
     //!\}
@@ -159,57 +159,15 @@ public:
             return is_char<'\0'>(id);
     }
 
-private:
-    //!\brief Describes the result of parsing the user input string given the respective option value type.
-    enum class option_parse_result
-    {
-        success, //!< Parsing of user input was successful.
-        error, //!< There was some error while trying to parse the user input.
-        overflow_error //!< Parsing was successful but the arithmetic value would cause an overflow.
-    };
-
-    /*!\brief Appends a double dash to a long identifier and returns it.
-    * \param[in] long_id The name of the long identifier.
-    * \returns The input long name prepended with a double dash.
-    */
-    std::string prepend_dash(std::string const & long_id)
-    {
-        return ("--" + long_id);
-    }
-
-    /*!\brief Appends a double dash to a short identifier and returns it.
-    * \param[in] short_id The name of the short identifier.
-    * \returns The input short name prepended with a single dash.
-    */
-    std::string prepend_dash(char const short_id)
-    {
-        return ("-" + std::string(1, short_id));
-    }
-
-    /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
-    * \param[in] short_id The name of the short identifier.
-    * \param[in] long_id  The name of the long identifier.
-    * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
-    */
-    std::string combine_option_names(char const short_id, std::string const & long_id)
-    {
-        if (short_id == '\0')
-            return prepend_dash(long_id);
-        else if (long_id.empty())
-            return prepend_dash(short_id);
-        else // both are set (note: both cannot be empty, this is caught before)
-            return prepend_dash(short_id) + "/" + prepend_dash(long_id);
-    }
-
     /*!\brief Finds the position of a short/long identifier in format_parse::argv.
+     * \tparam iterator_type The type of iterator that defines the range to search in.
      * \tparam id_type The identifier type; must be either of type `char` if it denotes a short identifier or
      *                 std::string if it denotes a long identifier.
      * \param[in] begin_it The iterator where to start the search of the identifier.
-     *                     Note that the end iterator is kept as a member variable.
-     * \param[in] id       The identifier to search for (must not contain dashes).
-     * \returns An iterator pointing to the first occurrence of the identifier in
-     *          the list pointed to by begin_t. If the list does not contain the
-     *          identifier `id`, the member variable `end_of_options_it` is returned.
+     * \param[in] end_it The iterator one past the end of where to search the identifier.
+     * \param[in] id The identifier to search for (must not contain dashes).
+     * \returns An iterator pointing to the first occurrence of `id` in the list pointed to by `begin_it`
+     *          or `end_it` if it is not contained.
      *
      * \details
      *
@@ -222,13 +180,13 @@ private:
      * The `id` is found by comparing every argument in argv to `id` prepended with two dashes (`--`)
      * or a prefix of such followed by the equal sign `=`.
      */
-    template <typename id_type>
-    std::vector<std::string>::iterator find_option_id(std::vector<std::string>::iterator const begin_it, id_type const & id)
+    template <typename iterator_type, typename id_type>
+    static iterator_type find_option_id(iterator_type begin_it, iterator_type end_it, id_type const & id)
     {
         if (is_empty_id(id))
-            return end_of_options_it;
+            return end_it;
 
-        return (std::find_if(begin_it, end_of_options_it,
+        return (std::find_if(begin_it, end_it,
             [&] (std::string const & current_arg)
             {
                 std::string full_id = prepend_dash(id);
@@ -246,6 +204,48 @@ private:
                            (current_arg.size() == full_id.size() || current_arg[full_id.size()] == '='); // space or `=`
                 }
             }));
+    }
+
+private:
+    //!\brief Describes the result of parsing the user input string given the respective option value type.
+    enum class option_parse_result
+    {
+        success, //!< Parsing of user input was successful.
+        error, //!< There was some error while trying to parse the user input.
+        overflow_error //!< Parsing was successful but the arithmetic value would cause an overflow.
+    };
+
+    /*!\brief Appends a double dash to a long identifier and returns it.
+    * \param[in] long_id The name of the long identifier.
+    * \returns The input long name prepended with a double dash.
+    */
+    static std::string prepend_dash(std::string const & long_id)
+    {
+        return {"--" + long_id};
+    }
+
+    /*!\brief Appends a double dash to a short identifier and returns it.
+    * \param[in] short_id The name of the short identifier.
+    * \returns The input short name prepended with a single dash.
+    */
+    static std::string prepend_dash(char const short_id)
+    {
+        return {"-" + std::string{short_id}};
+    }
+
+    /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.
+    * \param[in] short_id The name of the short identifier.
+    * \param[in] long_id  The name of the long identifier.
+    * \returns The short_id prepended with a single dash and the long_id prepended with a double dash, separated by '/'.
+    */
+    std::string combine_option_names(char const short_id, std::string const & long_id)
+    {
+        if (short_id == '\0')
+            return prepend_dash(long_id);
+        else if (long_id.empty())
+            return prepend_dash(short_id);
+        else // both are set (note: both cannot be empty, this is caught before)
+            return prepend_dash(short_id) + "/" + prepend_dash(long_id);
     }
 
     /*!\brief Returns true and removes the long identifier if it is in format_parse::argv.
@@ -528,12 +528,12 @@ private:
     template <typename option_type, typename id_type>
     bool get_option_by_id(option_type & value, id_type const & id)
     {
-        auto it = find_option_id(argv.begin(), id);
+        auto it = find_option_id(argv.begin(), end_of_options_it, id);
 
         if (it != end_of_options_it)
             identify_and_retrieve_option_value(value, it, id);
 
-        if (find_option_id(it, id) != end_of_options_it) // should not be found again
+        if (find_option_id(it, end_of_options_it, id) != end_of_options_it) // should not be found again
            throw option_declared_multiple_times("Option " + prepend_dash(id) +
                                                 " is no list/container but declared multiple times.");
 
@@ -557,13 +557,13 @@ private:
     //!\endcond
     bool get_option_by_id(option_type & value, id_type const & id)
     {
-        auto it = find_option_id(argv.begin(), id);
+        auto it = find_option_id(argv.begin(), end_of_options_it, id);
         bool seen_at_least_once{it != end_of_options_it};
 
         while (it != end_of_options_it)
         {
             identify_and_retrieve_option_value(value, it, id);
-            it = find_option_id(it, id);
+            it = find_option_id(it, end_of_options_it, id);
         }
 
         return seen_at_least_once;

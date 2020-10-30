@@ -425,6 +425,64 @@ public:
         return *sub_parser;
     }
 
+    /*!\brief Checks whether the option identifier (`id`) was set on the command line by the user.
+     * \tparam id_type Either type `char` or a type that a `std::string` is constructible from.
+     * \param[in] id The short (`char`) or long (`std::string`) option identifier to search for.
+     * \returns `true` if option identifier `id` was set on the command line by the user.
+     * \throws seqan3::design_error if the function is used incorrectly (see details below).
+     *
+     * \details
+     *
+     * You can only ask for option identifiers that were added to the parser beforehand via
+     * `seqan3::argument_parser::add_option`.
+     * As in the `seqan3::argument_parser::add_option` call, pass short identifiers as a `char` and long identifiers
+     * as a `std::string` or a type that a `std::string` is constructible from (e.g. a `const char *`).
+     *
+     * ### Example
+     *
+     * \include test/snippet/argument_parser/is_option_set.cpp
+     *
+     * ### Exceptions
+     *
+     * This function throws a seqan3::design_error if
+     * * `seqan3::argument_parser::parse()` was not called before.
+     * * a long identifier was passed (e.g. a `std::string`) that only consists of a single character. If you mean to
+     *   pass a short identifier, please pass it as a `char` not a `std::string`.
+     * * the option identifier cannot be found in the list of valid option identifiers that were added to the parser
+     *   via `seqan3::argument_parser::add_option()` calls beforehand.
+     */
+    template <typename id_type>
+    //!\cond
+        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type>
+    //!\endcond
+    bool is_option_set(id_type const & id) const
+    {
+        if (!parse_was_called)
+            throw design_error{"You can only ask which options have been set after calling the function `parse()`."};
+
+        // the detail::format_parse::find_option_id call in the end expects either a char or std::string
+        using char_or_string_t = std::conditional_t<std::same_as<id_type, char>, char, std::string>;
+        char_or_string_t short_or_long_id = {id}; // e.g. convert char * to string here if necessary
+
+        if constexpr (!std::same_as<id_type, char>) // long id was given
+        {
+            if (short_or_long_id.size() == 1)
+            {
+                throw design_error{"Long option identifiers must be longer than one character! If " + short_or_long_id +
+                                   "' was meant to be a short identifier, please pass it as a char ('') not a string"
+                                   " (\"\")!"};
+            }
+        }
+
+        if (std::find(used_option_ids.begin(), used_option_ids.end(), std::string{id}) == used_option_ids.end())
+            throw design_error{"You can only ask for option identifiers that you added with add_option() before."};
+
+        // we only need to search for an option before the `end_of_options_indentifier` (`--`)
+        auto end_of_options = std::find(cmd_arguments.begin(), cmd_arguments.end(), end_of_options_indentifier);
+        auto option_it = detail::format_parse::find_option_id(cmd_arguments.begin(), end_of_options, short_or_long_id);
+        return option_it != end_of_options;
+    }
+
     //!\name Structuring the Help Page
     //!\{
 
@@ -560,11 +618,36 @@ private:
     //!\brief Validates the application name to ensure an escaped server call.
     std::regex app_name_regex{"^[a-zA-Z0-9_-]+$"};
 
+    //!\brief Signals the argument parser that no options follow this string but only positional arguments.
+    static constexpr std::string_view const end_of_options_indentifier{"--"};
+
     //!\brief Stores the sub-parser in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
     std::unique_ptr<argument_parser> sub_parser{nullptr};
 
     //!\brief Stores the sub-parser names in case \link subcommand_arg_parse subcommand parsing \endlink is enabled.
     std::vector<std::string> subcommands{};
+
+    /*!\brief The format of the argument parser that decides the behavior when
+     *        calling the seqan3::argument_parser::parse function.
+     *
+     * \details
+     *
+     * The format is set in the function argument_parser::init.
+     */
+    std::variant<detail::format_parse,
+                 detail::format_help,
+                 detail::format_short_help,
+                 detail::format_version,
+                 detail::format_html,
+                 detail::format_man,
+                 detail::format_copyright/*,
+                 detail::format_ctd*/> format{detail::format_help{{}, false}}; // Will be overwritten in any case.
+
+    //!\brief List of option/flag identifiers that are already used.
+    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
+
+    //!\brief The command line arguments.
+    std::vector<std::string> cmd_arguments{};
 
     /*!\brief Initializes the seqan3::argument_parser class on construction.
      *
@@ -579,7 +662,7 @@ private:
      *
      * \details
      *
-     * This function adds all command line parameters to a std::vector<std::string>
+     * This function adds all command line parameters to the cmd_arguments member variable
      * to take advantage of the vector functionality later on. Additionally,
      * the format member variable is set, depending on which parameters are given
      * by the user:
@@ -600,9 +683,6 @@ private:
      */
     void init(int argc, char const * const * const argv)
     {
-        // cash command line input, in case --version-check is specified but shall not be passed to format_parse()
-        std::vector<std::string> argv_new{};
-
         if (argc <= 1) // no arguments provided
         {
             format = detail::format_short_help{};
@@ -689,18 +769,17 @@ private:
                 else
                     throw validation_error{"Value for option --version-check must be 1 or 0."};
 
+                // in case --version-check is specified it shall not be passed to format_parse()
                 argc -= 2;
             }
             else
             {
-                argv_new.push_back(std::move(arg));
+                cmd_arguments.push_back(std::move(arg));
             }
         }
 
         if (!special_format_was_set)
-        {
-            format = detail::format_parse(argc, std::move(argv_new));
-        }
+            format = detail::format_parse(argc, cmd_arguments);
     }
 
     //!\brief Adds standard options to the help page.
@@ -764,22 +843,6 @@ private:
         if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
             throw design_error("Option Identifiers cannot both be empty.");
     }
-
-    /*!\brief The format of the argument parser that decides the behavior when
-     * calling the seqan3::argument_parser::parse function.
-     * \details The format is set in the function argument_parser::init.
-     */
-    std::variant<detail::format_parse,
-                 detail::format_help,
-                 detail::format_short_help,
-                 detail::format_version,
-                 detail::format_html,
-                 detail::format_man,
-                 detail::format_copyright/*,
-                 detail::format_ctd*/> format{detail::format_help{{}, false}}; // Will be overwritten in any case.
-
-    //!\brief List of option/flag identifiers that are already used.
-    std::set<std::string> used_option_ids{"h", "hh", "help", "advanced-help", "export-help", "version", "copyright"};
 };
 
 } // namespace seqan3
