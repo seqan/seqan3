@@ -274,6 +274,10 @@ private:
         #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             auto it = stream_view.begin();
             auto e = stream_view.end();
+
+            if (it == e)
+                throw unexpected_end_of_input{"No sequence information given!"};
+
             for (; (it != e) && ((!is_id)(*it)); ++it)
             {
                 if ((is_space || is_digit)(*it))
@@ -290,6 +294,9 @@ private:
             }
 
         #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
+
+            if (std::ranges::begin(stream_view) == std::ranges::end(stream_view))
+                throw unexpected_end_of_input{"No sequence information given!"};
 
             std::ranges::copy(stream_view | views::take_until(is_id)                   // until next header (or end)
                                           | std::views::filter(!(is_space || is_digit))// ignore whitespace and numbers
