@@ -7,9 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include "../alphabet_test_template.hpp"
-#include "../alphabet_constexpr_test_template.hpp"
-
 #include <seqan3/alphabet/aminoacid/aa10li.hpp>
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
