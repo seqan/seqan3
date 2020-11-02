@@ -67,13 +67,90 @@ TEST(tmp_filename_dtr, dtr)
     EXPECT_FALSE(fs::exists(path.parent_path()));
 }
 
-// throw if invalid TMPDIR
-TEST(tmp_filename_throw, throw)
+//!\brief A wrapper class to handle construction, destruction and permission handling of a temporary directory.
+class read_only_directory
 {
-    if (!system("man putenv > /dev/null 2>&1"))
+public:
+    read_only_directory() = delete; //< Deleted.
+    read_only_directory(read_only_directory const &) = delete; //< Deleted.
+    read_only_directory(read_only_directory &&) = default; //< Defaulted.
+    read_only_directory & operator=(read_only_directory const &) = delete; //< Deleted.
+    read_only_directory & operator=(read_only_directory &&) = default; //< Defaulted.
+
+    /*!\brief Construct a directory from a given path.
+     * \throws if std::filesystem::create_directory throws.
+     * \throws std::filesystem::filesystem_error if the directory already exists.
+     * \throws if std::filesystem::permissions throws.
+     */
+    explicit read_only_directory(std::filesystem::path path) : directory_path(std::move(path))
     {
-        char str[] = "TMPDIR=/invalid";
-        putenv(str);
+        if (!std::filesystem::create_directory(directory_path))
+        {
+            throw std::filesystem::filesystem_error{"The read_only_directory path already exists",
+                                                    directory_path,
+                                                    std::make_error_code(std::errc::file_exists)};
+        }
+        std::filesystem::permissions(directory_path,
+                                     std::filesystem::perms::owner_write,
+                                     std::filesystem::perm_options::remove);
+    }
+
+    //!\brief Destructor tries to delete the directory.
+    ~read_only_directory()
+    {
+        [[maybe_unused]] std::error_code ec;
+        release_impl(ec);
+    }
+
+    /*!\brief Tries to remove the directory.
+     * \throws if std::filesystem::permissions throws.
+     * \throws if std::filesystem::remove throws.
+     * \throws std::filesystem::filesystem_error if the directory does not exist.
+     */
+    void release() const
+    {
+        std::error_code ec;
+        release_impl(ec);
+
+        if (ec.value())
+            throw std::filesystem::filesystem_error("Error while removing directory", directory_path, ec);
+    }
+
+private:
+    //!/brief The path of the managed directory.
+    std::filesystem::path const directory_path;
+
+    /*!\brief Tries to remove the directory.
+     */
+    void release_impl(std::error_code & ec) const noexcept
+    {
+        std::filesystem::permissions(directory_path,
+                                     std::filesystem::perms::owner_write,
+                                     std::filesystem::perm_options::add,
+                                     ec);
+        std::filesystem::remove(directory_path, ec);
+    }
+};
+
+TEST(tmp_filename_throw, directory_not_writeable)
+{
+    try
+    {
+        // Create a directory in the temporary directory.
+        std::filesystem::path test_path = std::filesystem::temp_directory_path();
+        test_path /= "seqan3_tmp_filename_throw";
+        read_only_directory test_directory{test_path};
+
+        // Set TMPDIR. This is the first env var that is looked up for `temp_directory_path` inside the `tmp_filename`.
+        setenv("TMPDIR", test_path.c_str(), 1); // name, value, overwrite
+
         EXPECT_THROW(seqan3::test::tmp_filename t1{"throw"}, std::filesystem::filesystem_error);
+
+        // Remove directory.
+        test_directory.release();
+    }
+    catch (std::exception const & e)
+    {
+        FAIL() << e.what();
     }
 }
