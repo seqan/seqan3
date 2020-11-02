@@ -127,7 +127,7 @@ TEST_F(read, complete_header)
 {
     std::string input
     {
-R"(ID ID1;	stuff
+R"(ID ID1;	Stuff
 SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
   ACGTTTTTTT TTTTTTTT        18
 //
@@ -146,7 +146,7 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
     };
 
     options.embl_genbank_complete_header = true;
-    ids[0] = "ID ID1;\tstuff\n";
+    ids[0] = "ID ID1;\tStuff\n";
     ids[1] = "ID ID2;\n";
     ids[2] = "ID ID3 lala;\nXX\nAC   AB000263;\nXX\n";
     do_read_test(input);
@@ -156,7 +156,7 @@ TEST_F(read, multiple_lines_before_seq)
 {
     std::string input
     {
-R"(ID ID1;	stuff
+R"(ID ID1;	Stuff
 XX
 XX
 XX
