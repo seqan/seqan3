@@ -476,9 +476,6 @@ TEST(validator_test, output_directory)
     }
 }
 
-#if __has_include(<filesystem>)
-// Setting the permissions with perm_options is not available in the experimental/filesystem branch.
-
 // In case this test is built as `root`, we want to exclude tests that check if certain missing permissions cause
 // specific exceptions. For this, we check if read/write permissions are still available after the permissions were
 // revoked. Note that `root` can always read/write even if user/group/all permissions are not set.
@@ -636,7 +633,6 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perm_options::add);
     }
 }
-#endif // __has_include(<filesystem>)
 
 TEST(validator_test, arithmetic_range_validator_success)
 {
