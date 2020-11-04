@@ -33,6 +33,18 @@ namespace seqan3::detail
 {
 
 // ----------------------------------------------------------------------------
+// compatibility_table
+// ----------------------------------------------------------------------------
+
+/*!\brief Declaration of algorithm specific compatibility table.
+ * \ingroup algorithm
+ * \tparam algorithm_id_type The type of the algorithm specific id. Algorithm configurations must maintain
+ *                           this table to allow validation checks.
+ */
+template <typename algorithm_id_type>
+inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
+
+// ----------------------------------------------------------------------------
 // Concept config_element_specialisation
 // ----------------------------------------------------------------------------
 
