@@ -510,8 +510,7 @@ private:
                                                             lazy<simd_matrix_scoring_scheme,
                                                                  score_t,
                                                                  typename traits_t::scoring_scheme_alphabet_type,
-                                                                 alignment_method_t,
-                                                                 scoring_scheme_t>,
+                                                                 alignment_method_t>,
                                                             void>;
 
             using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,
@@ -566,8 +565,7 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                                                     lazy<simd_matrix_scoring_scheme,
                                                          typename traits_t::score_type,
                                                          typename traits_t::scoring_scheme_alphabet_type,
-                                                         alignment_type_t,
-                                                         scoring_scheme_t>,
+                                                         alignment_type_t>,
                                                     void>;
 
     using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,

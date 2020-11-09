@@ -133,10 +133,10 @@ public:
 
         this->convert_batch_of_sequences_to_simd_vector(simd_seq1_collection,
                                                         seq1_collection,
-                                                        traits_type::padding_symbol);
+                                                        this->scoring_scheme.padding_symbol);
         this->convert_batch_of_sequences_to_simd_vector(simd_seq2_collection,
                                                         seq2_collection,
-                                                        traits_type::padding_symbol);
+                                                        this->scoring_scheme.padding_symbol);
 
         size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
         size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
@@ -247,11 +247,11 @@ protected:
         // 1st recursion phase: band intersects with the first row.
         // ---------------------------------------------------------------------
 
-        for (auto sequence1_value : sequence1 | views::take(column_size))
+        for (auto alphabet1 : sequence1 | views::take(column_size))
         {
             this->compute_column(*++alignment_matrix_it,
                                  *++indexed_matrix_it,
-                                 sequence1_value,
+                                 alphabet1,
                                  sequence2 | views::take(++row_size));
         }
 
@@ -260,11 +260,11 @@ protected:
         // ---------------------------------------------------------------------
 
         size_t first_row_index = 0u;
-        for (auto sequence1_value : sequence1 | views::drop(column_size))
+        for (auto alphabet1 : sequence1 | views::drop(column_size))
         {
             compute_band_column(*++alignment_matrix_it,
                                 *++indexed_matrix_it | views::drop(first_row_index + 1),
-                                sequence1_value,
+                                alphabet1,
                                 sequence2 | views::slice(first_row_index, ++row_size));
             ++first_row_index;
         }
@@ -292,13 +292,13 @@ protected:
     /*!\brief Computes a column of the band that does not start in the first row of the alignment matrix.
      * \tparam alignment_column_t The type of the alignment column; must model std::ranges::forward_range.
      * \tparam cell_index_column_t The type of the indexed column; must model std::ranges::input_range.
-     * \tparam sequence1_value_t The value type of sequence1; must model seqan3::semialphabet.
+     * \tparam alphabet1_t The type of the current symbol of sequence1.
      * \tparam sequence2_t The type of the second sequence; must model std::ranges::input_range.
      *
      * \param[in] alignment_column The current alignment matrix column to compute.
      * \param[in] cell_index_column The current index matrix column to get the respective cell indices.
-     * \param[in] sequence1_value The current symbol of sequence1.
-     * \param[in] sequence2 The second sequence to align against `sequence1_value`.
+     * \param[in] alphabet1 The current symbol of sequence1.
+     * \param[in] sequence2 The second sequence to align against `alphabet1`.
      *
      * \details
      *
@@ -342,11 +342,11 @@ protected:
      */
     template <std::ranges::forward_range alignment_column_t,
               std::ranges::input_range cell_index_column_t,
-              typename sequence1_value_t,
+              typename alphabet1_t,
               std::ranges::input_range sequence2_t>
     void compute_band_column(alignment_column_t && alignment_column,
                              cell_index_column_t && cell_index_column,
-                             sequence1_value_t const & sequence1_value,
+                             alphabet1_t const & alphabet1,
                              sequence2_t && sequence2)
     {
         // ---------------------------------------------------------------------
@@ -362,22 +362,21 @@ protected:
         cell = this->track_cell(
                 this->initialise_band_first_cell(cell.best_score(),
                                                  *++next_alignment_column_it,
-                                                 this->scoring_scheme.score(sequence1_value,
-                                                                            *std::ranges::begin(sequence2))),
+                                                 this->scoring_scheme.score(alphabet1, *std::ranges::begin(sequence2))),
                 *cell_index_column_it);
 
         // ---------------------------------------------------------------------
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for (auto && sequence2_value : sequence2 | views::drop(1))
+        for (auto && alphabet2 : sequence2 | views::drop(1))
         {
             current_alignment_column_it = next_alignment_column_it;
             auto cell = *current_alignment_column_it;
             cell = this->track_cell(
                 this->compute_inner_cell(cell.best_score(),
                                          *++next_alignment_column_it,
-                                         this->scoring_scheme.score(sequence1_value, sequence2_value)),
+                                         this->scoring_scheme.score(alphabet1, alphabet2)),
                 *++cell_index_column_it);
         }
 

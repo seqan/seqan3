@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
+#include <seqan3/core/simd/concept.hpp>
 
 namespace seqan3::detail
 {
@@ -52,6 +53,37 @@ protected:
         scoring_scheme{seqan3::get<align_cfg::scoring_scheme>(config).scheme}
     {}
     //!\}
+
+    /*!\brief Maybe converts the given sequence value to a specific profile used by the underlying scoring scheme.
+     *
+     * \tparam alphabet_t The type of the actual alphabet; must model either seqan3::simd::simd_concept or
+     *                    seqan3::semialphabet.
+     *
+     * \param[in] alphabet The alphabet value to get a score profile for.
+     *
+     * \details
+     *
+     * In the vectorised alignment the scoring scheme might transform the sequence values of the first sequence into
+     * a profile for a more efficient comparison of the sequence characters in simd mode.
+     *
+     * If the given sequence type models seqan3::semialphabet the function becomes a no-op function and returns the
+     * unmodified value.
+     */
+    template <typename alphabet_t>
+    //!\cond
+        requires simd_concept<std::remove_cvref_t<alphabet_t>>
+    //!\endcond
+    auto scoring_scheme_profile_column(alphabet_t && alphabet) const noexcept
+    {
+        return scoring_scheme.make_score_profile(std::forward<alphabet_t>(alphabet));
+    }
+
+    //!\overload
+    template <semialphabet alphabet_t>
+    alphabet_t scoring_scheme_profile_column(alphabet_t && alphabet) const noexcept
+    {
+        return std::forward<alphabet_t>(alphabet);
+    }
 };
 
 } // namespace seqan3::detail

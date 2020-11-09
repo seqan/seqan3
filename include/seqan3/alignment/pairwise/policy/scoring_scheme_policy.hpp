@@ -12,7 +12,9 @@
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/core/type_traits/basic.hpp>
 
 namespace seqan3::detail
 {
@@ -38,17 +40,17 @@ private:
      * \{
      */
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy() noexcept = default;
+    constexpr scoring_scheme_policy() = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy(scoring_scheme_policy const &) noexcept = default;
+    constexpr scoring_scheme_policy(scoring_scheme_policy const &) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy(scoring_scheme_policy &&) noexcept = default;
+    constexpr scoring_scheme_policy(scoring_scheme_policy &&) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy const &) noexcept = default;
+    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy const &) = default;
     //!\brief Defaulted.
-    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy &&) noexcept = default;
+    constexpr scoring_scheme_policy & operator=(scoring_scheme_policy &&) = default;
     //!\brief Defaulted.
-    ~scoring_scheme_policy() noexcept = default;
+    ~scoring_scheme_policy() = default;
 
     //!\brief Initialise the policy.
     template <typename configuration_t>
@@ -58,6 +60,33 @@ private:
 
     //!\brief The scoring scheme used for this alignment algorithm.
     scoring_scheme_t scoring_scheme{};
+
+    /*!\brief Maybe converts the given sequence value to a specific profile used by the underlying scoring scheme.
+     *
+     * \details
+     *
+     * In the vectorised alignment the scoring scheme might transform the sequence values of the first sequence into
+     * a profile for a more efficient comparison of the sequence characters in simd mode.
+     *
+     * If the given sequence type models seqan3::semialphabet the function becomes a no-op function and returns the
+     * unmodified value.
+     */
+    template <typename alphabet_t>
+    //!\cond
+        requires simd_concept<std::remove_cvref_t<alphabet_t>>
+    //!\endcond
+    auto scoring_scheme_profile_column(alphabet_t && alphabet) const noexcept
+    {
+        return scoring_scheme.make_score_profile(std::forward<alphabet_t>(alphabet));
+    }
+
+    //!\overload
+    template <semialphabet alphabet_t>
+    alphabet_t scoring_scheme_profile_column(alphabet_t && alphabet) const
+        noexcept
+    {
+        return std::forward<alphabet_t>(alphabet);
+    }
 };
 
 } // namespace seqan3::detail

@@ -250,7 +250,7 @@ private:
 
         std::vector<simd_score_t, aligned_allocator<simd_score_t, alignof(simd_score_t)>> simd_sequence{};
 
-        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>(traits_t::padding_symbol))
+        for (auto && simd_vector_chunk : sequences | views::to_simd<simd_score_t>(this->scoring_scheme.padding_symbol))
             for (auto && simd_vector : simd_vector_chunk)
                 simd_sequence.push_back(std::move(simd_vector));
 
@@ -398,9 +398,9 @@ private:
         // Recursion phase: compute column-wise the alignment matrix.
         // ----------------------------------------------------------------------------
 
-        for (auto const & seq1_value : sequence1)
+        for (auto const & alphabet1 : sequence1)
         {
-            compute_alignment_column<true>(seq1_value, sequence2);
+            compute_alignment_column<true>(this->scoring_scheme_profile_column(alphabet1), sequence2);
             finalise_last_cell_in_column(true);
         }
 

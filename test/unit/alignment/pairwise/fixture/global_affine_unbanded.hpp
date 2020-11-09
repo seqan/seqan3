@@ -503,4 +503,138 @@ static auto aa27_blosum62_gap_1_open_10 = [] ()
     };
 }();
 
+static auto aa27_blosum62_gap_1_open_10_small = [] ()
+{
+    using seqan3::operator""_aa27;
+    return seqan3::test::alignment::fixture::alignment_fixture
+    {
+        "RKFCYMD"_aa27,
+        "GAYQW"_aa27,
+        align_config | config_blosum62_scheme,
+        -11,
+        "RKFCYMD",
+        "G--AYQW",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{5u}},
+        std::vector
+        {
+        //    e  ,R  ,K  ,F  ,C  ,Y  ,M  ,D  ,
+        /*e*/  0 ,-11,-12,-13,-14,-15,-16,-17,
+        /*G*/ -11,-2 ,-13,-14,-15,-16,-17,-17,
+        /*A*/ -12,-12,-3 ,-14,-14,-16,-17,-18,
+        /*Y*/ -13,-14,-14,0  ,-11,-7 ,-13,-14,
+        /*Q*/ -14,-12,-13,-11,-3 ,-12,-7 ,-13,
+        /*W*/ -15,-16,-15,-12,-13,-1 ,-12,-11
+        },
+        std::vector
+        {
+        //    e  ,R  ,K  ,F  ,C  ,Y  ,M  ,D  ,
+        /*e*/ N  ,L  ,l  ,l  ,l  ,l  ,l  ,l  ,
+        /*G*/ U  ,DUL,DUL,l  ,l  ,l  ,l  ,DUl,
+        /*A*/ u  ,DUL,DuL,L  ,Dul,l  ,Dul,l  ,
+        /*Y*/ u  ,DuL,DUl,DUL,L  ,DUl,l  ,l  ,
+        /*Q*/ u  ,DuL,DuL,Ul ,DUL,DUL,DUl,DUl,
+        /*W*/ u  ,uL ,Dul,DuL,DUL,Dul,L  ,DUl
+        }
+    };
+}();
+
+static auto aa27_blosum62_gap_1_open_10_empty_first = [] ()
+{
+    using seqan3::operator""_aa27;
+    return seqan3::test::alignment::fixture::alignment_fixture
+    {
+        "PPAMDYIRPW"_aa27,
+        ""_aa27,
+        align_config | config_blosum62_scheme,
+        -20,
+        "PPAMDYIRPW",
+        "----------",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{0u}},
+        std::vector
+        {
+        //    e  ,P  ,P  ,A  ,M  ,D  ,Y  ,I  ,R  ,P  ,W  ,
+        /*e*/ 0  ,-11,-12,-13,-14,-15,-16,-17,-18,-19,-20
+        },
+        std::vector
+        {
+        //    e,P,P,A,M,D,Y,I,R,P,W,
+        /*e*/ N,L,l,l,l,l,l,l,l,l,l
+        }
+    };
+}();
+
+static auto aa27_blosum62_gap_1_open_10_empty_second = [] ()
+{
+    using seqan3::operator""_aa27;
+    return seqan3::test::alignment::fixture::alignment_fixture
+    {
+        ""_aa27,
+        "PPAMDYIRPW"_aa27,
+        align_config | config_blosum62_scheme,
+        -20,
+        "----------",
+        "PPAMDYIRPW",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{10u}},
+        std::vector
+        {
+        //    e
+        /*e*/ 0  ,
+        /*P*/ -11,
+        /*P*/ -12,
+        /*A*/ -13,
+        /*M*/ -14,
+        /*D*/ -15,
+        /*Y*/ -16,
+        /*I*/ -17,
+        /*R*/ -18,
+        /*P*/ -19,
+        /*W*/ -20
+        },
+        std::vector
+        {
+        //    e
+        /*e*/ N,
+        /*P*/ U,
+        /*P*/ u,
+        /*A*/ u,
+        /*M*/ u,
+        /*D*/ u,
+        /*Y*/ u,
+        /*I*/ u,
+        /*R*/ u,
+        /*P*/ u,
+        /*W*/ u
+        }
+    };
+}();
+
+static auto aa27_blosum62_gap_1_open_10_empty_both = [] ()
+{
+    using seqan3::operator""_aa27;
+    return seqan3::test::alignment::fixture::alignment_fixture
+    {
+        ""_aa27,
+        ""_aa27,
+        align_config | config_blosum62_scheme,
+        0,
+        "",
+        "",
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        std::vector
+        {
+        //     e
+        /*e*/  0
+        },
+        std::vector
+        {
+        //    e
+        /*e*/ N
+        }
+    };
+}();
+
 } // namespace seqan3::test::alignment::fixture::global::affine::unbanded

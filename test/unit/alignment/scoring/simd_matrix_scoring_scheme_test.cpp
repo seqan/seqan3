@@ -19,13 +19,10 @@ template <typename simd_t>
 struct simd_matrix_scoring_scheme_test : public ::testing::Test
 {
     using scalar_t = typename seqan3::simd_traits<simd_t>::scalar_type;
-
-    scalar_t padded_value1 = std::numeric_limits<scalar_t>::lowest();      // sets the most significant bit.
-    scalar_t padded_value2 = std::numeric_limits<scalar_t>::lowest() >> 1; // sets the bit before most significant bit.
 };
 
-using simd_test_types = ::testing::Types<//seqan3::simd::simd_type_t<int8_t>,
-                                         //seqan3::simd::simd_type_t<int16_t>,
+using simd_test_types = ::testing::Types<seqan3::simd::simd_type_t<int8_t>,
+                                         seqan3::simd::simd_type_t<int16_t>,
                                          seqan3::simd::simd_type_t<int32_t>>;
 
 TYPED_TEST_SUITE(simd_matrix_scoring_scheme_test, simd_test_types, );
@@ -34,34 +31,47 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::align_cfg::method_global,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+                                                                seqan3::align_cfg::method_global>;
 
     EXPECT_TRUE(std::is_nothrow_default_constructible_v<scheme_t>);
-    EXPECT_TRUE(std::is_nothrow_copy_constructible_v<scheme_t>);
+    EXPECT_TRUE(std::is_copy_constructible_v<scheme_t>);
     EXPECT_TRUE(std::is_nothrow_move_constructible_v<scheme_t>);
-    EXPECT_TRUE(std::is_nothrow_copy_assignable_v<scheme_t>);
+    EXPECT_TRUE(std::is_copy_assignable_v<scheme_t>);
     EXPECT_TRUE(std::is_nothrow_move_assignable_v<scheme_t>);
     EXPECT_TRUE(std::is_nothrow_destructible_v<scheme_t>);
     EXPECT_TRUE((std::is_constructible_v<scheme_t, seqan3::aminoacid_scoring_scheme<>>));
     EXPECT_TRUE(std::semiregular<scheme_t>);
 }
 
+TYPED_TEST(simd_matrix_scoring_scheme_test, make_score_profile)
+{
+    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                seqan3::aa27,
+                                                                seqan3::align_cfg::method_global>;
+
+    scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+
+    TypeParam original = seqan3::simd::iota<TypeParam>(2);
+    TypeParam expected = original * seqan3::simd::fill<TypeParam>(seqan3::alphabet_size<seqan3::aa27> + 1);
+    SIMD_EQ(simd_scheme.make_score_profile(original), expected);
+}
+
 TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothrow)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::align_cfg::method_global,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+                                                                seqan3::align_cfg::method_global>;
 
     scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
 
     TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
-    SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+    SIMD_EQ(simd_scheme.score(simd_scheme.make_score_profile(simd_value1), simd_value2),
+            seqan3::simd::fill<TypeParam>(17));
 
     simd_value2 = seqan3::simd::fill<TypeParam>(1);
-    SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-2));
+    SIMD_EQ(simd_scheme.score(simd_scheme.make_score_profile(simd_value1), simd_value2),
+            seqan3::simd::fill<TypeParam>(-2));
 }
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_on_overflow)
@@ -69,8 +79,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_
     using scalar_t = typename seqan3::simd_traits<TypeParam>::scalar_type;
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::align_cfg::method_global,
-                                                                seqan3::aminoacid_scoring_scheme<int64_t>>;
+                                                                seqan3::align_cfg::method_global>;
 
     int64_t too_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
     int64_t too_small = static_cast<int64_t>(std::numeric_limits<scalar_t>::lowest()) - 1;
@@ -99,8 +108,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
 {
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::align_cfg::method_global,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+                                                                seqan3::align_cfg::method_global>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
 
@@ -108,53 +116,60 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
 
     // all match
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), seqan3::simd::fill<TypeParam>(17));
 
     // all mismatch
     simd_value2 = seqan3::simd::fill<TypeParam>(3);
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), seqan3::simd::fill<TypeParam>(-3));
 
     // first matches, remaining mismatches.
     simd_value2[0] = 2;
     TypeParam result = seqan3::simd::fill<TypeParam>(-3);
     result[0] = 17;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
     // first mismatches, remaining matches.
     simd_value1 = simd_value2;
     simd_value1[0] = 3;
     result = seqan3::simd::fill<TypeParam>(9);
     result[0] = -3;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 }
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
 {
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+    // Skip the test for byte scalar types at the moment since it needs a different approach.
+    // Note: |aa27| = 27 and a score matrix needs 27 * 27 = 729 entries which do not fit into 8bit (=256 values).
+    if constexpr (sizeof(typename seqan3::simd_traits<TypeParam>::scalar_type) != 1)
+    {
+        using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                    seqan3::aa27,
+                                                                    seqan3::align_cfg::method_global>;
 
-    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
 
-    TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
-    TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(3);
-    TypeParam result = seqan3::simd::fill<TypeParam>(-3);
+        TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
+        TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(3);
+        TypeParam result = seqan3::simd::fill<TypeParam>(-3);
 
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is regular symbol; second value is padded symbol => score of 1.
-    simd_value2[0] = this->padded_value1;
-    result[0] = 1;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is regular symbol; second value is padded symbol => score of 1.
+        simd_value1[0] = 2;
+        simd_value2[0] = scheme.padding_symbol;
+        result[0] = scheme.padding_match_score();
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is padded symbol; second value is padded symbol => score of 1.
-    simd_value1[0] = this->padded_value1;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is padded symbol; second value is padded symbol => score of 1.
+        simd_value1[0] = scheme.padding_symbol;
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is padded symbol; second value is regular symbol => score of 1.
-    simd_value2[0] = 2;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is padded symbol; second value is regular symbol => score of 1.
+        simd_value1[0] = scheme.padding_symbol;
+        simd_value2[0] = 2;
+        result[0] = scheme.padding_match_score();
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
+    }
 }
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
@@ -162,8 +177,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
     // In local alignment we always want to mismatch.
     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
                                                                 seqan3::aa27,
-                                                                seqan3::align_cfg::method_local,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+                                                                seqan3::align_cfg::method_local>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
 
@@ -171,52 +185,61 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
 
     // all match
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), seqan3::simd::fill<TypeParam>(17));
 
     // all mismatch
     simd_value2 = seqan3::simd::fill<TypeParam>(3);
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), seqan3::simd::fill<TypeParam>(-3));
 
     // first matches, remaining mismatches.
     simd_value2[0] = 2;
     TypeParam result = seqan3::simd::fill<TypeParam>(-3);
     result[0] = 17;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
     // first mismatches, remaining matches.
     simd_value1 = simd_value2;
     simd_value1[0] = 3;
     result = seqan3::simd::fill<TypeParam>(9);
     result[0] = -3;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+    SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 }
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
 {
-    // In local alignment we always want to mismatch.
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_local,
-                                                                seqan3::aminoacid_scoring_scheme<>>;
+    // Skip the test for byte scalar types at the moment since it needs a different approach.
+    // Note: |aa27| = 27 and a score matrix needs 27 * 27 = 729 entries which do not fit into 8bit (=256 values).
+    if constexpr (sizeof(typename seqan3::simd_traits<TypeParam>::scalar_type) != 1)
+    {
+        // In local alignment we always want to mismatch.
+        using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                    seqan3::aa27,
+                                                                    seqan3::align_cfg::method_local>;
 
-    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
 
-    TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
-    TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
-    TypeParam result = seqan3::simd::fill<TypeParam>(17);
+        TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
+        TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
+        TypeParam result = seqan3::simd::fill<TypeParam>(17);
 
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is regular symbol; second value is padded symbol => score of -1.
-    simd_value2[0] = this->padded_value2;
-    result[0] = -1;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is regular symbol; second value is padded symbol => score of -1.
+        simd_value1[0] = 2;
+        simd_value2[0] = scheme.padding_symbol;
+        result[0] = -1;
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is padded symbol; second value is padded symbol => score of -1.
-    simd_value1[0] = this->padded_value1;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is padded symbol; second value is padded symbol => score of -1.
+        simd_value1[0] = scheme.padding_symbol;
+        simd_value2[0] = scheme.padding_symbol;
+        result[0] = -1;
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
 
-    // First value is padded symbol; second value is regular symbol => score of -1.
-    simd_value2[0] = 3;
-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+        // First value is padded symbol; second value is regular symbol => score of -1.
+        simd_value1[0] = scheme.padding_symbol;
+        simd_value2[0] = 3;
+        result[0] = -1;
+        SIMD_EQ(scheme.score(scheme.make_score_profile(simd_value1), simd_value2), result);
+    }
 }
