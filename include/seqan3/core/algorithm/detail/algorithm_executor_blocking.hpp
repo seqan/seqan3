@@ -141,8 +141,6 @@ public:
     ~algorithm_executor_blocking() = default;
 
     /*!\brief Constructs this executor with the given resource range.
-     * \tparam exec_policy_t The type of the execution policy; seqan3::is_execution_policy must return `true`. Defaults
-     *                       to seqan3::sequenced_policy.
      *
      * \param[in] resource The underlying resource.
      * \param[in] algorithm The algorithm to invoke on the elements of the underlying resource.
