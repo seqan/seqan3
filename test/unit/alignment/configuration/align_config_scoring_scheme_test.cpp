@@ -14,7 +14,7 @@
 #include <seqan3/std/concepts>
 
 template <typename t>
-class align_confg_scoring_test : public ::testing::Test
+class align_config_scoring_scheme_test : public ::testing::Test
 {
 public:
 
@@ -24,15 +24,15 @@ public:
 
 using test_types = ::testing::Types<std::tuple<seqan3::aminoacid_scoring_scheme<int8_t>, seqan3::aa27>,
                                     std::tuple<seqan3::nucleotide_scoring_scheme<int8_t>, seqan3::dna15>>;
-TYPED_TEST_SUITE(align_confg_scoring_test, test_types, );
+TYPED_TEST_SUITE(align_config_scoring_scheme_test, test_types, );
 
-TYPED_TEST(align_confg_scoring_test, config_element_specialisation)
+TYPED_TEST(align_config_scoring_scheme_test, config_element_specialisation)
 {
     using scheme_t = typename TestFixture::scheme_t;
     EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
 }
 
-TYPED_TEST(align_confg_scoring_test, configuration)
+TYPED_TEST(align_config_scoring_scheme_test, configuration)
 {
     using alph_t   = typename TestFixture::alph_t;
     using scheme_t = typename TestFixture::scheme_t;
@@ -40,20 +40,14 @@ TYPED_TEST(align_confg_scoring_test, configuration)
         seqan3::align_cfg::scoring_scheme elem{scheme_t{}};
         seqan3::configuration cfg{elem};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme.score(seqan3::assign_char_to('a',
-                                                                                                           alph_t{}),
-                                                                                    seqan3::assign_char_to('a',
-                                                                                                           alph_t{}))),
-                  0);
+        auto const & scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme;
+        EXPECT_EQ((scheme.score(seqan3::assign_char_to('a', alph_t{}), seqan3::assign_char_to('a', alph_t{}))), 0);
     }
 
     {
         seqan3::configuration cfg{seqan3::align_cfg::scoring_scheme{scheme_t{}}};
 
-        EXPECT_EQ((seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme.score(seqan3::assign_char_to('a',
-                                                                                                           alph_t{}),
-                                                                                    seqan3::assign_char_to('c',
-                                                                                                           alph_t{}))),
-                  -1);
+        auto const & scheme = seqan3::get<seqan3::align_cfg::scoring_scheme>(cfg).scheme;
+        EXPECT_EQ((scheme.score(seqan3::assign_char_to('a', alph_t{}), seqan3::assign_char_to('c', alph_t{}))), -1);
     }
 }
