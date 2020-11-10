@@ -11,6 +11,8 @@ project (seqan3_test_unit CXX)
 include (../seqan3-test.cmake)
 include (GoogleTest OPTIONAL)
 
+include (diagnostics/list_unused_unit_tests)
+
 option (SEQAN3_VERBOSE_TESTS "Run each test case individually" ON)
 
 macro (seqan3_test unit_test_cpp)
@@ -20,6 +22,7 @@ macro (seqan3_test unit_test_cpp)
 
     add_executable (${target} ${unit_test_cpp})
     target_link_libraries (${target} seqan3::test::unit)
+    collect_used_test (${target})
     if (SEQAN3_VERBOSE_TESTS AND NOT CMAKE_VERSION VERSION_LESS 3.10) # cmake >= 3.10
         gtest_discover_tests(${target} TEST_PREFIX "${test_name}::" PROPERTIES TIMEOUT "30")
     else ()
@@ -35,3 +38,5 @@ seqan3_require_ccache ()
 seqan3_require_test ()
 
 add_subdirectories ()
+
+list_unused_unit_tests ()
