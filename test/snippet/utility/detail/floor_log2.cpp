@@ -1,4 +1,4 @@
-#include <seqan3/core/math.hpp>
+#include <seqan3/utility/math.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()

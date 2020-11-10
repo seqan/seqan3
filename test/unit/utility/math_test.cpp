@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/math.hpp>
+#include <seqan3/utility/math.hpp>
 
 static constexpr size_t max_iterations = 1;//1 << 15;
 
