@@ -303,12 +303,11 @@ public:
     }
 };
 
-//!\cond
-// required to prevent https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
+#if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
     requires requires { { max_pseudoknot_depth_fn<alph_t>{} }; }
 inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_fn<alph_t>{};
-//!\endcond
+#endif // SEQAN3_WORKAROUND_GCC_89953
 
 } // namespace seqan3::detail::adl_only
 
@@ -357,12 +356,20 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
+#if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
 //!\cond
     requires requires { { detail::adl_only::max_pseudoknot_depth_fn<alph_t>{} }; } &&
              requires { { detail::adl_only::max_pseudoknot_depth_obj<alph_t>() }; }
 //!\endcond
 inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_obj<alph_t>();
+#else // ^^^ workaround / no workaround vvv
+template <typename alph_t>
+//!\cond
+    requires requires { { detail::adl_only::max_pseudoknot_depth_fn<alph_t>{}() }; }
+//!\endcond
+inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_fn<alph_t>{}();
+#endif // SEQAN3_WORKAROUND_GCC_89953
 
 } // namespace seqan3
 
