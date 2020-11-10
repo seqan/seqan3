@@ -189,9 +189,27 @@
 //  Deprecation Messages
 // ============================================================================
 
+//!\brief _Pragma requires a string-literal and # makes it a string
+#ifndef SEQAN3_PRAGMA
+#   define SEQAN3_PRAGMA(non_string_literal) _Pragma(#non_string_literal)
+#endif
+
 //!\brief Deprecation message for SeqAn 3.1.0 release.
-#if !defined(SEQAN3_DEPRECATED_310)
-#   define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#ifndef SEQAN3_DEPRECATED_310
+#   ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#       define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#   else
+#       define SEQAN3_DEPRECATED_310 /**/
+#   endif
+#endif
+
+//!\brief Deprecation message for deprecated header.
+#ifndef SEQAN3_DEPRECATED_HEADER
+#   ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#       define SEQAN3_DEPRECATED_HEADER(message) SEQAN3_PRAGMA(GCC warning message)
+#   else
+#       define SEQAN3_DEPRECATED_HEADER(message) /**/
+#   endif
 #endif
 
 // ============================================================================

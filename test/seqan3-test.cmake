@@ -85,6 +85,7 @@ add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
 add_library (seqan3_test_header INTERFACE)
 target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
 target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
+target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
 add_library (seqan3::test::header ALIAS seqan3_test_header)
 
 # ----------------------------------------------------------------------------
