@@ -12,7 +12,7 @@
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 template <typename T>
 using aminoacid_conversion = ::testing::Test;

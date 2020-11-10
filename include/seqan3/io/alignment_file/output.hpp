@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>

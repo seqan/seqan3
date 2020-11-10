@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 
 /*!\defgroup type_list Type List
  * \brief Provides seqan3::type_list and metaprogramming utilities for working on type lists and type packs.
@@ -21,7 +21,7 @@
  *
  * \details
  *
- * All traits are defined in the header `<seqan3/core/type_list/traits.hpp>`.
+ * All traits are defined in the header `<seqan3/utility/type_list/traits.hpp>`.
  *
  */
 

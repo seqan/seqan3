@@ -23,7 +23,7 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/test/cereal.hpp>
 
 using seqan3::operator""_aa27;

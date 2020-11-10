@@ -26,7 +26,7 @@
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/tuple_utility.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 /*!\defgroup core Core
  * \brief Provides core functionality used by multiple modules.

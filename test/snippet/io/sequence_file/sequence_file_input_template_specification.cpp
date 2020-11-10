@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 
 // ... input had amino acid sequences

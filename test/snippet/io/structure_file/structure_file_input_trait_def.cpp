@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73

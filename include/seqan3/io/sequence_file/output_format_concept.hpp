@@ -19,7 +19,7 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 
 namespace seqan3::detail

@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/type_list/traits.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 // Some test namespace to check if namespace information are preserved within the naming.
 namespace foo

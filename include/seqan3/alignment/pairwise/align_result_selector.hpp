@@ -28,8 +28,8 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
-#include <seqan3/core/type_list/traits.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/ranges>

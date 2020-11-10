@@ -3,7 +3,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/record.hpp>
 
 int main()

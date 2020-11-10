@@ -24,7 +24,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/filesystem>

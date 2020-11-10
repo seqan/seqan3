@@ -13,8 +13,7 @@
 
 #include <meta/meta.hpp>
 
-
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>

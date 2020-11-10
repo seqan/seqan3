@@ -18,7 +18,7 @@
 #include <meta/meta.hpp>
 
 #include <seqan3/core/algorithm/concept.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 
 namespace seqan3::detail

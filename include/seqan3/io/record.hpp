@@ -16,7 +16,7 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 
 namespace seqan3

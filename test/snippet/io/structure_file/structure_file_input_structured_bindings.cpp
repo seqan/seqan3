@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/range/views/to_char.hpp>
 

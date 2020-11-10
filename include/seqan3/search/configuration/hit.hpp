@@ -19,7 +19,7 @@
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::search_cfg
