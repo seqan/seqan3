@@ -39,7 +39,7 @@ protected:
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
     using base_algorithm_t = pairwise_alignment_algorithm<alignment_configuration_t, policies_t...>;
 
-    // import types from base class.
+    // Import types from base class.
     using typename base_algorithm_t::traits_type;
     using typename base_algorithm_t::alignment_result_type;
     using typename base_algorithm_t::score_type;
