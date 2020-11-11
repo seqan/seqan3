@@ -3,8 +3,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/alignment_file/output.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 int main()
 {

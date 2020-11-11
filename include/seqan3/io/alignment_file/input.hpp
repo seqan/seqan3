@@ -13,7 +13,10 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/concepts>
+#include <seqan3/std/filesystem>
 #include <fstream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <variant>
 #include <vector>
@@ -26,7 +29,6 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/alignment_file/input_format_concept.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
@@ -41,9 +43,7 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3
 {

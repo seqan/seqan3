@@ -13,16 +13,17 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/filesystem>
 #include <fstream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <variant>
 #include <vector>
+
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
@@ -38,7 +39,7 @@
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3
 {

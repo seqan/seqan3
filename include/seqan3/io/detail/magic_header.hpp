@@ -13,15 +13,15 @@
 #pragma once
 
 #include <array>
+#include <seqan3/std/span>
 #include <string>
+#include <seqan3/std/type_traits>
 #include <vector>
 
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
-#include <seqan3/std/type_traits>
-#include <seqan3/std/span>
 
 namespace seqan3::detail
 {

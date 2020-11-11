@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/type_traits>
 #include <utility>
 
 #include <seqan3/utility/type_list/type_list.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/type_traits>
 
 namespace seqan3::detail
 {

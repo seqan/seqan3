@@ -1,8 +1,7 @@
 #include <type_traits>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 
 // With c++20 you could also write it like this
 // auto fn = []<typename value_t>(value_t && value)

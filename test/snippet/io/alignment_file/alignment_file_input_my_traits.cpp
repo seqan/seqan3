@@ -1,9 +1,9 @@
 #include <sstream>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/io/alignment_file/input.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 struct my_traits : seqan3::alignment_file_input_default_traits<>
 {

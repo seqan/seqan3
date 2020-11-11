@@ -24,10 +24,10 @@
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/pack.hpp>
 #include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3::detail
 {

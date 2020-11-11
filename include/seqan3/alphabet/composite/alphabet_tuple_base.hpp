@@ -28,7 +28,6 @@
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {

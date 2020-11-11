@@ -12,14 +12,14 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <tuple>
 #include <type_traits>
 
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/core/pod_tuple.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 namespace seqan3::detail
 {
