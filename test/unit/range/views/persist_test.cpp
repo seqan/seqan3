@@ -9,15 +9,16 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
+
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 // ============================================================================
 //  test templates

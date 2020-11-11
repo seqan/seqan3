@@ -4,7 +4,7 @@
 #include <range/v3/view/chunk.hpp>
 //![include_ranges_chunk]
 
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 //![include]
 #include <seqan3/io/sequence_file/all.hpp>
 //![include]

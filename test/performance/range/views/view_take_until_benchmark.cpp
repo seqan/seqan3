@@ -13,9 +13,9 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 // ============================================================================
 //  sequential_read

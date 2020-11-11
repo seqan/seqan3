@@ -9,7 +9,7 @@
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/argument_parser/detail/format_html.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 TEST(html_format, empty_information)
 {

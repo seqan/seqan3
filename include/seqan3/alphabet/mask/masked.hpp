@@ -14,7 +14,7 @@
 
 #include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/core/char_operations/transform.hpp>
 
 namespace seqan3

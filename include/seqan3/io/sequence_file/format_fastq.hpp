@@ -12,7 +12,9 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <iterator>
+#include <seqan3/std/ranges>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -20,7 +22,6 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -37,8 +38,7 @@
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 namespace seqan3
 {
