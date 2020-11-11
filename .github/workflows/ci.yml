@@ -272,10 +272,10 @@ jobs:
           cd seqan3-build
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           if [[ "${{ matrix.build }}" =~ ^(unit|header|snippet|coverage)$ ]]; then
-            make gtest_project
+            make gtest_build
           fi
-          if [[ "${{ matrix.build }}" =~ ^(performance)$ ]]; then
-            make gbenchmark_project
+          if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
+            make gbenchmark_build
           fi
 
       - name: Build tests
