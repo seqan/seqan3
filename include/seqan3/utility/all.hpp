@@ -6,16 +6,24 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief [DEPRECATED] Provides seqan3::type_list and metaprogramming utilities.
- * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;.
- *             Please \#include <seqan3/utility/type_list/all.hpp> and <seqan3/utility/type_pack/all.hpp> instead.
+ * \brief Meta-header for the \link utility utility module \endlink.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/utility/type_list/all.hpp>
 #include <seqan3/utility/type_pack/all.hpp>
+#include <seqan3/utility/math.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/type_list/all.hpp> instead.")
+/*!\defgroup utility Utility
+ * \brief Provides additional utility functionality used by multiple modules.
+ *
+ * The utility module contains concepts, functions, traits and classes that
+ * are independent of the remaining modules in SeqAn. These implementations
+ * are considered external functionality, i.e. they could have been outsourced
+ * into their own libraries.
+ *
+ * The utility module has no dependency to any other module except the \ref core
+ * module.
+ */

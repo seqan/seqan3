@@ -7,9 +7,13 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::type_list.
+ * \brief [DEPRECATED] Provides seqan3::type_list.
+ * \deprecated This header will be removed in 3.1. Please use seqan3/utility/type_list/type_list.hpp instead.
  */
 
 #pragma once
 
 #include <seqan3/utility/type_list/type_list.hpp>
+
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/type_list/type_list.hpp> instead.")
