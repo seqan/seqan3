@@ -293,6 +293,24 @@
 #   endif
 #endif
 
+/*!\brief This is needed to support CentOS 7 or RHEL 7; Newer CentOS's include a more modern default-gcc version making
+ *        this macro obsolete.
+ *
+ * In GCC 5 there was a bigger ABI change and modern systems compile with dual ABI, but some enterprise systems (those
+ * where gcc 4 is the standard compiler) don't support dual ABI. This has the effect that even community builds of gcc
+ * are build with --disable-libstdcxx-dual-abi. Only building the compiler yourself would solve this problem.
+ *
+ * \see https://github.com/seqan/seqan3/issues/2244
+ * \see https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
+ */
+#ifndef SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+#   if defined(_GLIBCXX_USE_CXX11_ABI) && _GLIBCXX_USE_CXX11_ABI == 0
+#       define SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI 0
+#   endif
+#endif
+
 //!\brief Workaround to access the static id of the configuration elements inside of the concept definition
 //!       (fixed in gcc11).
 #ifndef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT

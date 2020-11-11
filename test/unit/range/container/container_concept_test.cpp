@@ -79,6 +79,27 @@ TEST(container, sequence_container_former_travis_bug)
     s.insert(8, " is an example string."s, 0, 14);
     EXPECT_EQ("Exemplar is an example", s);
 
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    // insert(const_iterator pos, char ch)
+    s.insert(s.begin() + s.find_first_of('n') + 1, ':');
+    EXPECT_EQ("Exemplar is an: example", s);
+
+    // insert(const_iterator pos, size_type count, char ch)
+    s.insert(s.begin() + s.find_first_of(':') + 1, 2, '=');
+    EXPECT_EQ("Exemplar is an:== example", s);
+
+    // insert(const_iterator pos, InputIt first, InputIt last)
+    {
+        std::string seq = " string";
+        s.insert(s.begin() + s.find_last_of('e') + 1,
+            std::begin(seq), std::end(seq));
+        EXPECT_EQ("Exemplar is an:== example string", s);
+    }
+
+    // insert(const_iterator pos, std::initializer_list<char>)
+    s.insert(s.begin() + s.find_first_of('g') + 1, { '.' });
+    EXPECT_EQ("Exemplar is an:== example string.", s);
+#else // ^^^ workaround / no workaround vvv
     // insert(const_iterator pos, char ch)
     s.insert(s.cbegin() + s.find_first_of('n') + 1, ':');
     EXPECT_EQ("Exemplar is an: example", s);
@@ -98,6 +119,7 @@ TEST(container, sequence_container_former_travis_bug)
     // insert(const_iterator pos, std::initializer_list<char>)
     s.insert(s.cbegin() + s.find_first_of('g') + 1, { '.' });
     EXPECT_EQ("Exemplar is an:== example string.", s);
+#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 }
 
 TEST(container, sequence_container)
