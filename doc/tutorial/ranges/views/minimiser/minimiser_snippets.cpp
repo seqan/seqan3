@@ -11,18 +11,12 @@ int main()
 {
 std::vector<seqan3::dna4> text{"CCACGTCGACGGTT"_dna4};
 {
-//![minimiser_win8]
+//![minimiser]
 //![def]
 auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(5);
-//![minimiser_win8]
+//![minimiser]
 }
 
-    {
-//![minimiser_win4]
-//![def]
-        auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(1);
-//![minimiser_win4]
-    }
 
 {
 //![minimiser_seed]
