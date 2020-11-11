@@ -30,6 +30,7 @@
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/join.hpp>
+#include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3
 {

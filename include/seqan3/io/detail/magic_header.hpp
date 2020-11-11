@@ -19,8 +19,7 @@
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
-#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/std/type_traits>
 #include <seqan3/std/span>
 
