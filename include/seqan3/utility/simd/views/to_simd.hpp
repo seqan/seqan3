@@ -695,7 +695,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/core/simd/view_to_simd.hpp}
+ * \header_file{seqan3/utility/simd/views/to_simd.hpp}
  *
  * This view can be used to transform a collection of sequences into chunks of simd vectors. This transformation is
  * also known as Array-of-Structure to Structure-of-Array transformation. It is used to transform the memory layout of
@@ -737,7 +737,7 @@ namespace seqan3::views
  *
  * ### Example
  *
- * \include test/snippet/core/simd/view_to_simd.cpp
+ * \include test/snippet/utility/simd/views/to_simd.cpp
  *
  * The output is as follows:
  *

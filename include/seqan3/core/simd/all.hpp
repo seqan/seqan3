@@ -37,7 +37,7 @@
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/views/iota_simd.hpp>
-#include <seqan3/core/simd/view_to_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
 
 /*!\namespace seqan3::simd
  * \brief The SeqAn namespace for simd data types, algorithms and meta functions.

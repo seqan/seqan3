@@ -20,7 +20,7 @@
 #include <seqan3/core/simd/debug_stream_simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/core/simd/view_to_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
