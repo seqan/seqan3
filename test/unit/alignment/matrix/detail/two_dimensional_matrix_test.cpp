@@ -15,7 +15,7 @@
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/test/simd_utility.hpp>
 

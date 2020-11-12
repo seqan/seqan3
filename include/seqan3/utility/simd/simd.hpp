@@ -28,7 +28,7 @@ inline namespace simd
  * \tparam simd_backend The simd backend to use, e.g.
  * seqan3::detail::builtin_simd
  *
- * \include test/snippet/core/simd/simd.cpp
+ * \include test/snippet/utility/simd/simd.cpp
  * \attention
  * seqan3::simd::simd_type may not support *float* types depending on the selected backend.
  *

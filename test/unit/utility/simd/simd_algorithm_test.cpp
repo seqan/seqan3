@@ -11,7 +11,7 @@
 #include <numeric>
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/test/simd_utility.hpp>
 

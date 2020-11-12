@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/core/simd/view_iota_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/test/simd_utility.hpp>

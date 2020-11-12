@@ -16,7 +16,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/range/views/zip.hpp>

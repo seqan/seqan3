@@ -28,7 +28,7 @@
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 

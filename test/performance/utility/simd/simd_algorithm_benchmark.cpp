@@ -12,7 +12,7 @@
 
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 
 // ----------------------------------------------------------------------------
 // Helper functions
