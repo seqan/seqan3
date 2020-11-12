@@ -9,7 +9,7 @@
 
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
-#include <seqan3/core/simd/detail/default_simd_backend.hpp>
+#include <seqan3/utility/simd/detail/default_simd_backend.hpp>
 
 #include <iostream>
 #include <type_traits>

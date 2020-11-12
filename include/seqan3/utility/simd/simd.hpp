@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/simd/detail/default_simd_backend.hpp>
+#include <seqan3/utility/simd/detail/default_simd_backend.hpp>
 
 namespace seqan3
 {
