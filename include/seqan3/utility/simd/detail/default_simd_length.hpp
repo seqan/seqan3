@@ -21,7 +21,7 @@ namespace seqan3::detail
  * \ingroup simd
  * \tparam simd_backend_t The name of the simd backend.
  *
- * \include test/snippet/core/simd/detail/default_simd_max_length.cpp
+ * \include test/snippet/utility/simd/detail/default_simd_max_length.cpp
  *
  * This value is influenced by compiler flags like `-march=native`, `-msse4`,
  * `-mavx2`, etc and sets this value accordingly.
