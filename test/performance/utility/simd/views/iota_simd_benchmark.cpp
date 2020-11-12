@@ -12,7 +12,7 @@
 
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/core/simd/view_iota_simd.hpp>
+#include <seqan3/utility/simd/views/iota_simd.hpp>
 
 // ============================================================================
 //  iota_simd_view_benchmark

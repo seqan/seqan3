@@ -230,7 +230,7 @@ namespace seqan3::views
  *
  * This view is an equivalent implementation to:
  *
- * \include test/snippet/core/simd/view_iota_simd_transform.cpp
+ * \include test/snippet/utility/simd/views/iota_simd_transform.cpp
  *
  * However, benchmarks showed that increasing a simd vector is faster than constructing it every time
  * (up-to 2x speed-up). This speed-up justifies an own class that does this task more efficiently.
@@ -267,7 +267,7 @@ namespace seqan3::views
  *
  * ### Example
  *
- * \include test/snippet/core/simd/view_iota_simd.cpp
+ * \include test/snippet/utility/simd/views/iota_simd.cpp
  * \hideinitializer
  */
 template <simd_concept index_simd_t>

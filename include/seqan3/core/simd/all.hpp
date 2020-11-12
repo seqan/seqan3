@@ -36,7 +36,7 @@
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/core/simd/view_iota_simd.hpp>
+#include <seqan3/utility/simd/views/iota_simd.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>
 
 /*!\namespace seqan3::simd
