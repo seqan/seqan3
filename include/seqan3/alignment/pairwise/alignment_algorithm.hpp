@@ -28,7 +28,7 @@
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/view_to_simd.hpp>

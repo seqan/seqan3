@@ -19,7 +19,7 @@
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 
 namespace seqan3::detail

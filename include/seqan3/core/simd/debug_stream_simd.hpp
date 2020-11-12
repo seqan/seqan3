@@ -14,7 +14,7 @@
 
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 
 namespace seqan3

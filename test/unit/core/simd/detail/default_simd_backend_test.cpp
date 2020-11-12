@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/detail/default_simd_backend.hpp>
 

@@ -19,7 +19,7 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
 {

@@ -16,7 +16,7 @@
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/std/concepts>
 

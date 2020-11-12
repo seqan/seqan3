@@ -17,7 +17,7 @@
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 
 namespace seqan3::detail

@@ -18,7 +18,7 @@
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/zip.hpp>
