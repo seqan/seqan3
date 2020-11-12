@@ -1,7 +1,7 @@
 #include <array>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/utility/simd/all.hpp>
 
 using uint8x4_t = seqan3::simd::simd_type_t<uint8_t, 4>;
 

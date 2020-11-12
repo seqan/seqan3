@@ -2,7 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/utility/simd/all.hpp>
 
 using uint16x8_t = seqan3::simd_type_t<uint16_t, 8>;
 

@@ -1,5 +1,5 @@
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/simd/all.hpp>
+#include <seqan3/utility/simd/all.hpp>
 
 int main()
 {
