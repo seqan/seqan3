@@ -14,4 +14,4 @@
 
 #include <seqan3/core/parallel/detail/latch.hpp>
 #include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
-#include <seqan3/core/parallel/detail/spin_delay.hpp>
+#include <seqan3/utility/parallel/detail/spin_delay.hpp>
