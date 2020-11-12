@@ -1,4 +1,4 @@
-#include <seqan3/core/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/detail/builtin_simd.hpp>
 
 using int8x16_t = seqan3::detail::builtin_simd<int8_t, 16>::type;
 

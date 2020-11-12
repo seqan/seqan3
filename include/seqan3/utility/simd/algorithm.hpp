@@ -16,7 +16,7 @@
 #include <utility>
 
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/core/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/detail/simd_algorithm_sse4.hpp>
 #include <seqan3/core/simd/detail/simd_algorithm_avx2.hpp>
 #include <seqan3/core/simd/detail/simd_algorithm_avx512.hpp>

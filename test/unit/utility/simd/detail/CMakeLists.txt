@@ -1,1 +1,2 @@
+seqan3_test (builtin_simd_test.cpp)
 seqan3_test (debug_stream_simd_test.cpp)

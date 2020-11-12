@@ -8,7 +8,7 @@
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Provides seqan3::detail::builtin_simd, seqan3::detail::is_builtin_simd
- * and seqan3::simd::simd_traits<builtin_simd_t>.
+ *        and seqan3::simd::simd_traits<builtin_simd_t>.
  */
 
 #pragma once
@@ -31,7 +31,7 @@ namespace seqan3::detail
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam length   The number of packed values in a simd vector
  *
- * \include test/snippet/core/simd/detail/builtin_simd.cpp
+ * \include test/snippet/utility/simd/detail/builtin_simd.cpp
  *
  * seqan3::detail::builtin_simd is basically defined as:
  *
@@ -111,7 +111,7 @@ struct builtin_simd_traits_helper<builtin_simd_t>
  * \ingroup simd
  * \tparam builtin_simd_t The type to check.
  *
- * \include test/snippet/core/simd/detail/is_builtin_simd.cpp
+ * \include test/snippet/utility/simd/detail/is_builtin_simd.cpp
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html
  */
 template <typename builtin_simd_t>
