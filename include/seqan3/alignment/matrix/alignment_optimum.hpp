@@ -19,7 +19,7 @@
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

@@ -14,7 +14,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::detail

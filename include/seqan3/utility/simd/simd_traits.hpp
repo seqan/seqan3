@@ -33,7 +33,7 @@ inline namespace simd
  * * swizzle_type - the type used to define how to swizzle a simd vector
  * * rebind - the type used to rebind a simd vector to another scalar_type
  *
- * \include test/snippet/core/simd/simd_traits.cpp
+ * \include test/snippet/utility/simd/simd_traits.cpp
  */
 template <typename simd_t>
 struct simd_traits

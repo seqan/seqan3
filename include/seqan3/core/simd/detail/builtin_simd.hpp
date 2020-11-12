@@ -17,8 +17,8 @@
 
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/simd/detail/default_simd_length.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 namespace seqan3::detail
