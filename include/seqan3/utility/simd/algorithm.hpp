@@ -19,7 +19,7 @@
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
 #include <seqan3/core/simd/detail/simd_algorithm_sse4.hpp>
 #include <seqan3/utility/simd/detail/simd_algorithm_avx2.hpp>
-#include <seqan3/core/simd/detail/simd_algorithm_avx512.hpp>
+#include <seqan3/utility/simd/detail/simd_algorithm_avx512.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/std/concepts>
 
