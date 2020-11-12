@@ -10,7 +10,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/core/simd/simd_algorithm.hpp>
+#include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
 

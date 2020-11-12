@@ -129,7 +129,7 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
  * Only the first simd length / 2 elements are defined.
  * The value of the remaining elements is implementation defined.
  *
- * \include test/snippet/core/simd/simd_extract.cpp
+ * \include test/snippet/utility/simd/simd_extract.cpp
  *
  * Example operation for SSE4:
  *
@@ -178,7 +178,7 @@ constexpr simd_t extract_half(simd_t const & src)
  * Only the first simd length / 4 elements are defined.
  * The value of the remaining elements is implementation defined.
  *
- * \include test/snippet/core/simd/simd_extract.cpp
+ * \include test/snippet/utility/simd/simd_extract.cpp
  *
  * Example operation for SSE4:
  *
@@ -227,7 +227,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
  * Only the first simd length / 8 elements are defined.
  * The value of the remaining elements is implementation defined.
  *
- * \include test/snippet/core/simd/simd_extract.cpp
+ * \include test/snippet/utility/simd/simd_extract.cpp
  *
  * Example operation for SSE4:
  *
@@ -276,7 +276,7 @@ inline namespace simd
  *
  * \details
  *
- * \include test/snippet/core/simd/fill.cpp
+ * \include test/snippet/utility/simd/fill.cpp
  */
 template <simd::simd_concept simd_t>
 constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar) noexcept
@@ -292,7 +292,7 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar) no
  *
  * \details
  *
- * \include test/snippet/core/simd/iota.cpp
+ * \include test/snippet/utility/simd/iota.cpp
  */
 template <simd::simd_concept simd_t>
 constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
@@ -309,7 +309,7 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
  *
  * \details
  *
- * \include test/snippet/core/simd/simd_load.cpp
+ * \include test/snippet/utility/simd/simd_load.cpp
  */
 template <simd::simd_concept simd_t>
 constexpr simd_t load(void const * mem_addr)
@@ -350,7 +350,7 @@ constexpr simd_t load(void const * mem_addr)
  *
  * \details
  *
- * \include test/snippet/core/simd/simd_transpose.cpp
+ * \include test/snippet/utility/simd/simd_transpose.cpp
  *
  * ### Exception
  *
@@ -395,7 +395,7 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
  *
  * \details
  *
- * \include test/snippet/core/simd/simd_upcast.cpp
+ * \include test/snippet/utility/simd/simd_upcast.cpp
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast(source_simd_t const & src)
