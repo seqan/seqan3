@@ -17,6 +17,7 @@
 
 #include <sdsl/bits.hpp>
 
+#include <seqan3/std/bit>
 #include <climits>
 #include <seqan3/std/concepts>
 #include <utility>
@@ -28,7 +29,6 @@
     #include <sys/endian.h>
 #endif // __has_include(endian.h)
 
-#include <seqan3/core/detail/endian.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3::detail
@@ -250,11 +250,11 @@ constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
 template <std::integral type>
 constexpr type to_little_endian(type const in) noexcept
 {
-    if constexpr (endian::native == endian::little)
+    if constexpr (std::endian::native == std::endian::little)
     {
         return in;
     }
-    else if constexpr (endian::native == endian::big)
+    else if constexpr (std::endian::native == std::endian::big)
     {
         static_assert(sizeof(type) <= 8,
                       "Can only convert the byte encoding for integral numbers with a size of up to 8 bytes.");
@@ -272,7 +272,7 @@ constexpr type to_little_endian(type const in) noexcept
     }
     else
     {
-        static_assert(endian::native == endian::little || endian::native == endian::big,
+        static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big,
                       "Expected a little-endian or big-endian platform.");
     }
 }

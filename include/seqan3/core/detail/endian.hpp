@@ -6,35 +6,25 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::endian.
+ * \brief [DEPRECATED] Provides seqan3::detail::endian.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;. Please use std::endian and \#include
+ *             <seqan3/std/bit> instead.
  */
 
 #pragma once
+
+#include <seqan3/std/bit>
 
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
 
-/*!\brief Indicates the endianness of all scalar types
- * \ingroup core
- *
- * \details
- *
- * This class reimplements the std::endian from https://en.cppreference.com/w/cpp/types/endian available in c++20.
- */
-enum class endian
-{
-#ifdef _WIN32
-    little = 0,                       //!< implementation-defined
-    big    = 1,                       //!< implementation-defined
-    native = little                   //!< implementation-defined
-#else
-    little = __ORDER_LITTLE_ENDIAN__, //!< implementation-defined
-    big    = __ORDER_BIG_ENDIAN__,    //!< implementation-defined
-    native = __BYTE_ORDER__           //!< implementation-defined
-#endif
-};
+    //!\brief Alias for std::endian.
+    using endian [[SEQAN3_DEPRECATED_310]] = std::endian;
 
 } // namespace seqan3::detail
+
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please use std::endian and #include <seqan3/std/bit> instead.")
