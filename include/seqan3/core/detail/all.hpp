@@ -19,6 +19,7 @@
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/debug_stream_variant.hpp>
 #include <seqan3/core/detail/endian.hpp>
-#include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/detail/type_inspection.hpp>
+#include <seqan3/utility/detail/integer_traits.hpp>
+

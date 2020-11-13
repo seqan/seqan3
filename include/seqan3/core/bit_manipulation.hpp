@@ -18,6 +18,7 @@
 #include <sdsl/bits.hpp>
 
 #include <climits>
+#include <seqan3/std/concepts>
 #include <utility>
 
 // Find correct header for byte-order conversion functions.
@@ -28,8 +29,7 @@
 #endif // __has_include(endian.h)
 
 #include <seqan3/core/detail/endian.hpp>
-#include <seqan3/core/detail/int_types.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3::detail
 {

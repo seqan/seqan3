@@ -6,7 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
-#include <seqan3/core/detail/int_types.hpp>
+
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 TEST(int_types_test, min_viable_uint_t)
 {
