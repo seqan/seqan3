@@ -12,13 +12,14 @@
 
 #pragma once
 
+#include <seqan3/std/type_traits>
+
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
-#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/std/type_traits>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 // ============================================================================
 // forwards
