@@ -227,7 +227,7 @@ Only read in the id, reference id, mapping quality, and alignment.
 
 \snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp sam_file
 
-With those information do the following:
+With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder how to use views on files)
   * For the resulting alignments, print which read was mapped against with reference id and

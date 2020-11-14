@@ -30,7 +30,7 @@ thus, with all possible configurations, is a very versatile and powerful tool to
 
 # Computing pairwise alignments
 
-Let us first have look at an example of computing a global alignment in SeqAn.
+Let us first have a look at an example of computing a global alignment in SeqAn.
 
 \includelineno doc/tutorial/pairwise_alignment/pairwise_alignment_first_global.cpp
 

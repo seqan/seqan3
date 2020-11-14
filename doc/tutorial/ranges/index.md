@@ -257,7 +257,7 @@ Use views to implement steps 2.-4.
 
 # Containers
 
-containers are ranges that own their data.
+Containers are ranges that own their data.
 SeqAn3 uses the standard library containers, like std::vector and std::list to store elements.
 For certain use-cases we have introduced our own containers, though.
 
