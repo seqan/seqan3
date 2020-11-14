@@ -10,7 +10,7 @@ on:
   pull_request:
 
 env:
-  CMAKE_VERSION: 3.7.2
+  CMAKE_VERSION: 3.8.2
   DOXYGEN_VERSION: 1.8.20
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
@@ -36,6 +36,7 @@ jobs:
             cc: "gcc-7"
             build: coverage
             build_type: Debug
+            skip_run_tests: true # Already ran by the make call
 
           - name: "Unit gcc9 (c++2a) on Linux"
             os: ubuntu-20.04
@@ -148,6 +149,18 @@ jobs:
             cc: "gcc-7"
             build: header
             build_type: Release
+
+          - name: "Non-cyclic tests gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            requires_ccache: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Debug
+            use_include_dependencies: true
+            skip_build_tests: true
+            skip_run_tests: true
 
           - name: "Snippet gcc7"
             os: ubuntu-20.04
@@ -263,6 +276,14 @@ jobs:
             ${{ matrix.name }}-ccache-${{ github.base_ref }}
             ${{ matrix.name }}-ccache-
 
+      - name: Tool versions
+        env:
+          CXX: ${{ matrix.cxx }}
+        run: |
+          env cmake --version
+          env doxygen --version || true
+          env $CXX --version || true
+
       - name: Configure tests
         env:
           CXX: ${{ matrix.cxx }}
@@ -277,8 +298,14 @@ jobs:
           if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
             make gbenchmark_build
           fi
+          if [[ "${{ matrix.use_include_dependencies }}" == "true" ]]; then
+            cmake -DSEQAN3_USE_INCLUDE_DEPENDENCIES=1 .
+            make all_dependencies
+            cmake . # are tests cyclic?
+          fi
 
       - name: Build tests
+        if: ${{!matrix.skip_build_tests}}
         env:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
@@ -296,7 +323,7 @@ jobs:
           ccache -s || true
 
       - name: Run tests
-        if: matrix.build != 'coverage' # Already ran by the make call
+        if: ${{!matrix.skip_run_tests}}
         run: |
           cd seqan3-build
           if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
