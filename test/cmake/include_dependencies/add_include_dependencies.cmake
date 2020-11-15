@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+include (diagnostics/list_missing_unit_tests)
+
 # get_include_target (<VAR> TARGET dna4_test)
 # get_include_target (<VAR> SOURCE "[test/unit/]alphabet/nucleotide/dna4_test.cpp")
 # get_include_target (<VAR> HEADER "[include/seqan3/]alphabet/nucleotide/dna4.hpp")
@@ -41,6 +43,7 @@ function (add_include_target include_target)
     if (NOT TARGET ${include_target})
         # add_library(${include_target} STATIC IMPORTED)
         add_custom_target (${include_target})
+        collect_include_target (${include_target})
     endif ()
 endfunction ()
 

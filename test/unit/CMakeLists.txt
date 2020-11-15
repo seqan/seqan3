@@ -11,6 +11,7 @@ project (seqan3_test_unit CXX)
 include (../seqan3-test.cmake)
 include (GoogleTest OPTIONAL)
 
+include (diagnostics/list_missing_unit_tests)
 include (diagnostics/list_unused_unit_tests)
 include (include_dependencies/add_include_dependencies)
 
@@ -48,4 +49,5 @@ seqan3_require_test ()
 
 add_subdirectories ()
 
+list_missing_unit_tests()
 list_unused_unit_tests ()
