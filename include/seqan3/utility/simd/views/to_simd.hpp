@@ -19,12 +19,12 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/algorithm.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/concept.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 
 namespace seqan3::detail
 {

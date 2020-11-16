@@ -17,8 +17,8 @@
 #include <vector>
 
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
 {

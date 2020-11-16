@@ -31,9 +31,9 @@
  * \todo Describe more what SIMD is and how to use it.
  */
 
+#include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
-#include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/views/iota_simd.hpp>

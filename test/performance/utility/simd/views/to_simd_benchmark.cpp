@@ -5,25 +5,25 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/algorithm>
 #include <deque>
 #include <iterator>
 #include <list>
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/range/views/to.hpp>
+#include <seqan3/range/views/zip.hpp>
+#include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
-#include <seqan3/range/container/aligned_allocator.hpp>
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
-#include <seqan3/test/performance/sequence_generator.hpp>
 
 // ============================================================================
 //  naive implementation without condition inside of hot loop

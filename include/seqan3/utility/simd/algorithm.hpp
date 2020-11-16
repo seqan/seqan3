@@ -13,6 +13,7 @@
 #pragma once
 
 #include <array>
+#include <seqan3/std/concepts>
 #include <utility>
 
 #include <seqan3/utility/simd/concept.hpp>
@@ -21,7 +22,6 @@
 #include <seqan3/utility/simd/detail/simd_algorithm_avx2.hpp>
 #include <seqan3/utility/simd/detail/simd_algorithm_avx512.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/std/concepts>
 
 namespace seqan3::detail
 {

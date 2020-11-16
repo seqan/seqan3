@@ -7,15 +7,13 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
 #include <seqan3/std/type_traits>
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
-
-#include <iostream>
-#include <type_traits>
 
 #ifdef __clang__
 using int8x16_t = int8_t __attribute__((ext_vector_type(16)));

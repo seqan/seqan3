@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/utility/simd/simd_algorithm.hpp>
+#include <seqan3/utility/simd/algorithm.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/simd/simd_algorithm.hpp> instead.")
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/simd/algorithm.hpp> instead.")

@@ -8,12 +8,12 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
-#include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/utility/simd/algorithm.hpp>
-
 #include <iostream>
 #include <sstream>
+
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 
 TEST(debug_stream_test, simd_rvalue)
 {

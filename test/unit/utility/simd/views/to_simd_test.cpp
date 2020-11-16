@@ -17,12 +17,13 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
-#include <seqan3/range/container/aligned_allocator.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
+
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/simd_utility.hpp>
