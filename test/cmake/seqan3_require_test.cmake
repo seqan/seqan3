@@ -6,9 +6,7 @@
 # -----------------------------------------------------------------------------------------------------
 
 # Exposes the google-test targets `gtest` and `gtest_main`.
-macro (seqan3_require_test)
-    enable_testing ()
-
+macro (seqan3_require_test_old gtest_git_tag)
     set (gtest_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gtest_project_args "-DBUILD_GMOCK=0")
 
@@ -31,10 +29,7 @@ macro (seqan3_require_test)
         gtest_project
         PREFIX gtest_project
         GIT_REPOSITORY "https://github.com/google/googletest.git"
-        # we currently have warnings that were introduced in
-        # 03867b5389516a0f185af52672cf5472fa0c159c, which are still available
-        # in "release-1.8.1", see https://github.com/google/googletest/issues/1419
-        GIT_TAG "release-1.10.0"
+        GIT_TAG "${gtest_git_tag}"
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         BUILD_BYPRODUCTS "${gtest_main_path}" "${gtest_path}"
@@ -53,4 +48,29 @@ macro (seqan3_require_test)
 
     unset(gtest_main_path)
     unset(gtest_path)
+endmacro ()
+
+macro (seqan3_require_test)
+    enable_testing ()
+
+    set (gtest_git_tag "release-1.10.0")
+
+    if (NOT CMAKE_VERSION VERSION_LESS 3.14)
+        message (STATUS "Fetch googletest:")
+
+        include (FetchContent)
+        FetchContent_Declare (
+            gtest_fetch_content
+            GIT_REPOSITORY "https://github.com/google/googletest.git"
+            GIT_TAG "${gtest_git_tag}"
+        )
+        option (BUILD_GMOCK "" OFF)
+        FetchContent_MakeAvailable(gtest_fetch_content)
+    else ()
+        message (STATUS "Use googletest as external project:")
+
+        seqan3_require_test_old ("${gtest_git_tag}")
+    endif ()
+
+    add_custom_target (gtest_build DEPENDS gtest_main gtest)
 endmacro ()
