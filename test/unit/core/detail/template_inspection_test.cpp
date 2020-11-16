@@ -190,3 +190,9 @@ TEST(template_inspect, is_type_specialisation_of_with_ill_formed_non_type_templa
 {
     EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<vargs_foo<5>, constraint_vbar>));
 }
+
+TEST(template_inspect, template_specialisation_of)
+{
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<seqan3::type_list<float>, seqan3::type_list>));
+    EXPECT_FALSE((seqan3::detail::template_specialisation_of<seqan3::type_list<int>, std::tuple>));
+}

@@ -7,6 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  * \brief Provides type traits for working with templates.
  */
 
@@ -234,6 +235,36 @@ struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
  */
 template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
 using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, templ_t, spec_t...>::type;
+
+// ----------------------------------------------------------------------------
+// template_specialisation_of
+// ----------------------------------------------------------------------------
+
+/*!\addtogroup concept
+ * \{
+ */
+
+/*!\interface seqan3::template_specialisation_of <>
+ * \brief Provides concept `seqan3::template_specialisation_of<mytype, [...]>` for checking the type specialisation of
+ *        some type with a given template, for example a specialized `type_list<float>` with the `type_list` template.
+ *
+ * \ingroup type_traits
+ *
+ * \tparam mytype           The query type.
+ * \tparam type_template    The type template you wish to compare against mytype.
+ *
+ * \see seqan3::detail::is_type_specialisation_of_v
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/template_inspection_usage_3.cpp
+ */
+//!\cond
+template <typename mytype, template <typename ...> typename type_template>
+SEQAN3_CONCEPT template_specialisation_of = is_type_specialisation_of_v<mytype, type_template>;
+
+//!\endcond
+//!\}
 
 // ----------------------------------------------------------------------------
 // strip_type_identity
