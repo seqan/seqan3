@@ -1,0 +1,51 @@
+// -*- C++ -*-
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
+/*!\file
+ * \brief Provides the C++20 \<bit\> header if it is not already available.
+ * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if __has_include(<bit>)
+#include <bit>
+#endif // __has_include(<bit>)
+
+#ifndef __cpp_lib_endian
+
+#include <cstddef>
+
+/*!\defgroup bit bit
+ * \ingroup std
+ * \brief The \<bit\> header from C++20's standard library.
+ */
+
+namespace std
+{
+
+/*!\brief Indicates the endianness of all scalar types.
+ * \sa https://en.cppreference.com/w/cpp/types/endian
+ * \ingroup bit
+ */
+enum class endian
+{
+#ifdef _WIN32
+    little = 0,                       //!< implementation-defined
+    big    = 1,                       //!< implementation-defined
+    native = little                   //!< implementation-defined
+#else
+    little = __ORDER_LITTLE_ENDIAN__, //!< implementation-defined
+    big    = __ORDER_BIG_ENDIAN__,    //!< implementation-defined
+    native = __BYTE_ORDER__           //!< implementation-defined
+#endif
+};
+
+} //namespace std
+
+#endif // __cpp_lib_endian

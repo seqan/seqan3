@@ -12,16 +12,19 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/charconv>
+#include <seqan3/std/concepts>
 #include <iterator>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/detail/to_string.hpp>
-#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
@@ -44,10 +47,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/charconv>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3::detail
 {

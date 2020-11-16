@@ -22,8 +22,8 @@
 
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/detail/to_string.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/detail/misc.hpp>

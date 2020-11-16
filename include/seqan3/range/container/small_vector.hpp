@@ -20,9 +20,9 @@
 #endif // SEQAN3_WITH_CEREAL
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3
 {

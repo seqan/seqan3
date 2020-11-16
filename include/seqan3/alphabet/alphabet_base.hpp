@@ -13,11 +13,11 @@
 #pragma once
 
 #include <cassert>
-
-#include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>
+
+#include <seqan3/alphabet/concept.hpp>
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3
 {

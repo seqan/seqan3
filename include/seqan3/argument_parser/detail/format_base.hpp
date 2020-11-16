@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <seqan3/std/filesystem>
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -21,9 +22,8 @@
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
-#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_list/traits.hpp>
-#include <seqan3/std/filesystem>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3::detail
 {

@@ -15,14 +15,13 @@
 
 #include <array>
 #include <cctype>
+#include <seqan3/std/concepts>
 #include <stdexcept>
 #include <string>
 
-#include <seqan3/std/concepts>
-
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/detail/type_inspection.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3::detail
 {

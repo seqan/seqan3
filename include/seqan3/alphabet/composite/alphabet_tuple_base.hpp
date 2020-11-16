@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/concepts>
 #include <utility>
 
 #include <meta/meta.hpp>
@@ -23,9 +24,8 @@
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/detail/int_types.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3::detail
 {

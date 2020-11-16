@@ -1,6 +1,6 @@
 seqan3_test(debug_stream_type_tuple_alignment_test.cpp)
-seqan3_test(int_types_test.cpp)
+seqan3_test(integer_traits_test.cpp)
 seqan3_test(pack_algorithm_test.cpp)
 seqan3_test(strong_type_debug_stream_test.cpp)
 seqan3_test(strong_type_test.cpp)
-seqan3_test(type_inspection_test.cpp)
+seqan3_test(type_name_as_string_test.cpp)
