@@ -137,7 +137,7 @@ public:
      *
      * \throws std::invalid_argument if the specified coordinate is out of range.
      */
-    auto trace_path(matrix_coordinate const & from_coordinate)
+    auto trace_path(matrix_coordinate const & from_coordinate) const
     {
         return trace_matrix.trace_path(from_coordinate);
     }
