@@ -1,9 +1,9 @@
 #include <cassert>
+#include <seqan3/std/concepts>
 #include <functional>
 #include <string>
 
-#include <seqan3/core/type_traits/function.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/type_traits/function_traits.hpp>
 
 std::function my_caller = [] (size_t position, std::string & sequence)
 {

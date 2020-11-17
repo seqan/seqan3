@@ -12,15 +12,10 @@
 
 #pragma once
 
-#include <functional>
-
 #include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3
 {
-// ----------------------------------------------------------------------------
-// function_traits
-// ----------------------------------------------------------------------------
 
 //!\cond
 template <typename function_t>
@@ -70,27 +65,5 @@ template <typename function_t>
 struct function_traits<function_t> : function_traits<decltype(std::function{std::declval<function_t>()})>
 {};
 //!\endcond
+
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-// ----------------------------------------------------------------------------
-// multi_invocable
-// ----------------------------------------------------------------------------
-
-/*!\brief A type that can conveniently inherit multiple invocables and acts as a union over them.
- * \tparam invocable_ts The types to inherit from.
- * \ingroup type_traits
- */
-template <typename ...invocable_ts>
-struct multi_invocable : invocable_ts...
-{
-    //!\brief Inherit the function call operators.
-    using invocable_ts::operator()...;
-};
-
-//!\brief Deduction guides for seqan3::detail::multi_invocable.
-template <typename ...invocable_ts>
-multi_invocable(invocable_ts...) -> multi_invocable<invocable_ts...>;
-
-} // namespace seqan3::detail

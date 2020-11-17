@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/search/configuration/hit.hpp>
@@ -24,6 +23,7 @@
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
 #include <seqan3/search/search_result.hpp>
+#include <seqan3/utility/detail/multi_invocable.hpp>
 
 namespace seqan3::detail
 {

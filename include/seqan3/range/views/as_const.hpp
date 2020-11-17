@@ -12,8 +12,9 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/utility/type_traits/function_traits.hpp>
 
 namespace seqan3::detail
 {
