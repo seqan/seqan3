@@ -12,16 +12,16 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <memory>
+#include <seqan3/std/ranges>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_base.hpp>
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

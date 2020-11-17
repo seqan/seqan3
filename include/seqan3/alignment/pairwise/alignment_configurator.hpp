@@ -53,8 +53,8 @@
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/simd/simd.hpp>
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
