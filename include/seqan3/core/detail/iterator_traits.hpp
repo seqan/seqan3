@@ -12,12 +12,11 @@
 
 #pragma once
 
-#include <iterator>
+#include <seqan3/std/iterator>
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/type_traits/pre.hpp>
-#include <seqan3/std/iterator>
 
 namespace seqan3
 {

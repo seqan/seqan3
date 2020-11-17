@@ -16,7 +16,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/io/exception.hpp>

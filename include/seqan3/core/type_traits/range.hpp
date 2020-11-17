@@ -16,9 +16,9 @@
 #include <seqan3/std/ranges>
 #include <type_traits>
 
+#include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/type_traits/pre.hpp>
-#include <seqan3/core/type_traits/iterator.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 // TODO(h-2): add innermost_reference instead of or addition to range_innermost_value?

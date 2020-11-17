@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/type_traits/iterator.hpp>
+#include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/repeat.hpp>
