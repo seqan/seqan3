@@ -42,13 +42,13 @@ namespace seqan3::detail
  *                           this table to allow validation checks.
  */
 template <typename algorithm_id_type>
-inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table;
+inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
 
 // ----------------------------------------------------------------------------
 // Concept config_element_specialisation
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 /*!\brief A helper class to check if a type has a static member called `id`.
  * \ingroup algorithm
  *
@@ -97,9 +97,9 @@ public:
     template <typename config1_t, typename config2_t>
     static constexpr auto is_compatible()
     {
-        if constexpr (has_id_member<config1_t>(0) && has_id_member<config2_t>(0)) // needed for gcc-9 -stc=c++2a
+        if constexpr (has_id_member<config1_t>(0) && has_id_member<config2_t>(0)) // needed for gcc <= 9
         {
-            if constexpr (std::same_as<id_type<config1_t>, id_type<config2_t>>) // needed for gcc-7 and gcc-8
+            if constexpr (std::same_as<id_type<config1_t>, id_type<config2_t>>)
                 return std::bool_constant<compatibility_table<id_type<config1_t>>[as_int<config1_t>]
                                                                                  [as_int<config2_t>]>{};
             else
@@ -107,7 +107,7 @@ public:
         }
         else
         {
-            return std::false_type{};
+            return std::bool_constant<compatibility_table<id_type<config1_t>>[as_int<config1_t>][as_int<config2_t>]>{};
         }
     }
 
@@ -140,7 +140,7 @@ SEQAN3_CONCEPT config_element_specialisation = requires
 {
     requires std::is_base_of_v<seqan3::pipeable_config_element<config_t>, config_t>;
     requires std::semiregular<config_t>;
-#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     requires config_id_accessor::has_id<config_t>;
 #else // ^^^ workaround / no workaround vvv
     { config_t::id };
