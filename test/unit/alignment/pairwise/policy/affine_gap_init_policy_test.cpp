@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/ranges>
 #include <type_traits>
 
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
@@ -16,8 +17,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 using seqan3::operator""_dna4;
 

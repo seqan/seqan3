@@ -17,9 +17,9 @@
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail
 {

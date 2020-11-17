@@ -20,8 +20,8 @@
 #include <string>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail
 {

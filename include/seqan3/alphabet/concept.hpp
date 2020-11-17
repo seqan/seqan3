@@ -18,8 +18,8 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 // ============================================================================
 // forwards

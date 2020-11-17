@@ -17,7 +17,7 @@
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail
 {

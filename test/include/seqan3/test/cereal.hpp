@@ -18,8 +18,8 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/archives/binary.hpp>
