@@ -18,8 +18,8 @@
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
+#include <seqan3/utility/type_traits/pre.hpp>
 
 // TODO(h-2): add innermost_reference instead of or addition to range_innermost_value?
 
