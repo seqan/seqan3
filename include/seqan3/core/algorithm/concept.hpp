@@ -168,7 +168,7 @@ template <typename config1_t, typename config2_t>
 SEQAN3_CONCEPT config_element_pipeable_with =
     config_element_specialisation<config1_t> &&
     config_element_specialisation<config2_t> &&
-#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>> &&
     decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
 #else // ^^^ workaround / no workaround vvv
