@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 #include <type_traits>
 #include <vector>
 
@@ -19,15 +21,13 @@
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/core/type_traits/concept.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/concept.hpp>
 
 namespace seqan3::detail
 {

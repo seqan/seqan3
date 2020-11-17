@@ -12,10 +12,9 @@
 
 #pragma once
 
-#include <type_traits>
-
-#include <seqan3/core/type_traits/concept.hpp>
 #include <seqan3/std/type_traits>
+
+#include <seqan3/utility/type_traits/concept.hpp>
 
 namespace seqan3::detail
 {
