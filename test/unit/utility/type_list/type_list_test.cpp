@@ -23,6 +23,6 @@ TEST(type_list, concept)
 {
     using t = seqan3::type_list<int, char, double>;
 
-    EXPECT_TRUE(seqan3::detail::type_list_specialisation<t>);
-    EXPECT_FALSE(seqan3::detail::type_list_specialisation<int>);
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<t, seqan3::type_list>));
+    EXPECT_FALSE((seqan3::detail::template_specialisation_of<int, seqan3::type_list>));
 }

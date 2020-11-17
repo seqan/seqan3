@@ -31,18 +31,3 @@ template <typename ...types>
 using type_list = meta::list<types...>;
 
 } // namespace seqan3
-
-namespace seqan3::detail
-{
-
-// ----------------------------------------------------------------------------
-// type_list_specialisation concept
-// ----------------------------------------------------------------------------
-
-/*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::type_list.
- * \ingroup type_list
- */
-template <typename t>
-SEQAN3_CONCEPT type_list_specialisation = is_type_specialisation_of_v<t, type_list>;
-
-} // namespace seqan3::detail
