@@ -53,6 +53,8 @@ macro (seqan3_require_benchmark)
     set (gbenchmark_git_tag "v1.5.0")
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
+        # NOTE: setting the standard prevents an ICE involving passing -fconcepts through CMAKE_CXX_FLAGS
+        set (CMAKE_CXX_STANDARD 17)
         message (STATUS "Fetch google benchmark:")
 
         include (FetchContent)
@@ -66,6 +68,7 @@ macro (seqan3_require_benchmark)
 
         # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
         add_library (gbenchmark ALIAS benchmark_main)
+        unset (CMAKE_CXX_STANDARD)
     else ()
         message (STATUS "Use google benchmark as external project:")
 
