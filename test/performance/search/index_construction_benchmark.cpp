@@ -9,12 +9,12 @@
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/rank_to.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
 #if SEQAN3_HAS_SEQAN2
 #include <seqan/index.h>
