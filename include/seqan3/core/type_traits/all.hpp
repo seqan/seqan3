@@ -6,13 +6,9 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various type traits.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- */
-
-/*!\defgroup type_traits Type Traits
- * \brief Provides various type traits and their shortcuts.
- * \ingroup core
+ * \brief [DEPRECATED] Provides various type traits.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.
+ *             Please \#include <seqan3/utility/type_traits/all.hpp> instead.
  */
 
 #pragma once
@@ -21,6 +17,7 @@
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
-#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
-#include <seqan3/utility/type_traits/pre.hpp>
+#include <seqan3/utility/type_traits/all.hpp>
+
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
+                         "Please #include <seqan3/utility/type_traits/all.hpp> instead.")

@@ -22,9 +22,9 @@
 #include <seqan3/core/concept/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/type_traits/all.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 
 /*!\defgroup core Core

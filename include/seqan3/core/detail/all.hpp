@@ -20,6 +20,7 @@
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/debug_stream_variant.hpp>
+#include <seqan3/core/detail/deferred_crtp_base.hpp>
+#include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/utility/detail/integer_traits.hpp>
-#include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
