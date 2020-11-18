@@ -7,14 +7,18 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides unary type traits on a set of types, usually provided as template argument pack.
+ * \brief [DEPRECATED] Provides unary type traits on a set of types, usually provided as template argument pack.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.
+ *             Please use seqan3::pack_traits::contains in <seqan3/core/type_list/traits.hpp> instead.
  */
 
 #pragma once
 
-#include <type_traits>
-
 #include <seqan3/core/platform.hpp>
+#include <seqan3/core/type_list/traits.hpp>
+
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
+                         "Please use seqan3::pack_traits::contains in <seqan3/core/type_list/traits.hpp> instead.")
 
 namespace seqan3::detail
 {
@@ -22,23 +26,22 @@ namespace seqan3::detail
 //!\addtogroup type_traits
 //!\{
 
-//!\brief Indicates whether the first template argument is contained in the remaining.
-//!\implements seqan3::unary_type_trait
+/*!\brief [DEPRECATED] Indicates whether the first template argument is contained in the remaining.
+ * \implements seqan3::unary_type_trait
+ * \deprecated This struct is deprecated and will be removed in SeqAn-3.1.
+ *             Please use seqan3::pack_traits::contains instead.
+ */
 template <typename target_t, typename ...pack>
-struct type_in_pack : std::false_type {};
+struct SEQAN3_DEPRECATED_310 type_in_pack : std::conditional_t<seqan3::pack_traits::contains<target_t, pack...>,
+                                                               std::true_type,
+                                                               std::false_type> {};
 
-//!\cond
+/*!\brief [DEPRECATED] Shortcut for seqan3::detail::type_in_pack (unary_type_trait shortcut).
+ * \deprecated This variable is deprecated and will be removed in SeqAn-3.1.
+ *             Please use seqan3::pack_traits::contains instead.
+ */
 template <typename target_t, typename ...pack>
-struct type_in_pack<target_t, target_t, pack...> : std::true_type {};
-
-template <typename target_t, typename pack1, typename ...pack>
-struct type_in_pack<target_t, pack1, pack...> : type_in_pack<target_t, pack...> {};
-//!\endcond
-
-//!\brief Shortcut for seqan3::detail::type_in_pack (unary_type_trait shortcut).
-//!\relates seqan3::detail::type_in_pack
-template <typename target_t, typename ...pack>
-inline bool constexpr type_in_pack_v = type_in_pack<target_t, pack...>::value;
+SEQAN3_DEPRECATED_310 inline bool constexpr type_in_pack_v = seqan3::pack_traits::contains<target_t, pack...>;
 
 //!\}
 
