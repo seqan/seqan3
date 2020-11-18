@@ -6,8 +6,10 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::band_static.
+ * \brief [DEPRECATED] Provides seqan3::band_static.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; The contained functionality has been replaced by the
+ *             seqan3::align_cfg::band_fixed_size configuration.
  */
 
 #pragma once
@@ -23,7 +25,7 @@ namespace seqan3
 /*!\brief Data structure for a static band.
  * \ingroup alignment_band
  */
-class static_band
+class SEQAN3_DEPRECATED_310 static_band
 {
 public:
     /*!\name Constructors, destructor and assignment
