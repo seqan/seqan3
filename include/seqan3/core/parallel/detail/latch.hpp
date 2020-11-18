@@ -14,9 +14,9 @@
 
 #include <atomic>
 #include <cassert>
+#include <seqan3/std/new>
 
 #include <seqan3/utility/parallel/detail/spin_delay.hpp>
-#include <seqan3/std/new>
 
 namespace seqan3::detail
 {
