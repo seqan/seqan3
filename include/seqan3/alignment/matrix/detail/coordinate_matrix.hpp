@@ -16,12 +16,12 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/simd_algorithm.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/view_iota_simd.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 
 namespace seqan3::detail

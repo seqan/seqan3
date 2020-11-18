@@ -12,15 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <seqan3/core/detail/template_inspection.hpp>
 
 namespace seqan3::detail
 {

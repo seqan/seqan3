@@ -16,8 +16,8 @@
 #include <tuple>
 #include <type_traits>
 
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/pod_tuple.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 

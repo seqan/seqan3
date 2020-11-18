@@ -19,8 +19,8 @@
 
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/iterator_traits.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/utility/type_traits/pre.hpp>

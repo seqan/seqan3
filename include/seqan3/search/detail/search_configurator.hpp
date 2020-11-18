@@ -12,8 +12,8 @@
 
 #pragma once
 
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/output.hpp>

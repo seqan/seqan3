@@ -17,7 +17,7 @@
 #include <variant>
 
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
