@@ -17,7 +17,6 @@ auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3:
 //![minimiser]
 }
 
-
 {
 //![minimiser_seed]
 //![def]
