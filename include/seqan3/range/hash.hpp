@@ -12,10 +12,11 @@
 
 #pragma once
 
-#include <seqan3/alphabet/hash.hpp>
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/alphabet/hash.hpp>
+#include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/range/concept.hpp>
 
 namespace std
 {

@@ -17,7 +17,7 @@
 #include <range/v3/view/sliding.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/kmer_hash.hpp>

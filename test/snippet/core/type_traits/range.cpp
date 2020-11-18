@@ -1,4 +1,4 @@
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 
 int main()
 {

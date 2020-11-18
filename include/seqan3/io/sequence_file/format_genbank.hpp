@@ -15,15 +15,15 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/charconv>
 #include <iterator>
-#include <string>
 #include <seqan3/std/ranges>
+#include <string>
 #include <string_view>
 #include <vector>
 
 #include <range/v3/view/chunk.hpp>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>

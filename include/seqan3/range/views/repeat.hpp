@@ -16,7 +16,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 
 namespace seqan3::detail

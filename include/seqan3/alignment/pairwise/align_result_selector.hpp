@@ -25,8 +25,8 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>

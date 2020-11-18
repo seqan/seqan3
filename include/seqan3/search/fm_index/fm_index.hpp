@@ -12,18 +12,19 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
+
 #include <sdsl/suffix_trees.hpp>
 
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/std/filesystem>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

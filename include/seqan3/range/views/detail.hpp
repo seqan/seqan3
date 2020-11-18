@@ -16,7 +16,7 @@
 #include <seqan3/std/ranges>
 #include <tuple>
 
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail

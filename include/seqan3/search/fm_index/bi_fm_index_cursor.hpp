@@ -13,17 +13,17 @@
 #pragma once
 
 #include <array>
+#include <seqan3/std/ranges>
 
 #include <sdsl/suffix_trees.hpp>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
