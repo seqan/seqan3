@@ -546,7 +546,8 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::range_compatible (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate whether the ranges are compatible
+     *        (which doesn't work for types during their definition).
      * \{
      */
     //!\cond

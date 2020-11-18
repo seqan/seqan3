@@ -266,30 +266,20 @@ constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_val
 //!\endcond
 
 // ----------------------------------------------------------------------------
-// range_compatible
+// range_compatible [DEPRECATED]
 // ----------------------------------------------------------------------------
-
-//NOTE(h-2): this could be moved to a separate file, because it also applies to iterators
 
 /*!\interface seqan3::range_compatible <>
  * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::range_innermost_value_t are
  * the same.
- *
- * \details
- *
- * \include test/snippet/core/type_traits/range.cpp
- *
- * Attention, this concept implicitly removes cv-qualifiers and reference from the types it recurses on and
- * compares.
+ * \deprecated This concept is deprecated and will be removed in SeqAn-3.1.
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT range_compatible = requires (t1, t2)
-{
-    requires (range_dimension_v<t1> == range_dimension_v<t2>);
-
-    requires std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>>;
-};
+SEQAN3_DEPRECATED_310 constexpr bool range_compatible = (
+    std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>> &&
+    range_dimension_v<t1> == range_dimension_v<t2>
+);
 //!\endcond
 
 //!\}
