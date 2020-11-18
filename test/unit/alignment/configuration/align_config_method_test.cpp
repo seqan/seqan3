@@ -10,7 +10,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
 

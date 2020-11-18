@@ -7,11 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
+
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/core/configuration/configuration.hpp>
 
 template <typename t>
 class align_config_scoring_scheme_test : public ::testing::Test

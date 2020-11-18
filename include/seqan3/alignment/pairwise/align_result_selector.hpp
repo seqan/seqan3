@@ -23,7 +23,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>

@@ -1,5 +1,5 @@
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 enum struct my_id : int
 {

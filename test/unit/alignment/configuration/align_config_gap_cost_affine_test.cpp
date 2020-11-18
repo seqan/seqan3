@@ -7,9 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/std/concepts>
+
+#include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 TEST(align_config_gap, config_element_specialisation)
 {

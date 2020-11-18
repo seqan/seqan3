@@ -9,10 +9,10 @@
 
 #include <range/v3/algorithm/equal.hpp>
 
-#include "configuration_mock.hpp"
-
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+
+#include "configuration_mock.hpp"
 
 TEST(configuration, concept_check)
 {

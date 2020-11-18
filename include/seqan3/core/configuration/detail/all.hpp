@@ -6,12 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the detail functionality of core algorithm.
+ * \brief Meta-header for the detail functionality of configuration.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
-#include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
-#include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
+#include <seqan3/core/configuration/detail/concept.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_debug_mode.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp>
+#include <seqan3/core/configuration/detail/configuration_utility.hpp>

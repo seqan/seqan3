@@ -14,7 +14,7 @@
 
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 

@@ -6,41 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::debug_mode.
+ * \brief [DEPRECATED] Provides seqan3::detail::debug_mode.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; Please \#include
+ *             <seqan3/core/configuration/detail/configuration_element_debug_mode.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_debug_mode.hpp>
 
-namespace seqan3::detail
-{
-/*!\brief A global configuration type used to enabled debugging of algorithms.
- * \ingroup algorithm
- * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
- *
- * \details
- *
- * This type is used to enable specific debugging behaviour of the algorithms, e.g. to output the score and the
- * trace matrix of the alignment algorithm.
- */
-template <typename wrapped_config_id_t>
-class debug_mode : public pipeable_config_element<debug_mode<wrapped_config_id_t>>
-{
-public:
-    /*!\name Constructors, assignment and destructor
-     * \{
-     */
-    constexpr debug_mode() = default;  //!< Defaulted.
-    constexpr debug_mode(debug_mode const &) = default; //!< Defaulted.
-    constexpr debug_mode(debug_mode &&) = default; //!< Defaulted.
-    constexpr debug_mode & operator=(debug_mode const &) = default; //!< Defaulted.
-    constexpr debug_mode & operator=(debug_mode &&) = default; //!< Defaulted.
-    ~debug_mode() = default; //!< Defaulted.
-    //!\}
-
-    //!\brief Internal id to check for consistent configuration settings.
-    static constexpr typename wrapped_config_id_t::value_type id{wrapped_config_id_t::value};
-};
-} // namespace seqan3::detail
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/core/configuration/detail/configuration_element_debug_mode.hpp> instead.")

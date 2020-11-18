@@ -9,10 +9,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
-#include "configuration_mock.hpp"
+#include "../configuration/configuration_mock.hpp"
 
 template <typename format_t>
 struct pipeable_config_element_test : public ::testing::Test

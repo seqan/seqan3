@@ -17,7 +17,7 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 
 namespace seqan3::detail

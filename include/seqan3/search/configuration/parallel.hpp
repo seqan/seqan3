@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/configuration_element_parallel_mode.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 
 namespace seqan3::search_cfg

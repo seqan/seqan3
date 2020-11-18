@@ -24,7 +24,7 @@
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 namespace seqan3::detail
 {

@@ -6,53 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::parallel_mode.
+ * \brief [DEPRECATED] Provides seqan3::detail::parallel_mode.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; Please \#include
+ *             <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp> instead.
  */
 
 #pragma once
 
-#include <optional>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp>
 
-namespace seqan3::detail
-{
-/*!\brief A global configuration type used to enable parallel execution of algorithms.
- * \ingroup algorithm
- * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
- *
- * \details
- *
- * This type is used to enable the parallel mode of the algorithms.
- */
-template <typename wrapped_config_id_t>
-class parallel_mode : public pipeable_config_element<parallel_mode<wrapped_config_id_t>>
-{
-public:
-    /*!\name Constructors, assignment and destructor
-     * \{
-     */
-    parallel_mode() = default; //!< Defaulted.
-    parallel_mode(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode(parallel_mode &&) = default; //!< Defaulted.
-    parallel_mode & operator=(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode & operator=(parallel_mode &&) = default; //!< Defaulted.
-    ~parallel_mode() = default; //!< Defaulted.
-
-    /*!\brief Sets the number of threads for the parallel configuration element.
-     * \param[in] thread_count_ The maximum number of threads to be used by the algorithm.
-     */
-    explicit parallel_mode(uint32_t thread_count_) noexcept : thread_count{thread_count_}
-    {}
-    //!\}
-
-    //!\brief The maximum number of threads the algorithm can use.
-    std::optional<uint32_t> thread_count{std::nullopt};
-
-    /*!\privatesection
-     * \brief Internal id to check for consistent configuration settings.
-     */
-    static constexpr typename wrapped_config_id_t::value_type id{wrapped_config_id_t::value};
-};
-} // namespace seqan3::detail
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp> instead.")
