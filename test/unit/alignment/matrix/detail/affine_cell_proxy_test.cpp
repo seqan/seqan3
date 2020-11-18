@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
-#include <seqan3/core/common_tuple.hpp>
+#include <seqan3/core/tuple/common_tuple.hpp>
 
 //------------------------------------------------------------------------------
 // score cell proxy
