@@ -17,7 +17,7 @@
 /*!\defgroup simd Simd
  * \brief The simd module contains a unified interface to provide simd types and functions used in seqan3.
  * \see https://en.wikipedia.org/wiki/SIMD
- * \ingroup core
+ * \ingroup utility
  *
  * \todo Make this public again. We made this documentation internal-documentation only for the 3.0.0 release, because
  * the API was not in shape yet. Remove the `cond DEV` and `todo` commands and remove `seqan3::simd` from
