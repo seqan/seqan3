@@ -56,7 +56,6 @@ template <seqan3::arithmetic value_t>
 lower_bound(value_t) -> lower_bound<value_t>;
 
 /*!\brief Deduces the underlying upper boundary type.
- * \relates seqan3::upper_bound
  * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic.
  */
 template <seqan3::arithmetic value_t>

@@ -28,9 +28,6 @@ namespace seqan3
 class SEQAN3_DEPRECATED_310 static_band
 {
 public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
     constexpr static_band()                                noexcept = default; //!< Defaulted
     constexpr static_band(static_band const &)             noexcept = default; //!< Defaulted
     constexpr static_band(static_band &&)                  noexcept = default; //!< Defaulted
@@ -40,8 +37,6 @@ public:
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
-     * \param lower The lower boundary of the band; must model std::integral.
-     * \param upper The upper boundary of the band; must model std::integral.
      *
      * \throws std::invalid_argument if upper < lower.
      *
@@ -58,7 +53,6 @@ public:
             throw std::invalid_argument("The upper boundary must not be smaller than the lower boundary.");
         }
     }
-    //!}
 
     //!\brief The data member storing the lower boundary of the band.
     int64_t lower_bound{std::numeric_limits<int64_t>::lowest()};
