@@ -232,7 +232,9 @@ jobs:
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get install --yes ${{ matrix.cxx }}
           else
-            brew install --force-bottle $(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
+            cxx_macos_name=$(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
+            brew install --force-bottle $cxx_macos_name
+            brew link $cxx_macos_name
           fi
 
       - name: Install lcov
