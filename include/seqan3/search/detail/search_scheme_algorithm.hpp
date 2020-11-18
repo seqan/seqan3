@@ -14,12 +14,12 @@
 
 #include <type_traits>
 
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/detail/search_common.hpp>
 #include <seqan3/search/detail/search_scheme_precomputed.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 namespace seqan3::detail
 {

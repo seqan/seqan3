@@ -1,4 +1,4 @@
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
+#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 template <typename T>
 struct A;

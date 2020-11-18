@@ -27,10 +27,10 @@
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
+#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 namespace seqan3::detail
 {

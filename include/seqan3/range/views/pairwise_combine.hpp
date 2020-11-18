@@ -13,12 +13,12 @@
 #pragma once
 
 #include <cmath>
+#include <seqan3/std/ranges>
 
 #include <seqan3/core/common_tuple.hpp>
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 namespace seqan3::detail
 {
