@@ -12,6 +12,8 @@
  *             or <seqan3/utility/detail/multi_invocable.hpp> instead.
  */
 
+#pragma once
+
 #include <seqan3/utility/detail/multi_invocable.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
 

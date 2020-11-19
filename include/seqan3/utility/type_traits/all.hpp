@@ -12,7 +12,7 @@
 
 /*!\defgroup type_traits Type Traits
  * \brief Provides various type traits and their shortcuts.
- * \ingroup core
+ * \ingroup utility
  */
 
 #pragma once

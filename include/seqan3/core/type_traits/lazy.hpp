@@ -12,6 +12,8 @@
  *             or <seqan3/core/detail/is_class_template_declarable.hpp> instead.
  */
 
+#pragma once
+
 #include <seqan3/core/detail/is_class_template_declarable.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 

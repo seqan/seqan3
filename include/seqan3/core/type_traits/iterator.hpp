@@ -11,6 +11,8 @@
  *             Please \#include <seqan3/core/detail/iterator_traits.hpp> instead.
  */
 
+#pragma once
+
 #include <seqan3/core/detail/iterator_traits.hpp>
 
 SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
