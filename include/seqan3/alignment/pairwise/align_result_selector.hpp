@@ -13,6 +13,7 @@
 #pragma once
 
 #include <optional>
+#include <seqan3/std/ranges>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
@@ -28,11 +29,8 @@
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/core/type_traits/transformation_trait_or.hpp>
-#include <seqan3/core/type_list/traits.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

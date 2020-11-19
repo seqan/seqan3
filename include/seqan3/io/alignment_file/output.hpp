@@ -13,14 +13,15 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/filesystem>
 #include <fstream>
+#include <seqan3/std/ranges>
 #include <string>
 #include <string_view>
 #include <variant>
 #include <vector>
 
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
@@ -31,10 +32,9 @@
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3
 {

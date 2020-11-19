@@ -11,7 +11,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 //-----------------------------------------------------------------------------
 // all_of

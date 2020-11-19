@@ -7,30 +7,15 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::type_list and metaprogramming utilities.
+ * \brief [DEPRECATED] Provides seqan3::type_list and metaprogramming utilities.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;.
+ *             Please \#include <seqan3/utility/type_list/all.hpp> and <seqan3/utility/type_pack/all.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/core/type_list/traits.hpp>
+#include <seqan3/utility/type_list/all.hpp>
+#include <seqan3/utility/type_pack/all.hpp>
 
-/*!\defgroup type_list Type List
- * \brief Provides seqan3::type_list and metaprogramming utilities for working on type lists and type packs.
- * \ingroup core
- *
- * \details
- *
- * All traits are defined in the header `<seqan3/core/type_list/traits.hpp>`.
- *
- */
-
-/*!\namespace seqan3::pack_traits
- * \brief Namespace containing traits for working on type packs.
- * \ingroup type_list
- */
-
-/*!\namespace seqan3::list_traits
- * \brief Namespace containing traits for working on seqan3::type_list.
- * \ingroup type_list
- */
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/type_list/all.hpp> instead.")

@@ -57,7 +57,6 @@
 #include <seqan3/core/type_traits/deferred_crtp_base.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/zip.hpp>
 

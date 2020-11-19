@@ -7,11 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/type_traits>
+
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/simd/concept.hpp>
 #include <seqan3/core/simd/detail/builtin_simd.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
-#include <seqan3/std/type_traits>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 #include <iostream>
 #include <type_traits>

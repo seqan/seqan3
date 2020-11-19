@@ -20,8 +20,8 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/alphabet/structure/structured_rna.hpp>
-#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 namespace seqan3::detail
 {

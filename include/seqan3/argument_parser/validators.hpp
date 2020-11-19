@@ -24,12 +24,13 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/type_list/traits.hpp>
 #include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/join.hpp>
+#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3
 {

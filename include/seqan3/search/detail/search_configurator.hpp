@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <seqan3/core/type_list/type_list.hpp>
 #include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/core/type_traits/template_inspection.hpp>
