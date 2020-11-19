@@ -51,7 +51,7 @@ struct transfer_template_args_onto
  *
  * ### Example
  *
- * \include test/snippet/core/type_traits/template_inspection_usage.cpp
+ * \include test/snippet/core/detail/template_inspection_usage.cpp
  */
 template <template <typename ...> typename source_template,
           template <typename ...> typename target_template,
@@ -138,7 +138,7 @@ using transfer_template_vargs_onto_t = typename transfer_template_vargs_onto<sou
  *
  * ### Example
  *
- * \include test/snippet/core/type_traits/template_inspection_usage_2.cpp
+ * \include test/snippet/core/detail/template_inspection_usage_2.cpp
  */
 template <typename source_t, template <typename ...> typename target_template>
 struct is_type_specialisation_of : public std::false_type

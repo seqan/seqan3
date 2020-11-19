@@ -30,7 +30,7 @@ namespace seqan3::detail
  *
  * Gives *type_t* back if *T::type* is a member type, otherwise *struct{using type = default_t}*.
  *
- * \include test/snippet/core/type_traits/transformation_trait_or.cpp
+ * \include test/snippet/utility/type_traits/transformation_trait_or.cpp
  *
  * \attention This might get removed if one of our used libraries offers the same
  * functionality.

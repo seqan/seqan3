@@ -39,7 +39,7 @@ namespace seqan3::detail
  *
  * ### Example
  *
- * \include test/snippet/core/type_traits/is_class_template_declarable_with.cpp
+ * \include test/snippet/core/detail/is_class_template_declarable_with.cpp
  */
 template <template <typename ...> typename query_t, typename ...args_t>
 struct is_class_template_declarable_with :

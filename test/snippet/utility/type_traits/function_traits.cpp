@@ -1,6 +1,4 @@
 #include <cassert>
-#include <seqan3/std/concepts>
-#include <functional>
 #include <string>
 
 #include <seqan3/utility/type_traits/function_traits.hpp>

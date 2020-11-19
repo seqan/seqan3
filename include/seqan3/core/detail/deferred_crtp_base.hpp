@@ -33,7 +33,7 @@ namespace seqan3::detail
  *
  * The following snippet demonstrates the use of the deferred crtp base class instantiation.
  *
- * \include test/snippet/core/type_traits/deferred_crtp_base.cpp
+ * \include test/snippet/core/detail/deferred_crtp_base.cpp
  *
  * \see seqan3::detail::invoke_deferred_crtp_base
  * \see seqan3::detail::deferred_crtp_base_vargs
@@ -66,7 +66,7 @@ struct deferred_crtp_base
  *
  * The following snippet demonstrates the use of the deferred crtp base class instantiation.
  *
- * \include test/snippet/core/type_traits/deferred_crtp_base.cpp
+ * \include test/snippet/core/detail/deferred_crtp_base.cpp
  *
  * \see seqan3::detail::invoke_deferred_crtp_base
  * \see seqan3::detail::deferred_crtp_base

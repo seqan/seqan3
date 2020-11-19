@@ -37,7 +37,7 @@ struct function_traits;
  *
  * ### Example
  *
- * \include snippet/core/type_traits/function_traits.cpp
+ * \include snippet/utility/type_traits/function_traits.cpp
  */
 template <typename return_t, typename ...args_t>
 struct function_traits<std::function<return_t(args_t...)>>
