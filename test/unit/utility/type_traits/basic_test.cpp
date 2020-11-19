@@ -6,14 +6,10 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <list>
-#include <vector>
 
 #include <gtest/gtest.h>
 
 #include <meta/meta.hpp>
-
-#include <range/v3/view/iota.hpp>
-#include <range/v3/view/take_exactly.hpp>
 
 #include <seqan3/utility/type_traits/basic.hpp>
 
