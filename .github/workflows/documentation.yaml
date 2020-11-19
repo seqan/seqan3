@@ -10,6 +10,10 @@ env:
   DOXYGEN_VERSION: 1.8.20
   TZ: Europe/Berlin
 
+defaults:
+  run:
+    shell: bash -ex {0}
+
 jobs:
   deploy_documentation:
     name: Deploy Documentation
@@ -26,7 +30,6 @@ jobs:
           key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
 
       - name: Setup Doxygen
-        shell: bash -ex {0}
         run: |
           mkdir -p /tmp/doxygen-download
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
@@ -40,7 +43,6 @@ jobs:
           key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
 
       - name: Setup CMake
-        shell: bash -ex {0}
         run: |
           mkdir -p /tmp/cmake-download
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
@@ -57,7 +59,6 @@ jobs:
           key: ${{ runner.os }}-documentation
 
       - name: Build documentation
-        shell: bash -ex {0}
         run: |
           mkdir -p doc-build
           cd doc-build
