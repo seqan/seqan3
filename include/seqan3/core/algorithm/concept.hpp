@@ -100,10 +100,14 @@ public:
         if constexpr (has_id_member<config1_t>(0) && has_id_member<config2_t>(0)) // needed for gcc <= 9
         {
             if constexpr (std::same_as<id_type<config1_t>, id_type<config2_t>>)
+            {
                 return std::bool_constant<compatibility_table<id_type<config1_t>>[as_int<config1_t>]
                                                                                  [as_int<config2_t>]>{};
+            }
             else
+            {
                 return std::false_type{};
+            }
         }
         else
         {
