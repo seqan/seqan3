@@ -17,6 +17,4 @@
 #include <seqan3/core/detail/is_class_template_declarable.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
-                         "Please #include <seqan3/utility/type_traits/lazy_conditional.hpp> "
-                         "or <seqan3/core/detail/is_class_template_declarable.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. Please #include <seqan3/utility/type_traits/lazy_conditional.hpp> or <seqan3/core/detail/is_class_template_declarable.hpp> instead.")

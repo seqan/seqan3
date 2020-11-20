@@ -21,7 +21,7 @@
 namespace seqan3
 {
 
-/*!\addtogroup type_traits
+/*!\addtogroup core
  * \{
  */
 
@@ -46,7 +46,7 @@ struct value_type<it_t>
 } // namespace seqan3::detail
 #endif // SEQAN3_DEPRECATED_310
 
-// see specialisation for ranges in core/type_traits/range.hpp
+// see specialisation for ranges in core/range/type_traits.hpp
 
 // ----------------------------------------------------------------------------
 // reference
@@ -69,7 +69,7 @@ struct reference<it_t>
 } // namespace seqan3::detail
 #endif // SEQAN3_DEPRECATED_310
 
-// see specialisation for ranges in core/type_traits/range.hpp
+// see specialisation for ranges in core/range/type_traits.hpp
 
 // ----------------------------------------------------------------------------
 // rvalue_reference
@@ -92,7 +92,7 @@ struct rvalue_reference<it_t>
 } // namespace seqan3::detail
 #endif // SEQAN3_DEPRECATED_310
 
-// see specialisation for ranges in core/type_traits/range.hpp
+// see specialisation for ranges in core/range/type_traits.hpp
 
 // ----------------------------------------------------------------------------
 // const_reference
@@ -121,7 +121,7 @@ struct difference_type<it_t>
 } // namespace seqan3::detail
 #endif // SEQAN3_DEPRECATED_310
 
-// see specialisation for ranges in core/type_traits/range.hpp
+// see specialisation for ranges in core/range/type_traits.hpp
 
 // ----------------------------------------------------------------------------
 // size_type
@@ -146,7 +146,7 @@ struct size_type<it_t>
 } // namespace seqan3::detail
 #endif // SEQAN3_DEPRECATED_310
 
-// see specialisation for ranges in core/type_traits/range.hpp
+// see specialisation for ranges in core/range/type_traits.hpp
 //!\}
 
 } // namespace seqan3

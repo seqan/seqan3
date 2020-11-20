@@ -17,8 +17,7 @@
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/type_list/traits.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
-                         "Please use seqan3::pack_traits::contains in <seqan3/core/type_list/traits.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. Please use seqan3::pack_traits::contains in <seqan3/core/type_list/traits.hpp> instead.")
 
 namespace seqan3::detail
 {

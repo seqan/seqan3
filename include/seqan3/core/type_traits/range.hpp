@@ -15,5 +15,4 @@
 
 #include <seqan3/core/range/type_traits.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. "
-                         "Please #include <seqan3/core/range/type_traits.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. Please #include <seqan3/core/range/type_traits.hpp> instead.")

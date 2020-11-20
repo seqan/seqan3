@@ -18,7 +18,7 @@ namespace seqan3::detail
 {
 
 /*!\brief An invocable wrapper that defers the instantiation of a crtp_base class.
- * \ingroup type_traits
+ * \ingroup core
  * \tparam crtp_base The crtp base class to be deferred. Must be a template template parameter.
  * \tparam args_t    A type template parameter pack used to augment the `crtp_base` class.
  *
@@ -49,7 +49,7 @@ struct deferred_crtp_base
 };
 
 /*!\brief An invocable wrapper that defers the instantiation of a crtp_base class.
- * \ingroup type_traits
+ * \ingroup core
  * \tparam crtp_base The crtp base class to be deferred. Must be a template template parameter.
  * \tparam args      A non-type template parameter pack used to augment the `crtp_base` class.
  *
@@ -82,7 +82,7 @@ struct deferred_crtp_base_vargs
 };
 
 /*!\brief Template alias to instantiate the deferred crtp base with the derived class.
- * \ingroup type_traits
+ * \ingroup core
  * \tparam deferred_crtp_base_t The deferred crtp base class.
  * \tparam derived_t            The derived type to instantiate the crtp base class with.
  *

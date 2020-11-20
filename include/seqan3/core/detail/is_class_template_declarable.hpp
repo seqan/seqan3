@@ -19,7 +19,7 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup type_traits
+/*!\addtogroup core
  * \{
  */
 
