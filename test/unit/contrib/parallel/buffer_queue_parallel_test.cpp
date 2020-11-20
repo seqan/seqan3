@@ -120,12 +120,13 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
 
     queue_t queue{initialCapacity};
     std::vector<size_t> random;
+    size_t const element_count{100'000};
     std::mt19937 rng(0);
 
     size_t chk_sum = 0;
 
-    random.resize(100000);
-    for (size_t i = 0; i < random.size(); ++i)
+    random.resize(element_count);
+    for (size_t i = 0; i < element_count; ++i)
     {
         random[i] = rng();
         chk_sum ^= random[i];
@@ -155,6 +156,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     std::vector<std::thread> workers;
     std::atomic<size_t> registered_writer = 0;
     std::atomic<size_t> registered_reader = 0;
+    std::atomic<size_t> read_element_count = 0;
     seqan3::contrib::queue_op_status push_status = seqan3::contrib::queue_op_status::success;
     seqan3::contrib::queue_op_status pop_status = seqan3::contrib::queue_op_status::success;
     for (size_t tid = 0; tid < thread_count; ++tid)
@@ -172,9 +174,9 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                 }
 
                 // printf("start writer #%ld\n", tid);
-                size_t offset = tid * (random.size() / writer_count);
-                size_t offset_end = std::min(static_cast<size_t>((tid + 1) * (random.size() / writer_count)),
-                                             random.size());
+                size_t offset = tid * (element_count / writer_count);
+                size_t offset_end = std::min(static_cast<size_t>((tid + 1) * (element_count / writer_count)),
+                                             element_count);
                 for (size_t pos = offset; pos != offset_end; ++pos)
                 {
                     try
@@ -191,6 +193,10 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                 ++registered_writer;
                 if (registered_writer.load() == (2 * writer_count))
                 {
+                    seqan3::detail::spin_delay delay{};
+                    // Do not close the queue until all elements have been read.
+                    while (read_element_count.load() != element_count)
+                        delay.wait();
                     queue.close();
                     // printf("writer #%ld closed the queue\n", tid);
                 }
@@ -216,6 +222,7 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
                         size_t val = queue.value_pop();
                         chk_sum_local ^= val;
                         ++cnt;
+                        ++read_element_count;
                         // if ((cnt & 0xff) == 0)
                         //    printf("%ld ", tid);
                     }
