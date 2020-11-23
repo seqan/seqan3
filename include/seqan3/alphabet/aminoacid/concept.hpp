@@ -16,7 +16,7 @@
 #include <type_traits>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 
 // ============================================================================
 // aminoacid_empty_base

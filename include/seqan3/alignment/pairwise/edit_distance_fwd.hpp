@@ -12,14 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
+
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

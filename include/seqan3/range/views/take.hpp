@@ -19,15 +19,15 @@
 #include <seqan3/std/span>
 #include <seqan3/std/type_traits>
 
-#include <seqan3/core/type_traits/iterator.hpp>
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/core/type_traits/transformation_trait_or.hpp>
+#include <seqan3/core/detail/iterator_traits.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
+#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
 namespace seqan3::detail
 {
@@ -430,7 +430,7 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    constexpr friend bool operator!=(sentinel_type const & lhs, basic_iterator const & rhs) 
+    constexpr friend bool operator!=(sentinel_type const & lhs, basic_iterator const & rhs)
         noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;

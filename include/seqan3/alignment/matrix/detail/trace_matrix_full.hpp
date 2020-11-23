@@ -21,7 +21,7 @@
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/zip.hpp>

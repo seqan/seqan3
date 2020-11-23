@@ -7,11 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
 #include <list>
 #include <vector>
 
-#include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
 TEST(lazy, instantiate)
 {

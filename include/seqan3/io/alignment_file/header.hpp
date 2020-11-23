@@ -13,15 +13,15 @@
 #pragma once
 
 #include <deque>
+#include <seqan3/std/ranges>
 #include <unordered_map>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/type_traits/pre.hpp>
 #include <seqan3/io/alignment_file/detail.hpp>
 #include <seqan3/range/hash.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/pre.hpp>
 
 namespace seqan3
 {

@@ -24,10 +24,9 @@
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/core/type_traits/pack.hpp>
 #include <seqan3/core/tuple_utility.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
 namespace seqan3::detail
 {
@@ -171,7 +170,7 @@ public:
     template <typename alternative_t>
     static constexpr bool holds_alternative() noexcept
     {
-        return detail::type_in_pack_v<alternative_t, alternative_types...>;
+        return seqan3::pack_traits::contains<alternative_t, alternative_types...>;
     }
 
     /*!\name Constructors, destructor and assignment

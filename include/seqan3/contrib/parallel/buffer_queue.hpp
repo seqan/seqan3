@@ -12,23 +12,22 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <atomic>
 #include <cmath>
+#include <seqan3/std/concepts>
 #include <mutex>
-#include <new>
+#include <seqan3/std/new>
+#include <seqan3/std/ranges>
 #include <shared_mutex>
+#include <seqan3/std/span>
 #include <type_traits>
 #include <vector>
 
 #include <seqan3/core/bit_manipulation.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/utility/parallel/detail/spin_delay.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/new>
-#include <seqan3/std/ranges>
-#include <seqan3/std/span>
 
 namespace seqan3::contrib
 {

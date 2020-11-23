@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 #include <vector>
 #include <stdexcept>
 
@@ -19,13 +21,11 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation.hpp>
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/detail.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 #include <seqan3/range/container/concept.hpp>
 
 // ============================================================================
@@ -546,7 +546,8 @@ public:
 
 protected:
     /*!\name Compatibility
-     * \brief Static constexpr variables that emulate/encapsulate seqan3::range_compatible (which doesn't work for types during their definition).
+     * \brief Static constexpr variables that emulate whether the ranges are compatible
+     *        (which doesn't work for types during their definition).
      * \{
      */
     //!\cond

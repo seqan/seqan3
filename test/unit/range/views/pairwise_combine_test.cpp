@@ -15,8 +15,8 @@
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/view/filter.hpp>
 
-#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/pretty_printing.hpp>

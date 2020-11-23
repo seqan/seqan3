@@ -6,39 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the concepts seqan3::transformation_trait and seqan3::unary_type_trait.
- * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
+ * \brief [DEPRECATED] Provides the concepts seqan3::transformation_trait and seqan3::unary_type_trait.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.
+ *             Please \#include <seqan3/utility/type_traits/concept.hpp> instead.
  */
 
 #pragma once
 
-#include <type_traits>
+#include <seqan3/utility/type_traits/concept.hpp>
 
-#include <seqan3/core/platform.hpp>
-
-namespace seqan3
-{
-
-/*!\interface seqan3::transformation_trait
- * \ingroup type_traits
- * \brief Concept for a transformation trait.
- *
- * An object is a transformation trait if it exposes a member type called `type`.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT transformation_trait = requires { typename t::type; };
-//!\endcond
-
-/*!\interface seqan3::unary_type_trait
- * \ingroup type_traits
- * \brief Concept for a unary traits type.
- *
- * An object is a unary traits type if it is derived from std::integral_constant.
- */
-//!\cond
-template <typename t>
-SEQAN3_CONCEPT unary_type_trait = std::is_base_of_v<std::integral_constant<typename t::value_type, t::value>, t>;
-//!\endcond
-
-} // namespace seqan3
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1. Please #include <seqan3/utility/type_traits/concept.hpp> instead.")

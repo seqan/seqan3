@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <functional>
 #include <iostream>
+#include <seqan3/std/ranges>
 #include <tuple>
 #include <type_traits>
 
@@ -28,10 +30,8 @@
 #include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3
 {

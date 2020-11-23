@@ -14,11 +14,12 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/std/ranges>
+
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/core/concept/tuple.hpp>
-#include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/core/range/type_traits.hpp>
 
 namespace seqan3::test
 {

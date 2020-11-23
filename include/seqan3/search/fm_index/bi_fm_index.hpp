@@ -12,14 +12,14 @@
 
 #pragma once
 
+#include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
 #include <utility>
 
-#include <seqan3/core/type_traits/range.hpp>
-#include <seqan3/std/filesystem>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {

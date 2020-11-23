@@ -12,8 +12,10 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/function.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/std/type_traits>
+
+#include <seqan3/utility/detail/multi_invocable.hpp>
 
 namespace seqan3::views
 {

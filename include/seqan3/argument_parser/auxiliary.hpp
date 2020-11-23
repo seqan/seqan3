@@ -12,16 +12,16 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <sstream>
+#include <seqan3/std/type_traits>
 #include <unordered_map>
 #include <vector>
 
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/type_traits>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::custom
 {

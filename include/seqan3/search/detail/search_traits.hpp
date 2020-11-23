@@ -14,12 +14,12 @@
 #pragma once
 
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/output.hpp>
 #include <seqan3/search/configuration/result_type.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail
 {

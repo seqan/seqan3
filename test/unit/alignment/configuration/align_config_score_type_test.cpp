@@ -11,7 +11,7 @@
 
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/core/algorithm/configuration.hpp>
-#include <seqan3/core/type_traits/basic.hpp>
+#include <seqan3/utility/type_traits/basic.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
 

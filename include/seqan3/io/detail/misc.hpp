@@ -15,7 +15,7 @@
 #include <variant>
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/filesystem>

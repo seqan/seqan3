@@ -1,8 +1,0 @@
-seqan3_test(basic_test.cpp)
-seqan3_test(deferred_crtp_base_test.cpp)
-seqan3_test(function_test.cpp)
-seqan3_test(lazy_test.cpp)
-seqan3_test(range_iterator_test.cpp)
-seqan3_test(template_inspection_test.cpp)
-seqan3_test(transformation_trait_or_test.cpp)
-seqan3_test(type_traits_iterator_test.cpp)

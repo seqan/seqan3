@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/search_result.hpp>

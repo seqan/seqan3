@@ -24,7 +24,7 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/structure_file/detail.hpp>

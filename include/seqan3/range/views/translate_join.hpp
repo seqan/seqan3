@@ -12,15 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/ranges>
 #include <vector>
 #include <stdexcept>
 
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/translate.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {

@@ -15,7 +15,7 @@
 #include <seqan3/std/type_traits>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/search/search_result.hpp>
 

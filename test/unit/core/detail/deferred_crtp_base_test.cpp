@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-#include <seqan3/core/type_traits/deferred_crtp_base.hpp>
+#include <seqan3/core/detail/deferred_crtp_base.hpp>
 
 // Defines a crtp_base class with an additional value type.
 template <typename derived_t, typename value_t = std::string>

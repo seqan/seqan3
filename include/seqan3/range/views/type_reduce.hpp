@@ -12,14 +12,14 @@
 
 #pragma once
 
-#include <string_view>
-
-#include <seqan3/core/type_traits/template_inspection.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
+#include <string_view>
+
+#include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::detail
 {

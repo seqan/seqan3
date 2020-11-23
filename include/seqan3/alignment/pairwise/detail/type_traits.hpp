@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/std/ranges>
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
@@ -30,14 +31,13 @@
 #include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
+#include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
-#include <seqan3/core/type_traits/function.hpp>
-#include <seqan3/core/type_traits/lazy.hpp>
-#include <seqan3/core/type_traits/template_inspection.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/type_traits/function_traits.hpp>
+#include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
 namespace seqan3::detail
 {

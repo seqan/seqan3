@@ -17,7 +17,7 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
-#include <seqan3/core/type_traits/range.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 
 namespace seqan3
 {

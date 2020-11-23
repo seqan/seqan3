@@ -14,8 +14,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/type_traits/lazy.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
+#include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
 namespace seqan3::detail
 {
