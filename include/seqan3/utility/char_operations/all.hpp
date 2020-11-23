@@ -14,6 +14,8 @@
 #pragma once
 
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/pretty_print.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>
 
 /*!\defgroup char_operations builtin_character operations
  * \brief Provides various operations on character types.
