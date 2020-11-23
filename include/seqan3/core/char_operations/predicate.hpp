@@ -9,7 +9,8 @@
  * \brief [DEPRECATED] Provides character predicates for tokenisation.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \deprecated This header will be removed in 3.1. Please use seqan3/utility/char_operations/predicate.hpp instead.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;
+ *             Please \#include <seqan3/utility/char_operations/predicate.hpp> instead.
  */
 
 #pragma once
