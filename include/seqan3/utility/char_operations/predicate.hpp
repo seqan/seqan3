@@ -14,7 +14,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/char_operations/predicate_detail.hpp>
+#include <seqan3/utility/char_operations/predicate_detail.hpp>
 
 // ----------------------------------------------------------------------------
 // General Purpose Char predicates
