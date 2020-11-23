@@ -15,7 +15,7 @@
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/core/char_operations/transform.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>
 
 namespace seqan3
 {

@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/alphabet_base.hpp>
-#include <seqan3/core/char_operations/transform.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dssp9

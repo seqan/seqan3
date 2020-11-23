@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include <seqan3/core/char_operations/transform.hpp>
 #include <seqan3/utility/char_operations/all.hpp>
 
 /*!\defgroup char_operations builtin_character operations
