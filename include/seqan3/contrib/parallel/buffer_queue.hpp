@@ -217,12 +217,13 @@ public:
      */
     void close() noexcept
     {
-        closed_flag.store(true, std::memory_order_release);
+        std::unique_lock write_lock{mutex};
+        closed_flag = true;
     }
 
     bool is_closed() const noexcept
     {
-        return closed_flag.load(std::memory_order_acquire);
+        return closed_flag;
     }
 
     bool is_empty() const noexcept
@@ -339,7 +340,7 @@ private:
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    push_back_position{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    pending_push_back_position{0};
     alignas(std::hardware_destructive_interference_size) std::atomic<size_type>    ring_buffer_capacity{0};
-    alignas(std::hardware_destructive_interference_size) std::atomic<bool>         closed_flag{false};
+    alignas(std::hardware_destructive_interference_size) bool                      closed_flag{false};
 };
 
 // Specifies a fixed size buffer queue.
