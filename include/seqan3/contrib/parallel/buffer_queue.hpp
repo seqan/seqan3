@@ -21,9 +21,9 @@
 #include <vector>
 
 #include <seqan3/core/bit_manipulation.hpp>
-#include <seqan3/core/parallel/detail/spin_delay.hpp>
 #include <seqan3/core/type_traits/range.hpp>
 #include <seqan3/range/container/concept.hpp>
+#include <seqan3/utility/parallel/detail/spin_delay.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <seqan3/std/new>
