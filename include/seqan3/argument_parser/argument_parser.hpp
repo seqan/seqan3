@@ -28,10 +28,10 @@
 #include <seqan3/argument_parser/detail/format_parse.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>
 #include <seqan3/argument_parser/detail/version_check.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/test_accessor.hpp>
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 namespace seqan3
 {

@@ -11,7 +11,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 template <typename T>
 using aminoacid = ::testing::Test;

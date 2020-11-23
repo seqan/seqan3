@@ -14,8 +14,8 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/core/char_operations/predicate.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
 
 using namespace std::literals;
 
