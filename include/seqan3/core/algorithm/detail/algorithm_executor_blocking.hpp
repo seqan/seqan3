@@ -313,6 +313,7 @@ private:
     {
         algorithm = std::move(other.algorithm);
         buffer_size = std::move(other.buffer_size);
+        exec_handler = std::move(other.exec_handler);
         // Get the old resource position.
         auto old_resource_position = std::ranges::distance(std::ranges::begin(other.resource),
                                                            other.resource_it);

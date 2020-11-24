@@ -44,6 +44,9 @@ namespace seqan3::detail
  * submit new algorithm tasks.
  *
  * \note Instances of this class are not copyable.
+ * 
+ * \warning This class is only thread-safe in a single producer context. Multiple consumers are allowed.
+ *          Concurrent invocation of the interfaces are undefined behaviour.
  *
  * \attention This class cannot be reused for multiple calls. For this to work, it requires barriers and a queue that
  *            can be reopened.
@@ -94,13 +97,7 @@ public:
     execution_handler_parallel(execution_handler_parallel &&) = default; //!< Defaulted.
     execution_handler_parallel & operator=(execution_handler_parallel const &) = delete; //!< Deleted.
     execution_handler_parallel & operator=(execution_handler_parallel &&) = default; //!< Defaulted.
-
-    //!\brief Waits for threads to finish.
-    ~execution_handler_parallel()
-    {
-        if (state != nullptr)
-            wait();
-    }
+    ~execution_handler_parallel() = default; //!< Defaulted.
     //!\}
 
     /*!\brief Asynchronously schedules a new algorithm task with the given input and callback.
@@ -189,29 +186,61 @@ public:
     {
         assert(state != nullptr);
 
-        if (!state->is_waiting)
-        {
-            state->is_waiting = true;
-            state->queue.close();
+        state->stop_and_wait();
+    }
 
-            for (auto & t : state->thread_pool)
+private:
+    /*!\brief An internal state stored on the heap to allow safe move construction/assignment of the class.
+     *
+     * \details
+     * 
+     * ### Thread safety
+     * 
+     * This class is only intended for use with a single producer model.
+     */
+    class internal_state
+    {
+    public:
+        /*!\name Constructors, destructor and assignment
+        * \brief Instances of this class are not copyable.
+        * \{
+        */
+        internal_state() = default; //!< Defaulted.
+        internal_state(internal_state const &) = delete; //!< Deleted.
+        internal_state(internal_state &&) = default; //!< Defaulted.
+        internal_state & operator=(internal_state const &) = delete; //!< Deleted.
+        internal_state & operator=(internal_state &&) = default; //!< Defaulted.
+
+        //!\brief Waits for threads to finish.
+        ~internal_state()
+        {
+            stop_and_wait();
+        }
+        //!\}
+
+        /*!\brief Waits until all threads have been joined.
+         *
+         * \details
+         * 
+         * ### Thread safety
+         * 
+         * This function is not thread-safe.
+         */
+        void stop_and_wait()
+        {
+            queue.close();
+
+            for (auto & t : thread_pool)
             {
                 if (t.joinable())
                     t.join();
             }
         }
-    }
 
-private:
-    //!\brief An internal state stored on the heap to allow safe move construction/assignment of the class.
-    struct internal_state
-    {
         //!\brief The thread pool.
         std::vector<std::thread>                 thread_pool{};
         //!\brief The concurrent queue containing the algorithms to process.
         contrib::fixed_buffer_queue<task_type>   queue{10000};
-        //!\brief Flag to check if wait was already invoked.
-        bool                                     is_waiting{false};
     };
 
     //!\brief Manages the internal state.
