@@ -112,17 +112,18 @@ the backward strand should not be considered. If this is the desired behaviour t
 to be used. Unlike the `seqan3::views::minimiser_hash`, `seqan3::views::minimiser` does not hash the values for you, so
 you have to do this yourself. But fear not, `seqan3::views::kmer_hash` makes this really easy for you!
 
-```cpp
-auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(5);
-```
+\snippet doc/tutorial/ranges/views/minimiser/minimiser_snippets.cpp minimiser
+
 
 This syntax will result in minimisers with k-mer size 4 and a window-length of 8 (5 + 4 - 1). (So, to determine the
 right window size you always have to determine the window size you would like to use in `seqan3::views::minimiser_hash`
 and subtract it by the k-mer size and add 1, here: 8 - 4 + 1 = 5.)
 Got it? Then let's make a simple test, what is the actual window size of the following:
 
-\snippet doc/tutorial/ranges/views/minimiser/minimiser_snippets.cpp minimiser
 
+```cpp
+auto minimisers = text | seqan3::views::kmer_hash(seqan3::ungapped{4}) | seqan3::views::minimiser(1);
+```
 \hint
 1 + 4 - 1 = 4. So, k-mer size and window size are equal.
 \endhint
