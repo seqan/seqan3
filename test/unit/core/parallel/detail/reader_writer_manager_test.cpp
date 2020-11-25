@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
+#include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
 
 TEST(reader_writer_manager, parallel)
 {
