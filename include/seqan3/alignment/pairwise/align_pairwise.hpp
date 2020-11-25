@@ -27,7 +27,6 @@
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
-#include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>
 #include <seqan3/core/simd/simd.hpp>
 #include <seqan3/range/views/persist.hpp>

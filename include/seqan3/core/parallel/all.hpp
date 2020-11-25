@@ -34,5 +34,4 @@
  * \endif
  */
 
-#include <seqan3/core/parallel/execution.hpp>
 #include <seqan3/core/parallel/detail/all.hpp>
