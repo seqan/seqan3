@@ -5,33 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-/*!\file
- * \brief Meta-header for the parallel module.
- * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- */
+ /*!\file
+  * \brief [DEPRECATED] Meta-header for the parallel module..
+  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+  * \deprecated This header will be removed in 3.1.0. Please use seqan3/utility/parallel/all.hpp instead.
+  */
 
-#pragma once
+ #pragma once
 
-/*!\defgroup parallel Parallel
- * \brief This module contains types and utilities for concurrent execution of algorithms in SeqAn.
- * \ingroup core
- *
- * \details
- *
- * ### Execution policies
- *
- * Since C++17/20 the standard defines execution policies for sequential, parallel and vectorised execution of
- * algorithms. These policies are not yet fully supported by the gcc compilers or only with a hard dependency on
- * external libraries. Thus, we define our own execution policies which adopt the behaviour of the policies defined
- * in the standard library. Once they are fully supported by the compilers our policies will merely alias the standard
- * policies.
- *
- * \if DEV
- * ### Concurrency support
- *
- * This module contains helper classes to synchronise threads in concurrent environments.
- *
- * \endif
- */
+ #include <seqan3/utility/parallel/all.hpp>
 
-#include <seqan3/utility/parallel/detail/all.hpp>
+ SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include "
+    "<seqan3/utility/parallel/all.hpp> instead.")
