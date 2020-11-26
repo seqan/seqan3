@@ -30,7 +30,7 @@ int main(int argc, char const * argv[])
     // Because of the argument_parsing struct and
     // the static member function enumeration_names
     // you can now add an option that takes a value of type std::errc:
-    parser.add_option(value, 'e', "errc", "Give me a std::errc value.", seqan3::option_spec::DEFAULT,
+    parser.add_option(value, 'e', "errc", "Give me a std::errc value.", seqan3::option_spec::defaulted,
                       seqan3::value_list_validator{(seqan3::enumeration_names<std::errc> | std::views::values)});
 
     try

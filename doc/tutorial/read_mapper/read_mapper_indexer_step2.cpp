@@ -47,10 +47,10 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     parser.info.short_description = "Creates an index over a reference.";
     parser.info.version = "1.0.0";
     parser.add_option(args.reference_path, 'r', "reference", "The path to the reference.",
-                      seqan3::option_spec::REQUIRED,
+                      seqan3::option_spec::required,
                       seqan3::input_file_validator{{"fa","fasta"}});
     parser.add_option(args.index_path, 'o', "output", "The output index file path.",
-                      seqan3::option_spec::DEFAULT,
+                      seqan3::option_spec::defaulted,
                       seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"index"}});
 }
 

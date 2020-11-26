@@ -50,6 +50,16 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The `seqan3::regex_validator` parses `std::filesystem::path`'s correctly now
   ([\#2216](https://github.com/seqan/seqan3/pull/2216)).
 
+## API changes
+
+#### Argument Parser
+
+* The enum names of `seqan3::option_spec` were changed to lower case:
+  * `seqan3::option_spec::DEFAULT` is replaced by `seqan3::option_spec::defaulted`.
+  * `seqan3::option_spec::REQUIRED` is replaced by `seqan3::option_spec::required`.
+  * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
+  * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.
+
 # 3.0.2
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.

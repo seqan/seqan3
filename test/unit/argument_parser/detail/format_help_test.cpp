@@ -232,8 +232,8 @@ TEST(help_page_printing, do_not_print_hidden_options)
     // Add an option and request help.
     seqan3::argument_parser parser5{"test_parser", 2, argv1};
     test_accessor::set_terminal_width(parser5, 80);
-    parser5.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::HIDDEN);
-    parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::HIDDEN);
+    parser5.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::hidden);
+    parser5.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::hidden);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser5.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
     std_cout = testing::internal::GetCapturedStdout();
@@ -254,28 +254,28 @@ TEST(help_page_printing, advanced_options)
     auto set_up = [&option_value, &flag_value] (seqan3::argument_parser & parser)
     {
         // default or required information are always displayed
-        parser.add_section("default section", seqan3::option_spec::REQUIRED);
-        parser.add_subsection("default subsection", seqan3::option_spec::REQUIRED); // same as DEFAULT
-        parser.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::REQUIRED);
-        parser.add_flag(flag_value, 'g', "goo", "this is a flag.", seqan3::option_spec::REQUIRED); // same as DEFAULT
-        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::REQUIRED); // same as DEFAULT
-        parser.add_line("some line.", true, seqan3::option_spec::REQUIRED); // same as DEFAULT
+        parser.add_section("default section", seqan3::option_spec::required);
+        parser.add_subsection("default subsection", seqan3::option_spec::required); // same as DEFAULT
+        parser.add_option(option_value, 'i', "int", "this is a int option.", seqan3::option_spec::required);
+        parser.add_flag(flag_value, 'g', "goo", "this is a flag.", seqan3::option_spec::required); // same as DEFAULT
+        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::required); // same as DEFAULT
+        parser.add_line("some line.", true, seqan3::option_spec::required); // same as DEFAULT
 
         // advanced information
-        parser.add_section("advanced section", seqan3::option_spec::ADVANCED);
-        parser.add_subsection("advanced subsection", seqan3::option_spec::ADVANCED);
-        parser.add_option(option_value, 'j', "jnt", "this is a int option.", seqan3::option_spec::ADVANCED);
-        parser.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::ADVANCED);
-        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::ADVANCED);
-        parser.add_line("some line.", true, seqan3::option_spec::ADVANCED);
+        parser.add_section("advanced section", seqan3::option_spec::advanced);
+        parser.add_subsection("advanced subsection", seqan3::option_spec::advanced);
+        parser.add_option(option_value, 'j', "jnt", "this is a int option.", seqan3::option_spec::advanced);
+        parser.add_flag(flag_value, 'f', "flag", "this is a flag.", seqan3::option_spec::advanced);
+        parser.add_list_item("-s, --some", "list item.", seqan3::option_spec::advanced);
+        parser.add_line("some line.", true, seqan3::option_spec::advanced);
 
         // hidden information (never displayed, normally used for options not section information)
-        parser.add_section("hidden section", seqan3::option_spec::HIDDEN);
-        parser.add_subsection("hidden subsection", seqan3::option_spec::HIDDEN);
-        parser.add_option(option_value, 'd', "dnt", "hidden option.", seqan3::option_spec::HIDDEN);
-        parser.add_flag(flag_value, 'l', "lflag", "hidden a flag.", seqan3::option_spec::HIDDEN);
-        parser.add_list_item("-s, --some", "hidden list item.", seqan3::option_spec::HIDDEN);
-        parser.add_line("hidden line.", true, seqan3::option_spec::HIDDEN);
+        parser.add_section("hidden section", seqan3::option_spec::hidden);
+        parser.add_subsection("hidden subsection", seqan3::option_spec::hidden);
+        parser.add_option(option_value, 'd', "dnt", "hidden option.", seqan3::option_spec::hidden);
+        parser.add_flag(flag_value, 'l', "lflag", "hidden a flag.", seqan3::option_spec::hidden);
+        parser.add_list_item("-s, --some", "hidden list item.", seqan3::option_spec::hidden);
+        parser.add_line("hidden line.", true, seqan3::option_spec::hidden);
     };
 
     // without -hh, only the non/advanced information are shown
@@ -367,10 +367,10 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
-    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::DEFAULT,
+    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::defaulted,
                        seqan3::value_list_validator{seqan3::enumeration_names<foo> | std::views::values});
     parser6.add_option(required_option, 'r', "required-int", "this is another int option.",
-                       seqan3::option_spec::REQUIRED);
+                       seqan3::option_spec::required);
     parser6.add_section("Flags");
     parser6.add_subsection("SubFlags");
     parser6.add_line("here come all the flags");

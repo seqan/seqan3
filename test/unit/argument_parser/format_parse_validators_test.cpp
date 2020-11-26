@@ -138,7 +138,7 @@ TEST(validator_test, input_file)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(file_in_path, 'i', "int-option", "desc",
-                          seqan3::option_spec::DEFAULT, seqan3::input_file_validator{formats});
+                          seqan3::option_spec::defaulted, seqan3::input_file_validator{formats});
 
         EXPECT_NO_THROW(parser.parse());
         EXPECT_EQ(file_in_path.string(), path);
@@ -256,7 +256,7 @@ TEST(validator_test, output_file)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(file_out_path, 'o', "out-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::output_file_validator{seqan3::output_file_open_options::create_new, formats});
 
         EXPECT_NO_THROW(parser.parse());
@@ -391,7 +391,7 @@ TEST(validator_test, input_directory)
             seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
             test_accessor::set_terminal_width(parser, 80);
             parser.add_option(dir_in_path, 'i', "input-option", "desc",
-                              seqan3::option_spec::DEFAULT, seqan3::input_directory_validator{});
+                              seqan3::option_spec::defaulted, seqan3::input_directory_validator{});
 
             EXPECT_NO_THROW(parser.parse());
             EXPECT_EQ(path, dir_in_path.string());
@@ -443,7 +443,7 @@ TEST(validator_test, output_directory)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(dir_out_path, 'o', "output-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::output_directory_validator{});
 
         EXPECT_NO_THROW(parser.parse());
@@ -644,7 +644,7 @@ TEST(validator_test, arithmetic_range_validator_success)
     seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser, 80);
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
+                      seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -656,7 +656,7 @@ TEST(validator_test, arithmetic_range_validator_success)
     seqan3::argument_parser parser2{"test_parser", 3, argv2, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser2, 80);
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-20, 20});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{-20, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -690,7 +690,7 @@ TEST(validator_test, arithmetic_range_validator_success)
     seqan3::argument_parser parser5{"test_parser", 5, argv5, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser5, 80);
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-50,50});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{-50,50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -739,7 +739,7 @@ TEST(validator_test, arithmetic_range_validator_success)
     seqan3::argument_parser parser8{"test_parser", 3, argv8, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser8, 80);
     parser8.add_option(double_option_value, 'i', "double-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{1, 20});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser8.parse());
@@ -757,7 +757,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser, 80);
     parser.add_option(option_value, 'i', "int-option", "desc",
-                      seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
+                      seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{1, 20});
 
     EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
@@ -766,7 +766,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     seqan3::argument_parser parser2{"test_parser", 3, argv2, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser2, 80);
     parser2.add_option(option_value, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-20, 20});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{-20, 20});
 
     EXPECT_THROW(parser2.parse(), seqan3::validation_error);
 
@@ -791,7 +791,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     seqan3::argument_parser parser5{"test_parser", 3, argv5, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser5, 80);
     parser5.add_option(option_vector, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{-50, 50});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{-50, 50});
 
     EXPECT_THROW(parser5.parse(), seqan3::validation_error);
 
@@ -810,7 +810,7 @@ TEST(validator_test, arithmetic_range_validator_error)
     seqan3::argument_parser parser7{"test_parser", 3, argv7, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser7, 80);
     parser7.add_option(double_option_value, 'i', "double-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::arithmetic_range_validator{1, 20});
+                       seqan3::option_spec::defaulted, seqan3::arithmetic_range_validator{1, 20});
 
     EXPECT_THROW(parser7.parse(), seqan3::validation_error);
 }
@@ -870,7 +870,7 @@ TEST(validator_test, value_list_validator_success)
     seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser, 80);
     parser.add_option(option_value, 's', "string-option", "desc",
-                      seqan3::option_spec::DEFAULT,
+                      seqan3::option_spec::defaulted,
                       seqan3::value_list_validator{valid_str_values | std::views::take(2)});
 
     testing::internal::CaptureStderr();
@@ -883,7 +883,7 @@ TEST(validator_test, value_list_validator_success)
     seqan3::argument_parser parser2{"test_parser", 3, argv2, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser2, 80);
     parser2.add_option(option_value_int, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{0, -21, 10});
+                       seqan3::option_spec::defaulted, seqan3::value_list_validator<int>{0, -21, 10});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser2.parse());
@@ -918,7 +918,7 @@ TEST(validator_test, value_list_validator_success)
     seqan3::argument_parser parser5{"test_parser", 5, argv5, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser5, 80);
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::defaulted, seqan3::value_list_validator<int>{-10, 48, 50});
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser5.parse());
@@ -932,7 +932,7 @@ TEST(validator_test, value_list_validator_success)
     seqan3::argument_parser parser7{"test_parser", 2, argv7, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser7, 80);
     parser7.add_option(option_vector_int, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::defaulted, seqan3::value_list_validator<int>{-10, 48, 50});
 
     option_vector_int.clear();
     testing::internal::CaptureStdout();
@@ -961,7 +961,7 @@ TEST(validator_test, value_list_validator_error)
     seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser, 80);
     parser.add_option(option_value, 's', "string-option", "desc",
-                      seqan3::option_spec::DEFAULT, seqan3::value_list_validator{"ha", "ba", "ma"});
+                      seqan3::option_spec::defaulted, seqan3::value_list_validator{"ha", "ba", "ma"});
 
     EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
@@ -987,7 +987,7 @@ TEST(validator_test, value_list_validator_error)
     seqan3::argument_parser parser5{"test_parser", 5, argv5, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser5, 80);
     parser5.add_option(option_vector_int, 'i', "int-option", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::value_list_validator<int>{-10, 48, 50});
+                       seqan3::option_spec::defaulted, seqan3::value_list_validator<int>{-10, 48, 50});
 
     EXPECT_THROW(parser5.parse(), seqan3::validation_error);
 }
@@ -1004,7 +1004,7 @@ TEST(validator_test, regex_validator_success)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT, email_validator);
+                          seqan3::option_spec::defaulted, email_validator);
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1046,7 +1046,7 @@ TEST(validator_test, regex_validator_success)
         seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_vector, 's', "string-option", "desc",
-                           seqan3::option_spec::DEFAULT, email_vector_validator);
+                           seqan3::option_spec::defaulted, email_vector_validator);
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1061,7 +1061,7 @@ TEST(validator_test, regex_validator_success)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(path_option, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT, email_vector_validator);
+                          seqan3::option_spec::defaulted, email_vector_validator);
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1075,7 +1075,7 @@ TEST(validator_test, regex_validator_success)
         seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_vector, 's', "string-option", "desc",
-                           seqan3::option_spec::DEFAULT, email_vector_validator);
+                           seqan3::option_spec::defaulted, email_vector_validator);
 
         option_vector.clear();
         testing::internal::CaptureStdout();
@@ -1104,7 +1104,7 @@ TEST(validator_test, regex_validator_error)
     seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser, 80);
     parser.add_option(option_value, '\0', "string-option", "desc",
-                      seqan3::option_spec::DEFAULT, seqan3::regex_validator{"tt"});
+                      seqan3::option_spec::defaulted, seqan3::regex_validator{"tt"});
 
     EXPECT_THROW(parser.parse(), seqan3::validation_error);
 
@@ -1132,7 +1132,7 @@ TEST(validator_test, regex_validator_error)
     seqan3::argument_parser parser4{"test_parser", 5, argv4, seqan3::update_notifications::off};
     test_accessor::set_terminal_width(parser4, 80);
     parser4.add_option(option_vector, 's', "", "desc",
-                       seqan3::option_spec::DEFAULT, seqan3::regex_validator{"tt"});
+                       seqan3::option_spec::defaulted, seqan3::regex_validator{"tt"});
 
     EXPECT_THROW(parser4.parse(), seqan3::validation_error);
 }
@@ -1155,7 +1155,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::defaulted, absolute_path_validator | my_file_ext_validator);
 
         testing::internal::CaptureStderr();
         EXPECT_NO_THROW(parser.parse());
@@ -1169,7 +1169,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::defaulted, absolute_path_validator | my_file_ext_validator);
 
         EXPECT_THROW(parser.parse(), seqan3::validation_error);
     }
@@ -1180,7 +1180,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                          seqan3::option_spec::defaulted, absolute_path_validator | my_file_ext_validator);
 
         EXPECT_THROW(parser.parse(), seqan3::validation_error);
     }
@@ -1192,7 +1192,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
                           seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}});
 
@@ -1209,7 +1209,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
                           seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}} |
                           seqan3::regex_validator{".*"});
@@ -1227,7 +1227,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
                           seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}} |
                           seqan3::regex_validator{".*"});
@@ -1256,7 +1256,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
                           seqan3::output_file_validator{seqan3::output_file_open_options::open_or_create, {"sa", "so"}} |
                           seqan3::regex_validator{".*"});
@@ -1285,7 +1285,7 @@ TEST(validator_test, chaining_validators)
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
         parser.add_option(option_list_value, 's', "string-option", "desc",
-                          seqan3::option_spec::DEFAULT,
+                          seqan3::option_spec::defaulted,
                           seqan3::regex_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"} |
                           seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}});
 

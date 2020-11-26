@@ -10,7 +10,7 @@ int main(int argc, const char ** argv)
     seqan3::regex_validator my_validator{"[a-zA-Z]+@[a-zA-Z]+\\.com"};
 
     myparser.add_option(my_string,'s',"str","Give me a string.",
-                        seqan3::option_spec::DEFAULT, my_validator);
+                        seqan3::option_spec::defaulted, my_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies a string
