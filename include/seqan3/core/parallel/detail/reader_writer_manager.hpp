@@ -8,8 +8,8 @@
  /*!\file
   * \brief [DEPRECATED] Provides seqan3::detail::reader_writer_manager.
   * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  * \deprecated This header will be removed in 3.1.0. Please use
-  * seqan3/utility/parallel/detail/reader_writer_manager.hpp instead.
+  * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0; Please \#include
+  * <seqan3/utility/parallel/detail/reader_writer_manager.hpp> instead.
   */
 
  #pragma once
@@ -17,5 +17,4 @@
  #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
 
  SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include "
-    "<seqan3/utility/parallel/detail/reader_writer_manager.hpp> instead.")
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp> instead.")

@@ -8,7 +8,8 @@
 /*!\file
  * \brief [DEPRECATED] Provides seqan3::detail::spin_delay.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \deprecated This header will be removed in 3.1. Please use seqan3/utility/parallel/detail/spin_delay.hpp instead.
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0; Please \#include
+ * <seqan3/utility/parallel/detail/spin_delay.hpp> instead.
  */
 
 #pragma once
@@ -16,5 +17,4 @@
 #include <seqan3/utility/parallel/detail/spin_delay.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include "
-   "<seqan3/utility/parallel/detail/spin_delay.hpp> instead.")
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/parallel/detail/spin_delay.hpp> instead.")

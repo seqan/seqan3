@@ -8,13 +8,13 @@
  /*!\file
   * \brief [DEPRECATED] Meta-header for the parallel module..
   * \author Rene Rahn <rene.rahn AT fu-berlin.de>
-  * \deprecated This header will be removed in 3.1.0. Please use seqan3/utility/parallel/all.hpp instead.
+  * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0; Please \#include
+  *             <seqan3/utility/parallel/all.hpp> instead.
   */
 
- #pragma once
+#pragma once
 
- #include <seqan3/utility/parallel/all.hpp>
+#include <seqan3/utility/parallel/all.hpp>
 
- SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include "
-    "<seqan3/utility/parallel/all.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/parallel/all.hpp> instead.")

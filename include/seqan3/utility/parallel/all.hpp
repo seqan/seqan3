@@ -14,17 +14,13 @@
 
 /*!\defgroup parallel Parallel
  * \brief This module contains types and utilities for concurrent execution of algorithms in SeqAn.
- * \ingroup core
+ * \ingroup utility
  *
  * \details
  *
  * ### Execution policies
  *
- * Since C++17/20 the standard defines execution policies for sequential, parallel and vectorised execution of
- * algorithms. These policies are not yet fully supported by the gcc compilers or only with a hard dependency on
- * external libraries. Thus, we define our own execution policies which adopt the behaviour of the policies defined
- * in the standard library. Once they are fully supported by the compilers our policies will merely alias the standard
- * policies.
+ * Here are currently only implementations which are part of detail and therefore not of interest for the common user. 
  *
  * \if DEV
  * ### Concurrency support
@@ -34,4 +30,6 @@
  * \endif
  */
 
-#include <seqan3/utility/parallel/detail/all.hpp>
+ #include <seqan3/utility/parallel/detail/latch.hpp>
+ #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
+ #include <seqan3/utility/parallel/detail/spin_delay.hpp>
