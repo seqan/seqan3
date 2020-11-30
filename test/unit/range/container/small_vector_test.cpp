@@ -16,9 +16,24 @@
 #include <seqan3/test/cereal.hpp>
 
 #include "container_test_template.hpp"
+#include "../iterator_test_template.hpp"
 
 using small_vector_over_dna4_t = seqan3::small_vector<seqan3::dna4, 1000>;
 INSTANTIATE_TYPED_TEST_SUITE_P(small_vector, container_over_dna4_test, small_vector_over_dna4_t, );
+
+using small_vector_over_char_t = seqan3::small_vector<char, 5>;
+template <>
+struct iterator_fixture<small_vector_over_char_t> : public ::testing::Test
+{
+    using iterator_tag = std::contiguous_iterator_tag;
+
+    static constexpr bool const_iterable = true;
+
+    small_vector_over_char_t test_range{'A', 'C', 'C', 'G', 'T'};
+    std::array<char, 5> expected_range{'A', 'C', 'C', 'G', 'T'};
+};
+
+INSTANTIATE_TYPED_TEST_SUITE_P(small_vector_iterator_test, iterator_fixture, small_vector_over_char_t, );
 
 // standard construction.
 TEST(small_vector, standard_construction)
