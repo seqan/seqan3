@@ -17,9 +17,9 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/configuration/align_config_band.hpp>
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3::test
 {

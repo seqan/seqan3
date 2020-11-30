@@ -21,8 +21,8 @@
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 struct alignment_selector_test : public ::testing::Test
 {

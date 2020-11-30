@@ -17,8 +17,8 @@
 
 #include <meta/meta.hpp>
 
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/configuration/detail/concept.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3::detail
 {

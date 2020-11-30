@@ -21,7 +21,6 @@
 #include <vector>
 
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
@@ -48,6 +47,7 @@
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3::detail
 {
