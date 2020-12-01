@@ -60,6 +60,7 @@ BENCHMARK_TEMPLATE(to_rank, seqan3::aa20);
 BENCHMARK_TEMPLATE(to_rank, seqan3::aa27);
 BENCHMARK_TEMPLATE(to_rank, seqan3::phred42);
 BENCHMARK_TEMPLATE(to_rank, seqan3::phred63);
+BENCHMARK_TEMPLATE(to_rank, seqan3::phred94);
 /* adaptations */
 BENCHMARK_TEMPLATE(to_rank, char);
 BENCHMARK_TEMPLATE(to_rank, char32_t);
@@ -72,6 +73,7 @@ BENCHMARK_TEMPLATE(to_rank, seqan3::alphabet_variant<seqan3::dna4, char>);
 BENCHMARK_TEMPLATE(to_rank, seqan3::masked<seqan3::dna4>);
 BENCHMARK_TEMPLATE(to_rank, seqan3::qualified<seqan3::dna4, seqan3::phred42>);
 BENCHMARK_TEMPLATE(to_rank, seqan3::qualified<seqan3::dna5, seqan3::phred63>);
+BENCHMARK_TEMPLATE(to_rank, seqan3::qualified<seqan3::dna5, seqan3::phred94>);
 
 #if SEQAN3_HAS_SEQAN2
 template <typename alphabet_t>
