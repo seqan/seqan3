@@ -66,12 +66,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_sam_base() noexcept = default; //!< Defaulted.
-    format_sam_base(format_sam_base const &) noexcept = default; //!< Defaulted.
-    format_sam_base & operator=(format_sam_base const &) noexcept = default; //!< Defaulted.
-    format_sam_base(format_sam_base &&) noexcept = default; //!< Defaulted.
-    format_sam_base & operator=(format_sam_base &&) noexcept = default; //!< Defaulted.
-    ~format_sam_base() noexcept = default; //!< Defaulted.
+    format_sam_base() = default; //!< Defaulted.
+    format_sam_base(format_sam_base const &) = default; //!< Defaulted.
+    format_sam_base & operator=(format_sam_base const &) = default; //!< Defaulted.
+    format_sam_base(format_sam_base &&) = default; //!< Defaulted.
+    format_sam_base & operator=(format_sam_base &&) = default; //!< Defaulted.
+    ~format_sam_base() = default; //!< Defaulted.
     //!\}
 
     //!\brief The format version string.

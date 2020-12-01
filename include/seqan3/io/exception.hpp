@@ -54,14 +54,17 @@ struct parse_error : std::runtime_error
 //!\brief Thrown if there is an io error in low level io operations such as in std::basic_streambuf operations.
 struct io_error : std::ios_base::failure
 {
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    // std::ios_base::failure is missing the std::error_code constructor in pre-C++11 ABI
+    // see https://en.cppreference.com/w/cpp/io/ios_base/failure
+    using base_t = std::ios_base::failure;
+    using base_t::base_t;
+#else // ^^^ workaround / no workaround vvv
     //!\brief Constructor that forwards the exception string.
-    io_error(std::string const & s,
-             std::error_code const & ec) : std::ios_base::failure{s, ec}
+    explicit io_error(std::string const & s, std::error_code const & ec = std::io_errc::stream)
+        : std::ios_base::failure{s, ec}
     {}
-
-    //!\brief Constructor that forwards the exception string.
-    explicit io_error(std::string const & s) : io_error{s, std::error_code{std::io_errc::stream}}
-    {}
+#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 };
 
 // ----------------------------------------------------------------------------

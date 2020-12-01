@@ -64,12 +64,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_bam() noexcept = default; //!< Defaulted.
-    format_bam(format_bam const &) noexcept = default; //!< Defaulted.
-    format_bam & operator=(format_bam const &) noexcept = default; //!< Defaulted.
-    format_bam(format_bam &&) noexcept = default; //!< Defaulted.
-    format_bam & operator=(format_bam &&) noexcept = default; //!< Defaulted.
-    ~format_bam() noexcept = default; //!< Defaulted.
+    // string_buffer is of type std::string and has some problems with pre-C++11 ABI
+    format_bam() = default; //!< Defaulted.
+    format_bam(format_bam const &) = default; //!< Defaulted.
+    format_bam & operator=(format_bam const &) = default; //!< Defaulted.
+    format_bam(format_bam &&) = default; //!< Defaulted.
+    format_bam & operator=(format_bam &&) = default; //!< Defaulted.
+    ~format_bam() = default; //!< Defaulted.
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

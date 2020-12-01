@@ -162,13 +162,26 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
     // TODO: how do you model this?
     // SEQAN3_RETURN_TYPE_CONSTRAINT(val.emplace(typename type::const_iterator{}, ?),
     //                               std::same_as, typename type::iterator);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.front()), std::same_as, typename type::iterator);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), typename type::value_type{}),
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.begin(), val2.front()), std::same_as, typename type::iterator);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.begin(), typename type::value_type{}),
                                   std::same_as, typename type::iterator);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{}),
-                                  std::same_as, typename type::iterator);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.begin(), val2.end()),
-                                  std::same_as, typename type::iterator);
+
+    // std::string is missing the const_iterator versions for insert in pre-C++11 ABI
+    requires detail::is_basic_string_v<type> || requires(type val, type val2)
+#else // ^^^ workaround / no workaround vvv
+    requires requires(type val, type val2)
+#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    {
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.front()), std::same_as, typename type::iterator);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), typename type::value_type{}),
+                                      std::same_as, typename type::iterator);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), typename type::size_type{}, typename type::value_type{}),
+                                      std::same_as, typename type::iterator);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.begin(), val2.end()),
+                                      std::same_as, typename type::iterator);
+    };
+
     requires detail::is_basic_string_v<type> || requires(type val)
     {
         // TODO this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
@@ -176,8 +189,16 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
                                       std::same_as, typename type::iterator);
     };
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.erase(val.cbegin()), std::same_as, typename type::iterator);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(val.erase(val.cbegin(), val.cend()), std::same_as, typename type::iterator);
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    // std::string is missing the const_iterator versions for erase in pre-C++11 ABI
+    requires detail::is_basic_string_v<type> || requires(type val)
+#else // ^^^ workaround / no workaround vvv
+    requires requires(type val)
+#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+    {
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.erase(val.cbegin()), std::same_as, typename type::iterator);
+        SEQAN3_RETURN_TYPE_CONSTRAINT(val.erase(val.cbegin(), val.cend()), std::same_as, typename type::iterator);
+    };
 
     SEQAN3_RETURN_TYPE_CONSTRAINT(val.push_back(val.front()), std::same_as, void);
     SEQAN3_RETURN_TYPE_CONSTRAINT(val.push_back(typename type::value_type{}), std::same_as, void);
