@@ -28,6 +28,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## New features
 
+#### Alphabet
+
+* Added `seqan3::phred94`, a quality type that represents the full Phred Score range (Sanger format) and is used for
+  PacBio Phred scores of HiFi reads ([\#2290](https://github.com/seqan/seqan3/pull/2290)).
+
 #### Argument Parser
 
 * We expanded the `seqan3::output_file_validator`, with a parameter `seqan3::output_file_open_options` to allow overwriting
