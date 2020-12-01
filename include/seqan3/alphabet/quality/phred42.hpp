@@ -32,13 +32,15 @@ namespace seqan3
  *
  * \details
  *
- * The phred42 quality alphabet represents the zero-based phred score range
+ * The phred42 \ref quality alphabet represents the zero-based phred score range
  * [0..41] mapped to the consecutive ASCII range ['!' .. 'J']. It therefore can
  * represent the Illumina 1.8+ standard and the original Sanger score. If you
  * intend to use phred scores exceeding 41, use the larger score type, namely
  * seqan3::phred63, otherwise on construction exceeding scores are mapped to 41.
  *
  * \include test/snippet/alphabet/quality/phred42.cpp
+ *
+ * \see quality
  */
 class phred42 : public quality_base<phred42, 42>
 {
