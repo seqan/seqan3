@@ -6,12 +6,12 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <fstream>
+#include <seqan3/std/ranges>
 
 #include <gtest/gtest.h>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
-#include <seqan3/std/ranges>
 
 // reused global variables
 std::string std_cout;
@@ -38,9 +38,7 @@ std::string const basic_options_str = "OPTIONS\n"
                                       "    --export-help (std::string)\n"
                                       "          Export the help page information. Value must be one of [html, man].\n"
                                       "    --version-check (bool)\n"
-                                      "          Whether to to check for the newest app version. Default: 1.\n"
-                                      "\n"
-                                      "  \n";
+                                      "          Whether to to check for the newest app version. Default: 1.\n";
 
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update: \n"
