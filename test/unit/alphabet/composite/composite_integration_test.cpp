@@ -19,13 +19,12 @@ using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna4;
 
+// tests various combinations of alphabet_variant and alphabet_tuple
 using qualified_dna_phred42 = seqan3::qualified<seqan3::dna4, seqan3::phred42>;
 using qualified_gapped_dna_phred42 = seqan3::qualified<seqan3::gapped<seqan3::dna4>, seqan3::phred42>;
 using gapped_qualified_dna_phred42 = seqan3::gapped<qualified_dna_phred42>;
 using qualified_qualified_gapped_dna_phred42_phred42 = seqan3::qualified<qualified_gapped_dna_phred42, seqan3::phred42>;
 using gapped_alphabet_variant_dna_phred42 = seqan3::gapped<seqan3::alphabet_variant<seqan3::dna4, seqan3::phred42>>;
-
-// Some haessllihckeiten-tests
 
 TEST(composite, custom_constructors)
 {
