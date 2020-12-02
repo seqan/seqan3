@@ -12,4 +12,9 @@ int main()
     seqan3::phred42 another_phred;
     another_phred.assign_phred(49); // converted down to 41
     seqan3::debug_stream << another_phred.to_phred() << "\n"; // 41
+
+    std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> query{{'A'_dna4, '!'_phred42},
+                                                                        {'C'_dna4, 'A'_phred42},
+                                                                        {'G'_dna4, '6'_phred42},
+                                                                        {'T'_dna4, '&'_phred42}};
 }
