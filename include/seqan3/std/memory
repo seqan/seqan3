@@ -1,0 +1,68 @@
+// -*- C++ -*-
+// -----------------------------------------------------------------------------------------------------
+// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
+// shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+// -----------------------------------------------------------------------------------------------------
+
+/*!\file
+ * \brief Provides C++20 additions to the \<memory\> header.
+ * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
+ */
+
+#pragma once
+
+#if __has_include(<version>)
+#include <version> // from C++20 all feature macros should be defined here
+#endif
+
+//!\brief A workaround for __cpp_lib_to_address for gcc version on macOS >=9.0 and < 9.4 (in C++20 mode).
+//!       Those versions implemented std::to_address, but did not define that feature detection macro.
+#ifndef SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
+#   if defined(__cpp_lib_to_address)
+#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 1
+#   elif defined(__GNUC__) && defined(__APPLE__) && (__GNUC__ == 9) && __cplusplus > 201703L
+#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 1
+#   else
+#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 0
+#   endif
+#endif
+
+#include <memory>
+
+#if !SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
+
+/*!\defgroup memory memory
+ * \ingroup std
+ * \brief The \<memory\> header from C++20's standard library.
+ */
+
+namespace std
+{
+
+/*!\brief Obtain the address represented by p without forming a reference to the object pointed to by p.
+ * \sa https://en.cppreference.com/w/cpp/memory/to_address
+ * \ingroup memory
+ */
+template <typename T>
+constexpr T * to_address(T * p) noexcept
+{
+    static_assert(!std::is_function_v<T>);
+    return p;
+}
+
+//!\overload
+template<typename T>
+constexpr auto to_address(const T & p) noexcept
+{
+    if constexpr (requires { std::pointer_traits<T>::to_address(p); })
+        return std::pointer_traits<T>::to_address(p);
+    else
+        return std::to_address(p.operator->());
+}
+
+} // namespace std
+
+#endif // SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
+
