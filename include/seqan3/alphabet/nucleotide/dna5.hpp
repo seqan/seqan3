@@ -15,7 +15,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
-#include <seqan3/core/char_operations/transform.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
 // dna5

@@ -16,7 +16,7 @@
 
 #include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
 #include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/core/char_operations/transform.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>
 
 namespace seqan3
 {

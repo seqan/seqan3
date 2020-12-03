@@ -6,18 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides Char predicates for tokenization.
+ * \brief [DEPRECATED] Provides Char predicates for tokenization.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;
+ *             Please \#include <seqan3/utility/char_operations/all.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/core/char_operations/pretty_print.hpp>
-#include <seqan3/core/char_operations/transform.hpp>
 #include <seqan3/utility/char_operations/all.hpp>
 
-/*!\defgroup char_operations builtin_character operations
- * \brief Provides various operations on character types.
- * \ingroup core
- */
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/char_operations/all.hpp> instead.")

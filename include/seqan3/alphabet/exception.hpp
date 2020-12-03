@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <stdexcept>
 #include <string>
 
-#include <seqan3/core/char_operations/pretty_print.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/char_operations/pretty_print.hpp>
 
 namespace seqan3
 {
