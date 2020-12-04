@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <seqan3/core/parallel/detail/latch.hpp>
+#include <seqan3/utility/parallel/detail/latch.hpp>
 
 TEST(latch, arrive_wait)
 {

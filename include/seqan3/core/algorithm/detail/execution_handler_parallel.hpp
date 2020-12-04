@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/core/parallel/detail/reader_writer_manager.hpp>
+#include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail

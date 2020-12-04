@@ -19,7 +19,6 @@
 
 #include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
 #include <seqan3/core/algorithm/detail/execution_handler_sequential.hpp>
-#include <seqan3/core/parallel/execution.hpp>
 
 namespace seqan3::detail
 {
