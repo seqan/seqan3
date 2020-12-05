@@ -15,7 +15,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/algorithm/configuration_element_parallel_mode.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_parallel_mode.hpp>
 
 namespace seqan3::align_cfg
 {

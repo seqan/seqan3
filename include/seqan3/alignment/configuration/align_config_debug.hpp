@@ -13,8 +13,8 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/detail.hpp>
-#include <seqan3/core/algorithm/configuration_element_debug_mode.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/detail/configuration_element_debug_mode.hpp>
 
 namespace seqan3::align_cfg::detail
 {

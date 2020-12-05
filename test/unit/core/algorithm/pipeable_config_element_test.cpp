@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include "configuration_mock.hpp"
-
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
+
+#include "../configuration/configuration_mock.hpp"
 
 TEST(pipeable_config_element, two_elements)
 {

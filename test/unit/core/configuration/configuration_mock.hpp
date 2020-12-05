@@ -9,8 +9,8 @@
 
 #include <array>
 
-#include <seqan3/core/algorithm/configuration_utility.hpp>
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/detail/configuration_utility.hpp>
 
 enum class test_algo_id : uint8_t
 {

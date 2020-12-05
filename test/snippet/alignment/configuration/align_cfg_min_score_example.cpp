@@ -1,5 +1,5 @@
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 int main()
 {

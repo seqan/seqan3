@@ -11,7 +11,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 TEST(align_config_min_score, config_element_specialisation)
 {

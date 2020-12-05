@@ -28,8 +28,8 @@
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/simd/simd_traits.hpp>

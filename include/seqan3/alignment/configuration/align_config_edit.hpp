@@ -15,7 +15,7 @@
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/core/algorithm/configuration.hpp>
+#include <seqan3/core/configuration/configuration.hpp>
 
 namespace seqan3::align_cfg
 {
