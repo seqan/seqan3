@@ -12,9 +12,11 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <array>
 #include <cstring>
 #include <memory>
+#include <seqan3/std/span>
 #include <thread>
 
 #if SEQAN3_HAS_ZLIB
@@ -24,13 +26,10 @@
 #error "This file cannot be used when building without GZip-support."
 #endif  // SEQAN3_HAS_ZLIB
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/span>
-
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
+#include <seqan3/utility/detail/to_little_endian.hpp>
 
 namespace seqan3::contrib
 {
