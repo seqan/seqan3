@@ -15,6 +15,7 @@
 #pragma once
 
 #include <seqan3/utility/math.hpp>
+#include <seqan3/utility/tuple_utility.hpp>
 #include <seqan3/utility/type_list/all.hpp>
 #include <seqan3/utility/type_pack/all.hpp>
 #include <seqan3/utility/type_traits/all.hpp>

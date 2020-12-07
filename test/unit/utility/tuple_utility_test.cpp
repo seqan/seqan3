@@ -5,18 +5,18 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/concepts>
+#include <tuple>
 #include <type_traits>
 
 #include <gtest/gtest.h>
 
-#include <tuple>
+#include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/utility/tuple_utility.hpp>
 
 #include "my_tuple.hpp"
 
-#include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/pod_tuple.hpp>
-#include <seqan3/core/tuple_utility.hpp>
-#include <seqan3/std/concepts>
 
 struct bar : public seqan3::detail::strong_type<unsigned, bar>
 {
