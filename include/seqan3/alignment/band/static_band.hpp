@@ -6,8 +6,10 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::band_static.
+ * \brief [DEPRECATED] Provides seqan3::band_static.
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; The contained functionality has been replaced by the
+ *             seqan3::align_cfg::band_fixed_size configuration.
  */
 
 #pragma once
@@ -23,12 +25,9 @@ namespace seqan3
 /*!\brief Data structure for a static band.
  * \ingroup alignment_band
  */
-class static_band
+class SEQAN3_DEPRECATED_310 static_band
 {
 public:
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
     constexpr static_band()                                noexcept = default; //!< Defaulted
     constexpr static_band(static_band const &)             noexcept = default; //!< Defaulted
     constexpr static_band(static_band &&)                  noexcept = default; //!< Defaulted
@@ -38,8 +37,6 @@ public:
 
     /*!\brief Construction from seqan3::lower_bound and seqan3::upper_bound.
      * \tparam input_value_t The input type of the lower and upper band boundaries.
-     * \param lower The lower boundary of the band; must model std::integral.
-     * \param upper The upper boundary of the band; must model std::integral.
      *
      * \throws std::invalid_argument if upper < lower.
      *
@@ -56,7 +53,6 @@ public:
             throw std::invalid_argument("The upper boundary must not be smaller than the lower boundary.");
         }
     }
-    //!}
 
     //!\brief The data member storing the lower boundary of the band.
     int64_t lower_bound{std::numeric_limits<int64_t>::lowest()};

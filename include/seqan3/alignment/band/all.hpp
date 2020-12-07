@@ -6,8 +6,10 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment_band band implementations \endlink.
+ * \brief [DEPRECATED] Meta-header for the \link alignment_band band implementations \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; The contained functionality has been replaced by the
+ *             seqan3::align_cfg::band_fixed_size configuration.
  */
 
 #pragma once
@@ -32,3 +34,5 @@
  */
 
 #include <seqan3/alignment/band/static_band.hpp>
+
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0. The contained functionality has been replaced by the seqan3::align_cfg::band_fixed_size configuration.")

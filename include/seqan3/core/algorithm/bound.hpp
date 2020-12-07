@@ -6,14 +6,18 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::lower_bound and seqan3::upper_bound.
+ * \brief [DEPRECATED] Provides seqan3::lower_bound and seqan3::upper_bound.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; The contained functionality has been replaced by the
+ *             seqan3::align_cfg::band_fixed_size configuration.
  */
 
 #pragma once
 
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
+
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0. The contained functionality has been replaced by the seqan3::align_cfg::band_fixed_size configuration.")
 
 namespace seqan3
 {
@@ -23,7 +27,7 @@ namespace seqan3
  * \tparam value_t The underlying type of the lower bound; must model seqan3::arithmetic.
  */
 template <seqan3::arithmetic value_t>
-struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
+struct SEQAN3_DEPRECATED_310 lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
 {
     //!\brief Inheriting constructors from base class.
     using detail::strong_type<value_t, lower_bound<value_t>>::strong_type;
@@ -34,7 +38,7 @@ struct lower_bound : detail::strong_type<value_t, lower_bound<value_t>>
  * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic.
  */
 template <seqan3::arithmetic value_t>
-struct upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
+struct SEQAN3_DEPRECATED_310 upper_bound : detail::strong_type<value_t, upper_bound<value_t>>
 {
     //!\brief Inheriting constructors from base class.
     using detail::strong_type<value_t, upper_bound<value_t>>::strong_type;
@@ -52,7 +56,6 @@ template <seqan3::arithmetic value_t>
 lower_bound(value_t) -> lower_bound<value_t>;
 
 /*!\brief Deduces the underlying upper boundary type.
- * \relates seqan3::upper_bound
  * \tparam value_t The underlying type of the upper bound; must model seqan3::arithmetic.
  */
 template <seqan3::arithmetic value_t>
