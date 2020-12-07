@@ -28,12 +28,12 @@
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
@@ -97,7 +97,7 @@ private:
      * unsigned integral type (seqan3::detail::min_viable_uint_t) is returned.
      */
     template <arithmetic score_t>
-    using select_scalar_index_t = min_viable_uint_t<1ull << (sizeof_bits<score_t> - 1)>;
+    using select_scalar_index_t = min_viable_uint_t<1ull << (bits_of<score_t> - 1)>;
 
     //!\brief Helper function to determine the alignment result type.
     static constexpr auto determine_alignment_result_type() noexcept

@@ -6,28 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <seqan3/std/bit>
-#include <cmath>
-#include <type_traits>
+#include <seqan3/std/concepts>
 
 #include <gtest/gtest.h>
 
 #include <sdsl/bits.hpp>
 
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 
 static constexpr size_t max_iterations = 1 << 15;
-
-TEST(bit_manipulation, sizeof_bits)
-{
-    EXPECT_EQ(seqan3::detail::sizeof_bits<int8_t>, 8);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<uint8_t>, 8);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<int16_t>, 16);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<uint16_t>, 16);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<int32_t>, 32);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<uint32_t>, 32);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<int64_t>, 64);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<uint64_t>, 64);
-}
 
 TEST(bit_manipulation, is_power_of_two)
 {
@@ -101,7 +88,7 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
     EXPECT_EQ(three2, 3u);
     EXPECT_EQ(eight, 8u);
 
-    for (uint8_t position = 0; position < seqan3::detail::sizeof_bits<unsigned_t>; ++position)
+    for (uint8_t position = 0; position < seqan3::detail::bits_of<unsigned_t>; ++position)
     {
         unsigned_t start = unsigned_t{1u} << position;
         unsigned_t end = start << 1u;
@@ -125,25 +112,25 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
     constexpr size_t t4 = std::countl_zero<unsigned_t>(0b0110u);
     constexpr size_t t5 = std::countl_zero<unsigned_t>(0b0100u);
     constexpr size_t t6 = std::countl_zero<unsigned_t>(0b10100000u);
-    EXPECT_EQ(t0, seqan3::detail::sizeof_bits<unsigned_t>);
-    EXPECT_EQ(t1, seqan3::detail::sizeof_bits<unsigned_t> - 1u);
-    EXPECT_EQ(t2, seqan3::detail::sizeof_bits<unsigned_t> - 3u);
-    EXPECT_EQ(t3, seqan3::detail::sizeof_bits<unsigned_t> - 2u);
-    EXPECT_EQ(t4, seqan3::detail::sizeof_bits<unsigned_t> - 3u);
-    EXPECT_EQ(t5, seqan3::detail::sizeof_bits<unsigned_t> - 3u);
-    EXPECT_EQ(t6, seqan3::detail::sizeof_bits<unsigned_t> - 8u);
+    EXPECT_EQ(t0, seqan3::detail::bits_of<unsigned_t>);
+    EXPECT_EQ(t1, seqan3::detail::bits_of<unsigned_t> - 1u);
+    EXPECT_EQ(t2, seqan3::detail::bits_of<unsigned_t> - 3u);
+    EXPECT_EQ(t3, seqan3::detail::bits_of<unsigned_t> - 2u);
+    EXPECT_EQ(t4, seqan3::detail::bits_of<unsigned_t> - 3u);
+    EXPECT_EQ(t5, seqan3::detail::bits_of<unsigned_t> - 3u);
+    EXPECT_EQ(t6, seqan3::detail::bits_of<unsigned_t> - 8u);
 
-    for (uint8_t cnt = 0; cnt < seqan3::detail::sizeof_bits<unsigned_t>; ++cnt)
+    for (uint8_t cnt = 0; cnt < seqan3::detail::bits_of<unsigned_t>; ++cnt)
     {
         unsigned_t start = std::numeric_limits<unsigned_t>::max() >> cnt;
         unsigned_t end = start >> 1u;
         for (unsigned_t n = start, k = 0u; n < end && k < max_iterations; ++n, ++k)
         {
-            EXPECT_EQ(seqan3::detail::sizeof_bits<unsigned_t> - sdsl::bits::hi(n) - 1, n) << "[SDSL] n " << n
-                                                                                          << " should have " << cnt
-                                                                                          << " leading zeros.";
+            EXPECT_EQ(seqan3::detail::bits_of<unsigned_t> - sdsl::bits::hi(n) - 1, n) << "[SDSL] n " << n
+                                                                                      << " should have " << cnt
+                                                                                      << " leading zeros.";
             EXPECT_EQ(std::countl_zero(n), cnt) << "n " << n << " should have " << cnt
-                                                                   << " leading zeros.";
+                                                             << " leading zeros.";
             EXPECT_EQ(std::countl_zero(n), cnt);
         }
     }
@@ -152,14 +139,14 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
 TYPED_TEST(unsigned_operations, count_trailing_zeros)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t sizeof_bits = std::countr_zero<unsigned_t>(0b0000);
+    constexpr size_t bits_of = std::countr_zero<unsigned_t>(0b0000);
     constexpr size_t zero = std::countr_zero<unsigned_t>(0b0001);
     constexpr size_t zero2 = std::countr_zero<unsigned_t>(0b0101);
     constexpr size_t one1 = std::countr_zero<unsigned_t>(0b0010);
     constexpr size_t one2 = std::countr_zero<unsigned_t>(0b0110);
     constexpr size_t two = std::countr_zero<unsigned_t>(0b0100);
     constexpr size_t five = std::countr_zero<unsigned_t>(0b10100000);
-    EXPECT_EQ(sizeof_bits, seqan3::detail::sizeof_bits<unsigned_t>);
+    EXPECT_EQ(bits_of, seqan3::detail::bits_of<unsigned_t>);
     EXPECT_EQ(zero, 0u);
     EXPECT_EQ(zero2, 0u);
     EXPECT_EQ(one1, 1u);
@@ -167,7 +154,7 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
     EXPECT_EQ(two, 2u);
     EXPECT_EQ(five, 5u);
 
-    for (uint8_t cnt = 0; cnt < seqan3::detail::sizeof_bits<unsigned_t>; ++cnt)
+    for (uint8_t cnt = 0; cnt < seqan3::detail::bits_of<unsigned_t>; ++cnt)
     {
         unsigned_t start = std::numeric_limits<unsigned_t>::max() << cnt;
         unsigned_t end = start << 1u;
@@ -183,7 +170,7 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
 template <std::unsigned_integral unsigned_t>
 unsigned_t permute_bits(unsigned_t v)
 {
-    if (v & (unsigned_t{1u} << (seqan3::detail::sizeof_bits<unsigned_t> - 1)))
+    if (v & (unsigned_t{1u} << (seqan3::detail::bits_of<unsigned_t> - 1)))
         return v;
 
     unsigned_t t = v | (v - 1);
@@ -207,10 +194,10 @@ TYPED_TEST(unsigned_operations, popcount)
     EXPECT_EQ(four, 4u);
     EXPECT_EQ(five, 5u);
 
-    for (uint8_t position = 0; position < seqan3::detail::sizeof_bits<unsigned_t>; ++position)
+    for (uint8_t position = 0; position < seqan3::detail::bits_of<unsigned_t>; ++position)
     {
         unsigned_t start = std::numeric_limits<unsigned_t>::max() >> position;
-        auto sizeof_bits_of_unsigned_t = seqan3::detail::sizeof_bits<unsigned_t>;
+        auto sizeof_bits_of_unsigned_t = seqan3::detail::bits_of<unsigned_t>;
 
         EXPECT_EQ(std::popcount(start),
                   sizeof_bits_of_unsigned_t - position) << "The pocount of " << start << " should be "

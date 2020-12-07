@@ -15,7 +15,7 @@
 #include <bitset>
 
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 
 namespace seqan3::detail
 {
@@ -67,7 +67,7 @@ public:
     using word_type = word_t;
 
     //!\copydoc default_edit_distance_trait_type::word_size
-    static constexpr auto word_size = sizeof_bits<word_type>;
+    static constexpr auto word_size = bits_of<word_type>;
 
     //!\copydoc default_edit_distance_trait_type::score_type
     using score_type = score_t;

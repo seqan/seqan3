@@ -12,12 +12,13 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/bit>
+
 #include <sdsl/bit_vectors.hpp>
 
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/std/algorithm>
 
 namespace seqan3
 {

@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 #include <seqan3/utility/math.hpp>
 
 static constexpr size_t max_iterations = 1 << 15;
@@ -36,7 +36,7 @@ TYPED_TEST(unsigned_operations, floor_log2)
     EXPECT_EQ(two2, 2u);
     EXPECT_EQ(seven, 7u);
 
-    for (uint8_t log2_value = 0; log2_value < seqan3::detail::sizeof_bits<unsigned_t>; ++log2_value)
+    for (uint8_t log2_value = 0; log2_value < seqan3::detail::bits_of<unsigned_t>; ++log2_value)
     {
         unsigned_t start = unsigned_t{1u} << log2_value;
         unsigned_t end = start << 1u;
@@ -65,7 +65,7 @@ TYPED_TEST(unsigned_operations, ceil_log2)
     EXPECT_EQ(three2, 3u);
     EXPECT_EQ(eight, 8u);
 
-    for (uint8_t log2_value = 0; log2_value < seqan3::detail::sizeof_bits<unsigned_t>; ++log2_value)
+    for (uint8_t log2_value = 0; log2_value < seqan3::detail::bits_of<unsigned_t>; ++log2_value)
     {
         unsigned_t start = unsigned_t{1u} << log2_value;
         unsigned_t end = start << 1u;
@@ -78,7 +78,7 @@ TYPED_TEST(unsigned_operations, ceil_log2)
         {
             EXPECT_EQ(seqan3::detail::ceil_log2(n), log2_value + 1u);
 
-            if constexpr (seqan3::detail::sizeof_bits<unsigned_t> <= 32u) // known to fail for 64bit unsigned integers
+            if constexpr (seqan3::detail::bits_of<unsigned_t> <= 32u) // known to fail for 64bit unsigned integers
             {
                 EXPECT_EQ(std::ceil(std::log2(n)), log2_value + 1u) << "ceil_log2 of " << start << " should be "
                                                                     << log2_value
