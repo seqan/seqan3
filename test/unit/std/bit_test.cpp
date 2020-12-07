@@ -16,7 +16,7 @@
 
 static constexpr size_t max_iterations = 1 << 15;
 
-TEST(bit_manipulation, is_power_of_two)
+TEST(bit, has_single_bit)
 {
     constexpr bool is_power_of_two0 = std::has_single_bit(0u);
     constexpr bool is_power_of_two1 = std::has_single_bit(1u);
@@ -39,7 +39,7 @@ TEST(bit_manipulation, is_power_of_two)
     }
 }
 
-TEST(bit_manipulation, next_power_of_two)
+TEST(bit, bit_ceil)
 {
     constexpr size_t next_power_of_two0 = std::bit_ceil(0u);
     constexpr size_t next_power_of_two1 = std::bit_ceil(1u);
@@ -70,7 +70,7 @@ class unsigned_operations : public ::testing::Test
 
 TYPED_TEST_SUITE(unsigned_operations, unsigned_types, );
 
-TYPED_TEST(unsigned_operations, most_significant_bit_set)
+TYPED_TEST(unsigned_operations, bit_width)
 {
     using unsigned_t = TypeParam;
     constexpr size_t zero = std::bit_width<unsigned_t>(0b0000);
@@ -102,7 +102,7 @@ TYPED_TEST(unsigned_operations, most_significant_bit_set)
     }
 }
 
-TYPED_TEST(unsigned_operations, count_leading_zeros)
+TYPED_TEST(unsigned_operations, countl_zero)
 {
     using unsigned_t = TypeParam;
     constexpr size_t t0 = std::countl_zero<unsigned_t>(0b0000u);
@@ -136,7 +136,7 @@ TYPED_TEST(unsigned_operations, count_leading_zeros)
     }
 }
 
-TYPED_TEST(unsigned_operations, count_trailing_zeros)
+TYPED_TEST(unsigned_operations, countr_zero)
 {
     using unsigned_t = TypeParam;
     constexpr size_t bits_of = std::countr_zero<unsigned_t>(0b0000);
