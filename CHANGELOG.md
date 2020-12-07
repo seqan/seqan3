@@ -54,7 +54,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument Parser
 
-* The enum names of `seqan3::option_spec` were changed to lower case:
+* The enum names of `seqan3::option_spec` were changed to lower case
+  ([\#2285](https://github.com/seqan/seqan3/pull/2285)):
   * `seqan3::option_spec::DEFAULT` is replaced by `seqan3::option_spec::defaulted`.
   * `seqan3::option_spec::REQUIRED` is replaced by `seqan3::option_spec::required`.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
