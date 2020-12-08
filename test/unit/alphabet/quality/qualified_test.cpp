@@ -13,6 +13,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
+#include <seqan3/alphabet/quality/phred94.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 
@@ -66,6 +67,7 @@ public:
 
 using qualified_types = ::testing::Types<seqan3::qualified<seqan3::dna4, seqan3::phred42>,
                                          seqan3::qualified<seqan3::dna4, seqan3::phred63>,
+                                         seqan3::qualified<seqan3::dna4, seqan3::phred94>,
                                          seqan3::qualified<seqan3::aa27, seqan3::phred42>,
                                          seqan3::qualified<seqan3::gapped<seqan3::dna4>, seqan3::phred42>,
                                          seqan3::dna4q>;

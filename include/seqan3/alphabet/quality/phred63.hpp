@@ -21,7 +21,7 @@
 namespace seqan3
 {
 
-/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (full range).
+/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores.
  * \implements seqan3::writable_quality_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  * \implements seqan3::trivially_copyable
@@ -32,11 +32,13 @@ namespace seqan3
  *
  * \details
  *
- * The phred63 quality alphabet represents the zero-based phred score range
- * [0..62] mapped to the ASCII range ['!' .. '~']. It represents the Sanger and
- * Illumina 1.8+ standard beyond the typical range of raw reads (0 to 41).
+ * The phred63 \ref quality alphabet represents the zero-based phred score range [0..62] mapped to the ASCII range
+ * ['!' .. '_']. It represents the Sanger and Illumina 1.8+ standard beyond the typical range of raw reads (0 to 41),
+ * namely seqan3::phred42.
  *
  * \include test/snippet/alphabet/quality/phred63.cpp
+ *
+ * \see quality
  */
 class phred63 : public quality_base<phred63, 63>
 {

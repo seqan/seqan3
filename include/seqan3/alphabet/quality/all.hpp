@@ -7,6 +7,7 @@
 
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  * \brief Meta-header that includes all headers from alphabet/quality/
  */
 
@@ -18,6 +19,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
 #include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/quality/phred94.hpp>
 
 /*!\defgroup quality Quality
  * \brief Provides the various quality score types.
@@ -51,11 +53,12 @@
  *
  * ###Encoding Schemes
  *
- * | Format                      | Quality Type          | Phred Score Range  | Rank Range   | ASCII Range  | Assert                    |
- * |:---------------------------:|:----------------------|:------------------:|:------------:|:------------:|:-------------------------:|
- * | Sanger, Illumina 1.8+ short | seqan3::phred42       | [0 .. 41]          | [0 .. 41]    | ['!' .. 'J'] | Phred score in [0 .. 61]  |
- * | Sanger, Illumina 1.8+ long  | seqan3::phred63       | [0 .. 62]          | [0 .. 62]    | ['!' .. '_'] | Phred score in [0 .. 62]  |
- * | Solexa, Illumina [1.0; 1.8[ | seqan3::phred68legacy | [-5 .. 62]         | [0 .. 67]    | [';' .. '~'] | Phred score in [-5 .. 62] |
+ * | Standard Use Case   | Format                      | Encoding | Alphabet Type         | Phred Score Range | Rank Range | ASCII Range  |
+ * |:-------------------:|:---------------------------:|:--------:|:----------------------|:-----------------:|:----------:|:------------:|
+ * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred42       | [0 .. 41]         | [0 .. 41]  | ['!' .. 'J'] |
+ * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred63       | [0 .. 62]         | [0 .. 62]  | ['!' .. '_'] |
+ * | PacBio              | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred94       | [0 .. 93]         | [0 .. 93]  | ['!' .. '~'] |
+ * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [';' .. '~'] |
  *
  * The most distributed format is the *Sanger* or <I>Illumina 1.8+</I> format.
  * Despite typical Phred scores for Illumina machines range from 0 to maximal
@@ -65,8 +68,10 @@
  * For other formats, like Solexa and Illumina 1.0 to 1.7 the type
  * seqan3::phred68legacy is provided. To cover also the Solexa format, the Phred
  * score is stored as a <B>signed</B> integer starting at -5.
+ * If you want to store PacBio HiFi reads, we recommend to use seqan3::phred94, as these use the full range of the phred
+ * quality scores.
  * An overview of all the score formats and their encodings can be found here:
- * https://en.wikipedia.org/wiki/FASTQ_format#Encoding.
+ * https://en.wikipedia.org/wiki/FASTQ_format#Encoding (last access 01.12.2020).
  *
  * ###Concept
  *
@@ -92,5 +97,5 @@
  * All quality alphabets are explicitly convertible to each other via their
  * Phred representation. Values not present in one alphabet are mapped to the
  * closest value in the target alphabet (e.g. a `seqan3::phred63` letter with
- * value 60 will convert to a `seqan3::phred42` letter of score 41).
+ * value 60 will convert to a `seqan3::phred42` letter of score 41, this also applies to `seqan3::phred94`).
  */
