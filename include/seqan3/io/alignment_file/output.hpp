@@ -21,7 +21,6 @@
 #include <variant>
 #include <vector>
 
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/alignment_file/format_bam.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/alignment_file/header.hpp>
@@ -34,6 +33,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3

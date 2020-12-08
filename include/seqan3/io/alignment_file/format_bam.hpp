@@ -22,7 +22,6 @@
 #include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
@@ -44,6 +43,7 @@
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3
 {

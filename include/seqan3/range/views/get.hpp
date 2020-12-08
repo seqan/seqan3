@@ -14,7 +14,7 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/core/concept/tuple.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::views

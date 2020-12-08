@@ -22,7 +22,6 @@
 #include <variant>
 #include <vector>
 
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/record.hpp>
@@ -35,6 +34,7 @@
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3

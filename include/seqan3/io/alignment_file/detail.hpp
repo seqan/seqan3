@@ -20,11 +20,11 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
-#include <seqan3/core/concept/tuple.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 #include <range/v3/view/zip.hpp>
 

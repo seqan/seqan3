@@ -6,19 +6,17 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief  Meta-include for custom concepts.
+ * \brief  Meta-include for tuple utilities: concept.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
-/*!\defgroup concept Concept
- * \ingroup core
- * \brief Additional concepts that are not specific to a SeqAn module.
+/*!\defgroup tuple Tuple
+ * \ingroup utility
+ * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not specific to a SeqAn module.
  *
  * \details
  *
