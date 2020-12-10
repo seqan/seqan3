@@ -7,6 +7,8 @@
 
 // This file can be used to test the basic functionality of a configuration element
 
+#pragma once
+
 #include <gtest/gtest.h>
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
