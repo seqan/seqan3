@@ -23,7 +23,9 @@
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
+#include <seqan3/alignment/matrix/detail/combined_score_and_trace_matrix.hpp>
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
+#include <seqan3/alignment/matrix/detail/trace_matrix_full.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm_banded.hpp>
@@ -489,11 +491,11 @@ private:
         // macrobenchmarks to show that it maintains a high performance.
 
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                                         // it is a local alignment,
-                      traits_t::is_debug ||                                                         // it runs in debug mode,
-                     (traits_t::compute_begin_positions || traits_t::compute_sequence_alignment) || // it computes more than the end position.
-                     (traits_t::is_banded && traits_t::compute_begin_positions) ||                  // banded
-                     (traits_t::is_vectorised && traits_t::compute_end_positions))                  // simd and more than the score.
+        if constexpr (traits_t::is_local ||                                          // it is a local alignment,
+                      traits_t::is_debug ||                                          // it runs in debug mode,
+                      traits_t::compute_sequence_alignment ||                        // it computes more than the begin position.
+                     (traits_t::is_banded && traits_t::compute_begin_positions) ||   // banded && more than end positions.
+                     (traits_t::is_vectorised && traits_t::compute_end_positions))   // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;
@@ -504,6 +506,10 @@ private:
         }
         else  // Use new alignment algorithm implementation.
         {
+            //----------------------------------------------------------------------------------------------------------
+            // Configure the optimum tracker policy.
+            //----------------------------------------------------------------------------------------------------------
+
             using scalar_optimum_updater_t = std::conditional_t<traits_t::is_banded,
                                                                 max_score_banded_updater,
                                                                 max_score_updater>;
@@ -525,9 +531,10 @@ private:
 
             using result_builder_policy_t = policy_alignment_result_builder<config_t>;
 
-            // ----------------------------------------------------------------------------
-            // Configure scoring scheme policy
-            // ----------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------------------------
+            // Configure the scoring scheme policy.
+            //----------------------------------------------------------------------------------------------------------
+
             using alignment_method_t = std::conditional_t<traits_t::is_global,
                                                           seqan3::align_cfg::method_global,
                                                           seqan3::align_cfg::method_local>;
@@ -557,15 +564,22 @@ private:
 
             using scoring_scheme_policy_t = policy_scoring_scheme<config_t, alignment_scoring_scheme_t>;
 
-            // ----------------------------------------------------------------------------
-            // Configure alignment matrix policy
-            // ----------------------------------------------------------------------------
+            //----------------------------------------------------------------------------------------------------------
+            // Configure the alignment matrix policy.
+            //----------------------------------------------------------------------------------------------------------
 
-            using alignment_matrix_policy_t = policy_alignment_matrix<traits_t, score_matrix_single_column<score_t>>;
+            using score_matrix_t = score_matrix_single_column<score_t>;
+            using trace_matrix_t = trace_matrix_full<trace_directions>;
 
-            // ----------------------------------------------------------------------------
-            // Configure alignment algorithm
-            // ----------------------------------------------------------------------------
+            using alignment_matrix_t = std::conditional_t<traits_t::requires_trace_information,
+                                                          combined_score_and_trace_matrix<score_matrix_t,
+                                                                                          trace_matrix_t>,
+                                                          score_matrix_t>;
+            using alignment_matrix_policy_t = policy_alignment_matrix<traits_t, alignment_matrix_t>;
+
+            //----------------------------------------------------------------------------------------------------------
+            // Configure the final alignment algorithm.
+            //----------------------------------------------------------------------------------------------------------
 
             using algorithm_t = select_alignment_algorithm_t<traits_t,
                                                              config_t,
