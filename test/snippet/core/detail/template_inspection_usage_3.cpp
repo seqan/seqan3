@@ -6,7 +6,7 @@ int main()
 {
     using my_type = std::vector<int>;
 
-    if constexpr (seqan3::detail::is_type_specialisation_of_v<my_type, std::vector>) // Note: std::vector has no <> !
+    if constexpr (seqan3::detail::template_specialisation_of<my_type, std::vector>) // Note: std::vector has no <> !
     {
         // ...
     }
