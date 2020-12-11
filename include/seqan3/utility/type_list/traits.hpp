@@ -217,8 +217,8 @@ inline constexpr bool contains = (find<query_t, list_t> != -1);
  */
 template <ptrdiff_t idx, typename list_t>
 //!\cond
-    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>)
-             && ((idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>))
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) &&
+             ((idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>))
 //!\endcond
 using at = typename decltype(detail::at<idx>(list_t{}))::type;
 

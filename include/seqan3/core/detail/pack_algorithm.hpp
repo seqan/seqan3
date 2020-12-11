@@ -200,7 +200,7 @@ constexpr void for_each(unary_function_t && fn, pack_t && ...args)
 /*!\brief Applies a function element wise to all types of a type list.
  * \ingroup core
  *
- * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of seqan3::type_list.
+ * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of a seqan3::type_list.
  * \tparam unary_function_t The function type, like function pointers, functors and lambdas; must model
  *                          std::invocable on each type of the type list wrapped in std::type_identity.
  *
