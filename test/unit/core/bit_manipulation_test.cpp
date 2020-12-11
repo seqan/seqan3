@@ -195,18 +195,18 @@ unsigned_t permute_bits(unsigned_t v)
 TYPED_TEST(unsigned_operations, popcount)
 {
     using unsigned_t = TypeParam;
-    constexpr size_t zero  = std::popcount<unsigned_t>(0b0000);
-    constexpr size_t one   = std::popcount<unsigned_t>(0b0100);
-    constexpr size_t two   = std::popcount<unsigned_t>(0b1100);
+    constexpr size_t zero = std::popcount<unsigned_t>(0b0000);
+    constexpr size_t one = std::popcount<unsigned_t>(0b0100);
+    constexpr size_t two = std::popcount<unsigned_t>(0b1100);
     constexpr size_t three = std::popcount<unsigned_t>(0b1110);
-    constexpr size_t four  = std::popcount<unsigned_t>(0b1111);
-    constexpr size_t five  = std::popcount<unsigned_t>(0b10011011);
-    EXPECT_EQ(zero,  0u);
-    EXPECT_EQ(one,   1u);
-    EXPECT_EQ(two,   2u);
+    constexpr size_t four = std::popcount<unsigned_t>(0b1111);
+    constexpr size_t five = std::popcount<unsigned_t>(0b10011011);
+    EXPECT_EQ(zero, 0u);
+    EXPECT_EQ(one, 1u);
+    EXPECT_EQ(two, 2u);
     EXPECT_EQ(three, 3u);
-    EXPECT_EQ(four,  4u);
-    EXPECT_EQ(five,  5u);
+    EXPECT_EQ(four, 4u);
+    EXPECT_EQ(five, 5u);
 
     for (uint8_t position = 0; position < seqan3::detail::sizeof_bits<unsigned_t>; ++position)
     {
