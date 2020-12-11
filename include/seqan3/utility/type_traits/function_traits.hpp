@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include <seqan3/utility/type_pack/traits.hpp>
 
 namespace seqan3
