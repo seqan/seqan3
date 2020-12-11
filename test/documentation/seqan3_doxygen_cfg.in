@@ -63,6 +63,8 @@ EXCLUDE_SYMBOLS        = seqan3::contrib
 FORMULA_FONTSIZE       = 14
 HTML_DYNAMIC_SECTIONS  = YES
 
+COLS_IN_ALPHA_INDEX    = 1
+
 ## detect headers without extensions (in std module)
 EXTENSION_MAPPING      = .no_extension=C++
 FILE_PATTERNS          = *
