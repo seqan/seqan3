@@ -1146,9 +1146,9 @@ inline std::string format_bam::get_tag_dict_str(sam_tag_dictionary const & tag_d
         if constexpr (std::same_as<T, int32_t>)
         {
             // always choose the smallest possible representation [cCsSiI]
-            bool negative = arg < 0;
-            size_t absolute_arg = ((negative) ? arg * -1 : arg);
+            size_t const absolute_arg = std::abs(arg);
             auto n = std::countr_zero(std::bit_ceil(absolute_arg + 1u) >> 1u) / 8u;
+            bool const negative = arg < 0;
             n = n * n + 2 * negative; // for switch case order
 
             switch (n)
