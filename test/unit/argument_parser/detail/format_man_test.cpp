@@ -61,7 +61,6 @@ struct format_man_test : public ::testing::Test
     R"(.TP)" "\n"
     R"(\fB--version-check\fP (bool))" "\n"
     R"(Whether to to check for the newest app version. Default: 1.)" "\n"
-    R"(.SS )" "\n"
     R"(.TP)" "\n"
     R"(\fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP))" "\n"
     R"(this is a int option. Default: 5. )" "\n"
@@ -139,8 +138,7 @@ TEST_F(format_man_test, empty_information)
     R"(Export the help page information. Value must be one of [html, man].)" "\n"
     R"(.TP)" "\n"
     R"(\fB--version-check\fP (bool))" "\n"
-    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
-    R"(.SS )" "\n";
+    R"(Whether to to check for the newest app version. Default: 1.)" "\n";
 
     // Test the dummy parser with minimal information.
     testing::internal::CaptureStdout();

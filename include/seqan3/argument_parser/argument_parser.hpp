@@ -795,7 +795,6 @@ private:
                                     "Export the help page information. Value must be one of [html, man].");
         if (version_check_dev_decision == update_notifications::on)
             add_list_item("\\fB--version-check\\fP (bool)", "Whether to to check for the newest app version. Default: 1.");
-        add_subsection(""); // add a new line (todo smehringer) add a add_newline() function
     }
 
     /*!\brief Checks whether the long identifier has already been used before.
