@@ -17,7 +17,7 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/detail/concept.hpp>
 #include <seqan3/core/configuration/detail/configuration_utility.hpp>
-#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/utility/tuple_utility.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 

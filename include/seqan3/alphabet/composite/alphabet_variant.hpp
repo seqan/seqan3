@@ -16,15 +16,15 @@
 
 #include <algorithm>
 #include <array>
-#include <utility>
 #include <cassert>
+#include <utility>
 #include <variant>
 
 #include <meta/meta.hpp>
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
-#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/utility/tuple_utility.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 

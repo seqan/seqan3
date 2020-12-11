@@ -20,7 +20,7 @@
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/utility/tuple_utility.hpp>
 
 namespace seqan3::detail
 {
