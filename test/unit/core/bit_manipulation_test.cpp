@@ -8,7 +8,6 @@
 #include <seqan3/std/bit>
 #include <cmath>
 #include <type_traits>
-#include <version>
 
 #include <gtest/gtest.h>
 
