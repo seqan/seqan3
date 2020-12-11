@@ -54,11 +54,15 @@ enum class endian
 
 #endif // __cpp_lib_endian
 
+#if !defined(__cpp_lib_int_pow2) || !defined(__cpp_lib_bitops)
+
 namespace std::detail
 {
 template <typename type_t>
 constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
 } // namespace std::detail
+
+#endif // !defined(__cpp_lib_int_pow2) || !defined(__cpp_lib_bitops)
 
 #ifndef __cpp_lib_int_pow2
 
