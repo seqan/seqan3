@@ -43,6 +43,8 @@ static void is_power_of_two_arithmetic(benchmark::State & state) {
 }
 BENCHMARK(is_power_of_two_arithmetic);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 static void is_power_of_two_seqan3(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
@@ -53,6 +55,7 @@ static void is_power_of_two_seqan3(benchmark::State & state) {
     }
 }
 BENCHMARK(is_power_of_two_seqan3);
+#pragma GCC diagnostic pop
 
 static void is_power_of_two_std(benchmark::State & state) {
     std::srand(0);
@@ -65,6 +68,8 @@ static void is_power_of_two_std(benchmark::State & state) {
 }
 BENCHMARK(is_power_of_two_std);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 static void next_power_of_two_seqan3(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
@@ -75,6 +80,7 @@ static void next_power_of_two_seqan3(benchmark::State & state) {
     }
 }
 BENCHMARK(next_power_of_two_seqan3);
+#pragma GCC diagnostic pop
 
 static void next_power_of_two_std(benchmark::State & state) {
     std::srand(0);
