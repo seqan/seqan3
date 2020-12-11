@@ -154,19 +154,19 @@ TYPED_TEST(unsigned_operations, count_trailing_zeros)
 {
     using unsigned_t = TypeParam;
     constexpr size_t sizeof_bits = std::countr_zero<unsigned_t>(0b0000);
-    constexpr size_t zero  = std::countr_zero<unsigned_t>(0b0001);
+    constexpr size_t zero = std::countr_zero<unsigned_t>(0b0001);
     constexpr size_t zero2 = std::countr_zero<unsigned_t>(0b0101);
-    constexpr size_t one1  = std::countr_zero<unsigned_t>(0b0010);
-    constexpr size_t one2  = std::countr_zero<unsigned_t>(0b0110);
-    constexpr size_t two   = std::countr_zero<unsigned_t>(0b0100);
-    constexpr size_t five  = std::countr_zero<unsigned_t>(0b10100000);
+    constexpr size_t one1 = std::countr_zero<unsigned_t>(0b0010);
+    constexpr size_t one2 = std::countr_zero<unsigned_t>(0b0110);
+    constexpr size_t two = std::countr_zero<unsigned_t>(0b0100);
+    constexpr size_t five = std::countr_zero<unsigned_t>(0b10100000);
     EXPECT_EQ(sizeof_bits, seqan3::detail::sizeof_bits<unsigned_t>);
-    EXPECT_EQ(zero,  0u);
+    EXPECT_EQ(zero, 0u);
     EXPECT_EQ(zero2, 0u);
-    EXPECT_EQ(one1,  1u);
-    EXPECT_EQ(one2,  1u);
-    EXPECT_EQ(two,   2u);
-    EXPECT_EQ(five,  5u);
+    EXPECT_EQ(one1, 1u);
+    EXPECT_EQ(one2, 1u);
+    EXPECT_EQ(two, 2u);
+    EXPECT_EQ(five, 5u);
 
     for (uint8_t cnt = 0; cnt < seqan3::detail::sizeof_bits<unsigned_t>; ++cnt)
     {
