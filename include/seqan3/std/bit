@@ -17,7 +17,6 @@
 #if __has_include(<bit>)
 #include <bit>
 #endif // __has_include(<bit>)
-#include <cassert>
 #include <climits>
 #include <type_traits>
 
