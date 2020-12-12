@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <cmath>
 #include <seqan3/std/bit>
 #include <seqan3/std/concepts>
