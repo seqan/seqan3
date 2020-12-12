@@ -20,15 +20,20 @@
 #include <climits>
 #include <type_traits>
 
-//!\brief This defines __cpp_lib_bitops for gcc version >=9.0 (in C++2a mode).
-//!       Those versions implemented std::{rotl, rotr, countl_zero, countl_one, countr_zero, countr_one, popcount}, but
-//!       did not define that feature detection macro.
+//!\brief This defines __cpp_lib_bitops.
 #ifndef SEQAN3_CPP_LIB_BITOPS
 #   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
 #   endif
 #endif
 
+/*!\brief This defines __cpp_lib_int_pow2.
+ * Note: g++-9.3 -std=c++2a on ubuntu 20.04 did `#define __cpp_lib_int_pow2 201806L`, which is an older implementation
+ * of the __cpp_lib_int_pow2 proposal.
+ *
+ * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0556r3.html (__cpp_lib_int_pow2 >= 201806L)
+ * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1956r1.pdf (__cpp_lib_int_pow2 >= 202002L)
+ */
 #ifndef SEQAN3_CPP_LIB_INT_POW2
 #   if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
 #       define SEQAN3_CPP_LIB_INT_POW2 1
