@@ -25,10 +25,14 @@
 //!       Those versions implemented std::{rotl, rotr, countl_zero, countl_one, countr_zero, countr_one, popcount}, but
 //!       did not define that feature detection macro.
 #ifndef SEQAN3_CPP_LIB_BITOPS
-#   if defined(__cpp_lib_bitops)
+#   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
-#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L /*C++2a*/
-// #       define SEQAN3_CPP_LIB_BITOPS 1
+#   endif
+#endif
+
+#ifndef SEQAN3_CPP_LIB_INT_POW2
+#   if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
+#       define SEQAN3_CPP_LIB_INT_POW2 1
 #   endif
 #endif
 
@@ -65,7 +69,7 @@ enum class endian
 
 #endif // __cpp_lib_endian
 
-#if !defined(__cpp_lib_int_pow2) || !defined(SEQAN3_CPP_LIB_BITOPS)
+#if !defined(SEQAN3_CPP_LIB_INT_POW2) || !defined(SEQAN3_CPP_LIB_BITOPS)
 
 namespace std::detail
 {
@@ -77,9 +81,9 @@ template <typename type_t>
 constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
 } // namespace std::detail
 
-#endif // !defined(__cpp_lib_int_pow2) || !defined(SEQAN3_CPP_LIB_BITOPS)
+#endif // !defined(SEQAN3_CPP_LIB_INT_POW2) || !defined(SEQAN3_CPP_LIB_BITOPS)
 
-#ifndef __cpp_lib_int_pow2
+#ifndef SEQAN3_CPP_LIB_INT_POW2
 
 namespace std
 {
@@ -144,7 +148,7 @@ template<class T> constexpr T bit_width(T x) noexcept
 
 } // namespace std
 
-#endif // __cpp_lib_int_pow2
+#endif // SEQAN3_CPP_LIB_INT_POW2
 
 #ifndef SEQAN3_CPP_LIB_BITOPS
 
