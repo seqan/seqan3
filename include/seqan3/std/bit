@@ -21,6 +21,17 @@
 #include <climits>
 #include <type_traits>
 
+//!\brief This defines __cpp_lib_bitops for gcc version >=9.0 (in C++2a mode).
+//!       Those versions implemented std::{rotl, rotr, countl_zero, countl_one, countr_zero, countr_one, popcount}, but
+//!       did not define that feature detection macro.
+#ifndef SEQAN3_CPP_LIB_BITOPS
+#   if defined(__cpp_lib_bitops)
+#       define SEQAN3_CPP_LIB_BITOPS 1
+#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L /*C++2a*/
+#       define SEQAN3_CPP_LIB_BITOPS 1
+#   endif
+#endif
+
 #ifndef __cpp_lib_endian
 
 #include <cstddef>
@@ -54,7 +65,7 @@ enum class endian
 
 #endif // __cpp_lib_endian
 
-#if !defined(__cpp_lib_int_pow2) || !defined(__cpp_lib_bitops)
+#if !defined(__cpp_lib_int_pow2) || !defined(SEQAN3_CPP_LIB_BITOPS)
 
 namespace std::detail
 {
@@ -66,15 +77,17 @@ template <typename type_t>
 constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
 } // namespace std::detail
 
-#endif // !defined(__cpp_lib_int_pow2) || !defined(__cpp_lib_bitops)
+#endif // !defined(__cpp_lib_int_pow2) || !defined(SEQAN3_CPP_LIB_BITOPS)
 
 #ifndef __cpp_lib_int_pow2
 
 namespace std
 {
 
+#ifndef SEQAN3_CPP_LIB_BITOPS
 // forward declare
 template<class T> constexpr int countl_zero(T x) noexcept;
+#endif // SEQAN3_CPP_LIB_BITOPS
 
 // // bit_­cast
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
@@ -128,7 +141,7 @@ template<class T> constexpr T bit_width(T x) noexcept
 
 #endif // __cpp_lib_int_pow2
 
-#ifndef __cpp_lib_bitops
+#ifndef SEQAN3_CPP_LIB_BITOPS
 
 namespace std
 {
@@ -192,4 +205,4 @@ template<class T> constexpr int popcount(T x) noexcept
 
 } // namespace std
 
-#endif // __cpp_lib_bitops
+#endif // SEQAN3_CPP_LIB_BITOPS
