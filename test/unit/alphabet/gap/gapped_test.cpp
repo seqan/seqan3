@@ -15,8 +15,6 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/quality/qualified.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
@@ -26,8 +24,7 @@
 using seqan3::operator""_dna4;
 
 using gapped_types = ::testing::Types<seqan3::gapped<seqan3::dna4>,
-                                      seqan3::gapped<seqan3::dna15>,
-                                      seqan3::gapped<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>;
+                                      seqan3::gapped<seqan3::dna15>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_test, gapped_types, );

@@ -10,8 +10,10 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_traits/concept.hpp>
+
+template <typename ...args_t>
+struct my_list;
 
 template <std::integral t>
 struct constraint_bar
@@ -21,17 +23,17 @@ struct constraint_bar
 
 TEST(template_inspect, concept_check)
 {
-    using tl = seqan3::type_list<int, char, double>;
+    using tl = my_list<int, char, double>;
 
     EXPECT_FALSE((seqan3::transformation_trait<seqan3::detail::transfer_template_args_onto<int, std::tuple>>));
     EXPECT_TRUE((seqan3::transformation_trait<seqan3::detail::transfer_template_args_onto<tl, std::tuple>>));
 
-    EXPECT_TRUE((seqan3::unary_type_trait<seqan3::detail::is_type_specialisation_of<int, seqan3::type_list>>));
+    EXPECT_TRUE((seqan3::unary_type_trait<seqan3::detail::is_type_specialisation_of<int, my_list>>));
 }
 
 TEST(template_inspect, transfer_template_args_onto_t)
 {
-    using tl = seqan3::type_list<int, char, double>;
+    using tl = my_list<int, char, double>;
     using t = seqan3::detail::transfer_template_args_onto<tl, std::tuple>::type;
     EXPECT_TRUE((std::is_same_v<t, std::tuple<int, char, double>>));
 
@@ -49,32 +51,32 @@ TEST(template_inspect, transfer_template_args_onto_with_constraint)
     using bar_int = constraint_bar<int>;
 
     // float does not fulfil integral constraint
-    using bar_float_identity = seqan3::detail::transfer_template_args_onto<seqan3::type_list<float>, constraint_bar>;
+    using bar_float_identity = seqan3::detail::transfer_template_args_onto<my_list<float>, constraint_bar>;
     EXPECT_FALSE(seqan3::transformation_trait<bar_float_identity>);
 
     // int fulfils integral constraint and static_assert
-    using bar_int_identity = seqan3::detail::transfer_template_args_onto<seqan3::type_list<int>, constraint_bar>;
+    using bar_int_identity = seqan3::detail::transfer_template_args_onto<my_list<int>, constraint_bar>;
     EXPECT_TRUE(seqan3::transformation_trait<bar_int_identity>);
     EXPECT_TRUE((std::is_same_v<typename bar_int_identity::type, bar_int>));
 
     // char fulfils integral constraint, but not static_assert
-    using bar_char_identity = seqan3::detail::transfer_template_args_onto<seqan3::type_list<char>, constraint_bar>;
+    using bar_char_identity = seqan3::detail::transfer_template_args_onto<my_list<char>, constraint_bar>;
     EXPECT_TRUE(seqan3::transformation_trait<bar_char_identity>);
     EXPECT_TRUE((std::is_same_v<typename bar_char_identity::type, bar_char>));
 }
 
 TEST(template_inspect, is_type_specialisation_of)
 {
-    using tl = seqan3::type_list<int, char, double>;
-    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of<tl, seqan3::type_list>::value));
-    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of<int, seqan3::type_list>::value));
+    using tl = my_list<int, char, double>;
+    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of<tl, my_list>::value));
+    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of<int, my_list>::value));
 }
 
 TEST(template_inspect, is_type_specialisation_of_v)
 {
-    using tl = seqan3::type_list<int, char, double>;
-    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of_v<tl, seqan3::type_list>));
-    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of_v<int, seqan3::type_list>));
+    using tl = my_list<int, char, double>;
+    EXPECT_TRUE((seqan3::detail::is_type_specialisation_of_v<tl, my_list>));
+    EXPECT_FALSE((seqan3::detail::is_type_specialisation_of_v<int, my_list>));
 }
 
 TEST(template_inspect, is_type_specialisation_with_constraint)
@@ -193,6 +195,6 @@ TEST(template_inspect, is_type_specialisation_of_with_ill_formed_non_type_templa
 
 TEST(template_inspect, template_specialisation_of)
 {
-    EXPECT_TRUE((seqan3::detail::template_specialisation_of<seqan3::type_list<float>, seqan3::type_list>));
-    EXPECT_FALSE((seqan3::detail::template_specialisation_of<seqan3::type_list<int>, std::tuple>));
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<my_list<float>, my_list>));
+    EXPECT_FALSE((seqan3::detail::template_specialisation_of<my_list<int>, std::tuple>));
 }

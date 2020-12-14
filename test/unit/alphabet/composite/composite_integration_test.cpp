@@ -15,6 +15,11 @@
 #include <seqan3/alphabet/quality/phred63.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 
+#include "../alphabet_constexpr_test_template.hpp"
+#include "../alphabet_test_template.hpp"
+#include "../semi_alphabet_constexpr_test_template.hpp"
+#include "../semi_alphabet_test_template.hpp"
+
 using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna4;
@@ -25,6 +30,17 @@ using qualified_gapped_dna_phred42 = seqan3::qualified<seqan3::gapped<seqan3::dn
 using gapped_qualified_dna_phred42 = seqan3::gapped<qualified_dna_phred42>;
 using qualified_qualified_gapped_dna_phred42_phred42 = seqan3::qualified<qualified_gapped_dna_phred42, seqan3::phred42>;
 using gapped_alphabet_variant_dna_phred42 = seqan3::gapped<seqan3::alphabet_variant<seqan3::dna4, seqan3::phred42>>;
+
+using alphabet_types = ::testing::Types<qualified_dna_phred42,
+                                        qualified_gapped_dna_phred42,
+                                        gapped_qualified_dna_phred42,
+                                        qualified_qualified_gapped_dna_phred42_phred42,
+                                        gapped_alphabet_variant_dna_phred42>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_composite_integration, alphabet, alphabet_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_composite_integration, semi_alphabet_test, alphabet_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_composite_integration, alphabet_constexpr, alphabet_types, );
+INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_composite_integration, semi_alphabet_constexpr, alphabet_types, );
 
 TEST(composite, custom_constructors)
 {
