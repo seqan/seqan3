@@ -12,13 +12,13 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 #include <thread>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 #include <seqan3/range/views/detail.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 //-----------------------------------------------------------------------------
 // This is the path a value takes when using this views::
@@ -78,9 +78,9 @@ public:
      * \{
      */
     async_input_buffer_view() = default; //!< Defaulted.
-    async_input_buffer_view(async_input_buffer_view const &) = default; //!< Defaulted.
+    async_input_buffer_view(async_input_buffer_view const &) = delete; //!< This is a move-only type.
     async_input_buffer_view(async_input_buffer_view &&) = default; //!< Defaulted.
-    async_input_buffer_view & operator=(async_input_buffer_view const &) = default; //!< Defaulted.
+    async_input_buffer_view & operator=(async_input_buffer_view const &) = delete; //!< This is a move-only type.
     async_input_buffer_view & operator=(async_input_buffer_view &&) = default; //!< Defaulted.
     ~async_input_buffer_view() = default; //!< Defaulted.
 

@@ -7,15 +7,16 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
+#include <seqan3/std/ranges>
 #include <type_traits>
+#include <vector>
 
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
@@ -119,9 +120,9 @@ TYPED_TEST(single_pass_input, view_construction)
     using rng_t = decltype(std::declval<TypeParam>() | seqan3::views::persist);
     using view_t = seqan3::detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE(std::is_default_constructible_v<view_t>);
-    EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
+    EXPECT_FALSE(std::is_copy_constructible_v<view_t>);
     EXPECT_TRUE(std::is_move_constructible_v<view_t>);
-    EXPECT_TRUE(std::is_copy_assignable_v<view_t>);
+    EXPECT_FALSE(std::is_copy_assignable_v<view_t>);
     EXPECT_TRUE(std::is_move_assignable_v<view_t>);
     EXPECT_TRUE(std::is_destructible_v<view_t>);
 
@@ -171,22 +172,15 @@ TYPED_TEST(single_pass_input, view_iterate)
         seqan3::detail::single_pass_input_view view{std::move(p)};
 
         TypeParam tmp{this->cmp_data};
-        auto tmp_it = tmp.begin();
-        for (auto && elem : view)
-        {
-            EXPECT_EQ(elem, *tmp_it);
-            ++tmp_it;
-        }
+        EXPECT_RANGE_EQ(tmp, view);
     }
     else
     {
+        // Single pass input is only movable.
         seqan3::detail::single_pass_input_view view{p};
+
         TypeParam tmp{this->cmp_data};
-        auto zipper = seqan3::views::zip(tmp, std::move(view));
-        for (auto it = zipper.begin(); it != zipper.end(); ++it)
-        {
-            EXPECT_EQ(std::get<0>(*it), std::get<1>(*it));
-        }
+        EXPECT_RANGE_EQ(tmp, view);
     }
 }
 

@@ -82,7 +82,7 @@ TEST(async_input_buffer, destruct_with_full_buffer)
     auto v0 = vec | seqan3::views::single_pass_input;
 
     {
-        auto v1 = v0 | seqan3::views::async_input_buffer(5);
+        auto v1 = std::move(v0) | seqan3::views::async_input_buffer(5);
 
         // consume five elements (construction already consumes one)
         auto b = std::ranges::begin(v1);
@@ -96,7 +96,7 @@ TEST(async_input_buffer, destruct_with_full_buffer)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     } // thread sync at destruction of v1; tests working destruction with full buffer
 
-    EXPECT_GE(std::ranges::distance(v0), 17); // total of at most 10 chars consumed
+    EXPECT_GE(std::ranges::distance(vec), 17); // total of at most 10 chars consumed
 }
 
 TEST(async_input_buffer, combinability)

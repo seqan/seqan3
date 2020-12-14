@@ -12,10 +12,11 @@
 
 #pragma once
 
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+
+#include <seqan3/range/views/detail.hpp>
 
 //-----------------------------------------------------------------------------
 // Implementation of single pass input view.
@@ -75,12 +76,12 @@ public:
      */
     //!\brief Default default-constructor.
     constexpr single_pass_input_view() = default;
-    //!\brief Default copy-constructor.
-    constexpr single_pass_input_view(single_pass_input_view const &) = default;
+    //!\brief This is a move-only type.
+    constexpr single_pass_input_view(single_pass_input_view const &) = delete;
     //!\brief Default move-constructor.
     constexpr single_pass_input_view(single_pass_input_view &&) = default;
-    //!\brief Default copy-assignment.
-    constexpr single_pass_input_view & operator=(single_pass_input_view const &) = default;
+    //!\brief This is a move-only type.
+    constexpr single_pass_input_view & operator=(single_pass_input_view const &) = delete;
     //!\brief Default move-assignment
     constexpr single_pass_input_view & operator=(single_pass_input_view &&) = default;
     //!\brief Default destructor.

@@ -72,6 +72,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
   * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.
 
+#### Views
+* Change `single_pass_input` and `async_input_buffer` views to move-only types ([\#2302](https://github.com/seqan/seqan3/pull/2302)).
+
+
 # 3.0.2
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
