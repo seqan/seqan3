@@ -91,7 +91,7 @@ ALIASES += strike{1}="\htmlonly<div style='color:red;text-decoration:line-throug
 
 ALIASES += noapi="\warning This documentation item is not guaranteed to exist in future SeqAn3 releases. Do not rely on the interface in your applications."
 
-ALIASES += experimental="\warning The interface of this documentation item is not yet stable and might change until the next release of SeqAn3. Do not rely on it in stable releases of your application."
+ALIASES += experimental="\warning The interface of this entity is experimental and might change in future releases of SeqAn3. Do not rely on it in stable releases of your application."
 
 ALIASES += header_file{1}="\htmlonly<b>Header File</b><br><div style='text-indent:3em;'><code>#include\endhtmlonly <\1>\htmlonly</code></div>\endhtmlonly"
 

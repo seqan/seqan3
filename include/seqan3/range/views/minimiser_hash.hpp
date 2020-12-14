@@ -151,6 +151,8 @@ namespace seqan3::views
  * \attention
  * Be aware of the requirements of the seqan3::views::kmer_hash view.
  *
+ * \experimental
+ *
  * ### View properties
  *
  * | Concepts and traits              | `urng_t` (underlying range type)   | `rrng_t` (returned range type)   |
