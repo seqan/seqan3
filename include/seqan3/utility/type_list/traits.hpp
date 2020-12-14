@@ -119,7 +119,8 @@ namespace seqan3::list_traits
  */
 
 //!\cond
-template <seqan3::detail::type_list_specialisation list_t>
+template <typename list_t>
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
 inline constexpr size_t size = 0;
 //!\endcond
 
@@ -133,7 +134,8 @@ template <typename ...pack_t>
 inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
 
 //!\cond
-template <typename query_t, seqan3::detail::type_list_specialisation list_t>
+template <typename query_t, typename list_t>
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
 inline constexpr ptrdiff_t count = -1;
 //!\endcond
 
@@ -148,7 +150,8 @@ inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> =
     seqan3::pack_traits::count<query_t, pack_t...>;
 
 //!\cond
-template <typename query_t, seqan3::detail::type_list_specialisation list_t>
+template <typename query_t, typename list_t>
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
 inline constexpr ptrdiff_t find = -1;
 //!\endcond
 
@@ -163,7 +166,8 @@ inline constexpr ptrdiff_t find<query_t, type_list<pack_t...>> =
     seqan3::pack_traits::detail::find<query_t, pack_t...>();
 
 //!\cond
-template <template <typename> typename pred_t, seqan3::detail::type_list_specialisation list_t>
+template <template <typename> typename pred_t, typename list_t>
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
 inline constexpr ptrdiff_t find_if = -1;
 //!\endcond
 
@@ -183,7 +187,10 @@ inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =
  *
  * \include test/snippet/utility/type_list/list_traits_contains.cpp
  */
-template <typename query_t, seqan3::detail::type_list_specialisation list_t>
+template <typename query_t, typename list_t>
+//!\cond
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
+//!\endcond
 inline constexpr bool contains = (find<query_t, list_t> != -1);
 
 //!\}
@@ -208,9 +215,10 @@ inline constexpr bool contains = (find<query_t, list_t> != -1);
  *
  * \include test/snippet/utility/type_list/list_traits_at.cpp
  */
-template <ptrdiff_t idx, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t idx, typename list_t>
 //!\cond
-    requires (idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) &&
+             ((idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>))
 //!\endcond
 using at = typename decltype(detail::at<idx>(list_t{}))::type;
 
@@ -227,9 +235,9 @@ using at = typename decltype(detail::at<idx>(list_t{}))::type;
  *
  * \include test/snippet/utility/type_list/list_traits_front.cpp
  */
-template <seqan3::detail::type_list_specialisation list_t>
+template <typename list_t>
 //!\cond
-    requires (size<list_t> > 0)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (size<list_t> > 0)
 //!\endcond
 using front = typename decltype(detail::front(list_t{}))::type;
 
@@ -249,9 +257,9 @@ using front = typename decltype(detail::front(list_t{}))::type;
  *
  * \include test/snippet/utility/type_list/list_traits_back.cpp
  */
-template <seqan3::detail::type_list_specialisation list_t>
+template <typename list_t>
 //!\cond
-    requires (size<list_t> > 0)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (size<list_t> > 0)
 //!\endcond
 using back = typename decltype(detail::back(list_t{}))::type;
 
@@ -279,7 +287,7 @@ using back = typename decltype(detail::back(list_t{}))::type;
  */
 template <typename ...lists_t>
 //!\cond
-    requires (seqan3::detail::type_list_specialisation<lists_t> && ...)
+    requires (seqan3::detail::template_specialisation_of<lists_t, seqan3::type_list> && ...)
 //!\endcond
 using concat = decltype(detail::concat(lists_t{}...));
 
@@ -296,9 +304,9 @@ using concat = decltype(detail::concat(lists_t{}...));
  *
  * \include test/snippet/utility/type_list/list_traits_drop_front.cpp
  */
-template <seqan3::detail::type_list_specialisation list_t>
+template <typename list_t>
 //!\cond
-    requires (size<list_t> > 0)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (size<list_t> > 0)
 //!\endcond
 using drop_front = decltype(detail::drop_front(list_t{}));
 
@@ -316,9 +324,9 @@ using drop_front = decltype(detail::drop_front(list_t{}));
  *
  * \include test/snippet/utility/type_list/list_traits_take.cpp
  */
-template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i <= size<list_t>)
 //!\endcond
 using take = typename decltype(detail::split_after<i>(list_t{}))::first_type;
 
@@ -336,9 +344,9 @@ using take = typename decltype(detail::split_after<i>(list_t{}))::first_type;
  *
  * \include test/snippet/utility/type_list/list_traits_drop.cpp
  */
-template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i <= size<list_t>)
 //!\endcond
 using drop = typename decltype(detail::split_after<i>(list_t{}))::second_type;
 
@@ -356,9 +364,9 @@ using drop = typename decltype(detail::split_after<i>(list_t{}))::second_type;
  *
  * \include test/snippet/utility/type_list/list_traits_take_last.cpp
  */
-template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i <= size<list_t>)
 //!\endcond
 using take_last = drop<size<list_t> - i, list_t>;
 
@@ -376,9 +384,9 @@ using take_last = drop<size<list_t> - i, list_t>;
  *
  * \include test/snippet/utility/type_list/list_traits_drop_last.cpp
  */
-template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i <= size<list_t>)
 //!\endcond
 using drop_last = take<size<list_t> - i, list_t>;
 
@@ -396,9 +404,9 @@ using drop_last = take<size<list_t> - i, list_t>;
  *
  * \include test/snippet/utility/type_list/list_traits_drop_last.cpp
  */
-template <ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i <= size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i <= size<list_t>)
 //!\endcond
 using split_after = decltype(detail::split_after<i>(list_t{}));
 
@@ -419,7 +427,10 @@ using split_after = decltype(detail::split_after<i>(list_t{}));
  *
  * \include test/snippet/utility/type_list/list_traits_transform.cpp
  */
-template <template <typename> typename trait_t, seqan3::detail::type_list_specialisation list_t>
+template <template <typename> typename trait_t, typename list_t>
+//!\cond
+    requires seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>
+//!\endcond
 using transform = decltype(detail::transform<trait_t>(list_t{}));
 
 /*!\brief Replace the type at the given index with the given type.
@@ -437,9 +448,9 @@ using transform = decltype(detail::transform<trait_t>(list_t{}));
  *
  * \include test/snippet/utility/type_list/list_traits_replace_at.cpp
  */
-template <typename replace_t, std::ptrdiff_t i, seqan3::detail::type_list_specialisation list_t>
+template <typename replace_t, std::ptrdiff_t i, typename list_t>
 //!\cond
-    requires (i >= 0 && i < size<list_t>)
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) && (i >= 0 && i < size<list_t>)
 //!\endcond
 using replace_at = decltype(detail::replace_at<replace_t, i>(list_t{}));
 

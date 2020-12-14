@@ -114,7 +114,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
 /*!\brief Tests whether a given predicate evaluates to `true` for each type in a seqan3::type_list.
  * \ingroup core
  *
- * \tparam list_t A type list; must model seqan3::detail::type_list_specialisation
+ * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of a seqan3::type_list
  * \tparam unary_predicate_t The function type, like function pointers, functors and lambdas;
  *                           must model std::predicate expanded on each argument type wrapped in std::type_identity.
  *
@@ -148,7 +148,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
 template <typename type_list_t, typename unary_predicate_t>
 [[nodiscard]] constexpr bool all_of(unary_predicate_t && fn)
 //!\cond
-    requires type_list_specialisation<type_list_t>
+    requires template_specialisation_of<type_list_t, seqan3::type_list>
 //!\endcond
 {
     return type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
@@ -200,7 +200,7 @@ constexpr void for_each(unary_function_t && fn, pack_t && ...args)
 /*!\brief Applies a function element wise to all types of a type list.
  * \ingroup core
  *
- * \tparam list_t A type list; must model seqan3::detail::type_list_specialisation.
+ * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of a seqan3::type_list.
  * \tparam unary_function_t The function type, like function pointers, functors and lambdas; must model
  *                          std::invocable on each type of the type list wrapped in std::type_identity.
  *
@@ -233,7 +233,7 @@ constexpr void for_each(unary_function_t && fn, pack_t && ...args)
  */
 template <typename type_list_t, typename unary_function_t>
 //!\cond
-    requires type_list_specialisation<type_list_t>
+    requires template_specialisation_of<type_list_t, seqan3::type_list>
 //!\endcond
 constexpr void for_each(unary_function_t && fn)
 {
