@@ -8,6 +8,7 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <thread>
 #include <utility>
 #include <vector>
 
@@ -19,7 +20,15 @@
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 
-template <typename t>
+//Forward declaration
+namespace seqan3::detail
+{
+
+struct execution_handler_sequential;
+
+}
+
+template <typename execution_handler_t>
 struct execution_handler : public ::testing::Test
 {
     static constexpr size_t total_size = 10000;
@@ -46,6 +55,15 @@ struct execution_handler : public ::testing::Test
 
     std::vector<seqan3::dna4_vector> sequence_collection1{};
     std::vector<seqan3::dna4_vector> sequence_collection2{};
+
+    // Do not use more than 4 threads if running in parallel
+    execution_handler_t execution_helper()
+    {
+        if constexpr(std::same_as<execution_handler_t, seqan3::detail::execution_handler_sequential>)
+            return execution_handler_t{};
+        else
+            return execution_handler_t{std::min<uint32_t>(4, std::thread::hardware_concurrency())};
+    }
 };
 
 auto simulate_alignment_with_range = [] (auto indexed_sequence_pairs,
@@ -62,7 +80,7 @@ TYPED_TEST_P(execution_handler, execute_as_indexed_sequence_pairs)
     std::vector<std::pair<size_t, size_t>> buffer;
     buffer.resize(this->total_size);
 
-    TypeParam exec_handler{};
+    TypeParam exec_handler{this->execution_helper()};
 
     size_t pos = 0;
     size_t chunk_size = 4; // total_size is a multiple of chunk size.
@@ -94,7 +112,7 @@ TYPED_TEST_P(execution_handler, bulk_execute)
     std::vector<std::pair<size_t, size_t>> buffer{};
     buffer.resize(this->total_size);
 
-    TypeParam exec_handler{};
+    TypeParam exec_handler{this->execution_helper()};
 
     size_t chunk_size = 4;
     auto indexed_sequence_pairs = seqan3::views::zip(seqan3::views::zip(this->sequence_collection1,

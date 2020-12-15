@@ -90,7 +90,7 @@ public:
     }
 
     //!\brief Constructs the execution handler spawning std::thread::hardware_concurrency many threads.
-    execution_handler_parallel() : execution_handler_parallel{std::thread::hardware_concurrency()}
+    execution_handler_parallel() : execution_handler_parallel{1u}
     {}
 
     execution_handler_parallel(execution_handler_parallel const &) = delete; //!< Deleted.
