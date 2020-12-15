@@ -33,10 +33,10 @@ int main(int argc, char ** argv)
     int32_t variable{};
     int16_t variable2{};
 
-    myparser.add_option(variable, 'i', "", "An int that is a square", seqan3::option_spec::defaulted,
+    myparser.add_option(variable, 'i', "", "An int that is a square", seqan3::option_spec::standard,
                         custom_validator{}); // ← your validator is used!
 
-    myparser.add_option(variable2, 'j', "", "An int that is a square and within [0,20].", seqan3::option_spec::defaulted,
+    myparser.add_option(variable2, 'j', "", "An int that is a square and within [0,20].", seqan3::option_spec::standard,
                         custom_validator{} | seqan3::arithmetic_range_validator{0, 20}); // ← now it's chained
 
     try

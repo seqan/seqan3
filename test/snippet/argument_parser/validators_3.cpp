@@ -10,7 +10,7 @@ int main(int argc, const char ** argv)
     std::filesystem::path myfile;
 
     myparser.add_option(myfile,'f',"file","Give me a filename.",
-                        seqan3::option_spec::defaulted, seqan3::input_file_validator{{"fa","fasta"}});
+                        seqan3::option_spec::standard, seqan3::input_file_validator{{"fa","fasta"}});
     //![validator_call]
 
     // an exception will be thrown if the user specifies a filename

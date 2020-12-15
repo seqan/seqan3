@@ -134,10 +134,10 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
                       seqan3::option_spec::required,
                       seqan3::input_file_validator{{"index"}});
     parser.add_option(args.sam_path, 'o', "output", "The output SAM file path.",
-                      seqan3::option_spec::defaulted,
+                      seqan3::option_spec::standard,
                       seqan3::output_file_validator{seqan3::output_file_open_options::create_new, {"sam"}});
     parser.add_option(args.errors, 'e', "error", "Maximum allowed errors.",
-                      seqan3::option_spec::defaulted,
+                      seqan3::option_spec::standard,
                       seqan3::arithmetic_range_validator{0, 4});
 }
 

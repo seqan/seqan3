@@ -10,7 +10,7 @@ int main(int argc, const char ** argv)
     seqan3::value_list_validator my_validator{2, 4, 6, 8, 10};
 
     myparser.add_option(myint,'i',"integer","Give me a number.",
-                        seqan3::option_spec::defaulted, my_validator);
+                        seqan3::option_spec::standard, my_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies an integer

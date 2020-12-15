@@ -367,7 +367,7 @@ TEST(help_page_printing, full_information)
     parser6.info.description.push_back("description2");
     parser6.info.short_description = "so short";
     parser6.add_option(option_value, 'i', "int", "this is a int option.");
-    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::defaulted,
+    parser6.add_option(enum_option_value, 'e', "enum", "this is an enum option.", seqan3::option_spec::standard,
                        seqan3::value_list_validator{seqan3::enumeration_names<foo> | std::views::values});
     parser6.add_option(required_option, 'r', "required-int", "this is another int option.",
                        seqan3::option_spec::required);

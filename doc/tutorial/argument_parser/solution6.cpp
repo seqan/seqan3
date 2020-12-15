@@ -89,7 +89,7 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
 
     //![value_list_validator]
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation.",
-                      seqan3::option_spec::defaulted, seqan3::value_list_validator{"median", "mean"});
+                      seqan3::option_spec::standard, seqan3::value_list_validator{"median", "mean"});
     //![value_list_validator]
 
     parser.add_flag(args.header_is_set, 'H', "header-is-set", "Let us know whether your data file contains a "

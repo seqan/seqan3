@@ -56,7 +56,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * The enum names of `seqan3::option_spec` were changed to lower case
   ([\#2285](https://github.com/seqan/seqan3/pull/2285)):
-  * `seqan3::option_spec::DEFAULT` is replaced by `seqan3::option_spec::defaulted`.
+  * `seqan3::option_spec::DEFAULT` is replaced by `seqan3::option_spec::standard`.
   * `seqan3::option_spec::REQUIRED` is replaced by `seqan3::option_spec::required`.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
   * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.

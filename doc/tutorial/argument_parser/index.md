@@ -308,12 +308,12 @@ Set an option/flag to hidden, if you want to completely hide it from the user. I
 
 Summary:
 
-| Tag        | Description                                                    |
-|:-----------|:---------------------------------------------------------------|
-| defaulted  | The default tag with no special behaviour.                     |
-| required   | Required options will cause an error if not provided.          |
-| advanced   | Advanced options are only displayed wit `-hh/--advanced-help`. |
-| hidden     | Hidden options are never displayed when exported.              |
+| Tag        | Description                                                                                       |
+|:-----------|:--------------------------------------------------------------------------------------------------|
+| standard   | The default tag (non-required and always visible).                                                |
+| required   | Required options will cause an error if not provided (required and always visible).               |
+| advanced   | Advanced options are only displayed wit `-hh/--advanced-help`. (non-required and partly visible). |
+| hidden     | Hidden options are never displayed when exported (non-required and non-visible).                  |
 
 \assignment{Assignment 5}
 
@@ -340,7 +340,7 @@ Our applications often do not allow just any value to be passed as input argumen
 
 A *validator* is a [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses) that is called within the argument parser after retrieving and converting a command line argument. We provide several validators, which we hope cover most of the use cases, but you can always create your own validator (see section [Create your own validator](#section_create_your_own_validator)).
 
-\attention You can pass a validator to the seqan3::argument_parser::add_option function only after passing the seqan3::option_spec parameter. Pass the seqan3::option_spec::defaulted tag if there are no further restrictions on your option.
+\attention You can pass a validator to the seqan3::argument_parser::add_option function only after passing the seqan3::option_spec parameter. Pass the seqan3::option_spec::standard tag if there are no further restrictions on your option.
 
 ## SeqAn validators
 

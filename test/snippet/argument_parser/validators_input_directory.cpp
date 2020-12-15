@@ -10,7 +10,7 @@ int main(int argc, const char ** argv)
     std::filesystem::path mydir{};
 
     myparser.add_option(mydir, 'd', "dir", "The directory containing the input files.",
-                        seqan3::option_spec::defaulted, seqan3::input_directory_validator{});
+                        seqan3::option_spec::standard, seqan3::input_directory_validator{});
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a directory that does not exists or has insufficient
