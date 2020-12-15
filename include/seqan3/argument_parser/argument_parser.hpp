@@ -187,12 +187,13 @@ public:
         subcommands{std::move(subcommands)}
     {
         if (!std::regex_match(app_name, app_name_regex))
-            throw design_error{"The application name must only contain alpha-numeric characters or '_' and '-' "
-                               "(regex: \"^[a-zA-Z0-9_-]+$\")."};
+            throw design_error{("The application name must only contain alpha-numeric characters or '_' and '-' "
+                               "(regex: \"^[a-zA-Z0-9_-]+$\").")};
 
         for (auto & sub : this->subcommands)
-            if (!std::regex_match(sub, std::regex{"^[a-zA-Z0-9_]+$"}))
-                throw design_error{"The subcommand name must only contain alpha-numeric characters or '_'."};
+            if (!std::regex_match(sub, app_name_regex))
+                throw design_error{("The subcommand name must only contain alpha-numeric characters or '_' and '-' "
+                                   "(regex: \"^[a-zA-Z0-9_-]+$\").")};
 
         info.app_name = std::move(app_name);
 
