@@ -183,7 +183,7 @@ public:
     using value_type = value_t;
 
     /*!\name Constructor, destructor and assignment.
-     * \brief The standard functions are explicitly defaulted.
+     * \brief The standard functions are explicitly set to default.
      * \{
      */
     constexpr strong_type()                                 noexcept = default; //!< Defaulted.

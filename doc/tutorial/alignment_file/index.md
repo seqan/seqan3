@@ -171,7 +171,7 @@ A read with name `r003` has been mapped to a reference with name `ref` at positi
 (in the reference, counting from 1) with a quality of `17` (Phred scaled).
 The flag has a value of `73` which indicates that the read is paired, the first in pair, but the mate is unmapped
 (see [this website](https://broadinstitute.github.io/picard/explain-flags.html) for a nice explanation of SAM flags).
-Fields set to `0` or `*` are defaulted and contain no information.
+Fields set to `0` or `*` indicate empty fields and contain no valuable information.
 
 The cigar string is `1M1D4M` which represents the following alignment:
 

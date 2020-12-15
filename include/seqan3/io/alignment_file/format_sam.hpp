@@ -77,8 +77,8 @@ namespace seqan3
  * In addition there is the seqan3::field::header_ptr, which is usually only used internally
  * to provide the range-based functionality of the file.
  *
- * **None of the fields are required** when writing but will be defaulted
- * to '0' for numeric fields and '*' for other fields.
+ * **None of the fields are required** when writing. If they are not given, a default value of '0' for numeric fields
+ * and '*' for other fields is used.
  *
  * ### SAM format columns -> fields
  *

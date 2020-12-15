@@ -32,7 +32,7 @@ namespace seqan3::detail
 /*!\brief Depending on the given filename/extension, create a compression stream or just forward the primary stream.
  * \param[in] primary_stream The primary (uncompressed) stream for writing.
  * \param[in,out] filename  The associated filename; compression extensions will be stripped.
- * \returns A pointer to the secondary stream with defaulted or NOP'ed deleter.
+ * \returns A pointer to the secondary stream with a default deleter or a NOP'ed deleter.
  * \throws seqan3::file_open_error If a compression-extension is used, but is not supported/available.
  */
 template <builtin_character char_t>

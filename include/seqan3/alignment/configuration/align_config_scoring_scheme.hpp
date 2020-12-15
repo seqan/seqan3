@@ -33,7 +33,7 @@ namespace seqan3::align_cfg
  * The scheme depends on the alphabet type of the passed sequences and must be chosen accordingly.
  * During the configuration of the pairwise alignment algorithm a static assert is triggered if the scoring scheme
  * is not compatible with the given alphabet types (see seqan3::scoring_scheme_for). Accordingly,
- * this configuration cannot be defaulted since it depends on the sequences and must be given as a minimal
+ * there is no default for this configuration since it depends on the sequences and it must be given as a minimal
  * configuration.
  *
  * ### Example
