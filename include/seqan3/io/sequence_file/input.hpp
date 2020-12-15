@@ -28,7 +28,6 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
@@ -37,6 +36,7 @@
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
+#include <seqan3/io/sequence_file/record.hpp>
 #include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
@@ -376,8 +376,10 @@ public:
     using field_types           = type_list<sequence_type, id_type, quality_type, sequence_quality_type>;
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
-    using record_type           = record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
-                                         selected_field_ids>;
+    using record_type           = sequence_record<detail::select_types_with_ids_t<field_types,
+                                                                                  field_ids,
+                                                                                  selected_field_ids>,
+                                                  selected_field_ids>;
     //!\}
 
     /*!\name Range associated types
