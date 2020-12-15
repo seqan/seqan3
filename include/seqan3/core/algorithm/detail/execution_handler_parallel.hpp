@@ -89,7 +89,20 @@ public:
         }
     }
 
-    //!\brief Constructs the execution handler spawning std::thread::hardware_concurrency many threads.
+    /*!\brief Constructs the execution handler spawning 1 thread.
+     *
+     * \details
+     * 
+     * ### Why only 1 thread?
+     * 
+     * This class is not public. It handles the thread pool when, e.g., using the alignment or search algorithms in 
+     * parallel via the config. This config requires a value (no default), hence the number of threads is always 
+     * set by the user.
+     * 
+     * When we use an algorithm in parallel, we also default construct a execution_handler_parallel along the way. If 
+     * the default is set to use all threads, we have to generate the thread pool and a queue. However, this default 
+     * constructed execution_handler_parallel is immediately moved away and destructed.
+     */
     execution_handler_parallel() : execution_handler_parallel{1u}
     {}
 
