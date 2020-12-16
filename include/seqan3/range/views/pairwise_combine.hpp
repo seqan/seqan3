@@ -15,7 +15,7 @@
 #include <cmath>
 #include <seqan3/std/ranges>
 
-#include <seqan3/core/common_tuple.hpp>
+#include <seqan3/core/tuple/common_tuple.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
