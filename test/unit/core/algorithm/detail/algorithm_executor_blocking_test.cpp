@@ -43,7 +43,7 @@ struct algorithm_type_for_input
     using type = std::function<void(algorithm_input_t, callback_t)>;
 };
 
-template <typename t>
+template <typename execution_handler_t>
 struct algorithm_executor_blocking_test : public ::testing::Test
 {
     // Some globally defined test types
@@ -52,6 +52,15 @@ struct algorithm_executor_blocking_test : public ::testing::Test
 
     sequence_pair_t sequence_pair{"AACGTACGT", "ATCGTCCGT"};  // Hamming distance is 7
     sequence_pairs_t sequence_pairs{5, sequence_pair};
+
+    // Do not use more than 4 threads if running in parallel
+    execution_handler_t execution_handler()
+    {
+        if constexpr(std::same_as<execution_handler_t, seqan3::detail::execution_handler_sequential>)
+            return execution_handler_t{};
+        else
+            return execution_handler_t{std::min<uint32_t>(4, std::thread::hardware_concurrency())};
+    }
 };
 
 using testing_types = testing::Types<seqan3::detail::execution_handler_sequential,
@@ -83,7 +92,7 @@ TYPED_TEST(algorithm_executor_blocking_test, is_eof)
                                                     size_t,
                                                     TypeParam>;
 
-    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
     EXPECT_FALSE(exec.is_eof());
 }
 
@@ -103,7 +112,7 @@ TYPED_TEST(algorithm_executor_blocking_test, next_result)
                                                     size_t,
                                                     TypeParam>;
 
-    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
 
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
@@ -122,8 +131,8 @@ TYPED_TEST(algorithm_executor_blocking_test, move_assignment)
                                                     size_t,
                                                     TypeParam>;
 
-    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}};
-    executor_t exec_move_assigned{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 2u};
+    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
+    executor_t exec_move_assigned{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
 
     exec_move_assigned = std::move(exec);
 
@@ -146,7 +155,7 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pair_view)
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{v, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{v, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
@@ -160,7 +169,10 @@ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pair_view)
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{std::views::single(this->sequence_pair), algorithm_t{dummy_algorithm{}}};
+    executor_t exec{std::views::single(this->sequence_pair), 
+                    algorithm_t{dummy_algorithm{}}, 
+                    0u, 
+                    this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.next_result()));
 }
@@ -173,7 +185,7 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
@@ -191,7 +203,10 @@ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{this->sequence_pairs | seqan3::views::persist, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{this->sequence_pairs | seqan3::views::persist, 
+                    algorithm_t{dummy_algorithm{}}, 
+                    0u, 
+                    this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
@@ -209,7 +224,7 @@ TYPED_TEST(algorithm_executor_blocking_test, empty_result_bucket)
                                                     size_t,
                                                     TypeParam>;
     this->sequence_pairs[3].first = "";
-    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}};
+    executor_t exec{this->sequence_pairs, algorithm_t{dummy_algorithm{}}, 0u, this->execution_handler()};
 
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);
