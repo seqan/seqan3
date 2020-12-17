@@ -312,7 +312,7 @@ Summary:
 |:-----------|:--------------------------------------------------------------------------------------------------|
 | standard   | The default tag (non-required and always visible).                                                |
 | required   | Required options will cause an error if not provided (required and always visible).               |
-| advanced   | Advanced options are only displayed wit `-hh/--advanced-help`. (non-required and partly visible). |
+| advanced   | Advanced options are only displayed wit `-hh/--advanced-help`. (non-required and visible on request). |
 | hidden     | Hidden options are never displayed when exported (non-required and non-visible).                  |
 
 \assignment{Assignment 5}
