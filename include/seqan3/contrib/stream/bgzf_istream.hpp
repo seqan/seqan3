@@ -26,7 +26,6 @@
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
 #include <seqan3/contrib/stream/bgzf_stream_util.hpp>
-#include <seqan3/io/exception.hpp>
 #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
 
 namespace seqan3::contrib

@@ -1,5 +1,6 @@
 #include <type_traits>
 
+#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/is_class_template_declarable.hpp>
 
