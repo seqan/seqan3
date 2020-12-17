@@ -932,8 +932,8 @@ TEST(parse_test, subcommand_argument_parser_success)
     }
 
     // incorrect sub command
+    const char * argv[]{"./top_level", "subiddysub", "-f"};
     { // see issue https://github.com/seqan/seqan3/issues/2172
-        const char * argv[]{"./top_level", "subiddysub", "-f"};
         seqan3::argument_parser top_level_parser{"top_level",
                                                  3,
                                                  argv,
@@ -941,6 +941,15 @@ TEST(parse_test, subcommand_argument_parser_success)
                                                  {"sub1", "sub2"}};
 
         EXPECT_THROW(top_level_parser.parse(), seqan3::argument_parser_error);
+    }
+
+    // sub command can contain dash, see https://github.com/seqan/product_backlog/issues/234
+    {
+        EXPECT_NO_THROW((seqan3::argument_parser{"top_level",
+                                                 2,
+                                                 argv,
+                                                 seqan3::update_notifications::off,
+                                                 {"-dash"}}));
     }
 }
 

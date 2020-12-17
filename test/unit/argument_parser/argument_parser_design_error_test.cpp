@@ -138,11 +138,6 @@ TEST(parse_test, subcommand_argument_parser_error)
                                               argv,
                                               seqan3::update_notifications::off,
                                               {"with space"}}), seqan3::design_error);
-        EXPECT_THROW((seqan3::argument_parser{"top_level",
-                                              2,
-                                              argv,
-                                              seqan3::update_notifications::off,
-                                              {"-dash"}}), seqan3::design_error);
     }
 
     // no positional/options are allowed

@@ -40,6 +40,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The `seqan3::argument_parser` has a new member function `seqan3::argument_parser::is_option_set` that
   checks whether an option, identified by its long or short name, was set on the command line by the user
   ([\#1859](https://github.com/seqan/seqan3/pull/1859)).
+* The subcommand of the `seqan3::argument_parser` may contain a dash
+  ([\#2306](https://github.com/seqan/seqan3/pull/2306)).
 
 #### Search
 
