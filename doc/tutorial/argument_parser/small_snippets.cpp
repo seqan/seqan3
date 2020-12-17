@@ -64,7 +64,7 @@ parser.add_positional_option(list_variable, "Give me one or more variables!.");
 seqan3::argument_parser parser{"Example-Parser", argc, argv};
 //![required_option]
 std::string required_variable{};
-parser.add_option(required_variable, 'n', "name", "I really need a name.", seqan3::option_spec::REQUIRED);
+parser.add_option(required_variable, 'n', "name", "I really need a name.", seqan3::option_spec::required);
 //![required_option]
 }
 

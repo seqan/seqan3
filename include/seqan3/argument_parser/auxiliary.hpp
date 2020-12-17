@@ -224,28 +224,33 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
  *
  * \details
  *
- * All options and flags are set to option_spec::DEFAULT unless specified
+ * All options and flags are set to option_spec::standard unless specified
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
  * \include test/snippet/argument_parser/auxiliary.cpp
  */
 enum option_spec
 {
-    DEFAULT  = 0, //!< The default were no checking or special displaying is happening.
-    REQUIRED = 1, /*!< Set an option as required if you want to enforce that the user
+    standard = 0, //!< The default were no checking or special displaying is happening.
+    required = 1, /*!< Set an option as required if you want to enforce that the user
                    * supplies this option when calling the program via the command line.
                    * If the option is missing, the argument_parser will automatically
                    * detect this and throw a invalid_argument exception.
                    */
-    ADVANCED = 2, /*!< Set an option/flag to advanced if you do not want the option to
+    advanced = 2, /*!< Set an option/flag to advanced if you do not want the option to
                    * be displayed in the normal help page (`-h/--help`). Instead, the
                    * advanced options are only displayed when calling `-hh/--advanced-help`
                    */
-    HIDDEN   = 4, /*!< Set an option/flag to hidden, if you want to completely hide it from
+    hidden = 4,   /*!< Set an option/flag to hidden, if you want to completely hide it from
                    * the user. It will never appear on the help page nor any export format.
                    * For example, this can be useful for debugging reasons.
                    * (e.g. "A tool for mapping reads to the genome").
                    */
+
+    DEFAULT SEQAN3_DEPRECATED_310  = standard, //!< \deprecated Use seqan3::option_spec::standard instead.
+    REQUIRED SEQAN3_DEPRECATED_310 = required, //!< \deprecated Use seqan3::option_spec::required instead.
+    ADVANCED SEQAN3_DEPRECATED_310 = advanced, //!< \deprecated Use seqan3::option_spec::advanced instead.
+    HIDDEN SEQAN3_DEPRECATED_310   = hidden,   //!< \deprecated Use seqan3::option_spec::hidden instead.
 };
 
 //!\brief Indicates whether application allows automatic update notifications by the seqan3::argument_parser.

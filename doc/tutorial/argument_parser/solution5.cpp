@@ -80,7 +80,7 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     parser.add_positional_option(args.file_path, "Please provide a tab separated data file.");
 
 //![solution]
-    parser.add_option(args.seasons, 's', "season", "Choose the seasons to aggregate.", seqan3::option_spec::REQUIRED);
+    parser.add_option(args.seasons, 's', "season", "Choose the seasons to aggregate.", seqan3::option_spec::required);
 //![solution]
 
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation: mean or median.");

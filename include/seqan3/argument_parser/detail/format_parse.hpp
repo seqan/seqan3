@@ -679,7 +679,7 @@ private:
         else // option is not set
         {
             // check if option is required
-            if (spec & option_spec::REQUIRED)
+            if (spec & option_spec::required)
                 throw required_option_missing("Option " + combine_option_names(short_id, long_id) +
                                               " is required but not set.");
         }

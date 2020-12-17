@@ -40,7 +40,7 @@ public:
  * - Unknown option/flag (not specified by developer but set by user)
  * - Too many positional options
  * - Too few positional options
- * - Option that was declared as required (option_spec::REQUIRED) was not set
+ * - Option that was declared as required (option_spec::required) was not set
  * - Option is not a list but specified multiple times
  * - Type conversion failed
  * - Validation failed (as defined by the developer)

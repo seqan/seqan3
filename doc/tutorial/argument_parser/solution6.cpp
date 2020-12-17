@@ -84,12 +84,12 @@ void initialise_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
 
     //![arithmetic_range_validator]
     parser.add_option(args.seasons, 's', "season", "Choose the seasons to aggregate.",
-                      seqan3::option_spec::REQUIRED, seqan3::arithmetic_range_validator{1, 7});
+                      seqan3::option_spec::required, seqan3::arithmetic_range_validator{1, 7});
     //![arithmetic_range_validator]
 
     //![value_list_validator]
     parser.add_option(args.aggregate_by, 'a', "aggregate-by", "Choose your method of aggregation.",
-                      seqan3::option_spec::DEFAULT, seqan3::value_list_validator{"median", "mean"});
+                      seqan3::option_spec::standard, seqan3::value_list_validator{"median", "mean"});
     //![value_list_validator]
 
     parser.add_flag(args.header_is_set, 'H', "header-is-set", "Let us know whether your data file contains a "

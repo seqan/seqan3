@@ -12,7 +12,7 @@ int main(int argc, const char ** argv)
     seqan3::input_file_validator my_file_ext_validator{{"sa", "so"}};
 
     myparser.add_option(file_name, 'f', "file","Give me a file name with an absolute path.",
-                        seqan3::option_spec::DEFAULT, absolute_path_validator | my_file_ext_validator);
+                        seqan3::option_spec::standard, absolute_path_validator | my_file_ext_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies a file name

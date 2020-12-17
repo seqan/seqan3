@@ -235,7 +235,7 @@ public:
     {
         std::string id = prep_id_for_help(short_id, long_id) + " " + option_type_and_list_info(value);
         std::string info{desc};
-        info += ((spec & option_spec::REQUIRED) ? std::string{" "} : detail::to_string(" Default: ", value, ". "));
+        info += ((spec & option_spec::required) ? std::string{" "} : detail::to_string(" Default: ", value, ". "));
         info += option_validator.get_help_page_message();
         store_help_page_element([this, id, info] () { derived_t().print_list_item(id, info); }, spec);
     }
@@ -437,13 +437,13 @@ private:
      *
      * \details
      *
-     * If `spec` equals `seqan3::option_spec::HIDDEN`, the information is never added to the help page.
-     * If `spec` equals `seqan3::option_spec::ADVANCED`, the information is only added to the help page if
+     * If `spec` equals `seqan3::option_spec::hidden`, the information is never added to the help page.
+     * If `spec` equals `seqan3::option_spec::advanced`, the information is only added to the help page if
      * the advanced help page has been queried on the command line (`show_advanced_options == true`).
      */
     void store_help_page_element(std::function<void()> printer, option_spec const spec)
     {
-        if (!(spec & option_spec::HIDDEN) && (!(spec & option_spec::ADVANCED) || show_advanced_options))
+        if (!(spec & option_spec::hidden) && (!(spec & option_spec::advanced) || show_advanced_options))
             parser_set_up_calls.push_back(std::move(printer));
     }
 };

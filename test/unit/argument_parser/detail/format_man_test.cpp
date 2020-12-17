@@ -93,7 +93,7 @@ struct format_man_test : public ::testing::Test
         parser.info.description.push_back("description");
         parser.info.description.push_back("description2");
         parser.add_option(option_value, 'i', "int", "this is a int option.");
-        parser.add_option(option_value, 'j', "jint", "this is a required int option.", seqan3::option_spec::REQUIRED);
+        parser.add_option(option_value, 'j', "jint", "this is a required int option.", seqan3::option_spec::required);
         parser.add_section("Flags");
         parser.add_subsection("SubFlags");
         parser.add_line("here come all the flags");

@@ -759,7 +759,7 @@ TEST(parse_test, required_option_missing)
     const char * argv[] = {"./argument_parser_test", "5", "-i", "15"};
     seqan3::argument_parser parser{"test_parser", 4, argv, seqan3::update_notifications::off};
     parser.add_option(option_value, 'i', "int-option", "this is an int option.");
-    parser.add_option(option_value, 'a', "req-option", "I am required.", seqan3::option_spec::REQUIRED);
+    parser.add_option(option_value, 'a', "req-option", "I am required.", seqan3::option_spec::required);
     parser.add_positional_option(option_value, "this is an int option.");
 
     EXPECT_THROW(parser.parse(), seqan3::required_option_missing);

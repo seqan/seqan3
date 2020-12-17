@@ -10,7 +10,7 @@ int main(int argc, const char ** argv)
     std::filesystem::path mydir{};
 
     myparser.add_option(mydir, 'd', "dir", "The output directory for storing the files.",
-                        seqan3::option_spec::DEFAULT,
+                        seqan3::option_spec::standard,
                         seqan3::output_file_validator{seqan3::output_file_open_options::create_new});
     //! [validator_call]
 
