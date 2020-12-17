@@ -114,7 +114,7 @@ namespace seqan3
  * \include test/snippet/io/alignment_file/alignment_file_output_custom_fields.cpp
  *
  * This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
- * output file will be defaulted, so unless you specify to read all SAM columns (see seqan3::format_sam)
+ * output file will have a default value, so unless you specify to read all SAM columns (see seqan3::format_sam)
  * the output file will not be equal to the input file.
  *
  * ### Writing record-wise in batches
@@ -806,7 +806,7 @@ protected:
  */
 
 /*!\brief Deduces selected_field_ids from input and sets alignment_file_output::ref_ids_type to
- *        seqan3::detail::ref_info_not_given. valid_formats is defaulted.
+ *        seqan3::detail::ref_info_not_given. valid_formats is set to the default.
  */
 template <detail::fields_specialisation selected_field_ids>
 alignment_file_output(std::filesystem::path, selected_field_ids const &)
@@ -837,7 +837,7 @@ alignment_file_output(stream_type &, file_format const &, selected_field_ids con
                              ref_info_not_given>;
 
 /*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
- *        seqan3::detail::ref_info_not_given. selected_field_ids is defaulted.
+ *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
 template <output_stream stream_type,
           alignment_file_output_format file_format>
@@ -847,7 +847,7 @@ alignment_file_output(stream_type &&, file_format const &)
                              ref_info_not_given>;
 
 /*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
- *        seqan3::detail::ref_info_not_given. selected_field_ids is defaulted.
+ *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
 template <output_stream stream_type,
           alignment_file_output_format file_format>
@@ -856,7 +856,7 @@ alignment_file_output(stream_type &, file_format const &)
                              type_list<file_format>,
                              ref_info_not_given>;
 
-//!\brief Deduces selected_field_ids and ref_ids_type from input. valid_formats is defaulted.
+//!\brief Deduces selected_field_ids and ref_ids_type from input. valid_formats is set to the default.
 template <detail::fields_specialisation selected_field_ids,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
@@ -868,7 +868,7 @@ alignment_file_output(std::filesystem::path const &,
                              typename alignment_file_output<>::valid_formats,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are defaulted.
+//!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are set to the default.
 template <std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
 alignment_file_output(std::filesystem::path const &,
@@ -908,7 +908,7 @@ alignment_file_output(stream_type &,
                              type_list<file_format>,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids is defaulted.
+//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids set to the default.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
@@ -921,7 +921,7 @@ alignment_file_output(stream_type &&,
                              type_list<file_format>,
                              std::remove_reference_t<ref_ids_type>>;
 
-//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids is defaulted.
+//!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids set to the default.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,

@@ -71,7 +71,7 @@ private:
 public:
     /*!\name Constructor, destructor, and assignment.
      * \{
-     * \brief All standard functions are explicitly defaulted.
+     * \brief All standard functions are explicitly set to default.
      */
     //!\brief Default default-constructor.
     constexpr single_pass_input_view() = default;

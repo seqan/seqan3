@@ -268,7 +268,7 @@ public:
      *
      * \details
      *
-     * Most assignments happen through implicit conversion and the defaulted assignment operator. This is for the rest.
+     * Most assignments happen through implicit conversion and the default assignment operator. This constructor is for the rest.
      */
     template <typename indirect_alternative_t>
     //!\cond

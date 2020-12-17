@@ -202,7 +202,7 @@ public:
     {
         // Proto-adaptors require arguments by definition, but some support defaulting those (e.g. views::translate).
         // This extracts the proto adaptor and invokes it without args which yields a different object, the closure
-        // with defaulted arguments.
+        // with default arguments.
         auto adaptor_closure = std::get<0>(this->arguments)();
         // Now we wrap this closure object back into a views::deep to get the deep behaviour.
         return deep<decltype(adaptor_closure)>{std::move(adaptor_closure)};

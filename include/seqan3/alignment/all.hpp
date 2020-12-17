@@ -180,7 +180,7 @@
  * assertion is raised.
  *
  * The scoring scheme can be configured with the seqan3::align_cfg::scoring_scheme element. Since the scoring scheme is
- * strongly coupled on the sequences to be aligned it can not be defaulted. Thus, it is mandatory for
+ * strongly coupled on the sequences to be aligned, there is no default for it. Thus, it is mandatory for
  * the developer to specify this configuration.
  *
  * ### Scoring gaps

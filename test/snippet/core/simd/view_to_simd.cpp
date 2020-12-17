@@ -10,7 +10,7 @@ int main()
 {
     using seqan3::operator""_dna4;
 
-    // Adds 7 sequences. The eighth will be defaulted.
+    // Adds 7 sequences. The eighth will be set to a default value.
     std::vector<seqan3::dna4_vector> batch;
     batch.push_back("ACGTACGTACGTACGATCG"_dna4);
     batch.push_back("AGTGAGCTACGGACTAGCTACGACT"_dna4);

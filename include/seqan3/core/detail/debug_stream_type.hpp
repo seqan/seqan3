@@ -71,7 +71,7 @@ class debug_stream_type
 {
 public:
     /*!\name Constructor, destructor and assignment.
-     * \brief The standard functions are explicitly defaulted.
+     * \brief The standard functions are explicitly set to default.
      * \{
      */
     debug_stream_type() = default;                                       //!< Defaulted
