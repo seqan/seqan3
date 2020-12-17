@@ -1,13 +1,17 @@
 # See https://docs.codecov.io/docs/codecovyml-reference
 codecov:
-  require_ci_to_pass: no
+  require_ci_to_pass: no  # codecov reports its results independent of whether CI passed
   notify:
-    wait_for_ci: no
+    wait_for_ci: no       # codecov has not to wait until the CI is finished to post its results
 
 coverage:
   status:
-    project:
+    project:  # project is the overall code coverage of the whole codebase
       default:
-        if_ci_failed: success
-        target: auto
-        threshold: 0.01%
+        if_ci_failed: success # per default, codecov would fail if any CI fails
+        target: auto          # the target coverage, usually the code coverage of the base-branch
+        threshold: 0.01%      # codecov/project fails if there is a drop of more than 0.01%
+    patch:  # patch is the code-coverage of the changed lines in the PR and often reports false positives
+      default:
+        if_ci_failed: success # per default, codecov would fail if any CI fails
+        informational: true   # the codecov/patch status is never "fail"
