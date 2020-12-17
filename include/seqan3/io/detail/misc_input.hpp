@@ -71,7 +71,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
 /*!\brief Depending on the magic bytes of the given stream, return a decompression stream or forward the primary stream.
  * \param[in] primary_stream The primary (device) stream for reading.
  * \param[in,out] filename  The associated filename; compression extensions will be stripped. [optional]
- * \returns A pointer to the secondary stream with a default deleter or a NOP'ed deleter.
+ * \returns A pointer to the secondary stream with a default deleter or a nop-deleter.
  * \throws seqan3::file_open_error If the magic bytes suggest compression, but is not supported/available.
  */
 template <builtin_character char_t>
