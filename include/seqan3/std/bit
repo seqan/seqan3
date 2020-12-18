@@ -92,9 +92,6 @@ constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
 namespace std
 {
 
-// namespace
-// {
-
 #ifndef SEQAN3_CPP_LIB_BITOPS
 // forward declare
 template<class T> constexpr int countl_zero(T x) noexcept;
@@ -148,8 +145,6 @@ template<class T> constexpr T bit_width(T x) noexcept
     return detail::sizeof_bits<T> - countl_zero(x);
 }
 
-// } // anonymous namespace
-
 } // namespace std
 
 #endif // SEQAN3_CPP_LIB_INT_POW2
@@ -158,9 +153,6 @@ template<class T> constexpr T bit_width(T x) noexcept
 
 namespace std
 {
-
-// namespace
-// {
 
 //
 // // rotating
@@ -219,8 +211,6 @@ template<class T> constexpr int popcount(T x) noexcept
     else
         return __builtin_popcount(x);
 }
-
-// } // anonymous namespace
 
 } // namespace std
 
