@@ -24,6 +24,8 @@
 #ifndef SEQAN3_CPP_LIB_BITOPS
 #   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
+#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L
+#       define SEQAN3_CPP_LIB_BITOPS 1
 #   endif
 #endif
 
