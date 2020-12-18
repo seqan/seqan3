@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 template <typename iterator_t>
 SEQAN3_CONCEPT iterator_traits_has_iterator_category = requires()
@@ -73,7 +74,7 @@ TEST(iterator_category_tag_t, no_legacy_iterator)
         using view_t = std::ranges::basic_istream_view<char, char, std::char_traits<char>>;
         using iterator_t = std::ranges::iterator_t<view_t>;
 #if SEQAN3_WORKAROUND_GCC_96070
-        EXPECT_TRUE((std::same_as<seqan3::detail::iterator_category_tag_t<iterator_t>, void>));
+        EXPECT_SAME_TYPE(seqan3::detail::iterator_category_tag_t<iterator_t>, void);
 #else // ^^^ workaround / no workaround vvv
         EXPECT_FALSE(has_iterator_category_tag_t<iterator_t>);
 #endif // SEQAN3_WORKAROUND_GCC_96070
@@ -84,8 +85,8 @@ TEST(iterator_category_tag_t, no_legacy_iterator)
         using view_t = std::ranges::basic_istream_view<char, char, std::char_traits<char>>;
         using iterator_t = my_iterator<std::ranges::iterator_t<view_t>>;
 #if SEQAN3_WORKAROUND_GCC_96070
-        EXPECT_TRUE((std::same_as<seqan3::detail::iterator_category_tag_t<iterator_t>, void>));
-        EXPECT_TRUE((std::same_as<std::iterator_traits<iterator_t>::iterator_category, void>));
+        EXPECT_SAME_TYPE(seqan3::detail::iterator_category_tag_t<iterator_t>, void);
+        EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, void);
 #else // ^^^ workaround / no workaround vvv
         EXPECT_FALSE(has_iterator_category_tag_t<iterator_t>);
         EXPECT_FALSE(iterator_traits_has_iterator_category<iterator_t>);

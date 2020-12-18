@@ -13,6 +13,7 @@
 
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "../configuration/configuration_mock.hpp"
 
@@ -46,13 +47,13 @@ TYPED_TEST_P(pipeable_config_element_test, base_class_construction)
 TYPED_TEST_P(pipeable_config_element_test, configuration_construction)
 {
     seqan3::configuration cfg{TypeParam{}};
-    EXPECT_TRUE((std::same_as<decltype(cfg), seqan3::configuration<TypeParam>>));
+    EXPECT_SAME_TYPE(decltype(cfg), seqan3::configuration<TypeParam>);
 }
 
 TYPED_TEST_P(pipeable_config_element_test, configuration_assignment)
 {
     seqan3::configuration cfg = TypeParam{};
-    EXPECT_TRUE((std::same_as<decltype(cfg), seqan3::configuration<TypeParam>>));
+    EXPECT_SAME_TYPE(decltype(cfg), seqan3::configuration<TypeParam>);
 }
 
 TYPED_TEST_P(pipeable_config_element_test, exists)

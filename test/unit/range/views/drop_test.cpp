@@ -5,13 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
 #include <deque>
 #include <iostream>
 #include <list>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <range/v3/view/unique.hpp>
 
@@ -20,10 +23,8 @@
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 // ============================================================================
 //  test templates
@@ -131,7 +132,7 @@ TEST(view_drop, type_erasure)
 
         auto v = seqan3::views::drop(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
+        EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(3,3));
     }
 
@@ -140,7 +141,7 @@ TEST(view_drop, type_erasure)
 
         auto v = seqan3::views::drop(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
+        EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(3,3));
     }
 
@@ -149,7 +150,7 @@ TEST(view_drop, type_erasure)
 
         auto v = seqan3::views::drop(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{4, 5, 6}));
     }
 
@@ -158,7 +159,7 @@ TEST(view_drop, type_erasure)
 
         auto v = seqan3::views::drop(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{4, 5, 6}));
     }
 
@@ -177,7 +178,7 @@ TEST(view_drop, type_erasure)
 
         auto v = seqan3::views::drop(urange, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v), decltype(std::views::drop(urange, 3))>));
+        EXPECT_SAME_TYPE(decltype(v), decltype(std::views::drop(urange, 3)));
         EXPECT_RANGE_EQ(v, (std::vector{4, 5, 6}));
     }
 
@@ -187,7 +188,7 @@ TEST(view_drop, type_erasure)
         auto v = urange | std::views::filter([] (int) { return true; });
         auto v2 = seqan3::views::drop(v, 3);
 
-        EXPECT_TRUE((std::same_as<decltype(v2), decltype(std::views::drop(v, 3))>));
+        EXPECT_SAME_TYPE(decltype(v2), decltype(std::views::drop(v, 3)));
         EXPECT_RANGE_EQ(v2, (std::vector{4, 5, 6}));
     }
 }

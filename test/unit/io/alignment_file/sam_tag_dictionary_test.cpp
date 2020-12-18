@@ -7,10 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
 #include <type_traits>
 
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_tag;
 
@@ -30,61 +31,61 @@ TEST(sam_tag_type, type_member_of_known_tags)
 {
     // types according to the SAM specifications
     // (see https://samtools.github.io/hts-specs/SAMtags.pdf)
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"AM"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"AS"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"BC"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"BQ"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"BZ"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CB"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CC"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CG"_tag>::type, std::vector<int32_t>>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CM"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CO"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CP"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CQ"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CR"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CS"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CT"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"CY"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"E2"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"FI"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"FS"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"FZ"_tag>::type, std::vector<uint16_t>>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"H0"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"H1"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"H2"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"HI"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"IH"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"LB"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"MC"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"MD"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"MI"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"MQ"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"NH"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"NM"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"OC"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"OP"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"OQ"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"OX"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"PG"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"PQ"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"PT"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"PU"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"Q2"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"QT"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"QX"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"R2"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"RG"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"RT"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"RX"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"SA"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"SM"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"TC"_tag>::type, int32_t>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"U2"_tag>::type, std::string>));
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type<"UQ"_tag>::type, int32_t>));
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"AM"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"AS"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"BC"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"BQ"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"BZ"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CB"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CC"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CG"_tag>::type, std::vector<int32_t>);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CM"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CO"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CP"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CQ"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CR"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CS"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CT"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"CY"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"E2"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"FI"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"FS"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"FZ"_tag>::type, std::vector<uint16_t>);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"H0"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"H1"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"H2"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"HI"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"IH"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"LB"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"MC"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"MD"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"MI"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"MQ"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"NH"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"NM"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"OC"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"OP"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"OQ"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"OX"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"PG"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"PQ"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"PT"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"PU"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"Q2"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"QT"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"QX"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"R2"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"RG"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"RT"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"RX"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"SA"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"SM"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"TC"_tag>::type, int32_t);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"U2"_tag>::type, std::string);
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type<"UQ"_tag>::type, int32_t);
 
     // test the short cut helper
-    EXPECT_TRUE((std::same_as<seqan3::sam_tag_type_t<"AM"_tag>, seqan3::sam_tag_type<"AM"_tag>::type>));
+    EXPECT_SAME_TYPE(seqan3::sam_tag_type_t<"AM"_tag>, seqan3::sam_tag_type<"AM"_tag>::type);
 }
 
 TEST(sam_tag_dictionary, get_function_known_tag)

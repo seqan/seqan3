@@ -10,6 +10,7 @@
 #include <string>
 
 #include <seqan3/utility/type_traits/function_traits.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 std::function test_function_object = [] (size_t arg1, std::string & arg2)
 {
@@ -29,16 +30,16 @@ TEST(function_traits, argument_count)
 TEST(function_traits, result_type)
 {
     using function_t = decltype(test_function_object);
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::result_type, char>));
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_ptr_t>::result_type, std::string>));
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_t>::result_type, char);
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_ptr_t>::result_type, std::string);
 }
 
 TEST(function_traits, argument_type_at)
 {
     using function_t = decltype(test_function_object);
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::argument_type_at<0>, size_t>));
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_t>::argument_type_at<1>, std::string &>));
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_ptr_t>::argument_type_at<0>, int>));
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_ptr_t>::argument_type_at<1>, const double &&>));
-    EXPECT_TRUE((std::same_as<seqan3::function_traits<function_ptr_t>::argument_type_at<2>, bool &>));
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_t>::argument_type_at<0>, size_t);
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_t>::argument_type_at<1>, std::string &);
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_ptr_t>::argument_type_at<0>, int);
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_ptr_t>::argument_type_at<1>, const double &&);
+    EXPECT_SAME_TYPE(seqan3::function_traits<function_ptr_t>::argument_type_at<2>, bool &);
 }

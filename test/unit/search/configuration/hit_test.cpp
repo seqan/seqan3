@@ -9,6 +9,7 @@
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
 
@@ -31,13 +32,13 @@ INSTANTIATE_TYPED_TEST_SUITE_P(mode_elements, pipeable_config_element_test, test
 TEST(config_element_test, tags)
 {
     seqan3::configuration elem_all = seqan3::search_cfg::hit_all{};
-    EXPECT_TRUE((std::same_as<decltype(elem_all), seqan3::configuration<seqan3::search_cfg::hit_all>>));
+    EXPECT_SAME_TYPE(decltype(elem_all), seqan3::configuration<seqan3::search_cfg::hit_all>);
 
     seqan3::configuration elem_all_best = seqan3::search_cfg::hit_all_best{};
-    EXPECT_TRUE((std::same_as<decltype(elem_all_best), seqan3::configuration<seqan3::search_cfg::hit_all_best>>));
+    EXPECT_SAME_TYPE(decltype(elem_all_best), seqan3::configuration<seqan3::search_cfg::hit_all_best>);
 
     seqan3::configuration elem_single_best = seqan3::search_cfg::hit_single_best{};
-    EXPECT_TRUE((std::same_as<decltype(elem_single_best), seqan3::configuration<seqan3::search_cfg::hit_single_best>>));
+    EXPECT_SAME_TYPE(decltype(elem_single_best), seqan3::configuration<seqan3::search_cfg::hit_single_best>);
 }
 
 TEST(hit_strata_test, member_variable)

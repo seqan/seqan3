@@ -7,15 +7,16 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
+#include <seqan3/std/ranges>
 #include <type_traits>
+#include <vector>
 
 #include <range/v3/view/slice.hpp>
 
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_same_type.hpp>
 
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
@@ -93,7 +94,7 @@ TYPED_TEST(single_pass_input, deduction_guide_lvalue)
     // same as
     seqan3::detail::single_pass_input_view v2{data_container};
 
-    EXPECT_TRUE((std::same_as<decltype(v1), decltype(v2)>));
+    EXPECT_SAME_TYPE(decltype(v1), decltype(v2));
 }
 
 TYPED_TEST(single_pass_input, deduction_guide_view)
@@ -111,7 +112,7 @@ TYPED_TEST(single_pass_input, deduction_guide_view)
     seqan3::detail::single_pass_input_view<decltype(data_all_view)> v1{data_all_view};
     seqan3::detail::single_pass_input_view v2{std::move(data_view)};
 
-    EXPECT_TRUE((std::same_as<decltype(v1), decltype(v2)>));
+    EXPECT_SAME_TYPE(decltype(v1), decltype(v2));
 }
 
 TYPED_TEST(single_pass_input, view_construction)

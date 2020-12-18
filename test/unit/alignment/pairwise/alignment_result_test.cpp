@@ -21,6 +21,7 @@
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna5;
@@ -311,5 +312,5 @@ TEST(alignment_result_test, access_result_value_type)
     seqan3::alignment_result result(result_value);
 
     using result_value_t = typename seqan3::detail::alignment_result_value_type_accessor<decltype(result)>::type;
-    EXPECT_TRUE((std::same_as<result_value_t, decltype(result_value)>));
+    EXPECT_SAME_TYPE(result_value_t, decltype(result_value));
 }

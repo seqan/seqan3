@@ -11,6 +11,7 @@
 
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "configuration_mock.hpp"
 
@@ -243,28 +244,28 @@ TEST(configuration, remove_by_type)
         seqan3::configuration<foo, bax, bar> cfg{};
 
         // remove middle
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bax>()), seqan3::configuration<foo, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<bax>()), (seqan3::configuration<foo, bar>));
         // remove head
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bar>()), seqan3::configuration<foo, bax>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<bar>()), (seqan3::configuration<foo, bax>));
         // remove tail
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foo>()), seqan3::configuration<bax, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<foo>()), (seqan3::configuration<bax, bar>));
 
         seqan3::configuration<foo> single_cfg{};
-        EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foo>()), seqan3::configuration<>>));
+        EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foo>()), seqan3::configuration<>);
     }
 
     {   // const cfg
         seqan3::configuration<foo, bax, bar> const cfg{};
 
         // remove middle
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bax>()), seqan3::configuration<foo, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<bax>()), (seqan3::configuration<foo, bar>));
         // remove head
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<bar>()), seqan3::configuration<foo, bax>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<bar>()), (seqan3::configuration<foo, bax>));
         // remove tail
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foo>()), seqan3::configuration<bax, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<foo>()), (seqan3::configuration<bax, bar>));
 
         seqan3::configuration<foo> const single_cfg{};
-        EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foo>()), seqan3::configuration<>>));
+        EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foo>()), seqan3::configuration<>);
     }
 }
 
@@ -273,19 +274,19 @@ TEST(configuration, remove_by_type_template)
     {
         seqan3::configuration<foo, foobar<>, bar> cfg{};
 
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foobar>()), seqan3::configuration<foo, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<foobar>()), (seqan3::configuration<foo, bar>));
 
         seqan3::configuration<foobar<>> single_cfg{};
-        EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>>));
+        EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>);
     }
 
     {   //const cfg
         seqan3::configuration<foo, foobar<>, bar> const cfg{};
 
-        EXPECT_TRUE((std::same_as<decltype(cfg.template remove<foobar>()), seqan3::configuration<foo, bar>>));
+        EXPECT_SAME_TYPE(decltype(cfg.template remove<foobar>()), (seqan3::configuration<foo, bar>));
 
         seqan3::configuration<foobar<>> const single_cfg{};
-        EXPECT_TRUE((std::same_as<decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>>));
+        EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>);
     }
 }
 
@@ -295,19 +296,19 @@ TEST(configuration, get_or_by_type)
 
     { // l-value
         EXPECT_FLOAT_EQ(cfg.get_or(bax{1.3}).value, 2.2);
-        EXPECT_TRUE((std::same_as<decltype(cfg.get_or(bax{1.3})), bax &>));
+        EXPECT_SAME_TYPE(decltype(cfg.get_or(bax{1.3})), bax &);
         EXPECT_EQ(cfg.get_or(foo{"test"}).value, "test");
     }
 
     { // const l-value
         EXPECT_FLOAT_EQ(std::as_const(cfg).get_or(bax{1.3}).value, 2.2);
-        EXPECT_TRUE((std::same_as<decltype(std::as_const(cfg).get_or(bax{1.3})), bax const &>));
+        EXPECT_SAME_TYPE(decltype(std::as_const(cfg).get_or(bax{1.3})), bax const &);
         EXPECT_EQ(std::as_const(cfg).get_or(foo{"test"}).value, "test");
     }
 
     { // r-value
         EXPECT_FLOAT_EQ(std::move(seqan3::configuration<bax, bar>{cfg}).get_or(bax{1.3}).value, 2.2);
-        EXPECT_TRUE((std::same_as<decltype(seqan3::configuration<bax, bar>{cfg}.get_or(bax{1.3})), bax &&>));
+        EXPECT_SAME_TYPE(decltype(seqan3::configuration<bax, bar>{cfg}.get_or(bax{1.3})), bax &&);
         EXPECT_EQ(std::move(seqan3::configuration<bax, bar>{cfg}).get_or(foo{"test"}).value, "test");
     }
 
@@ -316,7 +317,7 @@ TEST(configuration, get_or_by_type)
         EXPECT_FLOAT_EQ(std::move(cfg_cr).get_or(bax{1.3}).value, 2.2);
         // TODO: Enable when gcc7 support is dropped or seqan3::get is implemented as CPO.
         // seqan3::configuration<bax, bar> const cfg_cr2{cfg};
-        // EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&>));
+        // EXPECT_SAME_TYPE(decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&);
         seqan3::configuration<bax, bar> const cfg_cr3{cfg};
         EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
     }
@@ -360,14 +361,14 @@ TEST(configuration, get_or_by_type_template)
         EXPECT_RANGE_EQ(cfg.get_or(alternative_t{double_vec_t{3.3}}).value, (std::vector{0, 1, 2, 3}));
         EXPECT_RANGE_EQ(cfg.get_or(alternative).value, (std::vector{0, 1, 2, 3}));
         EXPECT_EQ(cfg.get_or(foo{"test"}).value, "test");
-        EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative)), foobar<std::vector<int>> &>));
+        EXPECT_SAME_TYPE(decltype(cfg.get_or(alternative)), foobar<std::vector<int>> &);
     }
 
     { // const l-value
         EXPECT_RANGE_EQ(std::as_const(cfg).get_or(alternative_t{double_vec_t{3.3}}).value, (std::vector{0, 1, 2, 3}));
         EXPECT_RANGE_EQ(std::as_const(cfg).get_or(alternative).value, (std::vector{0, 1, 2, 3}));
         EXPECT_EQ(std::as_const(cfg).get_or(foo{"test"}).value, "test");
-        EXPECT_TRUE((std::same_as<decltype(std::as_const(cfg).get_or(alternative)), foobar<std::vector<int>> const &>));
+        EXPECT_SAME_TYPE(decltype(std::as_const(cfg).get_or(alternative)), foobar<std::vector<int>> const &);
     }
 
     { // r-value;
@@ -429,8 +430,8 @@ TEST(configuration, get_or_perfectly_forwarded_alternative)
     alternative_t const const_alternative{alternative};
 
     EXPECT_RANGE_EQ(cfg.get_or(alternative_t{std::vector<double>{3.3}}).value, (std::vector<double>{3.3}));
-    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative)), alternative_t &>));
-    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(const_alternative)), alternative_t const &>));
-    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(alternative_t{std::vector<double>{3.3}})), alternative_t>));
-    EXPECT_TRUE((std::same_as<decltype(cfg.get_or(std::move(const_alternative))), alternative_t const>));
+    EXPECT_SAME_TYPE(decltype(cfg.get_or(alternative)), alternative_t &);
+    EXPECT_SAME_TYPE(decltype(cfg.get_or(const_alternative)), alternative_t const &);
+    EXPECT_SAME_TYPE(decltype(cfg.get_or(alternative_t{std::vector<double>{3.3}})), alternative_t);
+    EXPECT_SAME_TYPE(decltype(cfg.get_or(std::move(const_alternative))), alternative_t const);
 }

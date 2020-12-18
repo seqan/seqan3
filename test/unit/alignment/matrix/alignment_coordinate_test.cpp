@@ -12,28 +12,29 @@
 #include <range/v3/view/iota.hpp>
 
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 TEST(advanceable_alignment_coordinate, column_index_type)
 {
     seqan3::detail::column_index_type ci{1u};
     EXPECT_EQ(ci.get(), 1u);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ci.get())>, size_t>));
+    EXPECT_SAME_TYPE(std::remove_reference_t<decltype(ci.get())>, size_t);
 
     seqan3::detail::column_index_type ci2{1};
     EXPECT_EQ(ci2.get(), 1);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ci2.get())>, std::ptrdiff_t>));
+    EXPECT_SAME_TYPE(std::remove_reference_t<decltype(ci2.get())>, std::ptrdiff_t);
 }
 
 TEST(advanceable_alignment_coordinate, row_index_type)
 {
     seqan3::detail::row_index_type ri{1u};
     EXPECT_EQ(ri.get(), 1u);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ri.get())>, size_t>));
+    EXPECT_SAME_TYPE(std::remove_reference_t<decltype(ri.get())>, size_t);
 
     seqan3::detail::row_index_type ri2{1};
     EXPECT_EQ(ri2.get(), 1);
-    EXPECT_TRUE((std::same_as<std::remove_reference_t<decltype(ri2.get())>, std::ptrdiff_t>));
+    EXPECT_SAME_TYPE(std::remove_reference_t<decltype(ri2.get())>, std::ptrdiff_t);
 }
 
 TEST(advanceable_alignment_coordinate, construction)
@@ -263,7 +264,7 @@ TEST(advanceable_alignment_coordinate, iota_column_index)
     col_incrementable co_end{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{0u}};
     auto v = std::views::iota(co_begin, co_end);
 
-    EXPECT_TRUE((std::same_as<decltype(v.begin()), decltype(v.end())>));
+    EXPECT_SAME_TYPE(decltype(v.begin()), decltype(v.end()));
     EXPECT_EQ((*(--v.end())).first, 4u);
 
     size_t test = 0u;
@@ -280,7 +281,7 @@ TEST(advanceable_alignment_coordinate, iota_row_index)
     row_incrementable co_end{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{5u}};
     auto v = std::views::iota(co_begin, co_end);
 
-    EXPECT_TRUE((std::same_as<decltype(v.begin()), decltype(v.end())>));
+    EXPECT_SAME_TYPE(decltype(v.begin()), decltype(v.end()));
     EXPECT_EQ((*(--v.end())).second, 4u);
 
     size_t test = 0u;
