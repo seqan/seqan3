@@ -107,6 +107,7 @@ SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
  * \implements seqan3::validator
+ * \tparam option_value_t Must be an arithmetic type.
  *
  * \details
  *
@@ -116,11 +117,12 @@ SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
  *
  * \include test/snippet/argument_parser/validators_1.cpp
  */
+template <arithmetic option_value_t>
 class arithmetic_range_validator
 {
 public:
     //!\brief The type of value that this validator invoked upon.
-    using option_value_type = double;
+    using option_value_type = option_value_t;
 
     /*!\brief The constructor.
      * \param[in] min_ Minimum set for the range to test.
