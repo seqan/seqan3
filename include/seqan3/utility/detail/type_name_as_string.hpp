@@ -47,9 +47,22 @@ inline std::string const type_name_as_string = [] ()
 #if defined(__GNUC__) || defined(__clang__) // clang and gcc only return a mangled name.
     using safe_ptr_t = std::unique_ptr<char, std::function<void(char *)>>;
 
+    // https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.3/a01696.html
     int status{};
     safe_ptr_t demangled_name_ptr{abi::__cxa_demangle(typeid(type).name(), 0, 0, &status),
                                   [] (char * name_ptr) { free(name_ptr); }};
+
+    // We exclude status != 0, because this code can't be reached normally, only if there is a defect in the compiler
+    // itself, since the type is directly given by the compiler. see https://github.com/seqan/seqan3/pull/2311
+    // LCOV_EXCL_START
+    if (status != 0)
+        return std::string{typeid(type).name()} +
+               " (abi::__cxa_demangle error status (" + std::to_string(status) + "): " +
+               (status == -1 ? "A memory allocation failure occurred." :
+               (status == -2 ? "mangled_name is not a valid name under the C++ ABI mangling rules." :
+               (status == -3 ? "One of the arguments is invalid." : "Unknown Error"))) + ")";
+    // LCOV_EXCL_STOP
+
     demangled_name = std::string{std::addressof(*demangled_name_ptr)};
 #else // e.g. MSVC
     demangled_name = typeid(type).name();
