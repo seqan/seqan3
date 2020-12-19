@@ -45,13 +45,19 @@
     #include <seqan/stream.h>
 #endif
 
+#ifndef NDEBUG
+inline constexpr size_t input_size = 10'000;
+#else
+inline constexpr size_t input_size = 10'000'000;
+#endif // NDEBUG
+
 std::string input
 {
     [] ()
     {
         std::string line{"The quick brown fox jumps over the lazy dog"};
         std::string ret;
-        for (size_t i = 0; i < 10'000'000; ++i)
+        for (size_t i = 0; i < input_size; ++i)
             ret += line;
         return ret;
     } ()

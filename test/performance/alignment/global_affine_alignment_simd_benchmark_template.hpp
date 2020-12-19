@@ -29,7 +29,7 @@
 // Globally defined constants to ensure same test data.
 inline constexpr size_t sequence_length = 150;
 #ifndef NDEBUG
-inline constexpr size_t set_size        = 128;
+inline constexpr size_t set_size        = 16;
 #else
 inline constexpr size_t set_size        = 1024;
 #endif // NDEBUG

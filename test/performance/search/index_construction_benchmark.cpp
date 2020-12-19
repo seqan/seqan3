@@ -25,7 +25,11 @@ static constexpr size_t seed{0x6126f};
 
 static void arguments(benchmark::internal::Benchmark * b)
 {
+#ifndef NDEBUG
+    for (int32_t length : {50, 5000})
+#else
     for (int32_t length : {50, 5000, 50'000})
+#endif  // NDEBUG
     {
         if (length > max_length)
             throw std::logic_error{"Increase max_length to at least " + std::to_string(length)};
