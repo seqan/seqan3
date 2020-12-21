@@ -1,4 +1,4 @@
-#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/utility/tuple/pod_tuple.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()
