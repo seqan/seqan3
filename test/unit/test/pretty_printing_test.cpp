@@ -45,7 +45,7 @@ TEST(pretty_printing, gtest_output)
     EXPECT_EQ(gtest_str(std::make_tuple<int, int>(42, -10)), "(42, -10)"s);
     EXPECT_EQ(debug_str(std::make_tuple<int, int>(42, -10)), "(42,-10)"s);
 
-#if GTEST_INTERNAL_HAS_VARIANT // googletest >1.10.0
+#if GTEST_INTERNAL_HAS_VARIANT // googletest at head (>=1.10.x)
     EXPECT_EQ(gtest_str(std::variant<int>{0}), "('int(index = 0)' with value 0)"s);
 #else // googletest <= 1.10.0
     EXPECT_EQ(gtest_str(std::variant<int>{0}), "0"s);
