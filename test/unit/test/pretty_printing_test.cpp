@@ -52,7 +52,7 @@ TEST(pretty_printing, gtest_output)
 #endif
     EXPECT_EQ(debug_str(std::variant<int>{0}), "0"s);
 
-#if GTEST_INTERNAL_HAS_OPTIONAL // googletest >1.10.0
+#if GTEST_INTERNAL_HAS_OPTIONAL // googletest at head (>=1.10.x)
     EXPECT_EQ(gtest_str(std::optional<int>{}), "(nullopt)"s);
 #else // googletest <= 1.10.0
     EXPECT_EQ(gtest_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
