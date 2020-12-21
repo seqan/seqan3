@@ -287,86 +287,96 @@ void bidirectional_search_stratified(benchmark::State & state, options && o)
     benchmark::DoNotOptimize(sum);
 }
 
+#ifndef NDEBUG
+inline constexpr size_t small_size = 1'000;
+inline constexpr size_t medium_size = 5'000;
+inline constexpr size_t big_size = 10'000;
+#else
+inline constexpr size_t small_size = 10'000;
+inline constexpr size_t medium_size = 50'000;
+inline constexpr size_t big_size = 100'000;
+#endif // NDEBUG
+
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch0,
-                  options{10'000, false, 10, 50, 0.18, 0.18, 0, 0, 0, 1.75});
+                  options{small_size, false, 10, 50, 0.18, 0.18, 0, 0, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch1,
-                  options{10'000, false, 10, 50, 0.18, 0.18, 0, 1, 0, 1.75});
+                  options{small_size, false, 10, 50, 0.18, 0.18, 0, 1, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch2,
-                  options{10'000, false, 10, 50, 0.18, 0.18, 0, 2, 0, 1.75});
+                  options{small_size, false, 10, 50, 0.18, 0.18, 0, 2, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all_collection, highErrorReadsSearch3,
-                  options{10'000, false, 10, 50, 0.18, 0.18, 0, 3, 0, 1.75});
+                  options{small_size, false, 10, 50, 0.18, 0.18, 0, 3, 0, 1.75});
 
 BENCHMARK_CAPTURE(unidirectional_search_all, lowErrorReadsSearch3,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch0,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch1,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch2,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch0Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch1Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch2Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_all, highErrorReadsSearch3Rep,
-                  options{100'000, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
+                  options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
 
 BENCHMARK_CAPTURE(bidirectional_search_all, lowErrorReadsSearch3,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch0,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch1,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch2,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3,
-                  options{100'000, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
+                  options{big_size, false, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch0Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 0, 0, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch1Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 1, 1, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch2Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 2, 2, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3Rep,
-                  options{100'000, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
+                  options{big_size, true, 50, 50, 0.18, 0.18, 0, 3, 3, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_all, highErrorReadsSearch3Rep,
-                  options{100'000, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
+                  options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 3, 1.75});
 
 BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata0Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata1Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, lowErrorReadsSearch3Strata2Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata0Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata1Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata2Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 BENCHMARK_CAPTURE(unidirectional_search_stratified, highErrorReadsSearch3Strata2RepLong,
-                  options{100'000, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
+                  options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 
 BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata0Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 0, 1});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata1Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 1, 1});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, lowErrorReadsSearch3Strata2Rep,
-                  options{50'000, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
+                  options{medium_size, true, 50, 50, 0.18, 0.18, 0, 3, 2, 1});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata0Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 0, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata1Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 1, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata2Rep,
-                  options{50'000, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
+                  options{medium_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 BENCHMARK_CAPTURE(bidirectional_search_stratified, highErrorReadsSearch3Strata2RepLong,
-                  options{100'000, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
+                  options{big_size, true, 50, 50, 0.30, 0.30, 0, 3, 2, 1.75});
 
 // ============================================================================
 //  instantiate tests
