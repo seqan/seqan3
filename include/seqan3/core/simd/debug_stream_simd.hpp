@@ -6,42 +6,14 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::debug_stream overload for seqan3::simd::simd_type.
+ * \brief [DEPRECATED] Provides seqan3::debug_stream overload for seqan3::simd::simd_type.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \deprecated This header will be removed in SeqAn-3.1.0. Please use seqan3/utility/simd/detail/debug_stream_simd.hpp instead.
  */
 
 #pragma once
 
-#include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
 
-namespace seqan3
-{
-
-/*!\brief Overload for debug_stream for simd types.
- * \ingroup simd
- * \private
- * \todo Make this public again. We made this documentation internal-documentation only for the 3.0.0 release, because
- * the API was not in shape yet. Remove the `private` and `todo` commands and remove `seqan3::simd` from
- * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
- */
-template <typename char_t, typename simd_t>
-//!\cond
-    requires simd::simd_concept<std::remove_cvref_t<simd_t>>
-//!\endcond
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
-{
-    using simd_type = std::remove_cvref_t<simd_t>;
-    constexpr size_t length = simd::simd_traits<simd_type>::length;
-    using scalar_type = typename simd::simd_traits<simd_type>::scalar_type;
-
-    std::array<scalar_type, length> array{};
-    for (size_t i = 0; i < length; ++i)
-        array[i] = simd[i];
-    s << array;
-    return s;
-}
-
-} // namespace seqan3
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/simd/detail/debug_stream_simd.hpp> instead.")

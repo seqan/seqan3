@@ -21,9 +21,9 @@
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/simd/simd_algorithm.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/concept.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 
 namespace seqan3::detail
 {

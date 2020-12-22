@@ -12,14 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
+
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/simd/simd_algorithm.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
 {

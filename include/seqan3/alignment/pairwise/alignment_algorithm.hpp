@@ -28,14 +28,14 @@
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/simd/concept.hpp>
-#include <seqan3/core/simd/simd.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
-#include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/take.hpp>
+#include <seqan3/utility/simd/concept.hpp>
+#include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
 
 namespace seqan3::detail

@@ -12,14 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
+#include <seqan3/std/span>
+
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_proxy.hpp>
 #include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/core/simd/concept.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
 {

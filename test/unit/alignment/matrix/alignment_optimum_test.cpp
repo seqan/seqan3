@@ -10,8 +10,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
-#include <seqan3/core/simd/simd.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 
 #include <seqan3/test/simd_utility.hpp>
 

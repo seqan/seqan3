@@ -14,7 +14,7 @@
 
 #include <array>
 
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 
 //!\cond DEV
 /*!\brief #SIMD_EQ checks if the sizes and the content of two given
@@ -29,7 +29,7 @@
  *
  * ###Example
  *
- * \include test/snippet/core/simd/simd_test_utility.cpp
+ * \include test/snippet/test/simd_utility.cpp
  */
 #define SIMD_EQ(...) do { \
     auto [left_simd_argument, right_simd_argument] = std::tuple{__VA_ARGS__}; \

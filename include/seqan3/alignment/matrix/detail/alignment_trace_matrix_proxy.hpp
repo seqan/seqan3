@@ -15,7 +15,7 @@
 #include <seqan3/std/concepts>
 
 #include <seqan3/alignment/matrix/trace_directions.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail

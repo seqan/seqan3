@@ -6,23 +6,14 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::default_simd_backend
+ * \brief [DEPRECATED] Provides seqan3::detail::default_simd_backend
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \deprecated This header will be removed in SeqAn-3.1.0. Please use seqan3/utility/simd/detail/default_simd_backend.hpp instead.
  */
 
 #pragma once
 
-#include <seqan3/core/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/detail/default_simd_backend.hpp>
 
-namespace seqan3::detail
-{
-
-/*!\brief seqan3::detail::default_simd_backend is the default used implementation of
- * seqan3::simd::simd_type.
- * \ingroup simd
- * \tparam scalar_t The underlying type of a simd vector
- * \tparam length The number of packed values in a simd vector
- */
-template <typename scalar_t, size_t length>
-using default_simd_backend = builtin_simd<scalar_t, length>;
-} // namespace seqan3::detail
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/simd/detail/default_simd_backend.hpp> instead.")

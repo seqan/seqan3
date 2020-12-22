@@ -19,7 +19,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/tuple_utility.hpp>
 
 namespace seqan3::detail

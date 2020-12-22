@@ -1,3 +1,0 @@
-seqan3_benchmark(simd_algorithm_benchmark.cpp)
-seqan3_benchmark(view_iota_simd_benchmark.cpp)
-seqan3_benchmark(view_to_simd_chunk_benchmark.cpp)
