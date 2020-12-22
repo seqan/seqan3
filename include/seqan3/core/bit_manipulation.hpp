@@ -48,6 +48,7 @@ constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
  * \returns True if *n* is a power of two. False otherwise.
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
+ * \deprecated Use std::has_single_bit instead.
  */
 SEQAN3_DEPRECATED_310 constexpr bool is_power_of_two(size_t const n)
 {
@@ -64,6 +65,7 @@ SEQAN3_DEPRECATED_310 constexpr bool is_power_of_two(size_t const n)
  * \returns The next power of two of *n*. If *n* is already a power of two, returns *n*.
  *
  * \sa https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+ * \deprecated Use std::bit_ceil instead.
  */
 SEQAN3_DEPRECATED_310 constexpr size_t next_power_of_two(size_t n)
 {
@@ -71,28 +73,30 @@ SEQAN3_DEPRECATED_310 constexpr size_t next_power_of_two(size_t n)
 }
 
 /*!\brief Returns the number of 1-bits.
-* \ingroup core
-*
-* \param[in] n An unsigned integer.
-*
-* \returns The number of 1-bits.
-*
-* ### Example
-*
-* \include test/snippet/core/detail/popcount.cpp
-*
-* ### Exception
-*
-* No-throw guarantee.
-*
-* ### Thread-safety
-*
-* Thread safe.
-*
-* ### Complexity
-*
-* Constant.
-*/
+ * \ingroup core
+ *
+ * \param[in] n An unsigned integer.
+ *
+ * \returns The number of 1-bits.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/popcount.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ *
+ * \deprecated Use std::popcount instead.
+ */
 template <std::unsigned_integral unsigned_t>
 SEQAN3_DEPRECATED_310 constexpr uint8_t popcount(unsigned_t const n) noexcept
 {
@@ -100,30 +104,32 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t popcount(unsigned_t const n) noexcept
 }
 
 /*!\brief Returns the number of leading 0-bits, starting at the most significant bit position.
-* \ingroup core
-*
-* \param[in] n An unsigned integer.
-*
-* \attention *n = 0* is a special case and is undefined behaviour.
-*
-* \returns The number of leading 0-bits.
-*
-* ### Example
-*
-* \include test/snippet/core/detail/count_leading_zeros.cpp
-*
-* ### Exception
-*
-* No-throw guarantee.
-*
-* ### Thread-safety
-*
-* Thread safe.
-*
-* ### Complexity
-*
-* Constant.
-*/
+ * \ingroup core
+ *
+ * \param[in] n An unsigned integer.
+ *
+ * \attention *n = 0* is a special case and is undefined behaviour.
+ *
+ * \returns The number of leading 0-bits.
+ *
+ * ### Example
+ *
+ * \include test/snippet/core/detail/count_leading_zeros.cpp
+ *
+ * ### Exception
+ *
+ * No-throw guarantee.
+ *
+ * ### Thread-safety
+ *
+ * Thread safe.
+ *
+ * ### Complexity
+ *
+ * Constant.
+ *
+ * \deprecated Use std::countl_zero instead.
+ */
 template <std::unsigned_integral unsigned_t>
 SEQAN3_DEPRECATED_310 constexpr uint8_t count_leading_zeros(unsigned_t const n) noexcept
 {
@@ -155,6 +161,8 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t count_leading_zeros(unsigned_t const n) 
  * ### Complexity
  *
  * Constant.
+ *
+ * \deprecated Use std::countr_zero instead.
  */
 template <std::unsigned_integral unsigned_t>
 SEQAN3_DEPRECATED_310 constexpr uint8_t count_trailing_zeros(unsigned_t const n) noexcept
@@ -187,6 +195,8 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t count_trailing_zeros(unsigned_t const n)
  * ### Complexity
  *
  * Constant.
+ *
+ * \deprecated Use std::bit_width(n) - 1 instead.
  */
 template <std::unsigned_integral unsigned_t>
 SEQAN3_DEPRECATED_310 constexpr uint8_t most_significant_bit_set(unsigned_t const n) noexcept
