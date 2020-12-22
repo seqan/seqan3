@@ -48,6 +48,7 @@ struct stream_buffer_exposer : public std::basic_streambuf<char_t, traits_t>
     using base_t::eback;
     using base_t::gptr;
     using base_t::egptr;
+    using base_t::setg;
     using base_t::gbump;
     using base_t::underflow;
 
