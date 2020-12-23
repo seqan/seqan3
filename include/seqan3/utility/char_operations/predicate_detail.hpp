@@ -19,7 +19,6 @@
 #include <stdexcept>
 #include <string>
 
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
@@ -304,41 +303,6 @@ struct is_in_interval_type : public char_predicate_base<is_in_interval_type<inte
 
         for (size_t i = interval_first; i <= static_cast<size_t>(interval_last); ++i)
             ret[i] = true;
-
-        return ret;
-    }();
-};
-
-// ----------------------------------------------------------------------------
-// is_in_alphabet_type
-// ----------------------------------------------------------------------------
-
-/*!\brief Parse condition that checks if a given value is within the given alphabet `alphabet_t`.
- * \ingroup stream
- * \implements seqan3::detail::char_predicate
- * \tparam alphabet_t The alphabet type. Must model seqan3::alphabet.
- */
-template <detail::constexpr_alphabet alphabet_t>
-struct is_in_alphabet_type : public char_predicate_base<is_in_alphabet_type<alphabet_t>>
-{
-public:
-    //!\brief The message representing this condition.
-    inline static const std::string msg = std::string{"is_in_alphabet<"}          +
-                                          detail::type_name_as_string<alphabet_t> +
-                                          std::string{">"};
-
-    //!\brief The base type.
-    using base_t = char_predicate_base<is_in_alphabet_type<alphabet_t>>;
-
-    //!\brief Import the data type from the base class.
-    using typename base_t::data_t;
-    //!\brief The look-up table that is used to evaluate the input.
-    static constexpr data_t data = [] () constexpr
-    {
-        data_t ret{};
-
-        for (size_t i = 0; i < 256; ++i)
-            ret[i] = char_is_valid_for<alphabet_t>(static_cast<uint8_t>(i));
 
         return ret;
     }();
