@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/range/type_traits.hpp>
@@ -40,6 +41,7 @@
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3
 {
@@ -269,7 +271,7 @@ private:
 
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr not_in_alph = !is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
 
         #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             auto it = stream_view.begin();
@@ -282,12 +284,13 @@ private:
             {
                 if ((is_space || is_digit)(*it))
                     continue;
-                else if (not_in_alph(*it))
+                else if (!is_legal_alph(*it))
                 {
                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                        not_in_alph.msg +
-                                        " evaluated to true on " +
-                                        detail::make_printable(*it)};
+                                      "char_is_valid_for<" +
+                                      detail::type_name_as_string<seq_legal_alph_type> +
+                                      "> evaluated to false on " +
+                                      detail::make_printable(*it)};
                 }
 
                 seq.push_back(assign_char_to(*it, std::ranges::range_value_t<seq_type>{}));
@@ -300,14 +303,15 @@ private:
 
             std::ranges::copy(stream_view | views::take_until(is_id)                   // until next header (or end)
                                           | std::views::filter(!(is_space || is_digit))// ignore whitespace and numbers
-                                          | std::views::transform([not_in_alph] (char const c)
+                                          | std::views::transform([is_legal_alph] (char const c)
                                             {
-                                                if (not_in_alph(c))
+                                                if (!is_legal_alph(c))
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                        not_in_alph.msg +
-                                                                        " evaluated to false on " +
-                                                                        detail::make_printable(c)};
+                                                                      "char_is_valid_for<" +
+                                                                      detail::type_name_as_string<seq_legal_alph_type> +
+                                                                      "> evaluated to false on " +
+                                                                      detail::make_printable(c)};
                                                 }
                                                 return c;
                                             })                                      // enforce legal alphabet
