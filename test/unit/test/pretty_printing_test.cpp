@@ -44,18 +44,27 @@ TEST(pretty_printing, gtest_output)
 
     EXPECT_EQ(gtest_str(std::make_tuple<int, int>(42, -10)), "(42, -10)"s);
     EXPECT_EQ(debug_str(std::make_tuple<int, int>(42, -10)), "(42,-10)"s);
+
+#if GTEST_INTERNAL_HAS_VARIANT // googletest at head (>=1.10.x)
+    EXPECT_EQ(gtest_str(std::variant<int>{0}), "('int(index = 0)' with value 0)"s);
+#else // googletest <= 1.10.0
+    EXPECT_EQ(gtest_str(std::variant<int>{0}), "0"s);
+#endif
+    EXPECT_EQ(debug_str(std::variant<int>{0}), "0"s);
+
+#if GTEST_INTERNAL_HAS_OPTIONAL // googletest at head (>=1.10.x)
+    EXPECT_EQ(gtest_str(std::optional<int>{}), "(nullopt)"s);
+#else // googletest <= 1.10.0
+    EXPECT_EQ(gtest_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
+#endif
+    EXPECT_EQ(debug_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
 }
 
 TEST(pretty_printing, std_output)
 {
+    // if any of these tests get supported by googletest move them to gtest_output
     EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
     EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
-
-    EXPECT_EQ(gtest_str(std::variant<int>{0}), "0"s);
-    EXPECT_EQ(debug_str(std::variant<int>{0}), "0"s);
-
-    EXPECT_EQ(gtest_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
-    EXPECT_EQ(debug_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
 
     EXPECT_EQ(gtest_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
     EXPECT_EQ(debug_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
