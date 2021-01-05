@@ -138,16 +138,26 @@ private:
             std::cout << ".SH LEGAL\n";
 
             if (!empty(meta.short_copyright))
-                std::cout << "\\fB" << meta.app_name << " Copyright:\\fR " << meta.short_copyright << "\n.br\n";
+                std::cout << in_bold(meta.app_name + " Copyright:") << ' ' << meta.short_copyright << "\n.br\n";
 
-            std::cout << "\\fBSeqAn Copyright:\\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n.br\n";
+            std::cout << in_bold("SeqAn Copyright:")
+                      << " 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n.br\n";
 
             if (!empty(meta.citation))
-                std::cout << "\\fBIn your academic works please cite:\\fR " << meta.citation << "\n.br\n";
+                std::cout << in_bold("In your academic works please cite:") << ' ' << meta.citation << "\n.br\n";
 
             if (!empty(meta.long_copyright))
-                std::cout << "For full copyright and/or warranty information see \\fB--copyright\\fR.\n";
+                std::cout << "For full copyright and/or warranty information see " << in_bold("--copyright") << ".\n";
         }
+    }
+
+    /*!\brief Format string as in_bold.
+     * \param[in] str The input string to format in bold.
+     * \returns The string `str` wrapped in bold formatting.
+     */
+    std::string in_bold(std::string const & str)
+    {
+        return "\\fB" + str + "\\fR";
     }
 
     //!\brief Needed for correct indentation and line breaks.
