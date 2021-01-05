@@ -132,7 +132,7 @@ private:
     //!\brief Prints a help page footer in man page format.
     void print_footer()
     {
-        print_legal();
+        // no footer
     }
 
     /*!\brief Format string as in_bold.
