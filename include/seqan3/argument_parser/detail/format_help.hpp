@@ -198,7 +198,7 @@ protected:
     //!\brief Prints a help page footer to std::cout.
     void print_footer()
     {
-        print_legal();
+        // no footer
     }
 
     /*!\brief Formats text for pretty command line printing.
