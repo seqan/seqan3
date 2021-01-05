@@ -134,7 +134,7 @@ private:
         if (line_is_paragraph)
             maybe_close_paragraph();
         else
-            std::cout << "<br />\n";
+            std::cout << "<br>\n";
     }
 
     /*!\brief Prints a help page list_item in HTML format to std::cout.
