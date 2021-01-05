@@ -53,7 +53,7 @@ inline std::string const type_name_as_string = [] ()
                                   [] (char * name_ptr) { free(name_ptr); }};
 
     // We exclude status != 0, because this code can't be reached normally, only if there is a defect in the compiler
-    // itself, since the type is directly given by the compiler. see https://github.com/seqan/seqan3/pull/2311
+    // itself, since the type is directly given by the compiler. See https://github.com/seqan/seqan3/pull/2311.
     // LCOV_EXCL_START
     if (status != 0)
         return std::string{typeid(type).name()} +
