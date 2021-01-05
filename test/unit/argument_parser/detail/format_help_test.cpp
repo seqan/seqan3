@@ -211,7 +211,7 @@ TEST(help_page_printing, version_call)
     // Version call with url and options.
     seqan3::argument_parser parser4{"test_parser", 2, argv3};
     test_accessor::set_terminal_width(parser4, 80);
-    parser4.info.url = "www.seqan.de";
+    parser4.info.url = "https://seqan.de";
     parser4.add_option(option_value, 'i', "int", "this is a int option.");
     parser4.add_flag(flag_value, 'f', "flag", "this is a flag.");
     parser4.add_positional_option(pos_opt_value, "this is a positional option.");
@@ -224,8 +224,7 @@ TEST(help_page_printing, version_call)
                basic_version_str +
                "\n" +
                "URL\n"
-               "    www.seqan.de\n"
-               "\n";
+               "    https://seqan.de\n";
     EXPECT_EQ(std_cout, expected);
 }
 
