@@ -41,8 +41,8 @@ std::string const basic_options_str = "OPTIONS\n"
                                       "          Whether to to check for the newest app version. Default: 1.\n";
 
 std::string const basic_version_str = "VERSION\n"
-                                      "    Last update: \n"
-                                      "    test_parser version: \n"
+                                      "    Last update:\n"
+                                      "    test_parser version:\n"
                                       "    SeqAn version: " + seqan3::seqan3_version + "\n";
 
 std::string license_text()
@@ -127,7 +127,8 @@ TEST(help_page_printing, with_short_copyright)
                "\n" +
                "LEGAL\n"
                "    test_parser Copyright: short\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n";
+               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    3-clause BSDL.\n";
     EXPECT_EQ(std_cout, expected);
 }
 
@@ -146,7 +147,8 @@ TEST(help_page_printing, with_long_copyright)
                basic_version_str +
                "\n" +
                "LEGAL\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
+               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    3-clause BSDL.\n"
                "    For full copyright and/or warranty information see --copyright.\n";
     EXPECT_EQ(std_cout, expected);
 }
@@ -166,7 +168,8 @@ TEST(help_page_printing, with_citation)
                basic_version_str +
                "\n" +
                "LEGAL\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
+               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    3-clause BSDL.\n"
                "    In your academic works please cite: citation\n";
     EXPECT_EQ(std_cout, expected);
 }
@@ -219,6 +222,7 @@ TEST(help_page_printing, version_call)
                "===========\n"
                "\n" +
                basic_version_str +
+               "\n" +
                "URL\n"
                "    www.seqan.de\n"
                "\n";
