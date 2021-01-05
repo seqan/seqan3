@@ -163,8 +163,6 @@ private:
     //!\brief Prints a help page footer in HTML format to std::cout.
     void print_footer()
     {
-        print_version();
-
         // Print legal stuff
         if ((!meta.short_copyright.empty()) || (!meta.long_copyright.empty()) || (!meta.citation.empty()))
         {

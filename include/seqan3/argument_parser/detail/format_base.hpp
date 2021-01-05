@@ -336,6 +336,8 @@ public:
                 print_line(example);
         }
 
+        print_version();
+
         derived_t().print_footer();
 
         std::exit(EXIT_SUCCESS); // program should not continue from here
