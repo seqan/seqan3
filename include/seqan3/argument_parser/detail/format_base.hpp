@@ -442,6 +442,38 @@ protected:
         }
     }
 
+    //!\brief Prints the legal information.
+    void print_legal()
+    {
+        // Print legal stuff
+        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
+        {
+            derived_t().print_section("Legal");
+
+            if (!empty(meta.short_copyright))
+            {
+                derived_t().print_line(derived_t().in_bold(meta.app_name + " Copyright: ") + meta.short_copyright,
+                                       false);
+            }
+
+            derived_t().print_line(derived_t().in_bold("SeqAn Copyright: ") +
+                                   "2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.", false);
+
+            if (!empty(meta.citation))
+            {
+                derived_t().print_line(derived_t().in_bold("In your academic works please cite: ") + meta.citation,
+                                       false);
+            }
+
+            if (!empty(meta.long_copyright))
+            {
+                derived_t().print_line("For full copyright and/or warranty information see " +
+                                       derived_t().in_bold("--copyright") + ".",
+                                       false);
+            }
+        }
+    }
+
     //!\brief Vector of functions that stores all calls except add_positional_option.
     std::vector<std::function<void()>> parser_set_up_calls;
     //!\brief Vector of functions that stores add_positional_option calls.
