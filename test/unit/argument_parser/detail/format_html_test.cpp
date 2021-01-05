@@ -48,10 +48,14 @@ TEST(html_format, empty_information)
                            "<dd>Whether to to check for the newest app version. Default: 1.</dd>\n"
                            "</dl>\n"
                            "<h2>Version</h2>\n"
-                           "<strong>Last update:</strong> <br>\n"
-                           "<strong>empty_options version:</strong> <br>\n"
-                           "<strong>SeqAn version:</strong> " + seqan3::seqan3_version + "<br>\n"
+                           "<p>\n"
+                           "<strong>Last update: </strong>\n"
                            "<br>\n"
+                           "<strong>empty_options version: </strong>\n"
+                           "<br>\n"
+                           "<strong>SeqAn version: </strong>" + seqan3::seqan3_version + "\n"
+                           "<br>\n"
+                           "</p>\n"
                            "</body></html>");
     EXPECT_EQ(my_stdout, expected);
 
@@ -80,7 +84,7 @@ TEST(html_format, full_information_information)
    parser1.info.description.push_back("description");
    parser1.info.description.push_back("description2");
    parser1.info.short_description = "short description";
-   parser1.info.url = "www.seqan.de";
+   parser1.info.url = "https://seqan.de";
    parser1.info.short_copyright = "short copyright";
    parser1.info.long_copyright = "long_copyright";
    parser1.info.citation = "citation";
@@ -158,12 +162,19 @@ TEST(html_format, full_information_information)
                           "example2\n"
                           "</p>\n"
                           "<h2>Version</h2>\n"
-                          "<strong>Last update:</strong> <br>\n"
-                          "<strong>program_full_options version:</strong> <br>\n"
-                          "<strong>SeqAn version:</strong> " + seqan3::seqan3_version + "<br>\n"
-                          "<h2>Url</h2>\n"
-                          "www.seqan.de<br>\n"
+                          "<p>\n"
+                          "<strong>Last update: </strong>\n"
                           "<br>\n"
+                          "<strong>program_full_options version: </strong>\n"
+                          "<br>\n"
+                          "<strong>SeqAn version: </strong>" + seqan3::seqan3_version + "\n"
+                          "<br>\n"
+                          "</p>\n"
+                          "<h2>Url</h2>\n"
+                          "<p>\n"
+                          "https://seqan.de\n"
+                          "<br>\n"
+                          "</p>\n"
                           "<h2>Legal</h2>\n"
                           "<strong>program_full_options Copyright: </strong>short copyright<br>\n"
                           "<strong>SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n"

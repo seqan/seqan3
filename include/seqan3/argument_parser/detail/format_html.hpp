@@ -163,21 +163,10 @@ private:
     //!\brief Prints a help page footer in HTML format to std::cout.
     void print_footer()
     {
+        print_version();
+
         maybe_close_list();
-
-        // Print version, date and url.
-        std::cout << "<h2>Version</h2>\n"
-                  << in_bold("Last update:") << ' ' << to_html(meta.date) << "<br>\n"
-                  << in_bold(meta.app_name + " version:") << ' ' << meta.version << "<br>\n"
-                  << in_bold("SeqAn version:") << ' ' << SEQAN3_VERSION_MAJOR << '.' <<  SEQAN3_VERSION_MINOR << '.'
-                  << SEQAN3_VERSION_PATCH << "<br>\n";
-
-        if (!meta.url.empty())
-        {
-            std::cout << "<h2>Url</h2>\n"
-                    << meta.url << "<br>\n";
-        }
-        std::cout << "<br>\n";
+        maybe_close_paragraph();
 
         // Print legal stuff
         if ((!meta.short_copyright.empty()) || (!meta.long_copyright.empty()) || (!meta.citation.empty()))
