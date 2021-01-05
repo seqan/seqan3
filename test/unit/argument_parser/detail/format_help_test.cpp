@@ -224,8 +224,7 @@ TEST(help_page_printing, version_call)
                basic_version_str +
                "\n" +
                "URL\n"
-               "    www.seqan.de\n"
-               "\n";
+               "    www.seqan.de\n";
     EXPECT_EQ(std_cout, expected);
 }
 
