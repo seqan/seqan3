@@ -198,23 +198,7 @@ protected:
     //!\brief Prints a help page footer to std::cout.
     void print_footer()
     {
-        // Print legal stuff
-        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
-        {
-            print_section("Legal");
-
-            if (!empty(meta.short_copyright))
-                print_line(in_bold(meta.app_name + " Copyright: ") + meta.short_copyright, false);
-
-            print_line(in_bold("SeqAn Copyright: ") +
-                       "2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.", false);
-
-            if (!empty(meta.citation))
-                print_line(in_bold("In your academic works please cite: ") + meta.citation, false);
-
-            if (!empty(meta.long_copyright))
-                print_line("For full copyright and/or warranty information see " + in_bold("--copyright") + ".", false);
-        }
+        print_legal();
     }
 
     /*!\brief Formats text for pretty command line printing.
