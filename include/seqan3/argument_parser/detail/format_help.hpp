@@ -198,8 +198,6 @@ protected:
     //!\brief Prints a help page footer to std::cout.
     void print_footer()
     {
-        print_version();
-
         // Print legal stuff
         if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
         {

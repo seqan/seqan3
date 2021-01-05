@@ -163,8 +163,6 @@ private:
     //!\brief Prints a help page footer in HTML format to std::cout.
     void print_footer()
     {
-        print_version();
-
         maybe_close_list();
         maybe_close_paragraph();
 
