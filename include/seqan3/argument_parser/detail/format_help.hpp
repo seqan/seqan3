@@ -199,25 +199,22 @@ protected:
     //!\brief Prints the version information to std::cout.
     void print_version()
     {
-        std::ostream_iterator<char> out(std::cout);
+        std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "." +
+                                        std::to_string(SEQAN3_VERSION_MINOR) + "." +
+                                        std::to_string(SEQAN3_VERSION_PATCH);
 
         // Print version, date and url.
-        std::cout << "\n" << in_bold("VERSION") << "\n";
-        std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << in_bold("Last update: ") << meta.date << "\n";
-        std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << in_bold(meta.app_name + " version: ") << meta.version << "\n";
-        std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << in_bold("SeqAn version: ") << SEQAN3_VERSION_MAJOR << '.'
-                  <<  SEQAN3_VERSION_MINOR << '.' << SEQAN3_VERSION_PATCH;
+        print_section("Version");
+        print_line(in_bold("Last update: ") + meta.date, false);
+        print_line(in_bold(meta.app_name + " version: ") + meta.version, false);
+        print_line(in_bold("SeqAn version: ") + version_str, false);
 
         if (!empty(meta.url))
         {
-            std::cout << "\n" << in_bold("URL") << "\n";
-            std::fill_n(out, layout.leftPadding, ' ');
-            std::cout << meta.url << "\n";
+            print_section("Url");
+            print_line(meta.url, false);
+            std::cout << "\n";
         }
-        std::cout << "\n";
     }
 
     //!\brief Prints a help page footer to std::cout.
@@ -225,31 +222,22 @@ protected:
     {
         print_version();
 
-        std::ostream_iterator<char> out(std::cout);
-
         // Print legal stuff
         if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
         {
-            std::cout << "\n" << in_bold("LEGAL") << "\n";
+            print_section("Legal");
 
             if (!empty(meta.short_copyright))
-            {
-                std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << in_bold(meta.app_name + " Copyright: ") << meta.short_copyright << "\n";
-            }
-            std::fill_n(out, layout.leftPadding, ' ');
-            std::cout << in_bold("SeqAn Copyright: ")
-                      << "2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n";
+                print_line(in_bold(meta.app_name + " Copyright: ") + meta.short_copyright, false);
+
+            print_line(in_bold("SeqAn Copyright: ") +
+                       "2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.", false);
+
             if (!empty(meta.citation))
-            {
-                std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << in_bold("In your academic works please cite: ") << meta.citation << "\n";
-            }
+                print_line(in_bold("In your academic works please cite: ") + meta.citation, false);
+
             if (!empty(meta.long_copyright))
-            {
-                std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << "For full copyright and/or warranty information see " << in_bold("--copyright") << ".\n";
-            }
+                print_line("For full copyright and/or warranty information see " + in_bold("--copyright") + ".", false);
         }
     }
 

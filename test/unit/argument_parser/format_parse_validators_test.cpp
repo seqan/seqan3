@@ -45,8 +45,8 @@ std::string const basic_options_str = "OPTIONS\n"
                                      "          Export the help page information. Value must be one of [html, man].\n";
 
 std::string const basic_version_str = "VERSION\n"
-                                      "    Last update: \n"
-                                      "    test_parser version: \n"
+                                      "    Last update:\n"
+                                      "    test_parser version:\n"
                                       "    SeqAn version: " + seqan3::seqan3_version + "\n";
 
 namespace seqan3::detail
