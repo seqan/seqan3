@@ -132,6 +132,8 @@ private:
     //!\brief Prints a help page footer in man page format.
     void print_footer()
     {
+        print_version();
+
         // Print legal stuff
         if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
         {
