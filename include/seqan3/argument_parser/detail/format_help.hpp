@@ -138,9 +138,9 @@ protected:
     void print_subsection(std::string const & title)
     {
         std::ostream_iterator<char> out(std::cout);
-        std::cout << '\n' << to_text("\\fB");
+        std::cout << '\n';
         std::fill_n(out, layout.leftPadding / 2, ' ');
-        std::cout << title << to_text("\\fP") << '\n';
+        std::cout << in_bold(title) << '\n';
         prev_was_paragraph = false;
     }
 
@@ -202,18 +202,18 @@ protected:
         std::ostream_iterator<char> out(std::cout);
 
         // Print version, date and url.
-        std::cout << "\n" << to_text("\\fB") << "VERSION" << to_text("\\fP") << "\n";
+        std::cout << "\n" << in_bold("VERSION") << "\n";
         std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << to_text("\\fB") << "Last update: " << to_text("\\fP") << meta.date << "\n";
+        std::cout << in_bold("Last update: ") << meta.date << "\n";
         std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << to_text("\\fB") << meta.app_name << " version: " << to_text("\\fP") << meta.version << "\n";
+        std::cout << in_bold(meta.app_name + " version: ") << meta.version << "\n";
         std::fill_n(out, layout.leftPadding, ' ');
-        std::cout << to_text("\\fB") << "SeqAn version: " << to_text("\\fP") << SEQAN3_VERSION_MAJOR << '.'
+        std::cout << in_bold("SeqAn version: ") << SEQAN3_VERSION_MAJOR << '.'
                   <<  SEQAN3_VERSION_MINOR << '.' << SEQAN3_VERSION_PATCH;
 
         if (!empty(meta.url))
         {
-            std::cout <<  "\n" << to_text("\\fB") << "URL" << to_text("\\fP") << "\n";
+            std::cout << "\n" << in_bold("URL") << "\n";
             std::fill_n(out, layout.leftPadding, ' ');
             std::cout << meta.url << "\n";
         }
@@ -230,28 +230,25 @@ protected:
         // Print legal stuff
         if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
         {
-            std::cout << "\n" << to_text("\\fB") << "LEGAL" << to_text("\\fP") << "\n";
+            std::cout << "\n" << in_bold("LEGAL") << "\n";
 
             if (!empty(meta.short_copyright))
             {
                 std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << to_text("\\fB") << meta.app_name << " Copyright: "
-                          << to_text("\\fP") << meta.short_copyright << "\n";
+                std::cout << in_bold(meta.app_name + " Copyright: ") << meta.short_copyright << "\n";
             }
             std::fill_n(out, layout.leftPadding, ' ');
-            std::cout << to_text("\\fB") << "SeqAn Copyright: " << to_text("\\fP")
+            std::cout << in_bold("SeqAn Copyright: ")
                       << "2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n";
             if (!empty(meta.citation))
             {
                 std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << to_text("\\fB") << "In your academic works please cite: " << to_text("\\fP")
-                          << meta.citation << "\n";
+                std::cout << in_bold("In your academic works please cite: ") << meta.citation << "\n";
             }
             if (!empty(meta.long_copyright))
             {
                 std::fill_n(out, layout.leftPadding, ' ');
-                std::cout << "For full copyright and/or warranty information see " << to_text("\\fB")
-                          << "--copyright" << to_text("\\fP") << ".\n";
+                std::cout << "For full copyright and/or warranty information see " << in_bold("--copyright") << ".\n";
             }
         }
     }
@@ -418,6 +415,15 @@ protected:
             std::cout << '\n';
     }
 
+    /*!\brief Format string in bold.
+     * \param[in] str The input string to format in bold.
+     * \returns The string `str` wrapped in bold formatting.
+     */
+    std::string in_bold(std::string const & str)
+    {
+        return to_text("\\fB") + str + to_text("\\fP");
+    }
+
     //!\brief Needed for correct formatting while calling different print functions.
     bool prev_was_paragraph{false};
 
@@ -532,8 +538,9 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
-        stream << std::string(80, '=') << to_text("\n\\fB") << "Copyright information for "
-               << meta.app_name << ":\n" << to_text("\\fP") << std::string(80, '-') << '\n';
+        stream << std::string(80, '=') << "\n"
+               << in_bold("Copyright information for " + meta.app_name + ":\n")
+               << std::string(80, '-') << '\n';
 
         if (!empty(meta.long_copyright))
         {
@@ -541,17 +548,18 @@ DAMAGE.)"};
         }
         else if (!empty(meta.short_copyright))
         {
-            stream << to_text("\\fP") << meta.app_name << " full copyright information not available. Displaying"
-                  << " short copyright information instead:\n" << to_text("\\fP") << meta.short_copyright << "\n";
+            stream << in_bold(meta.app_name + " full copyright information not available. " +
+                              "Displaying short copyright information instead:\n" )
+                   << meta.short_copyright << "\n";
         }
         else
         {
             stream << to_text("\\fP") << meta.app_name << " copyright information not available.\n";
         }
 
-        stream << std::string(80, '=') << to_text("\n\\fB")
-              << "This program contains SeqAn code licensed under the following terms:\n" << to_text("\\fP")
-              << std::string(80, '-') << '\n' << seqan_license << '\n';
+        stream << std::string(80, '=') << '\n'
+               << in_bold("This program contains SeqAn code licensed under the following terms:\n")
+               << std::string(80, '-') << '\n' << seqan_license << '\n';
 
         std::exit(EXIT_SUCCESS);
     }
