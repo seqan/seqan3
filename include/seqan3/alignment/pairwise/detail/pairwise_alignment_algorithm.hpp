@@ -17,10 +17,10 @@
 
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/core/simd/view_to_simd.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
 
 namespace seqan3::detail
 {

@@ -32,10 +32,10 @@
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/core/simd/simd_traits.hpp>
-#include <seqan3/core/simd/simd.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 

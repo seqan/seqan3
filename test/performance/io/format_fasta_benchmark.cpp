@@ -49,7 +49,7 @@ static std::string fasta_file = []()
     return file;
 }();
 
-void write3(benchmark::State & state)
+void seqan3_dna5_ostringstream_write(benchmark::State & state)
 {
     std::ostringstream ostream;
     seqan3::sequence_file_output fout{ostream, seqan3::format_fasta{}, seqan3::fields<seqan3::field::id,
@@ -69,11 +69,11 @@ void write3(benchmark::State & state)
     state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
-BENCHMARK(write3);
+BENCHMARK(seqan3_dna5_ostringstream_write);
 
 #if __has_include(<seqan/seq_io.h>)
 
-void write2(benchmark::State & state)
+void seqan2_dna5_ostringstream_write(benchmark::State & state)
 {
     std::ostringstream ostream;
     seqan::CharString id = fasta_hdr;
@@ -93,10 +93,10 @@ void write2(benchmark::State & state)
     state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
 
-BENCHMARK(write2);
+BENCHMARK(seqan2_dna5_ostringstream_write);
 #endif
 
-void read3(benchmark::State & state)
+void seqan3_dna5_istringstream_read(benchmark::State & state)
 {
     std::istringstream istream{fasta_file};
     seqan3::sequence_file_input fin{istream, seqan3::format_fasta{}};
@@ -116,13 +116,13 @@ void read3(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
-BENCHMARK(read3);
+BENCHMARK(seqan3_dna5_istringstream_read);
 
 #if __has_include(<seqan/seq_io.h>)
 
 #include <fstream>
 
-void read2(benchmark::State & state)
+void seqan2_dna5_istringstream_read(benchmark::State & state)
 {
     seqan::CharString id;
     seqan::Dna5String seq;
@@ -148,7 +148,7 @@ void read2(benchmark::State & state)
     state.counters["bytes_per_run"] = bytes_per_run;
     state.counters["bytes_per_second"] = seqan3::test::bytes_per_second(bytes_per_run);
 }
-BENCHMARK(read2);
+BENCHMARK(seqan2_dna5_istringstream_read);
 #endif
 
 BENCHMARK_MAIN();

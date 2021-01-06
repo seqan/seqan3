@@ -74,9 +74,9 @@ TEST(char_predicate, concept)
     EXPECT_FALSE(seqan3::detail::char_predicate<int>);
 }
 
-TEST(char_predicate, char_predicate_combiner)
+TEST(char_predicate, char_predicate_disjunction)
 {
-    using cond_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using cond_t = seqan3::detail::char_predicate_disjunction<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_TRUE(cond_t{}('a'));
     EXPECT_TRUE(cond_t{}('A'));
     EXPECT_TRUE(cond_t{}('0'));
@@ -93,9 +93,9 @@ TEST(char_predicate, char_predicate_combiner)
     EXPECT_FALSE(p('1'));
 }
 
-TEST(char_predicate, char_predicate_combiner_msg)
+TEST(char_predicate, char_predicate_disjunction_msg)
 {
-    using or_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
+    using or_t = seqan3::detail::char_predicate_disjunction<foo<'a'>, foo<'A'>, foo<'0'>>;
     EXPECT_EQ(or_t::msg,   "(foo_a || foo_A || foo_0)"s);
 }
 

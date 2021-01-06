@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/simd/concept.hpp>
+#include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::detail

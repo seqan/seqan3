@@ -10,7 +10,8 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
-#include <seqan3/core/simd/simd.hpp>
+#include <seqan3/utility/simd/simd.hpp>
+
 #include <seqan3/test/simd_utility.hpp>
 
 #include "../../../range/iterator_test_template.hpp"
