@@ -21,10 +21,10 @@ namespace seqan3::detail
 {
 
 // ------------------------------------------------------------------
-// alphabet_tuple_base_specialisation
+// alphabet_tuple_like
 // ------------------------------------------------------------------
 
-/*!\interface seqan3::detail::alphabet_tuple_base_specialisation <>
+/*!\interface seqan3::detail::alphabet_tuple_like <>
  * \brief seqan3::alphabet_tuple_base and its derivates model this concept.
  * \ingroup composite
  *
@@ -35,9 +35,9 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alphabet_tuple_base_specialisation = requires
+SEQAN3_CONCEPT alphabet_tuple_like = requires
 {
-    requires t::seqan3_alphabet_tuple_base_specialisation;
+    requires t::seqan3_alphabet_tuple_like;
 };
 //!\endcond
 
