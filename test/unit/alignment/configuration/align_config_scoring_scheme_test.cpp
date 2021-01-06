@@ -27,10 +27,10 @@ using test_types = ::testing::Types<std::tuple<seqan3::aminoacid_scoring_scheme<
                                     std::tuple<seqan3::nucleotide_scoring_scheme<int8_t>, seqan3::dna15>>;
 TYPED_TEST_SUITE(align_config_scoring_scheme_test, test_types, );
 
-TYPED_TEST(align_config_scoring_scheme_test, config_element_specialisation)
+TYPED_TEST(align_config_scoring_scheme_test, config_element)
 {
     using scheme_t = typename TestFixture::scheme_t;
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::scoring_scheme<scheme_t>>));
 }
 
 TYPED_TEST(align_config_scoring_scheme_test, configuration)
