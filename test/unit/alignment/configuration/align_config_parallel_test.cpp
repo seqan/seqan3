@@ -27,9 +27,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test, 
 // individual tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-TEST(align_config_parallel, config_element_specialisation)
+TEST(align_config_parallel, config_element)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::parallel>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::parallel>));
 }
 
 TEST(align_config_parallel, configuration)

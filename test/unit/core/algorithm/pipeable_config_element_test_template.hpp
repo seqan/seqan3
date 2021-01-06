@@ -24,7 +24,7 @@ TYPED_TEST_SUITE_P(pipeable_config_element_test);
 
 TYPED_TEST_P(pipeable_config_element_test, concept_check)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
+    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
 }
 
 TYPED_TEST_P(pipeable_config_element_test, standard_construction)
