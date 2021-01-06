@@ -12,9 +12,9 @@
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 
-TEST(align_config_gap, config_element_specialisation)
+TEST(align_config_gap, config_element)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::gap_cost_affine>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::gap_cost_affine>));
 }
 
 TEST(align_config_gap, configuration)

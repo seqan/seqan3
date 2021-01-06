@@ -13,9 +13,9 @@
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 
-TEST(align_config_min_score, config_element_specialisation)
+TEST(align_config_min_score, config_element)
 {
-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::min_score>));
+    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::min_score>));
 }
 
 TEST(align_config_min_score, configuration)

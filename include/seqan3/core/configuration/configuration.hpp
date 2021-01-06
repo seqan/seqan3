@@ -26,7 +26,7 @@ namespace seqan3
 
 //!\cond
 // Forward declaration for friend declaration definitions below.
-template <detail::config_element_specialisation ... configs_t>
+template <detail::config_element ... configs_t>
 class configuration;
 
 template <typename lhs_derived_t, typename lhs_value_t, typename rhs_derived_t, typename rhs_value_t>
@@ -66,7 +66,7 @@ constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> con
  * \ingroup algorithm
  *
  * \tparam configs_t Template parameter pack containing all configuration elements; Must model
- *                   seqan3::detail::config_element_specialisation
+ *                   seqan3::detail::config_element
  *
  * \details
  *
@@ -74,11 +74,11 @@ constexpr auto operator|(pipeable_config_element<lhs_derived_t, lhs_value_t> con
  * configurations for a specific algorithm. It extends the standard tuple interface with some useful functions to modify
  * and query the user configurations.
  */
-template <detail::config_element_specialisation ... configs_t>
+template <detail::config_element ... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <detail::config_element_specialisation ... _configs_t>
+    template <detail::config_element ... _configs_t>
     friend class configuration;
 
 public:
@@ -99,13 +99,13 @@ public:
 
     /*!\brief Constructs a configuration from a single configuration element.
      * \tparam config_element_t The configuration element to add; must model
-     *                          seqan3::detail::config_element_specialisation.
+     *                          seqan3::detail::config_element.
      * \param[in] config_element The configuration element to construct the configuration from.
      */
     template <typename config_element_t>
     //!\cond
         requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>) &&
-                 detail::config_element_specialisation<std::remove_cvref_t<config_element_t>>
+                 detail::config_element<std::remove_cvref_t<config_element_t>>
     //!\endcond
     constexpr configuration(config_element_t && config_element) :
         base_type{std::forward<config_element_t>(config_element)}
@@ -464,7 +464,7 @@ private:
      *
      * Strong exception guarantee.
      */
-    template <detail::config_element_specialisation config_element_t>
+    template <detail::config_element config_element_t>
     constexpr auto push_back(config_element_t elem) const &
     {
         static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
@@ -478,7 +478,7 @@ private:
     }
 
     //!\copydoc push_back
-    template <detail::config_element_specialisation config_element_t>
+    template <detail::config_element config_element_t>
     constexpr auto push_back(config_element_t elem) &&
     {
         static_assert(detail::is_configuration_valid_v<std::remove_cvref_t<config_element_t>,
@@ -567,7 +567,7 @@ private:
 /*!\brief Deduces the correct configuration element type from the passed seqan3::pipeable_config_element.
  * \relates seqan3::configuration
  */
-template <detail::config_element_specialisation config_t>
+template <detail::config_element config_t>
 configuration(config_t) -> configuration<config_t>;
 //!\}
 
@@ -655,7 +655,7 @@ namespace std
  * \see std::tuple_size_v
  * \ingroup algorithm
  */
-template <seqan3::detail::config_element_specialisation ... configs_t>
+template <seqan3::detail::config_element ... configs_t>
 struct tuple_size<seqan3::configuration<configs_t...>>
 {
     //!\brief The number of elements.
@@ -667,7 +667,7 @@ struct tuple_size<seqan3::configuration<configs_t...>>
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  * \ingroup algorithm
  */
-template <size_t pos, seqan3::detail::config_element_specialisation ... configs_t>
+template <size_t pos, seqan3::detail::config_element ... configs_t>
 struct tuple_element<pos, seqan3::configuration<configs_t...>>
 {
     //!\brief The type of the config at position `pos`
