@@ -74,26 +74,26 @@ class strong_type;
 //!\endcond
 
 //------------------------------------------------------------------------------
-// concept strong_type_specialisation
+// concept derived_from_strong_type
 //------------------------------------------------------------------------------
 
-/*!\interface seqan3::detail::strong_type_specialisation <>
+/*!\interface seqan3::detail::derived_from_strong_type <>
  * \brief Defines the requirements of a seqan::detail::strong_type specialisation.
  * \tparam strong_type_t The type the concept check is performed on (the putative strong type).
  * \ingroup core
  */
-/*!\name Requirements for seqan3::detail::strong_type_specialisation
- * \brief You can expect these members on all types that implement seqan3::detail::strong_type_specialisation.
- * \relates seqan3::detail::strong_type_specialisation
+/*!\name Requirements for seqan3::detail::derived_from_strong_type
+ * \brief You can expect these members on all types that implement seqan3::detail::derived_from_strong_type.
+ * \relates seqan3::detail::derived_from_strong_type
  *
  * \details
  *
- * A type that implements strong_type_specialisation must be a derived class of seqan3::detail::strong_type.
+ * A type that implements derived_from_strong_type must be a derived class of seqan3::detail::strong_type.
  * \{
  */
 //!\cond
 template <typename strong_type_t>
-SEQAN3_CONCEPT strong_type_specialisation = requires (strong_type_t && obj)
+SEQAN3_CONCEPT derived_from_strong_type = requires (strong_type_t && obj)
 {
 //!\endcond
 
@@ -511,7 +511,7 @@ private:
 
 /*!\brief Formatted output to a seqan3::detail::debug_stream_type.
  * \tparam char_t The char type of the seqan3::detail::debug_stream_type.
- * \tparam strong_type_t The strong type to print; must model seqan3::detail::strong_type_specialisation.
+ * \tparam strong_type_t The strong type to print; must model seqan3::detail::derived_from_strong_type.
  *
  * \param[in,out] stream The output stream.
  * \param[in] value The strong typed value to print.
@@ -522,7 +522,7 @@ private:
  *
  * \returns `stream_t &` A reference to the given stream.
  */
-template <typename char_t, strong_type_specialisation strong_type_t>
+template <typename char_t, derived_from_strong_type strong_type_t>
 debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, strong_type_t && value)
 {
     stream << value.get();

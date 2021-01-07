@@ -38,7 +38,7 @@ namespace seqan3::detail
  * Checks if the type is from the same algorithm configuration and if it can be combined with any of the
  * existing elements in the current configuration.
  */
-template <config_element_specialisation query_t, config_element_specialisation ... compare_types>
+template <config_element query_t, config_element ... compare_types>
 struct is_configuration_valid :
     public std::conditional_t<
         (std::is_same_v<std::remove_cvref_t<decltype(query_t::id)>, std::remove_cvref_t<decltype(compare_types::id)>> && ...) &&

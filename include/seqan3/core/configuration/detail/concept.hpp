@@ -45,7 +45,7 @@ template <typename algorithm_id_type>
 inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
 
 // ----------------------------------------------------------------------------
-// Concept config_element_specialisation
+// Concept config_element
 // ----------------------------------------------------------------------------
 
 #ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
@@ -82,7 +82,7 @@ public:
 };
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 
-/*!\interface seqan3::detail::config_element_specialisation <>
+/*!\interface seqan3::detail::config_element <>
  * \brief Concept for an algorithm configuration element.
  * \ingroup algorithm
  *
@@ -90,9 +90,9 @@ public:
  * \implements seqan3::pipeable_config_element
  */
 
-/*!\name Requirements for seqan3::detail::config_element_specialisation
- * \relates seqan3::detail::config_element_specialisation
- * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element_specialisation.
+/*!\name Requirements for seqan3::detail::config_element
+ * \relates seqan3::detail::config_element
+ * \brief   You can expect this member on all types that satisfy seqan3::detail::config_element.
  * \{
  */
 /*!\var id
@@ -101,7 +101,7 @@ public:
 //!\}
 //!\cond
 template <typename config_t>
-SEQAN3_CONCEPT config_element_specialisation = requires
+SEQAN3_CONCEPT config_element = requires
 {
     requires std::is_base_of_v<seqan3::pipeable_config_element<config_t>, config_t>;
     requires std::semiregular<config_t>;

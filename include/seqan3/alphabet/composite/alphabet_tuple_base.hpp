@@ -303,7 +303,7 @@ public:
                                                        meta::list<>>...>;
     //!\brief Make specialisations of this template identifiable in metapgrogramming contexts.
     //!\private
-    static constexpr bool seqan3_alphabet_tuple_base_specialisation = true;
+    static constexpr bool seqan3_alphabet_tuple_like = true;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -742,7 +742,7 @@ namespace std
  * \ingroup composite
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
-template <std::size_t i, seqan3::detail::alphabet_tuple_base_specialisation tuple_t>
+template <std::size_t i, seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
@@ -754,7 +754,7 @@ struct tuple_element<i, tuple_t>
  * \ingroup composite
  * \see std::tuple_size_v
  */
-template <seqan3::detail::alphabet_tuple_base_specialisation tuple_t>
+template <seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_size<tuple_t> :
     public std::integral_constant<size_t, seqan3::list_traits::size<typename tuple_t::seqan3_required_types>>
 {};

@@ -101,10 +101,10 @@ struct multi_skill_type : seqan3::detail::strong_type<int,
 
 TEST(strong_type, concept)
 {
-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &>);
-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &>);
-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &&>);
-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &&>);
+    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type &>);
+    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type const &>);
+    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type &&>);
+    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type const &&>);
 }
 
 TEST(strong_type, pure_type)
