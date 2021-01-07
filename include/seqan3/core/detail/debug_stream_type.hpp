@@ -25,6 +25,8 @@ namespace seqan3
 
 //!\brief Flags that change the behaviour of the seqan3::debug_stream.
 //!\ingroup stream
+//!\implements seqan3::enum_bitwise_operators
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 enum fmtflags2
 {
     none                = 0,        //!< No flag is set.
@@ -35,8 +37,11 @@ enum fmtflags2
 };
 
 //!\brief Overload bitwise operators for seqan3::fmtflags2.
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
+//!\cond DEV
 template <>
 constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
+//!\endcond
 
 // ------------------------------------------------------------------
 // seqan3::debug_stream_type

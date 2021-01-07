@@ -18,7 +18,64 @@
 
 namespace seqan3
 {
+/*!\interface seqan3::enum_bitwise_operators
+ * \brief You can expect these functions on all types that overload seqan3::add_enum_bitwise_operators.
+ */
+/*!\name Requirements for seqan3::enum_bitwise_operators
+ * \relates seqan3::enum_bitwise_operators
+ * \brief You can expect these member functions.
+ * \{
+ * \fn operator&(lhs_t lhs, rhs_t rhs)
+ * \brief Returns the binary `&` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary conjunction of `lhs` and `rhs`.
+ *
+ * \fn operator|(lhs_t lhs, rhs_t rhs)
+ * \brief Returns the binary `|` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary disjunction of `lhs` and `rhs`.
+ *
+ * \fn operator^(lhs_t lhs, rhs_t rhs)
+ * \brief Returns the binary `^` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary XOR operation on `lhs` and `rhs`.
+ *
+ * \fn operator~(lhs_t lhs)
+ * \brief Returns the binary `~` operator of lhs.
+ * \param lhs First enum.
+ *
+ * \returns the binary NOT operation on `lhs`.
+ *
+ * \fn operator&=(lhs_t & lhs, rhs_t rhs)
+ * \brief Returns the binary `&=` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary AND assigment on `lhs`.
+ *
+ * \fn operator|=(lhs_t & lhs, rhs_t rhs)
+ * \brief Returns the binary `|=` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary OR assignment on `lhs`.
+ *
+ * \fn operator^=(lhs_t & lhs, rhs_t rhs)
+ * \brief Returns the binary `^=` operator of lhs and rhs.
+ * \param lhs First enum.
+ * \param rhs Second enum.
+ *
+ * \returns the binary XOR assignment on `lhs`.
+ * \}
+ */
 
+//!\cond DEV
 /*!\brief Set to true for a scoped enum to have binary operators overloaded.
  * \ingroup core
  *
@@ -38,6 +95,9 @@ constexpr bool add_enum_bitwise_operators = false;
  * \brief Perform binary operations like on ints or weak enums. These overloads are available if
  * seqan3::add_enum_bitwise_operators is defined for your type.
  * \ingroup core
+ *
+ * \details
+ *
  * \see seqan3::add_enum_bitwise_operators
  * \{
  */
@@ -93,5 +153,6 @@ constexpr t & operator^= (t & lhs, t rhs) noexcept
     return lhs;
 }
 //!\}
+//!\endcond
 
 } // namespace seqan3
