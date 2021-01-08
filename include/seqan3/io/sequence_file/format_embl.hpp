@@ -19,6 +19,7 @@
 #include <string_view>
 #include <vector>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -35,6 +36,7 @@
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3
 {
@@ -164,14 +166,15 @@ protected:
             auto seq_view = stream_view | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
                                         | views::take_until_or_throw(is_end);   // until //
 
-            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                     {
                                         if (!is_legal_alph(c))
                                         {
                                             throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              is_legal_alph.msg +
-                                                              " evaluated to false on " +
+                                                              "char_is_valid_for<" +
+                                                              detail::type_name_as_string<seq_legal_alph_type> +
+                                                              "> evaluated to false on " +
                                                               detail::make_printable(c)};
                                         }
                                         return c;

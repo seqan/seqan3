@@ -10,12 +10,16 @@
 #include <string>
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+
+#ifdef SEQAN3_DEPRECATED_310
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
+#endif // SEQAN3_DEPRECATED_310
 
 using namespace std::literals;
 
@@ -57,7 +61,13 @@ TEST(char_predicate, concept)
 {
     using seqan3::operator""_aa27;
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_TRUE(seqan3::detail::char_predicate<decltype(seqan3::is_in_alphabet<seqan3::dna4>)>);
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
+
     EXPECT_TRUE(seqan3::detail::char_predicate<decltype(seqan3::is_char<seqan3::to_char('A'_aa27)>)>);
     EXPECT_TRUE((seqan3::detail::char_predicate<decltype(seqan3::is_in_interval<'a','z'>)>));
     EXPECT_TRUE(seqan3::detail::char_predicate<decltype(seqan3::is_space)>);
@@ -134,6 +144,9 @@ TEST(char_predicate, is_in_interval_msg)
     EXPECT_EQ((seqan3::detail::is_in_interval_type<'a', 'z'>::msg), "is_in_interval<'a', 'z'>"s);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 TEST(char_predicate, is_in_alphabet)
 {
     {
@@ -168,6 +181,8 @@ TEST(char_predicate, is_in_alphabet_msg)
 {
     EXPECT_EQ((seqan3::detail::is_in_alphabet_type<seqan3::dna4>::msg), "is_in_alphabet<seqan3::dna4>"s);
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
 TEST(char_predicate, is_char)
 {
@@ -431,6 +446,9 @@ TEST(char_predicate, char_types)
         EXPECT_FALSE((seqan3::is_in_interval<'a', 'z'>(char16_t{256})));
     }
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     {  // is_in_alphabet
         char c1 = 'N';
         EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::dna5>(c1));
@@ -443,13 +461,15 @@ TEST(char_predicate, char_types)
     {  // check value out of range
         EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::dna5>(char16_t{256}));
     }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 }
 
 // see issue https://github.com/seqan/seqan3/issues/1972
 TEST(char_predicate, issue1972)
 {
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
-    EXPECT_TRUE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
-    EXPECT_FALSE(seqan3::is_in_alphabet<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('A')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('a')); // valid seqan3::rna5 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('-')); // valid seqan3::gap char
+    EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::rna5>>('S')); // neither seqan3::rna5 nor seqan3::gap
 }

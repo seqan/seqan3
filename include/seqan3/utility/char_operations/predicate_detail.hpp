@@ -19,9 +19,12 @@
 #include <stdexcept>
 #include <string>
 
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
+
+#ifdef SEQAN3_DEPRECATED_310
+#include <seqan3/alphabet/concept.hpp>
+#endif // SEQAN3_DEPRECATED_310
 
 namespace seqan3::detail
 {
@@ -309,6 +312,7 @@ struct is_in_interval_type : public char_predicate_base<is_in_interval_type<inte
     }();
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 // ----------------------------------------------------------------------------
 // is_in_alphabet_type
 // ----------------------------------------------------------------------------
@@ -343,6 +347,7 @@ public:
         return ret;
     }();
 };
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // is_char_type

@@ -20,6 +20,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/core/range/type_traits.hpp>
@@ -39,6 +40,7 @@
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3
 {
@@ -151,15 +153,16 @@ protected:
                                     | std::views::filter(!is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                     {
                                         if (!is_legal_alph(c))
                                         {
                                             throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                is_legal_alph.msg +
-                                                                " evaluated to false on " +
-                                                                detail::make_printable(c)};
+                                                              "char_is_valid_for<" +
+                                                              detail::type_name_as_string<seq_legal_alph_type> +
+                                                              "> evaluated to false on " +
+                                                              detail::make_printable(c)};
                                         }
                                         return c;
                                     })

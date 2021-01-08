@@ -23,6 +23,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
@@ -41,6 +42,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3
 {
@@ -158,11 +160,12 @@ protected:
         }
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
             if (!is_legal_seq(*begin(stream_view))) // if neither id nor seq found: throw
             {
                 throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
-                                  is_id.msg + " and " + is_legal_seq.msg +
+                                  is_id.msg + " and char_is_valid_for<" +
+                                  detail::type_name_as_string<seq_legal_alph_type> + ">" +
                                   " evaluated to false on " + detail::make_printable(*begin(stream_view))};
             }
         }
@@ -170,7 +173,7 @@ protected:
         // READ SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_seq = is_in_alphabet<seq_legal_alph_type>;
+            auto constexpr is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(stream_view | views::take_line_or_throw                      // until end of line
                                           | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
                                           | std::views::transform([is_legal_seq](char const c)
@@ -178,8 +181,9 @@ protected:
                                                 if (!is_legal_seq(c))                    // enforce legal alphabet
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      is_legal_seq.msg +
-                                                                      " evaluated to false on " +
+                                                                      "char_is_valid_for<" +
+                                                                      detail::type_name_as_string<seq_legal_alph_type> +
+                                                                      "> evaluated to false on " +
                                                                       detail::make_printable(c)};
                                                 }
                                               return c;
@@ -361,16 +365,16 @@ private:
     template <typename alph_type, typename stream_view_type>
     auto read_structure(stream_view_type & stream_view)
     {
-        auto constexpr is_legal_structure = is_in_alphabet<alph_type>;
+        auto constexpr is_legal_structure = char_is_valid_for<alph_type>;
         return stream_view | views::take_until(is_space) // until whitespace
                            | std::views::transform([is_legal_structure](char const c)
                              {
                                  if (!is_legal_structure(c))
                                  {
                                      throw parse_error{
-                                         std::string{"Encountered an unexpected letter: "} +
-                                         is_legal_structure.msg +
-                                         " evaluated to false on " + detail::make_printable(c)};
+                                         std::string{"Encountered an unexpected letter: char_is_valid_for<"} +
+                                                     detail::type_name_as_string<alph_type> +
+                                                     "> evaluated to false on " + detail::make_printable(c)};
                                  }
                                  return c;
                              })                                  // enforce legal alphabet

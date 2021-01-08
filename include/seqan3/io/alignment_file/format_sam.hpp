@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
@@ -45,6 +46,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3
@@ -511,13 +513,14 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     if (!is_char<'*'>(*std::ranges::begin(stream_view))) // sequence information is given
     {
-        auto constexpr is_legal_alph = is_in_alphabet<seq_legal_alph_type>;
+        auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
         auto seq_stream = field_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                        {
                                            if (!is_legal_alph(c))
                                                throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                 is_legal_alph.msg +
-                                                                 " evaluated to false on " +
+                                                                 "char_is_valid_for<" +
+                                                                 detail::type_name_as_string<seq_legal_alph_type> +
+                                                                 "> evaluated to false on " +
                                                                  detail::make_printable(c)};
                                            return c;
                                        });
