@@ -28,7 +28,7 @@ namespace seqan3
  *
  * \details
  *
- * The phred68legacy quality alphabet represents the -5-based phred score range
+ * The phred68legacy quality alphabet represents the -5-based Phred score range
  * [-5..62] mapped to the ASCII range [';' .. '~']. It represents the Solexa and
  * the Illumina [1.0;1.8[ standard.
  *
@@ -57,7 +57,7 @@ public:
     constexpr phred68legacy & operator=(phred68legacy &&)       noexcept = default; //!< Defaulted.
     ~phred68legacy()                                            noexcept = default; //!< Defaulted.
 
-    //!\brief Construct from phred value.
+    //!\brief Construct from Phred score value.
     constexpr phred68legacy(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
@@ -67,7 +67,7 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between phred and rank score representation.
+    //!\brief The projection offset between Phred and rank score representation.
     static constexpr phred_type offset_phred{-5};
 
     //!\brief The projection offset between char and rank score representation.

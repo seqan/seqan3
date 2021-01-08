@@ -41,7 +41,7 @@ namespace seqan3
  * alphabets like a `qualified<char, phred42>` or a `qualified<gapped<dna4>, phred42>`
  * sequence.
  * The rank values correspond to numeric values in the size of the composite,
- * while the character values are taken from the sequence alphabet and the phred
+ * while the character values are taken from the sequence alphabet and the Phred score
  * values are taken from the quality alphabet.
  *
  * As with all `seqan3::alphabet_tuple_base` s you may access the individual
@@ -116,7 +116,7 @@ public:
         return *this;
     }
 
-    //!\brief Assign from a phred value. This modifies the internal quality letter.
+    //!\brief Assign from a Phred score value. This modifies the internal quality letter.
     constexpr qualified & assign_phred(phred_type const c) noexcept
     {
         seqan3::assign_phred_to(c, get<1>(*this));
@@ -127,7 +127,7 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the phred value. This reads the internal quality letter.
+    //!\brief Return the Phred score value. This reads the internal quality letter.
     constexpr phred_type to_phred() const noexcept
     {
         return rank_to_phred[to_rank()];
@@ -178,7 +178,7 @@ protected:
         }()
     };
 
-    //!\brief Rank to phred conversion table.
+    //!\brief Rank to Phred conversion table.
     static std::array<char_type, alphabet_size> constexpr rank_to_phred
     {
         [] () constexpr

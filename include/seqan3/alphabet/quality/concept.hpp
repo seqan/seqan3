@@ -60,10 +60,10 @@ namespace seqan3
  * \{
  */
 
-/*!\brief The public getter function for the phred representation of a quality score.
+/*!\brief The public getter function for the Phred representation of a quality score.
  * \tparam your_type The type of alphabet. Must model the seqan3::quality_alphabet.
- * \param  chr       The quality value to convert into the phred score.
- * \returns the phred representation of a quality score.
+ * \param  chr       The quality value to convert into the Phred score.
+ * \returns the Phred representation of a quality score.
  * \ingroup quality
  *
  * \details
@@ -158,9 +158,9 @@ namespace seqan3
  * \{
  */
 
-/*!\brief Assign a phred score to a quality alphabet object.
+/*!\brief Assign a Phred score to a quality alphabet object.
  * \tparam your_type The type of the target object. Must model the seqan3::quality_alphabet.
- * \param  chr       The phred score being assigned; must be of the seqan3::alphabet_phred_t of the target object.
+ * \param  chr       The Phred score being assigned; must be of the seqan3::alphabet_phred_t of the target object.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
  * \ingroup quality
  * \details

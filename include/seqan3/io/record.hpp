@@ -63,7 +63,7 @@ enum class field
     // Fields used in multiple contexts ........................................
     seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
     id,             //!< The identifier, usually a string.
-    qual,           //!< The qualities, usually in phred-score notation.
+    qual,           //!< The qualities, usually in Phred score notation.
     seq_qual,       //!< Sequence and qualities combined in one range.
     offset,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
 

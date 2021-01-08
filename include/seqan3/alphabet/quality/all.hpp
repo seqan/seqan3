@@ -62,9 +62,9 @@
  *
  * The most distributed format is the *Sanger* or <I>Illumina 1.8+</I> format.
  * Despite typical Phred scores for Illumina machines range from 0 to maximal 41, it is possible that processed reads
- * reach higher scores. If you don't intend to handle Phred scores larger than 41, we recommend to use seqan3::phred42
- * due to its more space efficient implementation (see below). If you want to store PacBio HiFi reads, we recommend to
- * use seqan3::phred94, as these use the full range of the phred quality scores.
+ * reach higher scores. If you don't intend to handle Phred scores larger than 41, we recommend using seqan3::phred42
+ * due to its more space-efficient implementation (see below). If you want to store PacBio HiFi reads, we recommend to
+ * use seqan3::phred94, as these use the full range of the Phred quality scores.
  * For other formats, like Solexa and Illumina 1.0 to 1.7 the type seqan3::phred68legacy is provided. To cover also the
  * Solexa format, the Phred score is stored as a <B>signed</B> integer starting at -5.
  *
@@ -88,7 +88,7 @@
         <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n
    </span>
  *
- * Normally, quality values come together with nucleotides. Therefore, it is obvious to cobine those alphabets what we
+ * Normally, quality values come together with nucleotides. Therefore, it is obvious to combine those alphabets what we
  * can do via seqan3::qualified. With seqan3::qualified, the cross product between the alphabets is formed, which leads
  * to the main advantage: compression.
  * The following combinations all still fit into a single byte:

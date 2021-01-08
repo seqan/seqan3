@@ -6,8 +6,6 @@
 using seqan3::operator""_dna4;
 using seqan3::operator""_phred63;
 
-// #include <vector>
-
 int main()
 {
     seqan3::phred63 phred;

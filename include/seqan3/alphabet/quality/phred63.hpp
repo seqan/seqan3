@@ -17,7 +17,7 @@
 namespace seqan3
 {
 
-/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (full range). <-- ist 93 nicht full range?
+/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores.
  * \implements seqan3::writable_quality_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  * \implements seqan3::trivially_copyable
@@ -28,11 +28,11 @@ namespace seqan3
  *
  * \details
  *
- * The phred63 \ref quality alphabet represents the zero-based phred score range [0..62] mapped to the consecutive ASCII
+ * The phred63 \ref quality alphabet represents the zero-based Phred score range [0..62] mapped to the consecutive ASCII
  * range ['!' .. '_']. It represents the Sanger and Illumina 1.8+ standard beyond the typical range of raw reads
- * (0 to 41), namely seqan3::phred42. If you intend to use phred scores exceeding 62, use the larger score type, namely
+ * (0 to 41), namely seqan3::phred42. If you intend to use Phred scores exceeding 62, use the larger score type, namely
  * seqan3::phred94.
- * Via seqan3::qualified, you can combine a nucleotide alphabet with the phred score to save space.
+ * Via seqan3::qualified, you can combine a nucleotide alphabet with the Phred score to save space.
  * All dna4 and rna4 combinations with seqan3::phred63 still fit into a single byte.
  * e.g. `seqan3::qualified<seqan3::dna4, seqan3::phred43>`
  *
@@ -63,7 +63,7 @@ public:
     constexpr phred63 & operator=(phred63 &&)       noexcept = default; //!< Defaulted.
     ~phred63()                                      noexcept = default; //!< Defaulted.
 
-    //!\brief Construct from phred value.
+    //!\brief Construct from Phred score value.
     constexpr phred63(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
@@ -73,7 +73,7 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between phred and rank score representation.
+    //!\brief The projection offset between Phred and rank score representation.
     static constexpr phred_type offset_phred{0};
 
     //!\brief The projection offset between char and rank score representation.

@@ -33,15 +33,15 @@ struct trim_fn
     {
         static_assert(quality_alphabet<threshold_t> || std::integral<threshold_t>,
                       "The threshold must either be a quality alphabet or an integral type "
-                      "in which case it is compared with the underlying phred type.");
+                      "in which case it is compared with the underlying Phred score type.");
 
         return adaptor_from_functor{*this, threshold};
     }
 
-    /*!\brief Trim based on minimum phred score.
+    /*!\brief Trim based on minimum Phred score.
      * \tparam irng_t The type of the range being processed. See seqan3::views::trim_quality for requirements.
      * \param irange The range being processed.
-     * \param threshold The minimum quality as a phred score [integral type].
+     * \param threshold The minimum quality as a Phred score [integral type].
      */
     template <std::ranges::input_range irng_t, typename threshold_t>
     constexpr auto operator()(irng_t && irange, threshold_t const threshold) const
@@ -52,7 +52,7 @@ struct trim_fn
                      std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>> ||
                       std::integral<std::remove_cvref_t<threshold_t>>,
                       "The threshold must either be a letter of the underlying alphabet or an integral type "
-                      "in which case it is compared with the underlying phred type.");
+                      "in which case it is compared with the underlying Phred score type.");
 
         return views::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
         {
