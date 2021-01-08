@@ -24,8 +24,9 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/detail/all.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/core/pod_tuple.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/core/tuple_utility.hpp>
+#include <seqan3/utility/tuple/pod_tuple.hpp>
 
 /*!\defgroup core Core
  * \brief Provides core functionality used by multiple modules.

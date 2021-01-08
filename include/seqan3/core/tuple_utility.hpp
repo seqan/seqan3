@@ -15,6 +15,6 @@
 #pragma once
 
 #include <seqan3/utility/tuple_utility.hpp>
-
 SEQAN3_DEPRECATED_HEADER(
    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/tuple_utility.hpp> instead.")
+

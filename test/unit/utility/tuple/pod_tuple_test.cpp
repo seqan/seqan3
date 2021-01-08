@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/pod_tuple.hpp>
+#include <seqan3/utility/tuple/pod_tuple.hpp>
 
 // default/zero construction
 TEST(pod_tuple_ctr, ctr)
