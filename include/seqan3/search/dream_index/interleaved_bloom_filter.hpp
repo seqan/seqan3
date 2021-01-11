@@ -129,8 +129,6 @@ private:
     //!\cond
     template <data_layout data_layout_mode>
     friend class interleaved_bloom_filter;
-
-    class membership_agent;
     //!\endcond
 
     //!\brief The underlying datatype to use.
@@ -185,6 +183,8 @@ private:
 public:
     //!\brief Indicates whether the Interleaved Bloom Filter is compressed.
     static constexpr data_layout data_layout_mode = data_layout_mode_;
+
+    class membership_agent; // documented upon definition below
 
     /*!\name Constructors, destructor and assignment
      * \{
