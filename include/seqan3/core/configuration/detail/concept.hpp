@@ -42,13 +42,13 @@ namespace seqan3::detail
  *                           this table to allow validation checks.
  */
 template <typename algorithm_id_type>
-inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
+inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
 
 // ----------------------------------------------------------------------------
 // Concept config_element
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 /*!\brief A helper class to check if a type has a static member called `id`.
  * \ingroup algorithm
  *
@@ -61,6 +61,10 @@ inline constexpr std::array<std::array<void, 0>, 0> compatibility_table;
 struct config_id_accessor
 {
 private:
+    //!\brief Helper variable template to convert the configuration enum identifier to an integer.
+    template <typename config_t>
+    static constexpr int32_t as_int = static_cast<int32_t>(std::remove_cvref_t<config_t>::id);
+
     //!\brief Helper function to check if static id member exists.
     template <typename config_t>
     static constexpr auto has_id_member(int) -> decltype((static_cast<void>(config_t::id), true))
@@ -76,6 +80,41 @@ private:
     }
 
 public:
+    //!\brief Type alias for the internal enumeration type that represents the id.
+    template <typename config_t>
+    using id_type = std::remove_cvref_t<decltype(config_t::id)>;
+
+    /*!\brief Checks if two configuration types are compatible.
+     *
+     * \tparam config1_t The type of the first configuration to check against the second.
+     * \tparam config2_t The type of the second configuration.
+     *
+     * \details
+     *
+     * Uses the seqan3::detail::compatibility_table of the corresponding configuration element domain to check
+     * if both configurations can be combined.
+     */
+    template <typename config1_t, typename config2_t>
+    static constexpr auto is_compatible()
+    {
+        if constexpr (has_id_member<config1_t>(0) && has_id_member<config2_t>(0)) // needed for gcc <= 9
+        {
+            if constexpr (std::same_as<id_type<config1_t>, id_type<config2_t>>)
+            {
+                return std::bool_constant<compatibility_table<id_type<config1_t>>[as_int<config1_t>]
+                                                                                 [as_int<config2_t>]>{};
+            }
+            else
+            {
+                return std::false_type{};
+            }
+        }
+        else
+        {
+            return std::bool_constant<compatibility_table<id_type<config1_t>>[as_int<config1_t>][as_int<config2_t>]>{};
+        }
+    }
+
     //!\brief Variable template that evaluates to `true` if the type has a static id member, otherwise `false`.
     template <typename config_t>
     static constexpr bool has_id = has_id_member<config_t>(0);
@@ -105,12 +144,42 @@ SEQAN3_CONCEPT config_element = requires
 {
     requires std::is_base_of_v<seqan3::pipeable_config_element<config_t>, config_t>;
     requires std::semiregular<config_t>;
-#ifdef SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     requires config_id_accessor::has_id<config_t>;
 #else // ^^^ workaround / no workaround vvv
     { config_t::id };
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 };
+//!\endcond
+
+/*!\interface seqan3::detail::config_element_pipeable_with <>
+ * \brief Concept to check if one configuration element can be combined with another configuration element.
+ * \ingroup algorithm
+ *
+ * \tparam config1_t The type of the first configuration element.
+ * \tparam config2_t The type of the second configuration element.
+ *
+ * \details
+ *
+ * This concept is fulfilled if:
+ *  * both configurations model seqan3::detail::config_element_specialisation,
+ *  * are defined within the same algorithm configuration domain,
+ *  * a seqan3::detail::compatibility_table is defined for the configuration elements and
+ *    returns `true` for both configurations.
+ */
+//!\cond
+template <typename config1_t, typename config2_t>
+SEQAN3_CONCEPT config_element_pipeable_with =
+    config_element_specialisation<config1_t> &&
+    config_element_specialisation<config2_t> &&
+#if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
+    std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>> &&
+    decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
+#else // ^^^ workaround / no workaround vvv
+    std::same_as<std::remove_cvref_t<decltype(config1_t::id)>, std::remove_cvref_t<decltype(config2_t::id)>> &&
+    compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>[static_cast<int32_t>(config1_t::id)]
+                                                                     [static_cast<int32_t>(config2_t::id)];
+#endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 //!\endcond
 
 } // namespace seqan3::detail
