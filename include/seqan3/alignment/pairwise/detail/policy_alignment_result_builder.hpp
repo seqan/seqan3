@@ -48,7 +48,6 @@ protected:
 
     static_assert(!std::same_as<result_type, empty_type>, "The alignment result type was not configured.");
 
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
