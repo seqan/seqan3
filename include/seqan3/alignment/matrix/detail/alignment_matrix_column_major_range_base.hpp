@@ -368,9 +368,8 @@ private:
             return column_index == me_ptr->num_cols;
         }
 
-        //!\copydoc operator==
-        friend constexpr bool operator==(std::default_sentinel_t const & lhs, iterator_type const & rhs)
-            noexcept
+        //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::alignment_column_type::iterator_type::operator==
+        friend constexpr bool operator==(std::default_sentinel_t const & lhs, iterator_type const & rhs) noexcept
         {
             return rhs == lhs;
         }
@@ -381,9 +380,8 @@ private:
             return !(*this == rhs);
         }
 
-        //!\copydoc operator!=
-        friend constexpr bool operator!=(std::default_sentinel_t const & lhs, iterator_type const & rhs)
-            noexcept
+        //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::alignment_column_type::iterator_type::operator!=
+        friend constexpr bool operator!=(std::default_sentinel_t const & lhs, iterator_type const & rhs) noexcept
         {
             return rhs != lhs;
         }

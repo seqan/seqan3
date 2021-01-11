@@ -150,7 +150,7 @@ private:
     private:
         //!\brief The base type.
         using base_t = alphabet_proxy<component_proxy<alphabet_type, index>, alphabet_type>;
-        //!\brief Befriend the base type so it can call our #on_update().
+        //!\brief Befriend the base type so it can call our seqan3::alphabet_tuple_base::component_proxy::on_update().
         friend base_t;
 
         //!\brief Store a pointer to the parent object so we can update it.
@@ -199,67 +199,67 @@ private:
             return get<index>(lhs) == static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator==(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs == lhs;
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator!=(derived_type const lhs, component_proxy const rhs) noexcept
         {
             return get<index>(lhs) != static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator!=(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs != lhs;
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator<(derived_type const lhs, component_proxy const rhs) noexcept
         {
             return get<index>(lhs) < static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator<(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs > lhs;
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator<=(derived_type const lhs, component_proxy const rhs) noexcept
         {
             return get<index>(lhs) <= static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator<=(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs >= lhs;
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator>(derived_type const lhs, component_proxy const rhs) noexcept
         {
             return get<index>(lhs) > static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator>(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs < lhs;
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator>=(derived_type const lhs, component_proxy const rhs) noexcept
         {
             return get<index>(lhs) >= static_cast<alphabet_type>(rhs);
         }
 
-        //!\copydoc operator==(derived_type const lhs, component_proxy const rhs)
+        //!\copydoc seqan3::alphabet_tuple_base::component_proxy::operator==(derived_type const, component_proxy const)
         friend constexpr bool operator>=(component_proxy<alphabet_type, index> const lhs, derived_type const rhs) noexcept
         {
             return rhs <= lhs;
