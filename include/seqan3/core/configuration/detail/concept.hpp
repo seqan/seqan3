@@ -162,7 +162,7 @@ SEQAN3_CONCEPT config_element = requires
  * \details
  *
  * This concept is fulfilled if:
- *  * both configurations model seqan3::detail::config_element_specialisation,
+ *  * both configurations model seqan3::detail::config_element,
  *  * are defined within the same algorithm configuration domain,
  *  * a seqan3::detail::compatibility_table is defined for the configuration elements and
  *    returns `true` for both configurations.
@@ -170,8 +170,8 @@ SEQAN3_CONCEPT config_element = requires
 //!\cond
 template <typename config1_t, typename config2_t>
 SEQAN3_CONCEPT config_element_pipeable_with =
-    config_element_specialisation<config1_t> &&
-    config_element_specialisation<config2_t> &&
+    config_element<config1_t> &&
+    config_element<config2_t> &&
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>> &&
     decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
