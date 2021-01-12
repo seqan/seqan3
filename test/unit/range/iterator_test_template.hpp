@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/std/iterator>
+#include <seqan3/std/memory>
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/platform.hpp>
@@ -25,6 +26,7 @@ struct iterator_fixture : public ::testing::Test
                                                                // std::forward_iterator_tag
                                                                // std::bidirectional_iterator_tag
                                                                // std::random_access_iterator_tag
+                                                               // std::contiguous_iterator_tag
 
     static constexpr bool const_iterable = true/false;         // Also test const_iterability. (const begin/end required)
 
@@ -97,6 +99,9 @@ TYPED_TEST_P(iterator_fixture, concept_check)
     EXPECT_EQ(std::random_access_iterator<iterator_type>,
               (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>));
 
+    EXPECT_EQ(std::contiguous_iterator<iterator_type>,
+              (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>));
+
     if constexpr (TestFixture::const_iterable)
     {
         using const_iterator_type = decltype(std::ranges::cbegin(this->test_range));
@@ -110,12 +115,16 @@ TYPED_TEST_P(iterator_fixture, concept_check)
 
         EXPECT_EQ(std::random_access_iterator<const_iterator_type>,
                   (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>));
+
+        EXPECT_EQ(std::contiguous_iterator<const_iterator_type>,
+                  (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>));
     }
 
     if (!std::derived_from<typename TestFixture::iterator_tag, std::input_iterator_tag>)
     {
-        FAIL() << "The iterator tag member type must be one of std::input_iterator_tag,"
-               << "std::forward_iterator_tag, std::bidirectional_iterator_tag, or std::random_access_iterator_tag.";
+        FAIL() << "The iterator tag member type must be one of std::input_iterator_tag, "
+               << "std::forward_iterator_tag, std::bidirectional_iterator_tag, std::random_access_iterator_tag, or "
+               << "std::contiguous_iterator_tag.";
     }
 }
 
@@ -642,6 +651,72 @@ TYPED_TEST_P(iterator_fixture, compare_geq)
     }
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Contiguous Iterator
+// ---------------------------------------------------------------------------------------------------------------------
+
+TYPED_TEST_P(iterator_fixture, address_of_begin)
+{
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
+    {
+        auto begin_it = std::ranges::begin(this->test_range);
+        EXPECT_EQ(std::to_address(begin_it), std::addressof(*begin_it));
+    }
+
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
+                  TestFixture::const_iterable)
+    {
+        auto cbegin_it = std::ranges::cbegin(this->test_range);
+        EXPECT_EQ(std::to_address(cbegin_it), std::addressof(*cbegin_it));
+    }
+}
+
+template <typename it_begin_t, typename it_sentinel_t>
+inline void address_difference_test(it_begin_t it_begin, it_sentinel_t it_end)
+{
+    using difference_t = std::iter_difference_t<it_begin_t>;
+
+    for (auto it = it_begin; it != it_end; ++it)
+    {
+        EXPECT_EQ(std::to_address(it), std::to_address(it_begin) + static_cast<difference_t>(it - it_begin));
+        EXPECT_EQ(std::to_address(it), std::to_address(it_end) - static_cast<difference_t>(it_end - it));
+    }
+}
+
+TYPED_TEST_P(iterator_fixture, address_of_end)
+{
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
+    {
+        using difference_t = std::iter_difference_t<decltype(std::ranges::begin(this->test_range))>;
+        auto it_begin = std::ranges::begin(this->test_range);
+        auto it_end = std::ranges::end(this->test_range);
+        EXPECT_EQ(std::to_address(it_end), std::to_address(it_begin) + static_cast<difference_t>(it_end - it_begin));
+    }
+
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
+                  TestFixture::const_iterable)
+    {
+        using difference_t = std::iter_difference_t<decltype(std::ranges::cbegin(this->test_range))>;
+        auto it_cbegin = std::ranges::cbegin(this->test_range);
+        auto it_cend = std::ranges::cend(this->test_range);
+        EXPECT_EQ(std::to_address(it_cend), std::to_address(it_cbegin) + static_cast<difference_t>(it_cend - it_cbegin));
+    }
+}
+
+TYPED_TEST_P(iterator_fixture, address_difference)
+{
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
+    {
+        address_difference_test(std::ranges::begin(this->test_range), std::ranges::end(this->test_range));
+    }
+
+    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
+                  TestFixture::const_iterable)
+    {
+        address_difference_test(std::ranges::cbegin(this->test_range), std::ranges::cend(this->test_range));
+    }
+}
+
 REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
                             concept_check,
                             const_non_const_compatibility,
@@ -661,4 +736,7 @@ REGISTER_TYPED_TEST_SUITE_P(iterator_fixture,
                             compare_less,
                             compare_greater,
                             compare_leq,
-                            compare_geq);
+                            compare_geq,
+                            address_of_begin,
+                            address_of_end,
+                            address_difference);
