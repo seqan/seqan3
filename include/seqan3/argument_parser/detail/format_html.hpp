@@ -167,9 +167,9 @@ private:
 
         // Print version, date and url.
         std::cout << "<h2>Version</h2>\n"
-                  << "<strong>Last update:</strong> " << to_html(meta.date) << "<br>\n<strong>"
-                  << meta.app_name << " version:</strong> " << meta.version << "<br>\n"
-                  << "<strong>SeqAn version:</strong> " << SEQAN3_VERSION_MAJOR << '.' <<  SEQAN3_VERSION_MINOR << '.'
+                  << in_bold("Last update:") << ' ' << to_html(meta.date) << "<br>\n"
+                  << in_bold(meta.app_name + " version:") << ' ' << meta.version << "<br>\n"
+                  << in_bold("SeqAn version:") << ' ' << SEQAN3_VERSION_MAJOR << '.' <<  SEQAN3_VERSION_MINOR << '.'
                   << SEQAN3_VERSION_PATCH << "<br>\n";
 
         if (!meta.url.empty())
@@ -182,18 +182,16 @@ private:
         // Print legal stuff
         if ((!meta.short_copyright.empty()) || (!meta.long_copyright.empty()) || (!meta.citation.empty()))
         {
-            std::cout << "<h2>Legal</h2>\n<strong>";
+            std::cout << "<h2>Legal</h2>\n";
 
             if (!meta.short_copyright.empty())
-                std::cout << meta.app_name << " Copyright: </strong>"
-                       << meta.short_copyright << "<br>\n<strong>";
+                std::cout << in_bold(meta.app_name + " Copyright: ") << meta.short_copyright << "<br>\n";
 
-            std::cout << "SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n<strong>";
+            std::cout << in_bold("SeqAn Copyright:")
+                      << " 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n";
 
             if (!meta.citation.empty())
-                std::cout << "In your academic works please cite:</strong> " << meta.citation << "<br>\n";
-            else
-                std::cout << "</strong>";
+                std::cout << in_bold("In your academic works please cite:") << ' ' << meta.citation << "<br>\n";
 
             if (!meta.long_copyright.empty())
                 std::cout << "For full copyright and/or warranty information see <tt>--copyright</tt>.\n";
@@ -265,6 +263,15 @@ private:
         }
 
         return result;
+    }
+
+    /*!\brief Format string as in_bold.
+     * \param[in] str The input string to format in bold.
+     * \returns The string `str` wrapped in bold formatting.
+     */
+    std::string in_bold(std::string const & str)
+    {
+        return "<strong>" + str + "</strong>";
     }
 
     //!\brief Current state is either inside a html \<dl\> tag (true) or not (false).
