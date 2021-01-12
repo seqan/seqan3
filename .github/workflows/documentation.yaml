@@ -56,7 +56,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: doc-build
-          key: ${{ runner.os }}-documentation
+          key: ${{ runner.os }}-documentation-${{ env.DOXYGEN_VERSION }}
 
       - name: Build documentation
         run: |
