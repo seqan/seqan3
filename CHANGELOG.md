@@ -43,6 +43,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The subcommand of the `seqan3::argument_parser` may contain a dash
   ([\#2306](https://github.com/seqan/seqan3/pull/2306)).
 
+#### Build system
+
+* We now use Doxygen version 1.9.1 to build our documentation ([\#2327](https://github.com/seqan/seqan3/pull/2327)).
+
 #### Search
 
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
