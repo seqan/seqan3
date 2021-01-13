@@ -13,5 +13,7 @@
 
 #pragma once
 
-#include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
-#include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/core/platform.hpp>
+
+// #include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
+// #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>

@@ -11,7 +11,7 @@
 #include <memory>
 #include <sstream>
 
-#include <seqan3/io/stream/iterator.hpp>
+#include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
 
 #ifdef SEQAN3_HAS_ZLIB
     #include <seqan3/contrib/stream/bgzf_istream.hpp>

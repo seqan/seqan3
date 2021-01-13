@@ -14,10 +14,11 @@
 
 #include <iosfwd>
 
-#include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+
+#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
 
 namespace seqan3::detail
 {
