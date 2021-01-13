@@ -19,9 +19,6 @@
 
 namespace seqan3::detail
 {
-// ============================================================================
-//  fast_istreambuf_iterator
-// ============================================================================
 
 /*!\brief Functionally the same as std::basic_streambuf<char_t, traits_t_>, but exposes protected members as public.
  * \ingroup stream
