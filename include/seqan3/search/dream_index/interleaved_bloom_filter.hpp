@@ -227,7 +227,7 @@ public:
         if (bin_size_ == 0)
             throw std::logic_error{"The size of a bin must be > 0."};
 
-        hash_shift = detail::count_leading_zeros(bin_size_);
+        hash_shift = std::countl_zero(bin_size_);
         bin_words = (bins + 63) >> 6; // = ceil(bins/64)
         technical_bins  = bin_words << 6; // = bin_words * 64
         data = sdsl::bit_vector(technical_bins * bin_size_);
@@ -678,7 +678,7 @@ public:
                 while (tmp > 0)
                 {
                     // Jump to the next 1 and increment the corresponding vector entry.
-                    uint8_t step = detail::count_trailing_zeros(tmp);
+                    uint8_t step = std::countr_zero(tmp);
                     bin += step++;
                     tmp >>= step;
                     ++(*this)[bin++];

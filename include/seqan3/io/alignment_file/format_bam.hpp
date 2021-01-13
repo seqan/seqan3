@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <seqan3/std/bit>
 #include <seqan3/std/concepts>
 #include <iterator>
 #include <seqan3/std/ranges>
@@ -20,7 +21,6 @@
 
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
@@ -1146,8 +1146,9 @@ inline std::string format_bam::get_tag_dict_str(sam_tag_dictionary const & tag_d
         if constexpr (std::same_as<T, int32_t>)
         {
             // always choose the smallest possible representation [cCsSiI]
-            bool negative = arg < 0;
-            auto n = __builtin_ctz(detail::next_power_of_two(((negative) ? arg * -1 : arg) + 1) >> 1) / 8;
+            size_t const absolute_arg = std::abs(arg);
+            auto n = std::countr_zero(std::bit_ceil(absolute_arg + 1u) >> 1u) / 8u;
+            bool const negative = arg < 0;
             n = n * n + 2 * negative; // for switch case order
 
             switch (n)

@@ -9,6 +9,7 @@
 /*!\file
  * \brief Provides the C++20 \<bit\> header if it is not already available.
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
@@ -16,6 +17,30 @@
 #if __has_include(<bit>)
 #include <bit>
 #endif // __has_include(<bit>)
+#include <climits>
+#include <type_traits>
+
+//!\brief This defines __cpp_lib_bitops.
+#ifndef SEQAN3_CPP_LIB_BITOPS
+#   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
+#       define SEQAN3_CPP_LIB_BITOPS 1
+#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L
+#       define SEQAN3_CPP_LIB_BITOPS 1
+#   endif
+#endif
+
+/*!\brief This defines __cpp_lib_int_pow2.
+ * Note: g++-9.3 -std=c++2a on ubuntu 20.04 did `#define __cpp_lib_int_pow2 201806L`, which is an older implementation
+ * of the __cpp_lib_int_pow2 proposal.
+ *
+ * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0556r3.html (__cpp_lib_int_pow2 >= 201806L)
+ * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1956r1.pdf (__cpp_lib_int_pow2 >= 202002L)
+ */
+#ifndef SEQAN3_CPP_LIB_INT_POW2
+#   if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
+#       define SEQAN3_CPP_LIB_INT_POW2 1
+#   endif
+#endif
 
 #ifndef __cpp_lib_endian
 
@@ -49,3 +74,146 @@ enum class endian
 } //namespace std
 
 #endif // __cpp_lib_endian
+
+#if !defined(SEQAN3_CPP_LIB_INT_POW2) || !defined(SEQAN3_CPP_LIB_BITOPS)
+
+namespace std::detail
+{
+/*!\brief How many bits has a type?
+ * \ingroup bit
+ * \tparam type_t The type to determine the number of bits.
+ */
+template <typename type_t>
+constexpr auto sizeof_bits = CHAR_BIT * sizeof(type_t);
+} // namespace std::detail
+
+#endif // !defined(SEQAN3_CPP_LIB_INT_POW2) || !defined(SEQAN3_CPP_LIB_BITOPS)
+
+#ifndef SEQAN3_CPP_LIB_INT_POW2
+
+namespace std
+{
+
+#ifndef SEQAN3_CPP_LIB_BITOPS
+// forward declare
+template<class T> constexpr int countl_zero(T x) noexcept;
+#endif // SEQAN3_CPP_LIB_BITOPS
+
+// // bit_­cast
+// template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
+//
+// // integral powers of 2
+
+/*!\brief Checks if x is an integral power of two.
+ * \sa https://en.cppreference.com/w/cpp/numeric/has_single_bit
+ * \ingroup bit
+ */
+template<class T> constexpr bool has_single_bit(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    return x > 0 && (x & (x-1)) == 0;
+}
+
+/*!\brief Calculates the smallest integral power of two that is not smaller than x.
+ * \sa https://en.cppreference.com/w/cpp/numeric/bit_ceil
+ * \ingroup bit
+ */
+template<class T> constexpr T bit_ceil(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if (x == 0)
+        return 1;
+
+    --x;
+    for (size_t shift = 1; !has_single_bit(x + 1); shift <<= 1)
+        x |= x >> shift;
+
+    return x + 1;
+}
+
+// template<class T> constexpr T bit_floor(T x) noexcept;
+
+/*!\brief If x is not zero, calculates the number of bits needed to store the value x, that is,
+ *        1 + floor(log2(x)). If x is zero, returns zero.
+ * \sa https://en.cppreference.com/w/cpp/numeric/bit_width
+ * \ingroup bit
+ */
+template<class T> constexpr T bit_width(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    return detail::sizeof_bits<T> - countl_zero(x);
+}
+
+} // namespace std
+
+#endif // SEQAN3_CPP_LIB_INT_POW2
+
+#ifndef SEQAN3_CPP_LIB_BITOPS
+
+namespace std
+{
+
+//
+// // rotating
+// template<class T> [[nodiscard]] constexpr T rotl(T x, int s) noexcept;
+// template<class T> [[nodiscard]] constexpr T rotr(T x, int s) noexcept;
+//
+// // counting
+
+/*!\brief Returns the number of consecutive 0 bits in the value of x, starting from the most significant bit ("left").
+ * \sa https://en.cppreference.com/w/cpp/numeric/countl_zero
+ * \ingroup bit
+ */
+template<class T> constexpr int countl_zero(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if constexpr (sizeof(T) == sizeof(unsigned long long))
+        return x == 0u ? detail::sizeof_bits<T> : __builtin_clzll(x);
+    else if constexpr (sizeof(T) == sizeof(unsigned long))
+        return x == 0u ? detail::sizeof_bits<T> : __builtin_clzl(x);
+    else
+        return detail::sizeof_bits<T> + (x == 0u ? 0u : __builtin_clz(x) - detail::sizeof_bits<unsigned int>);
+}
+
+// template<class T> constexpr int countl_one(T x) noexcept;
+
+/*!\brief Returns the number of consecutive 0 bits in the value of x, starting from the least significant bit ("right").
+ * \sa https://en.cppreference.com/w/cpp/numeric/countr_zero
+ * \ingroup bit
+ */
+template<class T> constexpr int countr_zero(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if constexpr (sizeof(T) == sizeof(unsigned long long))
+        return x == 0u ? detail::sizeof_bits<T> : __builtin_ctzll(x);
+    else if constexpr (sizeof(T) == sizeof(unsigned long))
+        return x == 0u ? detail::sizeof_bits<T> : __builtin_ctzl(x);
+    else
+        return x == 0u ? detail::sizeof_bits<T> : __builtin_ctz(x);
+}
+// template<class T> constexpr int countr_one(T x) noexcept;
+
+/*!\brief Returns the number of 1 bits in the value of x.
+ * \sa https://en.cppreference.com/w/cpp/numeric/popcount
+ * \ingroup bit
+ */
+template<class T> constexpr int popcount(T x) noexcept
+{
+    static_assert(std::is_unsigned_v<T>, "Input should be unsigned.");
+
+    if constexpr (sizeof(T) == sizeof(unsigned long long))
+        return __builtin_popcountll(x);
+    else if constexpr (sizeof(T) == sizeof(unsigned long))
+        return __builtin_popcountl(x);
+    else
+        return __builtin_popcount(x);
+}
+
+} // namespace std
+
+#endif // SEQAN3_CPP_LIB_BITOPS

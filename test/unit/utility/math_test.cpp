@@ -7,9 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/utility/math.hpp>
 
-static constexpr size_t max_iterations = 1;//1 << 15;
+static constexpr size_t max_iterations = 1 << 15;
 
 using unsigned_types = ::testing::Types<uint8_t, uint16_t, uint32_t, uint64_t>;
 

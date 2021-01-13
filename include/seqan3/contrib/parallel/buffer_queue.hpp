@@ -14,6 +14,7 @@
 
 #include <seqan3/std/algorithm>
 #include <atomic>
+#include <seqan3/std/bit>
 #include <cmath>
 #include <seqan3/std/concepts>
 #include <mutex>
@@ -24,7 +25,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/utility/parallel/detail/spin_delay.hpp>
@@ -109,7 +109,7 @@ public:
     explicit buffer_queue(size_type const init_capacity)
     {
         buffer.resize(init_capacity + 1);
-        ring_buffer_capacity = seqan3::detail::next_power_of_two(buffer.size());
+        ring_buffer_capacity = std::bit_ceil(buffer.size());
     }
 
     template <std::ranges::input_range range_type>
@@ -420,7 +420,7 @@ inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&
 
         // increase capacity by one and move all elements from current pop_front_position one to the right.
         buffer.resize(old_size + 1);
-        ring_buffer_capacity = seqan3::detail::next_power_of_two(buffer.size());
+        ring_buffer_capacity = std::bit_ceil(buffer.size());
         std::ranges::move_backward(std::span{buffer.data() + front_buffer_position, buffer.data() + old_size},
                                    buffer.data() + buffer.size());
 

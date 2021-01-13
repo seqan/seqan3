@@ -12,12 +12,14 @@
 
 #pragma once
 
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/std/bit>
+
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3
 {
@@ -211,10 +213,10 @@ public:
      */
     constexpr dynamic_bitset(uint64_t const value)
     {
-        if (detail::popcount(value >> 58) != 0)
+        if (std::popcount(value >> 58u) != 0u)
             throw std::invalid_argument{"The dynamic_bitset can be at most 58 long."};
         data.bits |= value;
-        data.size |= value ? detail::most_significant_bit_set(value) + 1 : 0u;
+        data.size |= std::bit_width(value);
     }
 
     /*!\brief Construct from two iterators.
@@ -953,7 +955,7 @@ public:
     //!\brief Returns the number of set bits.
     constexpr size_type count() const noexcept
     {
-        return detail::popcount(data.bits);
+        return std::popcount(data.bits);
     }
 
     /*!\brief Returns the i-th element.

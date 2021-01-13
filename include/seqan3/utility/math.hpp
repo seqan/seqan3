@@ -12,11 +12,13 @@
 
 #pragma once
 
+#include <seqan3/std/bit>
+#include <cassert>
 #include <cmath>
 #include <seqan3/std/concepts>
 #include <stdexcept>
 
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {
@@ -52,7 +54,7 @@ template <std::unsigned_integral unsigned_t>
 constexpr unsigned_t floor_log2(unsigned_t const n) noexcept
 {
     assert(n > 0u); // n == 0 is undefined behaviour
-    return most_significant_bit_set(n);
+    return std::bit_width(n) - 1;
 }
 
 /*!\brief Computes the ceil of the logarithm to the base of two for unsigned integers.
