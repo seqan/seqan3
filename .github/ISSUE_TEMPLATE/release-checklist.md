@@ -120,7 +120,7 @@ assignees: ''
   - [ ] [macports](https://github.com/macports/macports-ports/tree/master/science/seqan3/Portfile) (@rrahn)
   - [ ] [bio.tools](https://bio.tools/seqan) (@rrahn)
   - [ ] [conda](https://github.com/bioconda/bioconda-recipes/tree/master/recipes/seqan3) (@eseiler)
-  - [ ] debian (@mr-c)
+  - [ ] [debian](https://tracker.debian.org/pkg/seqan3) (@mr-c)
   - [ ] fedora (@sagitter)
 - [ ] Update release template with the current release tasks.
 - [ ] Celebrate :tada: :beer:
