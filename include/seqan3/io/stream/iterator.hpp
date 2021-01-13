@@ -13,7 +13,8 @@
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp> or #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp> instead.")
 
-// #include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
-// #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
+#include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
