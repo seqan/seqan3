@@ -185,14 +185,14 @@ div.toc h3 {
 }
 
 /* assignment box */
-div.assignemnt {
+div.assignment {
     padding: 0;
     background-color: #dce2ef;
     border-left: 6px solid #2f436a;
     border-radius: 4px;
 }
 
-div.assignemnt h4 {
+div.assignment h4 {
     padding-top: 0;
     background-repeat: no-repeat;
     background-size: 2em;
@@ -267,4 +267,70 @@ div.solution {
 #nav-tree .label a[class^="struct"][class$="html"]::after {
     content: " Class";
     color: grey;
+}
+.mlabel.experimental-api
+{
+    background-color: orange;
+    border-top: 1px solid #da8d00; /* darken(orange, 14.5) */
+    border-left: 1px solid #da8d00; /* same as above */
+    border-right: 1px solid #ffc965; /* lighten(orange, 40) */
+    border-bottom: 1px solid #ffc965; /* same as above */
+}
+
+.mlabel.stable-api
+{
+    background-color: green;
+    border-top: 1px solid #006d00; /* darken(green, 14.5) */
+    border-left: 1px solid #006d00; /* same as above */
+    border-right: 1px solid #00cc00; /* lighten(green, 20) */
+    border-bottom: 1px solid #00cc00; /* same as above */
+}
+
+.mlabel.no-api
+{
+    background-color: red;
+    border-top: 1px solid #da0000; /* darken(red, 14.5) */
+    border-left: 1px solid #da0000; /* same as above */
+    border-right: 1px solid #ff9999; /* lighten(red, 60) */
+    border-bottom: 1px solid #ff9999; /* same as above */
+}
+
+dl.stable-api::before {
+    content: "✔️"; /*Note: first character is a utf8 symbol (U+2714)*/
+    font-size: 18pt;
+}
+
+dl.stable-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    background-color: #e8ffe8;
+    border-color: #00D000;
+}
+
+dl.experimental-api::before {
+    content: "⚗️"; /*Note: first character is a utf8 symbol (U+2697)*/
+    font-size: 18pt;
+}
+
+dl.experimental-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    border-color: #E08D12;
+    background-color: #FBF0E0;
+}
+
+dl.no-api::before {
+    content: "🚩"; /*Note: first character is a utf8 symbol (U+1F6A9)*/
+    font-size: 18pt;
+}
+
+dl.no-api {
+    margin-left: -7px;
+    padding-left: 3px;
+    border-left: 4px solid;
+    border-color: #FF0000;
+    background-color: #FFF1F1;
+    /* border-radius: 4px; */
 }

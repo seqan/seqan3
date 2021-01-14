@@ -41,7 +41,7 @@ struct bin_literal
  *
  * \details
  *
- * \experimental
+ * \experimentalapi
  *
  * When hashing a sequence, there may be positions that do not count towards the final hash value.
  * A shape offers an easy way to define such patterns. Given a k-mer length `k` (0 < `k` <= 58), a shape
