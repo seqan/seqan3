@@ -66,14 +66,14 @@ struct suffix_array_interval
 };
 
 /*!\brief The SeqAn FM Index Cursor.
- * \implements seqan3::fm_index_cursor_specialisation
+ * \implements seqan3::detail::template_specialisation_of of a seqan3::fm_index_cursor
  * \tparam index_t The type of the underlying index; must model seqan3::fm_index_specialisation.
  * \implements seqan3::cerealisable
  * \details
  *
  * The cursor's interface provides searching a string from left to right in the indexed text.
  * All methods modifying the cursor (e.g. extending by a character with extend_right()) return a `bool` value whether
- * the operation was successful or not. In case of an unsuccessful operation the cursor remains unmodified, i.e. an
+ * the operation was successful or not. In case of an unsuccessful operation the cursor remains unmodified, i.e. a
  * cursor can never be in an invalid state except default constructed cursors that are always invalid.
  *
  * \if DEV
