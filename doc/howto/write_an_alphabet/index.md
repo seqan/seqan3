@@ -136,7 +136,7 @@ your type also model these concepts.
 \endsolution
 
 At this point the seqan3::alphabet concept should be modelled successfully and even seqan3::writable_alphabet
-is fine because we implemented `assign_char` and `char_is_valid`.
+is fine because we implemented `assign_char`.
 \snippet dna2_alphabet.cpp writable_alphabet_concept
 
 ## Shortcut: alphabet base template
@@ -183,4 +183,3 @@ from '1', 't' and 'T' for value 1 as well as from '0', 'f' and 'F' for value 0.
 \note
 You should really make your alphabet types [no-throw-default-constructible](\ref std::is_nothrow_default_constructible)
 if you can!
-
