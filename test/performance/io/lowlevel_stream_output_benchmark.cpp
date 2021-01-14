@@ -12,7 +12,7 @@
 #include <iterator>
 
 #include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/io/stream/iterator.hpp>
+#include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/test/tmp_filename.hpp>

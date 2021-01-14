@@ -13,6 +13,7 @@
 #pragma once
 
 #include <array>
+#include <cassert>
 #include <seqan3/std/concepts>
 #include <utility>
 

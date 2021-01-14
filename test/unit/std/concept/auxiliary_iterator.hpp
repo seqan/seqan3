@@ -10,10 +10,7 @@
 #include <forward_list>
 #include <seqan3/std/iterator>
 #include <list>
-#include <seqan3/std/ranges>
 #include <vector>
-
-#include <seqan3/io/stream/iterator.hpp>
 
 using input_iterator = std::istream_iterator<char>;
 using output_iterator = std::cpp20::ostream_iterator<char>;

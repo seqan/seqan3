@@ -27,7 +27,6 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/io/stream/iterator.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>

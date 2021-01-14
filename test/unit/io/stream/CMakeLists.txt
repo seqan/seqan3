@@ -1,1 +1,1 @@
-seqan3_test(fast_streambuf_iterator_test.cpp)
+add_subdirectories()

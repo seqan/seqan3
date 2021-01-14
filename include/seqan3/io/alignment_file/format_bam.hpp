@@ -37,6 +37,7 @@
 #include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/slice.hpp>
