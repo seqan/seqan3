@@ -12,6 +12,7 @@
 
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -404,7 +405,7 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
 
 TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
 {
-    EXPECT_TRUE(seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor>);
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor>));
 }
 
 TYPED_TEST_P(fm_index_cursor_collection_test, serialisation)

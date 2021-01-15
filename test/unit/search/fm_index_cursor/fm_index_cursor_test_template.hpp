@@ -11,7 +11,7 @@
 #include <type_traits>
 
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -349,7 +349,7 @@ TYPED_TEST_P(fm_index_cursor_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_test, concept_check)
 {
-    EXPECT_TRUE(seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor>);
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor>));
 }
 
 TYPED_TEST_P(fm_index_cursor_test, serialisation)
