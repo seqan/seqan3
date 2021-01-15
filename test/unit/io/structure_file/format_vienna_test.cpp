@@ -123,30 +123,46 @@ struct read : public ::testing::Test
         auto it = fin.begin();
         for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
         {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_EQ(check_energy, seqan3::get<seqan3::field::energy>(*it).has_value());
+#pragma GCC diagnostic pop
             EXPECT_EQ(check_energy, (*it).energy().has_value());
             if (check_seq)
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
+#pragma GCC diagnostic pop
                 EXPECT_RANGE_EQ((*it).sequence(), expected_seq[idx]);
             }
             if (check_id)
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
+#pragma GCC diagnostic pop
                 EXPECT_RANGE_EQ((*it).id(), expected_id[idx]);
             }
             if (check_structure)
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
                 bpp_test((*it).base_pair_probability_matrix(), expected_interactions[idx]);
             }
             if (check_energy)
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
+#pragma GCC diagnostic pop
                 EXPECT_DOUBLE_EQ(*(*it).energy(), expected_energy[idx]);
             }
             if (check_structure)
             {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
                 EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
                 EXPECT_RANGE_EQ((*it).sequence_structure(), expected_structure[idx]);
             }
@@ -256,7 +272,10 @@ TEST_F(read_fields, only_seq)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
+#pragma GCC diagnostic pop
         EXPECT_RANGE_EQ((*it).sequence(), expected_seq[idx]);
     }
 }
@@ -268,7 +287,10 @@ TEST_F(read_fields, only_id)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
+#pragma GCC diagnostic pop
         EXPECT_RANGE_EQ((*it).id(), expected_id[idx]);
     }
 }
@@ -280,6 +302,8 @@ TEST_F(read_fields, only_structure)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
         EXPECT_RANGE_EQ((*it).sequence_structure(), expected_structure[idx]);
     }
@@ -292,9 +316,15 @@ TEST_F(read_fields, only_energy)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_TRUE(seqan3::get<seqan3::field::energy>(*it));
+#pragma GCC diagnostic pop
         EXPECT_TRUE((*it).energy());
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
+#pragma GCC diagnostic pop
         EXPECT_DOUBLE_EQ(*(*it).energy(), expected_energy[idx]);
     }
 }
@@ -306,10 +336,13 @@ TEST_F(read_fields, structured_seq)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::rna5>,
                         expected_seq[idx]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::wuss<51>>,
                         expected_structure[idx]);
+#pragma GCC diagnostic pop
     }
 }
 
@@ -320,6 +353,8 @@ TEST_F(read_fields, only_bpp)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
         bpp_test((*it).base_pair_probability_matrix(), expected_interactions[idx]);
     }

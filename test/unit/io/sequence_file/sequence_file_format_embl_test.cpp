@@ -117,8 +117,11 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
+#pragma GCC diagnostic pop
 
             EXPECT_EQ((*it).id(), ids[i]);
             EXPECT_EQ((*it).sequence(), seqs[i]);

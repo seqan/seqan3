@@ -71,8 +71,11 @@ TEST_F(sequence_record, get_by_field)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4);
+#pragma GCC diagnostic pop
 }
 
 TEST_F(sequence_record, get_by_member)
@@ -87,6 +90,8 @@ TEST_F(sequence_record, get_types)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::id>(r)));
     EXPECT_SAME_TYPE(seqan3::dna4_vector &, decltype(seqan3::get<seqan3::field::seq>(r)));
 
@@ -99,6 +104,7 @@ TEST_F(sequence_record, get_types)
     EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::id>(std::move(std::as_const(r)))));
     EXPECT_SAME_TYPE(seqan3::dna4_vector const &&,
                      decltype(seqan3::get<seqan3::field::seq>(std::move(std::as_const(r)))));
+#pragma GCC diagnostic pop
 }
 
 TEST_F(sequence_record, member_types)
