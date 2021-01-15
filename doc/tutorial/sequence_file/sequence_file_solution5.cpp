@@ -74,7 +74,7 @@ int main()
 
     auto length_filter = std::views::filter([] (auto & rec)
     {
-        return std::ranges::size(seqan3::get<seqan3::field::seq>(rec)) >= 5;
+        return std::ranges::size(rec.sequence()) >= 5;
     });
 
     fout = fin | length_filter;

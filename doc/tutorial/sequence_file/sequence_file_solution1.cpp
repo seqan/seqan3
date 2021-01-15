@@ -55,9 +55,9 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "ID:  "  << seqan3::get<seqan3::field::id>(rec) << '\n';
-        seqan3::debug_stream << "SEQ: "  << seqan3::get<seqan3::field::seq>(rec) << '\n';
-        seqan3::debug_stream << "QUAL: " << seqan3::get<seqan3::field::qual>(rec) << '\n';
+        seqan3::debug_stream << "ID:  "  << rec.id() << '\n';
+        seqan3::debug_stream << "SEQ: "  << rec.sequence() << '\n';
+        seqan3::debug_stream << "QUAL: " << rec.base_qualities() << '\n';
     }
 }
 //![solution]

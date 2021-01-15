@@ -22,7 +22,6 @@ int main()
 
     auto record = fin.front(); // get current record, in this case the first
 
-    // record is tuple-like type, but allows access via field identifiers:
-    auto & id = get<seqan3::field::id>(record);
-    auto & seq = get<seqan3::field::seq>(record);
+    auto & id = record.id();
+    auto & seq = record.sequence();
 }

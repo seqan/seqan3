@@ -69,7 +69,7 @@ void map_reads(std::filesystem::path const & query_path,
     for (auto && record : query_file_in | seqan3::views::take(20))
 #endif // SEQAN3_WORKAROUND_GCC_93983
     {
-        auto & query = seqan3::get<seqan3::field::seq>(record);
+        auto & query = record.sequence();
         for (auto && result : search(query, index, search_config))
         {
             size_t start = result.reference_begin_position() ? result.reference_begin_position() - 1 : 0;
@@ -78,7 +78,7 @@ void map_reads(std::filesystem::path const & query_path,
             for (auto && alignment : seqan3::align_pairwise(std::tie(text_view, query), align_config))
             {
                 auto && [aligned_database, aligned_query] = alignment.alignment();
-                seqan3::debug_stream << "id:       " << seqan3::get<seqan3::field::id>(record) << '\n';
+                seqan3::debug_stream << "id:       " << record.id() << '\n';
                 seqan3::debug_stream << "score:    " << alignment.score() << '\n';
                 seqan3::debug_stream << "database: " << aligned_database << '\n';
                 seqan3::debug_stream << "query:    "  << aligned_query << '\n';

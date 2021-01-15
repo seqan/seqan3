@@ -14,14 +14,12 @@ UUGGAGUACACAACCUGUACACUCUUUC
 
 int main()
 {
-    using seqan3::get;
-
     seqan3::structure_file_input fin{std::istringstream{input}, seqan3::format_vienna{}};
 
 #if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length5_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<seqan3::field::seq>(rec)) >= 5;
+        return std::ranges::size(rec.sequence()) >= 5;
     });
 #endif // !SEQAN3_WORKAROUND_GCC_93983
 
@@ -30,5 +28,5 @@ int main()
 #else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"
 #endif // SEQAN3_WORKAROUND_GCC_93983
-        seqan3::debug_stream << (get<0>(rec) | seqan3::views::to_char) << '\n';
+        seqan3::debug_stream << (rec.sequence() | seqan3::views::to_char) << '\n';
 }

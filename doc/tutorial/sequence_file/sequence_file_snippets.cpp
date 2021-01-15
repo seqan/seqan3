@@ -127,7 +127,7 @@ seqan3::sequence_file_input fin2{std::filesystem::temp_directory_path()/"my.fast
 
 for (auto && [rec1, rec2] : seqan3::views::zip(fin1, fin2)) // && is important!
 {                                                           // because seqan3::views::zip returns temporaries
-    if (seqan3::get<seqan3::field::id>(rec1) != seqan3::get<seqan3::field::id>(rec2))
+    if (rec1.id() != rec2.id())
         throw std::runtime_error("Oh oh your pairs don't match.");
 }
 //![paired_reads]
@@ -142,7 +142,7 @@ for (auto && records : fin | ranges::views::chunk(10))
 {
     // `records` contains 10 elements (or less at the end)
     seqan3::debug_stream << "Taking the next 10 sequences:\n";
-    seqan3::debug_stream << "ID:  " << seqan3::get<seqan3::field::id>(*records.begin()) << '\n';
+    seqan3::debug_stream << "ID:  " << (*records.begin()).id() << '\n';
 }                                                                                           // prints first ID in batch
 //![read_in_batches]
 }
@@ -154,14 +154,14 @@ seqan3::sequence_file_input fin{std::filesystem::temp_directory_path()/"my.fastq
 // std::views::filter takes a function object (a lambda in this case) as input that returns a boolean
 auto minimum_quality_filter = std::views::filter([] (auto const & rec)
 {
-    auto qual = seqan3::get<seqan3::field::qual>(rec) | std::views::transform([] (auto q) { return q.to_phred(); });
+    auto qual = rec.base_qualities() | std::views::transform([] (auto q) { return q.to_phred(); });
     double sum = std::accumulate(qual.begin(), qual.end(), 0);
     return sum / std::ranges::size(qual) >= 40; // minimum average quality >= 40
 });
 
 for (auto & rec : fin | minimum_quality_filter)
 {
-    seqan3::debug_stream << "ID: " << seqan3::get<seqan3::field::id>(rec) << '\n';
+    seqan3::debug_stream << "ID: " << rec.id() << '\n';
 }
 //![quality_filter]
 }

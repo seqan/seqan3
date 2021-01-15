@@ -12,13 +12,12 @@ GGAGTATAATATATATATATATAT)";
 
 int main()
 {
-
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "ID:  " << seqan3::get<seqan3::field::id>(rec) << '\n';
-        seqan3::debug_stream << "SEQ: " << seqan3::get<seqan3::field::seq>(rec) << '\n';
+        seqan3::debug_stream << "ID:  " << rec.id() << '\n';
+        seqan3::debug_stream << "SEQ: " << rec.sequence() << '\n';
         // a quality field also exists, but is not printed, because we know it's empty for FastA files.
     }
 }

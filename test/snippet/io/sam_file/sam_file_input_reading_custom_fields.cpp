@@ -14,15 +14,13 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    using seqan3::get;
-
     seqan3::sam_file_input fin{std::istringstream{sam_file_raw},
                                seqan3::format_sam{},
                                seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "flag:  "            << get<seqan3::field::flag>(rec) << '\n';
-        seqan3::debug_stream << "mapping quality:  " << get<seqan3::field::mapq>(rec) << '\n';
+        seqan3::debug_stream << "flag:  "            << rec.flag() << '\n';
+        seqan3::debug_stream << "mapping quality:  " << rec.mapping_quality() << '\n';
     }
 }

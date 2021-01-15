@@ -74,7 +74,7 @@ void map_reads(std::filesystem::path const & query_path,
 
     for (auto && record : query_file_in)
     {
-        auto & query = seqan3::get<seqan3::field::seq>(record);
+        auto & query = record.sequence();
         for (auto && result : search(query, index, search_config))
         {
             size_t start = result.reference_begin_position() ? result.reference_begin_position() - 1 : 0;
@@ -87,11 +87,11 @@ void map_reads(std::filesystem::path const & query_path,
                 size_t map_qual = 60u + alignment.score();
 
                 sam_out.emplace_back(query,
-                                     seqan3::get<seqan3::field::id>(record),
+                                     record.id(),
                                      storage.ids[result.reference_id()],
                                      ref_offset,
                                      aligned_seq,
-                                     seqan3::get<seqan3::field::qual>(record),
+                                     record.base_qualities(),
                                      map_qual);
             }
         }

@@ -14,8 +14,6 @@ HGEBHHHHHGEBHHHH)";
 
 int main()
 {
-    using seqan3::get;
-
     using structure_file_input_t = seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa,
                                                                 seqan3::fields<seqan3::field::seq,
                                                                                seqan3::field::id,
@@ -26,9 +24,9 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "ID: "        << get<seqan3::field::id>(rec)                                  << '\n';
+        seqan3::debug_stream << "ID: "        << rec.id()                                  << '\n';
         // sequence and structure are converted to char on-the-fly
-        seqan3::debug_stream << "SEQ: "       << (get<seqan3::field::seq>(rec) | seqan3::views::to_char)       << '\n';
-        seqan3::debug_stream << "STRUCTURE: " << (get<seqan3::field::structure>(rec) | seqan3::views::to_char) << '\n';
+        seqan3::debug_stream << "SEQ: "       << (rec.sequence() | seqan3::views::to_char)       << '\n';
+        seqan3::debug_stream << "STRUCTURE: " << (rec.sequence_structure() | seqan3::views::to_char) << '\n';
     }
 }
