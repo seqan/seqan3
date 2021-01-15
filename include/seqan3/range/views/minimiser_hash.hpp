@@ -151,7 +151,7 @@ namespace seqan3::views
  * \attention
  * Be aware of the requirements of the seqan3::views::kmer_hash view.
  *
- * \experimental
+ * \experimentalapi
  *
  * ### View properties
  *

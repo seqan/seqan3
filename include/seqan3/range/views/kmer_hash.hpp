@@ -207,7 +207,7 @@ public:
  * When using a gapped seqan3::shape, the `0`s of the seqan3::shape are virtually removed from the hashed k-mer.
  * Note that any shape is expected to start with a `1` and end with a `1`.
  *
- * \experimental
+ * \experimentalapi
  *
  * ### Implementation detail
  *
