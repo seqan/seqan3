@@ -20,7 +20,8 @@
 #include <climits>
 #include <type_traits>
 
-//!\brief This defines __cpp_lib_bitops.
+//!\brief A workaround for __cpp_lib_bitops for gcc version 9.x (in C++20 mode).
+//!       Those versions implemented std::countl_zero, etc, but did not define that feature detection macro.
 #ifndef SEQAN3_CPP_LIB_BITOPS
 #   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
