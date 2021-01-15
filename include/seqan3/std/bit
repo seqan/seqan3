@@ -42,7 +42,17 @@
 #   endif
 #endif
 
-#ifndef __cpp_lib_endian
+//!\brief A workaround for __cpp_lib_endian for gcc version 8.x (in C++20 mode).
+//!       Those versions implemented std::endian, but did not define that feature detection macro.
+#ifndef SEQAN3_CPP_LIB_ENDIAN
+#   if defined(__cpp_lib_endian)
+#       define SEQAN3_CPP_LIB_ENDIAN 1
+#   elif defined(__GNUC__) && __GNUC__ == 8 && __cplusplus > 201703L
+#       define SEQAN3_CPP_LIB_ENDIAN 1
+#   endif
+#endif
+
+#ifndef SEQAN3_CPP_LIB_ENDIAN
 
 #include <cstddef>
 
@@ -73,7 +83,7 @@ enum class endian
 
 } //namespace std
 
-#endif // __cpp_lib_endian
+#endif // SEQAN3_CPP_LIB_ENDIAN
 
 #if !defined(SEQAN3_CPP_LIB_INT_POW2) || !defined(SEQAN3_CPP_LIB_BITOPS)
 
