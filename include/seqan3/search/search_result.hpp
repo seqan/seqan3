@@ -72,8 +72,8 @@ template <typename query_id_type,
 //!\cond
     requires (std::integral<query_id_type> || std::same_as<query_id_type, detail::empty_type>) &&
              (detail::template_specialisation_of<cursor_type, fm_index_cursor> ||
-                detail::template_specialisation_of<cursor_type, bi_fm_index_cursor>) &&
-             // std::same_as<cursor_type, detail::empty_type>
+                     detail::template_specialisation_of<cursor_type, bi_fm_index_cursor> ||
+                     std::same_as<cursor_type, detail::empty_type>) &&
              (std::integral<reference_id_type> || std::same_as<reference_id_type, detail::empty_type>) &&
              (std::integral<reference_begin_position_type> || std::same_as<reference_begin_position_type,
                                                                            detail::empty_type>)
