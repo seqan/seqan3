@@ -349,7 +349,8 @@ TYPED_TEST_P(fm_index_cursor_test, lazy_locate)
 
 TYPED_TEST_P(fm_index_cursor_test, concept_check)
 {
-    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor>));
+    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor> ||
+            seqan3::detail::template_specialisation_of<TypeParam, seqan3::bi_fm_index_cursor>));
 }
 
 TYPED_TEST_P(fm_index_cursor_test, serialisation)
