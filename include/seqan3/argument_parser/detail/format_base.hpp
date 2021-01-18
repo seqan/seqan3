@@ -24,6 +24,7 @@
 #include <seqan3/argument_parser/validators.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/version.hpp>
 
 namespace seqan3::detail
 {
@@ -335,6 +336,8 @@ public:
                 print_line(example);
         }
 
+        print_version();
+
         derived_t().print_footer();
 
         std::exit(EXIT_SUCCESS); // program should not continue from here
@@ -417,6 +420,26 @@ protected:
     void print_line(std::string const & text)
     {
         derived_t().print_line(text, true);
+    }
+
+    //!\brief Prints the version information.
+    void print_version()
+    {
+        std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "." +
+                                        std::to_string(SEQAN3_VERSION_MINOR) + "." +
+                                        std::to_string(SEQAN3_VERSION_PATCH);
+
+        // Print version, date and url.
+        derived_t().print_section("Version");
+        derived_t().print_line(derived_t().in_bold("Last update: ") + meta.date, false);
+        derived_t().print_line(derived_t().in_bold(meta.app_name + " version: ") + meta.version, false);
+        derived_t().print_line(derived_t().in_bold("SeqAn version: ") + version_str, false);
+
+        if (!empty(meta.url))
+        {
+            derived_t().print_section("Url");
+            derived_t().print_line(meta.url, false);
+        }
     }
 
     //!\brief Vector of functions that stores all calls except add_positional_option.

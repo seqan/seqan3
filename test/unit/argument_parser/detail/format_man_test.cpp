@@ -79,7 +79,13 @@ struct format_man_test : public ::testing::Test
     R"(.SH EXAMPLES)" "\n"
     R"(example)" "\n"
     R"(.sp)" "\n"
-    R"(example2)" "\n";
+    R"(example2)" "\n"
+    R"(.SH VERSION)" "\n"
+    R"(\fBLast update: \fRDecember 01, 1994)" "\n"
+    R"(.br)" "\n"
+    R"(\fBdefault version: \fR01.01.01)" "\n"
+    R"(.br)" "\n"
+    R"(\fBSeqAn version: \fR3.0.3)" "\n";
 
     // Full info parser initialisation
     void dummy_init(seqan3::argument_parser & parser)
@@ -138,7 +144,13 @@ TEST_F(format_man_test, empty_information)
     R"(Export the help page information. Value must be one of [html, man].)" "\n"
     R"(.TP)" "\n"
     R"(\fB--version-check\fP (bool))" "\n"
-    R"(Whether to to check for the newest app version. Default: 1.)" "\n";
+    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
+    R"(.SH VERSION)" "\n"
+    R"(\fBLast update: \fRDecember 01, 1994)" "\n"
+    R"(.br)" "\n"
+    R"(\fBdefault version: \fR01.01.01)" "\n"
+    R"(.br)" "\n"
+    R"(\fBSeqAn version: \fR3.0.3)" "\n";
 
     // Test the dummy parser with minimal information.
     testing::internal::CaptureStdout();
