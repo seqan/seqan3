@@ -11,7 +11,6 @@
 #include <type_traits>
 
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
