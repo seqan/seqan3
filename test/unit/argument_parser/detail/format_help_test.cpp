@@ -127,7 +127,7 @@ TEST(help_page_printing, with_short_copyright)
                "\n" +
                "LEGAL\n"
                "    test_parser Copyright: short\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n";
     EXPECT_EQ(std_cout, expected);
 }
@@ -147,7 +147,7 @@ TEST(help_page_printing, with_long_copyright)
                basic_version_str +
                "\n" +
                "LEGAL\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n"
                "    For full copyright and/or warranty information see --copyright.\n";
     EXPECT_EQ(std_cout, expected);
@@ -168,7 +168,7 @@ TEST(help_page_printing, with_citation)
                basic_version_str +
                "\n" +
                "LEGAL\n"
-               "    SeqAn Copyright: 2006-2015 Knut Reinert, FU-Berlin; released under the\n"
+               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
                "    3-clause BSDL.\n"
                "    In your academic works please cite: citation\n";
     EXPECT_EQ(std_cout, expected);
