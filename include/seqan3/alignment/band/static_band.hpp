@@ -22,8 +22,9 @@
 namespace seqan3
 {
 
-/*!\brief Data structure for a static band.
+/*!\brief [DEPRECATED] Data structure for a static band.
  * \ingroup alignment_band
+ * \deprecated use seqan3::align_cfg::band_fixed_size instead.
  */
 class SEQAN3_DEPRECATED_310 static_band
 {
