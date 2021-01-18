@@ -17,21 +17,19 @@
 #include <version> // from C++20 all feature macros should be defined here
 #endif
 
-//!\brief A workaround for __cpp_lib_to_address for gcc version on macOS >=9.0 and < 9.4 (in C++20 mode).
+//!\brief A workaround for __cpp_lib_to_address for gcc version >=8.0 and < 9.4 (in C++20 mode).
 //!       Those versions implemented std::to_address, but did not define that feature detection macro.
-#ifndef SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
+#ifndef SEQAN3_CPP_LIB_TO_ADDRESS
 #   if defined(__cpp_lib_to_address)
-#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 1
-#   elif defined(__GNUC__) && defined(__APPLE__) && (__GNUC__ == 9) && __cplusplus > 201703L
-#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 1
-#   else
-#       define SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT 0
+#       define SEQAN3_CPP_LIB_TO_ADDRESS 1
+#   elif defined(__GNUC__) && (__GNUC__ == 8 || __GNUC__ == 9) && __cplusplus > 201703L
+#       define SEQAN3_CPP_LIB_TO_ADDRESS 1
 #   endif
 #endif
 
 #include <memory>
 
-#if !SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
+#ifndef SEQAN3_CPP_LIB_TO_ADDRESS
 
 /*!\defgroup memory memory
  * \ingroup std
@@ -64,5 +62,4 @@ constexpr auto to_address(const T & p) noexcept
 
 } // namespace std
 
-#endif // SEQAN3_WORKAROUND_CPP_LIB_TO_ADDRESS_IS_PRESENT
-
+#endif // SEQAN3_CPP_LIB_TO_ADDRESS

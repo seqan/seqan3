@@ -17,13 +17,11 @@
 
 //!\brief A workaround for __cpp_lib_remove_cvref for gcc version >=9.0 and <9.4 (in C++17 mode).
 //!       Those versions implemented std::remove_cvref_t, but did not define that feature detection macro.
-#ifndef SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF
+#ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
 #   if defined(__cpp_lib_remove_cvref)
-#       define SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF 1
+#       define SEQAN3_CPP_LIB_REMOVE_CVREF 1
 #   elif defined(__GNUC__) && ((__GNUC__ == 9) && (__GNUC_MINOR__ < 4)) && __cplusplus > 201703L
-#       define SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF 1
-#   else
-#       define SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF 0
+#       define SEQAN3_CPP_LIB_REMOVE_CVREF 1
 #   endif
 #endif
 
@@ -33,7 +31,7 @@ namespace std
 // ----------------------------------------------------------------------------
 // remove_cvref_t
 // ----------------------------------------------------------------------------
-#if !SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF
+#ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
 /*!\brief Return the input type with `const`, `volatile` and references removed.
  * \tparam t The type to operate on.
  */
@@ -54,7 +52,7 @@ struct remove_cvref<t> // needed for gcc-9, it defines std::remove_cvref but doe
  */
 template <typename t>
 using remove_cvref_t = typename remove_cvref<t>::type;
-#endif // !SEQAN3_WORKAROUND_CPP_LIB_REMOVE_CVREF
+#endif // SEQAN3_CPP_LIB_REMOVE_CVREF
 
 // ----------------------------------------------------------------------------
 // type_identity
