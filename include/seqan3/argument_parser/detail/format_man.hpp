@@ -132,23 +132,7 @@ private:
     //!\brief Prints a help page footer in man page format.
     void print_footer()
     {
-        // Print legal stuff
-        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
-        {
-            std::cout << ".SH LEGAL\n";
-
-            if (!empty(meta.short_copyright))
-                std::cout << in_bold(meta.app_name + " Copyright:") << ' ' << meta.short_copyright << "\n.br\n";
-
-            std::cout << in_bold("SeqAn Copyright:")
-                      << " 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n.br\n";
-
-            if (!empty(meta.citation))
-                std::cout << in_bold("In your academic works please cite:") << ' ' << meta.citation << "\n.br\n";
-
-            if (!empty(meta.long_copyright))
-                std::cout << "For full copyright and/or warranty information see " << in_bold("--copyright") << ".\n";
-        }
+        // no footer
     }
 
     /*!\brief Format string as in_bold.

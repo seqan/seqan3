@@ -176,10 +176,16 @@ TEST(html_format, full_information_information)
                           "<br>\n"
                           "</p>\n"
                           "<h2>Legal</h2>\n"
-                          "<strong>program_full_options Copyright: </strong>short copyright<br>\n"
-                          "<strong>SeqAn Copyright:</strong> 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n"
-                          "<strong>In your academic works please cite:</strong> citation<br>\n"
-                          "For full copyright and/or warranty information see <tt>--copyright</tt>.\n"
+                          "<p>\n"
+                          "<strong>program_full_options Copyright: </strong>short copyright\n"
+                          "<br>\n"
+                          "<strong>SeqAn Copyright: </strong>2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
+                          "<br>\n"
+                          "<strong>In your academic works please cite: </strong>citation\n"
+                          "<br>\n"
+                          "For full copyright and/or warranty information see <strong>--copyright</strong>.\n"
+                          "<br>\n"
+                          "</p>\n"
                           "</body></html>");
    EXPECT_EQ(my_stdout, expected);
 }

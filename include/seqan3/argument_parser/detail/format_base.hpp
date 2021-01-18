@@ -338,6 +338,8 @@ public:
 
         print_version();
 
+        print_legal();
+
         derived_t().print_footer();
 
         std::exit(EXIT_SUCCESS); // program should not continue from here

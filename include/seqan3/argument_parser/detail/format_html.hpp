@@ -163,26 +163,7 @@ private:
     //!\brief Prints a help page footer in HTML format to std::cout.
     void print_footer()
     {
-        maybe_close_list();
         maybe_close_paragraph();
-
-        // Print legal stuff
-        if ((!meta.short_copyright.empty()) || (!meta.long_copyright.empty()) || (!meta.citation.empty()))
-        {
-            std::cout << "<h2>Legal</h2>\n";
-
-            if (!meta.short_copyright.empty())
-                std::cout << in_bold(meta.app_name + " Copyright: ") << meta.short_copyright << "<br>\n";
-
-            std::cout << in_bold("SeqAn Copyright:")
-                      << " 2006-2019 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.<br>\n";
-
-            if (!meta.citation.empty())
-                std::cout << in_bold("In your academic works please cite:") << ' ' << meta.citation << "<br>\n";
-
-            if (!meta.long_copyright.empty())
-                std::cout << "For full copyright and/or warranty information see <tt>--copyright</tt>.\n";
-        }
 
         // Print HTML boilerplate footer.
         std::cout << "</body></html>";

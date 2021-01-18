@@ -185,10 +185,9 @@ TEST_F(format_man_test, full_info_short_copyright)
     // Add a short copyright and test the dummy parser.
     parser.info.short_copyright = "short copyright";
     expected += R"(.SH LEGAL
-\fBdefault Copyright:\fR short copyright
+\fBdefault Copyright: \fRshort copyright
 .br
-\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
-.br
+\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
 )";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -208,12 +207,11 @@ TEST_F(format_man_test, full_info_short_and_citation)
     parser.info.short_copyright = "short copyright";
     parser.info.citation = "citation";
     expected += R"(.SH LEGAL
-\fBdefault Copyright:\fR short copyright
+\fBdefault Copyright: \fRshort copyright
 .br
-\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
 .br
-\fBIn your academic works please cite:\fR citation
-.br
+\fBIn your academic works please cite: \fRcitation
 )";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -234,11 +232,11 @@ TEST_F(format_man_test, full_info_short_long_and_citation)
     parser.info.citation = "citation";
     parser.info.long_copyright = "looong copyright";
     expected += R"(.SH LEGAL
-\fBdefault Copyright:\fR short copyright
+\fBdefault Copyright: \fRshort copyright
 .br
-\fBSeqAn Copyright:\fR 2006-2015 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
 .br
-\fBIn your academic works please cite:\fR citation
+\fBIn your academic works please cite: \fRcitation
 .br
 For full copyright and/or warranty information see \fB--copyright\fR.
 )";
