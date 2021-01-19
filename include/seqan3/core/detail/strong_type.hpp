@@ -62,6 +62,7 @@ enum struct strong_type_skill
 namespace seqan3
 {
 //!\cond DEV
+//!\brief Overload bitwise operators for seqan3::detail::strong_type_skill.
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = true;

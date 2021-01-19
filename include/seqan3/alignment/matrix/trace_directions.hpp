@@ -22,7 +22,7 @@ namespace seqan3::detail
  * \ingroup alignment_matrix
  * \implements seqan3::enum_bitwise_operators
  * \implements seqan3::enum_bitwise_operators
-  * \sa seqan3::enum_bitwise_operators enables combining enum values.
+ * \sa seqan3::enum_bitwise_operators enables combining enum values.
  * \sa seqan3::detail::alignment_trace_matrix implementations use this enum as matrix entry type.
  */
 enum struct trace_directions : uint8_t

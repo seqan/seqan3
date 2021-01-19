@@ -36,9 +36,9 @@ enum fmtflags2
     default_            = small_int_as_number
 };
 
+//!\cond DEV
 //!\brief Overload bitwise operators for seqan3::fmtflags2.
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
-//!\cond DEV
 template <>
 constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
 //!\endcond
