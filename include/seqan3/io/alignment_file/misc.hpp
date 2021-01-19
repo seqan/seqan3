@@ -24,6 +24,8 @@ struct ref_info_not_given
 
 /*!\brief An enum flag that describes the properties of an aligned read (given as a SAM record).
  * \ingroup alignment_file
+ * \implements seqan3::enum_bitwise_operators
+ * \sa seqan3::enum_bitwise_operators enables combining enum values.
  *
  * The SAM flag are bitwise flags, which means that each value corresponds to a specific bit that is set and that they
  * can be combined and tested using binary operations.
@@ -84,9 +86,12 @@ enum class sam_flag : uint16_t
    supplementary_alignment = 0x800  //!< This sequence is part of a split alignment and is not the primary alignment.
 };
 
+//!\cond DEV
 //!\brief Enables bitwise operations for seqan3::sam_flags.
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<sam_flag> = true;
+//!\endcond
 
 /*!\brief Overload for the seqan3::sam_flags.
  * \tparam char_t Type char type of the debug_stream.

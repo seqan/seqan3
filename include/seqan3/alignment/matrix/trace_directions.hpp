@@ -20,7 +20,9 @@ namespace seqan3::detail
 
 /*!\brief The possible directions a trace can have. The values can be combined by the logical `|`-operator.
  * \ingroup alignment_matrix
- * \sa seqan3::add_enum_bitwise_operators <seqan3::detail::trace_directions> enables combining enum values.
+ * \implements seqan3::enum_bitwise_operators
+ * \implements seqan3::enum_bitwise_operators
+ * \sa seqan3::enum_bitwise_operators enables combining enum values.
  * \sa seqan3::detail::alignment_trace_matrix implementations use this enum as matrix entry type.
  */
 enum struct trace_directions : uint8_t
@@ -43,14 +45,13 @@ enum struct trace_directions : uint8_t
 
 namespace seqan3
 {
+//!\cond DEV
 //!\brief Enable bitwise operators for enum seqan3::detail::trace_directions.
 //!\ingroup alignment_matrix
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = true;
-} // namespace seqan3
-
-namespace seqan3
-{
+//!\endcond
 
 /*!\brief All trace_directions can be printed as ascii or as utf8 to the seqan3::debug_stream.
  * \param s The seqan3::debug_stream.

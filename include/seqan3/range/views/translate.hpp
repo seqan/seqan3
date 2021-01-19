@@ -61,6 +61,8 @@ namespace seqan3
 {
 
 //!\brief Specialisation values for single and multiple translation frames.
+//!\implements seqan3::enum_bitwise_operators
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 enum class translation_frames : uint8_t
 {
     FWD_FRAME_0 = 1,                                    //!< The first forward frame starting at position 0
@@ -77,9 +79,12 @@ enum class translation_frames : uint8_t
     SIX_FRAME = FWD | REV                               //!< All frames
 };
 
+//!\cond DEV
 //!\brief Enable bitwise operators for enum translation_frames.
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<translation_frames> = true;
+//!\endcond
 
 }
 

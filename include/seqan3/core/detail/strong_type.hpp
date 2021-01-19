@@ -27,6 +27,8 @@ namespace seqan3::detail
 
 /*!\brief Enum class for all supported operations that can be added to a seqan3::detail::strong_type.
  * \ingroup core
+ * \implements seqan3::enum_bitwise_operators
+ * \sa seqan3::enum_bitwise_operators enables combining enum values.
  */
 enum struct strong_type_skill
 {
@@ -59,7 +61,9 @@ enum struct strong_type_skill
 
 namespace seqan3
 {
-//!\cond
+//!\cond DEV
+//!\brief Overload bitwise operators for seqan3::detail::strong_type_skill.
+//!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = true;
 //!\endcond
