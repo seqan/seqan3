@@ -66,7 +66,6 @@ struct suffix_array_interval
 };
 
 /*!\brief The SeqAn FM Index Cursor.
- * \implements seqan3::detail::template_specialisation_of a seqan3::fm_index_cursor
  * \tparam index_t The type of the underlying index; must model seqan3::fm_index_specialisation.
  * \implements seqan3::cerealisable
  * \details

@@ -41,7 +41,7 @@ namespace seqan3
  * \ingroup search
  * \tparam query_id_type The type of the query_id; must model std::integral.
  * \tparam cursor_type The type of the cursor; must model seqan3::detail::template_specialisation_of a
- * seqan3::fm_index_cursor
+ * seqan3::fm_index_cursor or a seqan3::bi_fm_index_cursor
  * \tparam reference_id_type The type of the reference_id; must model std::integral.
  * \tparam reference_begin_position_type The type of the reference_begin_position; must model std::integral.
  *

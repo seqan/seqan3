@@ -12,7 +12,6 @@
 
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
-#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -403,12 +402,6 @@ TYPED_TEST_P(fm_index_cursor_collection_test, extend_const_char_pointer)
     }
 }
 
-TYPED_TEST_P(fm_index_cursor_collection_test, concept_check)
-{
-    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor> ||
-    seqan3::detail::template_specialisation_of<TypeParam, seqan3::bi_fm_index_cursor>));
-}
-
 TYPED_TEST_P(fm_index_cursor_collection_test, serialisation)
 {
     typename TypeParam::index_type fm{this->text_col4};
@@ -422,4 +415,4 @@ TYPED_TEST_P(fm_index_cursor_collection_test, serialisation)
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_collection_test, ctr, begin, extend_right_range,
                             extend_right_range_empty_text, extend_right_char, extend_right_range_and_cycle,
                             extend_right_char_and_cycle, extend_right_and_cycle, query, last_rank, incomplete_alphabet,
-                            lazy_locate, extend_const_char_pointer, concept_check, serialisation);
+                            lazy_locate, extend_const_char_pointer, serialisation);

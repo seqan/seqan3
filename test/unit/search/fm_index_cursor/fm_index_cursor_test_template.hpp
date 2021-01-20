@@ -346,12 +346,6 @@ TYPED_TEST_P(fm_index_cursor_test, lazy_locate)
     EXPECT_RANGE_EQ(it.locate(), it.lazy_locate());
 }
 
-TYPED_TEST_P(fm_index_cursor_test, concept_check)
-{
-    EXPECT_TRUE((seqan3::detail::template_specialisation_of<TypeParam, seqan3::fm_index_cursor> ||
-            seqan3::detail::template_specialisation_of<TypeParam, seqan3::bi_fm_index_cursor>));
-}
-
 TYPED_TEST_P(fm_index_cursor_test, serialisation)
 {
     typename TypeParam::index_type fm{this->text1};
@@ -364,4 +358,4 @@ TYPED_TEST_P(fm_index_cursor_test, serialisation)
 
 REGISTER_TYPED_TEST_SUITE_P(fm_index_cursor_test, ctr, begin, extend_right_range, extend_right_char,
                             extend_right_range_and_cycle, extend_right_char_and_cycle, extend_right_and_cycle, query,
-                            last_rank, incomplete_alphabet, lazy_locate, concept_check, serialisation);
+                            last_rank, incomplete_alphabet, lazy_locate, serialisation);
