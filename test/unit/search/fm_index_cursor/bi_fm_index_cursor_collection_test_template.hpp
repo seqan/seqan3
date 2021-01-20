@@ -13,7 +13,6 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
