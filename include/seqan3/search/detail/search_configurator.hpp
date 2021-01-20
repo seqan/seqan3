@@ -78,7 +78,7 @@ private:
     {
         //!\brief The selected algorithm type based on the index.
         using type =
-            lazy_conditional_t<bi_fm_index_specialisation<index_t>,
+            lazy_conditional_t<template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>,
                                lazy<search_scheme_algorithm, configuration_t, index_t, policies_t...>,
                                lazy<unidirectional_search_algorithm, configuration_t, index_t, policies_t...>>;
     };
@@ -159,8 +159,8 @@ public:
      *
      * \details
      *
-     * If the `index_t` models seqan3::bi_fm_index_specialisation, then the
-     * seqan3::detail::search_scheme_algorithm is chosen. Otherwise, the
+     * If the cursor of `index_t` models seqan3::detail::template_specialisation_of a seqan3::bi_fm_index_cursor,
+     * then the seqan3::detail::search_scheme_algorithm is chosen. Otherwise, the
      * seqan3::detail::unidirectional_search_algorithm is chosen.
      */
     template <typename query_t, typename configuration_t, typename index_t>

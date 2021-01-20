@@ -24,6 +24,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
 
+
 namespace seqan3::detail
 {
 
@@ -42,9 +43,13 @@ enum class error_type : uint8_t
 
 /*!\brief The algorithm that performs a unidirectional search on an FM index using trivial backtracking.
  * \tparam configuration_t The search configuration type.
- * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
+ * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
+ * a seqan3::fm_index_cursor.
  */
-template <typename configuration_t, fm_index_specialisation index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename ...policies_t>
+//!\cond
+requires (template_specialisation_of<typename index_t::cursor_type, fm_index_cursor>)
+//!\endcond
 class unidirectional_search_algorithm : protected policies_t...
 {
 private:
@@ -68,7 +73,8 @@ public:
 
     /*!\brief Constructs from a configuration object and an index.
      * \tparam configuration_t The search configuration type.
-     * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
+     * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
+     * a seqan3::fm_index_cursor.
      * \param[in] cfg The configuration object that guides the search algorithm.
      * \param[in] index The index used in the algorithm.
      *
