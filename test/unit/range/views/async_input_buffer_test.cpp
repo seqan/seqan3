@@ -75,6 +75,7 @@ TEST(async_input_buffer, buffer_size_huge)
     EXPECT_RANGE_EQ(vec, v);
 }
 
+#if 0
 TEST(async_input_buffer, destruct_with_full_buffer)
 {
     seqan3::dna4_vector vec{"ACGTACGTACGTATCGAGAGCTTTAGC"_dna4};
@@ -98,6 +99,7 @@ TEST(async_input_buffer, destruct_with_full_buffer)
 
     EXPECT_GE(std::ranges::distance(vec), 17); // total of at most 10 chars consumed
 }
+#endif
 
 TEST(async_input_buffer, combinability)
 {
