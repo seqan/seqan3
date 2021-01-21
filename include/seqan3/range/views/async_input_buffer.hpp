@@ -78,9 +78,20 @@ public:
      * \{
      */
     async_input_buffer_view() = default; //!< Defaulted.
+
+#if defined(__cpp_lib_ranges) // C++20 ranges available
     async_input_buffer_view(async_input_buffer_view const &) = delete; //!< This is a move-only type.
+#else
+    async_input_buffer_view(async_input_buffer_view const &) = default; //!< Defaulted.
+#endif
     async_input_buffer_view(async_input_buffer_view &&) = default; //!< Defaulted.
+
+
+#if defined(__cpp_lib_ranges) // C++20 ranges available
     async_input_buffer_view & operator=(async_input_buffer_view const &) = delete; //!< This is a move-only type.
+#else
+    async_input_buffer_view & operator=(async_input_buffer_view const &) = default; //!< Defaulted.
+#endif
     async_input_buffer_view & operator=(async_input_buffer_view &&) = default; //!< Defaulted.
     ~async_input_buffer_view() = default; //!< Defaulted.
 

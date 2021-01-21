@@ -76,14 +76,28 @@ public:
      */
     //!\brief Default default-constructor.
     constexpr single_pass_input_view() = default;
-    //!\brief This is a move-only type.
+
+#if defined(__cpp_lib_ranges) // C++20 ranges available
+    //!\brief This is a move-only type
     constexpr single_pass_input_view(single_pass_input_view const &) = delete;
+#else
+    //!\brief Default copy-constructor
+    constexpr single_pass_input_view(single_pass_input_view const &) = default;
+#endif
     //!\brief Default move-constructor.
     constexpr single_pass_input_view(single_pass_input_view &&) = default;
-    //!\brief This is a move-only type.
+
+#if defined(__cpp_lib_ranges) // C++20 ranges available
+    //!\brief This is a move-only type
     constexpr single_pass_input_view & operator=(single_pass_input_view const &) = delete;
+#else
+    //!\brief Default copy-operator
+    constexpr single_pass_input_view & operator=(single_pass_input_view const &) = default;
+#endif
     //!\brief Default move-assignment
     constexpr single_pass_input_view & operator=(single_pass_input_view &&) = default;
+
+
     //!\brief Default destructor.
     ~single_pass_input_view() = default;
 
