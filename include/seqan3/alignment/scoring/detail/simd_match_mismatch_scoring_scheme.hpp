@@ -17,8 +17,8 @@
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/concept/cereal.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 
@@ -78,7 +78,7 @@ private:
 
 public:
     //!\brief The padding symbol used to fill up smaller sequences in a simd batch.
-    static constexpr scalar_type padding_symbol = static_cast<scalar_type>(1u << (sizeof_bits<scalar_type> - 1));
+    static constexpr scalar_type padding_symbol = static_cast<scalar_type>(1u << (bits_of<scalar_type> - 1));
 
     /*!\name Constructors, destructor and assignment
      * \{

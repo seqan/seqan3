@@ -18,9 +18,9 @@
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/platform.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 
 namespace seqan3::detail
 {
@@ -78,8 +78,8 @@ struct default_edit_distance_trait_type
     using query_type = std::remove_reference_t<query_t>;
 
     //!\brief The size of one machine word.
-    static constexpr uint8_t word_size = sizeof_bits<word_type>;
-    static_assert(sizeof_bits<word_type> <= 64u, "we assume at most uint64_t as word_type");
+    static constexpr uint8_t word_size = bits_of<word_type>;
+    static_assert(bits_of<word_type> <= 64u, "we assume at most uint64_t as word_type");
 
     //!\brief The type of an iterator of the database sequence.
     using database_iterator = std::ranges::iterator_t<database_type>;

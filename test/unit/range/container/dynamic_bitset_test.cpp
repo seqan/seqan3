@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/bit_manipulation.hpp>
 #include <seqan3/range/container/dynamic_bitset.hpp>
 #include <seqan3/test/cereal.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
 
 // Standard construction.
 TEST(dynamic_bitset, standard_construction)
@@ -30,7 +30,7 @@ TEST(dynamic_bitset, standard_construction)
     EXPECT_TRUE((std::is_nothrow_move_assignable_v<seqan3::dynamic_bitset<58>>));
     EXPECT_THROW(seqan3::dynamic_bitset{std::numeric_limits<uint64_t>::max()}, std::invalid_argument);
     EXPECT_THROW(seqan3::dynamic_bitset{"10101011x0101"}, std::invalid_argument);
-    EXPECT_EQ(seqan3::detail::sizeof_bits<decltype(*std::declval<seqan3::dynamic_bitset<58>>().raw_data())>, 64u);
+    EXPECT_EQ(seqan3::detail::bits_of<decltype(*std::declval<seqan3::dynamic_bitset<58>>().raw_data())>, 64u);
 }
 
 TEST(dynamic_bitset, concepts)

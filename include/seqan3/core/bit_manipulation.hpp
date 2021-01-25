@@ -6,39 +6,29 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides utility functions for bit twiddling.
+ * \brief [DEPRECATED] Provides utility functions for bit twiddling.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \sa https://en.wikipedia.org/wiki/Bit_manipulation
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/utility/detail/bit_manipulation.hpp>
+ *             instead.
  */
 
 #pragma once
 
-#include <meta/meta.hpp>
+#include <seqan3/utility/detail/bits_of.hpp>
+#include <seqan3/utility/detail/to_little_endian.hpp>
 
-#include <seqan3/std/bit>
-#include <climits>
-#include <seqan3/std/concepts>
-#include <utility>
-
-// Find correct header for byte-order conversion functions.
-#if __has_include(<endian.h>) // unix GLIBC
-    #include <endian.h>
-#elif __has_include(<sys/endian.h>)  // *BSD
-    #include <sys/endian.h>
-#endif // __has_include(endian.h)
-
-#include <seqan3/utility/detail/integer_traits.hpp>
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/std/bit> XOR <seqan3/utility/detail/bits_of.hpp> XOR <seqan3/utility/detail/to_little_endian.hpp> instead.")
 
 namespace seqan3::detail
 {
-
 /*!\brief How many bits has a type?
  * \ingroup core
  *
  * \tparam type_t The type to determine the number of bits.
+ * \deprecated This is deprecated use seqan3::detail::bits_of.
  */
 template <typename type_t>
-constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
+SEQAN3_DEPRECATED_310 constexpr auto sizeof_bits = seqan3::detail::bits_of<type_t>;
 
 /*!\brief Is this number a power of two.
  * \ingroup core
@@ -203,48 +193,6 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t most_significant_bit_set(unsigned_t cons
 {
     assert(n > 0); // n == 0 might have undefined behaviour
     return std::bit_width(n) - 1;
-}
-
-/*!\brief Convert the byte encoding of integer values to little-endian byte order.
- * \ingroup core
- * \tparam type The type of the value to convert; must model std::integral.
- * \param  in   The input value to convert.
- * \returns the converted value in little-endian byte-order.
- *
- * \details
- *
- * This function swaps the bytes if the host system uses big endian. In this case only 1, 2, 4, or 8 byte big
- * integral types are allowed as input. On host systems with little endian this function is a no-op and returns the
- * unchanged input value. Other systems with mixed endianness are not supported.
- */
-template <std::integral type>
-constexpr type to_little_endian(type const in) noexcept
-{
-    if constexpr (std::endian::native == std::endian::little)
-    {
-        return in;
-    }
-    else if constexpr (std::endian::native == std::endian::big)
-    {
-        static_assert(sizeof(type) <= 8,
-                      "Can only convert the byte encoding for integral numbers with a size of up to 8 bytes.");
-        static_assert(std::has_single_bit(sizeof(type)),
-                      "Can only convert the byte encoding for integral numbers whose byte size is a power of two.");
-
-        if constexpr (sizeof(type) == 2)
-            return htole16(in);
-        else if constexpr (sizeof(type) == 4)
-            return htole32(in);
-        else if constexpr (sizeof(type) == 8)
-            return htole64(in);
-        else
-            return in;  // single byte.
-    }
-    else
-    {
-        static_assert(std::endian::native == std::endian::little || std::endian::native == std::endian::big,
-                      "Expected a little-endian or big-endian platform.");
-    }
 }
 
 } // namespace seqan3::detail
