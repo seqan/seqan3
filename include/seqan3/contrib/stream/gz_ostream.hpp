@@ -236,7 +236,7 @@ bool basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::zip_to_stream(
             written_byte_size = static_cast<std::streamsize>(m_output_buffer.size()) - m_zip_stream.avail_out;
             total_written_byte_size += written_byte_size;
 
-            // ouput buffer is full, dumping to ostream
+            // output buffer is full, dumping to ostream
             m_ostream.write((const char_type *) &(m_output_buffer[0]),
                             static_cast<std::streamsize>(written_byte_size / sizeof(char_type)));
 
@@ -283,7 +283,7 @@ std::streamsize basic_gz_ostreambuf<Elem, Tr, ElemA, ByteT, ByteAT>::flush(int f
             written_byte_size = static_cast<std::streamsize>(m_output_buffer.size()) - m_zip_stream.avail_out;
             total_written_byte_size += written_byte_size;
 
-            // ouput buffer is full, dumping to ostream
+            // output buffer is full, dumping to ostream
             m_ostream.write((const char_type *) &(m_output_buffer[0]),
                             static_cast<std::streamsize>(written_byte_size / sizeof(char_type) * sizeof(byte_type)));
 

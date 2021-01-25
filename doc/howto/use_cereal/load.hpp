@@ -21,7 +21,7 @@ void load(std::vector<int16_t> & data, seqan3::test::tmp_filename & tmp_file)
 void store(std::vector<int16_t> const & data, seqan3::test::tmp_filename & tmp_file)
 {
     std::ofstream os(tmp_file.get_path(), std::ios::binary); // Where output should be stored.
-    cereal::BinaryOutputArchive archive(os);                 // Create an ouput archive from the output stream.
+    cereal::BinaryOutputArchive archive(os);                 // Create an output archive from the output stream.
     archive(data);                                           // Store data.
 }
 

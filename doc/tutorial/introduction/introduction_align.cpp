@@ -16,7 +16,7 @@ int main()
     auto tmp_dir = std::filesystem::temp_directory_path();
     std::string filename{tmp_dir/"seq.fasta"};
     {
-        // Create a /tmp/my.fasta file.
+        // Create a /tmp/seq.fasta file.
         seqan3::sequence_file_output file_out{filename};
 
         using seqan3::operator""_dna5;
