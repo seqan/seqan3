@@ -47,7 +47,7 @@ std::string const basic_options_str = "OPTIONS\n"
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update:\n"
                                       "    test_parser version:\n"
-                                      "    SeqAn version: " + seqan3::seqan3_version + "\n";
+                                      "    SeqAn version: " + std::string(seqan3::seqan3_version_cstring) + "\n";
 
 namespace seqan3::detail
 {

@@ -390,7 +390,7 @@ TEST_F(version_check, greater_app_version)
     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a smaller app version than the current
-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"1.5.9\n" + seqan3::seqan3_version}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"1.5.9\n" + std::string(seqan3::seqan3_version_cstring)}));
 
     // create timestamp file that dates one day before current to trigger a message
     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
@@ -411,7 +411,7 @@ TEST_F(version_check, unregistered_app)
     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a smaller app version than the current
-    ASSERT_TRUE(create_file(app_version_filename(), std::string{ "UNREGISTERED_APP\n" + seqan3::seqan3_version}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{ "UNREGISTERED_APP\n" + std::string(seqan3::seqan3_version_cstring)}));
 
     // create timestamp file that dates one day before current to trigger a message
     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
@@ -435,7 +435,7 @@ TEST_F(version_check, smaller_app_version)
     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a greater app version than the current
-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + std::string(seqan3::seqan3_version_cstring)}));
 
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
@@ -463,7 +463,7 @@ TEST_F(version_check, smaller_app_version_custom_url)
     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
 
     // create version file with equal seqan version and a greater app version than the current
-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
+    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + std::string(seqan3::seqan3_version_cstring)}));
 
     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
