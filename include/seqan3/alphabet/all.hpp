@@ -20,7 +20,7 @@
  * perceive them, but it makes sense to use a smaller, stricter and well-defined alphabet
  * in almost all cases, because:
  *
- *   * Most of our sequences alphabets are actually smaller and can possibly be **represented by less bits**
+ *   * Most of our sequence alphabets are actually smaller and can possibly be **represented by less bits**
  * than a `char`, e.g. a `char` can have 256 values and thus must be represented by 8 bits of memory, but a DNA
  * character *could* be represented by 2 bits, because it only has four values in the smallest representation
  * ('A', 'C', 'G', 'T').
@@ -48,7 +48,7 @@
  * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
  * member of the alphabet (see below for "members VS free/global functions").
  *
- * In some areas we provide alphabets types with different sizes for the same purpose, e.g. seqan3::dna4
+ * In some areas we provide alphabet types with different sizes for the same purpose, e.g. seqan3::dna4
  * ('A', 'C', 'G', 'T'), seqan3::dna5 (plus 'N') and seqan3::dna15 (plus ambiguous characters defined by
  * IUPAC). By convention most of our alphabets carry their size in their name (seqan3::dna4 has size 4 a.s.o.).
  *
