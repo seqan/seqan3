@@ -6,28 +6,29 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides utility functions for bit twiddling.
+ * \brief [DEPRECATED] Provides utility functions for bit twiddling.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \sa https://en.wikipedia.org/wiki/Bit_manipulation
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/utility/detail/bit_manipulation.hpp>
+ *             instead.
  */
 
 #pragma once
 
-#include <seqan3/std/bit>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/detail/bits_of.hpp>
+#include <seqan3/utility/detail/to_little_endian.hpp>
 
-#include <seqan3/utility/detail/integer_traits.hpp>
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/std/bit> XOR <seqan3/utility/detail/bits_of.hpp> XOR <seqan3/utility/detail/to_little_endian.hpp> instead.")
 
 namespace seqan3::detail
 {
-
 /*!\brief How many bits has a type?
  * \ingroup core
  *
  * \tparam type_t The type to determine the number of bits.
+ * \deprecated This is deprecated use seqan3::detail::bits_of.
  */
 template <typename type_t>
-constexpr auto sizeof_bits = min_viable_uint_v<CHAR_BIT * sizeof(type_t)>;
+SEQAN3_DEPRECATED_310 constexpr auto sizeof_bits = seqan3::detail::bits_of<type_t>;
 
 /*!\brief Is this number a power of two.
  * \ingroup core

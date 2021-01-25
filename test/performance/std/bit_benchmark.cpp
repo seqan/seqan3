@@ -9,7 +9,12 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/core/bit_manipulation.hpp>
+#include <seqan3/core/platform.hpp> // pre-define SEQAN3_DEPRECATED_HEADER
+#pragma push_macro("SEQAN3_DEPRECATED_HEADER")
+#undef SEQAN3_DEPRECATED_HEADER
+#define SEQAN3_DEPRECATED_HEADER(...)
+#include <seqan3/core/bit_manipulation.hpp> // include header without warning
+#pragma pop_macro("SEQAN3_DEPRECATED_HEADER")
 
 template <typename size_type>
 static void is_power_of_two_popcount(benchmark::State & state) {
