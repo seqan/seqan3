@@ -24,7 +24,7 @@ namespace seqan3::align_cfg
 {
 
 /*!\brief Sets the scoring scheme for the alignment algorithm.
- * \ingroup configuration
+ * \ingroup alignment_configuration
  * \tparam scoring_scheme_t The type of the scoring scheme; must model std::semiregular.
  *
  * \details
