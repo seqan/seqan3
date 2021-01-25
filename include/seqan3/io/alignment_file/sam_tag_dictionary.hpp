@@ -16,7 +16,7 @@
 #include <map>
 #include <variant>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>

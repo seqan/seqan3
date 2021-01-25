@@ -19,7 +19,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_proxy.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail

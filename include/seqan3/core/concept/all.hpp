@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
 /*!\defgroup concept Concept

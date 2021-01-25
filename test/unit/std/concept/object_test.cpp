@@ -9,7 +9,7 @@
 
 #include <random>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/std/concepts>
 
 #include "auxiliary.hpp"

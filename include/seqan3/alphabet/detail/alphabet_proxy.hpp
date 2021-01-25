@@ -17,7 +17,7 @@
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 

@@ -17,7 +17,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 
 #if SEQAN3_WITH_CEREAL

@@ -15,7 +15,7 @@
 #include <stdexcept>
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/std/concepts>
 

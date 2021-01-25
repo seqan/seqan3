@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>

@@ -15,7 +15,7 @@
 #include <seqan3/std/concepts>
 #include <type_traits>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>

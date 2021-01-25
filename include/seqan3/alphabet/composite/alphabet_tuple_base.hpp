@@ -22,7 +22,7 @@
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>

@@ -16,7 +16,7 @@
 #include <string>
 #include <tuple>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #ifdef SEQAN3_HAS_BZIP2
     #include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif

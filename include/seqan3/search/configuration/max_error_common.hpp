@@ -14,7 +14,7 @@
 #pragma once
 
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/std/concepts>
 
 namespace seqan3::search_cfg
