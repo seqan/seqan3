@@ -33,8 +33,9 @@ namespace seqan3
  * intend to use Phred scores exceeding 41, use the larger score types, namely seqan3::phred63 or seqan3::phred94,
  * otherwise on construction exceeding scores are mapped to 41.
  * Via seqan3::qualified, you can combine a nucleotide alphabet with the Phred score to save space.
- * All dna and rna combinations with seqan3::phred42 still fit into a single byte.
- * e.g. `seqan3::qualified<seqan3::dna4, seqan3::phred42>`
+ * All dna and rna combinations with seqan3::phred42 still fit into a single byte,
+ * e.g. `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (4 * 42 = 168 values can be stored in a single byte which can
+ * contain up to 256 values).
  *
  * \include test/snippet/alphabet/quality/phred42.cpp
  *
