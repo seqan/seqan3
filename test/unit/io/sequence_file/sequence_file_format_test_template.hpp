@@ -86,6 +86,13 @@ TYPED_TEST_P(sequence_file_read, standard)
         {
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), this->quals[i]);
         }
+
+        EXPECT_RANGE_EQ((*it).sequence(), this->seqs[i]);
+        EXPECT_EQ((*it).id(), this->ids[i]);
+        if constexpr (std::same_as<TypeParam, seqan3::format_fastq> || std::same_as<TypeParam, seqan3::format_sam>)
+        {
+            EXPECT_RANGE_EQ((*it).base_qualities(), this->quals[i]);
+        }
     }
 }
 
@@ -120,6 +127,8 @@ TYPED_TEST_P(sequence_file_read, seq_qual)
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq_qual>(*it) | seqan3::views::convert<seqan3::dna5>,
                         this->seqs[i]);
+
+        EXPECT_RANGE_EQ((*it).id(), this->ids[i]);
     }
 }
 

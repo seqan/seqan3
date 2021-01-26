@@ -75,6 +75,10 @@ struct read_sam : sequence_file_read<seqan3::format_sam>
             EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
+
+            EXPECT_EQ((*it).id(), ids[i]);
+            EXPECT_EQ((*it).sequence(), seqs[i]);
+            EXPECT_EQ((*it).base_qualities(), quals[i]);
         }
     }
 };

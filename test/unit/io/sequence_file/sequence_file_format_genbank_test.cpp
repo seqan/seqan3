@@ -122,6 +122,9 @@ struct read : public sequence_file_read<seqan3::format_genbank>
         {
             EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
+
+            EXPECT_EQ((*it).id(), ids[i]);
+            EXPECT_EQ((*it).sequence(), seqs[i]);
         }
     }
 };
