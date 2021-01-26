@@ -11,9 +11,7 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
@@ -103,19 +101,4 @@ TEST_F(record, get_by_field)
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4);
-}
-
-// ----------------------------------------------------------------------------
-// detail/record.hpp
-// ----------------------------------------------------------------------------
-
-TEST(detail, select_types_with_ids)
-{
-    using types         = seqan3::type_list<std::string, seqan3::dna4_vector, std::vector<seqan3::phred42>>;
-    using types_as_ids  = seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>;
-    using selected_ids  = seqan3::fields<seqan3::field::qual, seqan3::field::id>;
-
-    using selected_types = typename seqan3::detail::select_types_with_ids<types, types_as_ids, selected_ids>::type;
-
-    EXPECT_TRUE((std::is_same_v<selected_types, seqan3::type_list<std::vector<seqan3::phred42>, std::string>>));
 }
