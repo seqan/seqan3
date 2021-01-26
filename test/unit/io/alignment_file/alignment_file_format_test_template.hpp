@@ -224,6 +224,21 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
         EXPECT_EQ(seqan3::get<seqan3::field::mapq>(rec), this->mapqs[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::mate>(rec), this->mates[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::tags>(rec), this->tag_dicts[i]);
+
+        EXPECT_EQ(rec.sequence(), this->seqs[i]);
+        EXPECT_EQ(rec.id(), this->ids[i]);
+        EXPECT_EQ(rec.base_qualities(), this->quals[i]);
+        EXPECT_EQ(rec.sequence_position(), this->offsets[i]);
+        EXPECT_EQ(rec.reference_id(), 0);
+        EXPECT_EQ(*rec.reference_position(), this->ref_offsets[i]);
+        EXPECT_RANGE_EQ(std::get<0>(rec.alignment()), std::get<0>(this->alignments[i]));
+        EXPECT_RANGE_EQ(std::get<1>(rec.alignment()), std::get<1>(this->alignments[i]));
+        EXPECT_EQ(rec.flag(), this->flags[i]);
+        EXPECT_EQ(rec.mapping_quality(), this->mapqs[i]);
+        EXPECT_EQ(rec.mate_reference_id(), std::get<0>(this->mates[i]));
+        EXPECT_EQ(rec.mate_position(), std::get<1>(this->mates[i]));
+        EXPECT_EQ(rec.template_length(), std::get<2>(this->mates[i]));
+        EXPECT_EQ(rec.tags(), this->tag_dicts[i]);
         ++i;
     }
 }
@@ -247,6 +262,21 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE(!std::get<1>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
     EXPECT_EQ(std::get<2>(seqan3::get<seqan3::field::mate>(*fin.begin())), int32_t{});
     EXPECT_TRUE(seqan3::get<seqan3::field::tags>(*fin.begin()).empty());
+
+    EXPECT_TRUE((*fin.begin()).sequence().empty());
+    EXPECT_TRUE((*fin.begin()).id().empty());
+    EXPECT_TRUE((*fin.begin()).base_qualities().empty());
+    EXPECT_EQ((*fin.begin()).sequence_position(), 0);
+    EXPECT_TRUE(!(*fin.begin()).reference_id().has_value());
+    EXPECT_TRUE(!(*fin.begin()).reference_position().has_value());
+    EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+    EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
+    EXPECT_EQ((*fin.begin()).flag(), seqan3::sam_flag{0u});
+    EXPECT_EQ((*fin.begin()).mapping_quality(), 0u);
+    EXPECT_TRUE(!(*fin.begin()).mate_reference_id().has_value());
+    EXPECT_TRUE(!(*fin.begin()).mate_position().has_value());
+    EXPECT_EQ((*fin.begin()).template_length(), int32_t{});
+    EXPECT_TRUE((*fin.begin()).tags().empty());
 }
 
 TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
@@ -288,6 +318,9 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+
+        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
     }
 }
 
@@ -312,6 +345,9 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+
+        EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
+        EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
     }
 }
 

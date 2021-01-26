@@ -179,6 +179,8 @@ TEST_F(sam_format, no_hd_line_in_header)
     seqan3::alignment_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"read1"});
+
+    EXPECT_EQ((*fin.begin()).id(), std::string{"read1"});
 }
 
 TEST_F(sam_format, windows_file)
@@ -187,6 +189,8 @@ TEST_F(sam_format, windows_file)
     seqan3::alignment_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"read1"});
+
+    EXPECT_EQ((*fin.begin()).id(), std::string{"read1"});
 }
 
 TEST_F(sam_format, format_error_illegal_character_in_seq)
@@ -343,6 +347,9 @@ TEST_F(sam_format, issue2195)
 
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"*r1"});
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*fin.begin()), expected_quality);
+
+        EXPECT_RANGE_EQ((*fin.begin()).id(), std::string{"*r1"});
+        EXPECT_RANGE_EQ((*fin.begin()).base_qualities(), expected_quality);
     }
 
     {
@@ -357,5 +364,8 @@ TEST_F(sam_format, issue2195)
 
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{""});
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*fin.begin()), expected_quality);
+
+        EXPECT_RANGE_EQ((*fin.begin()).id(), std::string{""});
+        EXPECT_RANGE_EQ((*fin.begin()).base_qualities(), expected_quality);
     }
 }

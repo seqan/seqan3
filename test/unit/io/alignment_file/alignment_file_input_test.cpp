@@ -264,6 +264,10 @@ TEST_F(alignment_file_input_f, record_reading)
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter]);
 
+        EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.base_qualities(), qual_comp[counter]);
+
         counter++;
     }
 
@@ -296,7 +300,7 @@ TEST_F(alignment_file_input_f, file_view)
 #if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
-        return size(seqan3::get<seqan3::field::seq>(rec)) >= 5;
+        return size(rec.sequence()) >= 5;
     });
 #endif
 
@@ -304,7 +308,7 @@ TEST_F(alignment_file_input_f, file_view)
 #if SEQAN3_WORKAROUND_GCC_93983
     for (auto & rec : fin /*| minimum_length_filter*/)
     {
-        if (!(size(seqan3::get<seqan3::field::seq>(rec)) >= 5))
+        if (!(size(rec.sequence()) >= 5))
             continue;
 #else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length_filter)
@@ -313,6 +317,10 @@ TEST_F(alignment_file_input_f, file_view)
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), qual_comp[counter]);
+
+        EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.base_qualities(), qual_comp[counter]);
 
         counter++;
     }
@@ -333,6 +341,10 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), fix.id_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(rec), fix.qual_comp[counter]);
+
+        EXPECT_RANGE_EQ(rec.sequence(), fix.seq_comp[counter]);
+        EXPECT_RANGE_EQ(rec.id(), fix.id_comp[counter]);
+        EXPECT_RANGE_EQ(rec.base_qualities(), fix.qual_comp[counter]);
 
         counter++;
     }
