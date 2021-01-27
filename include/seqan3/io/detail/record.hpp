@@ -137,20 +137,20 @@ auto const & get_or_ignore(record<field_types, field_ids> const & r)
 }
 
 //!\copydoc seqan3::detail::get_or_ignore
-template <size_t i, template <tuple_like ...types_> typename tuple_like_t, typename ...types>
-auto & get_or_ignore(tuple_like_t<types...> & t)
+template <size_t i, tuple_like tuple_t>
+auto & get_or_ignore(tuple_t & t)
 {
-    if constexpr (i < sizeof...(types))
+    if constexpr (i < std::tuple_size_v<tuple_t>)
         return std::get<i>(t);
     else
         return std::ignore;
 }
 
 //!\copydoc seqan3::detail::get_or_ignore
-template <size_t i, template <tuple_like ...types_> typename tuple_like_t, typename ...types>
-auto const & get_or_ignore(tuple_like_t<types...> const & t)
+template <size_t i, tuple_like tuple_t>
+auto const & get_or_ignore(tuple_t const & t)
 {
-    if constexpr (i < sizeof...(types))
+    if constexpr (i < std::tuple_size_v<tuple_t>)
         return std::get<i>(t);
     else
         return std::ignore;

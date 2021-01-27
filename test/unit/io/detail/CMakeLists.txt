@@ -1,3 +1,4 @@
+seqan3_test(detail_record_test.cpp)
 seqan3_test(in_file_iterator_test.cpp)
 seqan3_test(misc_test.cpp)
 seqan3_test(out_file_iterator_test.cpp)
