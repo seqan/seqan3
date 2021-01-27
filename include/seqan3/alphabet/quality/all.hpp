@@ -72,18 +72,18 @@
  *
  * <span style="font-size:12px;font-family:Courier New;line-height:1;">
         <span style="color:DarkSlateBlue"> SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS....................................................</span>\n
-        <span style="color:Chartreuse">    MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM...............................</span>\n
+        <span style="color:SeaGreen">      MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM...............................</span>\n
         <span style="color:Chocolate">     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP</span>\n
         <span style="color:BlueViolet">    ..........................OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO</span>\n\n
         <span style="font-weight:bold"> !\"\#\$\%\&'()*+,-\./0123456789:;\<\=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{\|}~</span>\n
                                        \|.........................\|..............\|....................\|..............................\|\n
                                            33........................59.............74...................95............................126\n\n
         <span style="color:DarkSlateBlue"> 0________________________________________40....................................................</span>\n
-        <span style="color:Chartreuse">    0________________________________________40___________________62...............................</span>\n
+        <span style="color:SeaGreen">      0________________________________________40___________________62...............................</span>\n
         <span style="color:Chocolate">     0________________________________________40___________________62_____________________________93</span>\n
         <span style="color:BlueViolet">    .........................-5____0_________9____________________62_____________________________93</span>\n\n
         <span style="color:DarkSlateBlue"> S - Sanger, Illumina 1.8+ - phred42</span>\n
-        <span style="color:Chartreuse">    M - Sanger, Illumina 1.8+ - phred63</span>\n
+        <span style="color:SeaGreen">      M - Sanger, Illumina 1.8+ - phred63</span>\n
         <span style="color:Chocolate">     P - Sanger, Illumina 1.8+ - phred94 (PacBio)</span>\n
         <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n
    </span>
