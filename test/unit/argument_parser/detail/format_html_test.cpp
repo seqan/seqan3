@@ -53,7 +53,7 @@ TEST(html_format, empty_information)
                            "<br>\n"
                            "<strong>empty_options version: </strong>\n"
                            "<br>\n"
-                           "<strong>SeqAn version: </strong>" + std::string(seqan3::seqan3_version_cstring) + "\n"
+                           "<strong>SeqAn version: </strong>" + std::string{seqan3::seqan3_version_cstring} + "\n"
                            "<br>\n"
                            "</p>\n"
                            "</body></html>");
@@ -167,7 +167,7 @@ TEST(html_format, full_information_information)
                           "<br>\n"
                           "<strong>program_full_options version: </strong>\n"
                           "<br>\n"
-                          "<strong>SeqAn version: </strong>" + std::string(seqan3::seqan3_version_cstring) + "\n"
+                          "<strong>SeqAn version: </strong>" + std::string{seqan3::seqan3_version_cstring} + "\n"
                           "<br>\n"
                           "</p>\n"
                           "<h2>Url</h2>\n"
