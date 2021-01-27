@@ -282,10 +282,8 @@ namespace std
  */
 template <typename field_types, typename field_ids>
 struct tuple_size<seqan3::record<field_types, field_ids>>
-{
-    //!\brief The value member. Delegates to same value on base_type.
-    static constexpr size_t value = tuple_size_v<typename seqan3::record<field_types, field_ids>::base_type>;
-};
+    : tuple_size<typename seqan3::record<field_types, field_ids>::base_type>
+{};
 
 /*!\brief Obtains the type of the specified element.
  * \implements seqan3::transformation_trait
@@ -294,10 +292,8 @@ struct tuple_size<seqan3::record<field_types, field_ids>>
  */
 template <size_t elem_no, typename field_types, typename field_ids>
 struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>
-{
-    //!\brief The member type. Delegates to same type on base_type.
-    using type = std::tuple_element_t<elem_no, typename seqan3::record<field_types, field_ids>::base_type>;
-};
+    : tuple_element<elem_no, typename seqan3::record<field_types, field_ids>::base_type>
+{};
 
 } // namespace std
 
