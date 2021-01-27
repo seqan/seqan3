@@ -28,6 +28,23 @@
                      + SEQAN3_VERSION_MINOR * 100 \
                      + SEQAN3_VERSION_PATCH)
 
+/*!\brief Converts a number to a string. Preprocessor needs this indirection to
+ * properly expand the values to strings.
+ */
+#define SEQAN3_VERSION_CSTRING_HELPER_STR(str) #str
+
+//!\brief Converts version numbers to string.
+#define SEQAN3_VERSION_CSTRING_HELPER_FUNC(MAJOR, MINOR, PATCH) \
+    SEQAN3_VERSION_CSTRING_HELPER_STR(MAJOR) "."\
+    SEQAN3_VERSION_CSTRING_HELPER_STR(MINOR) "."\
+    SEQAN3_VERSION_CSTRING_HELPER_STR(PATCH)
+
+//!\brief The full version as null terminated string.
+#define SEQAN3_VERSION_CSTRING \
+    SEQAN3_VERSION_CSTRING_HELPER_FUNC(SEQAN3_VERSION_MAJOR, \
+                                       SEQAN3_VERSION_MINOR, \
+                                       SEQAN3_VERSION_PATCH)
+
 namespace seqan3
 {
 
@@ -38,9 +55,13 @@ constexpr uint8_t seqan3_version_minor = SEQAN3_VERSION_MINOR;
 //!\brief The patch version.
 constexpr uint8_t seqan3_version_patch = SEQAN3_VERSION_PATCH;
 
-//!\brief The full version as `std::string`.
-std::string const seqan3_version = std::to_string(seqan3_version_major) + "." +
-                                   std::to_string(seqan3_version_minor) + "." +
-                                   std::to_string(seqan3_version_patch);
+//!\brief The full version as `std::size_t`.
+constexpr std::size_t seqan3_version = SEQAN3_VERSION;
+
+//!\brief The full version as null terminated string.
+constexpr char const* seqan3_version_cstring = SEQAN3_VERSION_CSTRING;
 
 } // namespace seqan3
+
+#undef SEQAN3_VERSION_CSTRING_HELPER_STR
+#undef SEQAN3_VERSION_CSTRING_HELPER_FUNC
