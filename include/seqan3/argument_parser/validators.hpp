@@ -273,23 +273,6 @@ private:
  * \relates seqan3::value_list_validator
  * \{
  */
-//!\brief Deduction guide for a parameter pack over an arithmetic type.
-template <typename option_type, typename ...option_types>
-//!\cond
-    requires ((arithmetic<option_types> && ... && arithmetic<option_type>) &&
-              !(detail::is_char_adaptation_v<option_types> || ... || detail::is_char_adaptation_v<option_type>))
-//!\endcond
-value_list_validator(option_type, option_types...) -> value_list_validator<double>;
-
-//!\brief Deduction guide for ranges over an arithmetic type.
-template <typename range_type>
-//!\cond
-    requires std::ranges::forward_range<std::decay_t<range_type>> &&
-             arithmetic<std::ranges::range_value_t<range_type>> &&
-             (!seqan3::detail::is_char_adaptation_v<std::ranges::range_value_t<range_type>>)
-//!\endcond
-value_list_validator(range_type && rng) -> value_list_validator<double>;
-
 //!\brief Given a parameter pack of types that are convertible to std::string, delegate to value type std::string.
 template <typename option_type, typename ...option_types>
 //!\cond
@@ -990,13 +973,14 @@ struct default_validator
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename validator1_type::option_value_type, typename validator2_type::option_value_type>
+    requires std::common_with<typename validator1_type::option_value_type, typename validator2_type::option_value_type>
 //!\endcond
 class validator_chain_adaptor
 {
 public:
     //!\brief The underlying type in both validators.
-    using option_value_type = typename validator1_type::option_value_type;
+    using option_value_type = std::common_type_t<typename validator1_type::option_value_type,
+                                                 typename validator2_type::option_value_type>;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -1081,8 +1065,8 @@ private:
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
-    requires std::same_as<typename std::remove_reference_t<validator1_type>::option_value_type,
-                       typename std::remove_reference_t<validator2_type>::option_value_type>
+    requires std::common_with<typename std::remove_reference_t<validator1_type>::option_value_type,
+                              typename std::remove_reference_t<validator2_type>::option_value_type>
 //!\endcond
 auto operator|(validator1_type && vali1, validator2_type && vali2)
 {
