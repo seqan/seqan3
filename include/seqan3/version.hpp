@@ -62,3 +62,6 @@ constexpr std::size_t seqan3_version = SEQAN3_VERSION;
 constexpr char const* seqan3_version_cstring = SEQAN3_VERSION_CSTRING;
 
 } // namespace seqan3
+
+#undef SEQAN3_VERSION_CSTRING_HELPER_STR
+#undef SEQAN3_VERSION_CSTRING_HELPER_FUNC
