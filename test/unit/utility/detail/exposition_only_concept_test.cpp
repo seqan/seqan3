@@ -12,7 +12,7 @@
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/std/iterator>
 
-#include "auxiliary.hpp"
+#include "../../std/concept/auxiliary.hpp"
 
 TEST(core_language_concepts, same_as)
 {
