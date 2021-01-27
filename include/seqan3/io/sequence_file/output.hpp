@@ -28,6 +28,7 @@
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
+#include <seqan3/io/detail/record_like.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
@@ -388,8 +389,7 @@ public:
     template <typename record_t>
     void push_back(record_t && r)
     //!\cond
-        requires tuple_like<record_t> &&
-                 requires { requires detail::is_type_specialisation_of_v<std::remove_cvref_t<record_t>, record>; }
+        requires detail::record_like<record_t>
     //!\endcond
     {
         write_record(detail::get_or_ignore<field::seq>(r),
@@ -423,7 +423,7 @@ public:
     template <typename tuple_t>
     void push_back(tuple_t && t)
     //!\cond
-        requires tuple_like<tuple_t>
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
     //!\endcond
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
