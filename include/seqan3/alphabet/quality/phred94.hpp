@@ -28,9 +28,9 @@ namespace seqan3
  *
  * \details
  *
- * The phred94 quality alphabet represents the zero-based phred score range [0..93] mapped to the ASCII range
+ * The phred94 quality alphabet represents the zero-based Phred score range [0..93] mapped to the ASCII range
  * ['!' .. '~'] (Sanger, Illumina 1.8+ format). It is typically used for HiFi reads produced by PacBio. For Sanger and
- * Illumina phred scores of raw reads the range is typically (0 to 41), represented as seqan3::phred42. If you expect
+ * Illumina Phred scores of raw reads the range is typically (0 to 41), represented as seqan3::phred42. If you expect
  * only slightly larger score types you can use seqan3::phred63 (0 to 62) which still has memory advantages when used
  * with seqan3::qualified.
  *
@@ -61,7 +61,7 @@ public:
     constexpr phred94 & operator=(phred94 &&)       noexcept = default; //!< Defaulted.
     ~phred94()                                      noexcept = default; //!< Defaulted.
 
-    //!\brief Construct from phred value.
+    //!\brief Construct from Phred score value.
     constexpr phred94(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
@@ -71,7 +71,7 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between phred and rank score representation.
+    //!\brief The projection offset between Phred and rank score representation.
     static constexpr phred_type offset_phred{0};
 
     //!\brief The projection offset between char and rank score representation.

@@ -14,14 +14,10 @@
 
 #include <seqan3/alphabet/quality/quality_base.hpp>
 
-// ------------------------------------------------------------------
-// phred42
-// ------------------------------------------------------------------
-
 namespace seqan3
 {
 
-/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores (typical range).
+/*!\brief Quality type for traditional Sanger and modern Illumina Phred scores.
  * \implements seqan3::writable_quality_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  * \implements seqan3::trivially_copyable
@@ -32,11 +28,14 @@ namespace seqan3
  *
  * \details
  *
- * The phred42 \ref quality alphabet represents the zero-based phred score range
- * [0..41] mapped to the consecutive ASCII range ['!' .. 'J']. It therefore can
- * represent the Illumina 1.8+ standard and the original Sanger score. If you
- * intend to use phred scores exceeding 41, use the larger score type, namely
- * seqan3::phred63, otherwise on construction exceeding scores are mapped to 41.
+ * The phred42 \ref quality alphabet represents the zero-based Phred score range [0..41] mapped to the consecutive ASCII
+ * range ['!' .. 'J']. It therefore can represent the Illumina 1.8+ standard and the original Sanger score. If you
+ * intend to use Phred scores exceeding 41, use the larger score types, namely seqan3::phred63 or seqan3::phred94,
+ * otherwise on construction exceeding scores are mapped to 41.
+ * Via seqan3::qualified, you can combine a nucleotide alphabet with the Phred score to save space.
+ * All dna and rna combinations with seqan3::phred42 still fit into a single byte,
+ * e.g. `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (4 * 42 = 168 values can be stored in a single byte which can
+ * contain up to 256 values).
  *
  * \include test/snippet/alphabet/quality/phred42.cpp
  *
@@ -65,7 +64,7 @@ public:
     constexpr phred42 & operator=(phred42 &&)       noexcept = default; //!< Defaulted.
     ~phred42()                                      noexcept = default; //!< Defaulted.
 
-    //!\brief Construct from phred value.
+    //!\brief Construct from Phred score value.
     constexpr phred42(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
@@ -75,7 +74,7 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between phred and rank score representation.
+    //!\brief The projection offset between Phred and rank score representation.
     static constexpr phred_type offset_phred{0};
 
     //!\brief The projection offset between char and rank score representation.

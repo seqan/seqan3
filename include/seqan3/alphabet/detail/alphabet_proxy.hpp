@@ -79,7 +79,7 @@ private:
     //!\brief The type of the alphabet character.
     using char_type  = detail::valid_template_spec_or_t<char, alphabet_char_t, alphabet_type>;
 
-    //!\brief The type of the phred score.
+    //!\brief The type of the Phred score.
     using phred_type = detail::valid_template_spec_or_t<int8_t, alphabet_phred_t, alphabet_type>;
 
 private:
@@ -167,7 +167,7 @@ public:
         return operator=(tmp);
     }
 
-    //!\brief Assigns a phred.
+    //!\brief Assigns a Phred score.
     constexpr derived_type & assign_phred(phred_type const c) noexcept
     //!\cond
         requires writable_quality_alphabet<alphabet_type>
@@ -231,7 +231,7 @@ public:
         return seqan3::to_char(operator alphabet_type());
     }
 
-    //!\brief Returns the phred score.
+    //!\brief Returns the Phred score.
     constexpr auto to_phred() const noexcept
     //!\cond
         requires quality_alphabet<alphabet_type>

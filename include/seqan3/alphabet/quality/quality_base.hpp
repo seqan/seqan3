@@ -49,7 +49,7 @@ private:
     constexpr quality_base & operator=(quality_base &&)       noexcept = default; //!< Defaulted.
     ~quality_base()                                           noexcept = default; //!< Defaulted.
 
-    //!\brief Allow construction from the phred value.
+    //!\brief Allow construction from the Phred score value.
     constexpr quality_base(phred_type const p) noexcept
     {
         static_cast<derived_type *>(this)->assign_phred(p);
@@ -71,7 +71,7 @@ public:
      * \{
      */
     // This constructor needs to be public, because constructor templates are not inherited otherwise
-    //!\brief Allow explicit construction from any other quality type by means of the phred representation.
+    //!\brief Allow explicit construction from any other quality type by means of the Phred score representation.
     template <typename other_qual_type>
     //!\cond
         requires (!std::same_as<quality_base, other_qual_type>) &&
@@ -87,7 +87,7 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the alphabet's value in phred representation.
+    //!\brief Return the alphabet's value in Phred score representation.
     constexpr phred_type to_phred() const noexcept
     {
         return rank_to_phred[to_rank()];
@@ -98,7 +98,7 @@ public:
      * \{
      */
 
-    /*!\brief Assign from the numeric phred value.
+    /*!\brief Assign from the numeric Phred score value.
      *
      * \details
      *

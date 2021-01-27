@@ -373,7 +373,7 @@ TEST(composite, custom_comparison)
     EXPECT_EQ(t51, 'C'_rna4);
     EXPECT_NE(t51, seqan3::gap{});
     EXPECT_EQ(t51, seqan3::gapped<seqan3::dna4>('C'_dna4));
-    EXPECT_EQ(t51, seqan3::phred42{0}); // "outer" phred element
+    EXPECT_EQ(t51, seqan3::phred42{0}); // "outer" Phred score element
     EXPECT_EQ(t51, (qualified_gapped_dna_phred42{'C'_dna4, seqan3::phred42{3}}));
 //     EXPECT_LT(t51, 'G'_dna4); // not supposed to work
 //     EXPECT_LT(t51, 'G'_rna4); // not supposed to work

@@ -61,17 +61,44 @@
  * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [';' .. '~'] |
  *
  * The most distributed format is the *Sanger* or <I>Illumina 1.8+</I> format.
- * Despite typical Phred scores for Illumina machines range from 0 to maximal
- * 41, it is possible that processed reads reach higher scores. If you don't
- * intend to handle Phred scores larger than 41, we recommend to use
- * seqan3::phred42 due to its more space efficient implementation.
- * For other formats, like Solexa and Illumina 1.0 to 1.7 the type
- * seqan3::phred68legacy is provided. To cover also the Solexa format, the Phred
- * score is stored as a <B>signed</B> integer starting at -5.
- * If you want to store PacBio HiFi reads, we recommend to use seqan3::phred94, as these use the full range of the phred
- * quality scores.
- * An overview of all the score formats and their encodings can be found here:
- * https://en.wikipedia.org/wiki/FASTQ_format#Encoding (last access 01.12.2020).
+ * Despite typical Phred scores for Illumina machines range from 0 to 41, it is possible that processed reads reach
+ * higher scores. If you do not intend handling Phred scores larger than 41, we recommend using seqan3::phred42 due to
+ * its more space-efficient implementation (see below). If you want to store PacBio HiFi reads, we recommend to use
+ * seqan3::phred94, as these use the full range of the Phred quality scores.
+ * For other formats, like Solexa and Illumina 1.0 to 1.7, the type seqan3::phred68legacy is provided. To also cover the
+ * Solexa format, the Phred score is stored as a **signed** integer starting at -5.
+ *
+ * The following figure gives a graphical explanation of the different Alphabet Types:
+ *
+ * <span style="font-size:12px;font-family:Courier New;line-height:1;">
+        <span style="color:DarkSlateBlue"> SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS....................................................</span>\n
+        <span style="color:SeaGreen">      MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM...............................</span>\n
+        <span style="color:Chocolate">     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP</span>\n
+        <span style="color:BlueViolet">    ..........................OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO</span>\n\n
+        <span style="font-weight:bold"> !\"\#\$\%\&'()*+,-\./0123456789:;\<\=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{\|}~</span>\n
+                                       \|.........................\|..............\|....................\|..............................\|\n
+                                           33........................59.............74...................95............................126\n\n
+        <span style="color:DarkSlateBlue"> 0________________________________________40....................................................</span>\n
+        <span style="color:SeaGreen">      0________________________________________40___________________62...............................</span>\n
+        <span style="color:Chocolate">     0________________________________________40___________________62_____________________________93</span>\n
+        <span style="color:BlueViolet">    .........................-5____0_________9____________________62_____________________________93</span>\n\n
+        <span style="color:DarkSlateBlue"> S - Sanger, Illumina 1.8+ - phred42</span>\n
+        <span style="color:SeaGreen">      M - Sanger, Illumina 1.8+ - phred63</span>\n
+        <span style="color:Chocolate">     P - Sanger, Illumina 1.8+ - phred94 (PacBio)</span>\n
+        <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n
+   </span>
+ *
+ * Quality values are usually paired together with nucleotides. Therefore, it stands to reason to combine both alphabets
+ * into a new data structure. In SeqAn, this can be done with seqan3::qualified. It represents the cross product between
+ * a nucleotide and a quality alphabet and is the go-to choice when compression is of interest.
+ * The following combinations still fit into a single byte:
+ * - `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (alphabet size: 4 x 42 = 168)
+ * - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
+ * - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
+ * Using `seqan3::qualified` can half the storage usage compared to storing qualities and nucleotides separately. Note
+ * that any combination of `seqan3::phred94` with another alphabet will cause `seqan3::qualified` to use at least 2
+ * bytes.
+ * While we used DNA alphabets in this example, the same properties hold true for RNA alphabets.
  *
  * ###Concept
  *
