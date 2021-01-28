@@ -85,7 +85,8 @@
         <span style="color:DarkSlateBlue"> S - Sanger, Illumina 1.8+ - phred42</span>\n
         <span style="color:SeaGreen">      M - Sanger, Illumina 1.8+ - phred63</span>\n
         <span style="color:Chocolate">     P - Sanger, Illumina 1.8+ - phred94 (PacBio)</span>\n
-        <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n
+        <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n\n
+        <span style="font-style:italic">Graphic was inspired by https://en.wikipedia.org/wiki/FASTQ_format#Encoding (last access 28.01.2021).</span>
    </span>
  *
  * Quality values are usually paired together with nucleotides. Therefore, it stands to reason to combine both alphabets
