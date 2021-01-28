@@ -65,7 +65,7 @@ enum class field
     id,             //!< The identifier, usually a string.
     qual,           //!< The qualities, usually in Phred score notation.
     seq_qual,       //!< Sequence and qualities combined in one range.
-    offset,         //!< Sequence (SEQ) relative start position (0-based), unsigned value.
+    offset,         //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
 
     // Fields unique to structure io ...........................................
     bpp,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
@@ -73,19 +73,19 @@ enum class field
     structured_seq, //!< Sequence and fixed interactions combined in one range.
     energy,         //!< Energy of a folded sequence, represented by one float number.
     react,          //!< Reactivity values of the sequence characters given in a vector of float numbers.
-    react_err,      //!< Reactivity error values given in a vector corresponding to REACT.
+    react_err,      //!< Reactivity error values given in a vector corresponding to seqan3::field::react.
     comment,        //!< Comment field of arbitrary content, usually a string.
 
     // Fields unique to alignment io ...........................................
     alignment,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
-    ref_id,         //!< The identifier of the (reference) sequence that SEQ was aligned to.
+    ref_id,         //!< The identifier of the (reference) sequence that seqan3::field::seq was aligned to.
     ref_seq,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
-    ref_offset,     //!< Sequence (REF_SEQ) relative start position (0-based), unsigned value.
+    ref_offset,     //!< Sequence (seqan3::field::ref_seq) relative start position (0-based), unsigned value.
     header_ptr,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
 
     flag,           //!< The alignment flag (bit information), `uint16_t` value.
     mate,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
-    mapq,           //!< The mapping quality of the SEQ alignment, usually a ohred-scaled score.
+    mapq,           //!< The mapping quality of the seqan3::field::seq alignment, usually a Phred-scaled score.
     cigar,          //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
     tags,           //!< The optional tags in the SAM format, stored in a dictionary.
 
@@ -305,7 +305,7 @@ namespace seqan3
 {
 
 /*!\name Free function get() interface for seqan3::record based on seqan3::field.
- * \brief This is the tuple interface via seqan3::field, e.g. `get<field::seq>(tuple)`.
+ * \brief This is the tuple interface via seqan3::field, e.g. `seqan3::get<seqan3::field::seq>(record)`.
  * \relates seqan3::record
  * \{
  */
