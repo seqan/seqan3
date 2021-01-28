@@ -30,6 +30,7 @@
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/record.hpp>
+#include <seqan3/io/detail/record_like.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/stream/concept.hpp>
@@ -482,8 +483,7 @@ public:
     template <typename record_t>
     void push_back(record_t && r)
     //!\cond
-        requires tuple_like<record_t> &&
-                 requires { requires detail::is_type_specialisation_of_v<std::remove_cvref_t<record_t>, record>; }
+        requires detail::record_like<record_t>
     //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
@@ -531,7 +531,7 @@ public:
     template <typename tuple_t>
     void push_back(tuple_t && t)
     //!\cond
-        requires tuple_like<tuple_t>
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
     //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
