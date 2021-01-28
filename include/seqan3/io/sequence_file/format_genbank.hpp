@@ -44,10 +44,10 @@
 namespace seqan3
 {
 
-/*!\brief       The GenBank format.
- * \implements  seqan3::sequence_file_input_format
- * \implements  seqan3::sequence_file_output_format
- * \ingroup     sequence
+/*!\brief The GenBank format.
+ * \implements seqan3::sequence_file_input_format
+ * \implements seqan3::sequence_file_output_format
+ * \ingroup sequence_file
  *
  * \details
  *

@@ -45,9 +45,9 @@
 namespace seqan3
 {
 
-/*!\brief       The FastQ format.
- * \implements  SequenceFileFormat
- * \ingroup     sequence
+/*!\brief The FastQ format.
+ * \implements SequenceFileFormat
+ * \ingroup sequence_file
  *
  * \details
  *
