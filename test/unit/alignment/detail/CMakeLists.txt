@@ -1,0 +1,1 @@
+seqan3_test(pairwise_alignment_concept_test.cpp)
