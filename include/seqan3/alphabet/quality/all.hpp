@@ -29,27 +29,22 @@
  *
  * ### Introduction
  *
- * Quality score sequences are usually output together with the DNA (or RNA)
- * sequence by sequencing machines like the Illumina Genome Analyzer. The
- * quality score of a nucleotide is also known as Phred score and is an integer
- * score being inversely proportional to the propability \f$p\f$ that a base
- * call is **incorrect**. Which roughly means that the higher a Phred score
- * is, the higher is the probabality that the corresponding nucleotide is
- * correct for that position.
+ * Quality score sequences are usually output together with the DNA (or RNA) sequence by sequencing machines like the
+ * Illumina Genome Analyzer. The quality score of a nucleotide is also known as Phred score and is an integer score
+ * being inversely proportional to the propability \f$p\f$ that a base call is **incorrect**. Which roughly means that
+ * the higher a Phred score is, the higher is the probabality that the corresponding nucleotide is correct for that
+ * position.
  * There exists two common variants of its computation:
  *   - Salinger format with \f$Q = -10log_{10}(p)\f$
  *   - Solexa format with \f$Q = -10log_{10}(p/(1-p))\f$
- * Thus, despite implicit conversion between different quality types is
- * supported, for very low quality levels the scores vary significantly and need
- * to be corrected by an offset before being compared. The Phred score range
- * does not fit into one digit, and is therefore mapped to ASCII characters.
- * Depending on the format and the analyzer machine generation, the mappings can
- * differ.
- * Output files storing DNA sequences and their quality scores are usually
- * stored in the **FASTQ** format indicated by the file endings *fastq*
- * or *fq*.
- * This sub-module provides multiple quality alphabets that can be used in
- * combination with regular containers and ranges.
+ * Thus, despite implicit conversion between different quality types is supported, for very low quality levels the
+ * scores vary significantly and need to be corrected by an offset before being compared. The Phred score range does not
+ * fit into one digit, and is therefore mapped to ASCII characters. Depending on the format and the analyzer machine
+ * generation, the mappings can differ.
+ * Output files storing DNA sequences and their quality scores are usually stored in the **FASTQ** format indicated by
+ * the file endings *fastq* or *fq*.
+ * This sub-module provides multiple quality alphabets that can be used in combination with regular containers and
+ * ranges.
  *
  * ###Encoding Schemes
  *
@@ -103,27 +98,24 @@
  *
  * ###Concept
  *
- * The quality submodule defines the seqan3::writable_quality_alphabet which encompasses
- * all the alphabets, defined in the submodule, and refines the
- * seqan3::writable_alphabet by providing Phred score assignment and conversion
+ * The quality submodule defines the seqan3::writable_quality_alphabet which encompasses all the alphabets, defined in
+ * the submodule, and refines the seqan3::writable_alphabet by providing Phred score assignment and conversion
  * operations.
- * Additionally, this submodule defines the seqan3::quality_alphabet, which only requires
- * readablity and not assignability.
+ * Additionally, this submodule defines the seqan3::quality_alphabet, which only requires readablity and not
+ * assignability.
  *
  * ###Assignment and Conversion
  *
- * Quality alphabets can be converted to their char and rank representation via
- * `seqan3::to_char` and `seqan3::to_rank` respectively (like all other alphabets). Additionally
- * they can be converted to their Phred representation via `seqan3::to_phred`.
+ * Quality alphabets can be converted to their char and rank representation via `seqan3::to_char` and `seqan3::to_rank`
+ * respectively (like all other alphabets). Additionally they can be converted to their Phred representation via
+ * `seqan3::to_phred`.
  *
- * Likewise, assignment happens via `seqan3::assign_char_to`, `seqan3::assign_rank_to` and
- * `seqan3::assign_phred_to`. Phred values outside the representable range, but inside the
- * legal range, are converted to the closest Phred score, e.g. assigning 60 to a
- * `seqan3::phred42` will result in a Phred score of 41. Assigning Phred values
- * outside the legal range results in undefined behaviour.
+ * Likewise, assignment happens via `seqan3::assign_char_to`, `seqan3::assign_rank_to` and `seqan3::assign_phred_to`.
+ * Phred values outside the representable range, but inside the legal range, are converted to the closest Phred score,
+ * e.g. assigning 60 to a `seqan3::phred42` will result in a Phred score of 41. Assigning Phred values outside the legal
+ * range results in undefined behaviour.
  *
- * All quality alphabets are explicitly convertible to each other via their
- * Phred representation. Values not present in one alphabet are mapped to the
- * closest value in the target alphabet (e.g. a `seqan3::phred63` letter with
- * value 60 will convert to a `seqan3::phred42` letter of score 41, this also applies to `seqan3::phred94`).
+ * All quality alphabets are explicitly convertible to each other via their Phred representation. Values not present in
+ * one alphabet are mapped to the closest value in the target alphabet (e.g. a `seqan3::phred63` letter with value 60
+ * will convert to a `seqan3::phred42` letter of score 41, this also applies to `seqan3::phred94`).
  */
