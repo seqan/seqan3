@@ -70,7 +70,9 @@
 // ============================================================================
 
 // SeqAn [required]
-#if !__has_include(<seqan3/version.hpp>)
+#if __has_include(<seqan3/version.hpp>)
+#   include <seqan3/version.hpp>
+#else
 #   error SeqAn3 include directory not set correctly. Forgot to add -I ${INSTALLDIR}/include to your CXXFLAGS?
 #endif
 

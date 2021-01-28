@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <string>
-
-#include <seqan3/core/platform.hpp>
+#include <cstddef>
+#include <cstdint>
 
 /*!\file
  * \brief Provides SeqAn version macros and global variables.
