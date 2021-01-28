@@ -339,7 +339,13 @@ template <field f, typename field_types, typename field_ids>
 auto const && get(record<field_types, field_ids> const && r)
 {
     static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
+#if SEQAN3_WORKAROUND_GCC_94967
+    // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
+    using return_t = std::tuple_element_t<field_ids::index_of(f), record<field_types, field_ids>>;
+    return static_cast<return_t const &&>(std::get<field_ids::index_of(f)>(std::move(r)));
+#else // ^^^ workaround / no workaround vvv
     return std::get<field_ids::index_of(f)>(std::move(r));
+#endif // SEQAN3_WORKAROUND_GCC_94967
 }
 //!\}
 

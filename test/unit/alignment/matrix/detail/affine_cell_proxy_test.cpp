@@ -7,6 +7,8 @@
 
 #include "gtest/gtest.h"
 
+#include <seqan3/test/expect_same_type.hpp>
+
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/core/tuple/common_tuple.hpp>
 
@@ -62,10 +64,10 @@ TEST_F(affine_cell_proxy_test, best_score)
     EXPECT_EQ(std::as_const(affine_cell).best_score(), best_score);
     EXPECT_EQ(std::move(affine_cell).best_score(), best_score);
     EXPECT_EQ(std::move(std::as_const(affine_cell)).best_score(), best_score);
-    EXPECT_TRUE((std::same_as<decltype(affine_cell.best_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).best_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).best_score()), int &&>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).best_score()), int const &&>));
+    EXPECT_SAME_TYPE(decltype(affine_cell.best_score()), int &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(affine_cell).best_score()), int const &);
+    EXPECT_SAME_TYPE(decltype(std::move(affine_cell).best_score()), int &&);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(affine_cell)).best_score()), int const &&);
 }
 
 TEST_F(affine_cell_proxy_test, horizontal_score)
@@ -74,10 +76,10 @@ TEST_F(affine_cell_proxy_test, horizontal_score)
     EXPECT_EQ(std::as_const(affine_cell).horizontal_score(), horizontal_score);
     EXPECT_EQ(std::move(affine_cell).horizontal_score(), horizontal_score);
     EXPECT_EQ(std::move(std::as_const(affine_cell)).horizontal_score(), horizontal_score);
-    EXPECT_TRUE((std::same_as<decltype(affine_cell.horizontal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).horizontal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).horizontal_score()), int const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).horizontal_score()), int const &>));
+    EXPECT_SAME_TYPE(decltype(affine_cell.horizontal_score()), int const &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(affine_cell).horizontal_score()), int const &);
+    EXPECT_SAME_TYPE(decltype(std::move(affine_cell).horizontal_score()), int const &);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(affine_cell)).horizontal_score()), int const &);
 }
 
 TEST_F(affine_cell_proxy_test, vertical_score)
@@ -86,10 +88,10 @@ TEST_F(affine_cell_proxy_test, vertical_score)
     EXPECT_EQ(std::as_const(affine_cell).vertical_score(), vertical_score);
     EXPECT_EQ(std::move(affine_cell).vertical_score(), vertical_score);
     EXPECT_EQ(std::move(std::as_const(affine_cell)).vertical_score(), vertical_score);
-    EXPECT_TRUE((std::same_as<decltype(affine_cell.vertical_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(affine_cell).vertical_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(affine_cell).vertical_score()), int &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(affine_cell)).vertical_score()), int &>));
+    EXPECT_SAME_TYPE(decltype(affine_cell.vertical_score()), int &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(affine_cell).vertical_score()), int &);
+    EXPECT_SAME_TYPE(decltype(std::move(affine_cell).vertical_score()), int &);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(affine_cell)).vertical_score()), int &);
 }
 
 TEST_F(affine_cell_proxy_test, tuple_size)
@@ -99,9 +101,9 @@ TEST_F(affine_cell_proxy_test, tuple_size)
 
 TEST_F(affine_cell_proxy_test, tuple_element)
 {
-    EXPECT_TRUE((std::same_as<std::tuple_element_t<0, cell_type>, int>));
-    EXPECT_TRUE((std::same_as<std::tuple_element_t<1, cell_type>, int const &>));
-    EXPECT_TRUE((std::same_as<std::tuple_element_t<2, cell_type>, int &>));
+    EXPECT_SAME_TYPE((std::tuple_element_t<0, cell_type>), int);
+    EXPECT_SAME_TYPE((std::tuple_element_t<1, cell_type>), int const &);
+    EXPECT_SAME_TYPE((std::tuple_element_t<2, cell_type>), int &);
 }
 
 TEST_F(affine_cell_proxy_test, tuple_like_concept)
@@ -179,10 +181,10 @@ TEST_F(trace_cell_proxy_test, best_trace)
     EXPECT_TRUE(std::as_const(trace_cell).best_trace() == best_trace);
     EXPECT_TRUE(cell_type{trace_cell}.best_trace() == best_trace);
     EXPECT_TRUE(std::move(std::as_const(trace_cell)).best_trace() == best_trace);
-    EXPECT_TRUE((std::same_as<decltype(trace_cell.best_trace()), trace_type &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(trace_cell).best_trace()), trace_type const &>));
-    EXPECT_TRUE((std::same_as<decltype(cell_type{trace_cell}.best_trace()), trace_type &&>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(trace_cell)).best_trace()), trace_type const &&>));
+    EXPECT_SAME_TYPE(decltype(trace_cell.best_trace()), trace_type &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(trace_cell).best_trace()), trace_type const &);
+    EXPECT_SAME_TYPE(decltype(cell_type{trace_cell}.best_trace()), trace_type &&);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(trace_cell)).best_trace()), trace_type const &&);
 }
 
 TEST_F(trace_cell_proxy_test, horizontal_trace)
@@ -191,10 +193,10 @@ TEST_F(trace_cell_proxy_test, horizontal_trace)
     EXPECT_TRUE(std::as_const(trace_cell).horizontal_trace() == horizontal_trace);
     EXPECT_TRUE(cell_type{trace_cell}.horizontal_trace() == horizontal_trace);
     EXPECT_TRUE(std::move(std::as_const(trace_cell)).horizontal_trace() == horizontal_trace);
-    EXPECT_TRUE((std::same_as<decltype(trace_cell.horizontal_trace()), trace_type const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(trace_cell).horizontal_trace()), trace_type const &>));
-    EXPECT_TRUE((std::same_as<decltype(cell_type{trace_cell}.horizontal_trace()), trace_type const &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(trace_cell)).horizontal_trace()), trace_type const &>));
+    EXPECT_SAME_TYPE(decltype(trace_cell.horizontal_trace()), trace_type const &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(trace_cell).horizontal_trace()), trace_type const &);
+    EXPECT_SAME_TYPE(decltype(cell_type{trace_cell}.horizontal_trace()), trace_type const &);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(trace_cell)).horizontal_trace()), trace_type const &);
 }
 
 TEST_F(trace_cell_proxy_test, vertical_trace)
@@ -203,10 +205,10 @@ TEST_F(trace_cell_proxy_test, vertical_trace)
     EXPECT_TRUE(std::as_const(trace_cell).vertical_trace() == vertical_trace);
     EXPECT_TRUE(cell_type{trace_cell}.vertical_trace() == vertical_trace);
     EXPECT_TRUE(std::move(std::as_const(trace_cell)).vertical_trace() == vertical_trace);
-    EXPECT_TRUE((std::same_as<decltype(trace_cell.vertical_trace()), trace_type &>));
-    EXPECT_TRUE((std::same_as<decltype(std::as_const(trace_cell).vertical_trace()), trace_type &>));
-    EXPECT_TRUE((std::same_as<decltype(cell_type{trace_cell}.vertical_trace()), trace_type &>));
-    EXPECT_TRUE((std::same_as<decltype(std::move(std::as_const(trace_cell)).vertical_trace()), trace_type &>));
+    EXPECT_SAME_TYPE(decltype(trace_cell.vertical_trace()), trace_type &);
+    EXPECT_SAME_TYPE(decltype(std::as_const(trace_cell).vertical_trace()), trace_type &);
+    EXPECT_SAME_TYPE(decltype(cell_type{trace_cell}.vertical_trace()), trace_type &);
+    EXPECT_SAME_TYPE(decltype(std::move(std::as_const(trace_cell)).vertical_trace()), trace_type &);
 }
 
 //------------------------------------------------------------------------------
