@@ -46,8 +46,8 @@
  * Depending on the format and the analyzer machine generation, the mappings can
  * differ.
  * Output files storing DNA sequences and their quality scores are usually
- * stored in the **FASTQ** format indicated by the file endings <I>fastq</I>
- * or <I>fq</I>.
+ * stored in the **FASTQ** format indicated by the file endings *fastq*
+ * or *fq*.
  * This sub-module provides multiple quality alphabets that can be used in
  * combination with regular containers and ranges.
  *
@@ -60,7 +60,7 @@
  * | PacBio              | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred94       | [0 .. 93]         | [0 .. 93]  | ['!' .. '~'] |
  * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [';' .. '~'] |
  *
- * The most distributed format is the *Sanger* or <I>Illumina 1.8+</I> format.
+ * The most distributed format is the *Sanger* or *Illumina 1.8+* format.
  * Despite typical Phred scores for Illumina machines range from 0 to 41, it is possible that processed reads reach
  * higher scores. If you do not intend handling Phred scores larger than 41, we recommend using seqan3::phred42 due to
  * its more space-efficient implementation (see below). If you want to store PacBio HiFi reads, we recommend to use
