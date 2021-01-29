@@ -50,7 +50,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing sequence files, e.g. FASTA, FASTQ ...
- * \ingroup sequence
+ * \ingroup sequence_file
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                              can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet

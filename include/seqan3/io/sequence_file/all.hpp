@@ -12,7 +12,7 @@
 
 #pragma once
 
-/*!\defgroup sequence Sequence File
+/*!\defgroup sequence_file Sequence File
  * \ingroup io
  * \brief Provides files and formats for handling sequence data.
  * \see \ref io

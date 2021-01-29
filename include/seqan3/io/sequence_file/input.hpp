@@ -49,7 +49,7 @@ namespace seqan3
 
 /*!\interface seqan3::sequence_file_input_traits <>
  * \brief The requirements a traits_type for seqan3::sequence_file_input must meet.
- * \ingroup sequence
+ * \ingroup sequence_file
  */
 /*!\name Requirements for seqan3::sequence_file_input_traits
  * \brief You can expect these **member types** of all types that satisfy seqan3::sequence_file_input_traits.
@@ -119,7 +119,7 @@ SEQAN3_CONCEPT sequence_file_input_traits = requires (t v)
 
 /*!\brief The default traits for seqan3::sequence_file_input
  * \implements sequence_file_input_traits
- * \ingroup sequence
+ * \ingroup sequence_file
  *
  * \details
  *
@@ -165,7 +165,7 @@ struct sequence_file_input_default_traits_dna
 };
 
 //!\brief A traits type that specifies input as amino acids.
-//!\ingroup sequence
+//!\ingroup sequence_file
 struct sequence_file_input_default_traits_aa : sequence_file_input_default_traits_dna
 {
     /*!\name Member types
@@ -186,7 +186,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for reading sequence files, e.g. FASTA, FASTQ ...
- * \ingroup sequence
+ * \ingroup sequence_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must satisfy
  *                              seqan3::sequence_file_input_traits.
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields

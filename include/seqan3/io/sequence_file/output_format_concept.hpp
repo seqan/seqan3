@@ -57,7 +57,7 @@ namespace seqan3
 
 /*!\interface seqan3::sequence_file_output_format <>
  * \brief The generic concept for sequence file out formats.
- * \ingroup sequence
+ * \ingroup sequence_file
  *
  * \details
  *
