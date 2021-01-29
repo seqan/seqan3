@@ -293,6 +293,16 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+//!       gcc7 does not preserve the const && type using std::get
+#ifndef SEQAN3_WORKAROUND_GCC_94967 // fixed since gcc8
+#   if defined(__GNUC__) && (__GNUC__ <= 7)
+#       define SEQAN3_WORKAROUND_GCC_94967 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_94967 0
+#   endif
+#endif
+
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070 and https://github.com/seqan/product_backlog/issues/151
 #ifndef SEQAN3_WORKAROUND_GCC_96070 // not yet fixed, this is a defect within the standard lib
 #   if defined(__GNUC__)

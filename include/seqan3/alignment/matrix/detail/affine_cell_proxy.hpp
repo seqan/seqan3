@@ -215,9 +215,14 @@ public:
     decltype(auto) best_score() && noexcept { return get_score_impl<0>(std::move(*this)); }
     //!\overload
     decltype(auto) best_score() const && noexcept
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<0, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<0>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_score_impl<0>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
@@ -227,10 +232,15 @@ public:
     //!\overload
     decltype(auto) horizontal_score() && noexcept { return get_score_impl<1>(std::move(*this)); }
     //!\overload
-     decltype(auto) horizontal_score() const && noexcept
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    decltype(auto) horizontal_score() const && noexcept
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<1, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<1>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_score_impl<1>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
@@ -241,9 +251,14 @@ public:
     decltype(auto) vertical_score() && noexcept { return get_score_impl<2>(std::move(*this)); }
     //!\overload
     decltype(auto) vertical_score() const && noexcept
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<2, score_cell_type>;
         return static_cast<return_t const &&>(get_score_impl<2>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_score_impl<2>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
     //!\}
 
@@ -280,9 +295,14 @@ public:
     //!\cond
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<0, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<0>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_trace_impl<0>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
@@ -314,9 +334,14 @@ public:
     //!\cond
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<1, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<1>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_trace_impl<1>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
@@ -348,9 +373,14 @@ public:
     //!\cond
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
-    { //Unfortunately gcc7 does not preserve the const && type: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
+    {
+#if SEQAN3_WORKAROUND_GCC_94967
+        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
         using return_t = std::tuple_element_t<2, trace_cell_type>;
         return static_cast<return_t const &&>(get_trace_impl<2>(std::move(*this)));
+#else // ^^^ workaround / no workaround vvv
+        return get_trace_impl<2>(std::move(*this));
+#endif // SEQAN3_WORKAROUND_GCC_94967
     }
     //!\}
 
