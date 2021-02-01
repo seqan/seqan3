@@ -60,6 +60,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#2179](https://github.com/seqan/seqan3/pull/2179)).
 * The `seqan3::regex_validator` parses `std::filesystem::path`'s correctly now
   ([\#2216](https://github.com/seqan/seqan3/pull/2216)).
+* The `seqan3::input_file_validator` and `seqan3::input_file_validator` support extensions containing a dot
+  ([\#2363](https://github.com/seqan/seqan3/pull/2363)).
 
 ## API changes
 

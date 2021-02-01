@@ -91,11 +91,15 @@ TEST(validator_test, input_file)
 {
     seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
     seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
+    seqan3::test::tmp_filename tmp_name_hidden{".testbox.fasta"};
+    seqan3::test::tmp_filename tmp_name_multiple{"testbox.fasta.txt"};
 
-    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
+    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}, std::string{"fasta.txt"}};
 
     std::ofstream tmp_file(tmp_name.get_path());
     std::ofstream tmp_file_2(tmp_name_2.get_path());
+    std::ofstream tmp_file_hidden(tmp_name_hidden.get_path());
+    std::ofstream tmp_file_multiple(tmp_name_multiple.get_path());
 
     { // single file
 
@@ -121,6 +125,16 @@ TEST(validator_test, input_file)
             does_not_exist.replace_extension();
             seqan3::input_file_validator my_validator{formats};
             EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
+        }
+
+        { // filename starts with dot.
+            seqan3::input_file_validator my_validator{formats};
+            EXPECT_NO_THROW(my_validator(tmp_name_hidden.get_path()));
+        }
+
+        { // file has multiple extensions.
+            seqan3::input_file_validator my_validator{formats};
+            EXPECT_NO_THROW(my_validator(tmp_name_multiple.get_path()));
         }
 
         {  // read from file
@@ -176,7 +190,7 @@ TEST(validator_test, input_file)
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
                                "          desc The input file must exist and read permissions must be granted.\n"
-                               "          Valid file extensions are: [fa, sam, fasta].\n"
+                               "          Valid file extensions are: [fa, sam, fasta, fasta.txt].\n"
                                "\n"} +
                                basic_options_str +
                                "\n" +
@@ -204,8 +218,9 @@ TEST(validator_test, output_file)
     std::ofstream tmp_file_2(tmp_name_2.get_path());    // create file
     std::filesystem::path existing_path{tmp_name_2.get_path()};
     seqan3::test::tmp_filename tmp_name_3{"testbox_3.fa"};
+    seqan3::test::tmp_filename hidden_name{".testbox.fasta"};
 
-    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}};
+    std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}, std::string{"fasta.txt"}};
 
     { // single file
 
@@ -239,6 +254,18 @@ TEST(validator_test, output_file)
             no_extension.replace_extension();
             seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
             EXPECT_THROW(my_validator(no_extension), seqan3::validation_error);
+        }
+
+        { // filename starts with dot.
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
+            EXPECT_NO_THROW(my_validator(hidden_name.get_path()));
+        }
+
+        { // file has multiple extensions.
+            std::filesystem::path multiple_extension{tmp_name.get_path()};
+            multiple_extension.replace_extension("fasta.txt");
+            seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
+            EXPECT_NO_THROW(my_validator(multiple_extension));
         }
 
         {  // read from file
@@ -298,7 +325,8 @@ TEST(validator_test, output_file)
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
                                "          desc The output file must not exist already and write permissions\n"
-                               "          must be granted. Valid file extensions are: [fa, sam, fasta].\n"
+                               "          must be granted. Valid file extensions are: [fa, sam, fasta,\n"
+                               "          fasta.txt].\n"
                                "\n"} +
                                basic_options_str +
                                "\n" +
@@ -325,7 +353,7 @@ TEST(validator_test, output_file)
                                "POSITIONAL ARGUMENTS\n"
                                "    ARGUMENT-1 (std::filesystem::path)\n"
                                "          desc Write permissions must be granted. Valid file extensions are:\n"
-                               "          [fa, sam, fasta].\n"
+                               "          [fa, sam, fasta, fasta.txt].\n"
                                "\n"} +
                                basic_options_str +
                                "\n" +
