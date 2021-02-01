@@ -11,8 +11,6 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
-#include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
-#include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/test/cereal.hpp>
 
@@ -119,18 +117,6 @@ TYPED_TEST_P(fm_index_collection_test, size)
     EXPECT_EQ(fm.size(), 10u); // including a sentinel character and a delimiter
 }
 
-TYPED_TEST_P(fm_index_collection_test, concept_check)
-{
-    using index_t = typename TypeParam::first_type;
-
-    EXPECT_TRUE((seqan3::detail::template_specialisation_of<typename index_t::cursor_type, seqan3::fm_index_cursor>));
-    if constexpr (std::same_as<index_t, seqan3::bi_fm_index<typename index_t::alphabet_type,
-                                                            seqan3::text_layout::collection>>)
-    {
-        EXPECT_TRUE((seqan3::detail::template_specialisation_of<typename index_t::cursor_type, seqan3::bi_fm_index_cursor>));
-    }
-}
-
 TYPED_TEST_P(fm_index_collection_test, empty_text)
 {
     using index_t = typename TypeParam::first_type;
@@ -158,4 +144,4 @@ TYPED_TEST_P(fm_index_collection_test, serialisation)
     seqan3::test::do_serialisation(fm);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(fm_index_collection_test, ctr, swap, size, serialisation, concept_check, empty_text);
+REGISTER_TYPED_TEST_SUITE_P(fm_index_collection_test, ctr, swap, size, serialisation, empty_text);

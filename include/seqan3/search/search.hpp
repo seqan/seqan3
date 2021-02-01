@@ -70,7 +70,7 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    index_t::cursor_type model seqan3::detail::template_specialisation_of a seqan3::fm_index_cursor.
+ * \tparam index_t    Type of the index.
  * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
  *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
  * \param[in] queries A single query or a range of queries.
@@ -101,8 +101,7 @@ namespace seqan3
 template <typename index_t, std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 //!\cond
-    requires detail::template_specialisation_of<typename index_t::cursor_type, fm_index_cursor> &&
-            std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
              std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>
 //!\endcond
 inline auto search(queries_t && queries,
@@ -173,7 +172,6 @@ inline auto search(queries_t && queries,
 template <typename index_t, std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
     requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
-            (detail::template_specialisation_of<typename index_t::cursor_type, fm_index_cursor>) &&
              (!std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>)
 inline auto search(queries_t && queries,
                    index_t const & index,
@@ -192,7 +190,6 @@ inline auto search(queries_t && queries,
 //!\overload
 template <typename index_t, std::ranges::forward_range query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires (detail::template_specialisation_of<typename index_t::cursor_type, fm_index_cursor>)
 inline auto search(query_t && query,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -202,7 +199,6 @@ inline auto search(query_t && query,
 
 //!\overload
 template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires (detail::template_specialisation_of<typename index_t::cursor_type, fm_index_cursor>)
 inline auto search(char const * const queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -212,7 +208,6 @@ inline auto search(char const * const queries,
 
 //!\overload
 template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires (detail::template_specialisation_of<typename index_t::cursor_type, fm_index_cursor>)
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
