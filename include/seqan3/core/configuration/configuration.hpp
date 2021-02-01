@@ -17,6 +17,7 @@
 #include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/detail/concept.hpp>
 #include <seqan3/core/configuration/detail/configuration_utility.hpp>
+#include <seqan3/core/detail/transfer_type_modifier_onto.hpp>
 #include <seqan3/utility/tuple_utility.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
@@ -201,15 +202,10 @@ public:
 
             // Get the actual base tuple type from the other configuration.
             using other_base_t = typename std::remove_cvref_t<other_configuration_t>::base_type;
-            // The other base tuple type matching the const qualifier of the input parameter.
-            using other_base_maybe_const_t =
-                std::conditional_t<std::is_const_v<std::remove_reference_t<other_configuration_t>>,
-                                   std::add_const_t<other_base_t>,
-                                   other_base_t>;
+
             // The other base tuple type matching the reference type and the const qualifier of the input parameter.
-            using fwd_other_base_t = std::conditional_t<std::is_lvalue_reference_v<other_configuration_t>,
-                                                        std::add_lvalue_reference_t<other_base_maybe_const_t>,
-                                                        std::add_rvalue_reference_t<other_base_maybe_const_t>>;
+            using other_base_same_modifier_t = detail::transfer_type_modifier_onto_t<other_configuration_t,
+                                                                                     other_base_t>;
 
             // Form a new seqan3::configuration type with the concatenated configuration element types of this and the
             // other configuration.
@@ -221,7 +217,7 @@ public:
 
             // Concatenate the two configurations using their base tuple types.
             return appended_configuration_t{std::tuple_cat(static_cast<base_type>(*this),
-                                                           static_cast<fwd_other_base_t>(other_config))};
+                                                           std::forward<other_base_same_modifier_t>(other_config))};
         }
     }
 
