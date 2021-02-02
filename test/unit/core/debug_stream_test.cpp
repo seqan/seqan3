@@ -276,3 +276,13 @@ TEST(debug_stream_test, sam_flags)
     o.flush();
     EXPECT_EQ(o.str(), "0,4");
 }
+
+TEST(debug_stream_test, byte)
+{
+    std::ostringstream o{};
+    seqan3::debug_stream_type my_stream{o};
+
+    my_stream << std::byte{40} << "," << std::byte{244};
+    o.flush();
+    EXPECT_EQ(o.str(), "40,244");
+}

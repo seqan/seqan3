@@ -11,6 +11,7 @@
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/detail/debug_stream_byte.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/debug_stream_variant.hpp>
