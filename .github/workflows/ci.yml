@@ -202,6 +202,17 @@ jobs:
             skip_build_tests: true
             skip_run_tests: true
 
+          - name: "CMake external project gcc7"
+            os: ubuntu-20.04
+            requires_toolchain: true
+            cxx: "g++-7"
+            cc: "gcc-7"
+            cmake: 3.14.6 # the whole test suite needs at least cmake 3.14
+            build: external_project
+            build_type: Debug
+            build_threads: 1 # output is important to be in sequential order
+            skip_run_tests: true
+
           - name: "Snippet gcc7"
             os: ubuntu-20.04
             requires_toolchain: true
@@ -250,6 +261,9 @@ jobs:
             OS="Linux"
           else
             OS="Darwin"
+          fi
+          if [ "$RUNNER_OS" == "Linux" ] && [[ "${{ matrix.build }}" =~ ^(external_project)$ ]]; then
+            sudo apt-get install libidn11 # this is needed for cmake 3.4 within the external_project test
           fi
           mkdir -p /tmp/cmake-download
           wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${{ matrix.cmake }}/cmake-${{ matrix.cmake }}-${OS}-x86_64.tar.gz
@@ -344,6 +358,9 @@ jobs:
           fi
           if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
             make gbenchmark_build
+          fi
+          if [[ "${{ matrix.build }}" =~ ^(external_project)$ ]]; then
+            make seqan3_test_prerequisite
           fi
           if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
             make download-cppreference-doxygen-web-tag
