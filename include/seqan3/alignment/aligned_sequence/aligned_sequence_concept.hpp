@@ -510,16 +510,4 @@ inline bool constexpr all_model_aligned_seq = (aligned_sequence<elems> && ...);
  */
 template <typename ...elems>
 inline bool constexpr all_model_aligned_seq<type_list<elems...>> = all_model_aligned_seq<elems...>;
-
-/*!\brief True, if each type models seqan3::writable_aligned_sequence; false otherwise.
- * \tparam elems The pack of types to be tested.
- */
-template <typename ...elems>
-inline bool constexpr all_model_writable_aligned_seq = (writable_aligned_sequence<elems> && ...);
-
-/*!\brief True, if each type in the seqan3::type_list models seqan3::writable_aligned_sequence; false otherwise.
- * \tparam elems The pack of types to be tested.
- */
-template <typename ...elems>
-inline bool constexpr all_model_writable_aligned_seq<type_list<elems...>> = all_model_writable_aligned_seq<elems...>;
 } // namespace seqan3::detail

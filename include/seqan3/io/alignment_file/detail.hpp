@@ -18,7 +18,7 @@
 #include <seqan3/std/ranges>
 #include <sstream>
 
-#include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/detail/pairwise_alignment_concept.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
@@ -41,7 +41,7 @@ struct view_equality_fn
     }
 };
 
-/*!\brief Compares two aligned sequence values and returns their cigar operation.
+/*!\brief Compares two seqan3::aligned_sequence values and returns their cigar operation.
  * \ingroup alignment_file
  * \tparam reference_char_type Must be equality comparable to seqan3::gap.
  * \tparam query_char_type     Must be equality comparable to seqan3::gap.
@@ -97,11 +97,11 @@ template <typename reference_char_type, typename query_char_type>
     return assign_char_to(operators[key], cigar_op{});
 }
 
-/*!\brief Creates a cigar string (SAM format) given an alignment represented by two aligned sequences.
+/*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment represented by two
+ *        seqan3::aligned_sequence's.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::tuple_like and must have std::tuple_size 2.
- *                         Each tuple element must be a range over values comparable to seqan3::gap.
+ * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
  * \param  alignment       The alignment, represented by a pair of aligned sequences,
  *                         to be transformed into cigar vector based on the
  *                         second (query) sequence.
@@ -110,7 +110,7 @@ template <typename reference_char_type, typename query_char_type>
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::vector<seqan3::cigar> representing the alignment.
+ * \returns An std::vector\<seqan3::cigar\> representing the alignment.
  *
  * \details
  *
@@ -134,14 +134,11 @@ template <typename reference_char_type, typename query_char_type>
  *
  * \sa seqan3::aligned_sequence
  */
-template <tuple_like alignment_type>
+template <seqan3::detail::pairwise_alignment alignment_type>
 [[nodiscard]] inline std::vector<cigar> get_cigar_vector(alignment_type && alignment,
                                                          uint32_t const query_start_pos = 0,
                                                          uint32_t const query_end_pos = 0,
                                                          bool const extended_cigar = false)
-//!\cond
-    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2)
-//!\endcond
 {
     using std::get;
 
@@ -197,10 +194,6 @@ template <tuple_like alignment_type>
  * \ingroup alignment_file
  * \param  cigar_vector The std::vector of seqan3::cigar elements to be transformed into a std::string.
  * \returns The cigar string (std::string).
- *
- * \details
- *
- * The transformation is done by printing the vector with the seqan3::debug_stream.
  */
 [[nodiscard]] inline std::string get_cigar_string(std::vector<cigar> const & cigar_vector)
 {
@@ -209,12 +202,11 @@ template <tuple_like alignment_type>
     return result;
 }
 
-/*!\brief Creates a cigar string (SAM format) given an alignment represented by two aligned sequences.
+/*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment.
  * \ingroup alignment_file
  *
- * \tparam alignment_type  Must model the seqan3::tuple_like and must have std::tuple_size 2.
- *                         Each tuple element must be a range over values comparable to seqan3::gap.
- * \param  alignment       The alignment, represented by a pair of aligned sequences,
+ * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
+ * \param  alignment       The alignment, represented by a seqan3::pair_like of seqan3::aligned_sequence's,
  *                         to be transformed into cigar vector based on the
  *                         second (query) sequence.
  * \param  query_start_pos The start position of the alignment in the query
@@ -243,26 +235,20 @@ template <tuple_like alignment_type>
  * string would look like this: "3=1X2I3=1X1=2D1=".
  * \sa seqan3::aligned_sequence
  */
-template <tuple_like alignment_type>
+template <seqan3::detail::pairwise_alignment alignment_type>
 [[nodiscard]] inline std::string get_cigar_string(alignment_type && alignment,
                                                   uint32_t const query_start_pos = 0,
                                                   uint32_t const query_end_pos = 0,
                                                   bool const extended_cigar = false)
-//!\cond
-    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2)
-//!\endcond
 {
     return get_cigar_string(get_cigar_vector(alignment, query_start_pos, query_end_pos, extended_cigar));
 }
 
-/*!\brief Transforms an alignment represented by two aligned sequences into the
- *        corresponding cigar string.
+/*!\brief Transforms an alignment represented by two seqan3::aligned_sequence's into the corresponding cigar string.
  * \ingroup alignment_file
  *
- * \tparam ref_seq_type    Must model std::ranges::forward_range. The value_type must
- *                         be equality comparable to seqan3::gap.
- * \tparam query_seq_type  Must model std::ranges::forward_range. The value_type must
- *                         be equality comparable to seqan3::gap.
+ * \tparam ref_seq_type    Must model seqan3::aligned_sequence.
+ * \tparam query_seq_type  Must model seqan3::aligned_sequence.
  * \param  ref_seq         The reference sequence to compare against the query sequence.
  * \param  query_seq       The query sequence to build the cigar string for.
  * \param  query_start_pos The start position of the alignment in the query
@@ -291,16 +277,12 @@ template <tuple_like alignment_type>
  *
  * \sa seqan3::aligned_sequence
  */
-template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range query_seq_type>
+template <seqan3::aligned_sequence ref_seq_type, seqan3::aligned_sequence query_seq_type>
 [[nodiscard]] inline std::string get_cigar_string(ref_seq_type && ref_seq,
                                                   query_seq_type && query_seq,
                                                   uint32_t const query_start_pos = 0,
                                                   uint32_t const query_end_pos = 0,
                                                   bool const extended_cigar = false)
-//!\cond
-    requires seqan3::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<ref_seq_type>> &&
-             seqan3::detail::weakly_equality_comparable_with<gap, std::ranges::range_reference_t<query_seq_type>>
-//!\endcond
 {
     return get_cigar_string(std::tie(ref_seq, query_seq), query_start_pos, query_end_pos, extended_cigar);
 }
@@ -308,8 +290,7 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
 /*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
  * \ingroup alignment_file
  *
- * \tparam alignment_type The type of alignment; must model seqan3::tuple_like and all tuple element types
- *                        must model seqan3::writable_aligned_sequence.
+ * \tparam alignment_type The type of alignment; must model seqan3::detail::writable_pairwise_alignment.
  *
  * \param[in,out] alignment    The alignment to fill with gaps according to the cigar information.
  * \param[in]     cigar_vector The cigar information given as a std::vector over seqan3::cigar.
@@ -328,11 +309,7 @@ template <std::ranges::forward_range ref_seq_type, std::ranges::forward_range qu
  * ATGCCCCGTTG--C
  * ```
  */
-template <tuple_like alignment_type>
-//!\cond
-    requires (std::tuple_size_v<std::remove_cvref_t<alignment_type>> == 2) &&
-             detail::all_model_writable_aligned_seq<detail::tuple_type_list_t<alignment_type>>
-//!\endcond
+template <seqan3::detail::writable_pairwise_alignment alignment_type>
 inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> const & cigar_vector)
 {
     using std::get;

@@ -77,7 +77,7 @@ enum class field
     comment,        //!< Comment field of arbitrary content, usually a string.
 
     // Fields unique to alignment io ...........................................
-    alignment,      //!< The (pairwise) alignment stored in an seqan3::alignment object.
+    alignment,      //!< The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
     ref_id,         //!< The identifier of the (reference) sequence that seqan3::field::seq was aligned to.
     ref_seq,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
     ref_offset,     //!< Sequence (seqan3::field::ref_seq) relative start position (0-based), unsigned value.
