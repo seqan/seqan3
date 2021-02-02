@@ -36,6 +36,8 @@ jobs:
             cmake: 3.8.2
             build: coverage
             build_type: Debug
+            build_threads: 2
+            test_threads: 2
             skip_run_tests: true # Already ran by the make call
 
           - name: "Unit gcc9 (c++2a) on Linux"
@@ -47,6 +49,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
             cxx_flags: "-std=c++2a"
 
           - name: "Unit gcc9 (c++2a) on macOS"
@@ -58,6 +62,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
             cxx_flags: "-std=c++2a"
 
           - name: "Unit gcc10 (c++17) on Linux"
@@ -69,6 +75,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
             cxx_flags: "-std=c++17 -fconcepts"
 
           - name: "Unit gcc10 (c++17) on macOS"
@@ -80,6 +88,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
             cxx_flags: "-std=c++17 -fconcepts"
 
           - name: "Unit gcc10 (c++20) on Linux"
@@ -91,6 +101,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Unit gcc10 (c++20) on macOS"
             os: macos-10.15
@@ -101,6 +113,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Unit gcc8 on Linux"
             os: ubuntu-20.04
@@ -111,6 +125,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Unit gcc8 on macOS"
             os: macos-10.15
@@ -121,6 +137,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Unit gcc7 on Linux"
             os: ubuntu-20.04
@@ -131,6 +149,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Unit gcc7 on macOS"
             os: macos-10.15
@@ -141,6 +161,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Performance gcc7"
             os: ubuntu-20.04
@@ -151,6 +173,8 @@ jobs:
             cmake: 3.8.2
             build: performance
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Header gcc7"
             os: ubuntu-20.04
@@ -161,6 +185,8 @@ jobs:
             cmake: 3.8.2
             build: header
             build_type: Release
+            build_threads: 2
+            test_threads: 2
 
           - name: "Non-cyclic tests gcc7"
             os: ubuntu-20.04
@@ -171,6 +197,7 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Debug
+            build_threads: 2
             use_include_dependencies: true
             skip_build_tests: true
             skip_run_tests: true
@@ -184,6 +211,9 @@ jobs:
             cmake: 3.8.2
             build: snippet
             build_type: Release
+            build_threads: 2
+            test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files,
+                            # they are not safe to run in parallel
 
           - name: "Documentation"
             os: ubuntu-20.04
@@ -191,6 +221,8 @@ jobs:
             requires_toolchain: false
             requires_ccache: false
             build: documentation
+            test_threads: 2
+            skip_build_tests: true
 
     steps:
       - name: Checkout SeqAn3
@@ -313,6 +345,9 @@ jobs:
           if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
             make gbenchmark_build
           fi
+          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
+            make download-cppreference-doxygen-web-tag
+          fi
           if [[ "${{ matrix.use_include_dependencies }}" == "true" ]]; then
             cmake -DSEQAN3_USE_INCLUDE_DEPENDENCIES=1 .
             make all_dependencies
@@ -330,22 +365,14 @@ jobs:
         run: |
           ccache -p || true
           cd seqan3-build
-          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
-            make download-cppreference-doxygen-web-tag
-          else
-            make -k -j2
-          fi
+          make -k -j${{ matrix.build_threads }}
           ccache -s || true
 
       - name: Run tests
         if: ${{!matrix.skip_run_tests}}
         run: |
           cd seqan3-build
-          if [[ "${{ matrix.build }}" =~ ^(snippet)$ ]]; then
-            ctest . --output-on-failure
-          else
-            ctest . -j2 --output-on-failure
-          fi
+          ctest . -j${{ matrix.test_threads }} --output-on-failure
 
       - name: Submit coverage build
         if: matrix.build == 'coverage'
