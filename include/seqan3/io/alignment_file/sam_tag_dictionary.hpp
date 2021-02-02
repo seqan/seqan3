@@ -26,15 +26,16 @@ namespace seqan3::detail
     //!\brief std::variant of allowed types for optional tag fields of the SAM format.
     //!\ingroup alignment_file_io
     using sam_tag_variant = std::variant<char, int32_t, float, std::string,
+                                         std::vector<std::byte>,
                                          std::vector<int8_t>, std::vector<uint8_t>,
                                          std::vector<int16_t>, std::vector<uint16_t>,
                                          std::vector<int32_t>, std::vector<uint32_t>,
                                          std::vector<float>>;
 
     //!\brief Each SAM tag type char identifier. Index corresponds to the seqan3::detail::sam_tag_variant types.
-    char constexpr sam_tag_type_char[11]       = {'A',  'i',  'f',  'Z',  'B', 'B', 'B', 'B', 'B', 'B', 'B'};
+    char constexpr sam_tag_type_char[12]       = {'A',  'i',  'f',  'Z', 'H', 'B', 'B', 'B', 'B', 'B', 'B', 'B'};
     //!\brief Each types SAM tag type extra char id. Index corresponds to the seqan3::detail::sam_tag_variant types.
-    char constexpr sam_tag_type_char_extra[11] = {'\0', '\0', '\0', '\0', 'c', 'C', 's', 'S', 'i', 'I', 'f'};
+    char constexpr sam_tag_type_char_extra[12] = {'\0', '\0', '\0', '\0', '\0', 'c', 'C', 's', 'S', 'i', 'I', 'f'};
 }
 
 namespace seqan3

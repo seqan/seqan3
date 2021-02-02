@@ -111,10 +111,12 @@ TEST(sam_tag_dictionary, get_function_unknown_tag)
     dict["nm"_tag] = std::vector<int32_t>{3, 4, 5}; // overwrites previous
     dict["co"_tag] = std::string("comment");
     dict["cg"_tag] = std::vector<int32_t>{3, 4, 5};
+    dict["zb"_tag] = std::vector<std::byte>{std::byte{80}, std::byte{244}, std::byte{12}};
 
     EXPECT_EQ(dict["nm"_tag], variant_type{(std::vector<int32_t>{3, 4, 5})});
     EXPECT_EQ(dict["co"_tag], variant_type{"comment"});
     EXPECT_EQ(dict["cg"_tag], variant_type{(std::vector<int32_t>{3, 4, 5})});
+    EXPECT_EQ(dict["zb"_tag], variant_type{(std::vector<std::byte>{std::byte{80}, std::byte{244}, std::byte{12}})});
 }
 
 TEST(sam_tag_dictionary, get_function_const)

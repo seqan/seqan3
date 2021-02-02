@@ -1107,6 +1107,19 @@ inline void format_sam::write_tag_fields(stream_it_t & stream_it, sam_tag_dictio
             {
                 stream_it.write_range(arg);
             }
+            else if constexpr (std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<T>>, std::byte>)
+            {
+                if (!std::ranges::empty(arg))
+                {
+                    stream_it.write_number(std::to_integer<uint8_t>(*std::ranges::begin(arg)));
+
+                    for (auto && elem : arg | views::drop(1))
+                    {
+                        *stream_it = ',';
+                        stream_it.write_number(std::to_integer<uint8_t>(elem));
+                    }
+                }
+            }
             else
             {
                 if (!std::ranges::empty(arg))
