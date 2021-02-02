@@ -693,6 +693,25 @@ public:
         return *this;
     }
 
+    /*!\brief Bin-wise addition of two `seqan3::counting_vector`s.
+     * \param rhs The other seqan3::counting_vector.
+     * \attention The seqan3::counting_vector must be at least as big as `rhs`.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/counting_vector.cpp
+     */
+    counting_vector & operator+=(counting_vector const & rhs)
+    {
+        assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
+
+        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), std::plus<value_t>());
+
+        return *this;
+    }
+
 };
 
 //!\}
