@@ -57,7 +57,7 @@ public:
     using type = maybe_lvalue_reference_target_t;
 };
 
-/*!\brief Transfers the type modifier `&`, `&&` and `const` (and any combination) to the target type.
+/*!\brief Transfers the type modifier `&`, `&&` and `const` (and any combination) to the target type
  *        (transformation_trait shortcut).
  * \tparam source_t The type you wish to transfer the type modifier from.
  * \tparam target_t The type you wish to transfer the type modifier to.
