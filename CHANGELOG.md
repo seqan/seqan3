@@ -66,7 +66,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Alphabet
 
 * Removed seqan3::char_is_valid_for requirement from seqan3::writable_alphabet and seqan3::writable_constexpr_alphabet
-  ([\#2290](https://github.com/seqan/seqan3/pull/2337)).
+  ([\#2337](https://github.com/seqan/seqan3/pull/2337)).
 
 #### Argument Parser
 
