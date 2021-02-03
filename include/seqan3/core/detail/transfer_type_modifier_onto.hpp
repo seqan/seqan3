@@ -24,7 +24,7 @@ namespace seqan3::detail
  * \tparam source_t The type you wish to transfer the type modifier from.
  * \tparam target_t The type you wish to transfer the type modifier to.
  * \ingroup core
- * If the target_t already has a type modifier, e.g. `const`, it will keep that type modifier.
+ * If the `target_t` already has a type modifier, e.g. `const`, it will keep that type modifier.
  *
  * If the resulting type would have the type modifier `&&` and `&` at the same time, it follows the rule of reference
  * collapsing, that means `&` will be preferred.
