@@ -157,6 +157,11 @@ TYPED_TEST(interleaved_bloom_filter_test, counting)
     }
     std::vector<size_t> expected(128, 128);
     EXPECT_EQ(counting, expected);
+
+    // Counting vectors can be added together
+    std::vector<size_t> expected2(128, 256);
+    counting += counting;
+    EXPECT_EQ(counting, expected2);
 }
 
 // Check special case where there is only one `1` in the bitvector.
@@ -183,6 +188,13 @@ TYPED_TEST(interleaved_bloom_filter_test, counting_no_ub)
     expected[63] = 128;
     expected[127] = 128;
     EXPECT_EQ(counting, expected);
+
+    // Counting vectors can be added together
+    std::vector<size_t> expected2(128, 0);
+    expected2[63] = 256;
+    expected2[127] = 256;
+    counting += counting;
+    EXPECT_EQ(counting, expected2);
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)

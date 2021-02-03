@@ -23,4 +23,7 @@ int main()
 
     counts += agent.bulk_contains(126); // `counts` contains the number of occurrences of 712, 237 and 126 in each bin.
     seqan3::debug_stream << counts << '\n'; // prints [1,0,0,2,0,0,0,0,0,2,0,0]
+
+    counts += counts; // multiple counts can also be added together
+    seqan3::debug_stream << counts << '\n'; // prints [2,0,0,4,0,0,0,0,0,4,0,0]
 }
