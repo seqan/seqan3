@@ -450,7 +450,8 @@ public:
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
 
         // initialise format handler or throw if format is not found
-        using format_variant_t = std::variant<format_embl, format_fasta, format_fastq, format_genbank, format_sam>;
+        using format_variant_t = typename detail::variant_from_tags<valid_formats,
+                                                                    detail::sequence_file_input_format_exposer>::type;
         format_variant_t format_variant{};
         detail::set_format(format_variant, filename);
 
