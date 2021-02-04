@@ -678,8 +678,19 @@ private:
         virtual ~selected_input_format_base() = default; //!< Virtual default.
         //!\}
 
-        //!\brief The interface any given user input format must implement.
-        virtual void read_sequence_record(std::istream &, record_type &, sequence_file_input_options_type const &) = 0;
+        /*!\brief Reads the next format specific record from the given istream.
+         *
+         * \param[in, out] instream The input stream to extract the next record from.
+         * \param[in, out] record_buffer The record buffer to fill.
+         * \param[in] options User specific format options set from outside.
+         *
+         * \details
+         *
+         * Invokes the actual read sequence record function for the selected format and fills the record accordingly.
+         */
+        virtual void read_sequence_record(std::istream & instream,
+                                          record_type & record_buffer,
+                                          sequence_file_input_options_type const & options) = 0;
     };
 
     /*!\brief The specific selected format to read the records from.
@@ -707,16 +718,7 @@ private:
         ~selected_input_format() = default; //!< Default.
         //!\}
 
-        /*!\brief Reads the next format specific record from the given istream.
-         *
-         * \param[in, out] instream The input stream to extract the next record from.
-         * \param[in, out] record_buffer The record buffer to fill.
-         * \param[in] options User specific format options set from outside.
-         *
-         * \details
-         *
-         * Invokes the actual read sequence record function for the selected format and fills the record accordingly.
-         */
+        //!\copydoc selected_input_format_base::read_sequence_record
         void read_sequence_record(std::istream & instream,
                                   record_type & record_buffer,
                                   sequence_file_input_options_type const & options) override
