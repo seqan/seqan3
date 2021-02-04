@@ -91,8 +91,9 @@ protected:
      * are stored. In some cases some additional work is done to generate the requested result. For example computing
      * the associated alignment from the traceback matrix.
      *
-     * The first parameter is the logger and is only available if the alignment was run in debug mode. It stores the
-     * debug score and, if applicable, the debug trace matrix, which are then stored in the created alignment result.
+     * The last parameter is a callback to access the logged alignment matrix if the alignment was executed in debug
+     * mode. It will be invoked with the underlying alignment result data to transfer the stored alignment matrix
+     * to the generated alignment result.
      */
     template <typename sequence_pair_t,
               typename index_t,
