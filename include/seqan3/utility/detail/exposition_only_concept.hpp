@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup concept
+/*!\addtogroup utility_concept
  * \{
  */
 
@@ -82,12 +82,13 @@ struct weakly_ordered_with_trait : std::integral_constant<bool, weakly_ordered_w
 namespace seqan3
 {
 
-/*!\addtogroup concept
+/*!\addtogroup utility_concept
  * \{
  */
 
 /*!\interface   seqan3::implicitly_convertible_to <>
  * \brief       Resolves to `std::ranges::implicitly_convertible_to<type1, type2>()`.
+ * \noapi
  */
 //!\cond
 template <typename t, typename u>
@@ -96,6 +97,7 @@ SEQAN3_CONCEPT implicitly_convertible_to = std::is_convertible_v<t, u>;
 
 /*!\interface   seqan3::explicitly_convertible_to <>
  * \brief       Resolves to `std::ranges::explicitly_convertible_to<type1, type2>()`.
+ * \noapi
  */
 //!\cond
 template <typename t, typename u>
@@ -105,6 +107,7 @@ SEQAN3_CONCEPT explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt
 /*!\interface   seqan3::arithmetic <>
  * \brief       A type that satisfies std::is_arithmetic_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_arithmetic
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -115,6 +118,7 @@ SEQAN3_CONCEPT arithmetic = std::is_arithmetic_v<t>;
  * \extends     seqan3::arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_floating_point
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -125,6 +129,7 @@ SEQAN3_CONCEPT floating_point = arithmetic<t> && std::is_floating_point_v<t>;
  * \extends     std::integral
  * \brief       This concept encompasses exactly the types `char`, `signed char`, `unsigned char`, `wchar_t`,
  *              `char16_t` and `char32_t`.
+ * \noapi
  */
 //!\cond
 
@@ -141,6 +146,7 @@ SEQAN3_CONCEPT builtin_character = std::integral<t> &&
  * \extends     std::destructible
  * \brief       A type that satisfies std::is_trivially_destructible_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_destructible
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -151,6 +157,7 @@ SEQAN3_CONCEPT trivially_destructible = std::destructible<t> && std::is_triviall
  * \brief       A type that satisfies std::is_trivially_copyable_v<t>.
  * \extends     std::copyable
  * \sa          https://en.cppreference.com/w/cpp/types/is_trivially_copyable
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -162,6 +169,7 @@ SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyab
  * \extends     seqan3::trivially_copyable
  * \extends     seqan3::trivially_destructible
  * \sa          https://en.cppreference.com/w/cpp/types/is_trivial
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -171,6 +179,7 @@ SEQAN3_CONCEPT trivial = trivially_copyable<t> && trivially_destructible<t> && s
 /*!\interface   seqan3::standard_layout
  * \brief       Resolves to std::is_standard_layout_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_standard_layout
+ * \noapi
  */
 //!\cond
 template <typename t>
@@ -180,6 +189,7 @@ SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
 /*!\interface   seqan3::weakly_assignable_from
  * \brief       Resolves to std::is_assignable_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_assignable
+ * \noapi
  *
  * \details
  *
@@ -190,5 +200,6 @@ SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
 template <typename t, typename u>
 SEQAN3_CONCEPT weakly_assignable_from = std::is_assignable_v<t, u>;
 //!\endcond
+//!\}
 
 }  // namespace seqan3
