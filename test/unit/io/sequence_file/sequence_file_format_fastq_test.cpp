@@ -118,6 +118,10 @@ struct read : public sequence_file_data
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
+
+            EXPECT_RANGE_EQ((*it).id(), ids[i]);
+            EXPECT_RANGE_EQ((*it).sequence(), seqs[i]);
+            EXPECT_RANGE_EQ((*it).base_qualities(), quals[i]);
         }
     }
 };

@@ -119,6 +119,9 @@ SQ Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
         {
             EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
+
+            EXPECT_EQ((*it).id(), ids[i]);
+            EXPECT_EQ((*it).sequence(), seqs[i]);
         }
     }
 };

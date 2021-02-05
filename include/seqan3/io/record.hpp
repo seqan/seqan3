@@ -268,6 +268,36 @@ public:
     {
         std::apply(expander, *this);
     }
+
+protected:
+    //!\privatesection
+
+    //!\brief A type alias for std::integral_constant
+    template <field f>
+    using field_constant = std::integral_constant<field, f>;
+
+    //!\brief This is basically the seqan3::get<f>(static_cast<tuple>(record)) implementation
+    template <field f, typename tuple_t>
+    static decltype(auto) get_impl(field_constant<f>, tuple_t && record_as_tuple)
+    {
+        static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
+#if SEQAN3_WORKAROUND_GCC_94967
+        // is_rvalue_reference_v can't be used, because tuple_t won't contain `&&` in the type due to reference
+        // collapsing
+        if constexpr (!std::is_lvalue_reference_v<tuple_t> && std::is_const_v<tuple_t>)
+        {
+            // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
+            using return_t = std::tuple_element_t<field_ids::index_of(f), tuple_t>;
+            return static_cast<return_t const &&>(std::get<field_ids::index_of(f)>(std::move(record_as_tuple)));
+        }
+        else
+        {
+            return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
+        }
+#else // ^^^ workaround / no workaround vvv
+        return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
+#endif // SEQAN3_WORKAROUND_GCC_94967
+    }
 };
 
 } // namespace seqan3
@@ -282,10 +312,8 @@ namespace std
  */
 template <typename field_types, typename field_ids>
 struct tuple_size<seqan3::record<field_types, field_ids>>
-{
-    //!\brief The value member. Delegates to same value on base_type.
-    static constexpr size_t value = tuple_size_v<typename seqan3::record<field_types, field_ids>::base_type>;
-};
+    : tuple_size<typename seqan3::record<field_types, field_ids>::base_type>
+{};
 
 /*!\brief Obtains the type of the specified element.
  * \implements seqan3::transformation_trait
@@ -294,10 +322,8 @@ struct tuple_size<seqan3::record<field_types, field_ids>>
  */
 template <size_t elem_no, typename field_types, typename field_ids>
 struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>
-{
-    //!\brief The member type. Delegates to same type on base_type.
-    using type = std::tuple_element_t<elem_no, typename seqan3::record<field_types, field_ids>::base_type>;
-};
+    : tuple_element<elem_no, typename seqan3::record<field_types, field_ids>::base_type>
+{};
 
 } // namespace std
 
