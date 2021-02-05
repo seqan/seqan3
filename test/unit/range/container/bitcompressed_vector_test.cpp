@@ -12,6 +12,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "container_test_template.hpp"
 
@@ -26,7 +27,7 @@ TEST(bitcompressed_vector_test, issue1743_complement_on_proxy)
     auto proxy = *v.begin();
     auto complement = seqan3::complement(proxy);
 
-    EXPECT_TRUE((std::same_as<decltype(complement), seqan3::dna4>));
+    EXPECT_SAME_TYPE(decltype(complement), seqan3::dna4);
     EXPECT_EQ(complement, 'T'_dna4);
 }
 

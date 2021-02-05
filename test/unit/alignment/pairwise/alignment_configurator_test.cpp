@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/ranges>
+
 #include <range/v3/view/single.hpp>
 
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
@@ -15,7 +17,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_dna4;
 
@@ -276,5 +278,5 @@ TEST(alignment_configurator, configure_result_score_type)
     EXPECT_DOUBLE_EQ(result.score(), 0.0);
     EXPECT_EQ(result.sequence1_end_position(), 4u);
     EXPECT_EQ(result.sequence2_end_position(), 4u);
-    EXPECT_TRUE((std::same_as<decltype(result.score()), double>));
+    EXPECT_SAME_TYPE(decltype(result.score()), double);
 }

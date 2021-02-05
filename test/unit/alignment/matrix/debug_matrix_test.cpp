@@ -10,6 +10,7 @@
 #include <seqan3/alignment/matrix/debug_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_dna4;
 using seqan3::operator|;
@@ -368,9 +369,9 @@ TEST_F(debug_matrix_test, construct_with_references)
     using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
     using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-    EXPECT_TRUE((std::same_as<matrix_type, seqan3::detail::row_wise_matrix<int> &>));
-    EXPECT_TRUE((std::same_as<first_sequence_type, std::vector<seqan3::dna4> &>));
-    EXPECT_TRUE((std::same_as<second_sequence_type, std::vector<seqan3::dna4> &>));
+    EXPECT_SAME_TYPE(matrix_type, seqan3::detail::row_wise_matrix<int> &);
+    EXPECT_SAME_TYPE(first_sequence_type, std::vector<seqan3::dna4> &);
+    EXPECT_SAME_TYPE(second_sequence_type, std::vector<seqan3::dna4> &);
 }
 
 TEST_F(debug_matrix_test, construct_with_move)
@@ -381,9 +382,9 @@ TEST_F(debug_matrix_test, construct_with_move)
     using first_sequence_type = typename debug_matrix_traits<debug_matrix_type>::first_sequence_type;
     using second_sequence_type = typename debug_matrix_traits<debug_matrix_type>::second_sequence_type;
 
-    EXPECT_TRUE((std::same_as<matrix_type, seqan3::detail::row_wise_matrix<int>>));
-    EXPECT_TRUE((std::same_as<first_sequence_type, std::vector<seqan3::dna4>>));
-    EXPECT_TRUE((std::same_as<second_sequence_type, std::vector<seqan3::dna4>>));
+    EXPECT_SAME_TYPE(matrix_type, seqan3::detail::row_wise_matrix<int>);
+    EXPECT_SAME_TYPE(first_sequence_type, std::vector<seqan3::dna4>);
+    EXPECT_SAME_TYPE(second_sequence_type, std::vector<seqan3::dna4>);
 }
 
 TEST_F(score_matrix_test, other_matrix)

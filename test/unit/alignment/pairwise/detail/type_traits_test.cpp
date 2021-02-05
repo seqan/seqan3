@@ -7,10 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
 #include <string>
 
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/test/expect_same_type.hpp>
 
 TEST(traits, alignment_function_traits)
 {
@@ -24,7 +25,7 @@ TEST(traits, alignment_function_traits)
     using callback_t = typename function_traits_t::callback_type;
     using alignment_result_t = typename function_traits_t::alignment_result_type;
 
-    EXPECT_TRUE((std::same_as<input_t, std::string>));
-    EXPECT_TRUE((std::same_as<callback_t, result_callback_t>));
-    EXPECT_TRUE((std::same_as<alignment_result_t, int>));
+    EXPECT_SAME_TYPE(input_t, std::string);
+    EXPECT_SAME_TYPE(callback_t, result_callback_t);
+    EXPECT_SAME_TYPE(alignment_result_t, int);
 }

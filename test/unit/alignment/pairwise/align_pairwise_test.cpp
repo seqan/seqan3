@@ -19,6 +19,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
 using seqan3::operator""_dna4;
@@ -171,7 +172,7 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
             for (auto && res : call_alignment<TypeParam>(p, cfg))
             {
                 EXPECT_EQ(res.score(), -4.0);
-                EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
+                EXPECT_SAME_TYPE(decltype(res.score()), double);
             }
         }
 

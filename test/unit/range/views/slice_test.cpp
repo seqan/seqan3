@@ -5,13 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
 #include <deque>
 #include <iostream>
 #include <list>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <range/v3/view/unique.hpp>
 
@@ -20,10 +23,8 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/ranges>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 // ============================================================================
 //  test templates
@@ -142,7 +143,7 @@ TEST(view_slice, type_erasure)
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
+        EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(1,3));
     }
 
@@ -151,7 +152,7 @@ TEST(view_slice, type_erasure)
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::string_view>));
+        EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(1,3));
     }
 
@@ -160,7 +161,7 @@ TEST(view_slice, type_erasure)
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 
@@ -169,7 +170,7 @@ TEST(view_slice, type_erasure)
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::span<int, std::dynamic_extent>>));
+        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 

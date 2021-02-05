@@ -14,6 +14,7 @@
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "fixture/alignment_fixture.hpp"
 
@@ -61,7 +62,7 @@ TYPED_TEST_P(pairwise_alignment_test, end_positions)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_TRUE((std::same_as<decltype(res.score()), double>));
+    EXPECT_SAME_TYPE(decltype(res.score()), double);
     EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
     EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
 }

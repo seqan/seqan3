@@ -10,6 +10,7 @@
 #include <seqan3/std/iterator>
 
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 TEST(fast_ostreambuf_iterator, concept)
 {
@@ -109,7 +110,7 @@ TEST(fast_ostreambuf_iterator, write_range_unsafe_range)
     std::ostringstream ostr{};
     seqan3::detail::fast_ostreambuf_iterator<char> it{*ostr.rdbuf()};
 
-    EXPECT_TRUE((std::same_as<void, decltype(it.write_range(std::string{"foo"}))>));
+    EXPECT_SAME_TYPE(void, decltype(it.write_range(std::string{"foo"})));
 
     it.write_range(std::string{"foo"});
 

@@ -8,6 +8,8 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/std/ranges>
+
+#include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/test/seqan2.hpp>
 
 // Note: this file will only test regressions encountered with seqan2 compatibility and has no claim to be complete
@@ -49,8 +51,8 @@ TYPED_TEST(seqan2_container, std_ranges_begin_end)
     auto it = std::ranges::begin(container);
     auto it_end = std::ranges::end(container);
 
-    EXPECT_TRUE((std::same_as<decltype(it), decltype(seqan::begin(container))>));
-    EXPECT_TRUE((std::same_as<decltype(it_end), decltype(seqan::end(container))>));
+    EXPECT_SAME_TYPE(decltype(it), decltype(seqan::begin(container)));
+    EXPECT_SAME_TYPE(decltype(it_end), decltype(seqan::end(container)));
 
     for (int i = 0; it != it_end; ++it, ++i)
     {
@@ -64,10 +66,10 @@ TYPED_TEST(seqan2_container, std_ranges_iterator)
     using iterator_t = decltype(std::ranges::begin(std::declval<container_t &>()));
     using const_iterator_t = decltype(std::ranges::begin(std::declval<container_t const &>()));
 
-    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t>, iterator_t>));
-    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t &>, iterator_t>));
-    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t const>, const_iterator_t>));
-    EXPECT_TRUE((std::same_as<std::ranges::iterator_t<container_t const &>, const_iterator_t>));
+    EXPECT_SAME_TYPE(std::ranges::iterator_t<container_t>, iterator_t);
+    EXPECT_SAME_TYPE(std::ranges::iterator_t<container_t &>, iterator_t);
+    EXPECT_SAME_TYPE(std::ranges::iterator_t<container_t const>, const_iterator_t);
+    EXPECT_SAME_TYPE(std::ranges::iterator_t<container_t const &>, const_iterator_t);
 }
 
 TYPED_TEST(seqan2_container, std_iterator_traits)
@@ -75,7 +77,7 @@ TYPED_TEST(seqan2_container, std_iterator_traits)
     using container_t = TypeParam;
     using iterator_t = std::ranges::iterator_t<container_t>;
     using value_type = typename std::iterator_traits<iterator_t>::value_type;
-    EXPECT_TRUE((std::same_as<value_type, int>));
+    EXPECT_SAME_TYPE(value_type, int);
 }
 
 TYPED_TEST(seqan2_container, std_iterator)
@@ -113,7 +115,7 @@ TYPED_TEST(seqan2_container, seqan3_value_type)
 {
     using container_t = TypeParam;
     using value_type = std::ranges::range_value_t<container_t>;
-    EXPECT_TRUE((std::same_as<value_type, int>));
+    EXPECT_SAME_TYPE(value_type, int);
 }
 
 #endif

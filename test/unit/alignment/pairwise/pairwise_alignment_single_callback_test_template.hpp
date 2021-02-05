@@ -13,6 +13,7 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 
 #include "fixture/alignment_fixture.hpp"
 
@@ -57,7 +58,7 @@ TYPED_TEST_P(pairwise_alignment_callback_test, end_positions)
                                       seqan3::align_cfg::on_result{[&] (auto && result)
                                       {
                                           EXPECT_EQ(result.score(), fixture.score);
-                                          EXPECT_TRUE((std::same_as<decltype(result.score()), double>));
+                                          EXPECT_SAME_TYPE(decltype(result.score()), double);
                                           EXPECT_EQ(result.sequence1_end_position(), fixture.end_positions.first);
                                           EXPECT_EQ(result.sequence2_end_position(), fixture.end_positions.second);
                                       }};

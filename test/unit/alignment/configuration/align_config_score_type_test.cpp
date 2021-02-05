@@ -11,6 +11,7 @@
 
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 #include "../../core/algorithm/pipeable_config_element_test_template.hpp"
@@ -27,11 +28,11 @@ TEST(align_config_score_type, score_type)
 {
     EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::score_type<int32_t>{})>,
                               seqan3::align_cfg::score_type<int32_t>>));                            // default case
-    EXPECT_TRUE((std::same_as<decltype(seqan3::align_cfg::score_type<int32_t>{})::type, int32_t>)); // default case
+    EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<int32_t>{})::type, int32_t); // default case
 
-    EXPECT_TRUE((std::same_as<decltype(seqan3::align_cfg::score_type<int16_t>{})::type, int16_t>));
-    EXPECT_TRUE((std::same_as<decltype(seqan3::align_cfg::score_type<float>{})::type, float>));
-    EXPECT_TRUE((std::same_as<decltype(seqan3::align_cfg::score_type<double>{})::type, double>));
+    EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<int16_t>{})::type, int16_t);
+    EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<float>{})::type, float);
+    EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<double>{})::type, double);
 }
 
 TEST(align_config_score_type, score_type_exists)
