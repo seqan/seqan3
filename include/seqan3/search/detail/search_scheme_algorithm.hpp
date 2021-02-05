@@ -32,11 +32,11 @@ namespace seqan3::detail
 /*!\brief The algorithm that performs a bidirectional search on a bidirectional FM index using (optimal) search schemes.
  * \tparam configuration_t The search configuration type.
  * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
- * a seqan3::bi_fm_index_cursor.
+ *                 a seqan3::bi_fm_index_cursor.
  */
 template <typename configuration_t, typename index_t, typename ...policies_t>
 //!\cond
-requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
+    requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
 //!\endcond
 class search_scheme_algorithm : protected policies_t...
 {
@@ -62,7 +62,7 @@ public:
     /*!\brief Constructs from a configuration object and an index.
      * \tparam configuration_t The search configuration type.
      * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
-     * a seqan3::bi_fm_index_cursor.
+     *                 a seqan3::bi_fm_index_cursor.
      * \param[in] cfg The configuration object that guides the search algorithm.
      * \param[in] index The index used in the algorithm.
      *
@@ -588,7 +588,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
  * \tparam index_t          index_t::cursor_type must model seqan3::detail::template_specialisation_of
- * a seqan3::bi_fm_index_cursor.
+ *                          a seqan3::bi_fm_index_cursor.
  * \tparam query_t          Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \tparam delegate_t       Takes `typename index_t::cursor_type` as argument.

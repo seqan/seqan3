@@ -29,8 +29,8 @@ struct fm_index_cursor_collection_test : public ::testing::Test
     using alphabet_type = typename index_type::alphabet_type;
     using text_type = std::vector<alphabet_type>;
 
-    static constexpr bool is_bi_fm_index = seqan3::detail::template_specialisation_of<typename index_type::cursor_type,
-        seqan3::bi_fm_index_cursor>;
+static constexpr bool is_bi_fm_index = seqan3::detail::template_specialisation_of<typename index_type::cursor_type,
+                                                                                  seqan3::bi_fm_index_cursor>;
     static constexpr auto convert = seqan3::views::char_to<alphabet_type> | seqan3::views::to<text_type>;
 
     text_type text1{convert(std::string_view{"ACGACG"})};

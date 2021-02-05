@@ -34,7 +34,7 @@ namespace seqan3
 
 /*!\brief The SeqAn Bidirectional FM Index Cursor.
  * \tparam index_t The type of the underlying index; index_t::cursor_type must model
- * seqan3::detail::template_specialisation_of a seqan3::bi_fm_index_cursor.
+ *                 seqan3::detail::template_specialisation_of a seqan3::bi_fm_index_cursor.
  * \implements seqan3::cerealisable
  * \details
  *

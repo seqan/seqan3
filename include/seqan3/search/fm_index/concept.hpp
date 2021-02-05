@@ -78,12 +78,12 @@ namespace seqan3
  */
 
 //!\brief The possible text layouts (single, collection) the seqan3::fm_index and seqan3::bi_fm_index can support.
-    enum text_layout : bool
-    {
-        //!\brief The text is a single range.
-        single,
-        //!\brief The text is a range of ranges.
-        collection
-    };
+enum text_layout : bool
+{
+    //!\brief The text is a single range.
+    single,
+    //!\brief The text is a range of ranges.
+    collection
+};
 
 } // namespace seqan3

@@ -98,7 +98,8 @@ namespace seqan3
  *
  * \include test/snippet/search/search.cpp
  */
-template <typename index_t, std::ranges::forward_range queries_t,
+template <typename index_t,
+          std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 //!\cond
     requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
@@ -169,7 +170,8 @@ inline auto search(queries_t && queries,
 //!\cond DEV
 // Convert query sequence if it does not match the alphabet type of the index.
 //!\overload
-template <typename index_t, std::ranges::forward_range queries_t,
+template <typename index_t,
+          std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
     requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
              (!std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>)
@@ -188,7 +190,8 @@ inline auto search(queries_t && queries,
 
 // Overload for a single query (not a collection of queries)
 //!\overload
-template <typename index_t, std::ranges::forward_range query_t,
+template <typename index_t,
+          std::ranges::forward_range query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(query_t && query,
                    index_t const & index,
