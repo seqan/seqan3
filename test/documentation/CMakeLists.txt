@@ -32,3 +32,5 @@ endif ()
 if (SEQAN3_DEV_DOC)
     add_subdirectory(doc_dev)
 endif ()
+
+include (seqan3-doxygen-package.cmake)
