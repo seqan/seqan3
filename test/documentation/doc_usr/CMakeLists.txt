@@ -24,6 +24,17 @@ add_custom_target(doc_usr ALL
                   COMMENT "Generating user API documentation with Doxygen"
                   VERBATIM)
 
+# Install doc_usr documentation in ./export folder
+# make DESTDIR=export install
+install (
+    DIRECTORY "${SEQAN3_DOXYGEN_OUTPUT_DIR}/html"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    COMPONENT doc
+    PATTERN "*.md5" EXCLUDE
+    PATTERN "*.map" EXCLUDE
+    PATTERN "formula.repository" EXCLUDE
+)
+
 ### Enable testing
 
 enable_testing()

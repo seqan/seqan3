@@ -59,4 +59,15 @@ set (SEQAN3_TEST_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
      "! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
 
 
+### install helper
 
+# make sure that prefix path is /usr/local/share/doc/seqan3/
+if (NOT DEFINED CMAKE_SIZEOF_VOID_P)
+    # we need this to suppress GNUInstallDirs AUTHOR_WARNING:
+    #   CMake Warning (dev) at /usr/share/cmake-3.19/Modules/GNUInstallDirs.cmake:223 (message):
+    #     Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+    #     target architecture is known.  Please enable at least one language before
+    #     including GNUInstallDirs.
+    set (CMAKE_SIZEOF_VOID_P 8)
+endif ()
+include (GNUInstallDirs) # this is needed to prefix the install paths
