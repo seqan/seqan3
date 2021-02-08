@@ -36,7 +36,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/quality/phred94.cpp
  *
- * You can find more information about the Phred scores in our \ref quality submodule \see quality submodule.
+ * \see quality, it contains a comprehensive overview over all phred implementations and what a Phred score represents.
  */
 class phred94 : public quality_base<phred94, 94>
 {

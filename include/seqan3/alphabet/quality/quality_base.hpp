@@ -87,7 +87,10 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the alphabet's value in Phred score representation.
+    /*!\brief Return the alphabet's value in Phred score representation.
+     *
+     * \see quality
+     */
     constexpr phred_type to_phred() const noexcept
     {
         return rank_to_phred[to_rank()];
@@ -103,6 +106,8 @@ public:
      * \details
      *
      * Satisfies the seqan3::writable_quality_alphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     *
+     * \see quality
      *
      * ###Complexity
      *
