@@ -45,6 +45,8 @@ namespace seqan3::custom
 /*!\brief Alphabet specific customisations for unsigned integral types.
  * \tparam uint_type Any of `uint8_t`, `uint16_t` and `uint32_t`.
  * \ingroup adaptation
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename uint_type>
 //!\cond
@@ -52,51 +54,62 @@ template <typename uint_type>
 //!\endcond
 struct alphabet<uint_type>
 {
-    //!\brief Return the number of values the uint type can take (e.g. 256 for `uint8_t`).
+    /*!\brief Return the number of values the uint type can take (e.g. 256 for `uint8_t`).
+     *
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr auto alphabet_size =
         detail::min_viable_uint_t<detail::size_in_values_v<uint_type>>{detail::size_in_values_v<uint_type>};
 
     /*!\brief Converting uint to char casts to a character type of same size.
-     * \param[in] intgr The alphabet letter that you wish to convert to char.
+     * \param[in] uint_v The alphabet letter that you wish to convert to char.
      * \returns The letter's value in the alphabet's rank type (usually `uint`).
+     *
+     * \stableapi{Since version 3.1.}
      */
-    static constexpr auto to_char(uint_type const intgr) noexcept
+    static constexpr auto to_char(uint_type const uint_v) noexcept
     {
         if constexpr (std::same_as<uint_type, uint8_t>)
-            return static_cast<char>(intgr);
+            return static_cast<char>(uint_v);
         else if constexpr (std::same_as<uint_type, uint16_t>)
-            return static_cast<char16_t>(intgr);
+            return static_cast<char16_t>(uint_v);
         else
-            return static_cast<char32_t>(intgr);
+            return static_cast<char32_t>(uint_v);
     }
 
     /*!\brief Converting uint to rank is a no-op (it will just return the value you pass in).
-     * \param[in] intgr The alphabet letter that you wish to convert to rank.
-     * \returns `intgr`.
+     * \param[in] uint_v The alphabet letter that you wish to convert to rank.
+     * \returns `uint_v`.
+     *
+     * \stableapi{Since version 3.1.}
      */
-    static constexpr uint_type to_rank(uint_type const intgr) noexcept
+    static constexpr uint_type to_rank(uint_type const uint_v) noexcept
     {
-        return intgr;
+        return uint_v;
     }
 
     /*!\brief Assign from a character type via implicit or explicit cast.
      * \param[in] chr The `char` value you wish to assign.
-     * \param[in,out] intgr The alphabet letter that you wish to assign to.
+     * \param[in,out] uint_v The alphabet letter that you wish to assign to.
      * \returns A reference to the alphabet letter you passed in.
+     *
+     * \stableapi{Since version 3.1.}
      */
-    static constexpr uint_type & assign_char_to(decltype(to_char(uint_type{})) const chr, uint_type & intgr) noexcept
+    static constexpr uint_type & assign_char_to(decltype(to_char(uint_type{})) const chr, uint_type & uint_v) noexcept
     {
-        return intgr = chr;
+        return uint_v = chr;
     }
 
     /*!\brief Assign a rank to to the uint (same as calling `=`).
-     * \param[in] intgr2 The `rank` value you wish to assign.
-     * \param[in,out] intgr The alphabet letter that you wish to assign to.
+     * \param[in] uint2_v The `rank` value you wish to assign.
+     * \param[in,out] uint_v The alphabet letter that you wish to assign to.
      * \returns A reference to the alphabet letter you passed in.
+     *
+     * \stableapi{Since version 3.1.}
      */
-    static constexpr uint_type & assign_rank_to(uint_type const intgr2, uint_type & intgr) noexcept
+    static constexpr uint_type & assign_rank_to(uint_type const uint2_v, uint_type & uint_v) noexcept
     {
-        return intgr = intgr2;
+        return uint_v = uint2_v;
     }
 };
 
