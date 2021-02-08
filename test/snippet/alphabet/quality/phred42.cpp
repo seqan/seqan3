@@ -9,7 +9,7 @@ using seqan3::operator""_phred42;
 int main()
 {
     seqan3::phred42 phred;
-    phred.assign_rank(2); // wrapper for assign_phred(2)
+    phred.assign_phred(2);
     seqan3::debug_stream << phred.to_phred() << "\n"; // 2
     seqan3::debug_stream << phred.to_char() << "\n";  // '#'
     seqan3::debug_stream << phred.to_rank() << "\n";  // 2
