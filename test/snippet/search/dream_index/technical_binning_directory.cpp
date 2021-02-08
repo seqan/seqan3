@@ -17,6 +17,8 @@ int main()
 
     auto v = seqan3::views::kmer_hash(seqan3::ungapped{5u});
 
+    seqan3::technical_binning_directory tbd2;
+
     seqan3::technical_binning_directory tbd{technical_bins, std::move(v), cfg};
     auto agent = tbd.counting_agent();
     seqan3::debug_stream << agent.count_query("ACTGACTGACTGATC"_dna4) << '\n'; // [11,9,0,0,0,0,0,0]

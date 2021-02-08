@@ -37,6 +37,36 @@ struct ibf_config
     uint8_t threads{1u}; //!< The number of threads to use functions.
 };
 
+enum class hash_variant : uint8_t
+{
+    kmer,
+    minimiser
+};
+
+template <auto t, typename hasher_t>
+struct hash_proxy;
+
+template <typename hasher_t>
+struct hash_proxy<hash_variant::kmer, hasher_t>
+{
+    size_t kmer_size;
+    hasher_t hasher(/*seqan3::views::kmer_hash(seqan3::ungapped{5u})*/); // view is not default constructible
+
+    hash_proxy(size_t kmer_size_) : kmer_size(kmer_size_)/*,
+                                    hasher(seqan3::views::kmer_hash(seqan3::ungapped{kmer_size}))*/ {}
+};
+
+template <typename hasher_t>
+struct hash_proxy<hash_variant::minimiser, hasher_t>
+{
+    size_t kmer_size;
+    size_t window_size;
+    hasher_t hasher(/*seqan3::views::minimiser_hash(10u, 5u)*/); // view is not default constructible
+
+    hash_proxy(size_t kmer_size_, size_t window_size_) : kmer_size(kmer_size_), window_size(window_size_)/*,
+                                    hasher(seqan3::views::minimiser_hash(kmer_size, window_size))*/ {}
+};
+
 /*!\brief The Technical Binning Directory. A data structure that enhances the seqan3::interleaved_bloom_filter by
  * handling sequences as input and query.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
@@ -106,7 +136,7 @@ public:
     //!\brief The type of the hash adaptor.
     using hash_adaptor_t = hash_adaptor_t_;
 
-    technical_binning_directory() = default; //!< Defaulted.
+    technical_binning_directory(): hash_adaptor(seqan3::views::kmer_hash(seqan3::ungapped{5u})) {};
     technical_binning_directory(technical_binning_directory const &) = default; //!< Defaulted.
     technical_binning_directory & operator=(technical_binning_directory const &) = default; //!< Defaulted.
     technical_binning_directory(technical_binning_directory &&) = default; //!< Defaulted.
