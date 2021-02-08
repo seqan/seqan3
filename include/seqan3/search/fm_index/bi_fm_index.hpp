@@ -29,7 +29,6 @@ namespace seqan3
  */
 
 /*!\brief The SeqAn Bidirectional FM Index
- * \implements seqan3::bi_fm_index_specialisation
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.

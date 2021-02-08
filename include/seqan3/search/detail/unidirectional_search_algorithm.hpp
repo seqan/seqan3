@@ -42,9 +42,9 @@ enum class error_type : uint8_t
 
 /*!\brief The algorithm that performs a unidirectional search on an FM index using trivial backtracking.
  * \tparam configuration_t The search configuration type.
- * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
+ * \tparam index_t The type of index.
  */
-template <typename configuration_t, fm_index_specialisation index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename ...policies_t>
 class unidirectional_search_algorithm : protected policies_t...
 {
 private:
@@ -68,7 +68,7 @@ public:
 
     /*!\brief Constructs from a configuration object and an index.
      * \tparam configuration_t The search configuration type.
-     * \tparam index_t The type of index; must model seqan3::fm_index_specialisation.
+     * \tparam index_t The type of index.
      * \param[in] cfg The configuration object that guides the search algorithm.
      * \param[in] index The index used in the algorithm.
      *

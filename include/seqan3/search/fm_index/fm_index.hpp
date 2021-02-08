@@ -151,7 +151,6 @@ using sdsl_wt_index_type =
 using default_sdsl_index_type = sdsl_wt_index_type;
 
 /*!\brief The SeqAn FM Index.
- * \implements seqan3::fm_index_specialisation
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
@@ -587,7 +586,6 @@ namespace seqan3::detail
 {
 
 /*!\brief An FM Index specialisation that handles reversing the given text.
- * \implements seqan3::fm_index_specialisation
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode  Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.

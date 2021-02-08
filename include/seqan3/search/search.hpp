@@ -70,7 +70,7 @@ namespace seqan3
  */
 
 /*!\brief Search a query or a range of queries in an index.
- * \tparam index_t    Must model seqan3::fm_index_specialisation.
+ * \tparam index_t    Type of the index.
  * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
  *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
  * \param[in] queries A single query or a range of queries.
@@ -98,7 +98,7 @@ namespace seqan3
  *
  * \include test/snippet/search/search.cpp
  */
-template <fm_index_specialisation index_t,
+template <typename index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 //!\cond
@@ -170,7 +170,7 @@ inline auto search(queries_t && queries,
 //!\cond DEV
 // Convert query sequence if it does not match the alphabet type of the index.
 //!\overload
-template <fm_index_specialisation index_t,
+template <typename index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
     requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
@@ -190,7 +190,7 @@ inline auto search(queries_t && queries,
 
 // Overload for a single query (not a collection of queries)
 //!\overload
-template <fm_index_specialisation index_t,
+template <typename index_t,
           std::ranges::forward_range query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(query_t && query,
@@ -201,7 +201,7 @@ inline auto search(query_t && query,
 }
 
 //!\overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(char const * const queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -210,7 +210,7 @@ inline auto search(char const * const queries,
 }
 
 //!\overload
-template <fm_index_specialisation index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
+template <typename index_t, typename configuration_t = decltype(search_cfg::default_configuration)>
 inline auto search(std::initializer_list<char const * const> const & queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
