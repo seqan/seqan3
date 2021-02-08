@@ -872,7 +872,6 @@ SEQAN3_CONCEPT alphabet = semialphabet<t> && requires (t v)
  *   1. `t` shall model seqan3::alphabet
  *   2. `t` shall model seqan3::writable_semialphabet
  *   3. seqan3::assign_char_to needs to be defined for objects of type `t`
- *   4. seqan3::char_is_valid_for needs to be defined for type `t` and an argument of the character representation
  *
  * See the documentation pages for the respective requirements.
  *
@@ -895,8 +894,6 @@ template <typename t>
 SEQAN3_CONCEPT writable_alphabet = alphabet<t> && writable_semialphabet<t> && requires (t v, alphabet_char_t<t> c)
 {
     { seqan3::assign_char_to(c, v) };
-
-    { seqan3::char_is_valid_for<t>(c) };
 };
 //!\endcond
 
@@ -1035,8 +1032,7 @@ SEQAN3_CONCEPT constexpr_alphabet = constexpr_semialphabet<t> && alphabet<t> && 
  * \ingroup alphabet
  *
  * Refines seqan3::detail::constexpr_alphabet, seqan3::detail::writable_constexpr_semialphabet and
- * seqan3::writable_alphabet and requires that the calls to seqan3::assign_char_to and seqan3::char_is_valid_for
- * can happen in a `constexpr`-context.
+ * seqan3::writable_alphabet and requires that the call to seqan3::assign_char_to can happen in a `constexpr`-context.
  */
 //!\cond
 template <typename t>
@@ -1045,7 +1041,6 @@ SEQAN3_CONCEPT writable_constexpr_alphabet =
 {
     // currently only tests rvalue interfaces, because we have no constexpr values in this scope to get references to
     requires SEQAN3_IS_CONSTEXPR(seqan3::assign_char_to(alphabet_char_t<t>{}, std::remove_reference_t<t>{}));
-    requires SEQAN3_IS_CONSTEXPR(seqan3::char_is_valid_for<t>(alphabet_char_t<t>{}));
 };
 //!\endcond
 

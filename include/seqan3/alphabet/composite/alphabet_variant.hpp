@@ -567,21 +567,30 @@ protected:
         for (size_t i = 0u; i < table_size; ++i)
         {
             char_type chr = static_cast<char_type>(i);
-            bool there_was_no_valid_representation{true};
 
-            meta::for_each(alternatives{}, [&] (auto && alt)
+            std::array<bool, sizeof...(alternative_types)> is_char_valid{char_is_valid_for<alternative_types>(chr)...};
+            std::array<rank_type, sizeof...(alternative_types)> ranks
             {
-                using alt_type = std::remove_cvref_t<decltype(alt)>;
+                rank_by_type_(assign_char_to(chr, alternative_types{}))...
+            };
 
-                if (there_was_no_valid_representation && char_is_valid_for<alt_type>(chr))
+            // if no char_is_valid_for any alternative use the rank of the first alternative
+#if defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
+            // the following lines only works beginning from c++20
+            auto found_it = std::find(is_char_valid.begin(), is_char_valid.end(), true);
+            auto found_index = found_it == is_char_valid.end() ? 0 : found_it - is_char_valid.begin();
+#else
+            size_t found_index = 0u;
+            for (size_t k = 0u; k < is_char_valid.size(); ++k)
+            {
+                if (is_char_valid[k])
                 {
-                    there_was_no_valid_representation = false;
-                    char_to_rank[i] = rank_by_type_(assign_char_to(chr, alt_type{}));
+                    found_index = k;
+                    break;
                 }
-            });
-
-            if (there_was_no_valid_representation)
-                char_to_rank[i] = rank_by_type_(assign_char_to(chr, meta::front<alternatives>{}));
+            }
+#endif // defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
+            char_to_rank[i] = ranks[found_index];
         }
 
         return char_to_rank;
