@@ -12,9 +12,9 @@ int main()
     seqan3::aa10li my_letter{'A'_aa10li};
 
     my_letter.assign_char('C');
-    my_letter.assign_char('?'); // all unknown characters are converted to 'S'_aa10li implicitly
+    my_letter.assign_char('?'); // all unknown characters are converted to 'A'_aa10li implicitly
 
-    if (my_letter.to_char() == 'S')
+    if (my_letter.to_char() == 'A')
         seqan3::debug_stream << "yeah\n"; // "yeah";
 
     // Convert aa27 alphabet to aa10_murphy

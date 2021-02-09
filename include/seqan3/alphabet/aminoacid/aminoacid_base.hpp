@@ -24,6 +24,8 @@ namespace seqan3
  * \ingroup aminoacid
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, auto size>
 class aminoacid_base : public alphabet_base<derived_type, size, char>, public aminoacid_empty_base
@@ -62,7 +64,10 @@ public:
      * \{
      */
     // This constructor needs to be public, because constructor templates are not inherited otherwise
-    //!\brief Allow explicit construction from any other aminoacid type and convert via the character representation.
+    /*!\brief Allow explicit construction from any other aminoacid type and convert via the character representation.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <typename other_aa_type>
     //!\cond
         requires (!std::same_as<aminoacid_base, other_aa_type>) &&
@@ -105,6 +110,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     static constexpr bool char_is_valid(char_type const c) noexcept
     {

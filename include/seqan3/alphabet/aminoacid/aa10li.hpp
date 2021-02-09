@@ -180,6 +180,8 @@ using aa10li_vector = std::vector<aa10li>;
  * \param[in] c The character to assign.
  * \relates seqan3::aa10li
  * \returns seqan3::aa10li
+ *
+ * \stableapi{Since version 3.1.}
  */
 constexpr aa10li operator""_aa10li(char const c) noexcept
 {
@@ -196,8 +198,9 @@ constexpr aa10li operator""_aa10li(char const c) noexcept
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
+ *
+ * \stableapi{Since version 3.1.}
  */
-
 inline aa10li_vector operator""_aa10li(char const * const s, size_t const n)
 {
     aa10li_vector r;
