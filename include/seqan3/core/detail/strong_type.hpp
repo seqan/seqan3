@@ -499,6 +499,20 @@ public:
     }
     //!\}
 
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
+     * \param[in] archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(value);
+    }
+    //!\endcond
+
 private:
     //!\brief The underlying value, which is wrapped as a strong type.
     value_t value;

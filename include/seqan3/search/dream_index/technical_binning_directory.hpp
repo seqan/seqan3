@@ -12,15 +12,21 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
-#include <seqan3/utility/tuple/concept.hpp>
-#include <seqan3/range/views/chunk.hpp>
-#include <seqan3/range/views/kmer_hash.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
+#if SEQAN3_WITH_CEREAL
+#include <cereal/types/variant.hpp>
+#endif // SEQAN3_WITH_CEREAL
 
-#include <seqan3/range/views/async_input_buffer.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/debug_stream/detail/to_string.hpp>
+#include <seqan3/range/views/kmer_hash.hpp>
+#include <seqan3/range/views/minimiser_hash.hpp>
+#include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
+// #include <seqan3/core/algorithm/detail/execution_handler_parallel.hpp>
+// #include <seqan3/utility/tuple/concept.hpp>
+// #include <seqan3/range/views/chunk.hpp>
+// #include <seqan3/range/views/zip.hpp>
+
+// #include <seqan3/range/views/async_input_buffer.hpp>
 
 namespace seqan3
 {
@@ -28,45 +34,91 @@ namespace seqan3
 /*!\addtogroup submodule_dream_index
  * \{
  */
-//!\brief Stores paramters to construct the seqan3::interleaved_bloom_filter with.
-struct ibf_config
-{
-    bin_count number_of_bins; //!< The number of bins.
-    bin_size size_of_bin; //!< The size of each individual bin.
-    hash_function_count number_of_hash_functions; //!< The number of hash functions.
-    uint8_t threads{1u}; //!< The number of threads to use functions.
-};
-
 enum class hash_variant : uint8_t
 {
     kmer,
     minimiser
 };
 
-template <auto t, typename hasher_t>
+template <hash_variant variant>
 struct hash_proxy;
 
-template <typename hasher_t>
-struct hash_proxy<hash_variant::kmer, hasher_t>
+template <>
+struct hash_proxy<hash_variant::kmer>
 {
-    size_t kmer_size;
-    hasher_t hasher(/*seqan3::views::kmer_hash(seqan3::ungapped{5u})*/); // view is not default constructible
+    using hash_view_t = decltype(views::kmer_hash(ungapped{5u}));
+    shape kmer_shape;
+    hash_view_t hasher = views::kmer_hash(ungapped{5u}); // view is not default constructible
 
-    hash_proxy(size_t kmer_size_) : kmer_size(kmer_size_)/*,
-                                    hasher(seqan3::views::kmer_hash(seqan3::ungapped{kmer_size}))*/ {}
+    hash_proxy() = default;
+    hash_proxy(hash_proxy const &) = default; //!< Defaulted.
+    hash_proxy & operator=(hash_proxy const &) = default; //!< Defaulted.
+    hash_proxy(hash_proxy &&) = default; //!< Defaulted.
+    hash_proxy & operator=(hash_proxy &&) = default; //!< Defaulted.
+    ~hash_proxy() = default; //!< Defaulted.
+
+    hash_proxy(shape kmer_shape_) : kmer_shape(kmer_shape_),
+                                    hasher(views::kmer_hash(kmer_shape)) {}
+
+    template <cereal_archive archive_t>
+    void CEREAL_SAVE_FUNCTION_NAME(archive_t & archive) const
+    {
+        archive(kmer_shape);
+    }
+
+    template <cereal_archive archive_t>
+    void CEREAL_LOAD_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(kmer_shape);
+        hasher = views::kmer_hash(kmer_shape);
+    }
 };
 
-template <typename hasher_t>
-struct hash_proxy<hash_variant::minimiser, hasher_t>
+template <>
+struct hash_proxy<hash_variant::minimiser>
 {
-    size_t kmer_size;
-    size_t window_size;
-    hasher_t hasher(/*seqan3::views::minimiser_hash(10u, 5u)*/); // view is not default constructible
+    using hash_view_t = decltype(views::minimiser_hash(ungapped{5u}, window_size{10u}));
+    shape kmer_shape;
+    window_size window_length;
+    hash_view_t hasher = views::minimiser_hash(ungapped{5u}, window_size{10u}); // view is not default constructible
 
-    hash_proxy(size_t kmer_size_, size_t window_size_) : kmer_size(kmer_size_), window_size(window_size_)/*,
-                                    hasher(seqan3::views::minimiser_hash(kmer_size, window_size))*/ {}
+    hash_proxy() = default;
+    hash_proxy(hash_proxy const &) = default; //!< Defaulted.
+    hash_proxy & operator=(hash_proxy const &) = default; //!< Defaulted.
+    hash_proxy(hash_proxy &&) = default; //!< Defaulted.
+    hash_proxy & operator=(hash_proxy &&) = default; //!< Defaulted.
+    ~hash_proxy() = default; //!< Defaulted.
+    hash_proxy(shape kmer_shape_, window_size window_length_) : kmer_shape(kmer_shape_),
+                                                                         window_length(window_length_),
+                                                                         hasher(views::minimiser_hash(kmer_shape, window_length)) {}
+
+    template <cereal_archive archive_t>
+    void CEREAL_SAVE_FUNCTION_NAME(archive_t & archive) const
+    {
+        archive(kmer_shape);
+        archive(window_length);
+    }
+
+    template <cereal_archive archive_t>
+    void CEREAL_LOAD_FUNCTION_NAME(archive_t & archive)
+    {
+        archive(kmer_shape);
+        archive(window_length);
+        hasher = views::minimiser_hash(kmer_shape, window_length);
+    }
 };
 
+//!\brief Stores parameters to construct the seqan3::interleaved_bloom_filter with.
+struct ibf_config
+{
+    bin_count number_of_bins; //!< The number of bins.
+    bin_size size_of_bin; //!< The size of each individual bin.
+    hash_function_count number_of_hash_functions; //!< The number of hash functions.
+    // uint8_t threads{1u}; //!< The number of threads to use functions.
+    shape kmer_shape;
+    window_size window_length;
+    hash_variant var;
+};
 /*!\brief The Technical Binning Directory. A data structure that enhances the seqan3::interleaved_bloom_filter by
  * handling sequences as input and query.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
@@ -110,15 +162,16 @@ struct hash_proxy<hash_variant::minimiser, hasher_t>
  * For example, calls to `emplace` from multiple threads are safe if `thread_1` accesses bins 0-63, `thread_2` bins
  * 64-127, and so on.
  */
-template <data_layout data_layout_mode_ = data_layout::uncompressed,
-          typename hash_adaptor_t_ = decltype(seqan3::views::kmer_hash(seqan3::ungapped(5u))),
-          semialphabet alph_t = dna4>
+
+// TODO we could actually get rid of the alph_t template param. But it would mean that we can't really have any checks
+// regarding the used alphabet - we could still store the alphabet size and then check the size on each call to emplace?
+template <data_layout data_layout_mode_ = data_layout::uncompressed, semialphabet alph_t = dna4>
 class technical_binning_directory : public interleaved_bloom_filter<data_layout_mode_>
 {
 private:
     //!\cond
-    template <data_layout data_layout_mode, typename friend_view_t, semialphabet friend_alph_t>
-        requires std::same_as<friend_view_t, hash_adaptor_t_>
+    //     requires std::same_as<friend_view_t, hash_adaptor_t_>
+    template <data_layout data_layout_mode, semialphabet friend_alph_t>
     friend class technical_binning_directory;
 
     template <std::integral value_t>
@@ -128,21 +181,33 @@ private:
     //!\brief The type of the underlying IBF.
     using base_t = interleaved_bloom_filter<data_layout_mode_>;
     //!\brief The adaptor to use for generating hash values from a sequence.
-    hash_adaptor_t_ hash_adaptor;
+    // hash_adaptor_t_ hash_adaptor;
+
 
 public:
+    std::variant<hash_proxy<hash_variant::minimiser>, hash_proxy<hash_variant::kmer>> proxy;
     //!\brief Indicates whether the Technical Binning Directory is compressed.
     static constexpr data_layout data_layout_mode = data_layout_mode_;
     //!\brief The type of the hash adaptor.
-    using hash_adaptor_t = hash_adaptor_t_;
+    // using hash_adaptor_t = hash_adaptor_t_;
 
-    technical_binning_directory(): hash_adaptor(seqan3::views::kmer_hash(seqan3::ungapped{5u})) {};
+    technical_binning_directory() = default;
     technical_binning_directory(technical_binning_directory const &) = default; //!< Defaulted.
     technical_binning_directory & operator=(technical_binning_directory const &) = default; //!< Defaulted.
     technical_binning_directory(technical_binning_directory &&) = default; //!< Defaulted.
     technical_binning_directory & operator=(technical_binning_directory &&) = default; //!< Defaulted.
     ~technical_binning_directory() = default; //!< Defaulted.
 
+    technical_binning_directory(ibf_config const & cfg)
+        : base_t(cfg.number_of_bins, cfg.size_of_bin, cfg.number_of_hash_functions)
+    {
+        if (cfg.var == hash_variant::kmer)
+            proxy = hash_proxy<hash_variant::kmer>{cfg.kmer_shape};
+        else
+            proxy = hash_proxy<hash_variant::minimiser>{cfg.kmer_shape, cfg.window_length};
+    }
+
+    // This constructor is horrible and needs to go away. Rather add a cookbook recipe on how to parallelise the construction.
 
     /*!\brief Construct an uncompressed Technical Binning Directory.
      * \tparam rng_t The type of the technical bins.
@@ -158,105 +223,105 @@ public:
      *
      * \include test/snippet/search/dream_index/technical_binning_directory.cpp
      */
-    template <std::ranges::range rng_t>
-    //!\cond
-        requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
-    technical_binning_directory(rng_t && technical_bins,
-                                hash_adaptor_t hash_adaptor,
-                                ibf_config const & cfg)
-        : base_t(cfg.number_of_bins, cfg.size_of_bin, cfg.number_of_hash_functions),
-          hash_adaptor(std::move(hash_adaptor))
-    {
-        static_assert(range_dimension_v<rng_t> == 2 || range_dimension_v<rng_t> == 3,
-                      "Technical bins must be given as range of ranges or range of ranges of ranges (!).");
-        static_assert(std::ranges::input_range<rng_t>, "Technical bins must model input_range.");
-        static_assert(std::ranges::input_range<std::ranges::range_reference_t<rng_t>>,
-                      "Individual bins must model input_range.");
-        // static_assert(semialphabet<range_innermost_value_t<rng_t>>, "The content of a bin must model semialphabet.");
-        // static_assert(semialphabet<range_innermost_value_t<rng_t::traits_type::sequence_type>>);
+    // template <std::ranges::range rng_t>
+    // //!\cond
+    //     requires (data_layout_mode == data_layout::uncompressed)
+    // //!\endcond
+    // technical_binning_directory(rng_t && technical_bins,
+    //                             hash_adaptor_t hash_adaptor,
+    //                             ibf_config const & cfg)
+    //     : base_t(cfg.number_of_bins, cfg.size_of_bin, cfg.number_of_hash_functions)
+    // {
+    //     static_assert(range_dimension_v<rng_t> == 2 || range_dimension_v<rng_t> == 3,
+    //                   "Technical bins must be given as range of ranges or range of ranges of ranges (!).");
+    //     static_assert(std::ranges::input_range<rng_t>, "Technical bins must model input_range.");
+    //     static_assert(std::ranges::input_range<std::ranges::range_reference_t<rng_t>>,
+    //                   "Individual bins must model input_range.");
+    //     // static_assert(semialphabet<range_innermost_value_t<rng_t>>, "The content of a bin must model semialphabet.");
+    //     // static_assert(semialphabet<range_innermost_value_t<rng_t::traits_type::sequence_type>>);
 
-        size_t const number_of_bins = cfg.number_of_bins.get();
+    //     size_t const number_of_bins = cfg.number_of_bins.get();
 
-        using rng_difference_t = std::ranges::range_difference_t<rng_t>;
-        if (std::ranges::distance(technical_bins) > static_cast<rng_difference_t>(number_of_bins))
-            throw std::logic_error("There are more bins in the input data set than "
-                                   "the binning directory is configured to handle.");
+    //     using rng_difference_t = std::ranges::range_difference_t<rng_t>;
+    //     if (std::ranges::distance(technical_bins) > static_cast<rng_difference_t>(number_of_bins))
+    //         throw std::logic_error("There are more bins in the input data set than "
+    //                                "the binning directory is configured to handle.");
 
-        auto worker = [&] (auto && zipped_view, auto &&)
-        {
-            auto hash_adaptor_copy = hash_adaptor;
-            for (auto && [technical_bin, bin_number] : zipped_view)
-            {
-                bin_index const idx{bin_number};
-                if constexpr(seqan3::tuple_like<std::ranges::range_reference_t<std::ranges::range_reference_t<rng_t>>>)
-                {
-                    for (auto && [seq] : technical_bin)
-                    {
-                        for (auto && hash : seq | hash_adaptor_copy)
-                            this->emplace(hash, idx);
-                    }
-                }
-                else
-                {
-                    for (auto && hash : technical_bin | hash_adaptor_copy)
-                        this->emplace(hash, idx);
-                }
-            }
-        };
+    //     auto worker = [&] (auto && zipped_view, auto &&)
+    //     {
+    //         auto hash_adaptor_copy = hash_adaptor;
+    //         for (auto && [technical_bin, bin_number] : zipped_view)
+    //         {
+    //             bin_index const idx{bin_number};
+    //             if constexpr(seqan3::tuple_like<std::ranges::range_reference_t<std::ranges::range_reference_t<rng_t>>>)
+    //             {
+    //                 for (auto && [seq] : technical_bin)
+    //                 {
+    //                     for (auto && hash : seq | hash_adaptor_copy)
+    //                         this->emplace(hash, idx);
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 for (auto && hash : technical_bin | hash_adaptor_copy)
+    //                     this->emplace(hash, idx);
+    //             }
+    //         }
+    //     };
 
-        auto worker_async = [&] (auto && zipped_view, auto &&)
-        {
-            auto hash_adaptor_copy = hash_adaptor;
-            for (auto && [technical_bin, bin_number] : zipped_view)
-            {
-                bin_index const idx{bin_number};
-                if constexpr(seqan3::tuple_like<std::ranges::range_reference_t<std::ranges::range_reference_t<rng_t>>>)
-                {
-                    for (auto && [seq] : technical_bin | seqan3::views::async_input_buffer(2))
-                    {
-                        for (auto && hash : seq | hash_adaptor_copy)
-                            this->emplace(hash, idx);
-                    }
-                }
-                else
-                {
-                    for (auto && hash : technical_bin | hash_adaptor_copy)
-                        this->emplace(hash, idx);
-                }
-            }
-        };
+    //     auto worker_async = [&] (auto && zipped_view, auto &&)
+    //     {
+    //         auto hash_adaptor_copy = hash_adaptor;
+    //         for (auto && [technical_bin, bin_number] : zipped_view)
+    //         {
+    //             bin_index const idx{bin_number};
+    //             if constexpr(seqan3::tuple_like<std::ranges::range_reference_t<std::ranges::range_reference_t<rng_t>>>)
+    //             {
+    //                 for (auto && [seq] : technical_bin | seqan3::views::async_input_buffer(2))
+    //                 {
+    //                     for (auto && hash : seq | hash_adaptor_copy)
+    //                         this->emplace(hash, idx);
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 for (auto && hash : technical_bin | hash_adaptor_copy)
+    //                     this->emplace(hash, idx);
+    //             }
+    //         }
+    //     };
 
-        // A single thread may handle between 8 and 64 bins.
-        size_t const chunk_size = std::clamp<size_t>(std::bit_ceil(number_of_bins / cfg.threads),
-                                                     8u,
-                                                     64u);
-        // If at least half of the threads are idle, we will make the I/O asynchronous for them.
-        size_t const threads = chunk_size * cfg.threads <= number_of_bins ? cfg.threads :
-                                   chunk_size * cfg.threads / 2 <= number_of_bins ? cfg.threads : cfg.threads / 2;
-        auto chunked_view = views::zip(technical_bins, std::views::iota(0u)) | views::chunk(chunk_size);
-        detail::execution_handler_parallel executioner{threads};
-        if (threads == cfg.threads / 2)
-            executioner.bulk_execute(worker_async, std::move(chunked_view), [](){});
-        else
-            executioner.bulk_execute(worker, std::move(chunked_view), [](){});
-    }
+    //     // A single thread may handle between 8 and 64 bins.
+    //     size_t const chunk_size = std::clamp<size_t>(std::bit_ceil(number_of_bins / cfg.threads),
+    //                                                  8u,
+    //                                                  64u);
+    //     // If at least half of the threads are idle, we will make the I/O asynchronous for them.
+    //     size_t const threads = chunk_size * cfg.threads <= number_of_bins ? cfg.threads :
+    //                                chunk_size * cfg.threads / 2 <= number_of_bins ? cfg.threads : cfg.threads / 2;
+    //     auto chunked_view = views::zip(technical_bins, std::views::iota(0u)) | views::chunk(chunk_size);
+    //     detail::execution_handler_parallel executioner{threads};
+    //     if (threads == cfg.threads / 2)
+    //         executioner.bulk_execute(worker_async, std::move(chunked_view), [](){});
+    //     else
+    //         executioner.bulk_execute(worker, std::move(chunked_view), [](){});
+    // }
 
+    // This constructor is hacky and needs to go away.
     //!\cond
     // Constructor for IBF App...
     // I need to construct an empty TBD for serialisation.
     // I need to provide the config (do I?) and the hash_adaptor(not serialisable), but can ignore the technical_bins.
-    template <std::ranges::range rng_t>
-        requires (data_layout_mode == data_layout::uncompressed)
-    technical_binning_directory(rng_t && technical_bins,
-                                hash_adaptor_t hash_adaptor,
-                                ibf_config const & cfg,
-                                bool)
-        : base_t(cfg.number_of_bins, cfg.size_of_bin, cfg.number_of_hash_functions),
-          hash_adaptor(std::move(hash_adaptor))
-    {
-        (void) technical_bins;
-    }
+    // template <std::ranges::range rng_t>
+    //     requires (data_layout_mode == data_layout::uncompressed)
+    // technical_binning_directory(rng_t && technical_bins,
+    //                             hash_adaptor_t hash_adaptor,
+    //                             ibf_config const & cfg,
+    //                             bool)
+    //     : base_t(cfg.number_of_bins, cfg.size_of_bin, cfg.number_of_hash_functions),
+    //       hash_adaptor(std::move(hash_adaptor))
+    // {
+    //     (void) technical_bins;
+    // }
     //!\endcond
 
     /*!\brief Construct a compressed Technical Binning Directory.
@@ -270,14 +335,34 @@ public:
      *
      * \include test/snippet/search/dream_index/technical_binning_directory.cpp
      */
-    technical_binning_directory(technical_binning_directory<data_layout::uncompressed,
-                                                            hash_adaptor_t,
-                                                            alph_t> && tbd)
+    technical_binning_directory(technical_binning_directory<data_layout::uncompressed, alph_t> && tbd)
     //!\cond
         requires (data_layout_mode == data_layout::compressed)
     //!\endcond
-        : base_t(tbd), hash_adaptor(tbd.hash_adaptor)
+        : base_t(std::move(tbd)), proxy(std::move(tbd.proxy))
     {}
+
+    template <typename range_t>
+    void emplace(range_t && range, bin_index const bin)
+    //!\cond
+        requires (data_layout_mode == data_layout::uncompressed)
+    //!\endcond
+    {
+        static_assert(std::ranges::input_range<range_t>, "A bin must model input_range.");
+        static_assert(semialphabet<std::ranges::range_reference_t<range_t>>,
+                      "The content of a bin must model semialphabet.");
+
+        if (this->bin_count() < bin.get())
+            throw std::logic_error(detail::to_string("Bin index is out of bounds. Number of bins: ", this->bin_count(),
+                                                     " Provided bin index: ", bin.get()));
+
+        std::visit([&, this] (auto & variant)
+                {
+                    auto & hasher = variant.hasher;
+                    for (auto && hash : range | hasher)
+                        base_t::emplace(hash, bin);
+                }, proxy);
+    }
 
     /*!\name Lookup
      * \{
@@ -299,15 +384,53 @@ public:
         return counting_agent_type<value_t>{*this};
     }
     //!\}
+
+    /*!\cond DEV
+     * \brief Serialisation support function.
+     * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
+     * \param[in] archive The archive being serialised from/to.
+     *
+     * \attention These functions are never called directly, see \ref serialisation for more details.
+     */
+    template <cereal_archive archive_t>
+    void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
+    {
+        // Upcast to the interleaved_bloom_filter and use serialisation thereof.
+        archive(*static_cast<base_t *>(this));
+        archive(proxy);
+
+        // Check the alphabet
+        auto sigma = alphabet_size<alph_t>;
+        archive(sigma);
+        if (sigma != alphabet_size<alph_t>)
+        {
+            throw std::logic_error{detail::to_string("The technical_binning_directory was built over an alphabet of "
+                                                     "size ", sigma, " but it is being read into a technical_binning"
+                                                     "_directory with an alphabet of size", alphabet_size<alph_t>)};
+        }
+
+        // Check the data layout
+        bool tmp = data_layout_mode;
+        archive(tmp);
+        if (tmp != data_layout_mode)
+        {
+            throw std::logic_error{detail::to_string("The technical_binning_directory was built ",
+                                                     (tmp ? "compressed" : "uncompressed"),
+                                                     " but it is being read into ",
+                                                     (tmp ? "a compressed" : "an uncompressed"),
+                                                      "technical_binning_directory")};
+        }
+    }
+    //!\endcond
 };
 
 /*!\name Type deduction guides
  * \{
  */
 //!\brief Deduces the template.
-template <typename rng_t, typename hash_adaptor_t>
-technical_binning_directory(rng_t, hash_adaptor_t, ibf_config) ->
-        technical_binning_directory<data_layout::uncompressed, hash_adaptor_t, range_innermost_value_t<rng_t>>;
+// template <typename rng_t>
+// technical_binning_directory(rng_t, ibf_config) ->
+//         technical_binning_directory<data_layout::uncompressed, range_innermost_value_t<rng_t>>;
 //!\}
 
 /*!\brief Manages counting queries for the seqan3::technical_binning_directory.
@@ -319,19 +442,21 @@ technical_binning_directory(rng_t, hash_adaptor_t, ibf_config) ->
  *
  * \include test/snippet/search/dream_index/counting_agent.cpp
  */
-template <data_layout data_layout_mode, typename hash_adaptor_t, semialphabet alph_t>
+template <data_layout data_layout_mode, semialphabet alph_t>
 template <std::integral value_t>
-class technical_binning_directory<data_layout_mode, hash_adaptor_t, alph_t>::counting_agent_type
+class technical_binning_directory<data_layout_mode, alph_t>::counting_agent_type
 {
 private:
     //!\brief The type of the augmented seqan3::technical_binning_directory.
-    using tbd_t = technical_binning_directory<data_layout_mode, hash_adaptor_t, alph_t>;
+    using tbd_t = technical_binning_directory<data_layout_mode, alph_t>;
 
     //!\brief A pointer to the augmented seqan3::technical_binning_directory.
     tbd_t const * tbd_ptr;
 
     //!\brief Store a seqan3::technical_binning_directory::membership_agent to call `bulk_contains`.
     decltype(std::declval<tbd_t>().membership_agent()) membership_agent;
+
+    // static constexpr auto access_hasher = [] (auto && variant) { return variant.hasher; };
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -389,8 +514,13 @@ public:
 
         std::ranges::fill(result_buffer, 0);
 
-        for (auto && hash : query | tbd_ptr->hash_adaptor)
-            result_buffer += membership_agent.bulk_contains(hash);
+        // auto * hasher = std::visit([] (auto & variant) { return &variant.hasher; }, tbd_ptr->proxy);
+        std::visit([&] (auto & variant)
+                        {
+                            auto & hasher = variant.hasher;
+                            for (auto && hash : query | hasher)
+                                result_buffer += membership_agent.bulk_contains(hash);
+                        }, tbd_ptr->proxy);
 
         return result_buffer;
     }
@@ -412,7 +542,7 @@ public:
      * Concurrent invocations of this function are not thread safe, please create a seqan3::counting_agent_type for each thread.
      */
     template <std::ranges::range query_t>
-    std::pair<counting_vector<value_t> const &, value_t const> count_query(query_t const & query, bool) & noexcept // TODO no second parameter please
+    std::pair<counting_vector<value_t> const &, value_t const> count_query(query_t const & query, bool) & noexcept // TODO no second parameter please What would be a better name?
     {
         assert(tbd_ptr != nullptr);
         assert(result_buffer.size() == tbd_ptr->bin_count());
@@ -425,18 +555,41 @@ public:
         std::ranges::fill(result_buffer, 0);
 
         value_t count{};
-        for (auto && hash : query | tbd_ptr->hash_adaptor)
-        {
-            result_buffer += membership_agent.bulk_contains(hash);
-            ++count;
-        }
+
+        std::visit([&] (auto & variant)
+                {
+                    auto & hasher = variant.hasher;
+                    for (auto && hash : query | hasher)
+                    {
+                        result_buffer += membership_agent.bulk_contains(hash);
+                        ++count;
+                    }
+                }, tbd_ptr->proxy);
 
         return {result_buffer, count};
     }
 
+    // TODO we want to be able to pass a range of hashes.
+    // E.g., in the Hierarchical IBF, we work with sets of kmer hashes to avoid reading queries multiple times.
+    template <std::ranges::range hash_range_t>
+    counting_vector<value_t> const & count_hashes(hash_range_t const & hashes) & noexcept;
+
+    template <std::ranges::range hash_range_t>
+    std::pair<counting_vector<value_t> const &, value_t const> count_hashes(hash_range_t const & hashes) & noexcept; // TODO better name?
+
     // `bulk_contains` cannot be called on a temporary, since the object the returned reference points to
     // is immediately destroyed.
-    counting_vector<value_t> const & count_query(size_t const value) && noexcept = delete;
+    template <typename query_t>
+    counting_vector<value_t> const & count_query(query_t const value) && noexcept = delete;
+
+    template <std::ranges::range query_t>
+    std::pair<counting_vector<value_t> const &, value_t const> count_query(query_t const & query, bool) && noexcept = delete;
+
+    template <typename hash_range_t>
+    counting_vector<value_t> const & count_hashes(hash_range_t const & hashes) && noexcept = delete;
+
+    template <std::ranges::range hash_range_t>
+    std::pair<counting_vector<value_t> const &, value_t const> count_hashes(hash_range_t const & hashes) && noexcept = delete;
     //!\}
 
 };
