@@ -9,6 +9,7 @@
 
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
 #include <seqan3/test/cereal.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 template <typename ibf_type>
 struct interleaved_bloom_filter_test : public ::testing::Test
@@ -43,7 +44,7 @@ TYPED_TEST(interleaved_bloom_filter_test, construction)
     TypeParam ibf2{TestFixture::make_ibf(seqan3::bin_count{64u},
                                          seqan3::bin_size{1024u},
                                          seqan3::hash_function_count{2u})};
-    EXPECT_EQ(ibf1, ibf2);
+    EXPECT_TRUE(ibf1 == ibf2);
 
      // bin_size parameter is too small
     EXPECT_THROW((TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{0u})), std::logic_error);
@@ -164,6 +165,27 @@ TYPED_TEST(interleaved_bloom_filter_test, counting)
     EXPECT_EQ(counting, expected2);
 }
 
+TYPED_TEST(interleaved_bloom_filter_test, counting_agent)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{128u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::views::iota(0, 128))
+        for (size_t hash : std::views::iota(0, 128))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_count
+    TypeParam ibf2{ibf};
+    auto agent = ibf2.counting_agent();
+    auto agent2 = ibf2.template counting_agent<size_t>();
+
+    std::vector<size_t> expected(128, 128);
+    EXPECT_RANGE_EQ(agent.bulk_count(std::views::iota(0u, 128u)), expected);
+    EXPECT_RANGE_EQ(agent2.bulk_count(std::views::iota(0u, 128u)), expected);
+}
+
 // Check special case where there is only one `1` in the bitvector.
 TYPED_TEST(interleaved_bloom_filter_test, counting_no_ub)
 {
@@ -195,6 +217,30 @@ TYPED_TEST(interleaved_bloom_filter_test, counting_no_ub)
     expected2[127] = 256;
     counting += counting;
     EXPECT_EQ(counting, expected2);
+}
+
+// Check special case where there is only one `1` in the bitvector.
+TYPED_TEST(interleaved_bloom_filter_test, counting_agent_no_ub)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{128u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::array<size_t, 2>{63, 127})
+        for (size_t hash : std::views::iota(0, 128))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
+    TypeParam ibf2{ibf};
+    auto agent = ibf2.counting_agent();
+    auto agent2 = ibf2.template counting_agent<size_t>();
+
+    std::vector<size_t> expected(128, 0);
+    expected[63] = 128;
+    expected[127] = 128;
+    EXPECT_RANGE_EQ(agent.bulk_count(std::views::iota(0u, 128u)), expected);
+    EXPECT_RANGE_EQ(agent2.bulk_count(std::views::iota(0u, 128u)), expected);
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)

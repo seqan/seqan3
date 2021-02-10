@@ -82,12 +82,35 @@ void bulk_contains_benchmark(::benchmark::State & state)
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
 }
 
+template <typename ibf_type>
+void bulk_count_benchmark(::benchmark::State & state)
+{
+    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
+                                                                 state.range(1),
+                                                                 state.range(2),
+                                                                 state.range(3));
+    (void) bin_indices;
+
+    auto agent = ibf.counting_agent();
+    for (auto _ : state)
+    {
+        [[maybe_unused]] auto & res = agent.bulk_count(hash_values);
+    }
+
+    state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
+}
+
 BENCHMARK_TEMPLATE(emplace_benchmark,
                    seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
 
 BENCHMARK_TEMPLATE(bulk_contains_benchmark,
                    seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
 BENCHMARK_TEMPLATE(bulk_contains_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)->Apply(arguments);
+
+BENCHMARK_TEMPLATE(bulk_count_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_count_benchmark,
                    seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)->Apply(arguments);
 
 BENCHMARK_MAIN();

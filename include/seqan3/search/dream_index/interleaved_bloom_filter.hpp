@@ -106,6 +106,10 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
  * To query the Interleaved Bloom Filter for a value, call seqan3::interleaved_bloom_filter::membership_agent() and use
  * the returned seqan3::interleaved_bloom_filter::membership_agent.
  *
+ * To count the occurrences of a range of values in the Interleaved Bloom Filter, call
+ * seqan3::interleaved_bloom_filter::counting_agent() and use
+ * the returned seqan3::interleaved_bloom_filter::counting_agent_type.
+ *
  * ### Compression
  *
  * The Interleaved Bloom Filter can be compressed by passing `data_layout::compressed` as template argument.
@@ -186,6 +190,8 @@ public:
     static constexpr data_layout data_layout_mode = data_layout_mode_;
 
     class membership_agent; // documented upon definition below
+    template <std::integral value_t>
+    class counting_agent_type; // documented upon definition below
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -356,9 +362,9 @@ public:
     /*!\name Lookup
      * \{
      */
-    /*!\brief Returns seqan3::interleaved_bloom_filter::membership_agent to be used for lookup.
+    /*!\brief Returns a seqan3::interleaved_bloom_filter::membership_agent to be used for lookup.
      * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to invalidates all
-     * seqan3::interleaved_bloom_filter::membership_agent constructed for this Interleaved Bloom Filter.
+     * `seqan3::interleaved_bloom_filter::membership_agent`s constructed for this Interleaved Bloom Filter.
      *
      * \details
      *
@@ -370,6 +376,23 @@ public:
     membership_agent membership_agent() const
     {
         return typename interleaved_bloom_filter<data_layout_mode>::membership_agent{*this};
+    }
+
+    /*!\brief Returns a seqan3::interleaved_bloom_filter::counting_agent_type to be used for counting.
+     * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to invalidates all
+     * `seqan3::interleaved_bloom_filter::counting_agent_type`s constructed for this Interleaved Bloom Filter.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/counting_agent_construction.cpp
+     * \sa seqan3::interleaved_bloom_filter::counting_agent_type::bulk_count
+     */
+    template <typename value_t = uint16_t>
+    counting_agent_type<value_t> counting_agent() const
+    {
+        return counting_agent_type<value_t>{*this};
     }
     //!\}
 
@@ -509,7 +532,7 @@ public:
     /*!\brief Determines set membership of a given value.
      * \param[in] value The raw value to process.
      *
-     * \attention The result of this function must always be bound via reference, e.g. `auto &` to prevent copying.
+     * \attention The result of this function must always be bound via reference, e.g. `auto &`, to prevent copying.
      * \attention Sequential calls to this function invalidate the previously returned reference.
      *
      * \details
@@ -520,8 +543,8 @@ public:
      *
      * ### Thread safety
      *
-     * Concurrent invocations of this function are not thread safe, please create a seqan3::membership_agent for each
-     * thread.
+     * Concurrent invocations of this function are not thread safe, please create a
+     * seqan3::interleaved_bloom_filter::membership_agent for each thread.
      */
     [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) & noexcept
     {
@@ -711,6 +734,101 @@ public:
 
         return *this;
     }
+
+};
+
+/*!\brief Manages counting ranges of values for the seqan3::interleaved_bloom_filter.
+ * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to invalidates the counting_agent_type.
+ *
+ * \details
+ *
+ * ### Example
+ *
+ * \include test/snippet/search/dream_index/counting_agent.cpp
+ */
+template <data_layout data_layout_mode>
+template <std::integral value_t>
+class interleaved_bloom_filter<data_layout_mode>::counting_agent_type
+{
+private:
+    //!\brief The type of the augmented seqan3::interleaved_bloom_filter.
+    using ibf_t = interleaved_bloom_filter<data_layout_mode>;
+
+    //!\brief A pointer to the augmented seqan3::interleaved_bloom_filter.
+    ibf_t const * ibf_ptr{nullptr};
+
+    //!\brief Store a seqan3::interleaved_bloom_filter::membership_agent to call `bulk_contains`.
+    typename ibf_t::membership_agent membership_agent;
+
+public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    counting_agent_type() = default; //!< Defaulted.
+    counting_agent_type(counting_agent_type const &) = default; //!< Defaulted.
+    counting_agent_type & operator=(counting_agent_type const &) = default; //!< Defaulted.
+    counting_agent_type(counting_agent_type &&) = default; //!< Defaulted.
+    counting_agent_type & operator=(counting_agent_type &&) = default; //!< Defaulted.
+    ~counting_agent_type() = default; //!< Defaulted.
+
+    /*!\brief Construct a counting_agent_type for an existing seqan3::interleaved_bloom_filter.
+     * \private
+     * \param ibf The seqan3::interleaved_bloom_filter.
+     */
+    counting_agent_type(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), membership_agent(ibf)
+    {
+        result_buffer.resize(ibf_ptr->bin_count());
+    };
+    //!\}
+
+    //!\brief Stores the result of bulk_count().
+    counting_vector<value_t> result_buffer;
+
+    /*!\name Counting
+     * \{
+     */
+    /*!\brief Counts the occurrences in each bin for all values in a range.
+     * \tparam value_range_t The type of the range of values. Must model std::ranges::input_range. The reference type
+     *                       must model std::unsigned_integral.
+     * \param[in] values The range of values to process.
+     *
+     * \attention The result of this function must always be bound via reference, e.g. `auto &`, to prevent copying.
+     * \attention Sequential calls to this function invalidate the previously returned reference.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/counting_agent.cpp
+     *
+     * ### Thread safety
+     *
+     * Concurrent invocations of this function are not thread safe, please create a
+     * seqan3::interleaved_bloom_filter::counting_agent_type for each thread.
+     */
+    template <std::ranges::range value_range_t>
+    [[nodiscard]] counting_vector<value_t> const & bulk_count(value_range_t && values) & noexcept
+    {
+        assert(ibf_ptr != nullptr);
+        assert(result_buffer.size() == ibf_ptr->bin_count());
+
+        static_assert(std::ranges::input_range<value_range_t>, "The values must model input_range.");
+        static_assert(std::unsigned_integral<std::ranges::range_value_t<value_range_t>>,
+                      "An individual value must be an unsigned integral.");
+
+        std::ranges::fill(result_buffer, 0);
+
+        for (auto && value : values)
+            result_buffer += membership_agent.bulk_contains(value);
+
+        return result_buffer;
+    }
+
+    // `bulk_count` cannot be called on a temporary, since the object the returned reference points to
+    // is immediately destroyed.
+    template <std::ranges::range value_range_t>
+    [[nodiscard]] counting_vector<value_t> const & bulk_count(value_range_t && values) && noexcept = delete;
+    //!\}
 
 };
 
