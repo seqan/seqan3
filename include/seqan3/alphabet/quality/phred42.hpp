@@ -39,7 +39,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/quality/phred42.cpp
  *
- * \see quality, it contains a comprehensive overview over all phred implementations and what a Phred score represents.
+ * \see quality, it contains a comprehensive overview over all Phred implementations and what a Phred score represents.
  */
 class phred42 : public quality_base<phred42, 42>
 {

@@ -88,6 +88,7 @@
  * Quality values are usually paired together with nucleotides. Therefore, it stands to reason to combine both alphabets
  * into a new data structure. In SeqAn, this can be done with seqan3::qualified. It represents the cross product between
  * a nucleotide and a quality alphabet and is the go-to choice when compression is of interest.
+ *
  * The following combinations still fit into a single byte:
  * - `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (alphabet size: 4 x 42 = 168)
  * - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)

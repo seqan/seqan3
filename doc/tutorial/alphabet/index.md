@@ -186,7 +186,7 @@ The following combinations still fit into a single byte (which can hold up-to 25
  - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
  - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
 
-Using \ref seqan3::qualified can half the storage usage compared to storing qualities and nucleotides separately.
+Using seqan3::qualified can half the storage usage compared to storing qualities and nucleotides separately.
 
 While we use DNA alphabets in this example, the same properties hold true for RNA alphabets.
 
