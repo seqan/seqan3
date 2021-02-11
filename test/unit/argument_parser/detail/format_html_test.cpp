@@ -88,6 +88,8 @@ TEST(html_format, full_information_information)
    parser1.info.short_copyright = "short copyright";
    parser1.info.long_copyright = "long_copyright";
    parser1.info.citation = "citation";
+   parser1.info.author = "author";
+   parser1.info.email = "email";
    parser1.add_option(option_value, 'i', "int", "this is a int option.");
    parser1.add_option(option_value, 'j', "jint", "this is a required int option.", seqan3::option_spec::required);
    parser1.add_flag(flag_value, 'f', "flag", "this is a flag.");
@@ -178,6 +180,10 @@ TEST(html_format, full_information_information)
                           "<h2>Legal</h2>\n"
                           "<p>\n"
                           "<strong>program_full_options Copyright: </strong>short copyright\n"
+                          "<br>\n"
+                          "<strong>Author: </strong>author\n"
+                          "<br>\n"
+                          "<strong>Contact: </strong>email\n"
                           "<br>\n"
                           "<strong>SeqAn Copyright: </strong>2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.\n"
                           "<br>\n"

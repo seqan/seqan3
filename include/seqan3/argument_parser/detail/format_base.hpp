@@ -448,7 +448,11 @@ protected:
     void print_legal()
     {
         // Print legal stuff
-        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation)))
+        if ((!empty(meta.short_copyright)) ||
+            (!empty(meta.long_copyright)) ||
+            (!empty(meta.citation)) ||
+            (!empty(meta.author)) ||
+            (!empty(meta.email)))
         {
             derived_t().print_section("Legal");
 
@@ -456,6 +460,16 @@ protected:
             {
                 derived_t().print_line(derived_t().in_bold(meta.app_name + " Copyright: ") + meta.short_copyright,
                                        false);
+            }
+
+            if (!empty(meta.author))
+            {
+                derived_t().print_line(derived_t().in_bold("Author: ") + meta.author, false);
+            }
+
+            if (!empty(meta.email))
+            {
+                derived_t().print_line(derived_t().in_bold("Contact: ") + meta.email, false);
             }
 
             derived_t().print_line(derived_t().in_bold("SeqAn Copyright: ") +

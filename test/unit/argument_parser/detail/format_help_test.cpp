@@ -174,6 +174,48 @@ TEST(help_page_printing, with_citation)
     EXPECT_EQ(std_cout, expected);
 }
 
+TEST(help_page_printing, with_author)
+{
+    seqan3::argument_parser author("test_parser", 2, argv1);
+    author.info.author = "author";
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(author.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    std_cout = testing::internal::GetCapturedStdout();
+    expected = "test_parser\n"
+               "===========\n"
+               "\n" +
+               basic_options_str +
+               "\n" +
+               basic_version_str +
+               "\n" +
+               "LEGAL\n"
+               "    Author: author\n"
+               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
+               "    3-clause BSDL.\n";
+    EXPECT_EQ(std_cout, expected);
+}
+
+TEST(help_page_printing, with_email)
+{
+    seqan3::argument_parser email("test_parser", 2, argv1);
+    email.info.email = "email";
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(email.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+    std_cout = testing::internal::GetCapturedStdout();
+    expected = "test_parser\n"
+               "===========\n"
+               "\n" +
+               basic_options_str +
+               "\n" +
+               basic_version_str +
+               "\n" +
+               "LEGAL\n"
+               "    Contact: email\n"
+               "    SeqAn Copyright: 2006-2021 Knut Reinert, FU-Berlin; released under the\n"
+               "    3-clause BSDL.\n";
+    EXPECT_EQ(std_cout, expected);
+}
+
 TEST(help_page_printing, empty_advanced_help)
 {
     // Empty help call with -hh
