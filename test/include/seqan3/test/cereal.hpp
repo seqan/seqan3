@@ -39,46 +39,46 @@ namespace test
  * \tparam in_archive_t  Type of the cereal input archive. Must model seqan3::cereal_input_archive.
  * \tparam out_archive_t Type of the cereal output archive. Must model seqan3::cereal_output_archive.
  * \tparam value_t       The type to cerealise. Must model seqan3::cerealisable.
- * \param l The object to cerealise.
+ * \param value The object to cerealise.
  */
 template <cereal_input_archive in_archive_t, cereal_output_archive out_archive_t, typename value_t>
 //!\cond
     requires cerealisable<value_t, in_archive_t, out_archive_t>
 //!\endcond
-void do_cerealisation(value_t && l)
+void do_cerealisation(value_t && value)
 {
     tmp_filename filename{"cereal_test"};
 
     {
         std::ofstream os{filename.get_path(), std::ios::binary};
         out_archive_t oarchive{os};
-        oarchive(l);
+        oarchive(value);
     }
 
     {
-        std::remove_cvref_t<value_t> in_l{};
+        std::remove_cvref_t<value_t> value_from_archive{};
         std::ifstream is{filename.get_path(), std::ios::binary};
         in_archive_t iarchive{is};
-        iarchive(in_l);
-        EXPECT_EQ(l, in_l);
+        iarchive(value_from_archive);
+        EXPECT_TRUE(value == value_from_archive);
     }
 }
 
 /*!\brief Tests if an object is serialise for all cereal archive types.
  * \tparam value_t The type to serialise.
- * \param l The object to serialise.
+ * \param value The object to serialise.
  *
  * If cereal is **not** available, this function is a NOP.
  * Otherwise it will call do_cerealisation() with cereal's `Binary`, `PortableBinary`, `JSON` and `XML` archives.
  */
 template <typename value_t>
-void do_serialisation([[maybe_unused]] value_t && l)
+void do_serialisation([[maybe_unused]] value_t && value)
 {
 #if SEQAN3_WITH_CEREAL
-    do_cerealisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (l);
-    do_cerealisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(l);
-    do_cerealisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (l);
-    do_cerealisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (l);
+    do_cerealisation<cereal::BinaryInputArchive,         cereal::BinaryOutputArchive>        (value);
+    do_cerealisation<cereal::PortableBinaryInputArchive, cereal::PortableBinaryOutputArchive>(value);
+    do_cerealisation<cereal::JSONInputArchive,           cereal::JSONOutputArchive>          (value);
+    do_cerealisation<cereal::XMLInputArchive,            cereal::XMLOutputArchive>           (value);
 #endif // SEQAN3_WITH_CEREAL
 }
 //!\endcond
