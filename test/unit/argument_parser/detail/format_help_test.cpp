@@ -114,6 +114,7 @@ TEST(help_page_printing, with_short_copyright)
 {
     // Again, but with short copyright, long copyright, and citation.
     seqan3::argument_parser short_copy("test_parser", 2, argv1);
+    test_accessor::set_terminal_width(short_copy, 80);
     short_copy.info.short_copyright = "short";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(short_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -135,6 +136,7 @@ TEST(help_page_printing, with_short_copyright)
 TEST(help_page_printing, with_long_copyright)
 {
     seqan3::argument_parser long_copy("test_parser", 2, argv1);
+    test_accessor::set_terminal_width(long_copy, 80);
     long_copy.info.long_copyright = "long";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(long_copy.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -156,6 +158,7 @@ TEST(help_page_printing, with_long_copyright)
 TEST(help_page_printing, with_citation)
 {
     seqan3::argument_parser citation("test_parser", 2, argv1);
+    test_accessor::set_terminal_width(citation, 80);
     citation.info.citation = "citation";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(citation.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -177,6 +180,7 @@ TEST(help_page_printing, with_citation)
 TEST(help_page_printing, with_author)
 {
     seqan3::argument_parser author("test_parser", 2, argv1);
+    test_accessor::set_terminal_width(author, 80);
     author.info.author = "author";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(author.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -198,6 +202,7 @@ TEST(help_page_printing, with_author)
 TEST(help_page_printing, with_email)
 {
     seqan3::argument_parser email("test_parser", 2, argv1);
+    test_accessor::set_terminal_width(email, 80);
     email.info.email = "email";
     testing::internal::CaptureStdout();
     EXPECT_EXIT(email.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -323,6 +328,7 @@ TEST(help_page_printing, advanced_options)
 
     // without -hh, only the non/advanced information are shown
     seqan3::argument_parser parser_normal_help{"test_parser", 2, argv1};
+    test_accessor::set_terminal_width(parser_normal_help, 80);
     set_up(parser_normal_help);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser_normal_help.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -348,6 +354,7 @@ TEST(help_page_printing, advanced_options)
 
     // with -hh everything is shown
     seqan3::argument_parser parser_advanced_help{"test_parser", 2, argv2};
+    test_accessor::set_terminal_width(parser_advanced_help, 80);
     set_up(parser_advanced_help);
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser_advanced_help.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
