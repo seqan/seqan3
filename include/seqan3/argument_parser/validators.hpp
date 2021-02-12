@@ -373,23 +373,26 @@ protected:
             throw validation_error{detail::to_string("The given filename ", path.string(), " has no extension. Expected"
                                                      " one of the following valid extensions:", extensions, "!")};
 
-        // Drop the dot.
-        std::string drop_less_ext = path.extension().string().substr(1);
+        std::string file_path{path.filename().string()};
+
+        // Leading dot indicates a hidden file is not part of the extension.
+        if (file_path.front() == '.')
+            file_path.erase(0, 1);
+
+        // Store a string_view containing all extensions for a better error message.
+        std::string const all_extensions{file_path.substr(file_path.find(".") + 1)};
 
         // Compares the extensions in lower case.
-        auto case_insensitive_equal_to = [&] (std::string const & ext)
+        auto case_insensitive_ends_with = [&] (std::string const & ext)
         {
-            return std::ranges::equal(ext, drop_less_ext, [] (char const chr1, char const chr2)
-                   {
-                       return std::tolower(chr1) == std::tolower(chr2);
-                   });
+            return case_insensitive_string_ends_with(file_path, ext);
         };
 
         // Check if requested extension is present.
-        if (std::ranges::find_if(extensions, case_insensitive_equal_to) == extensions.end())
+        if (std::ranges::find_if(extensions, case_insensitive_ends_with) == extensions.end())
         {
             throw validation_error{detail::to_string("Expected one of the following valid extensions: ", extensions,
-                                                     "! Got ", drop_less_ext, " instead!")};
+                                                     "! Got ", all_extensions, " instead!")};
         }
     }
 
@@ -449,6 +452,23 @@ protected:
             return "";
         else
             return detail::to_string(" Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
+    }
+
+    /*!\brief Helper function that checks if a string is a suffix of another string. Case insensitive.
+     * \param str The string to be searched.
+     * \param suffix The suffix to be searched for.
+     * \returns `true` if `suffix` is a suffix of `str`, otherwise `false`.
+     */
+    bool case_insensitive_string_ends_with(std::string_view str, std::string_view suffix) const
+    {
+        size_t const suffix_length{suffix.size()};
+        size_t const str_length{str.size()};
+        return suffix_length > str_length ?
+               false :
+               std::ranges::equal(str.substr(str_length - suffix_length), suffix, [] (char const chr1, char const chr2)
+               {
+                   return std::tolower(chr1) == std::tolower(chr2);
+               });
     }
 
     //!\brief Stores the extensions.
