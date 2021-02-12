@@ -35,8 +35,9 @@
  * the higher a Phred score is, the higher is the probabality that the corresponding nucleotide is correct for that
  * position.
  * There exists two common variants of its computation:
- *   - Salinger format with \f$Q = -10log_{10}(p)\f$
+ *   - Sanger format with \f$Q = -10log_{10}(p)\f$
  *   - Solexa format with \f$Q = -10log_{10}(p/(1-p))\f$
+ *
  * Thus, despite implicit conversion between different quality types is supported, for very low quality levels the
  * scores vary significantly and need to be corrected by an offset before being compared. The Phred score range does not
  * fit into one digit, and is therefore mapped to ASCII characters. Depending on the format and the analyzer machine
@@ -87,10 +88,12 @@
  * Quality values are usually paired together with nucleotides. Therefore, it stands to reason to combine both alphabets
  * into a new data structure. In SeqAn, this can be done with seqan3::qualified. It represents the cross product between
  * a nucleotide and a quality alphabet and is the go-to choice when compression is of interest.
+ *
  * The following combinations still fit into a single byte:
  * - `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (alphabet size: 4 x 42 = 168)
  * - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
  * - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
+ *
  * Using `seqan3::qualified` can half the storage usage compared to storing qualities and nucleotides separately. Note
  * that any combination of `seqan3::phred94` with another alphabet will cause `seqan3::qualified` to use at least 2
  * bytes.

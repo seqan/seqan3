@@ -171,6 +171,27 @@ alphabet, or nucleotide / amino acid and structure alphabet that stores both inf
 For the use cases just described we offer pre-defined composites (seqan3::qualified, seqan3::structured_rna,
 seqan3::structured_aa). See our API documentation for a detailed description of each.
 
+### Phred Score
+
+The Phred quality score is the quality alphabet for nucleotides. It is generated automatically during DNA
+sequencing. A Phred quality score is assigned to each nucleotide base call and in the FASTQ format encoded as ASCII
+characters alongside the read sequences.
+
+Therefore, it stands to reason to combine both alphabets into a new data structure. In SeqAn, this can be done with
+seqan3::qualified. It represents the cross product between a nucleotide and a quality alphabet and is the go-to choice
+when compression is of interest.
+
+The following combinations still fit into a single byte (which can hold up-to 256 different values):
+ - `seqan3::qualified<seqan3::dna4, seqan3::phred42>` (alphabet size: 4 x 42 = 168)
+ - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
+ - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
+
+Using seqan3::qualified can half the storage usage compared to storing qualities and nucleotides separately.
+
+While we use DNA alphabets in this example, the same properties hold true for RNA alphabets.
+
+\snippet alphabet_main.cpp phred
+
 ## Gap alphabet
 
 The seqan3::gap alphabet is the smallest alphabet in SeqAn, consisting only of the gap character.

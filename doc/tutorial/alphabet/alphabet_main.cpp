@@ -3,6 +3,8 @@
 #include <tuple>
 #include <vector>
 
+#include <seqan3/core/debug_stream.hpp>
+
 //! [create]
 #include <seqan3/alphabet/all.hpp> // for working with alphabets directly
 
@@ -75,6 +77,22 @@ int main ()
 //! [compare]
     assert(eq && neq && geq && gt && seq && st);
     assert(some_nucl == "AGT"_dna4);
+
+//! [phred]
+    using seqan3::operator""_dna4;
+    using seqan3::operator""_phred42;
+
+    seqan3::phred42 phred;
+    phred.assign_phred(2);
+    seqan3::debug_stream << phred.to_phred() << "\n"; // 2
+    seqan3::debug_stream << phred.to_char() << "\n";  // '#'
+    seqan3::debug_stream << phred.to_rank() << "\n";  // 2
+
+    std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> query{{'A'_dna4, '!'_phred42},
+                                                                        {'C'_dna4, 'A'_phred42},
+                                                                        {'G'_dna4, '6'_phred42},
+                                                                        {'T'_dna4, '&'_phred42}};
+//! [phred]
 
 //! [gapped]
     // Assign a gap symbol to a gapped RNA alphabet.
