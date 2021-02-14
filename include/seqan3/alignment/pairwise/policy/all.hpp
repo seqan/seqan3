@@ -60,7 +60,6 @@
  * Function name     | Arguments                              | Return value                         |
  * ----------------- | -------------------------------------- | ------------------------------------ |
  * `compute_cell`    | `cell &&`, `cache &`, `score const &`  | `void`                               |
- * `make_cache`      | `gap_scheme const &`                   | alignment_algorithm_state            |
  *
  * - compute_cell:
  *
@@ -68,11 +67,6 @@
  *    It gets as an input the dereferenced value of the scoring matrix (see above), the current alignment algorithm
  *    cache and the score of comparing two letter of the used alphabet using the passed scoring scheme.
  *
- * - make_cache:
- *
- *     Initialises and returns the cache used in the alignment algorithm. It must return a type that allows structured
- *     bindings, with the first argument being of the same type as the allocator value type used in the matrix policy,
- *     the second argument being the costs for gap opening + gap and the third argument being the costs for a gap.
  *
  * ### Existing gap policies:
  *

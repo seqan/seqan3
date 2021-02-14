@@ -26,8 +26,8 @@ namespace seqan3
 // seqan3::gap_score
 // ------------------------------------------------------------------
 
-/*!\brief A strong type of underlying type `score_type` that represents the score of any character against a gap
- *        character. 
+/*!\brief [DEPRECATED] A strong type of underlying type `score_type` that
+ *        represents the score of any character against a gap character.
  * \deprecated This type is deprecated and will be removed in SeqAn3.1.
  * \tparam score_type The underlying type.
  * \ingroup scoring
@@ -53,8 +53,9 @@ gap_score(score_type) -> gap_score<score_type>;
 // seqan3::gap_open_score
 // ------------------------------------------------------------------
 
-/*!\brief A strong type of underlying type `score_type` that represents an additional score (usually negative) that
- *        is incurred once additionaly per stretch of consecutive gaps.
+/*!\brief [DEPRECATED] A strong type of underlying type `score_type` that
+ *        represents an additional score (usually negative) that is incurred
+ *        once additionaly per stretch of consecutive gaps.
  * \deprecated This type is deprecated and will be removed in SeqAn3.1.
  * \tparam score_type The underlying type.
  * \ingroup scoring
@@ -80,10 +81,11 @@ gap_open_score(score_type) -> gap_open_score<score_type>;
 // seqan3::gap_scheme
 // ------------------------------------------------------------------
 
-/*!\brief A scheme for representing and computing scores against gap characters.
+/*!\brief [DEPRECATED] A scheme for representing and computing scores against gap characters.
  * \tparam score_type Type of the score values saved internally.
  * \implements seqan3::cerealisable
  * \ingroup scoring
+ * \deprecated This type is deprecated and will be removed in SeqAn3.1.
  */
 template <arithmetic score_t = int8_t>
 class SEQAN3_DEPRECATED_310 gap_scheme
