@@ -81,8 +81,7 @@ private:
      */
     void normalize()
     {
-        auto concated_path   = sandbox_path / std::filesystem::path{*this};
-        auto normalized_path = concated_path.lexically_normal();
+        auto normalized_path = std::filesystem::weakly_canonical(*this);
         std::filesystem::path::operator=(normalized_path);
     }
 
@@ -97,7 +96,7 @@ private:
         // Checking that sandbox_path is an absolute path
         if (!sandbox_path.is_absolute()) {
             throw std::filesystem::filesystem_error("sandbox path must be an absolute path",
-                                                sandbox_path, relative(sandbox_path),
+                                                sandbox_path, *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
 
