@@ -18,13 +18,12 @@ int main()
 
     seqan3::sequence_file_input fin{std::istringstream{input},
                                     seqan3::format_fasta{},
-                                    seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
+                                    seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::qual>{}};
 
-    for (auto & [id, seq_qual] : fin) // the order is now different, "id" comes first, because it was specified first
+    for (auto & [id, seq, qual] : fin) // the order is now different, "id" comes first, because it was specified first
     {
         seqan3::debug_stream << "ID:  " << id << '\n';
-        // sequence and qualities are part of the same vector, of type std::vector<dna5q>
-        seqan3::debug_stream << "SEQ: "  << (seq_qual | seqan3::views::get<0>) << '\n'; // sequence string is extracted
-        seqan3::debug_stream << "QUAL: " << (seq_qual | seqan3::views::get<1>) << '\n'; // quality string is extracted
+        seqan3::debug_stream << "SEQ: "  << seq << '\n';
+        seqan3::debug_stream << "QUAL: " << qual << '\n';
     }
 }

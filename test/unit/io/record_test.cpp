@@ -44,7 +44,7 @@ TEST(fields, usage)
     EXPECT_TRUE(default_fields::contains(seqan3::field::seq));
     EXPECT_TRUE(default_fields::contains(seqan3::field::id));
     EXPECT_TRUE(default_fields::contains(seqan3::field::qual));
-    EXPECT_FALSE(default_fields::contains(seqan3::field::seq_qual));
+    EXPECT_FALSE(default_fields::contains(seqan3::field::_seq_qual_deprecated));
     EXPECT_EQ(default_fields::index_of(seqan3::field::seq), 0ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::id),  1ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::qual), 2ul);

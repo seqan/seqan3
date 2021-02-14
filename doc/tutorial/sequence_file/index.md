@@ -140,16 +140,13 @@ You can also customise this list if you want to allow different or additional fi
 
 # Fields {#section_sequence_files}
 
-The Sequence file abstraction supports reading four different fields:
+The Sequence file abstraction supports reading three different fields:
 
   1. seqan3::field::seq
   2. seqan3::field::id
   3. seqan3::field::qual
-  4. seqan3::field::seq_qual
 
-The first three fields are retrieved by default (and in that order!).
-The last field may be selected to directly store sequence and qualities in a more memory-efficient
-combined container (see seqan3::qualified).
+The three fields are retrieved by default (and in that order!).
 This is more advanced than what we cover here,
 but if you are still interested you can take a look at the tutorial \ref tutorial_sam_file
 which introduces reading a file with custom selected fields.

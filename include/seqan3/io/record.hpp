@@ -64,7 +64,8 @@ enum class field
     seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
     id,             //!< The identifier, usually a string.
     qual,           //!< The qualities, usually in Phred score notation.
-    seq_qual,       //!< Sequence and qualities combined in one range.
+    _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
+
     offset,         //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
 
     // Fields unique to structure io ...........................................
@@ -104,11 +105,14 @@ enum class field
     user_defined_8, //!< Identifier for user defined file formats and specialisations.
     user_defined_9, //!< Identifier for user defined file formats and specialisations.
 
+    // deprecated lowercase:
+    seq_qual SEQAN3_DEPRECATED_310 = _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
+
     // deprecated uppercase:
     SEQ SEQAN3_DEPRECATED_310 = seq, //!< Please use the field name in lower case.
     ID SEQAN3_DEPRECATED_310 = id, //!< Please use the field name in lower case.
     QUAL SEQAN3_DEPRECATED_310 = qual, //!< Please use the field name in lower case.
-    SEQ_QUAL SEQAN3_DEPRECATED_310 = seq_qual, //!< Please use the field name in lower case.
+    SEQ_QUAL SEQAN3_DEPRECATED_310 = _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
     OFFSET SEQAN3_DEPRECATED_310 = offset, //!< Please use the field name in lower case.
     BPP SEQAN3_DEPRECATED_310 = bpp, //!< Please use the field name in lower case.
     STRUCTURE SEQAN3_DEPRECATED_310 = structure, //!< Please use the field name in lower case.

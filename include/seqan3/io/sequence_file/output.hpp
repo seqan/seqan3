@@ -64,12 +64,11 @@ namespace seqan3
  * FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
  * files, discarding the alignment.
  *
- * The Sequence file abstraction supports writing four different fields:
+ * The Sequence file abstraction supports writing three different fields:
  *
  *   1. seqan3::field::seq
  *   2. seqan3::field::id
  *   3. seqan3::field::qual
- *   4. seqan3::field::seq_qual (sequence and qualities in one range)
  *
  * The member functions take any and either of these fields. If the field ID of an argument cannot be deduced, it
  * is assumed to correspond to the field ID of the respective template parameter.
@@ -182,7 +181,7 @@ public:
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids            = fields<field::seq, field::id, field::qual, field::seq_qual>;
+    using field_ids            = fields<field::seq, field::id, field::qual, field::_seq_qual_deprecated>;
 
     static_assert([] () constexpr
                   {
@@ -196,7 +195,7 @@ public:
 
     static_assert([] () constexpr
                   {
-                      return !(selected_field_ids::contains(field::seq_qual) &&
+                      return !(selected_field_ids::contains(field::_seq_qual_deprecated) &&
                                (selected_field_ids::contains(field::seq) ||
                                (selected_field_ids::contains(field::qual))));
                   }(),
@@ -395,8 +394,7 @@ public:
         write_record(detail::get_or_ignore<field::seq>(r),
                      detail::get_or_ignore<field::id>(r),
                      detail::get_or_ignore<field::qual>(r),
-                     detail::get_or_ignore<field::seq_qual>(r));
-
+                     detail::get_or_ignore<field::_seq_qual_deprecated>(r));
     }
 
     /*!\brief           Write a record in form of a std::tuple to the file.
@@ -430,7 +428,7 @@ public:
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
                      detail::get_or_ignore<selected_field_ids::index_of(field::id)>(t),
                      detail::get_or_ignore<selected_field_ids::index_of(field::qual)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::seq_qual)>(t));
+                     detail::get_or_ignore<selected_field_ids::index_of(field::_seq_qual_deprecated)>(t));
     }
 
     /*!\brief            Write a record to the file by passing individual fields.

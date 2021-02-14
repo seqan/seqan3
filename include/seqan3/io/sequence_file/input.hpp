@@ -57,10 +57,6 @@ namespace seqan3
  *
  * \details
  *
- * Note that the alphabet type of the seqan3::field::seq_qual cannot be specified directly, it is always
- * seqan3::qualified<sequence_alphabet, quality_alphabet> and the container type templates for
- * the field are those of seqan3::field::seq.
- *
  * \{
  */
 /*!\typedef using sequence_alphabet
@@ -202,12 +198,11 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
  * files, discarding the alignment.
  *
- * The Sequence file abstraction supports reading four different fields:
+ * The Sequence file abstraction supports reading three different fields:
  *
  *   1. seqan3::field::seq
  *   2. seqan3::field::id
  *   3. seqan3::field::qual
- *   4. seqan3::field::seq_qual (sequence and qualities in one range)
  *
  * The first three fields are retrieved by default (and in that order). The last field may be selected to have
  * sequence and qualities directly stored in a more memory-efficient combined container. If you select the last
@@ -330,10 +325,10 @@ public:
     using stream_char_type      = char;
     //!\}
 
-    /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
+   /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
      * \ref field_types.
      */
-    using field_ids            = fields<field::seq, field::id, field::qual, field::seq_qual>;
+    using field_ids            = fields<field::seq, field::id, field::qual, field::_seq_qual_deprecated>;
 
     static_assert([] () constexpr
                   {
@@ -347,7 +342,7 @@ public:
 
     static_assert([] () constexpr
                   {
-                      return !(selected_field_ids::contains(field::seq_qual) &&
+                      return !(selected_field_ids::contains(field::_seq_qual_deprecated) &&
                                (selected_field_ids::contains(field::seq) ||
                                (selected_field_ids::contains(field::qual))));
                   }(),
@@ -367,10 +362,14 @@ public:
     //!\brief The type of field::qual (std::vector <seqan3::phred42> by default).
     using quality_type          = typename traits_type::template quality_container<
                                     typename traits_type::quality_alphabet>;
-    //!\brief The type of field::seq_qual (std::vector <seqan3::dna5q> by default).
+#ifdef SEQAN3_DEPRECATED_310
+    /*!\brief [DEPRECATED] The type of field::seq_qual (std::vector <seqan3::dna5q> by default).
+     * \deprecated This type will be removed in SeqAn-3.1.0. Use sequence_type and quality_type instead.
+     */
     using sequence_quality_type = typename traits_type::
                                     template sequence_container<qualified<typename traits_type::sequence_alphabet,
                                                                           typename traits_type::quality_alphabet>>;
+#endif // SEQAN3_DEPRECATED_310
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types           = type_list<sequence_type, id_type, quality_type, sequence_quality_type>;
@@ -591,7 +590,7 @@ public:
 
     //!\brief The options are public and its members can be set directly.
     sequence_file_input_options<typename traits_type::sequence_legal_alphabet,
-                             selected_field_ids::contains(field::seq_qual)> options;
+                             selected_field_ids::contains(field::_seq_qual_deprecated)> options;
 
 protected:
     //!\privatesection
@@ -650,13 +649,13 @@ protected:
         std::visit([&] (auto & f)
         {
             // read new record
-            if constexpr (selected_field_ids::contains(field::seq_qual))
+            if constexpr (selected_field_ids::contains(field::_seq_qual_deprecated))
             {
                 f.read_sequence_record(*secondary_stream,
                                        options,
-                                       detail::get_or_ignore<field::seq_qual>(record_buffer),
+                                       detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer),
                                        detail::get_or_ignore<field::id>(record_buffer),
-                                       detail::get_or_ignore<field::seq_qual>(record_buffer));
+                                       detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer));
             }
             else
             {

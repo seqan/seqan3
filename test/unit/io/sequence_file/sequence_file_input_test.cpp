@@ -272,7 +272,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     /* record based reading */
     seqan3::sequence_file_input fin{std::istringstream{input},
                                     seqan3::format_fasta{},
-                                    seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
+                                    seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>{}};
 
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)

@@ -122,7 +122,7 @@ TYPED_TEST_P(sequence_file_read, only_id)
 TYPED_TEST_P(sequence_file_read, seq_qual)
 {
     std::stringstream istream{this->standard_input};
-    seqan3::sequence_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
+    seqan3::sequence_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>{}};
 
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
@@ -130,12 +130,13 @@ TYPED_TEST_P(sequence_file_read, seq_qual)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq_qual>(*it) | seqan3::views::convert<seqan3::dna5>,
+        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::_seq_qual_deprecated>(*it) | seqan3::views::convert<seqan3::dna5>,
                         this->seqs[i]);
 #pragma GCC diagnostic pop
 
         EXPECT_RANGE_EQ((*it).id(), this->ids[i]);
     }
+
 }
 
 TYPED_TEST_P(sequence_file_read, options_truncate_ids)
@@ -198,7 +199,7 @@ TYPED_TEST_P(sequence_file_write, seq_qual)
     });
 
     seqan3::sequence_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::id,
-                                                                                 seqan3::field::seq_qual>{}};
+                                                                                 seqan3::field::_seq_qual_deprecated>{}};
 
     for (unsigned i = 0; i < 3; ++i)
     {
