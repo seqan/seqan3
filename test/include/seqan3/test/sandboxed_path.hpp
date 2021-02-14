@@ -18,7 +18,7 @@
 namespace seqan3::test
 {
 
-/** \brief sandboxed_path is a path that can not leave a certain path
+/** \brief Utility class to stay inside a sandbox path.
  *
  * sandboxed_path inherits from std::filesystem::path and behaves mostly
  * like it. In addition it receives a sandbox directory at construction time.
@@ -30,9 +30,9 @@ namespace seqan3::test
  *  - sandbox directory is unmutable during the life cycle of a sandboxed_path
  *
  * Caveat:
- *  - relatives paths are not possible
- *  - sandboxed_path is not 100% tight
- *    - calling relative_path() leaves the environment of sandboxed_path
+ *  - relative paths are not possible
+ *  - some functions will leave the sandboxed environment.
+ *    - e.g.: calling relative_path() leaves the environment of sandboxed_path.
  */
 class sandboxed_path : public std::filesystem::path
 {
@@ -40,11 +40,11 @@ private:
     std::filesystem::path const sandbox_path;
 
 public:
-    /*!\brief Construction of a sandboxed_path
+    /*!\brief Construction of a sandboxed_path.
      * \param path must be an absolute path.
      *
      * A sandboxed_path initialized with this constructor will
-     * point to path and disallow extension that leave path.
+     * point to `path` and disallow extension that leave `path`.
      */
     explicit sandboxed_path(std::filesystem::path path)
         : std::filesystem::path{path}
@@ -54,7 +54,7 @@ public:
         checkInvariant();
     }
 
-    /*!\brief Construction of a sandboxed path
+    /*!\brief Construction of a sandboxed path.
      * \param sandbox_path must be an absolute path.
      * \param path must be a path that is inside of sandbox_path.
      *
@@ -74,6 +74,11 @@ public:
 
 
 private:
+    /*!\brief Normalizes the path.
+     *
+     * Normalization means that is converted to a absolute path and
+     * the path is lexically normalized as described in std::filesystem::path
+     */
     void normalize()
     {
         auto concated_path   = sandbox_path / std::filesystem::path{*this};
@@ -81,6 +86,12 @@ private:
         std::filesystem::path::operator=(normalized_path);
     }
 
+    /*!\brief Checks the invariant and throws if it is broken.
+     *
+     * Checks that the invariant of the class sandboxed_path is keeped.
+     * If is broken it throws an exception.
+     * See class description for invariant.
+     */
     void checkInvariant() const
     {
         // Checking that sandbox_path is an absolute path
@@ -95,13 +106,13 @@ private:
         // Leaving the temporary directory is not allowed.
         if (rel_path.string().find("..") == 0) {
             throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                sandbox_path, relative(sandbox_path),
+                                                sandbox_path, *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
     }
 
 public:
-    /*!\brief Replaces the path with a new path
+    /*!\brief Replaces the path with a new path.
      *
      * This works the same as std::filesystem::path::operator=
      * and additionally checks the invariant.
@@ -117,7 +128,7 @@ public:
         return *this;
     }
 
-    /*!\brief Replaces the path with a new path
+    /*!\brief Replaces the path with a new path.
      *
      * This works the same as std::filesystem::path::operator=
      * and additionally checks the invariant.
@@ -134,7 +145,7 @@ public:
     }
 
 
-    /*!\brief Replaces the path with a new path
+    /*!\brief Replaces the path with a new path.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -150,7 +161,7 @@ public:
         return *this;
     }
 
-    /*!\brief Replaces the path with a new path
+    /*!\brief Replaces the path with a new path.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -166,7 +177,7 @@ public:
         return *this;
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::operator/=
      * and additionally checks the invariant.
@@ -179,7 +190,7 @@ public:
         return append(source);
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -195,7 +206,7 @@ public:
         return *this;
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -211,7 +222,7 @@ public:
         return *this;
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::operator+=
      * and additionally checks the invariant.
@@ -224,7 +235,7 @@ public:
         return concat(source);
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -240,7 +251,7 @@ public:
         return *this;
     }
 
-    /*!\brief Extends the path
+    /*!\brief Extends the path.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -256,7 +267,7 @@ public:
         return *this;
     }
 
-    /*!\brief Removes the filename
+    /*!\brief Removes the filename.
      *
      * This works the same as std::filesystem::path::remove_filename
      * and additionally checks the invariant.
@@ -271,7 +282,7 @@ public:
         return *this;
     }
 
-    /*!\brief Replaces the filename
+    /*!\brief Replaces the filename.
      *
      * This works the same as std::filesystem::path::replace_filename
      * and additionally checks the invariant.
@@ -286,7 +297,7 @@ public:
         return *this;
     }
 
-    /*!\brief Replaces the extension
+    /*!\brief Replaces the extension.
      *
      * This works the same as std::filesystem::path::replace_extension
      * and additionally checks the invariant.
@@ -301,7 +312,7 @@ public:
         return *this;
     }
 
-    /*!\brief Returns sandboxed path to the parent path
+    /*!\brief Returns sandboxed path to the parent path.
      *
      * This works the same as std::filesystem::path::parent_path
      * and additionally checks the invariant.
@@ -318,7 +329,7 @@ public:
     void swap(sandboxed_path &) noexcept = delete; //!< Swap operator is not possible
 
 private:
-    void clear() = delete; //!< Unlikly operator
+    void clear() = delete; //!< Unlikely to be usefull, not implemented.
 };
 
 /** Free sandboxed_path append operator.
