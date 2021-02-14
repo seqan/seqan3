@@ -12,9 +12,10 @@
 
 #pragma once
 
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
+
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 namespace seqan3::views
 {

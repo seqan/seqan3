@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/iterator>
 #include <random>
 
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
-#include <seqan3/std/iterator>
 
 #include "../../std/concept/auxiliary.hpp"
 

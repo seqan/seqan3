@@ -8,6 +8,8 @@
 /*!\file
  * \brief [DEPRECATED] Provides concepts for core language types and relations that don't have concepts in C++20 (yet).
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/utility/detail/exposition_only_concept.hpp>
+ *             instead.
  */
 
 #pragma once

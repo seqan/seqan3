@@ -12,11 +12,16 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/concepts>
+#include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
 #include <iostream>
+#include <seqan3/std/span>
 #include <string>
 #include <tuple>
 
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+
 #ifdef SEQAN3_HAS_BZIP2
     #include <seqan3/contrib/stream/bz2_istream.hpp>
 #endif
@@ -26,11 +31,7 @@
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
-#include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 namespace seqan3::detail
 {
