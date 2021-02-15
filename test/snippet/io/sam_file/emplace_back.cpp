@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/io/alignment_file/output.hpp>
+#include <seqan3/io/sam_file/output.hpp>
 
 int main()
 {

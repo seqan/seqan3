@@ -100,7 +100,7 @@
 
 #pragma once
 
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/sequence_file/all.hpp>

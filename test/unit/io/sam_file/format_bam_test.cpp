@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/io/alignment_file/format_bam.hpp>
+#include <seqan3/io/sam_file/format_bam.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/to.hpp>
 

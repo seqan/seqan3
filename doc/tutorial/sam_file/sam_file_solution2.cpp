@@ -63,7 +63,7 @@ write_file_dummy_struct go{};
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/std/filesystem>

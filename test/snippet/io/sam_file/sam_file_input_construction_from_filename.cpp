@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/std/filesystem>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none

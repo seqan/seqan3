@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/ranges>
 

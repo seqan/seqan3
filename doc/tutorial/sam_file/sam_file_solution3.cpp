@@ -1,5 +1,5 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 #include <seqan3/std/filesystem>
 
 using seqan3::operator""_dna4;

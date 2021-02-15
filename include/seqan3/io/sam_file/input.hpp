@@ -28,11 +28,11 @@
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/io/alignment_file/input_format_concept.hpp>
-#include <seqan3/io/alignment_file/format_bam.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
-#include <seqan3/io/alignment_file/misc.hpp>
-#include <seqan3/io/alignment_file/record.hpp>
+#include <seqan3/io/sam_file/input_format_concept.hpp>
+#include <seqan3/io/sam_file/format_bam.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
+#include <seqan3/io/sam_file/misc.hpp>
+#include <seqan3/io/sam_file/record.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>

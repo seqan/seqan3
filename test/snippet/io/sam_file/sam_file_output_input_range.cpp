@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 
 auto sam_file_raw = R"(First	0	*	0	0	*	*	0	0	ACGT	*
 2nd	0	*	0	0	*	*	0	0	NATA	*

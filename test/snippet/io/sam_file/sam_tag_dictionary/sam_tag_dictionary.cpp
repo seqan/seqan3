@@ -1,5 +1,5 @@
 //! [type_overload]
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 
 using seqan3::operator""_tag;
 
@@ -11,7 +11,7 @@ struct seqan3::sam_tag_type<"XX"_tag> // here comes your tag
 //! [type_overload]
 
 //! [tag]
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 
 using seqan3::operator""_tag;
 
@@ -22,7 +22,7 @@ uint16_t tag_id = "NM"_tag; // tag_id = 10061
 
 
 //! [tag_type_t]
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 
 using seqan3::operator""_tag;
 
@@ -33,7 +33,7 @@ using nm_tag_type = seqan3::sam_tag_type_t<"NM"_tag>;
 
 
 //! [tag_type]
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 
 using seqan3::operator""_tag;
 

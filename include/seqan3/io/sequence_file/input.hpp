@@ -37,7 +37,7 @@
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
 #include <seqan3/io/sequence_file/record.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3

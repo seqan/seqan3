@@ -21,12 +21,12 @@
 #include <variant>
 #include <vector>
 
-#include <seqan3/io/alignment_file/format_bam.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
-#include <seqan3/io/alignment_file/header.hpp>
-#include <seqan3/io/alignment_file/misc.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
-#include <seqan3/io/alignment_file/output_options.hpp>
+#include <seqan3/io/sam_file/format_bam.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
+#include <seqan3/io/sam_file/header.hpp>
+#include <seqan3/io/sam_file/misc.hpp>
+#include <seqan3/io/sam_file/output_format_concept.hpp>
+#include <seqan3/io/sam_file/output_options.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/record.hpp>

@@ -12,8 +12,8 @@
 #include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
 
-#include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/io/alignment_file/output.hpp>
+#include <seqan3/io/sam_file/input.hpp>
+#include <seqan3/io/sam_file/output.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/std/iterator>
 

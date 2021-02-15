@@ -27,7 +27,7 @@ write_file_dummy_struct go{};
 
 //![code]
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 #include <seqan3/std/filesystem>
 
 int main()

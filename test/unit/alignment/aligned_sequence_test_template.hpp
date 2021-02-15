@@ -15,7 +15,7 @@
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/io/alignment_file/detail.hpp>
+#include <seqan3/io/sam_file/detail.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;
