@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/iterator>
 #include <random>
 
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/std/iterator>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
-#include "auxiliary.hpp"
+#include "../../std/concept/auxiliary.hpp"
 
 TEST(core_language_concepts, same_as)
 {

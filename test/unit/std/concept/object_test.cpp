@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/concepts>
 #include <random>
 
-#include <seqan3/core/concept/core_language.hpp>
-#include <seqan3/std/concepts>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 #include "auxiliary.hpp"
 

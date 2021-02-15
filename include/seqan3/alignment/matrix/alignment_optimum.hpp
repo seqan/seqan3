@@ -16,8 +16,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>

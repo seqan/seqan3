@@ -13,14 +13,5 @@
 #pragma once
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
-
-/*!\defgroup concept Concept
- * \ingroup core
- * \brief Additional concepts that are not specific to a SeqAn module.
- *
- * \details
- *
- * \todo write me.
- */

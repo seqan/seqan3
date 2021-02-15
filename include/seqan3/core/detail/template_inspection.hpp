@@ -240,11 +240,7 @@ using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, tem
 // template_specialisation_of
 // ----------------------------------------------------------------------------
 
-/*!\addtogroup concept
- * \{
- */
-
-/*!\interface seqan3::template_specialisation_of <>
+/*!\interface seqan3::detail::template_specialisation_of <>
  * \brief Provides concept `seqan3::template_specialisation_of<mytype, [...]>` for checking the type specialisation of
  *        some type with a given template, for example a specialized `type_list<float>` with the `type_list` template.
  *
@@ -264,7 +260,6 @@ template <typename mytype, template <typename ...> typename type_template>
 SEQAN3_CONCEPT template_specialisation_of = is_type_specialisation_of_v<mytype, type_template>;
 
 //!\endcond
-//!\}
 
 // ----------------------------------------------------------------------------
 // strip_type_identity

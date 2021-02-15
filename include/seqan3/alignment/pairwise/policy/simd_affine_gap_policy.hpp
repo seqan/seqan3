@@ -19,8 +19,8 @@
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>

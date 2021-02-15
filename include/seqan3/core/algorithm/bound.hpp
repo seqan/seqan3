@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <seqan3/core/concept/core_language.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0. The contained functionality has been replaced by the seqan3::align_cfg::band_fixed_size configuration.")
 

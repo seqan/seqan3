@@ -14,7 +14,7 @@
 
 #include <array>
 
-#include <seqan3/core/concept/core_language.hpp>
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 
 namespace seqan3::detail
