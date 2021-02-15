@@ -23,7 +23,7 @@ TEST(translate_triplets, dna4)
     seqan3::dna4 n3{'A'_dna4};
     seqan3::aa27 c{'L'_aa27};
 
-    seqan3::aa27 t1{seqan3::translate_triplet<seqan3::genetic_code::CANONICAL>(n1, n2, n3)};
+    seqan3::aa27 t1{seqan3::translate_triplet<seqan3::genetic_code::canonical>(n1, n2, n3)};
 
     EXPECT_EQ(t1, c);
 }
@@ -35,7 +35,7 @@ TEST(translate_triplets, dna15)
     seqan3::dna15 n3{'A'_dna15};
     seqan3::aa27 c{'L'_aa27};
 
-    seqan3::aa27 t1{seqan3::translate_triplet<seqan3::genetic_code::CANONICAL, seqan3::dna15>(n1, n2, n3)};
+    seqan3::aa27 t1{seqan3::translate_triplet<seqan3::genetic_code::canonical, seqan3::dna15>(n1, n2, n3)};
 
     EXPECT_EQ(t1, c);
 }

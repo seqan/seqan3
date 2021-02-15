@@ -51,7 +51,7 @@ class rna15;
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-template <genetic_code gc = genetic_code::CANONICAL, nucleotide_alphabet nucl_type>
+template <genetic_code gc = genetic_code::canonical, nucleotide_alphabet nucl_type>
 constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept
 {
     if constexpr (std::same_as<nucl_type, dna4> || std::same_as<nucl_type, dna5> || std::same_as<nucl_type, dna15>)
@@ -97,7 +97,7 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
  *
  * \deprecated Use seqan3::translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) instead.
  */
-template <genetic_code gc = genetic_code::CANONICAL, typename tuple_type>
+template <genetic_code gc = genetic_code::canonical, typename tuple_type>
 //!\cond
     requires (std::tuple_size<tuple_type>::value == 3) &&
              nucleotide_alphabet<std::tuple_element_t<0, tuple_type>> &&
@@ -128,7 +128,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (tuple_type const & input
  *
  * \deprecated Use seqan3::translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) instead.
  */
-template <genetic_code gc = genetic_code::CANONICAL, std::ranges::input_range range_type>
+template <genetic_code gc = genetic_code::canonical, std::ranges::input_range range_type>
 //!\cond
     requires nucleotide_alphabet<std::ranges::range_reference_t<std::decay_t<range_type>>>
 //!\endcond
@@ -164,7 +164,7 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (range_type && input_rang
  *
  * \deprecated Use seqan3::translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) instead.
  */
-template <genetic_code gc = genetic_code::CANONICAL, std::ranges::random_access_range rng_t>
+template <genetic_code gc = genetic_code::canonical, std::ranges::random_access_range rng_t>
 //!\cond
     requires nucleotide_alphabet<std::ranges::range_reference_t<std::decay_t<rng_t>>>
 //!\endcond
