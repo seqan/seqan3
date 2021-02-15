@@ -32,7 +32,7 @@ class rna15;
 
 /*!\brief Translate one nucleotide triplet into single amino acid (single nucleotide interface).
  * \ingroup aminoacid
- * \tparam nucl_type The type of input nucleotides.
+ * \tparam nucl_type The type of input nucleotides; must model seqan3::nucleotide_alphabet.
  * \param[in] n1 First nucleotide in triplet.
  * \param[in] n2 Second nucleotide in triplet.
  * \param[in] n3 Third nucleotide in triplet.
@@ -48,6 +48,8 @@ class rna15;
  * ### Exceptions
  *
  * No-throw guarantee.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <genetic_code gc = genetic_code::CANONICAL, nucleotide_alphabet nucl_type>
 constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nucl_type const & n3) noexcept

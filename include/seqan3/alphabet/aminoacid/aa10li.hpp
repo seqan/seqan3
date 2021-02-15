@@ -76,6 +76,8 @@ namespace seqan3
  * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
  * \include test/snippet/alphabet/aminoacid/aa10li.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class aa10li : public aminoacid_base<aa10li, 10>
 {
@@ -164,8 +166,11 @@ protected:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::aa10li.
-//!\relates aa10li
+/*!\brief Alias for an std::vector of seqan3::aa10li.
+ * \relates aa10li
+ *
+ * \stableapi{Since version 3.1.}
+ */
 using aa10li_vector = std::vector<aa10li>;
 
 // ------------------------------------------------------------------

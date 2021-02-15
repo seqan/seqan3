@@ -38,6 +38,8 @@ namespace seqan3
  * function seqan3::aa27::assign_char().
  *
  * \include test/snippet/alphabet/aminoacid/aa27_construction.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 
 class aa27 : public aminoacid_base<aa27, 27>
@@ -130,8 +132,11 @@ protected:
 
 namespace seqan3
 {
-//!\brief Alias for an std::vector of seqan3::aa27.
-//!\relates aa27
+/*!\brief Alias for an std::vector of seqan3::aa27.
+ * \relates aa27
+ *
+ * \stableapi{Since version 3.1.}
+ */
 using aa27_vector = std::vector<aa27>;
 
 } // namespace seqan3
@@ -154,6 +159,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/aminoacid/aa27_char_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 constexpr aa27 operator""_aa27(char const c) noexcept
 {
@@ -172,9 +178,10 @@ constexpr aa27 operator""_aa27(char const c) noexcept
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
+ *
+ * \stableapi{Since version 3.1.}
  */
-
-inline aa27_vector operator""_aa27(const char * s, std::size_t n)
+inline aa27_vector operator""_aa27(char const * const s, size_t const n)
 {
     aa27_vector r;
     r.resize(n);

@@ -75,6 +75,8 @@ namespace seqan3
  * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
  * \include test/snippet/alphabet/aminoacid/aa10murphy.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class aa10murphy : public aminoacid_base<aa10murphy, 10>
 {
@@ -163,8 +165,11 @@ protected:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::aa10murphy.
-//!\relates aa10murphy
+/*!\brief Alias for an std::vector of seqan3::aa10murphy.
+ * \relates aa10murphy
+ *
+ * \stableapi{Since version 3.1.}
+ */
 using aa10murphy_vector = std::vector<aa10murphy>;
 
 // ------------------------------------------------------------------
@@ -179,6 +184,8 @@ using aa10murphy_vector = std::vector<aa10murphy>;
  * \param[in] c The character to assign.
  * \relates seqan3::aa10murphy
  * \returns seqan3::aa10murphy
+ *
+ * \stableapi{Since version 3.1.}
  */
 constexpr aa10murphy operator""_aa10murphy(char const c) noexcept
 {
@@ -195,9 +202,10 @@ constexpr aa10murphy operator""_aa10murphy(char const c) noexcept
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
+ *
+ * \stableapi{Since version 3.1.}
  */
-
-inline aa10murphy_vector operator""_aa10murphy(const char * s, std::size_t n)
+inline aa10murphy_vector operator""_aa10murphy(char const * const s, size_t const n)
 {
     aa10murphy_vector r;
     r.resize(n);
