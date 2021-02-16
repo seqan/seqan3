@@ -28,7 +28,7 @@ section, which is optional, and an alignment section
 
 Here is an example of a SAM file:
 
-\include doc/tutorial/alignment_file/example.sam
+\include doc/tutorial/sam_file/example.sam
 
 The following table summarises the columns of a SAM file:
 
@@ -87,7 +87,7 @@ The formerly introduced formats can be identified by the following file name ext
 
 You can access and modify the valid file extensions via the `file_extension` member variable in a format tag:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp file_extensions
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp file_extensions
 
 # Reading alignment files
 
@@ -102,9 +102,9 @@ The construction works analogously to sequence files by passing a file name,
 in which case all template parameters are automatically deduced (by the file name extension).
 Or you can pass a stream (e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp filename_construction
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp filename_construction
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
 
 ## Reading custom fields
 
@@ -114,9 +114,9 @@ The file will read only those fields and fill the record accordingly.
 
 You can select fields by providing a seqan3::fields object as an extra parameter to the constructor:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp read_custom_fields
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp read_custom_fields
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
 
 \attention The order in which you specify the selected fields determines the order of elements in the seqan3::record.
 
@@ -135,7 +135,7 @@ For this purpose, write a small program that
 
 Use the following file to test your program:
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution1.cpp sam_file
+\snippet doc/tutorial/sam_file/sam_file_solution1.cpp sam_file
 
 It should output:
 ```
@@ -145,7 +145,7 @@ Average: 27.4
 \endassignment
 \solution
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution1.cpp solution
+\snippet doc/tutorial/sam_file/sam_file_solution1.cpp solution
 
 \endsolution
 
@@ -193,15 +193,15 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 By default, the `seqan3::alignment_file_input` will always read the `seqan3::field::cigar` and store it
 into a `std::vector<seqan3::cigar>`:
 
-\snippet doc/tutorial/alignment_file/alignment_file_read_cigar.cpp code
+\snippet doc/tutorial/sam_file/sam_file_read_cigar.cpp code
 
 ## Reading the CIGAR information into an actual alignment
 
 In SeqAn, the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you. You can access it by querying `seqan3::field::alignment` from the record:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp alignments_without_ref
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp alignments_without_ref
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
 
 In the example above, you can only safely access the aligned read.
 
@@ -212,20 +212,20 @@ Although the SAM format does not handle reference sequence information,
 you can provide these information to the seqan3::alignment_file_input which automatically fills the alignment object.
 You can pass reference ids and reference sequences as additional constructor parameters:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp alignments_with_ref
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp alignments_with_ref
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
 Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp ref_file
+\snippet doc/tutorial/sam_file/sam_file_solution2.cpp ref_file
 
 Then read in the following SAM file while providing the reference sequence information.
 Only read in the id, reference id, mapping quality, and alignment.
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp sam_file
+\snippet doc/tutorial/sam_file/sam_file_solution2.cpp sam_file
 
 With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
@@ -248,7 +248,7 @@ r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the refere
 
 \solution
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp solution
+\snippet doc/tutorial/sam_file/sam_file_solution2.cpp solution
 
 \endsolution
 
@@ -264,9 +264,9 @@ For this purpose, you can also select specific fields by giving an additional se
 \attention The **order** of the field tags in your seqan3::fields object will determine
            the order of values stored in the record type!
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp writing
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp writing
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
 
 Note that this only works because in the SAM format **all fields are optional**.
 So if we provide less fields when writing, default values are printed.
@@ -293,6 +293,6 @@ read2   0       *       0       0       *       *       0       0       AGAAAGAG
 \endassignment
 \solution
 
-\include doc/tutorial/alignment_file/alignment_file_solution3.cpp
+\include doc/tutorial/sam_file/sam_file_solution3.cpp
 
 \endsolution

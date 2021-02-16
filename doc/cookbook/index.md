@@ -135,7 +135,7 @@ To search for either 1 insertion or 1 deletion you can use the seqan3::search_cf
 In SeqAn, the conversion from a CIGAR string to an alignment (two aligned_sequences) is done automatically for you.
 You can access it by querying seqan3::field::alignment from the record:
 
-\snippet doc/tutorial/alignment_file/alignment_file_snippets.cpp alignments_without_ref
+\snippet doc/tutorial/sam_file/sam_file_snippets.cpp alignments_without_ref
 
 # Combining sequence and alignment files
 
@@ -145,7 +145,7 @@ This recipe can be used to:
 3. For the resulting alignments, print which read was mapped against with reference id and the number of seqan3::gap's
    involved in the alignment (either in aligned reference or in read sequence).
 
-\snippet doc/tutorial/alignment_file/alignment_file_solution2.cpp solution
+\snippet doc/tutorial/sam_file/sam_file_solution2.cpp solution
 
 # Map reads ans write output to SAM file
 For a full recipe on creating your own readmapper, see the very end of the tutorial \ref tutorial_read_mapper.
