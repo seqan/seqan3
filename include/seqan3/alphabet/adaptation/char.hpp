@@ -46,6 +46,8 @@ namespace seqan3::custom
 /*!\brief Alphabet specific customisations for builtin char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
  * \ingroup adaptation
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename char_type>
 //!\cond
@@ -53,13 +55,18 @@ template <typename char_type>
 //!\endcond
 struct alphabet<char_type>
 {
-    //!\brief The number of values the char type can take (e.g. 256 for `char`).
+    /*!\brief The number of values the char type can take (e.g. 256 for `char`).
+     *
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr auto alphabet_size =
         detail::min_viable_uint_t<detail::size_in_values_v<char_type>>{detail::size_in_values_v<char_type>};
 
     /*!\brief Converting char to char is no-op (it will just return the value you pass in).
      * \param[in] chr The alphabet letter that you wish to convert to char (no-op).
      * \returns `chr`.
+     *
+     * \stableapi{Since version 3.1.}
      */
     static constexpr char_type to_char(char_type const chr) noexcept
     {
@@ -69,6 +76,8 @@ struct alphabet<char_type>
     /*!\brief Convert char to rank by casting to an unsigned integral type of same size.
      * \param[in] chr The alphabet letter that you wish to convert to rank.
      * \returns The letter's value in the alphabet's rank type (usually a `uint*_t`).
+     *
+     * \stableapi{Since version 3.1.}
      */
     static constexpr auto to_rank(char_type const chr) noexcept
     {
@@ -79,6 +88,8 @@ struct alphabet<char_type>
      * \param[in] chr2 The `char` value you wish to assign.
      * \param[in,out] chr The alphabet letter that you wish to assign to.
      * \returns A reference to the alphabet letter you passed in.
+     *
+     * \stableapi{Since version 3.1.}
      */
     static constexpr char_type & assign_char_to(char_type const chr2, char_type & chr) noexcept
     {
@@ -89,6 +100,8 @@ struct alphabet<char_type>
      * \param[in] rank The `rank` value you wish to assign.
      * \param[in,out] chr The alphabet letter that you wish to assign to.
      * \returns A reference to the alphabet letter you passed in.
+     *
+     * \stableapi{Since version 3.1.}
      */
     static constexpr char_type & assign_rank_to(decltype(alphabet::to_rank(char_type{})) const rank,
                                                 char_type & chr) noexcept

@@ -48,6 +48,7 @@ namespace seqan3
  * This creates an alphabet called `ab` which has size two and the two letters 'A' and 'B':
  * \include test/snippet/alphabet/detail/alphabet_base.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, size_t size, typename char_t = char>
 class alphabet_base
@@ -58,9 +59,18 @@ protected:
     /*!\name Member types
      * \{
      */
-    //!\brief The char representation; conditional needed to make semi alphabet definitions legal.
+    /*!\brief The char representation; conditional needed to make semi alphabet definitions legal.
+     * \details We need a return type for seqan3::alphabet_base::to_char and seqan3::alphabet_base::assign_char other
+     *          than void to make these in-class definitions valid when `char_t` is void.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     using char_type = std::conditional_t<std::same_as<char_t, void>, char, char_t>;
-    //!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+
+    /*!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+     *
+     * \stableapi{Since version 3.1.}
+     */
     using rank_type = detail::min_viable_uint_t<size - 1>;
     //!\}
 
@@ -92,6 +102,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr char_type to_char() const noexcept
     //!\cond
@@ -114,6 +126,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr rank_type to_rank() const noexcept
     {
@@ -138,6 +152,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr derived_type & assign_char(char_type const c) noexcept
     //!\cond
@@ -163,6 +179,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr derived_type & assign_rank(rank_type const c) noexcept
     {
@@ -172,43 +190,64 @@ public:
     }
     //!\}
 
-    //!\brief The size of the alphabet, i.e. the number of different values it can take.
+    /*!\brief The size of the alphabet, i.e. the number of different values it can take.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     static detail::min_viable_uint_t<size> constexpr alphabet_size = size;
 
     //!\name Comparison operators
     //!\{
 
-    //!\brief Checks whether the letters `lhs` and `rhs` are equal.
+    /*!\brief Checks whether the letters `lhs` and `rhs` are equal.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator==(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) == seqan3::to_rank(rhs);
     }
 
-    //!\brief Checks whether the letters `lhs` and `rhs` are unequal.
+    /*!\brief Checks whether the letters `lhs` and `rhs` are unequal.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator!=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) != seqan3::to_rank(rhs);
     }
 
-    //!\brief Checks whether the letter `lhs` is smaller than `rhs`.
+    /*!\brief Checks whether the letter `lhs` is smaller than `rhs`.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator<(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) < seqan3::to_rank(rhs);
     }
 
-    //!\brief Checks whether the letter `lhs` is greater than `rhs`.
+    /*!\brief Checks whether the letter `lhs` is greater than `rhs`.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator>(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) > seqan3::to_rank(rhs);
     }
 
-    //!\brief Checks whether the letter `lhs` is smaller than or equal to `rhs`.
+    /*!\brief Checks whether the letter `lhs` is smaller than or equal to `rhs`.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator<=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) <= seqan3::to_rank(rhs);
     }
 
-    //!\brief Checks whether the letter `lhs` is bigger than or equal to `rhs`.
+    /*!\brief Checks whether the letter `lhs` is bigger than or equal to `rhs`.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     friend constexpr bool operator>=(derived_type const lhs, derived_type const rhs) noexcept
     {
         return seqan3::to_rank(lhs) >= seqan3::to_rank(rhs);
