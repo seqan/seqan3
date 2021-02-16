@@ -1,23 +1,19 @@
-#include <seqan3/std/filesystem>
-#include <fstream>
-
-#include <seqan3/core/debug_stream.hpp>
-
-struct write_file_dummy_struct
+#include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
+create_temporary_snippet_file reference_fasta
 {
-    std::filesystem::path const tmp_path = std::filesystem::temp_directory_path();
-
-    write_file_dummy_struct()
-    {
-
-auto fasta_file_raw = R"//![ref_file](
+    "reference.fasta",
+R"//![ref_file](
 >chr1
 ACAGCAGGCATCTATCGGCGGATCGATCAGGCAGGCAGCTACTGG
 >chr2
 ACAGCAGGCATCTATCGGCGGATCGATCAGGCAGGCAGCTACTGTAATGGCATCAAAATCGGCATG
-)//![ref_file]";
+)//![ref_file]"
+}; // std::filesystem::current_path() / "reference.fasta" will be deleted after the execution
 
-auto file_raw = R"//![sam_file](
+create_temporary_snippet_file mapping_sam
+{
+    "mapping.sam",
+R"//![sam_file](
 @HD	VN:1.6	SO:coordinate
 @SQ	SN:chr1	LN:45
 @SQ	SN:chr2	LN:66
@@ -25,38 +21,11 @@ r001	99	chr1	7	60	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*
 r003	0	chr1	9	60	5S6M	*	0	0	GCCTAAGCTAA	*
 r004	0	chr2	16	60	6M14N5M	*	0	0	ATAGCTTCAGC	*
 r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
-)//![sam_file]";
-
-        std::ofstream file{tmp_path/"mapping.sam"};
-        std::string str{file_raw};
-        file << str.substr(1); // skip first newline
-
-        std::ofstream reffile{tmp_path/"reference.fasta"};
-        std::string fasta_file_rawstr{fasta_file_raw};
-        reffile << fasta_file_rawstr.substr(1); // skip first newline
-    }
-
-    ~write_file_dummy_struct()
-    {
-        std::error_code ec{};
-        std::filesystem::path file_path{};
-
-        file_path = tmp_path/"mapping.sam";
-        std::filesystem::remove(file_path, ec);
-        if (ec)
-            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
-
-        file_path = tmp_path/"reference.fasta";
-        std::filesystem::remove(file_path, ec);
-        if (ec)
-            seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
-
-    }
-};
-
-write_file_dummy_struct go{};
+)//![sam_file]"
+}; // std::filesystem::current_path() / "mapping.sam" will be deleted after the execution
 
 //![solution]
+#include <seqan3/std/algorithm> // std::ranges::count
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 #include <string>
@@ -71,44 +40,41 @@ write_file_dummy_struct go{};
 
 int main()
 {
-    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
+    std::filesystem::path current_path = std::filesystem::current_path();
 
     // read in reference information
-    seqan3::sequence_file_input reference_file{tmp_dir/"reference.fasta"};
-    std::vector<std::string> ref_ids{};
-    std::vector<seqan3::dna5_vector> ref_seqs{};
+    seqan3::sequence_file_input reference_file{current_path / "reference.fasta"};
+
+    std::vector<std::string> reference_ids{};
+    std::vector<seqan3::dna5_vector> reference_sequences{};
 
     for (auto && record : reference_file)
     {
-        ref_ids.push_back(std::move(record.id()));
-        ref_seqs.push_back(std::move(record.sequence()));
+        reference_ids.push_back(std::move(record.id()));
+        reference_sequences.push_back(std::move(record.sequence()));
     }
 
-    using field_type = seqan3::fields<seqan3::field::id,
-                                      seqan3::field::ref_id,
-                                      seqan3::field::mapq,
-                                      seqan3::field::alignment>;
+    // filter out alignments
+    seqan3::sam_file_input mapping_file{current_path / "mapping.sam", reference_ids, reference_sequences};
 
-    seqan3::sam_file_input mapping_file{tmp_dir/"mapping.sam", ref_ids, ref_seqs, field_type{}};
+    auto mapq_filter = std::views::filter([] (auto & record) { return record.mapping_quality() >= 30; });
 
-    auto mapq_filter = std::views::filter([] (auto & rec) { return rec.mapping_quality() >= 30; });
-
-    for (auto & [id, ref_id, mapq, alignment] : mapping_file | mapq_filter)
+    for (auto & record : mapping_file | mapq_filter)
     {
-        using seqan3::get;
-        size_t sum_ref{};
-        for (auto const & char_ref : get<0>(alignment))
-            if (char_ref == seqan3::gap{})
-                ++sum_ref;
+        using std::get;
 
-        size_t sum_read{};
-        for (auto const & char_read : get<1>(alignment))
-            if (char_read == seqan3::gap{})
-                ++sum_read;
+        // as loop
+        size_t sum_reference{};
+        for (auto const & char_reference : get<0>(record.alignment()))
+            if (char_reference == seqan3::gap{})
+                ++sum_reference;
 
-        seqan3::debug_stream << id << " mapped against " << ref_id << " with "
+        // or via std::ranges::count
+        size_t sum_read = std::ranges::count(get<1>(record.alignment()), seqan3::gap{});
+
+        seqan3::debug_stream << record.id() << " mapped against " << record.reference_id() << " with "
                              << sum_read << " gaps in the read sequence and "
-                             << sum_ref  << " gaps in the reference sequence.\n";
+                             << sum_reference  << " gaps in the reference sequence.\n";
     }
 }
 //![solution]
