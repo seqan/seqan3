@@ -95,8 +95,8 @@ namespace seqan3
  *        the value_type must also model std::ranges::forward_range, and the value type of the value type
  *        must model seqan3::alphabet (e.g. std::vector<std::vector<dna4>>).
  *
- * \attention This type is the first template parameter of the alignment_file_default_traits and should not be manually
- *            configured in order to allow for automatic type deduction from reference information input on
+ * \attention This type is the first template parameter of seqan3::sam_file_input_default_traits and should not be
+ *            manually configured in order to allow for automatic type deduction from reference information input on
  *            construction.
  */
 /*!\typedef using ref_ids
@@ -104,8 +104,8 @@ namespace seqan3
  *        the value_type must also model std::ranges::forward_range, and the value type of the value type
  *        must model seqan3::alphabet (e.g. std::vector<string>).
  *
- * \attention This type is the second template parameter of the alignment_file_default_traits and should not be manually
- *            configured in order to allow for automatic type deduction from reference information input on
+ * \attention This type is the second template parameter of seqan3::sam_file_input_default_traits and should not be
+ *            manually configured in order to allow for automatic type deduction from reference information input on
  *            construction.
  */
 //!\}
