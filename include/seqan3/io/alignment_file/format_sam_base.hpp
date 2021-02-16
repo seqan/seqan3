@@ -126,13 +126,13 @@ protected:
 
     template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
     void read_header(stream_view_type && stream_view,
-                     alignment_file_header<ref_ids_type> & hdr,
+                     sam_file_header<ref_ids_type> & hdr,
                      ref_seqs_type & /*ref_id_to_pos_map*/);
 
     template <typename stream_t, typename ref_ids_type>
     void write_header(stream_t & stream,
                       alignment_file_output_options const & options,
-                      alignment_file_header<ref_ids_type> & header);
+                      sam_file_header<ref_ids_type> & header);
 };
 
 /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
@@ -455,7 +455,7 @@ inline void format_sam_base::read_field(stream_view_type && stream_view, std::op
  */
 template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
 inline void format_sam_base::read_header(stream_view_type && stream_view,
-                                         alignment_file_header<ref_ids_type> & hdr,
+                                         sam_file_header<ref_ids_type> & hdr,
                                          ref_seqs_type & /*ref_id_to_pos_map*/)
 {
     auto it = std::ranges::begin(stream_view);
@@ -569,7 +569,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 
             case 'P': /* PG (program) tag */
             {
-                typename alignment_file_header<ref_ids_type>::program_info_t tmp{};
+                typename sam_file_header<ref_ids_type>::program_info_t tmp{};
 
                 parse_tag_value(tmp.id);                                // read required ID tag
 
@@ -650,7 +650,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 template <typename stream_t, typename ref_ids_type>
 inline void format_sam_base::write_header(stream_t & stream,
                                           alignment_file_output_options const & options,
-                                          alignment_file_header<ref_ids_type> & header)
+                                          sam_file_header<ref_ids_type> & header)
 {
     // -----------------------------------------------------------------
     // Check Header

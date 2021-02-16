@@ -49,7 +49,7 @@ struct sam_record : public ::testing::Test
                                     std::string, // seqan3::field::ref_id,
                                     std::optional<int32_t>, // seqan3::field::ref_offset,
                                     // seqan3::field::header_ptr,
-                                    seqan3::alignment_file_header<std::vector<std::string>> *,
+                                    seqan3::sam_file_header<std::vector<std::string>> *,
                                     seqan3::sam_flag, // seqan3::field::flag,
                                     mate_t, // seqan3::field::mate,
                                     uint8_t, // seqan3::field::mapq,
@@ -107,7 +107,7 @@ TEST_F(sam_record, definition_tuple_traits)
                                  alignment_t,
                                  std::string,
                                  std::optional<int32_t>,
-                                 seqan3::alignment_file_header<std::vector<std::string>> *,
+                                 seqan3::sam_file_header<std::vector<std::string>> *,
                                  seqan3::sam_flag,
                                  mate_t,
                                  uint8_t,
@@ -122,7 +122,7 @@ TEST_F(sam_record, definition_tuple_traits)
     EXPECT_SAME_TYPE(alignment_t, (std::tuple_element_t<4, record_type>));
     EXPECT_SAME_TYPE(std::string, (std::tuple_element_t<5, record_type>));
     EXPECT_SAME_TYPE(std::optional<int32_t>, (std::tuple_element_t<6, record_type>));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> *, (std::tuple_element_t<7, record_type>));
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *, (std::tuple_element_t<7, record_type>));
     EXPECT_SAME_TYPE(seqan3::sam_flag, (std::tuple_element_t<8, record_type>));
     EXPECT_SAME_TYPE(mate_t, (std::tuple_element_t<9, record_type>));
     EXPECT_SAME_TYPE(uint8_t, (std::tuple_element_t<10, record_type>));
@@ -171,7 +171,7 @@ TEST_F(sam_record, get_by_type)
     EXPECT_EQ(std::get<alignment_t>(r), alignment_t{});
     // EXPECT_EQ(std::get<std::string>(r), "ref"); // ambiguous
     EXPECT_EQ(std::get<std::optional<int32_t>>(r), 0);
-    EXPECT_EQ(std::get<seqan3::alignment_file_header<std::vector<std::string>> *>(r), nullptr);
+    EXPECT_EQ(std::get<seqan3::sam_file_header<std::vector<std::string>> *>(r), nullptr);
     EXPECT_EQ(std::get<seqan3::sam_flag>(r), seqan3::sam_flag{41u});
     EXPECT_EQ(std::get<mate_t>(r), (mate_t{0, 9, 300}));
     EXPECT_EQ(std::get<uint8_t>(r), 61u);
@@ -236,7 +236,7 @@ TEST_F(sam_record, get_types)
     EXPECT_SAME_TYPE(alignment_t &, decltype(seqan3::get<seqan3::field::alignment>(r)));
     EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::ref_id>(r)));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(seqan3::get<seqan3::field::ref_offset>(r)));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * &,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &,
                      decltype(seqan3::get<seqan3::field::header_ptr>(r)));
     EXPECT_SAME_TYPE(seqan3::sam_flag &, decltype(seqan3::get<seqan3::field::flag>(r)));
     EXPECT_SAME_TYPE(mate_t &, decltype(seqan3::get<seqan3::field::mate>(r)));
@@ -253,7 +253,7 @@ TEST_F(sam_record, get_types)
     EXPECT_SAME_TYPE(std::string const &, decltype(seqan3::get<seqan3::field::ref_id>(std::as_const(r))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &,
                      decltype(seqan3::get<seqan3::field::ref_offset>(std::as_const(r))));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * const &,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &,
                      decltype(seqan3::get<seqan3::field::header_ptr>(std::as_const(r))));
     EXPECT_SAME_TYPE(seqan3::sam_flag const &, decltype(seqan3::get<seqan3::field::flag>(std::as_const(r))));
     EXPECT_SAME_TYPE(mate_t const &, decltype(seqan3::get<seqan3::field::mate>(std::as_const(r))));
@@ -268,7 +268,7 @@ TEST_F(sam_record, get_types)
     EXPECT_SAME_TYPE(alignment_t &&, decltype(seqan3::get<seqan3::field::alignment>(std::move(r))));
     EXPECT_SAME_TYPE(std::string &&, decltype(seqan3::get<seqan3::field::ref_id>(std::move(r))));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(seqan3::get<seqan3::field::ref_offset>(std::move(r))));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * &&,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &&,
                      decltype(seqan3::get<seqan3::field::header_ptr>(std::move(r))));
     EXPECT_SAME_TYPE(seqan3::sam_flag &&, decltype(seqan3::get<seqan3::field::flag>(std::move(r))));
     EXPECT_SAME_TYPE(mate_t &&, decltype(seqan3::get<seqan3::field::mate>(std::move(r))));
@@ -287,7 +287,7 @@ TEST_F(sam_record, get_types)
     EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::ref_id>(std::move(std::as_const(r)))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &&,
                      decltype(seqan3::get<seqan3::field::ref_offset>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * const &&,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &&,
                      decltype(seqan3::get<seqan3::field::header_ptr>(std::move(std::as_const(r)))));
     EXPECT_SAME_TYPE(seqan3::sam_flag const &&,
                      decltype(seqan3::get<seqan3::field::flag>(std::move(std::as_const(r)))));
@@ -310,7 +310,7 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(alignment_t &, decltype(r.alignment()));
     EXPECT_SAME_TYPE(std::string &, decltype(r.reference_id()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_position()));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * &, decltype(r.header_ptr()));
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &, decltype(r.header_ptr()));
     EXPECT_SAME_TYPE(seqan3::sam_flag &, decltype(r.flag()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.mate_reference_id()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.mate_position()));
@@ -326,7 +326,7 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(alignment_t const &, decltype(std::as_const(r.alignment())));
     EXPECT_SAME_TYPE(std::string const &, decltype(std::as_const(r.reference_id())));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.reference_position())));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * const &,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &,
                      decltype(std::as_const(r.header_ptr())));
     EXPECT_SAME_TYPE(seqan3::sam_flag const &, decltype(std::as_const(r.flag())));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &, decltype(std::as_const(r.mate_reference_id())));
@@ -343,7 +343,7 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(alignment_t &&, decltype(std::move(r.alignment())));
     EXPECT_SAME_TYPE(std::string &&, decltype(std::move(r.reference_id())));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.reference_position())));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * &&, decltype(std::move(r.header_ptr())));
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &&, decltype(std::move(r.header_ptr())));
     EXPECT_SAME_TYPE(seqan3::sam_flag &&, decltype(std::move(r.flag())));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.mate_reference_id())));
     EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(std::move(r.mate_position())));
@@ -359,7 +359,7 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(alignment_t const &&, decltype(std::move(std::as_const(r.alignment()))));
     EXPECT_SAME_TYPE(std::string const &&, decltype(std::move(std::as_const(r.reference_id()))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.reference_position()))));
-    EXPECT_SAME_TYPE(seqan3::alignment_file_header<std::vector<std::string>> * const &&,
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &&,
                      decltype(std::move(std::as_const(r.header_ptr()))));
     EXPECT_SAME_TYPE(seqan3::sam_flag const &&, decltype(std::move(std::as_const(r.flag()))));
     EXPECT_SAME_TYPE(std::optional<int32_t> const &&, decltype(std::move(std::as_const(r.mate_reference_id()))));

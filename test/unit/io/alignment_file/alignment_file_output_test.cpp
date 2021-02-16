@@ -384,7 +384,7 @@ TEST(row, print_header_in_record)
     std::vector<std::string> const ref_ids{"ref1", "ref2"};
     std::vector<int32_t>     const ref_len{234511, 243243};
 
-    seqan3::alignment_file_header header{ref_ids};
+    seqan3::sam_file_header header{ref_ids};
 
     header.ref_id_info.push_back({ref_len[0], ""});
     header.ref_id_info.push_back({ref_len[1], ""});

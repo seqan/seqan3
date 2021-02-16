@@ -502,7 +502,7 @@ TEST_F(bam_format, too_long_cigar_string_write)
 
     std::ostringstream os{};
 
-    seqan3::alignment_file_header header{std::vector<std::string>{this->ref_id}};
+    seqan3::sam_file_header header{std::vector<std::string>{this->ref_id}};
     header.ref_id_info.push_back({ref.size(), ""});
     header.ref_dict[this->ref_id] = 0;
 

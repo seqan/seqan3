@@ -81,7 +81,7 @@ enum class field
     ref_id,         //!< The identifier of the (reference) sequence that seqan3::field::seq was aligned to.
     ref_seq,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
     ref_offset,     //!< Sequence (seqan3::field::ref_seq) relative start position (0-based), unsigned value.
-    header_ptr,     //!< A pointer to the seqan3::alignment_file_header object storing header information.
+    header_ptr,     //!< A pointer to the seqan3::sam_file_header object storing header information.
 
     flag,           //!< The alignment flag (bit information), `uint16_t` value.
     mate,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.

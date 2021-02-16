@@ -77,7 +77,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
               std::ifstream                                                       & stream,
               alignment_file_input_options<dna5>                                  & options,
               std::vector<dna5_vector>                                            & ref_sequences,
-              alignment_file_header<>                                             & header,
+              sam_file_header<>                                                   & header,
               dna5_vector                                                         & seq,
               std::vector<phred42>                                                & qual,
               std::string                                                         & id,
@@ -186,7 +186,7 @@ SEQAN3_CONCEPT alignment_file_input_format =
  * \param[in,out] stream      The input stream to read from.
  * \param[in]     options     File specific options passed to the format.
  * \param[out]    ref_seqs    The reference sequences to the corresponding alignments.
- * \param[out]    header      A pointer to the seqan3::alignment_file_header object.
+ * \param[out]    header      A pointer to the seqan3::sam_file_header object.
  * \param[out]    seq         The buffer for seqan3::field::seq input.
  * \param[out]    qual        The buffer for seqan3::field::qual input.
  * \param[out]    id          The buffer for seqan3::field::id input.
