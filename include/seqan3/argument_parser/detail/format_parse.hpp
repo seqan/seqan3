@@ -339,7 +339,7 @@ private:
 
     /*!\brief Parses the given option value and appends it to the target container.
      * \tparam container_option_t Must model the seqan3::sequence_container and
-     *                            its value_type must model the seqan3::input_stream_over
+     *                            its value_type must model seqan3::input_stream_over or seqan3::named_enumeration
      *
      * \param[out] value The container that stores the parsed value.
      * \param[in] in The input argument to be parsed.
@@ -347,7 +347,8 @@ private:
      */
     template <sequence_container container_option_t>
     //!\cond
-        requires input_stream_over<std::istringstream, typename container_option_t::value_type>
+        requires input_stream_over<std::istringstream, typename container_option_t::value_type> ||
+                 named_enumeration<typename container_option_t::value_type>
     //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {

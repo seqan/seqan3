@@ -619,6 +619,18 @@ TEST(parse_type_test, parse_success_enum_option)
     }
 
     {
+        std::vector<foo::bar> option_value{};
+
+        const char * argv[] = {"./argument_parser_test", "-e", "two", "-e", "one", "-e", "three"};
+        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
+        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_value == (std::vector<foo::bar>{foo::bar::two, foo::bar::one, foo::bar::three}));
+    }
+
+    {
         Other::bar option_value{};
 
         const char * argv[] = {"./argument_parser_test", "-e", "two"};
