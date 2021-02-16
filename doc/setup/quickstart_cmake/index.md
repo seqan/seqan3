@@ -102,7 +102,7 @@ To test whether everything works, we will now compile and run a small example.
 
 First we create the file `hello_world.cpp` in the `source` directory with the following contents:
 
-\include hello_world.cpp
+\include doc/setup/quickstart_cmake/hello_world.cpp
 
 To compile it we first create a `CMakeLists.txt` file in the `source` directory:
 
