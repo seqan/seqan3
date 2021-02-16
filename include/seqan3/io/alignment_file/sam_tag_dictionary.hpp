@@ -53,7 +53,7 @@ namespace seqan3
  * which delegate to its unique id.
  * e.g.
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag
+ * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag
  *
  * The purpose of those tags is to fill or query the seqan3::sam_tag_dictionary
  * for a specific key (tag_id) and retrieve the corresponding value.
@@ -100,7 +100,7 @@ constexpr uint16_t operator""_tag()
  * recommend to use X?, Y? or Z?) you need to overload the seqan3::sam_tag_type
  * struct in the following way: (take tag "XX" as an example)
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp type_overload
+ * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp type_overload
  *
  * Everything else, like the get and set functions and correct SAM output
  * (XX:i:? in this case) is handled by the seqan3::sam_tag_dictionary.
@@ -255,7 +255,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * which delegates to its unique id (type uint16_t).
  * Example:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag
+ * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag
  *
  * The purpose of those tags is to fill or query the seqan3::sam_tag_dictionary
  * for a specific key (tag_id) and retrieve the corresponding value.
@@ -271,11 +271,11 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * are pre-defined by a type trait called seqan3::sam_tag_type. You can access
  * the type via:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag_type_t
+ * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag_type_t
  *
  * which is the short cut for:
  *
- * \snippet test/snippet/io/alignment_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag_type
+ * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag_type
  *
  * The following types are allowed by the
  * [SAM specifications](https://samtools.github.io/hts-specs/SAMtags.pdf):
@@ -301,7 +301,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Example:
  *
- * \include test/snippet/io/alignment_file/sam_tag_dictionary/general_usage.cpp
+ * \include test/snippet/io/sam_file/sam_tag_dictionary/general_usage.cpp
  *
  * \attention You can get any SAM_tag out of the dictionary, even if the tag is
  *            user defined, but note that for unknown tags the return type is an
@@ -311,7 +311,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  *
  * Unknown Tag Example:
  *
- * \include test/snippet/io/alignment_file/sam_tag_dictionary/unknown_tag.cpp
+ * \include test/snippet/io/sam_file/sam_tag_dictionary/unknown_tag.cpp
  *
  * As mentioned before you can either overload the type trait seqan3::sam_tag_type
  * for the tag "XZ" or learn more about an std::variant at

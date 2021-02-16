@@ -130,7 +130,7 @@ template <typename reference_char_type, typename query_char_type>
  * the following cigar vector: "[('M',4),('I',2),('M',5),('D',2),('M',1)]".
  * The extended cigar string would look like this: "[('=',3)('X',1)('I',2)('=',3)('X',1)('=',1)('D',2)('=',1)]".
  *
- * \include test/snippet/io/alignment_file/get_cigar_vector.cpp
+ * \include test/snippet/io/sam_file/get_cigar_vector.cpp
  *
  * \sa seqan3::aligned_sequence
  */
