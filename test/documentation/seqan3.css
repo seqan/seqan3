@@ -268,6 +268,7 @@ div.solution {
     content: " Class";
     color: grey;
 }
+
 .mlabel.experimental-api
 {
     background-color: orange;
@@ -333,4 +334,25 @@ dl.no-api {
     border-color: #FF0000;
     background-color: #FFF1F1;
     /* border-radius: 4px; */
+}
+
+.mlabel.experimental-api.header
+{
+    float:right;
+    font-size: 12px;
+    margin-top: -3px;
+}
+
+.mlabel.stable-api.header
+{
+    float:right;
+    font-size: 12px;
+    margin-top: -3px;
+}
+
+.mlabel.no-api.header
+{
+    float:right;
+    font-size: 12px;
+    margin-top: -3px;
 }
