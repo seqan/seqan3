@@ -42,7 +42,7 @@ struct view_equality_fn
 };
 
 /*!\brief Compares two seqan3::aligned_sequence values and returns their cigar operation.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \tparam reference_char_type Must be equality comparable to seqan3::gap.
  * \tparam query_char_type     Must be equality comparable to seqan3::gap.
  * \param  reference_char      The aligned character of the reference to compare.
@@ -99,7 +99,7 @@ template <typename reference_char_type, typename query_char_type>
 
 /*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment represented by two
  *        seqan3::aligned_sequence's.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
  * \param  alignment       The alignment, represented by a pair of aligned sequences,
@@ -191,7 +191,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 }
 
 /*!\brief Transforms a vector of cigar elements into a string representation.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \param  cigar_vector The std::vector of seqan3::cigar elements to be transformed into a std::string.
  * \returns The cigar string (std::string).
  */
@@ -203,7 +203,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 }
 
 /*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \tparam alignment_type  Must model seqan3::detail::pairwise_alignment.
  * \param  alignment       The alignment, represented by a seqan3::pair_like of seqan3::aligned_sequence's,
@@ -245,7 +245,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 }
 
 /*!\brief Transforms an alignment represented by two seqan3::aligned_sequence's into the corresponding cigar string.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \tparam ref_seq_type    Must model seqan3::aligned_sequence.
  * \tparam query_seq_type  Must model seqan3::aligned_sequence.
@@ -288,7 +288,7 @@ template <seqan3::aligned_sequence ref_seq_type, seqan3::aligned_sequence query_
 }
 
 /*!\brief Transforms a std::vector of operation-count pairs (representing the cigar string).
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \tparam alignment_type The type of alignment; must model seqan3::detail::writable_pairwise_alignment.
  *

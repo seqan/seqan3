@@ -45,7 +45,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing alignment files, e.g. SAM, BAL, BLAST, ...
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
@@ -53,7 +53,7 @@ namespace seqan3
  *
  * \details
  *
- * \copydetails alignment_file
+ * \copydetails io_sam_file
  *
  * The member functions take any and either of these fields.
  *

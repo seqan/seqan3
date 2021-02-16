@@ -23,7 +23,7 @@ struct ref_info_not_given
 {};
 
 /*!\brief An enum flag that describes the properties of an aligned read (given as a SAM record).
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \implements seqan3::enum_bitwise_operators
  * \sa seqan3::enum_bitwise_operators enables combining enum values.
  *
