@@ -50,6 +50,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Search
 
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
+* The `seqan3::interleaved_bloom_filter` supports counting occurrences of a range of values
+  ([\#2373](https://github.com/seqan/seqan3/pull/2373)).
 
 ## Notable Bug-fixes
 
