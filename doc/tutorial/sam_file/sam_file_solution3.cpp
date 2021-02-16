@@ -11,7 +11,7 @@ int main()
                                                    "AGAAAGAGCGAGGCTATTTTAGCGAGTTA"_dna4};
 
     auto tmp_dir = std::filesystem::temp_directory_path();
-    seqan3::alignment_file_output fout{tmp_dir/"my.sam", seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
+    seqan3::sam_file_output fout{tmp_dir/"my.sam", seqan3::fields<seqan3::field::id, seqan3::field::seq>{}};
 
     for (size_t i = 0; i < ids.size(); ++i)
     {

@@ -7,7 +7,7 @@
 
 int main()
 {
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     std::string id;
     seqan3::dna5_vector seq;

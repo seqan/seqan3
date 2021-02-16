@@ -48,7 +48,7 @@ int main()
 //![writing]
     auto filename = std::filesystem::temp_directory_path()/"out.sam";
 
-    seqan3::alignment_file_output fout{filename, seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
+    seqan3::sam_file_output fout{filename, seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
 
     size_t mymapq{0};
     seqan3::sam_flag flag{seqan3::sam_flag::unmapped};

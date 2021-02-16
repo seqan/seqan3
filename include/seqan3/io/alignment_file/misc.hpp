@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides helper data structures for the seqan3::alignment_file_output.
+ * \brief Provides helper data structures for the seqan3::sam_file_output.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 

@@ -219,7 +219,7 @@ protected:
               typename e_value_type,
               typename bit_score_type>
     void write_alignment_record(stream_type & stream,
-                                alignment_file_output_options const & options,
+                                sam_file_output_options const & options,
                                 header_type && header,
                                 seq_type && seq,
                                 qual_type && qual,
@@ -339,7 +339,7 @@ inline void format_sam::write_sequence_record(stream_type & stream,
     using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
     using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
-    alignment_file_output_options output_options;
+    sam_file_output_options output_options;
 
     write_alignment_record(stream,
                            output_options,
@@ -627,7 +627,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
         std::swap(cigar_vector, tmp_cigar_vector);
 }
 
-//!\copydoc alignment_file_output_format::write_alignment_record
+//!\copydoc sam_file_output_format::write_alignment_record
 template <typename stream_type,
           typename header_type,
           typename seq_type,
@@ -641,7 +641,7 @@ template <typename stream_type,
           typename e_value_type,
           typename bit_score_type>
 inline void format_sam::write_alignment_record(stream_type & stream,
-                                               alignment_file_output_options const & options,
+                                               sam_file_output_options const & options,
                                                header_type && header,
                                                seq_type && seq,
                                                qual_type && qual,

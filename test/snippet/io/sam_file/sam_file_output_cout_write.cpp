@@ -4,5 +4,5 @@
 
 int main()
 {
-    seqan3::alignment_file_output fout{std::cout, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::cout, seqan3::format_sam{}};
 }

@@ -57,7 +57,7 @@ static std::string create_sam_file_string(size_t const n_queries)
                                           seqan3::field::alignment, seqan3::field::mapq, seqan3::field::qual,
                                           seqan3::field::flag>;
         std::ostringstream stream;
-        seqan3::alignment_file_output sam_out{stream, seqan3::format_sam{}, sam_fields{}};
+        seqan3::sam_file_output sam_out{stream, seqan3::format_sam{}, sam_fields{}};
 
         for (size_t i = 0; i < n_queries; ++i)
         {

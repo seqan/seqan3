@@ -18,7 +18,7 @@ int main()
                                seqan3::format_sam{},
                                seqan3::fields<seqan3::field::ref_offset, seqan3::field::flag>{}};
     // output doesn't have to match the configuration of the input
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     for (auto & r : fin)
         fout.push_back(r); // copy all the records.

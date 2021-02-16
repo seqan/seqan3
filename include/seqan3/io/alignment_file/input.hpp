@@ -486,8 +486,8 @@ public:
      *   14. seqan3::field::evalue
      *   15. seqan3::field::bit_score
      *
-     * There exists one more field for alignment files, the seqan3::field::header_ptr, but this field is mostly used
-     * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access
+     * There exists one more field for SAM files, the seqan3::field::header_ptr, but this field is mostly used
+     * internally. Please see the seqan3::sam_file_output::header member function for details on how to access
      * the seqan3::sam_file_header of the file.)
      */
     using field_ids = fields<field::seq,

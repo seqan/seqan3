@@ -10,7 +10,7 @@ int main()
 {
     using seqan3::operator""_dna5;
 
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     std::vector<std::tuple<seqan3::dna5_vector, std::string>> range
     {
