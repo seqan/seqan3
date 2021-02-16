@@ -9,7 +9,7 @@
 
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include "alignment_file_format_test_template.hpp"
+#include "sam_file_format_test_template.hpp"
 
 template <>
 struct alignment_file_read<seqan3::format_sam> : public alignment_file_data

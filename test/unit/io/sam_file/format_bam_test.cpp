@@ -13,7 +13,7 @@
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/to.hpp>
 
-#include "alignment_file_format_test_template.hpp"
+#include "sam_file_format_test_template.hpp"
 
 template <>
 struct alignment_file_read<seqan3::format_bam> : public alignment_file_data
