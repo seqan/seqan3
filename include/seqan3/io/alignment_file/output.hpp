@@ -69,11 +69,11 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_filename_construction.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_filename_construction.cpp
  *
  * Writing to std::cout:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_cout_write.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_cout_write.cpp
  *
  * Note that this is not the same as writing `alignment_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
@@ -112,7 +112,7 @@ namespace seqan3
  * use that information instead of the template argument**. This is especially handy when reading from one file and
  * writing to another, because you don't have to configure the output file to match the input file, it will just work:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_custom_fields.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_custom_fields.cpp
  *
  * This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
  * output file will have a default value, so unless you specify to read all SAM columns (see seqan3::format_sam)
@@ -122,18 +122,18 @@ namespace seqan3
  *
  * You can write multiple records at once, by assigning to the file:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_write_range.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_write_range.cpp
  *
  * ### File I/O pipelines
  *
  * Record-wise writing in batches also works for writing from input files directly to output files, because input
  * files are also input ranges in SeqAn:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_input_range.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_input_range.cpp
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * \include test/snippet/io/sam_file/alignment_file_output_io_pipeline.cpp
+ * \include test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp
  *
  * ### Formats
  *
@@ -262,11 +262,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_filename_construction.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_filename_construction.cpp
      *
      * Writing with custom selected fields:
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_format_construction.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_format_construction.cpp
      */
     alignment_file_output(std::filesystem::path filename,
                           selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -358,11 +358,11 @@ public:
      *
      * In most cases the template parameters are deduced completely automatically:
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_filename_construction_with_ref_info.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_filename_construction_with_ref_info.cpp
      *
      * Writing with custom selected fields:
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_format_construction.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_format_construction.cpp
      */
     template <typename ref_ids_type_, std::ranges::forward_range ref_lengths_type>
     //!\cond
@@ -604,7 +604,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_write_range.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_write_range.cpp
      */
     template <typename rng_t>
     alignment_file_output & operator=(rng_t && range)
@@ -638,11 +638,11 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_write_range.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_write_range.cpp
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_io_pipeline.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp
      *
      */
     template <typename rng_t>
@@ -685,7 +685,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/io/sam_file/alignment_file_output_set_header.cpp
+     * \include test/snippet/io/sam_file/sam_file_output_set_header.cpp
      *
      * \sa seqan3::alignment_file_header
      */
