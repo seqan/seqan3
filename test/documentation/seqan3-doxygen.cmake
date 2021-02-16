@@ -46,43 +46,28 @@ ExternalProject_Add (
     INSTALL_COMMAND ""
 )
 
-if (SEQAN3_USER_DOC)
-    message (STATUS "Configuring user doc.")
+### TEST HELPER
 
-    set (SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/doc_usr")
-    set (SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_CLONE_DIR}")
-    set (SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "detail seqan3::simd") #/""
-    set (SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "-NDEBUG") #/""
-    set (SEQAN3_DOXYGEN_ENABLED_SECTIONS "") #/"DEV"
-    set (SEQAN3_DOXYGEN_EXTRACT_PRIVATE "NO") #/"YES":
+# doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
+set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS "
+    ${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr;
+    cat \"doxygen.cerr\";
+    test ! -s \"doxygen.cerr\"")
 
-    configure_file (${SEQAN3_DOXYFILE_IN} ${SEQAN3_DOXYGEN_OUTPUT_DIR}/Doxyfile)
+# We search the HTML output to ensure that no `requires` clauses are at wrong places.
+set (SEQAN3_TEST_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
+     "! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
 
-    add_custom_target(doc_usr ALL
-                      COMMAND ${DOXYGEN_EXECUTABLE}
-                      WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-                      DEPENDS download-cppreference-doxygen-web-tag
-                      COMMENT "Generating user API documentation with Doxygen"
-                      VERBATIM)
+
+### install helper
+
+# make sure that prefix path is /usr/local/share/doc/seqan3/
+if (NOT DEFINED CMAKE_SIZEOF_VOID_P)
+    # we need this to suppress GNUInstallDirs AUTHOR_WARNING:
+    #   CMake Warning (dev) at /usr/share/cmake-3.19/Modules/GNUInstallDirs.cmake:223 (message):
+    #     Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+    #     target architecture is known.  Please enable at least one language before
+    #     including GNUInstallDirs.
+    set (CMAKE_SIZEOF_VOID_P 8)
 endif ()
-
-if (SEQAN3_DEV_DOC)
-    message(STATUS "Configuring devel doc.")
-
-    set(SEQAN3_DOXYGEN_OUTPUT_DIR "${PROJECT_BINARY_DIR}/doc_dev")
-    set(SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_CLONE_DIR}")
-    set(SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS "")
-    set(SEQAN3_DOXYGEN_PREDEFINED_NDEBUG "")
-    set(SEQAN3_DOXYGEN_ENABLED_SECTIONS "DEV")
-    set(SEQAN3_DOXYGEN_EXTRACT_PRIVATE "YES")
-
-    configure_file(${SEQAN3_DOXYFILE_IN} ${SEQAN3_DOXYGEN_OUTPUT_DIR}/Doxyfile)
-
-    add_custom_target(doc_dev ALL
-                      COMMAND ${DOXYGEN_EXECUTABLE}
-                      WORKING_DIRECTORY ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-                      DEPENDS download-cppreference-doxygen-web-tag
-                      COMMENT "Generating developer API documentation with Doxygen"
-                      VERBATIM)
-                      message (STATUS "Add devel doc test.")
-endif ()
+include (GNUInstallDirs) # this is needed to prefix the install paths
