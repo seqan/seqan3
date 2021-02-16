@@ -224,7 +224,7 @@ namespace seqan3::detail
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::sam_file_input_format [default is false].
  * \ingroup core
- * \see seqan3::type_list_specialisationOfsam_file_input_formats
+ * \see seqan3::type_list_of_sam_file_input_formats
  */
 template <typename t>
 constexpr bool is_type_list_of_sam_file_input_formats_v = false;
@@ -232,7 +232,7 @@ constexpr bool is_type_list_of_sam_file_input_formats_v = false;
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::sam_file_input_format [overload].
  * \ingroup core
-  * \see seqan3::type_list_specialisationOfsam_file_input_formats
+ * \see seqan3::type_list_of_sam_file_input_formats
  */
 template <typename ...ts>
 constexpr bool is_type_list_of_sam_file_input_formats_v<type_list<ts...>> = (sam_file_input_format<ts> && ...);
@@ -240,7 +240,7 @@ constexpr bool is_type_list_of_sam_file_input_formats_v<type_list<ts...>> = (sam
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
  *        seqan3::sam_file_input_format.
  * \ingroup core
- * \see seqan3::is_type_list_of_alignment_file_formats_v
+ * \see seqan3::is_type_list_of_sam_file_input_formats_v
  */
 template <typename t>
 SEQAN3_CONCEPT type_list_of_sam_file_input_formats = is_type_list_of_sam_file_input_formats_v<t>;
