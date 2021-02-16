@@ -55,7 +55,8 @@ Prerequisites: building the documentation
 Our installation uses GNU standard installation directories provided by cmake
 [GNUInstallDirs](https://cmake.org/cmake/help/v3.19/module/GNUInstallDirs.html#module:GNUInstallDirs).
 
-That means the html documentation will be installed to `<DESTDIR>/<INSTALL_PREFIX>/<INSTALL_DOCDIR>/html/` where `<INSTALL_PREFIX>` is typically `usr/local` and `<INSTALL_DOCDIR>` is `share/doc/seqan3`.
+That means the html documentation will be installed to `<DESTDIR>/<INSTALL_PREFIX>/<INSTALL_DOCDIR>/html/` where 
+`<INSTALL_PREFIX>` is typically `usr/local` and `<INSTALL_DOCDIR>` is `share/doc/seqan3`.
 
 That means our html documentation will be installed to `<DESTDIR>/usr/local/share/doc/seqan3/html`.
 
