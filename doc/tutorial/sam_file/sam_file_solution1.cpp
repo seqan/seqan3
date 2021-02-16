@@ -36,7 +36,7 @@ int main()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
-    seqan3::alignment_file_input fin{tmp_dir/"my.sam", seqan3::fields<seqan3::field::mapq>{}};
+    seqan3::sam_file_input fin{tmp_dir/"my.sam", seqan3::fields<seqan3::field::mapq>{}};
 
     double sum{};
     size_t c{};

@@ -187,7 +187,7 @@ protected:
               typename e_value_type,
               typename bit_score_type>
     void read_alignment_record(stream_type & stream,
-                               alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
                                seq_type & seq,
@@ -295,7 +295,7 @@ inline void format_sam::read_sequence_record(stream_type & stream,
                                              id_type & id,
                                              qual_type & qualities)
 {
-    alignment_file_input_options<seq_legal_alph_type> align_options;
+    sam_file_input_options<seq_legal_alph_type> align_options;
 
     if constexpr (seq_qual_combined)
     {
@@ -361,7 +361,7 @@ inline void format_sam::write_sequence_record(stream_type & stream,
         /*bit_score*/      0);
 }
 
-//!\copydoc alignment_file_input_format::read_alignment_record
+//!\copydoc sam_file_input_format::read_alignment_record
 template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type,
           typename ref_seqs_type,
@@ -382,7 +382,7 @@ template <typename stream_type,     // constraints checked by file
           typename e_value_type,
           typename bit_score_type>
 inline void format_sam::read_alignment_record(stream_type & stream,
-                                              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                                              sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                               ref_seqs_type & ref_seqs,
                                               sam_file_header<ref_ids_type> & header,
                                               seq_type & seq,

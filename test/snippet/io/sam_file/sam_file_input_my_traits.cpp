@@ -5,7 +5,7 @@
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
-struct my_traits : seqan3::alignment_file_input_default_traits<>
+struct my_traits : seqan3::sam_file_input_default_traits<>
 {
     using sequence_alphabet = seqan3::dna4;                        // instead of dna5
 
@@ -24,5 +24,5 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 // ... within main you can then use:
 int main()
 {
-    seqan3::alignment_file_input<my_traits> fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    seqan3::sam_file_input<my_traits> fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 }

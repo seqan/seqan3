@@ -251,7 +251,7 @@ struct bam_format : public alignment_file_data
 TEST_F(bam_format, wrong_magic_bytes)
 {
     std::istringstream stream{std::string{'\x43', '\x41', '\x4D', '\x01' /*CAM\1*/}};
-    seqan3::alignment_file_input fin{stream, seqan3::format_bam{}};
+    seqan3::sam_file_input fin{stream, seqan3::format_bam{}};
     EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
@@ -267,7 +267,7 @@ TEST_F(bam_format, unknown_ref_in_header)
     };
 
     std::istringstream stream{unknown_ref};
-    seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+    seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
     EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
@@ -283,7 +283,7 @@ TEST_F(bam_format, wrong_ref_length_in_header)
     };
 
     std::istringstream stream{wrong_ref_length};
-    seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+    seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
     EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
@@ -307,7 +307,7 @@ TEST_F(bam_format, wrong_order_in_header)
     };
 
     std::istringstream stream{wrong_order};
-    seqan3::alignment_file_input fin{stream, rids, rseqs, seqan3::format_bam{}};
+    seqan3::sam_file_input fin{stream, rids, rseqs, seqan3::format_bam{}};
     EXPECT_THROW(fin.begin(), seqan3::format_error);
 }
 
@@ -331,7 +331,7 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -352,7 +352,7 @@ TEST_F(bam_format, wrong_char_as_tag_identifier)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -377,7 +377,7 @@ TEST_F(bam_format, invalid_cigar_op)
         };
 
         std::istringstream stream{wrong_char_in_tag};
-        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -403,7 +403,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
     {   // successful reading
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        seqan3::alignment_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
+        seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
 
         EXPECT_RANGE_EQ(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin())),
                         std::get<0>(this->alignments[0]));
@@ -421,14 +421,14 @@ TEST_F(bam_format, too_long_cigar_string_read)
     {   // error: sam_tag_dictionary is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment>{}};
         ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 
     {   // error: sequence is not read
         std::istringstream stream{sam_file_with_too_long_cigar_string};
 
-        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment,
+        seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::alignment,
                                                                                       seqan3::field::tags>{}};
         ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
@@ -449,7 +449,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
             '\x00', '\x02', '\x02', '\x03'
         }};
 
-        seqan3::alignment_file_input fin{stream, seqan3::format_bam{}};
+        seqan3::sam_file_input fin{stream, seqan3::format_bam{}};
         ASSERT_THROW(fin.begin(), seqan3::format_error);
     }
 }

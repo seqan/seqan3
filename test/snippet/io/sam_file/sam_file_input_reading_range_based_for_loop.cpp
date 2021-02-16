@@ -16,7 +16,7 @@ int main()
 {
     using seqan3::get;
 
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
     for (auto & rec : fin)
     {

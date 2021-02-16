@@ -26,10 +26,10 @@ int main()
                                           seqan3::field::header_ptr>;
 
                                                                 // The expected format:
-    using alignment_file_input_t = seqan3::alignment_file_input<seqan3::alignment_file_input_default_traits<>,
+    using sam_file_input_t = seqan3::sam_file_input<seqan3::sam_file_input_default_traits<>,
                                                                 default_fields,
                                                                 // Which formats are allowed:
                                                                 seqan3::type_list<seqan3::format_sam>>;
 
-    alignment_file_input_t fin{std::istringstream{input}, seqan3::format_sam{}};
+    sam_file_input_t fin{std::istringstream{input}, seqan3::format_sam{}};
 }

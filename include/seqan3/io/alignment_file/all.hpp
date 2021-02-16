@@ -24,7 +24,7 @@
  *
  * \note For a step-by-step guide take a look at our tutorial: \ref tutorial_alignment_file.
  *
- * \copydetails seqan3::alignment_file_input::field_ids
+ * \copydetails seqan3::sam_file_input::field_ids
  *
  * All of these fields are retrieved by default (and in that order).
  * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::flag) while others are specific to

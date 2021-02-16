@@ -17,7 +17,7 @@ int main()
 {
     using seqan3::get;
 
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
 #if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length10_filter = std::views::filter([] (auto const & rec)

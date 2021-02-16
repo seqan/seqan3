@@ -11,14 +11,14 @@ int main()
 {
     // copying a file in one line:
     seqan3::alignment_file_output{std::ostringstream{}, seqan3::format_sam{}} =
-        seqan3::alignment_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+        seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
     // with seqan3::alignment_file_output as a variable:
     seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
     fout = fin;
 
     // or in pipe notation:
-    seqan3::alignment_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}} |
+    seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}} |
     seqan3::alignment_file_output{std::ostringstream{}, seqan3::format_sam{}};
 }

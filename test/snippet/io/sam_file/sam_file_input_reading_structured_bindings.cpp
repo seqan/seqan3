@@ -14,9 +14,9 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw},
-                                     seqan3::format_sam{},
-                                     seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw},
+                               seqan3::format_sam{},
+                               seqan3::fields<seqan3::field::flag, seqan3::field::mapq>{}};
 
     for (auto & [flag, mapq] : fin) // the order is the same as specified in fields!
     {

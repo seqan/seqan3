@@ -15,7 +15,7 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
     using record_type = typename decltype(fin)::record_type;
     std::vector<record_type> records{}; // store all my records in a vector

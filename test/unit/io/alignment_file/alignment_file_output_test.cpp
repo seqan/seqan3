@@ -472,7 +472,7 @@ TEST(rows, assign_range_of_tuples)
     assign_impl(range);
 }
 
-TEST(rows, assign_alignment_file_input)
+TEST(rows, assign_sam_file_input)
 {
     std::vector<std::string> ref_ids{"ref"};
     std::vector<seqan3::dna4_vector> ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};
@@ -489,7 +489,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
     // with reference information
     {
-        seqan3::alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
         seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
         fout = fin;
@@ -501,7 +501,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
     // without reference information
     {
-        seqan3::alignment_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
         seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
         fout = fin;
@@ -527,7 +527,7 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
-    seqan3::alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
     seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     fin | fout;
@@ -555,13 +555,13 @@ read2	42	ref	2	62	7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	xy:B:S,3,4,5
 read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
     {
-        seqan3::alignment_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
         seqan3::alignment_file_output fout{filename.get_path()};
 
         fin | fout;
     }
 
-    seqan3::alignment_file_input fin2{filename.get_path(), ref_ids, ref_seqs};
+    seqan3::sam_file_input fin2{filename.get_path(), ref_ids, ref_seqs};
     seqan3::alignment_file_output fout2{std::ostringstream{}, seqan3::format_sam{}};
 
     fin2 | fout2;

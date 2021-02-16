@@ -107,7 +107,7 @@ void sam_file_read_from_stream(benchmark::State &state)
         istream.clear();
         istream.seekg(0, std::ios::beg);
 
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
 
         // read all records and store in internal buffer
         auto it = fin.begin();
@@ -126,7 +126,7 @@ void sam_file_read_from_disk(benchmark::State &state)
 
     for (auto _ : state)
     {
-        seqan3::alignment_file_input fin{tmp_path};
+        seqan3::sam_file_input fin{tmp_path};
 
         // read all records and store in internal buffer
         auto it = fin.begin();

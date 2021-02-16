@@ -101,7 +101,7 @@ protected:
               typename e_value_type,
               typename bit_score_type>
     void read_alignment_record(stream_type & stream,
-                               alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
                                seq_type & seq,
@@ -266,7 +266,7 @@ private:
     static std::string get_tag_dict_str(sam_tag_dictionary const & tag_dict);
 };
 
-//!\copydoc alignment_file_input_format::read_alignment_record
+//!\copydoc sam_file_input_format::read_alignment_record
 template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type,
           typename ref_seqs_type,
@@ -287,7 +287,7 @@ template <typename stream_type,     // constraints checked by file
           typename e_value_type,
           typename bit_score_type>
 inline void format_bam::read_alignment_record(stream_type & stream,
-                                              alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
+                                              sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                               ref_seqs_type & ref_seqs,
                                               sam_file_header<ref_ids_type> & header,
                                               seq_type & seq,

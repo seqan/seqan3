@@ -7,6 +7,6 @@ r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*)";
 
 int main()
 {
-    seqan3::alignment_file_input fin{std::istringstream{input}, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{std::istringstream{input}, seqan3::format_sam{}};
     //                          ^ no need to specify the template arguments
 }
