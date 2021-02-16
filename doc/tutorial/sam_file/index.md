@@ -1,4 +1,4 @@
-# Alignment Input and Output in SeqAn {#tutorial_alignment_file}
+# SAM Input and Output in SeqAn {#tutorial_sam_file}
 
 ***Learning Objective:***
 

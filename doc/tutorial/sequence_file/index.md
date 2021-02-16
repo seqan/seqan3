@@ -151,7 +151,7 @@ The first three fields are retrieved by default (and in that order!).
 The last field may be selected to directly store sequence and qualities in a more memory-efficient
 combined container (see seqan3::qualified).
 This is more advanced than what we cover here,
-but if you are still interested you can take a look at the tutorial \ref tutorial_alignment_file
+but if you are still interested you can take a look at the tutorial \ref tutorial_sam_file
 which introduces reading a file with custom selected fields.
 
 # Reading a sequence file
