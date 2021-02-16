@@ -16,7 +16,7 @@
 #include "sam_file_format_test_template.hpp"
 
 template <>
-struct alignment_file_read<seqan3::format_bam> : public alignment_file_data
+struct sam_file_read<seqan3::format_bam> : public sam_file_data
 {
     // -----------------------------------------------------------------------------------------------------------------
     // formatted input
@@ -238,14 +238,14 @@ struct alignment_file_read<seqan3::format_bam> : public alignment_file_data
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_read, seqan3::format_bam, );
-INSTANTIATE_TYPED_TEST_SUITE_P(bam, alignment_file_write, seqan3::format_bam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, sam_file_read, seqan3::format_bam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bam, sam_file_write, seqan3::format_bam, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // BAM specifics
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct bam_format : public alignment_file_data
+struct bam_format : public sam_file_data
 {};
 
 TEST_F(bam_format, wrong_magic_bytes)

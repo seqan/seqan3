@@ -12,7 +12,7 @@
 #include "sam_file_format_test_template.hpp"
 
 template <>
-struct alignment_file_read<seqan3::format_sam> : public alignment_file_data
+struct sam_file_read<seqan3::format_sam> : public sam_file_data
 {
     // -----------------------------------------------------------------------------------------------------------------
     // formatted input
@@ -99,14 +99,14 @@ read1	41	*	1	61	1S1M1D1M1I	*	0	0	ACGT	!##$
 // parametrized tests
 // ---------------------------------------------------------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(sam, alignment_file_read, seqan3::format_sam, );
-INSTANTIATE_TYPED_TEST_SUITE_P(sam, alignment_file_write, seqan3::format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sam_file_read, seqan3::format_sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(sam, sam_file_write, seqan3::format_sam, );
 
 // ---------------------------------------------------------------------------------------------------------------------
 // SAM specifics
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct sam_format : public alignment_file_data
+struct sam_format : public sam_file_data
 {};
 
 // since BAM uses the same read header function from SAM, it only needs to be tested once

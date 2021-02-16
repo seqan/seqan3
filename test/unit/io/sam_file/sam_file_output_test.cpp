@@ -512,7 +512,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     }
 }
 
-TEST(rows, assign_alignment_file_pipes)
+TEST(rows, assign_sam_file_pipes)
 {
     std::vector<std::string> const ref_ids{"ref"};
     std::vector<seqan3::dna4_vector> const ref_seqs{"ACTAGCTAGGAGGACTAGCATCGATC"_dna4};
