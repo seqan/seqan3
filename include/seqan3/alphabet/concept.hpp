@@ -140,6 +140,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline constexpr auto to_rank = detail::adl_only::to_rank_fn{};
 //!\}
@@ -236,6 +238,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline constexpr auto assign_rank_to = detail::adl_only::assign_rank_to_fn{};
 //!\}
@@ -318,12 +322,17 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline constexpr auto to_char = detail::adl_only::to_char_fn{};
 //!\}
 
-//!\brief The `char_type` of the alphabet; defined as the return type of seqan3::to_char.
-//!\ingroup alphabet
+/*!\brief The `char_type` of the alphabet; defined as the return type of seqan3::to_char.
+ * \ingroup alphabet
+ *
+ * \stableapi{Since version 3.1.}
+ */
 template <typename alphabet_type>
 //!\cond
     requires requires (alphabet_type const a) { { seqan3::to_char(a) }; }
@@ -414,6 +423,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline constexpr auto assign_char_to = detail::adl_only::assign_char_to_fn{};
 //!\}
@@ -515,6 +526,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename alph_t>
 //!\cond
@@ -595,6 +608,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/assign_char_strictly_to.cpp
  *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto assign_char_strictly_to = detail::adl_only::assign_char_strictly_to_fn{};
 //!\}
@@ -698,6 +712,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \stableapi{Since version 3.1.}
  */
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
@@ -756,6 +772,8 @@ inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_fn<alph_t>
  *   * `t &`
  *   * `t const`
  *   * `t const &`
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
@@ -805,6 +823,8 @@ SEQAN3_CONCEPT semialphabet =
  * Types that model the concept (and all refinements) can be serialised via SeqAn
  * serialisation support.
  * The rank value is (de-)serialised, types need not provide any overloads themselves.
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
@@ -842,6 +862,8 @@ SEQAN3_CONCEPT writable_semialphabet = semialphabet<t> && requires (t v, alphabe
  *   * `t &`
  *   * `t const`
  *   * `t const &`
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
@@ -888,6 +910,8 @@ SEQAN3_CONCEPT alphabet = semialphabet<t> && requires (t v)
  * Types that model the concept (and all refinements) can be serialised via SeqAn
  * serialisation support.
  * The rank value is (de-)serialised, types need not provide any overloads themselves.
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
@@ -919,6 +943,8 @@ SEQAN3_CONCEPT writable_alphabet = alphabet<t> && writable_semialphabet<t> && re
  * Delegates to seqan3::to_rank.
  *
  * \attention These functions are never called directly, see the \ref alphabet module on how to use serialisation.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <cereal_output_archive archive_t, semialphabet alphabet_t>
 alphabet_rank_t<alphabet_t> CEREAL_SAVE_MINIMAL_FUNCTION_NAME(archive_t const &, alphabet_t const & l)

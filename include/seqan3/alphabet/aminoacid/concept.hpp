@@ -28,6 +28,8 @@ namespace seqan3
 /*!\brief This is an empty base class that can be inherited by types that shall model seqan3::aminoacid_alphabet.
  * \ingroup aminoacid
  * \see seqan3::enable_aminoacid
+ *
+ * \stableapi{Since version 3.1.}
  */
 struct aminoacid_empty_base
 {};
@@ -89,16 +91,14 @@ namespace seqan3
  *
  * ### Specialisation
  *
- * Do not specialise this trait directly. It acts as a wrapper and looks for two possible implementations
+ * Do not specialise this trait directly. It acts as a wrapper and looks for three possible implementations
  * (in this order):
  *
  *   1. A `static` member variable `enable_aminoacid` of the class `seqan3::custom::alphabet<t>`.
  *   2. A free function `constexpr bool enable_aminoacid(t) noexcept` in the namespace of your type (or as `friend`).
- *
- * If none of these is found, the default value is defined as:
- *
- *   * `true` if the type inherits from seqan3::aminoacid_empty_base (or seqan3::aminoacid_base),
- *   * `false` otherwise.
+ *   3. If none of these is found, the default value is defined as:
+ *     * `true` if the type inherits from seqan3::aminoacid_empty_base (or seqan3::aminoacid_base),
+ *     * `false` otherwise.
  *
  * Implementations of 1. and 2. are required to be marked `constexpr` and the value / return value must be convertible
  * to `bool`.
@@ -118,6 +118,11 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To change the default behaviour for your own alphabet,
  * follow the above instructions.
+ *
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::enable_aminoacid, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 template <typename t>
 inline constexpr bool enable_aminoacid = detail::adl_only::enable_aminoacid_dispatcher::dispatch<std::remove_cvref_t<t>>();
@@ -138,6 +143,8 @@ inline constexpr bool enable_aminoacid = detail::adl_only::enable_aminoacid_disp
  * ###Concepts and doxygen
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename type>

@@ -24,9 +24,9 @@ namespace third_party_ns
 
 enum class third_party_type
 {
-    ZERO,
-    ONE,
-    TWO
+    zero,
+    one,
+    two
 };
 
 } // namespace third_party_ns
@@ -37,41 +37,42 @@ enum class third_party_type
 template <>
 struct seqan3::custom::alphabet<third_party_ns::third_party_type>
 {
+    using alphabet_t = third_party_ns::third_party_type;
 
     static constexpr size_t alphabet_size = 3;
 
-    static constexpr size_t to_rank(third_party_ns::third_party_type const a) noexcept
+    static constexpr size_t to_rank(alphabet_t const a) noexcept
     {
         return static_cast<size_t>(a);
     }
 
-    static constexpr third_party_ns::third_party_type & assign_rank_to(size_t const r, third_party_ns::third_party_type & a) noexcept
+    static constexpr alphabet_t & assign_rank_to(size_t const r, alphabet_t & a) noexcept
     {
         switch (r)
         {
-            case 0:  a = third_party_ns::third_party_type::ZERO; return a;
-            case 1:  a = third_party_ns::third_party_type::ONE;  return a;
-            default: a = third_party_ns::third_party_type::TWO;  return a;
+            case 0:  a = alphabet_t::zero; return a;
+            case 1:  a = alphabet_t::one;  return a;
+            default: a = alphabet_t::two;  return a;
         }
     }
 
-    static constexpr char to_char(third_party_ns::third_party_type const a) noexcept
+    static constexpr char to_char(alphabet_t const a) noexcept
     {
         switch (a)
         {
-            case third_party_ns::third_party_type::ZERO: return '0';
-            case third_party_ns::third_party_type::ONE:  return '1';
-            default:                                     return '2';
+            case alphabet_t::zero: return '0';
+            case alphabet_t::one:  return '1';
+            default:               return '2';
         }
     }
 
-    static constexpr third_party_ns::third_party_type & assign_char_to(char const c, third_party_ns::third_party_type & a) noexcept
+    static constexpr alphabet_t & assign_char_to(char const c, alphabet_t & a) noexcept
     {
         switch (c)
         {
-            case '0': a = third_party_ns::third_party_type::ZERO; return a;
-            case '1': a = third_party_ns::third_party_type::ONE;  return a;
-            default:  a = third_party_ns::third_party_type::TWO;  return a;
+            case '0': a = alphabet_t::zero; return a;
+            case '1': a = alphabet_t::one;  return a;
+            default:  a = alphabet_t::two;  return a;
         }
     }
 };

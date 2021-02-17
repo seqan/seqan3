@@ -68,8 +68,6 @@
  * |    Unknown                 | Xaa               | X               | <span style="color:red">S</span>| <span style="color:red">S</span> | <span style="color:red">A</span> |
  * |    Stop Codon              | N/A               | *               | <span style="color:red">W</span>| <span style="color:red">F</span> | <span style="color:red">F</span> |
  *
- * All amino acid alphabets provide static value members (like an enum) for all amino acids in the form of the
- * one-letter representation.
  * As shown above, alphabets smaller than 27 internally represent multiple amino acids as one.\n
  * For most cases it is highly recommended to use seqan3::aa27 as seqan3::aa20 provides
  * no benefits in regard to space consumption (both need 5bits).

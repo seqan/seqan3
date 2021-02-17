@@ -112,16 +112,16 @@ protected:
             ret['U'] = ret['T']; ret['u'] = ret['t'];
 
             // iupac characters get special treatment, because there is no N
-            ret['R'] = ret['A']; ret['r'] = ret['A']; // or G
-            ret['Y'] = ret['C']; ret['y'] = ret['C']; // or T
-            ret['S'] = ret['C']; ret['s'] = ret['C']; // or G
-            ret['W'] = ret['A']; ret['w'] = ret['A']; // or T
-            ret['K'] = ret['G']; ret['k'] = ret['G']; // or T
-            ret['M'] = ret['A']; ret['m'] = ret['A']; // or T
-            ret['B'] = ret['C']; ret['b'] = ret['C']; // or G or T
-            ret['D'] = ret['A']; ret['d'] = ret['A']; // or G or T
-            ret['H'] = ret['A']; ret['h'] = ret['A']; // or C or T
-            ret['V'] = ret['A']; ret['v'] = ret['A']; // or C or G
+            ret['R'] = ret['A']; ret['r'] = ret['A']; // A or G
+            ret['Y'] = ret['C']; ret['y'] = ret['C']; // C or T
+            ret['S'] = ret['C']; ret['s'] = ret['C']; // C or G
+            ret['W'] = ret['A']; ret['w'] = ret['A']; // A or T
+            ret['K'] = ret['G']; ret['k'] = ret['G']; // G or T
+            ret['M'] = ret['A']; ret['m'] = ret['A']; // A or T
+            ret['B'] = ret['C']; ret['b'] = ret['C']; // C or G or T
+            ret['D'] = ret['A']; ret['d'] = ret['A']; // A or G or T
+            ret['H'] = ret['A']; ret['h'] = ret['A']; // A or C or T
+            ret['V'] = ret['A']; ret['v'] = ret['A']; // A or C or G
 
             return ret;
         }()

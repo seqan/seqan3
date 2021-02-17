@@ -57,6 +57,8 @@ namespace seqan3
  * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
  * \include test/snippet/alphabet/aminoacid/aa20_construction.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class aa20 : public aminoacid_base<aa20, 20>
 {
@@ -148,8 +150,11 @@ protected:
 
 namespace seqan3
 {
-//!\brief Alias for an std::vector of seqan3::aa20.
-//!\relates aa20
+/*!\brief Alias for an std::vector of seqan3::aa20.
+ * \relates aa20
+ *
+ * \stableapi{Since version 3.1.}
+ */
 using aa20_vector = std::vector<aa20>;
 
 } // namespace seqan3
@@ -172,6 +177,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/aminoacid/aa20_char_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 constexpr aa20 operator""_aa20(char const c) noexcept
 {
@@ -190,9 +196,10 @@ constexpr aa20 operator""_aa20(char const c) noexcept
  *
  * \attention
  * All seqan3 literals are in the namespace seqan3!
+ *
+ * \stableapi{Since version 3.1.}
  */
-
-inline aa20_vector operator""_aa20(const char * s, std::size_t n)
+inline aa20_vector operator""_aa20(char const * const s, size_t const n)
 {
     aa20_vector r;
     r.resize(n);

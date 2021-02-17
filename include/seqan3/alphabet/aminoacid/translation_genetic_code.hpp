@@ -19,29 +19,32 @@ namespace seqan3
 /*!\brief Genetic codes used for translation of nucleotides into amino acids.
  *
  * \details
- * The numeric values of the enums correspond to the genbank transl_table values
- * (see https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi).
+ * The numeric values of the enums correspond to the genbank transl_table values.
+ * \sa https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 enum struct genetic_code : uint8_t
 {
-    CANONICAL=1,
-//     VERT_MITOCHONDRIAL,
-//     YEAST_MITOCHONDRIAL,
-//     MOLD_MITOCHONDRIAL,
-//     INVERT_MITOCHONDRIAL,
-//     CILIATE,
-//     FLATWORM_MITOCHONDRIAL = 9,
-//     EUPLOTID,
-//     PROKARYOTE,
-//     ALT_YEAST,
-//     ASCIDIAN_MITOCHONDRIAL,
-//     ALT_FLATWORM_MITOCHONDRIAL,
-//     BLEPHARISMA,
-//     CHLOROPHYCEAN_MITOCHONDRIAL,
-//     TREMATODE_MITOCHONDRIAL = 21,
-//     SCENEDESMUS_MITOCHONDRIAL,
-//     THRAUSTOCHYTRIUM_MITOCHONDRIAL,
-//     PTEROBRANCHIA_MITOCHONDRIAL,
-//     GRACILIBACTERIA
+    canonical = 1, //!< [The Standard Code](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1).
+    CANONICAL SEQAN3_DEPRECATED_310 = canonical, //!< \deprecated Use seqan3::genetic_code::canonical instead.
+//     vert_mitochondrial,
+//     yeast_mitochondrial,
+//     mold_mitochondrial,
+//     invert_mitochondrial,
+//     ciliate,
+//     flatworm_mitochondrial = 9,
+//     euplotid,
+//     prokaryote,
+//     alt_yeast,
+//     ascidian_mitochondrial,
+//     alt_flatworm_mitochondrial,
+//     blepharisma,
+//     chlorophycean_mitochondrial,
+//     trematode_mitochondrial = 21,
+//     scenedesmus_mitochondrial,
+//     thraustochytrium_mitochondrial,
+//     pterobranchia_mitochondrial,
+//     gracilibacteria
 };
 }
