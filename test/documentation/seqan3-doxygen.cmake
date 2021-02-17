@@ -24,10 +24,19 @@ else ()
 endif ()
 
 ### Configure doc/developer targets.
-set(SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
+set (SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_CLONE_DIR}")
+set (SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
+set (SEQAN3_FOOTER_HTML_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_footer.html.in)
 
 option(SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
 option(SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
+option(SEQAN3_VERCEL_PREVIEW_DOC "Is this a preview build by vercel.com?" OFF)
+
+if (SEQAN3_VERCEL_PREVIEW_DOC)
+    set (SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL "HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/.vercel/powered-by-vercel.svg")
+    set (SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL
+         "<li class='footer'><img class='footer' src='$relpath^powered-by-vercel.svg' width='104' height='31' alt='Powered by Vercel'/></li>")
+endif ()
 
 ### Download and extract cppreference-doxygen-web.tag.xml for std:: documentation links
 set(SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")

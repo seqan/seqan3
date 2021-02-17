@@ -42,7 +42,7 @@ SKIP_FUNCTION_MACROS   = NO
 SORT_BRIEF_DOCS        = YES
 TOC_INCLUDE_HEADINGS   = 2
 HTML_EXTRA_STYLESHEET  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3.css
-HTML_FOOTER            = ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/seqan3_footer.html
+HTML_FOOTER            = ${SEQAN3_DOXYGEN_OUTPUT_DIR}/seqan3_footer.html
 INPUT_ENCODING         = UTF-8
 EXTRA_PACKAGES         = {amsfonts}
 
@@ -104,3 +104,4 @@ HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/alignment_fil
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
+${SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL}
