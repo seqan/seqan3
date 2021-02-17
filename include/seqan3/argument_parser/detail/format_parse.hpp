@@ -317,7 +317,7 @@ private:
      *          seqan3::enumeration_names<option_t> map and otherwise seqan3::option_parse_result::success.
      */
     template <named_enumeration option_t>
-    option_parse_result parse_option_value(option_t & value, std::string_view const in)
+    option_parse_result parse_option_value(option_t & value, std::string const & in)
     {
         auto map = seqan3::enumeration_names<option_t>;
 
@@ -339,7 +339,7 @@ private:
 
     /*!\brief Parses the given option value and appends it to the target container.
      * \tparam container_option_t Must model the seqan3::sequence_container and
-     *                            its value_type must model seqan3::input_stream_over or seqan3::named_enumeration
+     *                            its value_type must be parseable via parse_option_value
      *
      * \param[out] value The container that stores the parsed value.
      * \param[in] in The input argument to be parsed.
@@ -347,8 +347,10 @@ private:
      */
     template <sequence_container container_option_t>
     //!\cond
-        requires input_stream_over<std::istringstream, typename container_option_t::value_type> ||
-                 named_enumeration<typename container_option_t::value_type>
+        requires requires (format_parse fp, typename container_option_t::value_type & container_value, std::string const & in)
+        {
+            SEQAN3_RETURN_TYPE_CONSTRAINT(fp.parse_option_value(container_value, in), std::same_as, option_parse_result);
+        }
     //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {

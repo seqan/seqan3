@@ -619,18 +619,6 @@ TEST(parse_type_test, parse_success_enum_option)
     }
 
     {
-        std::vector<foo::bar> option_value{};
-
-        const char * argv[] = {"./argument_parser_test", "-e", "two", "-e", "one", "-e", "three"};
-        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
-        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
-
-        EXPECT_NO_THROW(parser.parse());
-
-        EXPECT_TRUE(option_value == (std::vector<foo::bar>{foo::bar::two, foo::bar::one, foo::bar::three}));
-    }
-
-    {
         Other::bar option_value{};
 
         const char * argv[] = {"./argument_parser_test", "-e", "two"};
@@ -1038,4 +1026,43 @@ TEST(parse_test, is_option_set)
     EXPECT_THROW(parser.is_option_set('-'), seqan3::design_error);
     EXPECT_THROW(parser.is_option_set('_'), seqan3::design_error);
     EXPECT_THROW(parser.is_option_set('\0'), seqan3::design_error);
+}
+
+TEST(parse_test, container_options)
+{
+    {
+        std::vector<foo::bar> option_values{};
+
+        const char * argv[] = {"./argument_parser_test", "-e", "two", "-e", "one", "-e", "three"};
+        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'e', "enum-option", "this is an enum option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<foo::bar>{foo::bar::two, foo::bar::one, foo::bar::three}));
+    }
+
+    {
+        std::vector<int> option_values{};
+
+        const char * argv[] = {"./argument_parser_test", "-i", "2", "-i", "1", "-i", "3"};
+        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'i', "int-option", "this is an int option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<int>{2, 1, 3}));
+    }
+
+    {
+        std::vector<bool> option_values{};
+
+        const char * argv[] = {"./argument_parser_test", "-b", "true", "-b", "false", "-b", "true"};
+        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'b', "bool-option", "this is a bool option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<bool>{true, false, true}));
+    }
 }
