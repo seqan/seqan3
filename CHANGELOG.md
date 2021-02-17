@@ -62,6 +62,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#2216](https://github.com/seqan/seqan3/pull/2216)).
 * The `seqan3::input_file_validator` and `seqan3::input_file_validator` support extensions containing a dot
   ([\#2363](https://github.com/seqan/seqan3/pull/2363)).
+* The Argument Parser accepts containers of all values it is able to parse, e.g. a `std::vector` of enums or `bool`
+  ([\#2381](https://github.com/seqan/seqan3/pull/2381)).
 
 ## API changes
 
