@@ -48,7 +48,7 @@ struct view_equality_fn
  * \param  reference_char      The aligned character of the reference to compare.
  * \param  query_char          The aligned character of the query to compare.
  * \param  extended_cigar      Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns A seqan3::cigar_op representing the alignment operation between the two values.
+ * \returns A seqan3::cigar::operation representing the alignment operation between the two values.
  *
  * \details
  *
@@ -81,9 +81,9 @@ struct view_equality_fn
  * \sa seqan3::aligned_sequence
  */
 template <typename reference_char_type, typename query_char_type>
-[[nodiscard]] constexpr cigar_op map_aligned_values_to_cigar_op(reference_char_type const reference_char,
-                                                                query_char_type const query_char,
-                                                                bool const extended_cigar)
+[[nodiscard]] constexpr cigar::operation map_aligned_values_to_cigar_op(reference_char_type const reference_char,
+                                                                        query_char_type const query_char,
+                                                                        bool const extended_cigar)
 //!\cond
     requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
              seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
@@ -94,7 +94,7 @@ template <typename reference_char_type, typename query_char_type>
     if (extended_cigar && (key == 0)) // in extended format refine the substitution operator to match/mismatch.
         key |= ((1 << 2) | static_cast<uint8_t>(query_char == reference_char));  // maps to [4, 5].
 
-    return assign_char_to(operators[key], cigar_op{});
+    return assign_char_to(operators[key], cigar::operation{});
 }
 
 /*!\brief Creates a cigar string (SAM format) given a seqan3::detail::pairwise_alignment represented by two
@@ -155,18 +155,20 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 
     // Add (S)oft-clipping at the start of the read
     if (query_start_pos)
-        result.emplace_back(query_start_pos, 'S'_cigar_op);
+        result.emplace_back(query_start_pos, 'S'_cigar_operation);
 
     // Create cigar string from alignment
     // -------------------------------------------------------------------------
     // initialize first operation and count value:
-    cigar_op operation{map_aligned_values_to_cigar_op(ref_seq[0], query_seq[0], extended_cigar)};
+    cigar::operation operation{map_aligned_values_to_cigar_op(ref_seq[0], query_seq[0], extended_cigar)};
     uint32_t count{0};
 
     // go through alignment columns
     for (auto column : views::zip(ref_seq, query_seq))
     {
-        cigar_op next_op = map_aligned_values_to_cigar_op(std::get<0>(column), std::get<1>(column), extended_cigar);
+        cigar::operation next_op = map_aligned_values_to_cigar_op(std::get<0>(column),
+                                                                  std::get<1>(column),
+                                                                  extended_cigar);
 
         if (operation == next_op)
         {
@@ -185,7 +187,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 
     // Add (S)oft-clipping at the end of the read
     if (query_end_pos)
-        result.emplace_back(query_end_pos, 'S'_cigar_op);
+        result.emplace_back(query_end_pos, 'S'_cigar_operation);
 
     return result;
 }
@@ -319,34 +321,37 @@ inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> 
     for (auto [cigar_count, cigar_operation] : cigar_vector)
     {
         // ignore since alignment shall contain sliced sequences
-        if (('S'_cigar_op == cigar_operation) || ('H'_cigar_op == cigar_operation))
+        if (('S'_cigar_operation == cigar_operation) || ('H'_cigar_operation == cigar_operation))
             continue;
 
-        assert(('M'_cigar_op == cigar_operation) || ('='_cigar_op == cigar_operation) ||
-               ('X'_cigar_op == cigar_operation) || ('D'_cigar_op == cigar_operation) ||
-               ('N'_cigar_op == cigar_operation) || ('I'_cigar_op == cigar_operation) ||
-               ('P'_cigar_op == cigar_operation)); // checked during IO
+        assert(('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation) ||
+               ('X'_cigar_operation == cigar_operation) || ('D'_cigar_operation == cigar_operation) ||
+               ('N'_cigar_operation == cigar_operation) || ('I'_cigar_operation == cigar_operation) ||
+               ('P'_cigar_operation == cigar_operation)); // checked during IO
 
-        if (('M'_cigar_op == cigar_operation) || ('='_cigar_op == cigar_operation) || ('X'_cigar_op == cigar_operation))
+        if (('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation) ||
+            ('X'_cigar_operation == cigar_operation))
         {
             std::ranges::advance(current_ref_pos , cigar_count);
             std::ranges::advance(current_read_pos, cigar_count);
         }
-        else if (('D'_cigar_op == cigar_operation) || ('N'_cigar_op == cigar_operation)) // insert gaps into read
+        else if (('D'_cigar_operation == cigar_operation) || ('N'_cigar_operation == cigar_operation))
         {
+            // insert gaps into read
+
             assert(std::distance(current_read_pos, std::ranges::end(get<1>(alignment))) >= 0);
             current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
             ++current_read_pos;
             std::ranges::advance(current_ref_pos , cigar_count);
         }
-        else if (('I'_cigar_op == cigar_operation)) // Insert gaps into ref
+        else if (('I'_cigar_operation == cigar_operation)) // Insert gaps into ref
         {
             assert(std::ranges::distance(current_ref_pos, std::ranges::end(get<0>(alignment))) >= 0);
             current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
             ++current_ref_pos;
             std::ranges::advance(current_read_pos, cigar_count);
         }
-        else if (('P'_cigar_op == cigar_operation)) // skip padding
+        else if (('P'_cigar_operation == cigar_operation)) // skip padding
         {
             current_ref_pos = insert_gap(get<0>(alignment), current_ref_pos, cigar_count);
             ++current_ref_pos;

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Introduces the cigar_op alphabet.
+ * \brief Introduces the seqan3::exposition_only::cigar_operation alphabet.
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
@@ -15,14 +15,13 @@
 #include <seqan3/alphabet/alphabet_base.hpp>
 
 // ------------------------------------------------------------------
-// cigar_op
+// cigar_operation
 // ------------------------------------------------------------------
 
-namespace seqan3
+namespace seqan3::exposition_only
 {
 
-/*!\brief The (extended) cigar operation alphabet of M,D,I,H,N,P,S,X,=.
- * \ingroup cigar
+/*!\brief The actual implementation of seqan3::cigar::operation for documentation purposes only.
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  * \implements seqan3::trivially_copyable
@@ -31,44 +30,39 @@ namespace seqan3
  *
  * \details
  *
- * The CIGAR string can be either basic or extended. The only difference in the
- * extended cigar alphabet is that aligned bases are classified as an actual
- * match ('=') or mismatch ('X'). In contrast, the basic cigar alphabet
- * only indicated the aligned status with an 'M', without further
- * information if the bases are actually equal or not.
+ * \note This class only exists because of technical reasons,
+ *       please always use seqan3::cigar::operation instead of seqan3::exposition_only::cigar_operation.
  *
- * The main purpose of the seqan3::cigar_op alphabet is to be used in the
- * seqan3::cigar composition, where a cigar operation is paired with a count
- * value.
+ * \if DEV
+ * \note We cannot declare seqan3::cigar::operation in-class, because we need to specify the second tuple element of
+ *       seqan3::alphabet_tuple_base before we actually can declare it in-class. This is a trade-off to make
+ *       seqan3::cigar a non-template class.
+ * \endif
  *
- * Example usage:
- * \include test/snippet/alphabet/cigar/cigar_op.cpp
+ * \sa seqan3::exposition_only for an explanation on exposition-only.
  *
- * \note Usually you do not want to manipulate cigar elements and vectors on
- *       your own but convert an alignment to a cigar and back. See
- *       seqan3::get_cigar_vector for how to convert two aligned sequences into
- *       a cigar_vector.
+ * \noapi{Please always use seqan3::cigar::operation. The API-Stability of all members documented in this class applies
+ *        directly to seqan3::cigar::operation.}
  */
-class cigar_op : public alphabet_base<cigar_op, 9, char>
+class cigar_operation : public alphabet_base<cigar_operation, 9, char>
 {
 private:
     //!\brief The base class.
-    using base_t = alphabet_base<cigar_op, 9, char>;
+    using base_t = alphabet_base<cigar_operation, 9, char>;
 
-    //!\cond \brief Befriend seqan3::alphabet_base.
+    //!\brief Befriend seqan3::alphabet_base.
     friend base_t;
-    //!\endcond
 
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cigar_op()                             noexcept = default; //!< Defaulted.
-    constexpr cigar_op(cigar_op const &)             noexcept = default; //!< Defaulted.
-    constexpr cigar_op(cigar_op &&)                  noexcept = default; //!< Defaulted.
-    constexpr cigar_op & operator=(cigar_op const &) noexcept = default; //!< Defaulted.
-    constexpr cigar_op & operator=(cigar_op &&)      noexcept = default; //!< Defaulted.
-    ~cigar_op()                                      noexcept = default; //!< Defaulted.
+    constexpr cigar_operation() noexcept = default; //!< Defaulted.
+    constexpr cigar_operation(cigar_operation const &) noexcept = default; //!< Defaulted.
+    constexpr cigar_operation(cigar_operation &&) noexcept = default; //!< Defaulted.
+    constexpr cigar_operation & operator=(cigar_operation const &) noexcept = default; //!< Defaulted.
+    constexpr cigar_operation & operator=(cigar_operation &&) noexcept = default; //!< Defaulted.
+    ~cigar_operation() noexcept = default; //!< Defaulted.
 
     //!\}
 
@@ -107,21 +101,4 @@ protected:
     };
 };
 
-// ------------------------------------------------------------------
-// literals
-// ------------------------------------------------------------------
-
-/*!\name Literals
- * \{
- */
-
-/*!\brief The seqan3::cigar_op char literal.
- * \relates seqan3::cigar_op
- * \returns seqan3::cigar_op
- */
-inline cigar_op operator""_cigar_op(char const c) noexcept
-{
-    return cigar_op{}.assign_char(c);
-}
-//!\}
-} // namespace seqan3
+} // namespace seqan3::exposition_only

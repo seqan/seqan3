@@ -23,7 +23,7 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
-using seqan3::operator""_cigar_op;
+using seqan3::operator""_cigar_operation;
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
 using seqan3::operator""_tag;
@@ -386,11 +386,13 @@ TYPED_TEST_P(sam_file_read, cigar_vector)
 {
     std::vector<std::vector<seqan3::cigar>> expected
     {
-        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
-        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
-         {2, 'H'_cigar_op}},
-        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
-         {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
+        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation}},
+        {{1, 'H'_cigar_operation}, {7, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'S'_cigar_operation}, {2, 'H'_cigar_operation}},
+        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'P'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'I'_cigar_operation}, {1, 'D'_cigar_operation},
+         {1, 'M'_cigar_operation}, {1, 'S'_cigar_operation}}
     };
 
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
@@ -597,11 +599,13 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
 {
     std::vector<std::vector<seqan3::cigar>> cigar_v
     {
-        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op}},
-        {{1, 'H'_cigar_op}, {7, 'M'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op},
-         {2, 'H'_cigar_op}},
-        {{1, 'S'_cigar_op}, {1, 'M'_cigar_op}, {1, 'P'_cigar_op}, {1, 'M'_cigar_op}, {1, 'I'_cigar_op},
-         {1, 'M'_cigar_op}, {1, 'I'_cigar_op}, {1, 'D'_cigar_op}, {1, 'M'_cigar_op}, {1, 'S'_cigar_op}}
+        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation}},
+        {{1, 'H'_cigar_operation}, {7, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'S'_cigar_operation}, {2, 'H'_cigar_operation}},
+        {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'P'_cigar_operation}, {1, 'M'_cigar_operation},
+         {1, 'I'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'I'_cigar_operation}, {1, 'D'_cigar_operation},
+         {1, 'M'_cigar_operation}, {1, 'S'_cigar_operation}}
     };
 
     this->tag_dicts[0]["NM"_tag] = 7;

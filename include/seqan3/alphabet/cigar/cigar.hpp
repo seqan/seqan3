@@ -26,7 +26,7 @@
 namespace seqan3
 {
 
-/*!\brief The cigar semialphabet pairs a counter with a seqan3::cigar_op letter.
+/*!\brief The seqan3::cigar semialphabet pairs a counter with a seqan3::cigar::operation letter.
  * \ingroup cigar
  * \implements seqan3::writable_semialphabet
  * \implements seqan3::trivially_copyable
@@ -36,7 +36,7 @@ namespace seqan3
  * \details
  *
  * This semialphabet represents a unit in a CIGAR string, typically found in the
- * SAM and BAM formats. It consists of a number and a seqan3::cigar_op symbol.
+ * SAM and BAM formats. It consists of a number and a seqan3::cigar::operation symbol.
  *
  * It has a "visual representation", but since this is a string and not a char,
  * the type only models seqan3::writable_semialphabet and not
@@ -45,23 +45,54 @@ namespace seqan3
  *
  * To avoid confusion between string and char literal, this alphabet has
  * no user defined literal operators. Always assign from a pair of
- * uint32_t and seqan3::cigar_op.
+ * uint32_t and seqan3::cigar::operation.
  *
  * ### Example
  *
  * \include test/snippet/alphabet/cigar/cigar.cpp
  */
-class cigar : public alphabet_tuple_base<cigar, uint32_t, cigar_op>
+class cigar : public alphabet_tuple_base<cigar, uint32_t, exposition_only::cigar_operation>
 {
 private:
     //!\brief The base class.
-    using base_t = alphabet_tuple_base<cigar, uint32_t, cigar_op>;
+    using base_t = alphabet_tuple_base<cigar, uint32_t, exposition_only::cigar_operation>;
 
     //!\cond \brief Befriend seqan3::alphabet_tuple_base.
     friend base_t;
     //!\endcond
 
 public:
+
+    /*!\brief The (extended) cigar operation alphabet of M,D,I,H,N,P,S,X,=.
+     *
+     * \details
+     *
+     * The CIGAR string can be either basic or extended. The only difference in the extended cigar alphabet is that
+     * aligned bases are classified as an actual match ('=') or mismatch ('X'). In contrast, the basic cigar alphabet
+     * only indicated the aligned status with an 'M', without further information if the bases are actually equal or
+     * not.
+     *
+     * The main purpose of the seqan3::cigar::operation alphabet is to be used in the seqan3::cigar
+     * composition, where a cigar operation is paired with a count value.
+     *
+     * \copydoc seqan3::doxygen::cigar_operation_table
+     *
+     * Example usage:
+     * \include test/snippet/alphabet/cigar/cigar_op.cpp
+     *
+     * \if DEV
+     * \note Usually you do not want to manipulate cigar elements and vectors on
+     *       your own but convert an alignment to a cigar and back. See
+     *       seqan3::detail::get_cigar_vector for how to convert two aligned sequences into
+     *       a cigar_vector.
+     * \endif
+     *
+     * \sa https://samtools.github.io/hts-specs/SAMv1.pdf#page=8
+     *
+     * \stableapi{Since version 3.1.}
+     */
+    using operation = exposition_only::cigar_operation;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -123,7 +154,7 @@ public:
         uint32_t num{};
         auto [ ptr, errc ] = std::from_chars(s.data(), s.data() + 10, num);
 
-        if ((errc != std::errc{}) || (!char_is_valid_for<cigar_op>(*ptr)) || (*(ptr + 1) != 0))
+        if ((errc != std::errc{}) || (!char_is_valid_for<operation>(*ptr)) || (*(ptr + 1) != 0))
         {
             get<0>(*this) = 0;
             assign_char_to('P', get<1>(*this));
@@ -164,5 +195,25 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cig
     s << c.to_string();
     return s;
 }
+
+// ------------------------------------------------------------------
+// literals
+// ------------------------------------------------------------------
+
+/*!\name Literals
+ * \{
+ */
+
+/*!\brief The seqan3::cigar::operation char literal.
+ * \relates seqan3::cigar
+ * \returns seqan3::cigar::operation
+ *
+ * \stableapi{Since version 3.1.}
+ */
+inline cigar::operation operator""_cigar_operation(char const c) noexcept
+{
+    return cigar::operation{}.assign_char(c);
+}
+//!\}
 
 } // namespace seqan3

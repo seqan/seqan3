@@ -221,9 +221,9 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
                                                        int32_t & sc_end) const
 {
     // Checks if the given index in the cigar vector is a soft clip.
-    auto soft_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'S'_cigar_op; };
+    auto soft_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'S'_cigar_operation; };
     // Checks if the given index in the cigar vector is a hard clip.
-    auto hard_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'H'_cigar_op; };
+    auto hard_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'H'_cigar_operation; };
     // Checks if the given cigar vector as at least min_size many elements.
     auto vector_size_at_least = [&] (size_t const min_size) { return cigar_vector.size() >= min_size; };
     // Returns the cigar count of the ith cigar element in the given cigar vector.
@@ -284,7 +284,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> format_sam_base::parse_c
             throw format_error{"Corrupted cigar string encountered"};
 
         update_alignment_lengths(ref_length, seq_length, cigar_operation, cigar_count);
-        operations.emplace_back(cigar_count, cigar_op{}.assign_char(cigar_operation));
+        operations.emplace_back(cigar_count, cigar::operation{}.assign_char(cigar_operation));
     }
 
     return {operations, ref_length, seq_length};

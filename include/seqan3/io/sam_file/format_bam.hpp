@@ -770,8 +770,8 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         {
             tag_dict["CG"_tag] = detail::get_cigar_string(cigar_vector);
             cigar_vector.resize(2);
-            cigar_vector[0] = cigar{static_cast<uint32_t>(std::ranges::distance(seq)), 'S'_cigar_op};
-            cigar_vector[1] = cigar{static_cast<uint32_t>(std::ranges::distance(get<1>(align))), 'N'_cigar_op};
+            cigar_vector[0] = cigar{static_cast<uint32_t>(std::ranges::distance(seq)), 'S'_cigar_operation};
+            cigar_vector[1] = cigar{static_cast<uint32_t>(std::ranges::distance(get<1>(align))), 'N'_cigar_operation};
         }
 
         std::string tag_dict_binary_str = get_tag_dict_str(tag_dict);
@@ -1148,7 +1148,7 @@ inline auto format_bam::parse_binary_cigar(cigar_input_type && cigar_input, uint
         count = operation_and_count >> 4;
 
         update_alignment_lengths(ref_length, seq_length, operation, count);
-        operations.emplace_back(count, cigar_op{}.assign_char(operation));
+        operations.emplace_back(count, cigar::operation{}.assign_char(operation));
         --n_cigar_op;
     }
 
