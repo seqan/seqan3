@@ -31,15 +31,5 @@
   *
   * The following table outlines the valid characters in the seqan3::cigar_op alphabet.
   *
-  * | Letter | Description                                                                                     |
-  * |--------|-------------------------------------------------------------------------------------------------|
-  * | M      | Alignment match (can be a sequence match or mismatch, used only in basic CIGAR representations) |
-  * | I      | Insertion to the reference                                                                      |
-  * | D      | Deletion from the reference                                                                     |
-  * | N      | Skipped region from the reference                                                               |
-  * | S      | Soft clipping (clipped sequences present in SEQ)                                                |
-  * | H      | Hard clipping (clipped sequences NOT present in SEQ)                                            |
-  * | P      | Padding (silent deletion from padded reference)                                                 |
-  * | =      | Sequence match                                                                                  |
-  * | X      | Sequence mismatch                                                                               |
+  * \copydoc seqan3::doxygen::cigar_operation_table
   */
