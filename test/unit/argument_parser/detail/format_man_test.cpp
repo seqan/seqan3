@@ -246,3 +246,45 @@ For full copyright and/or warranty information see \fB--copyright\fR.
     my_stdout = testing::internal::GetCapturedStdout();
     EXPECT_EQ(my_stdout, expected);
 }
+
+TEST_F(format_man_test, full_info_author)
+{
+    // Create the dummy parser.
+    seqan3::argument_parser parser{"default", 3, argv};
+
+    // Fill out the dummy parser with options and flags and sections and subsections.
+    dummy_init(parser);
+    // Add a short copyright and test the dummy parser.
+    parser.info.author = "author";
+    expected += R"(.SH LEGAL
+\fBAuthor: \fRauthor
+.br
+\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+)";
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+
+    my_stdout = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(my_stdout, expected);
+}
+
+TEST_F(format_man_test, full_info_email)
+{
+    // Create the dummy parser.
+    seqan3::argument_parser parser{"default", 3, argv};
+
+    // Fill out the dummy parser with options and flags and sections and subsections.
+    dummy_init(parser);
+    // Add a short copyright and test the dummy parser.
+    parser.info.email = "email";
+    expected += R"(.SH LEGAL
+\fBContact: \fRemail
+.br
+\fBSeqAn Copyright: \fR2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.
+)";
+    testing::internal::CaptureStdout();
+    EXPECT_EXIT(parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
+
+    my_stdout = testing::internal::GetCapturedStdout();
+    EXPECT_EQ(my_stdout, expected);
+}

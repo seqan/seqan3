@@ -66,6 +66,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#2363](https://github.com/seqan/seqan3/pull/2363)).
 * The Argument Parser accepts containers of all values it is able to parse, e.g. a `std::vector` of enums or `bool`
   ([\#2381](https://github.com/seqan/seqan3/pull/2381)).
+* The Argument Parser's help pages now contain author and email information
+  ([\#2374](https://github.com/seqan/seqan3/pull/2374)).
 
 ## API changes
 
