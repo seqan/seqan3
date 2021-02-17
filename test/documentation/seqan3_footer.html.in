@@ -7,6 +7,7 @@
     <div id="list_bottom_right" style="text-align:right; float:left; color:black; padding: 0px 0px 0px 10px"></div>
     <script type="text/javascript" charset="utf-8" src="version.js"></script>
     $navpath
+      ${SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL}
       <li class="footer">$generatedby
         <a href="https://www.doxygen.org/index.html">
           <img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/>
