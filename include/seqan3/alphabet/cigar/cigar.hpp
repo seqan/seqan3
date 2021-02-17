@@ -47,9 +47,13 @@ namespace seqan3
  * no user defined literal operators. Always assign from a pair of
  * uint32_t and seqan3::cigar::operation.
  *
+ * \copydoc seqan3::doxygen::cigar_operation_table
+ *
  * ### Example
  *
  * \include test/snippet/alphabet/cigar/cigar.cpp
+ *
+ * \sa https://samtools.github.io/hts-specs/SAMv1.pdf#page=8
  */
 class cigar : public alphabet_tuple_base<cigar, uint32_t, exposition_only::cigar_operation>
 {
@@ -96,12 +100,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cigar()                          noexcept = default; //!< Defaulted.
-    constexpr cigar(cigar const &)             noexcept = default; //!< Defaulted.
-    constexpr cigar(cigar &&)                  noexcept = default; //!< Defaulted.
+    constexpr cigar() noexcept = default; //!< Defaulted.
+    constexpr cigar(cigar const &) noexcept = default; //!< Defaulted.
+    constexpr cigar(cigar &&) noexcept = default; //!< Defaulted.
     constexpr cigar & operator=(cigar const &) noexcept = default; //!< Defaulted.
-    constexpr cigar & operator=(cigar &&)      noexcept = default; //!< Defaulted.
-    ~cigar()                                   noexcept = default; //!< Defaulted.
+    constexpr cigar & operator=(cigar &&) noexcept = default; //!< Defaulted.
+    ~cigar() noexcept = default; //!< Defaulted.
 
     // Inherit constructors from base
     using base_t::base_t;
@@ -125,10 +129,10 @@ public:
      * \stableapi{Since version 3.1.}
      */
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar & operator=(component_type const alph) noexcept {} ))
-    //!\}
 
     // Inherit operators from base
     using base_t::operator=;
+    //!\}
 
     /*!\name Read functions
      * \{
