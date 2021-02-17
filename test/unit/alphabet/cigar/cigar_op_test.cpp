@@ -11,7 +11,7 @@
 #include "../alphabet_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
-#include <seqan3/alphabet/cigar/cigar_op.hpp>
+#include <seqan3/alphabet/cigar/exposition_only/cigar_operation.hpp>
 
 using seqan3::operator""_cigar_op;
 

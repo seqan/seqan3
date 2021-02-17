@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/adaptation/uint.hpp>
-#include <seqan3/alphabet/cigar/cigar_op.hpp>
+#include <seqan3/alphabet/cigar/exposition_only/cigar_operation.hpp>
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/range/container/small_string.hpp>
