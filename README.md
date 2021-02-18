@@ -71,5 +71,6 @@ g++-7 -O3 -DNDEBUG -Wall -Wextra                                \
 
 ## Sponsorships
 
-* [![Vercel](https://raw.githubusercontent.com/seqan/seqan3/master/test/documentation/.vercel/powered-by-vercel.svg)](https://vercel.com/?utm_source=seqan&utm_campaign=oss):
-  Vercel is kind enough to sponsor our documentation preview-builds within our pull requests. Check them out!
+[![Vercel](https://raw.githubusercontent.com/seqan/seqan3/master/test/documentation/.vercel/powered-by-vercel.svg)](https://vercel.com/?utm_source=seqan&utm_campaign=oss)
+
+Vercel is kind enough to sponsor our documentation preview-builds within our pull requests. Check them out!

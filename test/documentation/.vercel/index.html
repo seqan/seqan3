@@ -4,7 +4,7 @@
     <style>
     body {text-align: center}
     h1 {color: gray}
-    a {
+    a.selection {
       height: 2em;
       display: inline-block;
       border-radius: 4px;
@@ -17,7 +17,7 @@
       text-decoration: none;
       margin: 5px;
     }
-    a:hover {
+    a.selection:hover {
         background-color: #fede09;
         text-decoration: underline;
     }
@@ -25,9 +25,13 @@
   </head>
 
   <body>
-    <h1>SeqAn Documentation Preview <img src="usr/html/powered-by-vercel.svg" style="vertical-align: middle;"></img></h1>
+    <h1>SeqAn Documentation Preview
+      <a href="https://vercel.com/?utm_source=seqan&utm_campaign=oss">
+        <img src="usr/html/powered-by-vercel.svg" style="vertical-align: middle;"/>
+      </a>
+    </h1>
 
-    <a href="usr/html/index.html">User Documentation Preview</a>
-    <a href="dev/html/index.html">Developer Documentation Preview</a>
+    <a class="selection" href="usr/html/index.html">User Documentation Preview</a>
+    <a class="selection" href="dev/html/index.html">Developer Documentation Preview</a>
   </body>
 </html>
