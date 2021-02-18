@@ -35,7 +35,7 @@ option(SEQAN3_VERCEL_PREVIEW_DOC "Is this a preview build by vercel.com?" OFF)
 if (SEQAN3_VERCEL_PREVIEW_DOC)
     set (SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL "HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/.vercel/powered-by-vercel.svg")
     set (SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL
-         "<li class='footer'><img class='footer' src='$relpath^powered-by-vercel.svg' width='104' height='31' alt='Powered by Vercel'/></li>")
+         "<li class='footer'><a href='https://vercel.com/?utm_source=seqan&utm_campaign=oss'><img class='footer' src='$relpath^powered-by-vercel.svg' width='104' height='31' alt='Powered by Vercel'/></a></li>")
 endif ()
 
 ### Download and extract cppreference-doxygen-web.tag.xml for std:: documentation links
