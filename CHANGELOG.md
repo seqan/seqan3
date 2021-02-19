@@ -68,6 +68,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#2381](https://github.com/seqan/seqan3/pull/2381)).
 * The Argument Parser's help pages now contain author and email information
   ([\#2374](https://github.com/seqan/seqan3/pull/2374)).
+* The Argument Parser is able to process defaults for list arguments
+  ([\#2394](https://github.com/seqan/seqan3/pull/2394)).
 
 ## API changes
 
