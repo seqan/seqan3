@@ -37,7 +37,7 @@ namespace seqan3
  *
  * \details
  * The DSSP annotation links structure elements to protein sequences.
- * Originally created with 7 letters as a file format for the DSSP program (http://www.cmbi.ru.nl/dssp.html),
+ * Originally created with 7 letters as a file format for the DSSP program (https://swift.cmbi.umcn.nl/gv/dssp/),
  * it is also used in the stockholm file format for structure alignments, extended by the characters C and X
  * (https://en.wikipedia.org/wiki/Stockholm_format).
  *
