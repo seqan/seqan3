@@ -76,7 +76,7 @@ assignees: ''
   <details><summary>Click for detailed steps</summary><br>
 
   Github is not able to create annotated releases (https://github.com/seqan/product_backlog/issues/159), so we have to manually sign the release.
-  Make sure you have set up [signed commits](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/signing-commits).
+  Make sure you have set up [signed commits](https://docs.github.com/en/github/authenticating-to-github/signing-commits).
   ```bash
   git checkout release-[VERSION]
   git tag -s [VERSION]
