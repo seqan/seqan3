@@ -40,7 +40,7 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
 |                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 0.11.0 |                                             |
 |**optional libs**  | [cereal](https://github.com/USCiLab/cereal)          | ≥ 1.2.3  | required for serialisation and CTD support  |
 |                   | [zlib](https://github.com/madler/zlib)               | ≥ 1.2    | required for `*.gz` and `.bam` file support |
-|                   | [bzip2](http://www.bzip.org)                         | ≥ 1.0    | required for `*.bz2` file support           |
+|                   | [bzip2](https://www.sourceware.org/bzip2)            | ≥ 1.0    | required for `*.bz2` file support           |
 
 ## Usage
 
