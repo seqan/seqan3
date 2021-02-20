@@ -30,7 +30,7 @@ struct pod_tuple
 {};
 //!\endcond
 
-/*!\brief Behaves like std::tuple but is an aggregate [PODType](https://en.cppreference.com/w/cpp/concept/PODType).
+/*!\brief Behaves like std::tuple but is an aggregate [PODType](https://en.cppreference.com/w/cpp/named_req/PODType).
  * \ingroup utility
  * \implements seqan3::tuple_like
  * \tparam type0    The first type (the first type).
