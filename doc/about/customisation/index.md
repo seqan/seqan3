@@ -47,7 +47,7 @@ satisfy the requirements of customisation point objects.
 
 More technical background on this topic can be found here:
 
-  1. [Original blog article](http://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) with
+  1. [Original blog article](https://ericniebler.com/2014/10/21/customization-point-design-in-c11-and-beyond/) with
      background and the first "Niebloid" design.
   2. [A more recent article](https://quuxplusone.github.io/blog/2018/03/19/customization-points-for-functions/) that
      also introduces the notion of "upload" namespaces.
