@@ -1,12 +1,12 @@
 # Copyright {#about_copyright}
 
-| Summary                   |                                                                                        |
-|---------------------------|----------------------------------------------------------------------------------------|
-| Copyright holders         | Knut Reinert, [FU-Berlin](https://fu-berlin.de), [MPI MolGen](https://molgen.mpg.de/)  |
-| Library source code       | ![](doc/about/copyright/bsdl_badge.svg)                                                |
-| Documentation             | ![](doc/about/copyright/ccby_badge.svg)                                                |
-| Snippets and examples     | ![](doc/about/copyright/cc0_badge.svg)                                                 |
-| Dependencies              | ![](doc/about/copyright/copyfree_badge.svg)                                            |
+| Summary                   |                                                                                            |
+|---------------------------|--------------------------------------------------------------------------------------------|
+| Copyright holders         | Knut Reinert, [FU-Berlin](https://fu-berlin.de), [MPI MolGen](https://www.molgen.mpg.de/)  |
+| Library source code       | ![](doc/about/copyright/bsdl_badge.svg)                                                    |
+| Documentation             | ![](doc/about/copyright/ccby_badge.svg)                                                    |
+| Snippets and examples     | ![](doc/about/copyright/cc0_badge.svg)                                                     |
+| Dependencies              | ![](doc/about/copyright/copyfree_badge.svg)                                                |
 
 # Source code license
 
