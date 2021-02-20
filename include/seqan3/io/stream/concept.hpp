@@ -159,20 +159,4 @@ SEQAN3_CONCEPT input_stream = requires { typename std::remove_reference_t<stream
   */
 //!\}
 
-/*!\interface seqan3::stream_REMOVEME <>
- * \extends seqan3::input_stream_over
- * \extends seqan3::output_stream_over
- * \brief Concept for i/o streams permitting both directions.
- * \ingroup stream
- *
- * An object satisfying the requirements of a stream concept can be used to stream in both (input and output)
- * directions.
- */
-//!\cond
-template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT stream_REMOVEME = output_stream_over<stream_type, value_type> &&
-                        input_stream_over<stream_type, value_type>;
-
-//!\endcond
-
 } // namespace seqan3
