@@ -14,7 +14,7 @@
 /*!\defgroup io IO
  * \brief The IO module provides stream handling formatted I/O.
  *
- * # stream_REMOVEMEs and (de-)compression {#io_compression}
+ * # Streams and (de-)compression {#io_compression}
  *
  * SeqAn works with regular iostreams as provided by the standard library, but it also handles compressed streams:
  *

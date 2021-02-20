@@ -42,6 +42,6 @@
 /*!\namespace seqan3::simd
  * \brief The SeqAn namespace for simd data types, algorithms and meta functions.
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
- * \sa https://en.wikipedia.org/wiki/stream_REMOVEMEing_SIMD_Extensions Which SIMD architectures exist?
+ * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  */
 //!\endcond
