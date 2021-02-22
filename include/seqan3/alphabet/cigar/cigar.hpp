@@ -111,6 +111,8 @@ public:
      * \param[in] alph        The value of a component that should be assigned.
      *
      * \include test/snippet/alphabet/cigar/cigar_value_construction.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar(component_type const alph) noexcept {} ))
 
@@ -119,6 +121,8 @@ public:
      * \param[in] alph        The value of a component that should be assigned.
      *
      * \include test/snippet/alphabet/cigar/cigar_value_assignment.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     SEQAN3_DOXYGEN_ONLY(( constexpr cigar & operator=(component_type const alph) noexcept {} ))
     //!\}
@@ -129,10 +133,13 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the string representation.
+    /*!\brief Return the string representation.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     small_string<11> to_string() const noexcept
     {
-        small_string<11> ret{}; // maximum number of digits for uint32_t + 1 char for the cigar_op
+        small_string<11> ret{}; // maximum number of digits for uint32_t + 1 char for the cigar operation
         ret.resize(11);
 
         auto [ ptr, errc ] = std::to_chars(ret.data(), ret.data() + 10, get<0>(*this));
@@ -148,7 +155,10 @@ public:
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from the string representation.
+    /*!\brief Assign from the string representation.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     cigar & assign_string(small_string<11> const s) noexcept
     {
         uint32_t num{};
@@ -175,16 +185,20 @@ public:
     /*!\copydoc alphabet_tuple_base::get(alphabet_tuple_base & l)
      *
      * \include test/snippet/alphabet/cigar/cigar_get_index.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( template <size_t index> constexpr auto get(cigar & l) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY(( friend template <size_t index> constexpr auto get(cigar & l) noexcept {} ))
 
     /*!\copybrief get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
      * \returns A proxy to the contained element that models the same alphabet concepts and supports assignment.
      *
      * \include test/snippet/alphabet/cigar/cigar_get_type.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( template <typename type> constexpr auto get(cigar & l) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY(( friend template <typename type> constexpr auto get(cigar & l) noexcept {} ))
     //!\}
 };
 
