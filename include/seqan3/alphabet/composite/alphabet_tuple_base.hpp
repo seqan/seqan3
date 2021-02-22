@@ -108,6 +108,8 @@ decltype(auto) get();
  *
  * \sa qualified
  * \sa masked
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename derived_type,
           typename ...component_types>
@@ -325,6 +327,8 @@ public:
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
      * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_construction.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename component_type>
     //!\cond
@@ -348,6 +352,8 @@ public:
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
      * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_construction.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_component_type>
     //!\cond
@@ -385,6 +391,8 @@ public:
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
      * \include test/snippet/alphabet/composite/alphabet_tuple_base_value_assignment.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename component_type>
     //!\cond
@@ -405,6 +413,8 @@ public:
      * Note: Since the alphabet_tuple_base is a CRTP base class, we show the working examples
      * with one of its derived classes (seqan3::qualified).
      * \include test/snippet/alphabet/composite/alphabet_tuple_base_subtype_assignment.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_component_type>
     //!\cond
@@ -456,6 +466,8 @@ public:
     /*!\brief Tuple-like access to the contained components.
      * \tparam index Return the i-th element.
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <size_t index>
     friend constexpr auto get(alphabet_tuple_base & l) noexcept
@@ -473,6 +485,8 @@ public:
     /*!\copybrief get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
      * \returns A proxy to the contained element that models the same alphabets concepts and supports assignment.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename type>
     friend constexpr auto get(alphabet_tuple_base & l) noexcept
@@ -486,6 +500,8 @@ public:
     /*!\copybrief get
      * \tparam index Return the i-th element.
      * \returns A copy of the contained element.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <size_t index>
     friend constexpr auto get(alphabet_tuple_base const & l) noexcept
@@ -500,6 +516,8 @@ public:
     /*!\copybrief get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
      * \returns A copy of the contained element.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename type>
     friend constexpr type get(alphabet_tuple_base const & l) noexcept
@@ -511,6 +529,8 @@ public:
     }
 
     /*!\brief Implicit cast to a single letter. Works only if the type is unique in the type list.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename type>
     constexpr operator type() const noexcept
@@ -536,6 +556,8 @@ public:
      *
      * To determine (in-)equality/order, it is first deduced which component the argument is comparable with.
      * The tuple is then cast to that type and the resulting value compared with the argument.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename derived_type_t, typename indirect_component_type>
     friend constexpr auto operator==(derived_type_t const lhs, indirect_component_type const rhs) noexcept
@@ -741,6 +763,8 @@ namespace std
  * \implements seqan3::transformation_trait
  * \ingroup composite
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <std::size_t i, seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_element<i, tuple_t>
@@ -753,6 +777,8 @@ struct tuple_element<i, tuple_t>
  * \implements seqan3::unary_type_trait
  * \ingroup composite
  * \see std::tuple_size_v
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_size<tuple_t> :
