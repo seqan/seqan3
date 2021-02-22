@@ -804,7 +804,7 @@ private:
         add_list_item("\\fB--export-help\\fP (std::string)",
                                     "Export the help page information. Value must be one of [html, man].");
         if (version_check_dev_decision == update_notifications::on)
-            add_list_item("\\fB--version-check\\fP (bool)", "Whether to to check for the newest app version. Default: 1.");
+            add_list_item("\\fB--version-check\\fP (bool)", "Whether to check for the newest app version. Default: 1.");
     }
 
     /*!\brief Checks whether the long identifier has already been used before.

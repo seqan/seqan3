@@ -38,7 +38,7 @@ std::string const basic_options_str = "OPTIONS\n"
                                       "    --export-help (std::string)\n"
                                       "          Export the help page information. Value must be one of [html, man].\n"
                                       "    --version-check (bool)\n"
-                                      "          Whether to to check for the newest app version. Default: 1.\n";
+                                      "          Whether to check for the newest app version. Default: 1.\n";
 
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update:\n"
