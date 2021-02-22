@@ -772,12 +772,12 @@ private:
 
                 arg = argv[i];
 
-                if (arg == "true")
+                if (arg == "1" || arg == "true")
                     version_check_user_decision = true;
-                else if (arg == "false")
+                else if (arg == "0" || arg == "false")
                     version_check_user_decision = false;
                 else
-                    throw validation_error{"Value for option --version-check must be true or false."};
+                    throw validation_error{"Value for option --version-check must be true (1) or false (0)."};
 
                 // in case --version-check is specified it shall not be passed to format_parse()
                 argc -= 2;
