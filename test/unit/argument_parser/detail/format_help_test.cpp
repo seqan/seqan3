@@ -19,10 +19,10 @@ std::string expected;
 int option_value{5};
 bool flag_value{};
 std::vector<std::string> pos_opt_value{};
-const char * argv0[] = {"./help_add_test --version-check 0"};
-const char * argv1[] = {"./help_add_test --version-check 0", "-h"};
-const char * argv2[] = {"./help_add_test --version-check 0", "-hh"};
-const char * argv3[] = {"./help_add_test --version-check 0", "--version"};
+const char * argv0[] = {"./help_add_test --version-check false"};
+const char * argv1[] = {"./help_add_test --version-check false", "-h"};
+const char * argv2[] = {"./help_add_test --version-check false", "-hh"};
+const char * argv3[] = {"./help_add_test --version-check false", "--version"};
 
 std::string const basic_options_str = "OPTIONS\n"
                                       "\n"
@@ -38,7 +38,7 @@ std::string const basic_options_str = "OPTIONS\n"
                                       "    --export-help (std::string)\n"
                                       "          Export the help page information. Value must be one of [html, man].\n"
                                       "    --version-check (bool)\n"
-                                      "          Whether to check for the newest app version. Default: 1.\n";
+                                      "          Whether to check for the newest app version. Default: true.\n";
 
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update:\n"

@@ -143,7 +143,7 @@ namespace seqan3
  *
  * Users of applications that have this feature activated can opt-out, by either:
  *
- *  * disabling it for a specific application simply by setting the option `--version-check 0` or
+ *  * disabling it for a specific application simply by setting the option `--version-check false` or
  *  * disabling it for all applications by setting the `SEQAN3_NO_VERSION_CHECK` environment variable.
  *
  * Note that in case there is no `--version-check` option (display available options with `-h/--help)`,
@@ -180,7 +180,7 @@ public:
      */
     argument_parser(std::string const app_name,
                     int const argc,
-                    char const * const * const  argv,
+                    char const * const * const argv,
                     update_notifications version_updates = update_notifications::on,
                     std::vector<std::string> subcommands = {}) :
         version_check_dev_decision{version_updates},
@@ -355,7 +355,7 @@ public:
      * - **-hh/\--advanced-help** Prints the help page including advanced options.
      * - <b>\--version</b> Prints the version information.
      * - <b>\--export-help [format]</b> Prints the application description in the given format (html/man/ctd).
-     * - <b>\--version-check 0/1</b> Disable/enable update notifications.
+     * - <b>\--version-check false/true</b> Disable/enable update notifications.
      *
      * Example:
      *
@@ -772,12 +772,12 @@ private:
 
                 arg = argv[i];
 
-                if (arg == "1")
+                if (arg == "true")
                     version_check_user_decision = true;
-                else if (arg == "0")
+                else if (arg == "false")
                     version_check_user_decision = false;
                 else
-                    throw validation_error{"Value for option --version-check must be 1 or 0."};
+                    throw validation_error{"Value for option --version-check must be true or false."};
 
                 // in case --version-check is specified it shall not be passed to format_parse()
                 argc -= 2;
@@ -804,7 +804,7 @@ private:
         add_list_item("\\fB--export-help\\fP (std::string)",
                                     "Export the help page information. Value must be one of [html, man].");
         if (version_check_dev_decision == update_notifications::on)
-            add_list_item("\\fB--version-check\\fP (bool)", "Whether to check for the newest app version. Default: 1.");
+            add_list_item("\\fB--version-check\\fP (bool)", "Whether to check for the newest app version. Default: true.");
     }
 
     /*!\brief Checks whether the long identifier has already been used before.

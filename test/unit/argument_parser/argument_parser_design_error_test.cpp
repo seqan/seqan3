@@ -102,7 +102,7 @@ TEST(parse_test, parse_called_twice)
 {
     std::string option_value;
 
-    const char * argv[] = {"./argument_parser_test", "--version-check", "0", "-s", "option_string"};
+    const char * argv[] = {"./argument_parser_test", "--version-check", "false", "-s", "option_string"};
     seqan3::argument_parser parser{"test_parser", 5, argv};
     parser.add_option(option_value, 's', "string-option", "this is a string option.");
 

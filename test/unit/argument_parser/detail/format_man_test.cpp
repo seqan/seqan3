@@ -21,7 +21,7 @@ struct format_man_test : public ::testing::Test
     int8_t non_list_pos_opt_value{1};
     std::vector<std::string> list_pos_opt_value{};
     std::string my_stdout{};
-    const char * argv[4] = {"./format_man_test --version-check 0", "--export-help", "man"};
+    const char * argv[4] = {"./format_man_test --version-check false", "--export-help", "man"};
     std::string expected =
     R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
     R"(.SH NAME)" "\n"
