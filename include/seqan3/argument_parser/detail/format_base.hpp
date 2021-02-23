@@ -115,7 +115,7 @@ protected:
     //!\endcond
     static std::string option_type_and_list_info(container_type const & container)
     {
-        return ("(\\fIList\\fP of \\fI" + get_type_name_as_string(container) + "\\fP's)");
+        return ("(\\fIList\\fP of \\fI" + get_type_name_as_string(container) + "\\fP)");
     }
 
     /*!\brief Formats the option/flag identifier pair for the help page printing.

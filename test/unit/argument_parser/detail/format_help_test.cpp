@@ -447,7 +447,7 @@ TEST(help_page_printing, full_information)
                "POSITIONAL ARGUMENTS\n"
                "    ARGUMENT-1 (signed 8 bit integer)\n"
                "          this is not a list.\n"
-               "    ARGUMENT-2 (List of std::string's)\n"
+               "    ARGUMENT-2 (List of std::string)\n"
                "          this is a positional option. Default: [].\n"
                "\n" +
                basic_options_str +

@@ -129,7 +129,7 @@ TEST(html_format, full_information_information)
                           "<dl>\n"
                           "<dt><strong>ARGUMENT-1</strong> (<em>signed 8 bit integer</em>)</dt>\n"
                           "<dd>this is a positional option. </dd>\n"
-                          "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
+                          "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>)</dt>\n"
                           "<dd>this is a positional option. Default: []. </dd>\n"
                           "</dl>\n"
                           "<h2>Options</h2>\n"

@@ -751,7 +751,7 @@ TEST(validator_test, arithmetic_range_validator_success)
                            "===========\n"
                            "\n"
                            "POSITIONAL ARGUMENTS\n"
-                           "    ARGUMENT-1 (List of signed 32 bit integer's)\n"
+                           "    ARGUMENT-1 (List of signed 32 bit integer)\n"
                            "          desc Default: []. Value must be in range [-20,20].\n"
                            "\n" +
                            basic_options_str +
@@ -968,7 +968,7 @@ TEST(validator_test, value_list_validator_success)
                            "===========\n"
                            "\n" +
                            basic_options_str +
-                           "    -i, --int-option (List of signed 32 bit integer's)\n"
+                           "    -i, --int-option (List of signed 32 bit integer)\n"
                            "          desc Default: []. Value must be one of [-10,48,50].\n\n" +
                            basic_version_str);
     EXPECT_EQ(my_stdout, expected);
@@ -1110,7 +1110,7 @@ TEST(validator_test, regex_validator_success)
                                "===========\n"
                                "\n" +
                                basic_options_str +
-                               "    -s, --string-option (List of std::string's)\n"
+                               "    -s, --string-option (List of std::string)\n"
                                "          desc Default: []. Value must match the pattern\n"
                                "          '[a-zA-Z]+@[a-zA-Z]+\\.com'.\n"
                                "\n" +

@@ -39,7 +39,7 @@ struct format_man_test : public ::testing::Test
     R"(\fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP))" "\n"
     R"(this is a positional option. )" "\n"
     R"(.TP)" "\n"
-    R"(\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's))" "\n"
+    R"(\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP))" "\n"
     R"(this is a positional option. Default: []. )" "\n"
     R"(.SH OPTIONS)" "\n"
     R"(.SS Basic options:)" "\n"
