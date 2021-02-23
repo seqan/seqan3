@@ -29,7 +29,7 @@
 #endif
 
 // MSVC doesn't define SSE4 macros, even if the instruction set is available (e.g. when AVX is defined)
-// See https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=vs-2019
+// See https://docs.microsoft.com/en-us/cpp/preprocessor/predefined-macros?view=msvc-160
 #if defined(_MSC_VER) && defined(__AVX__) && !defined(__SSE4_1__) && !defined(__SSE4_2__)
 #define __SSE4_1__ 1
 #define __SSE4_2__ 1

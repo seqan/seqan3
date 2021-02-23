@@ -14,15 +14,15 @@
 /*!\defgroup io IO
  * \brief The IO module provides stream handling formatted I/O.
  *
- * # stream_REMOVEMEs and (de-)compression {#io_compression}
+ * # Streams and (de-)compression {#io_compression}
  *
  * SeqAn works with regular iostreams as provided by the standard library, but it also handles compressed streams:
  *
- * | **Format** | **Extension**   | **Dependency**                   | **Description**                                   |
- * |:-----------|:----------------|:---------------------------------|:--------------------------------------------------|
- * | GZip       | `.gz`¹          | [zlib](https://zlib.net/)        | GNU-Zip, most common format on UNIX               |
- * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)        | [Blocked GZip](https://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
- * | BZip2      | `.bz2`          | [libbz2](https://www.bzip.org)   | Stronger compression than GZip, slower to compress |
+ * | **Format** | **Extension**   | **Dependency**                             | **Description**                                                                                                       |
+ * |:-----------|:----------------|:-------------------------------------------|:----------------------------------------------------------------------------------------------------------------------|
+ * | GZip       | `.gz`¹          | [zlib](https://zlib.net/)                  | GNU-Zip, most common format on UNIX                                                                                   |
+ * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)                  | [Blocked GZip](https://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
+ * | BZip2      | `.bz2`          | [libbz2](https://www.sourceware.org/bzip2) | Stronger compression than GZip, slower to compress                                                                    |
  *
  * <small>¹ SeqAn always assumes GZip and does not handle pure `.Z`.<br>
  * ² Some file formats like `.bam` or `.bcf` are implicitly BGZF-compressed without showing this in the

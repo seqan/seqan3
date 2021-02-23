@@ -141,7 +141,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The `seqan3::views::minimiser` has been added. This is a view that computes the minimum in a window shifted over a
   range of comparable values ([\#1654](https://github.com/seqan/seqan3/pull/1654)).
 * The `seqan3::views::minimiser_hash` has been added. This is a view that computes the minimisers of a range of type
-  `seqan3::semialphabet` ([\#1721](https://https://github.com/seqan/seqan3/pull/1721)).
+  `seqan3::semialphabet` ([\#1721](https://github.com/seqan/seqan3/pull/1721)).
 
 #### Search
 
@@ -222,7 +222,7 @@ Header Changes:
 * The `seqan3::forward_range` has been removed. Use `std::ranges::borrowed_range` instead
   ([\#2038](https://github.com/seqan/seqan3/pull/2038)).
 * The `seqan3::views:trim` has been renamed to `seqan3::views:trim_quality`
-  ([\#2025](https://https://github.com/seqan/seqan3/pull/2025)).
+  ([\#2025](https://github.com/seqan/seqan3/pull/2025)).
 
 Header Changes:
 

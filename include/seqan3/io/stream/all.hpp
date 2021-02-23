@@ -10,7 +10,7 @@
  * \author René Rahn <rene.rahn AT fu-berlin.de>
  */
 
-/*!\defgroup stream stream_REMOVEME
+/*!\defgroup stream Stream
  * \brief The stream sub-module contains data structures and functions for streaming and tokenization.
  * \ingroup io
  */

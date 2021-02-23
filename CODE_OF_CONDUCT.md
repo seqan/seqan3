@@ -10,7 +10,7 @@ Please have a look at the full text here: https://berlincodeofconduct.org/
 
 Many SeqAn core team members and contributors are employees and/or (PhD) students of Freie Universität Berlin and
 are thus also bound by the
-[Academic Honour Code](https://www.fu-berlin.de/forschung/service/Ehrenkodex-ab292002.pdf).
+[Academic Honour Code](https://www.fu-berlin.de/service/zuvdocs/amtsblatt/2002/ab292002.pdf).
 
 # Scope
 

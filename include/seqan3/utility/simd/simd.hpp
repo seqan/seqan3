@@ -37,7 +37,7 @@ inline namespace simd
  * ###Helper types
  *   seqan3::simd::simd_type_t as a shorthand for seqan3::simd::simd_type::type
  * \sa https://en.wikipedia.org/wiki/SIMD What is SIMD conceptually?
- * \sa https://en.wikipedia.org/wiki/stream_REMOVEMEing_SIMD_Extensions Which SIMD architectures exist?
+ * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
  * \sa https://github.com/edanor/umesimd Underlying library of *seqan3::detail::ume_simd* types.
  * \sa https://software.intel.com/sites/landingpage/IntrinsicsGuide Instruction sets and their low-level intrinsics.

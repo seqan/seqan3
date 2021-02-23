@@ -16,25 +16,6 @@
 
 #include <seqan3/io/stream/concept.hpp>
 
-TEST(io, stream_REMOVEME)
-{
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::istream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ostream, char>));
-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::iostream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ifstream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ofstream, char>));
-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::fstream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::istringstream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ostringstream, char>));
-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::stringstream, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
-}
-
 TEST(io, input_stream_over)
 {
     EXPECT_TRUE((seqan3::input_stream_over<std::istream, char>));

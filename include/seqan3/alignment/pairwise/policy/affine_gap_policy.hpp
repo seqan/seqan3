@@ -35,7 +35,7 @@ namespace seqan3::detail
  *
  * This CRTP-policy implements the recursion for the alignment algorithm with affine gaps. See
  * `Osamu Gotoh, Optimal sequence alignment allowing for long gaps, Bulletin of Mathematical Biology, Volume 52,
- *  Issue 3, 1990, Pages 359-373, ISSN 0092-8240, https://doi.org/10.1016/S0092-8240(05)80216-2.`
+ *  Issue 3, 1990, Pages 359-373, ISSN 0092-8240, https://doi.org/10.1007/BF02458577`
  * for more information.
  *
  * \remarks The template parameters of this CRTP-policy are selected in the

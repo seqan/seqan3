@@ -2,7 +2,7 @@
 
 [TOC]
 
-Summary: SeqAn3 adheres to [semantic versioning](https://semvar.org) and provides a stable API within
+Summary: SeqAn3 adheres to [semantic versioning](https://semver.org) and provides a stable API within
 one major release (all of `seqan-3.*.*`) unless otherwise noted.
 There is no ABI stability.
 

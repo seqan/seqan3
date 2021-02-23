@@ -14,7 +14,7 @@ Thank you for reporting an issue! Before you submit a bug report, please do the 
   * Search the list of existing issues to see if someone has reported the issue already.
 
 If you already know how to fix the issue, you can directly create a pull-request instead of an issue.
-See the guide on [CONTRIBUTING](./CONTRIBUTING.md) for more details.
+See the [contributor guide](https://docs.seqan.de/seqan/3-master-user/about_contributing.html) for more details.
 -->
 
 ## Platform

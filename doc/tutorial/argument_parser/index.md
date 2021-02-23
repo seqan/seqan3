@@ -3,7 +3,7 @@
 <b>Learning Objective:</b> <br>
 You will learn how to use the seqan3::argument_parser class to parse command line arguments. This tutorial is a walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
 
-\tutorial_head{Easy, 30-60 min, \ref setup, [POSIX conventions](https://www.math.uni-hamburg.de/doc/java/tutorial/essential/attributes/_posix.html)}
+\tutorial_head{Easy, 30-60 min, \ref setup, [POSIX conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html)}
 
 [TOC]
 
@@ -34,7 +34,7 @@ The binary `program1` is called with several command line **arguments**. We call
 | **flag**               | boolean on/off flag (*id*)                     | `-f`                    |
 | **positional option**  | identify an argument by position (*value*)     | `file1.txt`             |
 
-Have a look at the [POSIX conventions](https://www.math.uni-hamburg.de/doc/java/tutorial/essential/attributes/_posix.html) for command line arguments if you want a detailed description on the requirements for the above. (Note: in the linked article the following holds: value="argument", option="option", flag = "option that does not require arguments", positional option ="non-option").
+Have a look at the [POSIX conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html) for command line arguments if you want a detailed description on the requirements for the above. (Note: in the linked article the following holds: value="argument", option="option", flag = "option that does not require arguments", positional option ="non-option").
 
 ## A continuous example
 We will get to know the wide functionality of the argument parser by writing a little application and extending it step by step.  Let's say we have a tab separated file `data.tsv` with information on the Game of Thrones Seasons ([by Wikipedia](https://en.wikipedia.org/wiki/List_of_Game_of_Thrones_episodes)):
