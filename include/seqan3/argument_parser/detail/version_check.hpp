@@ -275,7 +275,7 @@ public:
      *
      * The following rules apply:
      *
-     * If the developer says no, it rules out all following decisions (even if the user specified --version-check 1).
+     * If the developer says no, it rules out all following decisions (even if the user specified --version-check true).
      * No cookie is ever written.
      *
      * If the environment variable SEQAN3_NO_VERSION_CHECK is set no version check is done (rules out all following).

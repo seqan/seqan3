@@ -17,7 +17,7 @@ TEST(html_format, empty_information)
     std::string expected;
 
     // Empty html help page.
-    const char * argv0[] = {"./help_add_test --version-check 0", "--export-help", "html"};
+    const char * argv0[] = {"./help_add_test --version-check false", "--export-help", "html"};
     seqan3::argument_parser parser0{"empty_options", 3, argv0};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser0.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -45,7 +45,7 @@ TEST(html_format, empty_information)
                            "<dt><strong>--export-help</strong> (std::string)</dt>\n"
                            "<dd>Export the help page information. Value must be one of [html, man].</dd>\n"
                            "<dt><strong>--version-check</strong> (bool)</dt>\n"
-                           "<dd>Whether to to check for the newest app version. Default: 1.</dd>\n"
+                           "<dd>Whether to check for the newest app version. Default: true.</dd>\n"
                            "</dl>\n"
                            "<h2>Version</h2>\n"
                            "<p>\n"
@@ -59,7 +59,7 @@ TEST(html_format, empty_information)
                            "</body></html>");
     EXPECT_EQ(my_stdout, expected);
 
-    const char * argv1[] = {"./help_add_test --version-check 0", "--export-help=html"};
+    const char * argv1[] = {"./help_add_test --version-check false", "--export-help=html"};
     seqan3::argument_parser parser1{"empty_options", 2, argv1};
     testing::internal::CaptureStdout();
     EXPECT_EXIT(parser1.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
@@ -77,7 +77,7 @@ TEST(html_format, full_information_information)
     std::vector<std::string> list_pos_opt_value{};
 
    // Full html help page.
-   const char * argv0[] = {"./help_add_test --version-check 0", "--export-help", "html"};
+   const char * argv0[] = {"./help_add_test --version-check false", "--export-help", "html"};
    seqan3::argument_parser parser1{"program_full_options", 3, argv0};
    parser1.info.synopsis.push_back("./some_binary_name synopsis");
    parser1.info.synopsis.push_back("./some_binary_name synopsis2");
@@ -129,7 +129,7 @@ TEST(html_format, full_information_information)
                           "<dl>\n"
                           "<dt><strong>ARGUMENT-1</strong> (<em>signed 8 bit integer</em>)</dt>\n"
                           "<dd>this is a positional option. </dd>\n"
-                          "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>'s)</dt>\n"
+                          "<dt><strong>ARGUMENT-2</strong> (<em>List</em> of <em>std::string</em>)</dt>\n"
                           "<dd>this is a positional option. Default: []. </dd>\n"
                           "</dl>\n"
                           "<h2>Options</h2>\n"
@@ -146,7 +146,7 @@ TEST(html_format, full_information_information)
                           "<dt><strong>--export-help</strong> (std::string)</dt>\n"
                           "<dd>Export the help page information. Value must be one of [html, man].</dd>\n"
                           "<dt><strong>--version-check</strong> (bool)</dt>\n"
-                          "<dd>Whether to to check for the newest app version. Default: 1.</dd>\n"
+                          "<dd>Whether to check for the newest app version. Default: true.</dd>\n"
                           "<dt><strong>-i</strong>, <strong>--int</strong> (<em>signed 32 bit integer</em>)</dt>\n"
                           "<dd>this is a int option. Default: 5. </dd>\n"
                           "<dt><strong>-j</strong>, <strong>--jint</strong> (<em>signed 32 bit integer</em>)</dt>\n"
@@ -198,9 +198,9 @@ TEST(html_format, full_information_information)
 
 TEST(export_help, parse_error)
 {
-    const char * argv[]  = {"./help_add_test --version-check 0", "--export-help"};
-    const char * argv2[] = {"./help_add_test --version-check 0", "--export-help=atml"};
-    const char * argv3[] = {"./help_add_test --version-check 0", "--export-help", "atml"};
+    const char * argv[]  = {"./help_add_test --version-check false", "--export-help"};
+    const char * argv2[] = {"./help_add_test --version-check false", "--export-help=atml"};
+    const char * argv3[] = {"./help_add_test --version-check false", "--export-help", "atml"};
 
     // no value after --export-help
     EXPECT_THROW((seqan3::argument_parser{"test_parser", 2, argv}), seqan3::argument_parser_error);

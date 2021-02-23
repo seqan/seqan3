@@ -42,8 +42,8 @@ bool wait_for(seqan3::argument_parser & parser)
 struct version_check : public ::testing::Test
 {
     char const * const OPTION_VERSION_CHECK = "--version-check";
-    char const * const OPTION_OFF = "0";
-    char const * const OPTION_ON = "1";
+    char const * const OPTION_OFF = "false";
+    char const * const OPTION_ON = "true";
 
     std::string const app_name = std::string{"test_version_check"};
 

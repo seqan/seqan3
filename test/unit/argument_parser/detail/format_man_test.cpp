@@ -21,7 +21,7 @@ struct format_man_test : public ::testing::Test
     int8_t non_list_pos_opt_value{1};
     std::vector<std::string> list_pos_opt_value{};
     std::string my_stdout{};
-    const char * argv[4] = {"./format_man_test --version-check 0", "--export-help", "man"};
+    const char * argv[4] = {"./format_man_test --version-check false", "--export-help", "man"};
     std::string expected =
     R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
     R"(.SH NAME)" "\n"
@@ -39,7 +39,7 @@ struct format_man_test : public ::testing::Test
     R"(\fBARGUMENT-1\fP (\fIsigned 8 bit integer\fP))" "\n"
     R"(this is a positional option. )" "\n"
     R"(.TP)" "\n"
-    R"(\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP's))" "\n"
+    R"(\fBARGUMENT-2\fP (\fIList\fP of \fIstd::string\fP))" "\n"
     R"(this is a positional option. Default: []. )" "\n"
     R"(.SH OPTIONS)" "\n"
     R"(.SS Basic options:)" "\n"
@@ -60,7 +60,7 @@ struct format_man_test : public ::testing::Test
     R"(Export the help page information. Value must be one of [html, man].)" "\n"
     R"(.TP)" "\n"
     R"(\fB--version-check\fP (bool))" "\n"
-    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
+    R"(Whether to check for the newest app version. Default: true.)" "\n"
     R"(.TP)" "\n"
     R"(\fB-i\fP, \fB--int\fP (\fIsigned 32 bit integer\fP))" "\n"
     R"(this is a int option. Default: 5. )" "\n"
@@ -144,7 +144,7 @@ TEST_F(format_man_test, empty_information)
     R"(Export the help page information. Value must be one of [html, man].)" "\n"
     R"(.TP)" "\n"
     R"(\fB--version-check\fP (bool))" "\n"
-    R"(Whether to to check for the newest app version. Default: 1.)" "\n"
+    R"(Whether to check for the newest app version. Default: true.)" "\n"
     R"(.SH VERSION)" "\n"
     R"(\fBLast update: \fRDecember 01, 1994)" "\n"
     R"(.br)" "\n"

@@ -100,7 +100,7 @@ struct alphabet<uint_type>
         return uint_v = chr;
     }
 
-    /*!\brief Assign a rank to to the uint (same as calling `=`).
+    /*!\brief Assign a rank to the uint (same as calling `=`).
      * \param[in] uint2_v The `rank` value you wish to assign.
      * \param[in,out] uint_v The alphabet letter that you wish to assign to.
      * \returns A reference to the alphabet letter you passed in.
