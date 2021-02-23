@@ -143,7 +143,7 @@ namespace seqan3
  *
  * Users of applications that have this feature activated can opt-out, by either:
  *
- *  * disabling it for a specific application simply by setting the option `--version-check false` or
+ *  * disabling it for a specific application simply by setting the option `--version-check false/0` or
  *  * disabling it for all applications by setting the `SEQAN3_NO_VERSION_CHECK` environment variable.
  *
  * Note that in case there is no `--version-check` option (display available options with `-h/--help)`,
@@ -355,7 +355,7 @@ public:
      * - **-hh/\--advanced-help** Prints the help page including advanced options.
      * - <b>\--version</b> Prints the version information.
      * - <b>\--export-help [format]</b> Prints the application description in the given format (html/man/ctd).
-     * - <b>\--version-check false/true</b> Disable/enable update notifications.
+     * - <b>\--version-check false/0/true/1</b> Disable/enable update notifications.
      *
      * Example:
      *
