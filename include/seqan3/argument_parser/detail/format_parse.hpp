@@ -563,6 +563,9 @@ private:
         auto it = find_option_id(argv.begin(), end_of_options_it, id);
         bool seen_at_least_once{it != end_of_options_it};
 
+        if (seen_at_least_once)
+            value.clear();
+
         while (it != end_of_options_it)
         {
             identify_and_retrieve_option_value(value, it, id);
@@ -736,9 +739,11 @@ private:
                                     std::to_string(positional_option_calls.size()) +
                                     "). See -h/--help for more information.");
 
-        if (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
+        if constexpr (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
         {
             assert(positional_option_count == positional_option_calls.size()); // checked on set up.
+
+            value.clear();
 
             while (it != argv.end())
             {

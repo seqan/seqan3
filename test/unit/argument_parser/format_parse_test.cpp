@@ -1028,6 +1028,7 @@ TEST(parse_test, is_option_set)
     EXPECT_THROW(parser.is_option_set('\0'), seqan3::design_error);
 }
 
+// https://github.com/seqan/seqan3/pull/2381
 TEST(parse_test, container_options)
 {
     {
@@ -1064,5 +1065,62 @@ TEST(parse_test, container_options)
         EXPECT_NO_THROW(parser.parse());
 
         EXPECT_TRUE(option_values == (std::vector<bool>{true, false, true}));
+    }
+}
+
+// https://github.com/seqan/seqan3/issues/2393
+TEST(parse_test, container_default)
+{
+    // overwrite default
+    {
+        std::vector<int> option_values{1, 2, 3};
+
+        const char * argv[] = {"./argument_parser_test", "-i", "2", "-i", "1", "-i", "3"};
+        seqan3::argument_parser parser{"test_parser", 7, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'i', "int-option", "this is an int option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<int>{2, 1, 3}));
+    }
+    // overwrite default, parameters are not consecutive
+    {
+        std::vector<int> option_values{1, 2, 3};
+        bool bool_opt{false};
+
+        const char * argv[] = {"./argument_parser_test", "-i", "2", "-b", "true", "-i", "1", "-i", "3"};
+        seqan3::argument_parser parser{"test_parser", 9, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'i', "int-option", "this is an int option.");
+        parser.add_option(bool_opt, 'b', "bool-option", "this is a bool option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<int>{2, 1, 3}));
+    }
+    // use default
+    {
+        std::vector<int> option_values{1, 2, 3};
+        bool bool_opt{false};
+
+        const char * argv[] = {"./argument_parser_test", "-b", "true"};
+        seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+        parser.add_option(option_values, 'i', "int-option", "this is an int option.");
+        parser.add_option(bool_opt, 'b', "bool-option", "this is a bool option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<int>{1, 2, 3}));
+    }
+    // overwrite default for positional options
+    {
+        std::vector<int> option_values{1, 2, 3};
+
+        const char * argv[] = {"./argument_parser_test", "2", "1", "3"};
+        seqan3::argument_parser parser{"test_parser", 4, argv, seqan3::update_notifications::off};
+        parser.add_positional_option(option_values, "this is an int option.");
+
+        EXPECT_NO_THROW(parser.parse());
+
+        EXPECT_TRUE(option_values == (std::vector<int>{2, 1, 3}));
     }
 }
