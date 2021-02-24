@@ -42,8 +42,11 @@ private:
     //!\brief Befriend seqan3::alphabet_base.
     friend base_t;
 
-    //!\brief The character that will be printed.
-    static constexpr char char_value = '-';
+    //!\brief Value to char conversion table.
+    static constexpr char_type rank_to_char[1]{'-'};
+
+    //!\brief Char to value conversion table.
+    static constexpr std::array<rank_type, 256> char_to_rank{};
 
 public:
     /*!\name Constructors, destructor and assignment
