@@ -136,7 +136,6 @@ TYPED_TEST_P(sequence_file_read, seq_qual)
 
         EXPECT_RANGE_EQ((*it).id(), this->ids[i]);
     }
-
 }
 
 TYPED_TEST_P(sequence_file_read, options_truncate_ids)

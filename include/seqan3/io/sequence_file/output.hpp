@@ -110,10 +110,9 @@ namespace seqan3
  *
  * You may also use the output file's iterator for writing, however, this rarely provides an advantage.
  *
-* ### Writing record-wise (custom fields)
+ * ### Writing record-wise (custom fields)
  *
- * If you want to pass a combined object for SEQ and QUAL fields to push_back() / emplace_back(), or if you want
- * to change the order of the parameters, you can pass a non-empty fields trait object to the
+ * If you want to change the order of the parameters, you can pass a non-empty fields trait object to the
  * sequence_file_output constructor to select the fields that are used for interpreting the arguments.
  *
  * The following snippets demonstrates the usage of such a fields trait object.
