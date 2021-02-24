@@ -46,14 +46,14 @@
  */
 
  /*!\namespace seqan3::exposition_only
-  * \brief A namespace for SeqAn entities that are intended for documentation-only.
+  * \brief A namespace for SeqAn entities that are intended for documentation purposes only.
   *
   * \details
   *
-  * We try to guarantee a strong \ref api_stability "API-Stability". This has the down-side that we sometimes opt to not
+  * We try to guarantee a strong \ref api_stability "API-Stability". This has the downside that we sometimes opt to not
   * document entities, because
   *
-  * 1. we don't want to guarantee that the entity will always keep the same name or
+  * 1. we do not want to guarantee that the entity will always keep the same name or
   * 2. we need a helper entity to define the actual entity or
   * 3. we are not completely sure if the entity is general enough to mark it stable,
   *
@@ -62,8 +62,9 @@
   * We therefore use the same trick as the C++ standard that defines entities, s.a. concepts, in a partial defined
   * state to express a general intend of the API without being explicit about it.
   *
-  * For example https://eel.is/c++draft/iterator.concept.readable where indirectly-readable-impl describes the general
-  * intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_­readable concept.
+  * For example, see https://eel.is/c++draft/iterator.concept.readable where `indirectly-readable-impl` describes the
+  * general intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_­readable
+  * concept.
   */
 
 /*!\if DEV
