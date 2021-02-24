@@ -336,21 +336,7 @@ dl.no-api {
     /* border-radius: 4px; */
 }
 
-.mlabel.experimental-api.header
-{
-    float:right;
-    font-size: 12px;
-    margin-top: -3px;
-}
-
-.mlabel.stable-api.header
-{
-    float:right;
-    font-size: 12px;
-    margin-top: -3px;
-}
-
-.mlabel.no-api.header
+.mlabel.experimental-api.header, .mlabel.stable-api.header, .mlabel.no-api.header
 {
     float:right;
     font-size: 12px;
