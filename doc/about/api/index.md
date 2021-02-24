@@ -8,7 +8,7 @@ There is no ABI stability.
 
 Many of the rules on this page are derived from the [abseil library](https://abseil.io/about/compatibility).
 
-# API stability
+# API stability {#api_stability}
 
 In general, you can expect all entities within the `seqan3` namespace to be usable throughout the entire
 release cycle of SeqAn3, i.e. if you write an application that includes `seqan-3.1.1`, you should be able
