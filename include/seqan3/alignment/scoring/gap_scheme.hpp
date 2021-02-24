@@ -301,3 +301,6 @@ gap_scheme(gap_score<score_arg_type>) -> gap_scheme<int8_t>;
 
 #pragma GCC diagnostic pop
 } // namespace seqan3
+
+SEQAN3_DEPRECATED_HEADER(
+    "This header and its provided functions are deprecated and will be removed in SeqAn-3.1.0.")
