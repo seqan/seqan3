@@ -34,7 +34,7 @@ struct ref_info_not_given
  *
  * Example:
  *
- * \include test/snippet/io/alignment_file/sam_flags.cpp
+ * \include test/snippet/io/sam_file/sam_flags.cpp
  *
  * Adapted from the [SAM specifications](https://samtools.github.io/hts-specs/SAMv1.pdf) are the following additional
  * information to some flag values:
