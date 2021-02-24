@@ -59,13 +59,15 @@ namespace seqan3
  * seqan3::alphabet, it is purely a way to avoid code duplication.
  *
  * The base class represents the alphabet value as the rank and automatically deduces the rank type from the size and
- * defines all required member functions. The derived type needs to define only the following two tables as static
- * member variables (can be private if the base class is befriended):
+ * defines all required member functions. The derived type needs to define only the following two static
+ * member functions (can be private if the base class is befriended):
  *
- *   * `static std::array<char_type, alphabet_size> constexpr rank_to_char` that defines for every possible rank value
- *     the corresponding char value.
- *   * `static std::array<rank_type, 256> constexpr char_to_rank` that defines for every possible character value the
- *     corresponding rank value (adapt size if char_type isn't `char`).
+ *   * `static constexpr char_type rank_to_char(rank_type const rank);` that defines for every possible rank value the
+ *     corresponding char value.
+ *     (The implementation can be a lookup-table or an arithmetic expression.)
+ *   * `static constexpr rank_type char_to_rank(char_type const chr);` that defines for every possible character value
+ *     the corresponding rank value (adapt size if char_type isn't `char`).
+ *     (The implementation can be a lookup-table or an arithmetic expression.)
  *
  * ### Example
  *
@@ -152,7 +154,7 @@ private:
      *        function to give the implementer more freedom.
      * \deprecated Define derived_type::rank_to_char_table as a function.
      */
-    static constexpr char_type rank_to_char_table(rank_type const rank) noexcept
+    SEQAN3_DEPRECATED_310 static constexpr char_type rank_to_char_table(rank_type const rank) noexcept
     {
         return derived_type::rank_to_char[rank];
     }
@@ -226,7 +228,7 @@ private:
      *        function to give the implementer more freedom.
      * \deprecated Define derived_type::char_to_rank as a function.
      */
-    static constexpr rank_type char_to_rank_table(char_type const chr) noexcept
+    SEQAN3_DEPRECATED_310 static constexpr rank_type char_to_rank_table(char_type const chr) noexcept
     {
         using index_t = std::make_unsigned_t<char_type>;
 #if SEQAN3_WORKAROUND_GCC_99318
