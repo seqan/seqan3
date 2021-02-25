@@ -107,6 +107,7 @@ SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
 /*!\brief A validator that checks whether a number is inside a given range.
  * \ingroup argument_parser
  * \implements seqan3::validator
+ * \tparam option_value_t The value type of the range; must model seqan3::arithmetic .
  *
  * \details
  *
@@ -116,11 +117,12 @@ SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
  *
  * \include test/snippet/argument_parser/validators_1.cpp
  */
+template <arithmetic option_value_t>
 class arithmetic_range_validator
 {
 public:
     //!\brief The type of value that this validator invoked upon.
-    using option_value_type = double;
+    using option_value_type = option_value_t;
 
     /*!\brief The constructor.
      * \param[in] min_ Minimum set for the range to test.
@@ -172,7 +174,7 @@ private:
 /*!\brief A validator that checks whether a value is inside a list of valid values.
  * \ingroup argument_parser
  * \implements seqan3::validator
- * \tparam option_value_t Must be a (container of) arithmetic type(s).
+ * \tparam option_value_t \copybrief seqan3::value_list_validator::option_value_type
  *
  * \details
  *
@@ -180,9 +182,9 @@ private:
  * The class than acts as a functor, that throws a seqan3::validation_error
  * exception whenever a given value is not in the given list.
  *
- * \note In order to simplify the chaining of validators, the option value type is deduced to `double` for ranges whose
- *       value type models seqan3::arithmetic, and to `std::string` if the ranges value type is convertible to it.
- *       Otherwise, the option value type is deduced to the value type of the range.
+ * \note In order to simplify the chaining of validators, the option value type is deduced to `std::string` if the
+ *       range's value type is convertible to it. Otherwise, the option value type is deduced to the value type of the
+ *       range.
  *
  * \include test/snippet/argument_parser/validators_2.cpp
  */

@@ -75,7 +75,7 @@ TEST(validator_test, fullfill_concept)
     EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> &>);
 
     EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<std::vector<int>>>);
-    EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator>);
+    EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator<int>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<double>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<std::string>>);
     EXPECT_TRUE(seqan3::validator<seqan3::input_file_validator<>>);
