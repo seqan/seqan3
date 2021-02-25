@@ -19,8 +19,8 @@ class detail_alphabet_variant : public seqan3::alphabet_variant<alphabet_types..
 {
 public:
     using seqan3::alphabet_variant<alphabet_types...>::partial_sum_sizes;
-    using seqan3::alphabet_variant<alphabet_types...>::rank_to_char;
-    using seqan3::alphabet_variant<alphabet_types...>::char_to_rank;
+    using seqan3::alphabet_variant<alphabet_types...>::rank_to_char_table;
+    using seqan3::alphabet_variant<alphabet_types...>::char_to_rank_table;
     using seqan3::alphabet_variant<alphabet_types...>::first_valid_char_table;
 };
 
@@ -51,9 +51,9 @@ TEST(alphabet_variant_detail_test, partial_sum_sizes)
     EXPECT_EQ(partial_sum4[3], 10);
 }
 
-TEST(alphabet_variant_detail_test, rank_to_char)
+TEST(alphabet_variant_detail_test, rank_to_char_table)
 {
-    constexpr std::array rank_to_char2 = detail_alphabet_variant<seqan3::dna4, seqan3::gap>::rank_to_char;
+    constexpr std::array rank_to_char2 = detail_alphabet_variant<seqan3::dna4, seqan3::gap>::rank_to_char_table;
     EXPECT_EQ(rank_to_char2.size(), 5u);
     EXPECT_EQ(rank_to_char2[0], 'A');
     EXPECT_EQ(rank_to_char2[1], 'C');
@@ -61,7 +61,9 @@ TEST(alphabet_variant_detail_test, rank_to_char)
     EXPECT_EQ(rank_to_char2[3], 'T');
     EXPECT_EQ(rank_to_char2[4], '-');
 
-    constexpr std::array rank_to_char3 = detail_alphabet_variant<seqan3::dna4, seqan3::gap, seqan3::dna5>::rank_to_char;
+    constexpr std::array rank_to_char3 = detail_alphabet_variant<seqan3::dna4,
+                                                                 seqan3::gap,
+                                                                 seqan3::dna5>::rank_to_char_table;
     EXPECT_EQ(rank_to_char3.size(), 10u);
     EXPECT_EQ(rank_to_char3[0], 'A');
     EXPECT_EQ(rank_to_char3[1], 'C');
@@ -74,7 +76,9 @@ TEST(alphabet_variant_detail_test, rank_to_char)
     EXPECT_EQ(rank_to_char3[8], 'N');
     EXPECT_EQ(rank_to_char3[9], 'T');
 
-    constexpr std::array rank_to_char4 = detail_alphabet_variant<seqan3::dna5, seqan3::gap, seqan3::dna4>::rank_to_char;
+    constexpr std::array rank_to_char4 = detail_alphabet_variant<seqan3::dna5,
+                                                                 seqan3::gap,
+                                                                 seqan3::dna4>::rank_to_char_table;
     EXPECT_EQ(rank_to_char4.size(), 10u);
     EXPECT_EQ(rank_to_char4[0], 'A');
     EXPECT_EQ(rank_to_char4[1], 'C');
@@ -88,9 +92,9 @@ TEST(alphabet_variant_detail_test, rank_to_char)
     EXPECT_EQ(rank_to_char4[9], 'T');
 }
 
-TEST(alphabet_variant_detail_test, char_to_rank)
+TEST(alphabet_variant_detail_test, char_to_rank_table)
 {
-    constexpr std::array char_to_rank2 = detail_alphabet_variant<seqan3::dna4, seqan3::gap>::char_to_rank;
+    constexpr std::array char_to_rank2 = detail_alphabet_variant<seqan3::dna4, seqan3::gap>::char_to_rank_table;
     EXPECT_EQ(char_to_rank2.size(), 256u);
     EXPECT_EQ(char_to_rank2['A'], 0);
     EXPECT_EQ(char_to_rank2['C'], 1);
@@ -98,7 +102,9 @@ TEST(alphabet_variant_detail_test, char_to_rank)
     EXPECT_EQ(char_to_rank2['T'], 3);
     EXPECT_EQ(char_to_rank2['-'], 4);
 
-    constexpr std::array char_to_rank3 = detail_alphabet_variant<seqan3::dna4, seqan3::gap, seqan3::dna5>::char_to_rank;
+    constexpr std::array char_to_rank3 = detail_alphabet_variant<seqan3::dna4,
+                                                                 seqan3::gap,
+                                                                 seqan3::dna5>::char_to_rank_table;
     EXPECT_EQ(char_to_rank3.size(), 256u);
     EXPECT_EQ(char_to_rank3['A'], 0);
     EXPECT_EQ(char_to_rank3['C'], 1);
@@ -111,7 +117,9 @@ TEST(alphabet_variant_detail_test, char_to_rank)
     EXPECT_EQ(char_to_rank3['N'], 8);
     EXPECT_EQ(char_to_rank3['T'], 3);
 
-    constexpr std::array char_to_rank4 = detail_alphabet_variant<seqan3::dna5, seqan3::gap, seqan3::dna4>::char_to_rank;
+    constexpr std::array char_to_rank4 = detail_alphabet_variant<seqan3::dna5,
+                                                                 seqan3::gap,
+                                                                 seqan3::dna4>::char_to_rank_table;
     EXPECT_EQ(char_to_rank4.size(), 256u);
     EXPECT_EQ(char_to_rank4['A'], 0);
     EXPECT_EQ(char_to_rank4['C'], 1);
