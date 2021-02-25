@@ -76,8 +76,8 @@ public:
 private:
     /*!\brief Normalizes the path.
      *
-     * Normalization means that is converted to a absolute path and
-     * the path is lexically normalized as described in std::filesystem::path
+     * Normalization means that the path is converted to an absolute path and
+     * is lexically normalized as described in std::filesystem::path
      */
     void normalize()
     {
