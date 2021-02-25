@@ -81,8 +81,8 @@ public:
     //!\}
 
 private:
-    //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char[alphabet_size]
+    //!\copydoc seqan3::dna4::rank_to_char_table
+    static constexpr char_type rank_to_char_table[alphabet_size]
     {
         'A',
         'B',
@@ -103,6 +103,12 @@ private:
 
     //!\copydoc seqan3::dna4::complement_table
     static const std::array<rna15, alphabet_size> complement_table;
+
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
 
     //!\copydoc seqan3::dna4::char_to_rank
     static constexpr rank_type char_to_rank(char_type const chr)
