@@ -70,7 +70,7 @@ namespace seqan3
  * ### Example
  *
  * This creates an alphabet called `ab` which has size two and the two letters 'A' and 'B':
- * \include test/snippet/alphabet/detail/alphabet_base.cpp
+ * \include test/snippet/alphabet/alphabet_base.cpp
  *
  * \stableapi{Since version 3.1.}
  */
