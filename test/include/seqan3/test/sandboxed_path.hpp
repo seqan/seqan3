@@ -81,8 +81,59 @@ private:
      */
     void normalize()
     {
-        auto normalized_path = std::filesystem::weakly_canonical(*this);
+#if SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
+        // convert into an absolute path
+        auto path = [this]() {
+            if (is_relative()) {
+                return (sandbox_path / *this).string();
+            } else {
+                return string();
+            }
+        }();
+        // Now me manually need to collapse any "." and ".."
+        size_t current_pos = path.find("/", 0); // find first "/" character
+        std::vector<std::string> path_parts;
+        while (current_pos < path.size()) {
+            auto end_pos = path.find("/", current_pos + 1);
+            auto word = path.substr(current_pos+1, end_pos-current_pos-1);
+            if (word == "." || word == "")
+            {
+                if (!path_parts.empty() and path_parts.back() != "")
+                {
+                    path_parts.emplace_back("");
+                }
+            }
+            else if (word == "..")
+            {
+                if (path_parts.empty())
+                {
+                    throw std::filesystem::filesystem_error("Path can not be normalized", *this,
+                                                             std::make_error_code(std::errc::invalid_argument));
+                }
+                path_parts.pop_back();
+            }
+            else
+            {
+                if (!path_parts.empty() and path_parts.back() == "")
+                {
+                    path_parts.back() = word;
+                }
+                else
+                {
+                    path_parts.emplace_back(word);
+                }
+            }
+            current_pos = end_pos;
+        }
+        std::string normalized_path;
+        for (auto const& p : path_parts) {
+            normalized_path += "/" + p;
+        }
+        std::filesystem::path::operator=(normalized_path.data());
+#else
+        auto normalized_path = std::filesystem::weakly_canonical(sandbox_path / *this);
         std::filesystem::path::operator=(normalized_path);
+#endif
     }
 
     /*!\brief Checks the invariant and throws if it is broken.
@@ -100,6 +151,26 @@ private:
                                                 std::make_error_code(std::errc::invalid_argument));
         }
 
+#if SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
+        auto current_dir = string();
+        auto sandbox_dir = sandbox_path.string();
+
+        // remove trailing '/' of path
+        if (!sandbox_dir.empty() and sandbox_dir.back() == '/') {
+            sandbox_dir.pop_back();
+        }
+
+        // Leaving the temporary directory is not allowed.
+        bool starts_with_sandbox_dir = (current_dir.rfind(sandbox_dir, 0) == 0);
+        if (!starts_with_sandbox_dir or
+            (current_dir.size() > sandbox_dir.size() and current_dir.at(sandbox_dir.size()) != '/'))
+        {
+            throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
+                                                sandbox_path, *this,
+                                                std::make_error_code(std::errc::invalid_argument));
+        }
+
+#else
         auto rel_path = lexically_relative(sandbox_path);
 
         // Leaving the temporary directory is not allowed.
@@ -108,6 +179,7 @@ private:
                                                 sandbox_path, *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
+#endif
     }
 
 public:

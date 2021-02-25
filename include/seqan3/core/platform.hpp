@@ -351,6 +351,16 @@
 #   endif
 #endif
 
+//!\brief Problems with incomplete filesystem support in GCC7
+#ifndef SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
+#   if defined(__GNUC__) && (__GNUC__ == 7)
+#       define SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM 0
+#   endif
+#endif
+
+
 // ============================================================================
 //  Backmatter
 // ============================================================================
