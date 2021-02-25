@@ -229,6 +229,9 @@ private:
     static constexpr rank_type char_to_rank_table(char_type const chr) noexcept
     {
         using index_t = std::make_unsigned_t<char_type>;
+#if SEQAN3_WORKAROUND_GCC_99318
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif // SEQAN3_WORKAROUND_GCC_99318
         return derived_type::char_to_rank[static_cast<index_t>(chr)];
     }
 
