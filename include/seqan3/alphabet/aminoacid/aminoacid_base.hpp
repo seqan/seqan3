@@ -129,9 +129,18 @@ private:
             std::array<bool, 256> ret{};
 
             // the original valid chars and their lower cases
-            for (uint8_t c : derived_type::rank_to_char)
+            for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
             {
-                ret[         c ] = true;
+                uint8_t c{};
+#ifdef SEQAN3_DEPRECATED_310
+                if constexpr (detail::has_rank_to_char_table<derived_type>)
+                    c = derived_type::rank_to_char[rank];
+                else
+                    c = derived_type::rank_to_char(rank);
+#else // ^^^ before 3.1.0 release / after 3.1.0 release vvv
+                c = derived_type::rank_to_char(rank);
+#endif // SEQAN3_DEPRECATED_310
+                ret[c] = true;
                 ret[to_lower(c)] = true;
             }
 
