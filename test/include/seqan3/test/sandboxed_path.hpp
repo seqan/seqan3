@@ -77,8 +77,6 @@ public:
     /*!\brief Replaces the path with a new path.
      * \tparam path_t The type of the path.
      *
-     * This works the same as std::filesystem::path::operator=
-     *
      * This works the same way as std::filesystem::path::operator=
      * and additionally checks the invariant.
      *
@@ -96,9 +94,12 @@ public:
     }
 
     /*!\brief Replaces the path with a new path.
+     * \tparam path_t The type of the path.
      *
      * This works the same as std::filesystem::path::operator=
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -225,9 +226,12 @@ public:
     }
 
     /*!\brief Replaces the path with a new path.
+     * \tparam source_t The type of the source.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -241,9 +245,12 @@ public:
     }
 
     /*!\brief Replaces the path with a new path.
+     * \tparam input_iter_t The type of the input iterators.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -257,9 +264,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam source_t The type of the source.
      *
      * This works the same as std::filesystem::path::operator/=
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -270,9 +280,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam source_t The type of the source.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -286,9 +299,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam input_iter_t The type of the input iterators.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -302,9 +318,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam source_t The type of the source.
      *
      * This works the same as std::filesystem::path::operator+=
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -315,9 +334,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam source_t The type of the source.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -331,9 +353,12 @@ public:
     }
 
     /*!\brief Extends the path.
+     * \tparam input_iter_t The type of the input iterators.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -351,6 +376,8 @@ public:
      * This works the same as std::filesystem::path::remove_filename
      * and additionally checks the invariant.
      *
+     * ### Exceptions
+     *
      * Basic exception guarantee
      */
     sandboxed_path & remove_filename()
@@ -365,6 +392,8 @@ public:
      *
      * This works the same as std::filesystem::path::replace_filename
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
@@ -381,6 +410,8 @@ public:
      * This works the same as std::filesystem::path::replace_extension
      * and additionally checks the invariant.
      *
+     * ### Exceptions
+     *
      * Basic exception guarantee
      */
     sandboxed_path & replace_extension(std::filesystem::path const & replacement = std::filesystem::path{})
@@ -395,6 +426,8 @@ public:
      *
      * This works the same as std::filesystem::path::parent_path
      * and additionally checks the invariant.
+     *
+     * ### Exceptions
      *
      * Basic exception guarantee
      */
