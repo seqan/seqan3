@@ -54,7 +54,7 @@ void sequential_read(benchmark::State & state)
             single_t s{c};
             if constexpr (one_adapt)
             {
-                auto v = s | adaptor;;
+                auto v = s | adaptor;
                 for (auto e : v)
                     dummy += e;
             }

@@ -15,7 +15,7 @@ enum class bar
 // Specialise a mapping from an identifying string to the respective value of your type bar.
 auto enumeration_names(bar)
 {
-    return std::unordered_map<std::string_view, bar>{{"one", bar::one}, {"two", bar::two}, {"three", bar::three}};;
+    return std::unordered_map<std::string_view, bar>{{"one", bar::one}, {"two", bar::two}, {"three", bar::three}};
 }
 
 } // namespace foo
