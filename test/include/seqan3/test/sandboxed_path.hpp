@@ -51,7 +51,7 @@ public:
         : std::filesystem::path{path}
         , sandbox_path{std::move(path)}
     {
-        normalize();
+        normalise();
         checkInvariant();
     }
 
@@ -65,13 +65,51 @@ public:
         : std::filesystem::path {path}
         , sandbox_path             {std::move(sandbox_path)}
     {
-        normalize();
+        normalise();
         checkInvariant();
     }
 
-    sandboxed_path() = delete; //!< Default construction not possible
-    sandboxed_path(sandboxed_path const&) = default;    //!< Default copy constructor
-    sandboxed_path(sandboxed_path&&) noexcept = default; //!< Default move constructor
+    sandboxed_path() = delete; //!< Deleted.
+    sandboxed_path(sandboxed_path const&) = default; //!< Defaulted.
+    sandboxed_path(sandboxed_path&&) noexcept = default; //!< Defaulted.
+    ~sandboxed_path() = default; //!< Defaulted.
+
+    /*!\brief Replaces the path with a new path.
+     * \tparam path_t The type of the path.
+     *
+     * This works the same as std::filesystem::path::operator=
+     *
+     * This works the same way as std::filesystem::path::operator=
+     * and additionally checks the invariant.
+     *
+     * ### Exceptions
+     *
+     * Basic exception guarantee.
+     */
+    template <typename path_t>
+    sandboxed_path & operator=(path_t const & path)
+    {
+        std::filesystem::path::operator=(path);
+        normalise();
+        checkInvariant();
+        return *this;
+    }
+
+    /*!\brief Replaces the path with a new path.
+     *
+     * This works the same as std::filesystem::path::operator=
+     * and additionally checks the invariant.
+     *
+     * Basic exception guarantee
+     */
+    template <typename path_t>
+    sandboxed_path & operator=(path_t && path)
+    {
+        std::filesystem::path::operator=(std::move(path));
+        normalise();
+        checkInvariant();
+        return *this;
+    }
 
 
 private:
@@ -110,7 +148,7 @@ private:
             {
                 if (path_parts.empty())
                 {
-                    throw std::filesystem::filesystem_error("Path can not be normalized", *this,
+                    throw std::filesystem::filesystem_error("Path can not be normalised", *this,
                                                              std::make_error_code(std::errc::invalid_argument));
                 }
                 path_parts.pop_back();
@@ -128,17 +166,18 @@ private:
             }
             current_pos = end_pos;
         }
-        std::string normalized_path;
+        std::string normalised_path;
         for (auto const& p : path_parts) {
-            normalized_path += "/" + p;
+            normalised_path += "/" + p;
         }
-        std::filesystem::path::operator=(normalized_path.data());
+        std::filesystem::path::operator=(normalised_path.data());
 #else
-        auto normalized_path = std::filesystem::weakly_canonical(sandbox_path / *this);
-        std::filesystem::path::operator=(normalized_path);
+        auto normalised_path = std::filesystem::weakly_canonical(sandbox_path / *this);
+        std::filesystem::path::operator=(normalised_path);
 #endif
     }
 
+public:
     /*!\brief Checks the invariant.
      *
      * Checks that the invariant of the class sandboxed_path is kept.
@@ -185,45 +224,6 @@ private:
 #endif
     }
 
-public:
-    /*!\brief Replaces the path with a new path.
-     * \tparam path_t The type of the path.
-     *
-     * This works the same as std::filesystem::path::operator=
-     *
-     * This works the same way as std::filesystem::path::operator=
-     * and additionally checks the invariant.
-     *
-     * ### Exceptions
-     *
-     * Basic exception guarantee.
-     */
-    template <class path_t>
-    sandboxed_path & operator=(path_t const & path)
-    {
-        std::filesystem::path::operator=(path);
-        normalize();
-        checkInvariant();
-        return *this;
-    }
-
-    /*!\brief Replaces the path with a new path.
-     *
-     * This works the same as std::filesystem::path::operator=
-     * and additionally checks the invariant.
-     *
-     * Basic exception guarantee
-     */
-    template <class Path>
-    sandboxed_path & operator=(Path && path)
-    {
-        std::filesystem::path::operator=(std::move(path));
-        normalize();
-        checkInvariant();
-        return *this;
-    }
-
-
     /*!\brief Replaces the path with a new path.
      *
      * This works the same as std::filesystem::path::assign
@@ -231,11 +231,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename Source>
-    sandboxed_path & assign(Source const & source)
+    template <typename source_t>
+    sandboxed_path & assign(source_t const & source)
     {
         std::filesystem::path::assign(source);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -247,11 +247,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename InputIt>
-    sandboxed_path & assign(InputIt first, InputIt last)
+    template <typename input_iter_t>
+    sandboxed_path & assign(input_iter_t first, input_iter_t last)
     {
         std::filesystem::path::assign(first, last);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -263,8 +263,8 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename Source>
-    sandboxed_path & operator/=(Source const & source)
+    template <typename source_t>
+    sandboxed_path & operator/=(source_t const & source)
     {
         return append(source);
     }
@@ -276,11 +276,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename Source>
-    sandboxed_path & append(Source const & source)
+    template <typename source_t>
+    sandboxed_path & append(source_t const & source)
     {
         std::filesystem::path::append(source);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -292,11 +292,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename InputIter>
-    sandboxed_path & append(InputIter first, InputIter second)
+    template <typename input_iter_t>
+    sandboxed_path & append(input_iter_t first, input_iter_t second)
     {
         std::filesystem::path::append(first, second);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -308,8 +308,8 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename Source>
-    sandboxed_path & operator+=(Source const & source)
+    template <typename source_t>
+    sandboxed_path & operator+=(source_t const & source)
     {
         return concat(source);
     }
@@ -321,11 +321,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename Source>
-    sandboxed_path & concat(Source const & source)
+    template <typename source_t>
+    sandboxed_path & concat(source_t const & source)
     {
         std::filesystem::path::concat(source);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -337,11 +337,11 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename InputIt>
-    sandboxed_path & concat(InputIt first, InputIt last)
+    template <typename input_iter_t>
+    sandboxed_path & concat(input_iter_t first, input_iter_t last)
     {
         std::filesystem::path::concat(first, last);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -356,7 +356,7 @@ public:
     sandboxed_path & remove_filename()
     {
         std::filesystem::path::remove_filename();
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -371,7 +371,7 @@ public:
     sandboxed_path & replace_filename(std::filesystem::path const & p)
     {
         std::filesystem::path::replace_filename(p);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -386,7 +386,7 @@ public:
     sandboxed_path & replace_extension(std::filesystem::path const & replacement = std::filesystem::path{})
     {
         std::filesystem::path::replace_extension(replacement);
-        normalize();
+        normalise();
         checkInvariant();
         return *this;
     }
@@ -405,10 +405,14 @@ public:
     }
 
 
-    void swap(sandboxed_path &) noexcept = delete; //!< Swap operator is not possible
+    void swap(sandboxed_path & other)
+    {
+        std::filesystem::path::swap(other);
+        checkInvariant();
+        other.checkInvariant();
+    }
 
-private:
-    void clear() = delete; //!< Unlikely to be useful, not implemented.
+    void clear() = delete; //!< Not implemented. Invariant requires the path to be an absolute path.
 };
 
 /** Free sandboxed_path append operator.
