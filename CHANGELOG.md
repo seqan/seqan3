@@ -55,7 +55,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## Notable Bug-fixes
 
-### Argument Parser
+#### Argument Parser
 
 * Argument parsing with subcommands: If the user forgets or misspells the subcommand, the error is thrown when calling
   `seqan3::argument_parser::parse()` and not on construction of the `seqan3::argument_parser`
@@ -70,6 +70,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ([\#2374](https://github.com/seqan/seqan3/pull/2374)).
 * The Argument Parser is able to process defaults for list arguments
   ([\#2394](https://github.com/seqan/seqan3/pull/2394)).
+
+#### Range
+
+* The `seqan3::views::kmer_hash` does not return wrong values when combined with `std::views::reverse` on a text of the
+  same size as the kmer ([\#2416](https://github.com/seqan/seqan3/pull/2416)).
 
 ## API changes
 

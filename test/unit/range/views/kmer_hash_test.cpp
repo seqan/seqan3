@@ -309,3 +309,29 @@ TYPED_TEST(kmer_hash_gapped_test, issue1988)
         EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
     }
 }
+
+// https://github.com/seqan/seqan3/issues/2415
+TYPED_TEST(kmer_hash_ungapped_test, issue2415)
+{
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        TypeParam text{'T'_dna4, 'A'_dna4, 'A'_dna4}; // TAA
+        result_t ungapped{48};
+
+        auto v = text | ungapped_view | std::views::reverse;
+        EXPECT_RANGE_EQ(ungapped, v);
+    }
+}
+
+// https://github.com/seqan/seqan3/issues/2415
+TYPED_TEST(kmer_hash_gapped_test, issue2415)
+{
+    if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
+    {
+        TypeParam text{'T'_dna4, 'A'_dna4, 'A'_dna4}; // TAA
+        result_t gapped{12};
+
+        auto v = text | gapped_view | std::views::reverse;
+        EXPECT_RANGE_EQ(gapped, v);
+    }
+}

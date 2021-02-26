@@ -327,16 +327,15 @@ public:
         assert(std::ranges::size(shape_) > 0);
 
         auto urange_size = std::ranges::distance(it_start, it_end);
-        auto step = (shape_.size() + 1 > urange_size) ? 0 : urange_size - shape_.size() + 1;
+        auto step = (shape_.size() > urange_size + 1) ? 0 : urange_size - shape_.size() + 1;
         text_left = std::ranges::next(it_start, step, it_end);
-        text_right = it_end;
 
         // shape size = 3
         // Text:      1 2 3 4 5 6 7 8 9
         // text_left: ^
         // text_right:    ^
         // distance(text_left, text_right) = 2
-        if (shape_.size() <= std::ranges::distance(text_left, text_right) + 1)
+        if (shape_.size() <= std::ranges::distance(text_left, it_end) + 1)
         {
             roll_factor = pow(sigma, static_cast<size_t>(std::ranges::size(shape_) - 1));
             hash_full();
