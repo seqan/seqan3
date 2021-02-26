@@ -6,14 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /* \file
- * \brief Provides the sandboxed_path and surrounding free functions
+ * \brief Provides the sandboxed_path and related free functions
  * \author Simon Gene <simon.gottlieb AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
 #include <seqan3/std/filesystem>
+
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::test
 {
@@ -21,13 +22,13 @@ namespace seqan3::test
 /** \brief Utility class to stay inside a sandbox path.
  *
  * sandboxed_path inherits from std::filesystem::path and behaves mostly
- * like it. In addition it receives a sandbox directory at construction time.
+ * like it. In addition, it receives a sandbox directory at construction time.
  * Functions are overloaded and a check for the invariant is added.
  *
  *  Invariant:
  *  - sandboxed_path is always converted to an absolute path
  *  - sandboxed_path always points to a file inside a given sandbox directory.
- *  - sandbox directory is unmutable during the life cycle of a sandboxed_path
+ *  - sandbox directory is immutable during the life cycle of a sandboxed_path
  *
  * Caveat:
  *  - relative paths are not possible
@@ -43,7 +44,7 @@ public:
     /*!\brief Construction of a sandboxed_path.
      * \param path must be an absolute path.
      *
-     * A sandboxed_path initialized with this constructor will
+     * A sandboxed_path initialised with this constructor will
      * point to `path` and disallow extension that leave `path`.
      */
     explicit sandboxed_path(std::filesystem::path path)
@@ -74,12 +75,14 @@ public:
 
 
 private:
-    /*!\brief Normalizes the path.
+    /*!\brief Normalises the path.
      *
-     * Normalization means that the path is converted to an absolute path and
-     * is lexically normalized as described in std::filesystem::path
+     * Normalisation means that the path is converted to an absolute path and
+     * is lexically normalised as described in std::filesystem::path.
+     *
+     * \sa https://en.cppreference.com/w/cpp/filesystem/path
      */
-    void normalize()
+    void normalise()
     {
 #if SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
         // convert into an absolute path
@@ -90,7 +93,7 @@ private:
                 return string();
             }
         }();
-        // Now me manually need to collapse any "." and ".."
+        // Now we need to manually collapse any "." and ".."
         size_t current_pos = path.find("/", 0); // find first "/" character
         std::vector<std::string> path_parts;
         while (current_pos < path.size()) {
@@ -136,11 +139,11 @@ private:
 #endif
     }
 
-    /*!\brief Checks the invariant and throws if it is broken.
+    /*!\brief Checks the invariant.
      *
-     * Checks that the invariant of the class sandboxed_path is keeped.
-     * If is broken it throws an exception.
+     * Checks that the invariant of the class sandboxed_path is kept.
      * See class description for invariant.
+     * \throws std::filesystem::filesystem_error if invariant was violated.
      */
     void checkInvariant() const
     {
@@ -184,14 +187,19 @@ private:
 
 public:
     /*!\brief Replaces the path with a new path.
+     * \tparam path_t The type of the path.
      *
      * This works the same as std::filesystem::path::operator=
+     *
+     * This works the same way as std::filesystem::path::operator=
      * and additionally checks the invariant.
      *
-     * Basic exception guarantee
+     * ### Exceptions
+     *
+     * Basic exception guarantee.
      */
-    template <class Path>
-    sandboxed_path & operator=(Path const & path)
+    template <class path_t>
+    sandboxed_path & operator=(path_t const & path)
     {
         std::filesystem::path::operator=(path);
         normalize();
@@ -400,7 +408,7 @@ public:
     void swap(sandboxed_path &) noexcept = delete; //!< Swap operator is not possible
 
 private:
-    void clear() = delete; //!< Unlikely to be usefull, not implemented.
+    void clear() = delete; //!< Unlikely to be useful, not implemented.
 };
 
 /** Free sandboxed_path append operator.
