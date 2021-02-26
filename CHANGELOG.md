@@ -76,6 +76,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The `seqan3::views::kmer_hash` does not return wrong values when combined with `std::views::reverse` on a text of the
   same size as the kmer ([\#2416](https://github.com/seqan/seqan3/pull/2416)).
 
+#### I/O
+
+* Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
+  not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
+
 ## API changes
 
 #### Alphabet

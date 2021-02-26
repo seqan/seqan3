@@ -444,6 +444,13 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
         if constexpr (detail::decays_to_ignore_v<seq_type>)
         {
+            auto skip_sequence_bytes = [&] ()
+            {
+                detail::consume(seq_stream);
+                if (core.l_seq & 1)
+                    std::ranges::next(std::ranges::begin(stream_view));
+            };
+
             if constexpr (!detail::decays_to_ignore_v<align_type>)
             {
                 static_assert(sequence_container<std::remove_reference_t<decltype(get<1>(align))>>,
@@ -486,14 +493,13 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                 }
                 else
                 {
+                    skip_sequence_bytes();
                     get<1>(align) = std::remove_reference_t<decltype(get<1>(align))>{}; // assign empty container
                 }
             }
             else
             {
-                detail::consume(seq_stream);
-                if (core.l_seq & 1)
-                    std::ranges::next(std::ranges::begin(stream_view));
+                skip_sequence_bytes();
             }
         }
         else
