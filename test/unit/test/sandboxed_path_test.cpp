@@ -240,6 +240,23 @@ TEST(sandboxed_path_parent_path, parent_path)
     EXPECT_THROW(path.parent_path(), fs::filesystem_error);
 }
 
+// swap
+TEST(sandboxed_path_swap, swap)
+{
+    sandboxed_path path1{"/dir", "/dir/dir2/dir3"};
+    sandboxed_path path2{"/dir", "/dir/dir_abc"};
+
+    // check swap works
+    EXPECT_NO_THROW(path1.swap(path2));
+    EXPECT_EQ(path1, "/dir/dir_abc");
+    EXPECT_EQ(path2, "/dir/dir2/dir3");
+
+    // checks swap triggers invariant violation
+    sandboxed_path path3{"/dir/dir2", "/dir/dir2/hallo"};
+    EXPECT_THROW(path1.swap(path3), fs::filesystem_error);
+}
+
+
 // operator/
 TEST(sandboxed_path_free_operator_append, free_operator_append)
 {
