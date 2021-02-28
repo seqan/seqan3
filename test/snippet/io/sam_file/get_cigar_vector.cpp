@@ -1,5 +1,5 @@
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sam_file/detail.hpp>
 

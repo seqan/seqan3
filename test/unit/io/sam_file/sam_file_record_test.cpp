@@ -16,11 +16,11 @@
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/detail/debug_stream_variant.hpp>
-#include <seqan3/io/sam_file/header.hpp>
-#include <seqan3/io/sam_file/record.hpp>
-#include <seqan3/io/sam_file/misc.hpp>
-#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/detail/record_like.hpp>
+#include <seqan3/io/sam_file/header.hpp>
+#include <seqan3/io/sam_file/misc.hpp>
+#include <seqan3/io/sam_file/record.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/tuple/concept.hpp>

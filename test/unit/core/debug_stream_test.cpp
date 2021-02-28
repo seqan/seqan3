@@ -7,6 +7,7 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/filesystem>
 #include <iostream>
 #include <string>
 
@@ -18,7 +19,6 @@
 #include <seqan3/io/sam_file/misc.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/std/filesystem>
 
 TEST(debug_stream_test, basic)
 {

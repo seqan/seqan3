@@ -1,8 +1,8 @@
+#include <seqan3/std/filesystem>
 #include <sstream>
 #include <tuple>
 
 #include <seqan3/io/sam_file/output.hpp>
-#include <seqan3/std/filesystem>
 
 int main()
 {

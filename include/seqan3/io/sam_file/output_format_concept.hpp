@@ -16,11 +16,11 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/io/sam_file/header.hpp>
 #include <seqan3/io/sam_file/misc.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>

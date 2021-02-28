@@ -1,7 +1,7 @@
+#include <seqan3/std/filesystem>
 #include <fstream>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/std/filesystem>
 
 struct write_file_dummy_struct
 {

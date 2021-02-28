@@ -1,5 +1,5 @@
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <seqan3/io/sam_file/output.hpp>

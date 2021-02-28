@@ -25,6 +25,8 @@
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/io/detail/ignore_output_iterator.hpp>
+#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sam_file/detail.hpp>
 #include <seqan3/io/sam_file/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -34,8 +36,6 @@
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
-#include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/istreambuf.hpp>

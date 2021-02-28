@@ -1,7 +1,7 @@
+#include <seqan3/std/filesystem>
 #include <fstream>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/std/filesystem>
 
 struct write_file_dummy_struct
 {
@@ -57,17 +57,17 @@ r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
 write_file_dummy_struct go{};
 
 //![solution]
+#include <seqan3/std/filesystem>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/record.hpp>
+#include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/std/filesystem>
-#include <seqan3/std/ranges>
 
 int main()
 {
