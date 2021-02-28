@@ -60,7 +60,7 @@ private:
     size_t target_size;
 
     //!\brief The forward declared iterator type.
-    template <typename rng_t>
+    template <bool const_range>
     class basic_iterator;
 
 private:
@@ -68,13 +68,13 @@ private:
      * \{
      */
     //!\brief The iterator type of this view (a random access iterator).
-    using iterator = basic_iterator<urng_t>;
+    using iterator = basic_iterator<false>;
     /*!\brief Note that this declaration does not give any compiler errors for non-const iterable ranges. Although
      * `basic_iterator` inherits from std::ranges::iterator_t which is not defined on a const-range, i.e. `urng_t const,
      *  if it is not const-iterable. We only just declare this type and never instantiate it, i.e. use this type within
      *  this class, if the underlying range is not const-iterable.
      */
-    using const_iterator = basic_iterator<urng_t const>;
+    using const_iterator = basic_iterator<true>;
     //!\}
 
 public:
@@ -229,18 +229,18 @@ view_take(urng_t && , size_t) -> view_take<std::views::all_t<urng_t>, exactly, o
 //!\brief The iterator for the view_take. It inherits from the underlying type, but overwrites several operators.
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, bool exactly, bool or_throw>
-template <typename rng_t>
+template <bool const_range>
 class view_take<urng_t, exactly, or_throw>::basic_iterator :
-    public inherited_iterator_base<basic_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
+    public inherited_iterator_base<basic_iterator<const_range>, maybe_const_iterator_t<const_range, urng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
-    using base_base_t = std::ranges::iterator_t<rng_t>;
+    using base_base_t = maybe_const_iterator_t<const_range, urng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
+    using base_t = inherited_iterator_base<basic_iterator, maybe_const_iterator_t<const_range, urng_t>>;
 
     //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = std::ranges::sentinel_t<urng_t>;
+    using sentinel_type = maybe_const_sentinel_t<const_range, urng_t>;
 
     //!\brief The current position.
     size_t pos{};

@@ -49,7 +49,7 @@ private:
     //!\brief The shape to use.
     shape shape_;
 
-    template <typename rng_t>
+    template <bool const_range>
     class basic_iterator;
 
 public:
@@ -115,7 +115,7 @@ public:
      */
     auto begin() noexcept
     {
-        return basic_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
+        return basic_iterator<false>{std::ranges::begin(urange), std::ranges::end(urange), shape_};
     }
 
     //!\copydoc begin()
@@ -124,7 +124,7 @@ public:
         requires const_iterable_range<urng_t>
     //!\endcond
     {
-        return basic_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
+        return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -146,7 +146,7 @@ public:
     {
         // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t>)
-            return basic_iterator<urng_t>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
+            return basic_iterator<false>{std::ranges::begin(urange), std::ranges::end(urange), shape_, true};
         else
             return std::ranges::end(urange);
     }
@@ -159,7 +159,7 @@ public:
     {
         // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t const>)
-            return basic_iterator<urng_t const>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
+            return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_, true};
         else
             return std::ranges::cend(urange);
     }
@@ -216,16 +216,16 @@ public:
  * access (\ref operator* and \ref operator[]).
  */
 template <std::ranges::view urng_t>
-template <typename rng_t>
+template <bool const_range>
 class kmer_hash_view<urng_t>::basic_iterator
 {
 private:
     //!\brief The iterator type of the underlying range.
-    using it_t = std::ranges::iterator_t<rng_t>;
+    using it_t = maybe_const_iterator_t<const_range, urng_t>;
     //!\brief The sentinel type of the underlying range.
-    using sentinel_t = std::ranges::sentinel_t<rng_t>;
+    using sentinel_t = maybe_const_sentinel_t<const_range, urng_t>;
 
-    template <typename urng2_t>
+    template <bool other_const_range>
     friend class basic_iterator;
 
 public:
@@ -259,16 +259,15 @@ public:
     ~basic_iterator()                                            = default; //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
-    template <typename urng2_t>
+    constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
     //!\cond
-        requires std::same_as<std::remove_const_t<urng_t>, urng2_t>
+        requires const_range
     //!\endcond
-    basic_iterator(basic_iterator<urng2_t> it) :
-        hash_value{std::move(it.hash_value)},
-        roll_factor{std::move(it.roll_factor)},
-        shape_{std::move(it.shape_)},
-        text_left{std::move(it.text_left)},
-        text_right{std::move(it.text_right)}
+        : hash_value{std::move(it.hash_value)},
+          roll_factor{std::move(it.roll_factor)},
+          shape_{std::move(it.shape_)},
+          text_left{std::move(it.text_left)},
+          text_right{std::move(it.text_right)}
     {}
 
     /*!\brief Construct from a given iterator on the text and a seqan3::shape.
