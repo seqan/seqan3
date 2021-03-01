@@ -53,7 +53,7 @@ TYPED_TEST_P(simulated_alignment_test, linear_alignment)
 
     auto mat_it = this->matrix().begin();
     auto col = *mat_it;
-    auto col_it = col.begin();;
+    auto col_it = col.begin();
     (*col_it).current = 0;
     (*col_it).up = this->gap;
     (*col_it).w_left = this->gap;
