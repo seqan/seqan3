@@ -189,7 +189,7 @@ protected:
     void read_alignment_record(stream_type & stream,
                                alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
-                               alignment_file_header<ref_ids_type> & header,
+                               sam_file_header<ref_ids_type> & header,
                                seq_type & seq,
                                qual_type & qual,
                                id_type & id,
@@ -245,7 +245,7 @@ private:
     static constexpr std::string_view dummy{};
 
     //!\brief The default header for the alignment format.
-    alignment_file_header<> default_header{};
+    sam_file_header<> default_header{};
 
     //!\brief Tracks whether reference information (\@SR tag) were found in the SAM header
     bool ref_info_present_in_header{false};
@@ -384,7 +384,7 @@ template <typename stream_type,     // constraints checked by file
 inline void format_sam::read_alignment_record(stream_type & stream,
                                               alignment_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                               ref_seqs_type & ref_seqs,
-                                              alignment_file_header<ref_ids_type> & header,
+                                              sam_file_header<ref_ids_type> & header,
                                               seq_type & seq,
                                               qual_type & qual,
                                               id_type & id,

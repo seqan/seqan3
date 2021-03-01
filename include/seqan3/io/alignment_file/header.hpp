@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the seqan3::alignment_file_header class.
+ * \brief Provides the seqan3::sam_file_header class.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -29,36 +29,36 @@ namespace seqan3
 //!\brief Stores the header information of alignment files.
 //!\ingroup alignment_file
 template <std::ranges::forward_range ref_ids_type = std::deque<std::string>>
-class alignment_file_header
+class sam_file_header
 {
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
     //!\brief Default constructor is defaulted.
-    alignment_file_header() = default;
+    sam_file_header() = default;
     //!\brief Copy construction is defaulted.
-    alignment_file_header(alignment_file_header const &) = default;
+    sam_file_header(sam_file_header const &) = default;
     //!\brief Copy assignment is defaulted.
-    alignment_file_header & operator=(alignment_file_header const &) = default;
+    sam_file_header & operator=(sam_file_header const &) = default;
     //!\brief Move construction is defaulted.
-    alignment_file_header(alignment_file_header &&) = default;
+    sam_file_header(sam_file_header &&) = default;
     //!\brief Move assignment is defaulted.
-    alignment_file_header & operator=(alignment_file_header &&) = default;
+    sam_file_header & operator=(sam_file_header &&) = default;
     //!\brief Destructor is defaulted.
-    ~alignment_file_header() = default;
+    ~sam_file_header() = default;
 
     /*!\brief Construct from a range of reference ids which redirects the `ref_ids_ptr` member (non-owning).
      * \param[in] ref_ids The range over reference ids to redirect the pointer at.
      */
-    alignment_file_header(ref_ids_type & ref_ids) :
+    sam_file_header(ref_ids_type & ref_ids) :
         ref_ids_ptr{&ref_ids, ref_ids_deleter_noop}
     {}
 
     /*!\brief Construct from a rvalue range of reference ids which is moved into the `ref_ids_ptr` (owning).
      * \param[in] ref_ids The range over reference ids to own.
      */
-    alignment_file_header(ref_ids_type && ref_ids) :
+    sam_file_header(ref_ids_type && ref_ids) :
         ref_ids_ptr{new ref_ids_type{std::move(ref_ids)}, ref_ids_deleter_default}
     {}
     //!\}

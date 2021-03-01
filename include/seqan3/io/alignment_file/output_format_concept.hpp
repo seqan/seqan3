@@ -76,7 +76,7 @@ SEQAN3_CONCEPT alignment_file_output_format =
     requires (detail::alignment_file_output_format_exposer<t>                      & v,
               std::ofstream                                                        & stream,
               alignment_file_output_options                                        & options,
-              alignment_file_header<>                                              & header,
+              sam_file_header<>                                                    & header,
               dna5_vector                                                          & seq,
               std::vector<phred42>                                                 & qual,
               std::string                                                          & id,
@@ -125,7 +125,7 @@ SEQAN3_CONCEPT alignment_file_output_format =
 
 /*!\fn void write_alignment_record(stream_type                            &  stream,
                                    alignment_file_output_options const    &  options,
-                                   alignment_file_header<>                & header,
+                                   sam_file_header<>                      &  header,
                                    seq_type                               && seq,
                                    qual_type                              && qual,
                                    id_type                                && id,

@@ -38,7 +38,7 @@ struct alignment_file_data : public ::testing::Test
     {
         ref_sequences = std::vector<seqan3::dna5_vector>{ref_seq};
         ref_ids = std::vector<std::string>{ref_id};
-        header = seqan3::alignment_file_header{ref_ids};
+        header = seqan3::sam_file_header{ref_ids};
         header.ref_id_info.emplace_back(ref_seq.size(), "");
         header.ref_dict[header.ref_ids()[0]] = 0; // set up header which is otherwise done on file level
     }
@@ -128,7 +128,7 @@ struct alignment_file_data : public ::testing::Test
 
     std::vector<seqan3::dna5_vector> ref_sequences{};
     std::vector<std::string> ref_ids{};
-    seqan3::alignment_file_header<std::vector<std::string>> header{};
+    seqan3::sam_file_header<std::vector<std::string>> header{};
 };
 
 template <typename format_t>
@@ -533,7 +533,7 @@ TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
 
 TYPED_TEST_P(alignment_file_write, with_header)
 {
-    seqan3::alignment_file_header header{std::vector<std::string>{this->ref_id}};
+    seqan3::sam_file_header header{std::vector<std::string>{this->ref_id}};
     header.sorting = "unknown";
     header.grouping = "none";
     header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});

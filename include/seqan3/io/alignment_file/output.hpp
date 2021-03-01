@@ -687,7 +687,7 @@ public:
      *
      * \include test/snippet/io/sam_file/sam_file_output_set_header.cpp
      *
-     * \sa seqan3::alignment_file_header
+     * \sa seqan3::sam_file_header
      */
     auto & header()
     {
@@ -728,9 +728,9 @@ protected:
     //!\}
 
     //!\brief The header type, which specilised with ref_ids_type if reference information are given.
-    using header_type = alignment_file_header<std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>,
-                                              std::vector<std::string>,
-                                              ref_ids_type>>;
+    using header_type = sam_file_header<std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>,
+                                        std::vector<std::string>,
+                                        ref_ids_type>>;
 
     //!\brief The file header object (will be set on construction).
     std::unique_ptr<header_type> header_ptr;
@@ -741,7 +741,7 @@ protected:
     {
         assert(std::ranges::size(ref_ids) == std::ranges::size(ref_lengths));
 
-        header_ptr = std::make_unique<alignment_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
+        header_ptr = std::make_unique<sam_file_header<ref_ids_type>>(std::forward<ref_ids_type_>(ref_ids));
 
         for (int32_t idx = 0; idx < std::ranges::distance(ref_ids); ++idx)
         {

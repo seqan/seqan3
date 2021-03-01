@@ -214,7 +214,7 @@ public:
         return get_impl(field_constant<seqan3::field::ref_offset>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief A pointer to the seqan3::alignment_file_header object storing header information.
+    //!\brief A pointer to the seqan3::sam_file_header object storing header information.
     decltype(auto) header_ptr() &&
     {
         return get_impl(field_constant<seqan3::field::header_ptr>{}, static_cast<tuple_base_t &&>(*this));

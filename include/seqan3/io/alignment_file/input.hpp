@@ -432,8 +432,8 @@ public:
     using e_value_type             = double;
     //!\brief The type of field::bitscore is fixed to double.
     using bitscore_type            = double;
-    //!\brief The type of field::header_ptr (default: alignment_file_header<typename traits_type::ref_ids>).
-    using header_type              = alignment_file_header<typename traits_type::ref_ids>;
+    //!\brief The type of field::header_ptr (default: sam_file_header<typename traits_type::ref_ids>).
+    using header_type              = sam_file_header<typename traits_type::ref_ids>;
 
 private:
     //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
@@ -488,7 +488,7 @@ public:
      *
      * There exists one more field for alignment files, the seqan3::field::header_ptr, but this field is mostly used
      * internally. Please see the seqan3::alignment_file_output::header member function for details on how to access
-     * the seqan3::alignment_file_header of the file.)
+     * the seqan3::sam_file_header of the file.)
      */
     using field_ids = fields<field::seq,
                              field::id,
@@ -825,7 +825,7 @@ public:
      *
      * \include test/snippet/io/sam_file/sam_file_input_get_header.cpp
      *
-     * \sa seqan3::alignment_file_header
+     * \sa seqan3::sam_file_header
      */
     header_type & header()
     {
