@@ -30,7 +30,7 @@ option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark bui
 # Paths to folders.
 # ----------------------------------------------------------------------------
 
-find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
+find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_directory.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
 find_path (SEQAN3_TEST_CMAKE_MODULE_DIR NAMES seqan3_test_component.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
 list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 

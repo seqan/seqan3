@@ -29,24 +29,25 @@ TEST(fm_index_test, cerealisation_errors)
 
     seqan3::fm_index<seqan3::dna4, seqan3::text_layout::single> index{"AGTCTGATGCTGCTAC"_dna4};
 
-    seqan3::test::tmp_filename filename{"cereal_test"};
+    seqan3::test::tmp_directory tmp_dir;
+    auto filename = tmp_dir.get_path() / "cereal_test";
 
     {
-        std::ofstream os{filename.get_path(), std::ios::binary};
+        std::ofstream os{filename, std::ios::binary};
         cereal::BinaryOutputArchive oarchive{os};
         oarchive(index);
     }
 
     {
         seqan3::fm_index<seqan3::dna5, seqan3::text_layout::single> in;
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
         EXPECT_THROW(iarchive(in), std::logic_error);
     }
 
     {
         seqan3::fm_index<seqan3::dna4, seqan3::text_layout::collection> in;
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename, std::ios::binary};
         cereal::BinaryInputArchive iarchive{is};
         EXPECT_THROW(iarchive(in), std::logic_error);
     }

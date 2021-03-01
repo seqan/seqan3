@@ -18,7 +18,7 @@
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
 #include "../iterator_test_template.hpp"
@@ -94,15 +94,16 @@ TEST(view_istreambuf, big_file_stram)
 {
     using namespace std::literals;
 
-    seqan3::test::tmp_filename file_name{"istream_storage"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "istream_storage";
 
     {
-        std::ofstream os{file_name.get_path()};
+        std::ofstream os{filename};
         for (size_t idx = 0; idx < 11000 ; ++idx)
             os << "halloballo\n";
     }
 
-    std::ifstream istream{file_name.get_path()};
+    std::ifstream istream{filename};
     auto v = seqan3::views::istreambuf(istream);
     while (v.begin() != v.end())
     {

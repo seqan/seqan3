@@ -13,7 +13,7 @@
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/take.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/std/iterator>
 
 TEST(rows, assign_sequence_files)

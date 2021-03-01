@@ -18,7 +18,7 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 #if SEQAN3_HAS_SEQAN2
 #include <seqan/seq_io.h>
@@ -56,14 +56,12 @@ std::string generate_fastq_string(size_t const entries_size)
 // save file on disc temporarily
 // ============================================================================
 
-auto create_fastq_file_for(std::string const & fastq_string)
+auto create_fastq_file_for(std::string const & fastq_string, seqan3::test::tmp_directory & tmp_dir)
 {
-    // create temporary file, automatically removed on destruction
-    seqan3::test::tmp_filename fastq_file{"format_fastq_benchmark_test_file.fastq"};
-    auto fastq_file_path = fastq_file.get_path();
+    auto fastq_file = tmp_dir.get_path() / "format_fastq_benchmark_test_file.fastq";
 
     // fill temporary file with a fastq file
-    std::ofstream ostream{fastq_file_path};
+    std::ofstream ostream{fastq_file};
     ostream << fastq_string;
     ostream.close();
     return fastq_file;
@@ -145,11 +143,15 @@ void fastq_read_from_disk_seqan3(benchmark::State & state)
 {
     size_t const iterations_per_run = state.range(0);
     std::string fastq_file = generate_fastq_string(iterations_per_run);
-    auto file_name = create_fastq_file_for(fastq_file);
+
+    // create temporary file, automatically removed on destruction
+    seqan3::test::tmp_directory tmp_dir;
+
+    auto file_name = create_fastq_file_for(fastq_file, tmp_dir);
 
     for (auto _ : state)
     {
-        seqan3::sequence_file_input fastq_file_in{file_name.get_path()};
+        seqan3::sequence_file_input fastq_file_in{file_name};
         auto it = fastq_file_in.begin();
         for (size_t i = 0; i < iterations_per_run; ++i)
             it++;
@@ -210,7 +212,11 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 {
     size_t const iterations_per_run = state.range(0);
     std::string fastq_file = generate_fastq_string(iterations_per_run);
-    auto file_name = create_fastq_file_for(fastq_file);
+
+    // create temporary file, automatically removed on destruction
+    seqan3::test::tmp_directory tmp_dir;
+
+    auto file_name = create_fastq_file_for(fastq_file, tmp_dir);
 
     seqan::CharString id{};
     seqan::Dna5String seq{};
@@ -218,7 +224,7 @@ void fastq_read_from_disk_seqan2(benchmark::State & state)
 
     for (auto _ : state)
     {
-        seqan::SeqFileIn seqFileIn(file_name.get_path().c_str());
+        seqan::SeqFileIn seqFileIn(file_name.c_str());
         auto it = seqFileIn.iter;
 
         for (size_t i = 0; i < iterations_per_run; ++i)

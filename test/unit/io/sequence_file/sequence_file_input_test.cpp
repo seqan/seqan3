@@ -16,7 +16,7 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 using seqan3::operator""_dna5;
 
@@ -72,22 +72,25 @@ TEST_F(sequence_file_input_f, construct_by_filename)
 {
     /* just the filename */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.get_path() / "sequence_file_input_constructor.fasta";
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW( seqan3::sequence_file_input<>{filename.get_path()} );
+        EXPECT_NO_THROW( seqan3::sequence_file_input<>{filename} );
     }
 
     // correct format check is done by tests of that format
 
     /* wrong extension */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_input_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( seqan3::sequence_file_input<>{filename.get_path()} ,
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.get_path() / "sequence_file_input_constructor.xyz";
+
+        std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
+        EXPECT_THROW( seqan3::sequence_file_input<>{filename} ,
                       seqan3::unhandled_extension_error );
     }
 
@@ -101,15 +104,16 @@ TEST_F(sequence_file_input_f, construct_by_filename)
     {
         using fields_seq = seqan3::fields<seqan3::field::seq>;
 
-        seqan3::test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.get_path() / "sequence_file_input_constructor.fasta";
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
         }
 
         EXPECT_NO_THROW(( seqan3::sequence_file_input<seqan3::sequence_file_input_default_traits_dna,
                                                       fields_seq,
-                                                      seqan3::type_list<seqan3::format_fasta>>{filename.get_path(),
+                                                      seqan3::type_list<seqan3::format_fasta>>{filename,
                                                                                                fields_seq{}} ));
     }
 }
@@ -151,13 +155,14 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.get_path() / "sequence_file_input_constructor.fasta";
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
         }
 
-        seqan3::sequence_file_input fin{filename.get_path()};
+        seqan3::sequence_file_input fin{filename};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -168,13 +173,14 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        seqan3::test::tmp_filename filename{"sequence_file_input_constructor.fasta"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.get_path() / "sequence_file_input_constructor.fasta";
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
         }
 
-        seqan3::sequence_file_input fin{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
+        seqan3::sequence_file_input fin{filename, seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fin);
         EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -209,10 +215,12 @@ TEST_F(sequence_file_input_f, default_template_args_and_deduction_guides)
 
 TEST_F(sequence_file_input_f, empty_file)
 {
-    seqan3::test::tmp_filename filename{"empty.fasta"};
-    std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "empty.fasta";
 
-    seqan3::sequence_file_input fin{filename.get_path()};
+    std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
+
+    seqan3::sequence_file_input fin{filename};
 
     EXPECT_EQ(fin.begin(), fin.end());
 }
@@ -399,15 +407,16 @@ std::string input_gz
 
 TEST_F(sequence_file_input_f, decompression_by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "sequence_file_output_test.fasta.gz";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(begin(input_gz), end(input_gz), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::sequence_file_input fin{filename.get_path()};
+    seqan3::sequence_file_input fin{filename};
 
     decompression_impl(*this, fin);
 }
@@ -446,29 +455,30 @@ std::string input_bgzf
 
 TEST_F(sequence_file_input_f, bgzf_decompression_by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bgzf"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "sequence_file_output_test.fasta.bgzf";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::sequence_file_input fin{filename.get_path()};
+    seqan3::sequence_file_input fin{filename};
 
     decompression_impl(*this, fin);
 }
 
 TEST_F(sequence_file_input_f, bgzf_decompression_by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.gz"};
-
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "sequence_file_output_test.fasta.gz";
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
         std::copy(input_bgzf.begin(), input_bgzf.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::sequence_file_input fin{filename.get_path()};
+    seqan3::sequence_file_input fin{filename};
     decompression_impl(*this, fin);
 }
 
@@ -506,15 +516,16 @@ std::string input_bz2
 
 TEST_F(sequence_file_input_f, decompression_by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"sequence_file_output_test.fasta.bz2"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.get_path() / "sequence_file_output_test.fasta.bz2";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(begin(input_bz2), end(input_bz2), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::sequence_file_input fin{filename.get_path()};
+    seqan3::sequence_file_input fin{filename};
 
     decompression_impl(*this, fin);
 }
