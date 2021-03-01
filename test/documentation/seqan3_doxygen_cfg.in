@@ -100,7 +100,7 @@ ALIASES += header_file{1}="\htmlonly<b>Header File</b><br><div style='text-inden
 
 ### Extra files that we can link to
 
-HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/alignment_file/example.sam
+HTML_EXTRA_FILES       = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc/tutorial/sam_file/example.sam
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.js
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/version.php
 HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/api-stability.js
