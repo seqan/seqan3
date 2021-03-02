@@ -1,8 +1,8 @@
+#include <seqan3/std/ranges>
 #include <sstream>
 
-#include <seqan3/io/alignment_file/all.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/std/ranges>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none
 @SQ	SN:ref	LN:45

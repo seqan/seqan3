@@ -10,7 +10,7 @@
 #include <seqan3/std/concepts>
 #include <type_traits>
 
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_tag;

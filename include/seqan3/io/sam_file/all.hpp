@@ -31,13 +31,13 @@
  * BLAST format (e.g. seqan3::field::bit_score). Please see the corresponding formats for more details.
  */
 
-#include <seqan3/io/alignment_file/format_bam.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
-#include <seqan3/io/alignment_file/header.hpp>
-#include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/io/alignment_file/input_format_concept.hpp>
-#include <seqan3/io/alignment_file/input_options.hpp>
-#include <seqan3/io/alignment_file/output.hpp>
-#include <seqan3/io/alignment_file/output_format_concept.hpp>
-#include <seqan3/io/alignment_file/output_options.hpp>
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/format_bam.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
+#include <seqan3/io/sam_file/header.hpp>
+#include <seqan3/io/sam_file/input.hpp>
+#include <seqan3/io/sam_file/input_format_concept.hpp>
+#include <seqan3/io/sam_file/input_options.hpp>
+#include <seqan3/io/sam_file/output.hpp>
+#include <seqan3/io/sam_file/output_format_concept.hpp>
+#include <seqan3/io/sam_file/output_options.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>

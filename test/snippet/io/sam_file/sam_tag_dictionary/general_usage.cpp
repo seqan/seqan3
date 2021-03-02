@@ -1,5 +1,5 @@
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 
 int main()
 {

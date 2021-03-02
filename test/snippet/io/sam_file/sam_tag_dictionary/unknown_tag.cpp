@@ -1,7 +1,7 @@
 #include <variant> // for std::visit
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/range/container/concept.hpp> // for the seqan3::container
 
 // a lambda helper function that prints every type in the std::variant<...allowed SAM tag types...>

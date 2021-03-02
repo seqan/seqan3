@@ -21,23 +21,23 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/exception.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
-#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/record.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
+#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3

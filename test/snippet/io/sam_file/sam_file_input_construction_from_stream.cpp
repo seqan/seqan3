@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/sam_file/input.hpp>
 
 auto input = R"(@HD	VN:1.6	SO:coordinate
 r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*)";

@@ -21,21 +21,21 @@
 #include <vector>
 
 #include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/exception.hpp>
-#include <seqan3/io/record.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>
 #include <seqan3/io/detail/record.hpp>
 #include <seqan3/io/detail/record_like.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/io/record.hpp>
+#include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
 #include <seqan3/io/sequence_file/format_genbank.hpp>
-#include <seqan3/io/alignment_file/format_sam.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/zip.hpp>

@@ -8,8 +8,8 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/io/alignment_file/input.hpp>
-#include <seqan3/io/alignment_file/output.hpp>
+#include <seqan3/io/sam_file/input.hpp>
+#include <seqan3/io/sam_file/output.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 

@@ -26,9 +26,10 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 write_file_dummy_struct go{};
 
 //![code]
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/alignment_file/all.hpp>
 #include <seqan3/std/filesystem>
+
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/io/sam_file/all.hpp>
 
 int main()
 {

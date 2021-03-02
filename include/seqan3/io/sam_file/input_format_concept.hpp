@@ -22,10 +22,10 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/io/alignment_file/header.hpp>
-#include <seqan3/io/alignment_file/input_options.hpp>
-#include <seqan3/io/alignment_file/misc.hpp>
-#include <seqan3/io/alignment_file/sam_tag_dictionary.hpp>
+#include <seqan3/io/sam_file/header.hpp>
+#include <seqan3/io/sam_file/input_options.hpp>
+#include <seqan3/io/sam_file/misc.hpp>
+#include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
 namespace seqan3::detail

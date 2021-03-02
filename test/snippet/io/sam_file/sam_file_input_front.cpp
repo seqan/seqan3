@@ -1,7 +1,7 @@
 #include <sstream>
 #include <utility>
 
-#include <seqan3/io/alignment_file/input.hpp>
+#include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none

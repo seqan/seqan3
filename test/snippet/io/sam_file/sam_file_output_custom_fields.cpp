@@ -1,7 +1,7 @@
+#include <seqan3/std/filesystem>
 #include <sstream>
 
-#include <seqan3/io/alignment_file/all.hpp>
-#include <seqan3/std/filesystem>
+#include <seqan3/io/sam_file/all.hpp>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none
 @SQ	SN:ref	LN:45
