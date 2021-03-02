@@ -19,6 +19,6 @@ int main()
     tmp_stream << sam_file_raw;
     tmp_stream.close();
 
-    seqan3::alignment_file_input fin{tmp_file}; // SAM format assumed, regular std::ifstream taken as stream
+    seqan3::sam_file_input fin{tmp_file}; // SAM format assumed, regular std::ifstream taken as stream
     std::filesystem::remove(tmp_file);
 }

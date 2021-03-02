@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_input and corresponding traits classes.
+ * \brief Provides seqan3::sam_file_input and corresponding traits classes.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -49,16 +49,16 @@ namespace seqan3
 {
 
 // ---------------------------------------------------------------------------------------------------------------------
-// alignment_file_input_traits
+// sam_file_input_traits
 // ---------------------------------------------------------------------------------------------------------------------
 
-/*!\interface seqan3::alignment_file_input_traits <>
- * \brief The requirements a traits_type for seqan3::alignment_file_input must meet.
+/*!\interface seqan3::sam_file_input_traits <>
+ * \brief The requirements a traits_type for seqan3::sam_file_input must meet.
  * \ingroup alignment_file
  */
-/*!\name Requirements for seqan3::alignment_file_input_traits
- * \brief You can expect these **member types** of all types that model seqan3::alignment_file_input_traits.
- * \memberof seqan3::alignment_file_input_traits
+/*!\name Requirements for seqan3::sam_file_input_traits
+ * \brief You can expect these **member types** of all types that model seqan3::sam_file_input_traits.
+ * \memberof seqan3::sam_file_input_traits
  * \{
  */
 /*!\typedef using sequence_alphabet
@@ -95,8 +95,8 @@ namespace seqan3
  *        the value_type must also model std::ranges::forward_range, and the value type of the value type
  *        must model seqan3::alphabet (e.g. std::vector<std::vector<dna4>>).
  *
- * \attention This type is the first template parameter of the alignment_file_default_traits and should not be manually
- *            configured in order to allow for automatic type deduction from reference information input on
+ * \attention This type is the first template parameter of seqan3::sam_file_input_default_traits and should not be
+ *            manually configured in order to allow for automatic type deduction from reference information input on
  *            construction.
  */
 /*!\typedef using ref_ids
@@ -104,14 +104,14 @@ namespace seqan3
  *        the value_type must also model std::ranges::forward_range, and the value type of the value type
  *        must model seqan3::alphabet (e.g. std::vector<string>).
  *
- * \attention This type is the second template parameter of the alignment_file_default_traits and should not be manually
- *            configured in order to allow for automatic type deduction from reference information input on
+ * \attention This type is the second template parameter of seqan3::sam_file_input_default_traits and should not be
+ *            manually configured in order to allow for automatic type deduction from reference information input on
  *            construction.
  */
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
+SEQAN3_CONCEPT sam_file_input_traits = requires (t v)
 {
     // field::seq
     requires writable_alphabet<typename t::sequence_alphabet>;
@@ -161,11 +161,11 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
 //!\endcond
 
 // ---------------------------------------------------------------------------------------------------------------------
-// alignment_file_input_default_traits
+// sam_file_input_default_traits
 // ---------------------------------------------------------------------------------------------------------------------
 
-/*!\brief The default traits for seqan3::alignment_file_input
- * \implements alignment_file_input_traits
+/*!\brief The default traits for seqan3::sam_file_input
+ * \implements sam_file_input_traits
  * \ingroup alignment_file
  * \tparam ref_sequences_t A range over reference sequences. This type is automatically deduced on construction.
  * \tparam ref_ids_t       A range over reference ids. This type is automatically deduced on construction.
@@ -180,10 +180,10 @@ SEQAN3_CONCEPT alignment_file_input_traits = requires (t v)
  * \include test/snippet/io/sam_file/sam_file_input_my_traits.cpp
  */
 template <typename ref_sequences_t = ref_info_not_given, typename ref_ids_t = std::deque<std::string>>
-struct alignment_file_input_default_traits
+struct sam_file_input_default_traits
 {
     /*!\name Member types
-     * \brief Definitions to model seqan3::alignment_file_input_traits.
+     * \brief Definitions to model seqan3::sam_file_input_traits.
      * \{
      */
 
@@ -217,17 +217,17 @@ struct alignment_file_input_default_traits
 };
 
 // ---------------------------------------------------------------------------------------------------------------------
-// alignment_file_input
+// sam_file_input
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\brief A class for reading alignment files, e.g. SAM, BAM, BLAST ...
  * \ingroup alignment_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must model
- *                              seqan3::alignment_file_input_traits.
+ *                              seqan3::sam_file_input_traits.
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
- *                              must be in seqan3::alignment_file_input::field_ids.
+ *                              must be in seqan3::sam_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
- *                              seqan3::alignment_file_input_format).
+ *                              seqan3::sam_file_input_format).
  *
  * \details
  *
@@ -258,14 +258,14 @@ struct alignment_file_input_default_traits
  *
  * \include test/snippet/io/sam_file/sam_file_input_construction_from_stream.cpp
  *
- * Note that this is not the same as writing `alignment_file_input<>` (with angle brackets). In the latter case they
+ * Note that this is not the same as writing `sam_file_input<>` (with angle brackets). In the latter case they
  * are explicitly set to their default values, in the former case
  * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
- * chooses different parameters depending on the constructor arguments. For opening from file, `alignment_file_input<>`
+ * chooses different parameters depending on the constructor arguments. For opening from file, `sam_file_input<>`
  * would have also worked, but for opening from stream it would not have.
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
- * seqan3::alignment_file_input_default_traits for more details. As mentioned above, specifying at least one
+ * seqan3::sam_file_input_default_traits for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction. The following is equivalent to the automatic
  * type deduction example with a stream from above:
  *
@@ -291,7 +291,7 @@ struct alignment_file_input_default_traits
  * ### Reading record-wise (custom fields)
  *
  * If you want to skip specific fields from the record you can pass a non-empty fields trait object to the
- * seqan3::alignment_file_input constructor to select the fields that should be read from the input. For example,
+ * seqan3::sam_file_input constructor to select the fields that should be read from the input. For example,
  * you may only be interested in the mapping flag and mapping quality of your SAM data to get some statistics.
  * The following snippets demonstrate the usage of such a fields trait object.
  *
@@ -331,7 +331,7 @@ struct alignment_file_input_default_traits
  *   * seqan3::format_bam
  */
 template <
-    alignment_file_input_traits traits_type_ = alignment_file_input_default_traits<>,
+    sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,
     detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                field::id,
                                                                field::offset,
@@ -348,8 +348,8 @@ template <
                                                                field::evalue,
                                                                field::bit_score,
                                                                field::header_ptr>,
-    detail::type_list_of_alignment_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
-class alignment_file_input
+    detail::type_list_of_sam_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
+class sam_file_input
 {
 public:
     /*!\name Template arguments
@@ -515,7 +515,7 @@ public:
                       return true;
                   }(),
                   "You selected a field that is not valid for aligment files, please refer to the documentation "
-                  "of alignment_file_input::field_ids for the accepted values.");
+                  "of sam_file_input::field_ids for the accepted values.");
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
     using record_type = sam_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
@@ -537,7 +537,7 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::make_signed_t<size_t>;
     //!\brief The iterator type of this view (an input iterator).
-    using iterator          = detail::in_file_iterator<alignment_file_input>;
+    using iterator          = detail::in_file_iterator<sam_file_input>;
     //!\brief The const iterator type is void because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
@@ -548,17 +548,17 @@ public:
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    alignment_file_input() = delete;
+    sam_file_input() = delete;
     //!\brief Copy construction is explicitly deleted because you cannot have multiple access to the same file.
-    alignment_file_input(alignment_file_input const &) = delete;
+    sam_file_input(sam_file_input const &) = delete;
     //!\brief Copy assignment is explicitly deleted because you cannot have multiple access to the same file.
-    alignment_file_input & operator=(alignment_file_input const &) = delete;
+    sam_file_input & operator=(sam_file_input const &) = delete;
     //!\brief Move construction is defaulted.
-    alignment_file_input(alignment_file_input &&) = default;
+    sam_file_input(sam_file_input &&) = default;
     //!\brief Move assignment is defaulted.
-    alignment_file_input & operator=(alignment_file_input &&) = default;
+    sam_file_input & operator=(sam_file_input &&) = default;
     //!\brief Destructor is defaulted.
-    ~alignment_file_input() = default;
+    ~sam_file_input() = default;
 
     /*!\brief Construct from filename.
      * \param[in] filename    Path to the file you wish to open.
@@ -577,8 +577,8 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    alignment_file_input(std::filesystem::path filename,
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_input(std::filesystem::path filename,
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{}, stream_deleter_default}
     {
         init_by_filename(std::move(filename));
@@ -586,7 +586,7 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam stream_t      The stream type; must model seqan3::input_stream.
-     * \tparam file_format   The format of the file in the stream, must model seqan3::alignment_file_input_format.
+     * \tparam file_format   The format of the file in the stream, must model seqan3::sam_file_input_format.
      * \param[in] stream     The stream to operate on; must be derived of std::basic_istream.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -603,26 +603,26 @@ public:
      * it is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <input_stream stream_t, alignment_file_input_format file_format>
+    template <input_stream stream_t, sam_file_input_format file_format>
     //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
     //!\endcond
-    alignment_file_input(stream_t                 & stream,
-                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_input(stream_t & stream,
+                   file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop}
     {
         init_by_format<file_format>();
     }
 
     //!\overload
-    template <input_stream stream_t, alignment_file_input_format file_format>
+    template <input_stream stream_t, sam_file_input_format file_format>
     //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
     //!\endcond
-    alignment_file_input(stream_t                && stream,
-                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_input(stream_t && stream,
+                   file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
     {
         init_by_format<file_format>();
@@ -651,10 +651,10 @@ public:
      * the file is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    alignment_file_input(std::filesystem::path filename,
-                         typename traits_type::ref_ids & ref_ids,
-                         typename traits_type::ref_sequences & ref_sequences,
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_input(std::filesystem::path filename,
+                   typename traits_type::ref_ids & ref_ids,
+                   typename traits_type::ref_sequences & ref_sequences,
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ifstream{}, stream_deleter_default}
     {
         // initialize reference information
@@ -665,7 +665,7 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam stream_t           The stream type; must model seqan3::input_stream.
-     * \tparam    file_format     The format of the file in the stream; must model seqan3::alignment_file_input_format.
+     * \tparam    file_format     The format of the file in the stream; must model seqan3::sam_file_input_format.
      * \param[in] stream          The stream to operate on; must be derived of std::basic_istream.
      * \param[in] ref_ids         A range containing the reference ids that correspond to the SAM/BAM file.
      * \param[in] ref_sequences   A range containing the reference sequences that correspond to the SAM/BAM file.
@@ -688,12 +688,12 @@ public:
      * it is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <input_stream stream_t, alignment_file_input_format file_format>
-    alignment_file_input(stream_t & stream,
-                         typename traits_type::ref_ids & ref_ids,
-                         typename traits_type::ref_sequences & ref_sequences,
-                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    template <input_stream stream_t, sam_file_input_format file_format>
+    sam_file_input(stream_t & stream,
+                   typename traits_type::ref_ids & ref_ids,
+                   typename traits_type::ref_sequences & ref_sequences,
+                   file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop}
     {
         // initialize reference information
@@ -703,12 +703,12 @@ public:
     }
 
     //!\overload
-    template <input_stream stream_t, alignment_file_input_format file_format>
-    alignment_file_input(stream_t && stream,
-                         typename traits_type::ref_ids & ref_ids,
-                         typename traits_type::ref_sequences & ref_sequences,
-                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    template <input_stream stream_t, sam_file_input_format file_format>
+    sam_file_input(stream_t && stream,
+                   typename traits_type::ref_ids & ref_ids,
+                   typename traits_type::ref_sequences & ref_sequences,
+                   file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                   selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default}
     {
         // initialize reference information
@@ -719,17 +719,17 @@ public:
 
     //!\cond
     // explicitly delete rvalues for reference information
-    alignment_file_input(std::filesystem::path,
-                         typename traits_type::ref_ids &&,
-                         typename traits_type::ref_sequences &&,
-                         selected_field_ids const &) = delete;
+    sam_file_input(std::filesystem::path,
+                   typename traits_type::ref_ids &&,
+                   typename traits_type::ref_sequences &&,
+                   selected_field_ids const &) = delete;
 
-    template <input_stream stream_t, alignment_file_input_format file_format>
-    alignment_file_input(stream_t &&,
-                         typename traits_type::ref_ids &&,
-                         typename traits_type::ref_sequences &&,
-                         file_format const &,
-                         selected_field_ids const &) = delete;
+    template <input_stream stream_t, sam_file_input_format file_format>
+    sam_file_input(stream_t &&,
+                   typename traits_type::ref_ids &&,
+                   typename traits_type::ref_sequences &&,
+                   file_format const &,
+                   selected_field_ids const &) = delete;
     //!\endcond
     //!\}
 
@@ -813,7 +813,7 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    alignment_file_input_options<typename traits_type::sequence_legal_alphabet> options;
+    sam_file_input_options<typename traits_type::sequence_legal_alphabet> options;
 
     /*!\brief Access the file's header.
      *
@@ -863,7 +863,7 @@ protected:
         static_assert(list_traits::contains<format_type, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
 
-        format = detail::alignment_file_input_format_exposer<format_type>{};
+        format = detail::sam_file_input_format_exposer<format_type>{};
         secondary_stream = detail::make_secondary_istream(*primary_stream);
     }
 
@@ -902,7 +902,7 @@ protected:
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
     using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::alignment_file_input_format_exposer>::type;
+                                                           detail::sam_file_input_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -1007,132 +1007,101 @@ protected:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::alignment_file_input
+ * \relates seqan3::sam_file_input
  * \{
  */
 //!\brief Deduce selected fields, file_format, and default the rest.
-template <input_stream stream_type,
-          alignment_file_input_format file_format,
-          detail::fields_specialisation selected_field_ids>
-alignment_file_input(stream_type && stream,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> alignment_file_input<typename alignment_file_input<>::traits_type,       // actually use the default
-                            selected_field_ids,
-                            type_list<file_format>>;
+template <input_stream stream_type, sam_file_input_format file_format, detail::fields_specialisation selected_field_ids>
+sam_file_input(stream_type && stream, file_format const &, selected_field_ids const &)
+    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+                      selected_field_ids,
+                      type_list<file_format>>;
 
 //!\brief Deduce selected fields, file_format, and default the rest.
-template <input_stream stream_type,
-          alignment_file_input_format file_format,
-          detail::fields_specialisation selected_field_ids>
-alignment_file_input(stream_type & stream,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> alignment_file_input<typename alignment_file_input<>::traits_type,       // actually use the default
-                            selected_field_ids,
-                            type_list<file_format>>;
+template <input_stream stream_type, sam_file_input_format file_format, detail::fields_specialisation selected_field_ids>
+sam_file_input(stream_type & stream, file_format const &, selected_field_ids const &)
+    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+                      selected_field_ids,
+                      type_list<file_format>>;
 
 //!\brief Deduce file_format, and default the rest.
-template <input_stream stream_type,
-          alignment_file_input_format file_format>
-alignment_file_input(stream_type && stream,
-                     file_format const &)
-    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
-                            typename alignment_file_input<>::selected_field_ids, // actually use the default
-                            type_list<file_format>>;
+template <input_stream stream_type, sam_file_input_format file_format>
+sam_file_input(stream_type && stream, file_format const &)
+    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+                      typename sam_file_input<>::selected_field_ids, // actually use the default
+                      type_list<file_format>>;
 
 //!\brief Deduce file_format, and default the rest.
-template <input_stream stream_type,
-          alignment_file_input_format file_format>
-alignment_file_input(stream_type & stream,
-                     file_format const &)
-    -> alignment_file_input<typename alignment_file_input<>::traits_type,        // actually use the default
-                            typename alignment_file_input<>::selected_field_ids, // actually use the default
-                            type_list<file_format>>;
+template <input_stream stream_type, sam_file_input_format file_format>
+sam_file_input(stream_type & stream, file_format const &)
+    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+                      typename sam_file_input<>::selected_field_ids, // actually use the default
+                      type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           detail::fields_specialisation selected_field_ids>
-alignment_file_input(std::filesystem::path path,
-                     ref_ids_t &,
-                     ref_sequences_t &,
-                     selected_field_ids const &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            selected_field_ids,
-                            typename alignment_file_input<>::valid_formats>;  // actually use the default
+sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &, selected_field_ids const &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      selected_field_ids,
+                      typename sam_file_input<>::valid_formats>;  // actually use the default
 
 //!\brief Deduce ref_sequences_t and ref_ids_t, default the rest.
 template <std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t>
-alignment_file_input(std::filesystem::path path,
-                     ref_ids_t &,
-                     ref_sequences_t &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            typename alignment_file_input<>::selected_field_ids, // actually use the default
-                            typename alignment_file_input<>::valid_formats>;     // actually use the default
+sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      typename sam_file_input<>::selected_field_ids, // actually use the default
+                      typename sam_file_input<>::valid_formats>;     // actually use the default
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
-          alignment_file_input_format file_format,
+          sam_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_input(stream_type && stream,
-                     ref_ids_t &,
-                     ref_sequences_t &,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            selected_field_ids,
-                            type_list<file_format>>;
+sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &, selected_field_ids const &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      selected_field_ids,
+                      type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
-          alignment_file_input_format file_format,
+          sam_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_input(stream_type & stream,
-                     ref_ids_t &,
-                     ref_sequences_t &,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            selected_field_ids,
-                            type_list<file_format>>;
+sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &, selected_field_ids const &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      selected_field_ids,
+                      type_list<file_format>>;
 
 //!\brief Deduce ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
-          alignment_file_input_format file_format>
-alignment_file_input(stream_type && stream,
-                     ref_ids_t &,
-                     ref_sequences_t &,
-                     file_format const &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            typename alignment_file_input<>::selected_field_ids, // actually use the default
-                            type_list<file_format>>;
+          sam_file_input_format file_format>
+sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      typename sam_file_input<>::selected_field_ids, // actually use the default
+                      type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
-          alignment_file_input_format file_format>
-alignment_file_input(stream_type & stream,
-                     ref_ids_t &,
-                     ref_sequences_t &,
-                     file_format const &)
-    -> alignment_file_input<alignment_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                                std::remove_reference_t<ref_ids_t>>,
-                            typename alignment_file_input<>::selected_field_ids, // actually use the default
-                            type_list<file_format>>;
+          sam_file_input_format file_format>
+sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &)
+    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
+                                                    std::remove_reference_t<ref_ids_t>>,
+                      typename sam_file_input<>::selected_field_ids, // actually use the default
+                      type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

@@ -52,7 +52,7 @@
  *
  * | **File**                      | **Formats**                                                                                                  |
  * |:------------------------------|:-------------------------------------------------------------------------------------------------------------|
- * | seqan3::alignment_file_input  | seqan3::format_sam, seqan3::format_bam                                                                       |
+ * | seqan3::sam_file_input        | seqan3::format_sam, seqan3::format_bam                                                                       |
  * | seqan3::alignment_file_output | seqan3::format_sam, seqan3::format_bam                                                                       |
  * | seqan3::sequence_file_input   | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
  * | seqan3::sequence_file_output  | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
@@ -60,7 +60,7 @@
  * | seqan3::structure_file_output | seqan3::format_vienna                                                                                        |
  *
  * Some formats are available in multiple files, e.g. seqan3::format_sam can be read by seqan3::sequence_file_input
- * and by seqan3::alignment_file_input. This represents different use-cases of the same file format.
+ * and by seqan3::sam_file_input. This represents different use-cases of the same file format.
  *
  * Typically formats are supported for reading and writing, but this does not always have to be the case. See the above
  * links for more information.

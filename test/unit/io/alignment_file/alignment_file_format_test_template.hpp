@@ -29,7 +29,7 @@ using seqan3::operator""_phred42;
 using seqan3::operator""_tag;
 
 // global variables for reuse
-seqan3::alignment_file_input_options<seqan3::dna5> input_options;
+seqan3::sam_file_input_options<seqan3::dna5> input_options;
 seqan3::alignment_file_output_options output_options;
 
 struct alignment_file_data : public ::testing::Test
@@ -143,7 +143,7 @@ TYPED_TEST_SUITE_P(alignment_file_read);
 
 TYPED_TEST_P(alignment_file_read, input_concept)
 {
-    EXPECT_TRUE((seqan3::alignment_file_input_format<TypeParam>));
+    EXPECT_TRUE((seqan3::sam_file_input_format<TypeParam>));
 }
 
 // ----------------------------------------------------------------------------
@@ -154,7 +154,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
 {
     typename TestFixture::stream_type istream{this->big_header_input};
 
-    seqan3::alignment_file_input fin{istream, TypeParam{}};
+    seqan3::sam_file_input fin{istream, TypeParam{}};
     auto & header = fin.header();
 
     EXPECT_EQ(header.format_version, "1.6");
@@ -192,7 +192,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
 TYPED_TEST_P(alignment_file_read, read_in_all_data)
 {
     typename TestFixture::stream_type istream{this->verbose_reads_input};
-    seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+    seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
     this->tag_dicts[0]["NM"_tag] = -7;
     this->tag_dicts[0]["AS"_tag] = 2;
@@ -246,7 +246,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
 TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
 {
     typename TestFixture::stream_type istream{this->empty_input};
-    seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+    seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
     EXPECT_TRUE(seqan3::get<seqan3::field::seq>(*fin.begin()).empty());
     EXPECT_TRUE(seqan3::get<seqan3::field::id>(*fin.begin()).empty());
@@ -282,7 +282,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
 TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
 {
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mapq>{}};
+    seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mapq>{}};
 
     size_t i{0};
     for (auto & [mapq] : fin)
@@ -293,11 +293,11 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::alignment_file_input fin{istream,
-                                         this->ref_ids,
-                                         this->ref_sequences,
-                                         TypeParam{},
-                                         seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream,
+                                   this->ref_ids,
+                                   this->ref_sequences,
+                                   TypeParam{},
+                                   seqan3::fields<seqan3::field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
@@ -310,11 +310,11 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        seqan3::alignment_file_input fin{istream,
-                                         this->ref_ids,
-                                         this->ref_sequences,
-                                         TypeParam{},
-                                         seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream,
+                                   this->ref_ids,
+                                   this->ref_sequences,
+                                   TypeParam{},
+                                   seqan3::fields<seqan3::field::alignment>{}};
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
@@ -328,7 +328,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
         size_t i{0};
         for (auto & [alignment] : fin)
@@ -341,7 +341,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
 
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
-        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
@@ -355,11 +355,11 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
 {
     {   /*with reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::alignment_file_input fin{istream,
-                                         this->ref_ids,
-                                         this->ref_sequences,
-                                         TypeParam{},
-                                         seqan3::fields<seqan3::field::mate>{}};
+        seqan3::sam_file_input fin{istream,
+                                   this->ref_ids,
+                                   this->ref_sequences,
+                                   TypeParam{},
+                                   seqan3::fields<seqan3::field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -373,7 +373,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
 
     {   /*no reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
-        seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mate>{}};
+        seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mate>{}};
 
         size_t i{0};
         for (auto & [mate] : fin)
@@ -393,7 +393,7 @@ TYPED_TEST_P(alignment_file_read, cigar_vector)
     };
 
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
-    seqan3::alignment_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
+    seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::cigar>{}};
 
     size_t i{0};
     for (auto & [cigar_v] : fin)
@@ -404,13 +404,13 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
 {
     {   // with reference information given
         typename TestFixture::stream_type istream{this->unknown_ref};
-        seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
+        seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
         EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
 
     {   // with reference information in the header
         typename TestFixture::stream_type istream{this->unknown_ref_header};
-        seqan3::alignment_file_input fin{istream, TypeParam{}};
+        seqan3::sam_file_input fin{istream, TypeParam{}};
         EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
 }

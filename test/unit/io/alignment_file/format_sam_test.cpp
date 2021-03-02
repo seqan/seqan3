@@ -118,7 +118,7 @@ TEST_F(sam_format, header_errors)
             "@HD\tVN:1.0\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -127,7 +127,7 @@ TEST_F(sam_format, header_errors)
             "@HD\tVN:1.0\tSI:this is not a valid tag starting with S\n"
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -137,7 +137,7 @@ TEST_F(sam_format, header_errors)
             "@TT\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -147,7 +147,7 @@ TEST_F(sam_format, header_errors)
             "@PG\tID:prog\tTT:this is not a valid tag\n"
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -157,7 +157,7 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:unknown_ref\tLN:0\n"
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     {
@@ -167,7 +167,7 @@ TEST_F(sam_format, header_errors)
             "@SQ\tSN:ref\tLN:0\n" /*wrong length*/
         };
         std::istringstream istream(header_str);
-        seqan3::alignment_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -176,7 +176,7 @@ TEST_F(sam_format, no_hd_line_in_header)
 {
     // the header line (@HD) is optional
     std::istringstream istream{std::string{"@SQ\tSN:ref\tLN:34\nread1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\n"}};
-    seqan3::alignment_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
+    seqan3::sam_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"read1"});
 
@@ -186,7 +186,7 @@ TEST_F(sam_format, no_hd_line_in_header)
 TEST_F(sam_format, windows_file)
 {
     std::istringstream istream(std::string("read1\t41\tref\t1\t61\t*\tref\t10\t300\tACGT\t!##$\r\n"));
-    seqan3::alignment_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
+    seqan3::sam_file_input fin{istream, seqan3::format_sam{}, seqan3::fields<seqan3::field::id>{}};
 
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*fin.begin()), std::string{"read1"});
 
@@ -197,7 +197,7 @@ TEST_F(sam_format, format_error_illegal_character_in_seq)
 {
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\tAC!T\t*\n"));
 
-    seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+    seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
     EXPECT_THROW(fin.begin(), seqan3::parse_error);
 }
 
@@ -206,26 +206,26 @@ TEST_F(sam_format, format_error_invalid_arithmetic_value)
     // invalid value
     std::istringstream istream(std::string("*\t0\t*\t1abc\t0\t*\t*\t0\t0\t*\t*\n"));
     {
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     // overflow error
     {
         istream = std::istringstream(std::string("*\t0\t*\t2147483650\t0\t*\t*\t0\t0\t*\t*\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     // negative value as ref_offset
     {
         istream = std::istringstream(std::string("*\t0\t*\t-3\t0\t*\t*\t0\t0\t*\t*\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 
     // negative value as mate mapping position
     {
         istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t-3\t0\t*\t*\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -235,19 +235,19 @@ TEST_F(sam_format, format_error_invalid_cigar)
     // unkown operation
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t5Z\t*\t0\t0\t*\t*\n"));
     {
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     // negative number as operation count
     {
         istream = std::istringstream(std::string("*\t0\t*\t0\t0\t-5M\t*\t0\t0\t*\t*\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 
     {
         istream = std::istringstream(std::string("*\t0\t*\t0\t0\t3S4M1I-5M2D2M\t*\t0\t0\t*\t*\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -257,13 +257,13 @@ TEST_F(sam_format, format_error_invalid_sam_tag_format)
     // type identifier is wrong
     std::istringstream istream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:X:3\n"));
     {
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
     // Array subtype identifier is wrong
     {
         istream = std::istringstream(std::string("*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\tNM:B:x3,4\n"));
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
 }
@@ -275,21 +275,21 @@ TEST_F(sam_format, short_cigar_string_with_softclipping)
 	// The member function transfer_soft_clipping_to needs to work on 2 element cigar strings
     {
         std::istringstream istream("id	16	ref	0	255	10M5S	*	0	0	AGAGGGGGATAACCA	*\n");
-        seqan3::alignment_file_input fin{istream,
-                                         ref_ids,
-                                         ref_sequences,
-                                         seqan3::format_sam{},
-                                         seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream,
+                                   ref_ids,
+                                   ref_sequences,
+                                   seqan3::format_sam{},
+                                   seqan3::fields<seqan3::field::alignment>{}};
         EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "AGAGGGGGAT"_dna5);
     }
 
     {
         std::istringstream istream("id	16	ref	0	255	5S10M	*	0	0	AGAGGGGGATAACCA	*\n");
-        seqan3::alignment_file_input fin{istream,
-                                         ref_ids,
-                                         ref_sequences,
-                                         seqan3::format_sam{},
-                                         seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_input fin{istream,
+                                   ref_ids,
+                                   ref_sequences,
+                                   seqan3::format_sam{},
+                                   seqan3::fields<seqan3::field::alignment>{}};
         EXPECT_RANGE_EQ(std::get<1>(std::get<0>(*fin.begin())), "GGGATAACCA"_dna5);
     }
 }
@@ -340,7 +340,7 @@ TEST_F(sam_format, issue2195)
         {
             "*r1\t4\t1\t10\t0\t5M\t=\t136097\t-121\tACTGA\t*9<9;\tNM:i:1\tMQ:i:0\n"
         };
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
 
         using seqan3::operator""_phred42;
         std::vector<seqan3::phred42> expected_quality = "*9<9;"_phred42;
@@ -357,7 +357,7 @@ TEST_F(sam_format, issue2195)
         {
             "*\t4\t1\t10\t0\t2M\t=\t136097\t-121\tAC\t*1\tNM:i:1\tMQ:i:0\n"
         };
-        seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
 
         using seqan3::operator""_phred42;
         std::vector<seqan3::phred42> expected_quality = "*1"_phred42;

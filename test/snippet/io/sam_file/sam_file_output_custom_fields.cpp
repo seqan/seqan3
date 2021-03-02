@@ -14,9 +14,9 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 int main()
 {
     // fin uses custom fields, fout uses the default fields.
-    seqan3::alignment_file_input fin{std::istringstream{sam_file_raw},
-                                     seqan3::format_sam{},
-                                     seqan3::fields<seqan3::field::ref_offset, seqan3::field::flag>{}};
+    seqan3::sam_file_input fin{std::istringstream{sam_file_raw},
+                               seqan3::format_sam{},
+                               seqan3::fields<seqan3::field::ref_offset, seqan3::field::flag>{}};
     // output doesn't have to match the configuration of the input
     seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 

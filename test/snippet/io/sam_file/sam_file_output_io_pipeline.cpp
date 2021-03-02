@@ -15,7 +15,7 @@ r001	147	ref	237	30	*	=	7	-39	CAGCGGCAT	*	NM:i:1
 int main()
 {
 #if !SEQAN3_WORKAROUND_GCC_93983
-    seqan3::alignment_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}}
+    seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}}
         | seqan3::views::persist
         | std::views::take(3) // take only the first 3 records
         | seqan3::alignment_file_output{std::ostringstream{}, seqan3::format_sam{}};

@@ -71,9 +71,9 @@ int main()
 {
 /*
 //![filename_construction]
-    seqan3::alignment_file_input fin_from_filename{"/tmp/my.sam"};
+    seqan3::sam_file_input fin_from_filename{"/tmp/my.sam"};
 
-    seqan3::alignment_file_input fin_from_stream{std::cin, seqan3::format_sam{}};
+    seqan3::sam_file_input fin_from_stream{std::cin, seqan3::format_sam{}};
 //![filename_construction]
 */
 }
@@ -83,9 +83,9 @@ int main()
 //![read_custom_fields]
     auto filename = std::filesystem::temp_directory_path()/"example.sam";
 
-    seqan3::alignment_file_input fin{filename, seqan3::fields<seqan3::field::id,
-                                                              seqan3::field::seq,
-                                                              seqan3::field::flag>{}};
+    seqan3::sam_file_input fin{filename, seqan3::fields<seqan3::field::id,
+                                                        seqan3::field::seq,
+                                                        seqan3::field::flag>{}};
 
     for (auto & [id, seq, flag /*order!*/] : fin)
     {
@@ -100,7 +100,7 @@ int main()
 //![alignments_without_ref]
     auto filename = std::filesystem::temp_directory_path()/"example.sam";
 
-    seqan3::alignment_file_input fin{filename, seqan3::fields<seqan3::field::id, seqan3::field::alignment>{}};
+    seqan3::sam_file_input fin{filename, seqan3::fields<seqan3::field::id, seqan3::field::alignment>{}};
 
     for (auto & [ id, alignment ] : fin)
     {
@@ -118,7 +118,7 @@ int main()
     std::vector<std::string> ref_ids{"ref"}; // list of one reference name
     std::vector<seqan3::dna5_vector> ref_sequences{"AGAGTTCGAGATCGAGGACTAGCGACGAGGCAGCGAGCGATCGAT"_dna5};
 
-    seqan3::alignment_file_input fin{filename, ref_ids, ref_sequences, seqan3::fields<seqan3::field::alignment>{}};
+    seqan3::sam_file_input fin{filename, ref_ids, ref_sequences, seqan3::fields<seqan3::field::alignment>{}};
 
     for (auto & [ alignment ] : fin)
     {

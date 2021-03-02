@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_input_options.
+ * \brief Provides seqan3::sam_file_input_options.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -20,7 +20,7 @@ namespace seqan3
 //!\brief The options type defines various option members that influence the behaviour of all or some formats.
 //!\ingroup alignment_file
 template <typename sequence_legal_alphabet>
-struct alignment_file_input_options
+struct sam_file_input_options
 {
     // options to define
 };

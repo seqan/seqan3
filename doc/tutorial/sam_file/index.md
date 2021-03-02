@@ -56,7 +56,7 @@ with the only difference that **the header is mandatory**.
 
 # Alignment file fields
 
-\copydetails seqan3::alignment_file_input::field_ids
+\copydetails seqan3::sam_file_input::field_ids
 
 Note that some of the fields are specific to the SAM format, while some are specific to BLAST.
 To make things clearer, here is the table of SAM columns connected to the corresponding alignment file field:
@@ -190,7 +190,7 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 
 ## Reading the CIGAR string
 
-By default, the `seqan3::alignment_file_input` will always read the `seqan3::field::cigar` and store it
+By default, the `seqan3::sam_file_input` will always read the `seqan3::field::cigar` and store it
 into a `std::vector<seqan3::cigar>`:
 
 \snippet doc/tutorial/sam_file/sam_file_read_cigar.cpp code
@@ -209,7 +209,7 @@ In the example above, you can only safely access the aligned read.
            (e.g. via the `operator[]`). It is represented by a dummy type that throws on access.
 
 Although the SAM format does not handle reference sequence information,
-you can provide these information to the seqan3::alignment_file_input which automatically fills the alignment object.
+you can provide these information to the seqan3::sam_file_input which automatically fills the alignment object.
 You can pass reference ids and reference sequences as additional constructor parameters:
 
 \snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
