@@ -32,9 +32,9 @@ using seqan3::operator""_tag;
 seqan3::sam_file_input_options<seqan3::dna5> input_options;
 seqan3::alignment_file_output_options output_options;
 
-struct alignment_file_data : public ::testing::Test
+struct sam_file_data : public ::testing::Test
 {
-    alignment_file_data()
+    sam_file_data()
     {
         ref_sequences = std::vector<seqan3::dna5_vector>{ref_seq};
         ref_ids = std::vector<std::string>{ref_id};
@@ -132,25 +132,25 @@ struct alignment_file_data : public ::testing::Test
 };
 
 template <typename format_t>
-struct alignment_file_read : public alignment_file_data
+struct sam_file_read : public sam_file_data
 {};
 
-TYPED_TEST_SUITE_P(alignment_file_read);
+TYPED_TEST_SUITE_P(sam_file_read);
 
 // ----------------------------------------------------------------------------
 // general
 // ----------------------------------------------------------------------------
 
-TYPED_TEST_P(alignment_file_read, input_concept)
+TYPED_TEST_P(sam_file_read, input_concept)
 {
     EXPECT_TRUE((seqan3::sam_file_input_format<TypeParam>));
 }
 
 // ----------------------------------------------------------------------------
-// alignment_file_read
+// sam_file_read
 // ----------------------------------------------------------------------------
 
-TYPED_TEST_P(alignment_file_read, header_sucess)
+TYPED_TEST_P(sam_file_read, header_sucess)
 {
     typename TestFixture::stream_type istream{this->big_header_input};
 
@@ -189,7 +189,7 @@ TYPED_TEST_P(alignment_file_read, header_sucess)
     EXPECT_EQ(header.comments[0], "Tralalalalalala this is a comment");
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_all_data)
+TYPED_TEST_P(sam_file_read, read_in_all_data)
 {
     typename TestFixture::stream_type istream{this->verbose_reads_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
@@ -243,7 +243,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_data)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
+TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
 {
     typename TestFixture::stream_type istream{this->empty_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
@@ -279,7 +279,7 @@ TYPED_TEST_P(alignment_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE((*fin.begin()).tags().empty());
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
+TYPED_TEST_P(sam_file_read, read_in_almost_nothing)
 {
     typename TestFixture::stream_type istream{this->simple_three_reads_input};
     seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::mapq>{}};
@@ -289,7 +289,7 @@ TYPED_TEST_P(alignment_file_read, read_in_almost_nothing)
         EXPECT_EQ(mapq, this->mapqs[i++]);
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
+TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
@@ -324,7 +324,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_with_ref)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
+TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
 {
     {
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
@@ -351,7 +351,7 @@ TYPED_TEST_P(alignment_file_read, read_in_alignment_only_without_ref)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
+TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_with_ref)
 {
     {   /*with reference information*/
         typename TestFixture::stream_type istream{this->simple_three_reads_input};
@@ -367,7 +367,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_with_ref)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
+TYPED_TEST_P(sam_file_read, read_mate_but_not_ref_id_without_ref)
 {
     std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate;
 
@@ -381,7 +381,7 @@ TYPED_TEST_P(alignment_file_read, read_mate_but_not_ref_id_without_ref)
     }
 }
 
-TYPED_TEST_P(alignment_file_read, cigar_vector)
+TYPED_TEST_P(sam_file_read, cigar_vector)
 {
     std::vector<std::vector<seqan3::cigar>> expected
     {
@@ -400,7 +400,7 @@ TYPED_TEST_P(alignment_file_read, cigar_vector)
         EXPECT_EQ(cigar_v, expected[i++]);
 }
 
-TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_information)
+TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
 {
     {   // with reference information given
         typename TestFixture::stream_type istream{this->unknown_ref};
@@ -416,7 +416,7 @@ TYPED_TEST_P(alignment_file_read, format_error_ref_id_not_in_reference_informati
 }
 
 // ----------------------------------------------------------------------------
-// alignment_file_write
+// sam_file_write
 // ----------------------------------------------------------------------------
 
 // Note that these differ from the alignment_file_output default fields:
@@ -437,19 +437,19 @@ using sam_fields = seqan3::fields<seqan3::field::header_ptr,
                                   seqan3::field::tags>;
 
 template <typename format_type>
-struct alignment_file_write : public alignment_file_read<format_type>
+struct sam_file_write : public sam_file_read<format_type>
 {
     std::ostringstream ostream;
 };
 
-TYPED_TEST_SUITE_P(alignment_file_write);
+TYPED_TEST_SUITE_P(sam_file_write);
 
-TYPED_TEST_P(alignment_file_write, output_concept)
+TYPED_TEST_P(sam_file_write, output_concept)
 {
     EXPECT_TRUE((seqan3::alignment_file_output_format<TypeParam>));
 }
 
-TYPED_TEST_P(alignment_file_write, write_empty_members)
+TYPED_TEST_P(sam_file_write, write_empty_members)
 {
     {
         seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
@@ -475,7 +475,7 @@ TYPED_TEST_P(alignment_file_write, write_empty_members)
     EXPECT_EQ(this->ostream.str(), this->empty_input);
 }
 
-TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
+TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
 {
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
@@ -497,7 +497,7 @@ TYPED_TEST_P(alignment_file_write, default_options_all_members_specified)
     EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
 }
 
-TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
+TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 {
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
@@ -531,7 +531,7 @@ TYPED_TEST_P(alignment_file_write, write_ref_id_with_different_types)
     EXPECT_EQ(this->ostream.str(), this->simple_three_reads_output);
 }
 
-TYPED_TEST_P(alignment_file_write, with_header)
+TYPED_TEST_P(sam_file_write, with_header)
 {
     seqan3::sam_file_header header{std::vector<std::string>{this->ref_id}};
     header.sorting = "unknown";
@@ -574,7 +574,7 @@ TYPED_TEST_P(alignment_file_write, with_header)
     EXPECT_EQ(this->ostream.str(), this->verbose_output);
 }
 
-TYPED_TEST_P(alignment_file_write, cigar_vector)
+TYPED_TEST_P(sam_file_write, cigar_vector)
 {
     std::vector<std::vector<seqan3::cigar>> cigar_v
     {
@@ -648,7 +648,7 @@ TYPED_TEST_P(alignment_file_write, cigar_vector)
     EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
 }
 
-TYPED_TEST_P(alignment_file_write, special_cases)
+TYPED_TEST_P(sam_file_write, special_cases)
 {
     std::optional<int32_t> rid;
 
@@ -687,7 +687,7 @@ TYPED_TEST_P(alignment_file_write, special_cases)
     EXPECT_EQ(this->ostream.str(), this->special_output);
 }
 
-TYPED_TEST_P(alignment_file_write, format_errors)
+TYPED_TEST_P(sam_file_write, format_errors)
 {
     seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
@@ -707,7 +707,7 @@ TYPED_TEST_P(alignment_file_write, format_errors)
                  seqan3::format_error);
 }
 
-REGISTER_TYPED_TEST_SUITE_P(alignment_file_read,
+REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             input_concept,
                             header_sucess,
                             read_in_all_data,
@@ -720,7 +720,7 @@ REGISTER_TYPED_TEST_SUITE_P(alignment_file_read,
                             cigar_vector,
                             format_error_ref_id_not_in_reference_information);
 
-REGISTER_TYPED_TEST_SUITE_P(alignment_file_write,
+REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
                             write_empty_members,
                             output_concept,
                             default_options_all_members_specified,
