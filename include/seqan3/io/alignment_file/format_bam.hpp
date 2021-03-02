@@ -51,7 +51,7 @@ namespace seqan3
 
 /*!\brief       The BAM format.
  * \implements  AlignmentFileFormat
- * \ingroup     alignment_file
+ * \ingroup io_sam_file
  *
  * \details
  *

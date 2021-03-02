@@ -12,7 +12,7 @@
 
 #pragma once
 
-/*!\defgroup alignment_file Alignment File
+/*!\defgroup io_sam_file SAM File
  * \ingroup io
  * \brief Provides files and formats for handling alignment data.
  *

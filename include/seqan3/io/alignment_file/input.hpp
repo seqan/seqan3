@@ -54,7 +54,7 @@ namespace seqan3
 
 /*!\interface seqan3::sam_file_input_traits <>
  * \brief The requirements a traits_type for seqan3::sam_file_input must meet.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  */
 /*!\name Requirements for seqan3::sam_file_input_traits
  * \brief You can expect these **member types** of all types that model seqan3::sam_file_input_traits.
@@ -166,7 +166,7 @@ SEQAN3_CONCEPT sam_file_input_traits = requires (t v)
 
 /*!\brief The default traits for seqan3::sam_file_input
  * \implements sam_file_input_traits
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \tparam ref_sequences_t A range over reference sequences. This type is automatically deduced on construction.
  * \tparam ref_ids_t       A range over reference ids. This type is automatically deduced on construction.
  *
@@ -221,7 +221,7 @@ struct sam_file_input_default_traits
 // ---------------------------------------------------------------------------------------------------------------------
 
 /*!\brief A class for reading alignment files, e.g. SAM, BAM, BLAST ...
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must model
  *                              seqan3::sam_file_input_traits.
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
@@ -231,7 +231,7 @@ struct sam_file_input_default_traits
  *
  * \details
  *
- * \copydetails alignment_file
+ * \copydetails io_sam_file
  *
  * ### Construction and specialisation
  *

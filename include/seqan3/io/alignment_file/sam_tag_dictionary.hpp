@@ -24,7 +24,7 @@
 namespace seqan3::detail
 {
     //!\brief std::variant of allowed types for optional tag fields of the SAM format.
-    //!\ingroup alignment_file_io
+    //!\ingroup io_sam_file
     using sam_tag_variant = std::variant<char, int32_t, float, std::string,
                                          std::vector<std::byte>,
                                          std::vector<int8_t>, std::vector<uint8_t>,
@@ -42,7 +42,7 @@ namespace seqan3
 {
 
 /*!\brief The SAM tag literal, such that tags can be used in constant expressions.
- * \ingroup alignment_file_io
+ * \ingroup io_sam_file
  * \tparam char_t The char type. Usually `char`. Parameter pack `...s` must be of
  *                length 2, since SAM tags consist of two letters (char0 and char1).
  * \returns The unique identifier of the SAM tag computed by char0 * 128 + char1.
@@ -88,7 +88,7 @@ constexpr uint16_t operator""_tag()
 }
 
 /*!\brief The generic base class.
- * \ingroup alignment_file_io
+ * \ingroup io_sam_file
  *
  * \attention This is a pure base class that needs to be specialized in order to
  *            be used.
@@ -171,7 +171,7 @@ struct sam_tag_type
 };
 
 //!\brief Short cut helper for seqan3::sam_tag_type::type.
-//!\ingroup alignment_file_io
+//!\ingroup io_sam_file
 template <uint16_t tag_value>
 using sam_tag_type_t = typename sam_tag_type<tag_value>::type;
 
@@ -245,7 +245,7 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
 //!\endcond
 
 /*!\brief The SAM tag dictionary class that stores all optional SAM fields.
- * \ingroup alignment_file_io
+ * \ingroup io_sam_file
  *
  * \details
  *

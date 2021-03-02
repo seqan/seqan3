@@ -31,7 +31,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Internal class used to expose the actual format interface to write alignment records into the file.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \tparam format_type The type of the format to be exposed.
  *
@@ -61,7 +61,7 @@ namespace seqan3
 
 /*!\interface seqan3::alignment_file_output_format <>
  * \brief The generic concept for alignment file out formats.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \details
  *

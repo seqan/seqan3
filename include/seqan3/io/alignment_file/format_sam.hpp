@@ -54,7 +54,7 @@ namespace seqan3
 
 /*!\brief       The SAM format (tag).
  * \implements  AlignmentFileFormat
- * \ingroup     alignment_file
+ * \ingroup io_sam_file
  *
  * \details
  *

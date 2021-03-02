@@ -52,7 +52,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The alignment base format.
- * \ingroup alignment_file
+ * \ingroup io_sam_file
  *
  * \details
  *
