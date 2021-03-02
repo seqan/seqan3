@@ -507,13 +507,13 @@ TEST_F(bam_format, too_long_cigar_string_write)
     header.ref_dict[this->ref_id] = 0;
 
     {
-        seqan3::alignment_file_output fout{os, seqan3::format_bam{}, seqan3::fields<seqan3::field::header_ptr,
-                                                                                    seqan3::field::id,
-                                                                                    seqan3::field::seq,
-                                                                                    seqan3::field::ref_id,
-                                                                                    seqan3::field::ref_offset,
-                                                                                    seqan3::field::alignment,
-                                                                                    seqan3::field::mapq>{}};
+        seqan3::sam_file_output fout{os, seqan3::format_bam{}, seqan3::fields<seqan3::field::header_ptr,
+                                                                              seqan3::field::id,
+                                                                              seqan3::field::seq,
+                                                                              seqan3::field::ref_id,
+                                                                              seqan3::field::ref_offset,
+                                                                              seqan3::field::alignment,
+                                                                              seqan3::field::mapq>{}};
 
         fout.emplace_back(&header, std::string{"long_read"}, read, 0, 0, alignment, 255);
     }

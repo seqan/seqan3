@@ -53,7 +53,7 @@
  * | **File**                      | **Formats**                                                                                                  |
  * |:------------------------------|:-------------------------------------------------------------------------------------------------------------|
  * | seqan3::sam_file_input        | seqan3::format_sam, seqan3::format_bam                                                                       |
- * | seqan3::alignment_file_output | seqan3::format_sam, seqan3::format_bam                                                                       |
+ * | seqan3::sam_file_output       | seqan3::format_sam, seqan3::format_bam                                                                       |
  * | seqan3::sequence_file_input   | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
  * | seqan3::sequence_file_output  | seqan3::format_embl, seqan3::format_fasta, seqan3::format_fastq, seqan3::format_genbank, seqan3::format_sam  |
  * | seqan3::structure_file_input  | seqan3::format_vienna                                                                                        |

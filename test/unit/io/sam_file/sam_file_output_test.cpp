@@ -47,10 +47,10 @@ std::string const output_comp
 // general
 // ----------------------------------------------------------------------------
 
-TEST(alignment_file_output_iterator, concepts)
+TEST(sam_file_output_iterator, concepts)
 {
-    using it_t = typename seqan3::alignment_file_output<>::iterator;
-    using sen_t = typename seqan3::alignment_file_output<>::sentinel;
+    using it_t = typename seqan3::sam_file_output<>::iterator;
+    using sen_t = typename seqan3::sam_file_output<>::sentinel;
 
     EXPECT_TRUE((std::output_iterator<it_t, std::tuple<std::string, std::string>>));
     EXPECT_TRUE((std::sentinel_for<sen_t, it_t>));
@@ -58,10 +58,10 @@ TEST(alignment_file_output_iterator, concepts)
 
 TEST(general, concepts)
 {
-    using t = seqan3::alignment_file_output<>;
+    using t = seqan3::sam_file_output<>;
     EXPECT_TRUE((std::ranges::output_range<t, std::tuple<std::string, std::string>>));
 
-    using ct = seqan3::alignment_file_output<> const;
+    using ct = seqan3::sam_file_output<> const;
     // not const-iterable
     EXPECT_FALSE((std::ranges::output_range<ct, std::tuple<std::string, std::string>>));
 }
@@ -70,47 +70,47 @@ TEST(general, construct_by_filename)
 {
     /* just the filename */
     {
-        seqan3::test::tmp_filename filename{"alignment_file_output_constructor.sam"};
-        EXPECT_NO_THROW( seqan3::alignment_file_output<>{filename.get_path()} );
+        seqan3::test::tmp_filename filename{"sam_file_output_constructor.sam"};
+        EXPECT_NO_THROW( seqan3::sam_file_output<>{filename.get_path()} );
     }
 
     /* wrong extension */
     {
-        seqan3::test::tmp_filename filename{"alignment_file_output_constructor.xyz"};
+        seqan3::test::tmp_filename filename{"sam_file_output_constructor.xyz"};
         std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW( seqan3::alignment_file_output<>{filename.get_path()},
+        EXPECT_THROW( seqan3::sam_file_output<>{filename.get_path()},
                       seqan3::unhandled_extension_error );
     }
 
     /* unknown file */
     {
         seqan3::test::tmp_filename filename{"I/do/not/exist.sam"};
-        EXPECT_THROW( seqan3::alignment_file_output<>{filename.get_path()}, seqan3::file_open_error );
+        EXPECT_THROW( seqan3::sam_file_output<>{filename.get_path()}, seqan3::file_open_error );
     }
 
     /* filename + fields */
     using fields_seq = seqan3::fields<seqan3::field::seq>;
     {
-        seqan3::test::tmp_filename filename{"alignment_file_output_constructor.sam"};
-        EXPECT_NO_THROW(( seqan3::alignment_file_output<fields_seq,
-                                                        seqan3::type_list<seqan3::format_sam>>{filename.get_path(),
-                                                                                                fields_seq{}} ));
+        seqan3::test::tmp_filename filename{"sam_file_output_constructor.sam"};
+        EXPECT_NO_THROW(( seqan3::sam_file_output<fields_seq,
+                                                  seqan3::type_list<seqan3::format_sam>>{filename.get_path(),
+                                                                                         fields_seq{}} ));
     }
 }
 
 TEST(general, construct_from_stream)
 {
     /* stream + format_tag */
-    EXPECT_NO_THROW(( seqan3::alignment_file_output<default_fields,
-                                                    seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
-                                                                                           seqan3::format_sam{}} ));
+    EXPECT_NO_THROW(( seqan3::sam_file_output<default_fields,
+                                              seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
+                                                                                     seqan3::format_sam{}} ));
 
 
     /* stream + format_tag + fields */
-    EXPECT_NO_THROW(( seqan3::alignment_file_output<default_fields,
-                                                    seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
-                                                                                           seqan3::format_sam{},
-                                                                                           default_fields{}} ));
+    EXPECT_NO_THROW(( seqan3::sam_file_output<default_fields,
+                                              seqan3::type_list<seqan3::format_sam>>{std::ostringstream{},
+                                                                                     seqan3::format_sam{},
+                                                                                     default_fields{}} ));
 }
 
 TEST(general, default_template_args_and_deduction_guides)
@@ -136,7 +136,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* default template args */
     {
-        using t = seqan3::alignment_file_output<>;
+        using t = seqan3::sam_file_output<>;
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
@@ -144,9 +144,9 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        seqan3::test::tmp_filename filename{"alignment_file_output_constructor.sam"};
+        seqan3::test::tmp_filename filename{"sam_file_output_constructor.sam"};
 
-        seqan3::alignment_file_output fout{filename.get_path()};
+        seqan3::sam_file_output fout{filename.get_path()};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -156,9 +156,9 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided filename constructor + custom fields */
     {
-        seqan3::test::tmp_filename filename{"alignment_file_output_constructor.sam"};
+        seqan3::test::tmp_filename filename{"sam_file_output_constructor.sam"};
 
-        seqan3::alignment_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::alignment>{}};
+        seqan3::sam_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::alignment>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::alignment>>)); // changed
@@ -169,7 +169,7 @@ TEST(general, default_template_args_and_deduction_guides)
     /* guided stream constructor */
     {
         std::ostringstream ext{};
-        seqan3::alignment_file_output fout{ext, seqan3::format_sam{}};
+        seqan3::sam_file_output fout{ext, seqan3::format_sam{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -179,7 +179,7 @@ TEST(general, default_template_args_and_deduction_guides)
 
     /* guided stream temporary constructor */
     {
-        seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+        seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
@@ -195,7 +195,7 @@ TEST(general, default_template_args_and_deduction_guides)
 template <typename fn_t>
 void row_wise_impl(fn_t fn)
 {
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     for (size_t i = 0; i < 3; ++i)
         fn(fout, i);
@@ -207,7 +207,7 @@ void row_wise_impl(fn_t fn)
 template <typename source_t>
 void assign_impl(source_t && source)
 {
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     fout = source;
 
@@ -335,8 +335,8 @@ TEST(row, different_fields_in_record_and_file)
                                                                                                    ids[1],
                                                                                                    seqs[1]};
 
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}, seqan3::fields<seqan3::field::seq,
-                                                                                                  seqan3::field::id>{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}, seqan3::fields<seqan3::field::seq,
+                                                                                            seqan3::field::id>{}};
 
     fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, std::string("read1"));
     // fout.emplace_back("AGGCTGNAGGCTGNA"_dna5, "read1"); // const char * is not allowed
@@ -358,11 +358,11 @@ TEST(row, print_header_in_file)
     std::vector<std::string> ref_ids{"ref1", "ref2"};
     std::vector<int32_t>     ref_len{234511, 243243};
 
-    seqan3::alignment_file_output fout{std::ostringstream{},
-                                       ref_ids,
-                                       ref_len,
-                                       seqan3::format_sam{},
-                                       seqan3::fields<seqan3::field::id>{}};
+    seqan3::sam_file_output fout{std::ostringstream{},
+                                 ref_ids,
+                                 ref_len,
+                                 seqan3::format_sam{},
+                                 seqan3::fields<seqan3::field::id>{}};
 
     fout.emplace_back(std::string("read1"));
 
@@ -393,9 +393,9 @@ TEST(row, print_header_in_record)
 
     // no file header present
     {
-        seqan3::alignment_file_output fout{std::ostringstream{},
-                                           seqan3::format_sam{},
-                                           seqan3::fields<seqan3::field::header_ptr>{}};
+        seqan3::sam_file_output fout{std::ostringstream{},
+                                     seqan3::format_sam{},
+                                     seqan3::fields<seqan3::field::header_ptr>{}};
 
         fout.emplace_back(&header);
 
@@ -414,11 +414,11 @@ TEST(row, print_header_in_record)
 
     // file header present but record header pointer is favoured
     {
-        seqan3::alignment_file_output fout{std::ostringstream{},
-                                           std::vector<std::string>{"other_ref1", "other_ref2"},
-                                           std::vector<int32_t>{12, 13},
-                                           seqan3::format_sam{},
-                                           seqan3::fields<seqan3::field::header_ptr>{}};
+        seqan3::sam_file_output fout{std::ostringstream{},
+                                     std::vector<std::string>{"other_ref1", "other_ref2"},
+                                     std::vector<int32_t>{12, 13},
+                                     seqan3::format_sam{},
+                                     seqan3::fields<seqan3::field::header_ptr>{}};
 
         fout.emplace_back(&header);
 
@@ -490,7 +490,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     // with reference information
     {
         seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
-        seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+        seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
         fout = fin;
 
@@ -502,7 +502,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     // without reference information
     {
         seqan3::sam_file_input fin{std::istringstream{comp}, seqan3::format_sam{}};
-        seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+        seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
         fout = fin;
 
@@ -528,7 +528,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
 
     seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     fin | fout;
 
@@ -556,13 +556,13 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 )";
     {
         seqan3::sam_file_input fin{std::istringstream{comp}, ref_ids, ref_seqs, seqan3::format_sam{}};
-        seqan3::alignment_file_output fout{filename.get_path()};
+        seqan3::sam_file_output fout{filename.get_path()};
 
         fin | fout;
     }
 
     seqan3::sam_file_input fin2{filename.get_path(), ref_ids, ref_seqs};
-    seqan3::alignment_file_output fout2{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout2{std::ostringstream{}, seqan3::format_sam{}};
 
     fin2 | fout2;
 
@@ -585,9 +585,9 @@ std::string compression_by_filename_impl(seqan3::test::tmp_filename & filename)
 {
     {
         // explicitly only test compression on sam format
-        seqan3::alignment_file_output<typename seqan3::alignment_file_output<>::selected_field_ids,
-                                      seqan3::type_list<seqan3::format_sam>,
-                                      seqan3::ref_info_not_given> fout{filename.get_path()};
+        seqan3::sam_file_output<typename seqan3::sam_file_output<>::selected_field_ids,
+                                seqan3::type_list<seqan3::format_sam>,
+                                seqan3::ref_info_not_given> fout{filename.get_path()};
 
         for (size_t i = 0; i < 3; ++i)
         {
@@ -613,7 +613,7 @@ std::string compression_by_filename_impl(seqan3::test::tmp_filename & filename)
 template <typename comp_stream_t>
 void compression_by_stream_impl(comp_stream_t & stream)
 {
-    seqan3::alignment_file_output fout{stream, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{stream, seqan3::format_sam{}};
 
     for (size_t i = 0; i < 3; ++i)
     {
@@ -649,7 +649,7 @@ std::string expected_bgzf
 
 TEST(compression, by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.gz"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.gz"};
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte.
@@ -671,7 +671,7 @@ TEST(compression, by_stream_gz)
 
 TEST(compression, by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.bgzf"};
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte.
@@ -706,7 +706,7 @@ std::string expected_bz2
 
 TEST(compression, by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bz2"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.bz2"};
 
     std::string buffer = compression_by_filename_impl(filename);
     EXPECT_EQ(buffer, expected_bz2);

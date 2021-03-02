@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_output_options.
+ * \brief Provides seqan3::sam_file_output_options.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -19,7 +19,7 @@ namespace seqan3
 
 //!\brief The options type defines various option members that influence the behavior of all or some formats.
 //!\ingroup io_sam_file
-struct alignment_file_output_options
+struct sam_file_output_options
 {
     /*!\brief The default plain text line-ending is "\n", but on Windows an
      *        additional carriage return is recommended ("\r\n" for line-ending).

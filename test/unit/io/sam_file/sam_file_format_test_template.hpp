@@ -30,7 +30,7 @@ using seqan3::operator""_tag;
 
 // global variables for reuse
 seqan3::sam_file_input_options<seqan3::dna5> input_options;
-seqan3::alignment_file_output_options output_options;
+seqan3::sam_file_output_options output_options;
 
 struct sam_file_data : public ::testing::Test
 {
@@ -419,7 +419,7 @@ TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
 // sam_file_write
 // ----------------------------------------------------------------------------
 
-// Note that these differ from the alignment_file_output default fields:
+// Note that these differ from the sam_file_output default fields:
 // 1. They don't contain field::bit_score and field::evalue since these belong to the BLAST format.
 // 2. field::alignment and field::cigar are redundant. Since field::alignment is the more complex one it is chosen here.
 //    The behaviour if both are given is tested in a separate test.
@@ -446,13 +446,13 @@ TYPED_TEST_SUITE_P(sam_file_write);
 
 TYPED_TEST_P(sam_file_write, output_concept)
 {
-    EXPECT_TRUE((seqan3::alignment_file_output_format<TypeParam>));
+    EXPECT_TRUE((seqan3::sam_file_output_format<TypeParam>));
 }
 
 TYPED_TEST_P(sam_file_write, write_empty_members)
 {
     {
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         using default_align_t = std::pair<std::span<seqan3::gapped<char>>, std::span<seqan3::gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
@@ -482,7 +482,7 @@ TYPED_TEST_P(sam_file_write, default_options_all_members_specified)
     this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
     {
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         for (size_t i = 0; i < 3; ++i)
         {
@@ -505,7 +505,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 
     {
         // header ref_id_type is std::string
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],
@@ -558,7 +558,7 @@ TYPED_TEST_P(sam_file_write, with_header)
     this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
 
     {
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         for (size_t i = 0; i < 3; ++i)
         {
@@ -590,7 +590,7 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
     this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
     {
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
         for (size_t i = 0ul; i < 3ul; ++i)
         {
             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
@@ -620,19 +620,19 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
 
     // 2. Write only the cigar, not the alignment
     {
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::header_ptr,
-                                                                                      seqan3::field::id,
-                                                                                      seqan3::field::flag,
-                                                                                      seqan3::field::ref_id,
-                                                                                      seqan3::field::ref_offset,
-                                                                                      seqan3::field::mapq,
-                                                                                      seqan3::field::cigar,
-                                                                                           // cigar instead of alignment
-                                                                                      seqan3::field::offset,
-                                                                                      seqan3::field::mate,
-                                                                                      seqan3::field::seq,
-                                                                                      seqan3::field::qual,
-                                                                                      seqan3::field::tags>{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::header_ptr,
+                                                                                seqan3::field::id,
+                                                                                seqan3::field::flag,
+                                                                                seqan3::field::ref_id,
+                                                                                seqan3::field::ref_offset,
+                                                                                seqan3::field::mapq,
+                                                                                seqan3::field::cigar,
+                                                                                     // cigar instead of alignment
+                                                                                seqan3::field::offset,
+                                                                                seqan3::field::mate,
+                                                                                seqan3::field::seq,
+                                                                                seqan3::field::qual,
+                                                                                seqan3::field::tags>{}};
 
         for (size_t i = 0ul; i < 3ul; ++i)
         {
@@ -656,7 +656,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
     {
         std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> mate{rid, rid, 0};
 
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], rid,
@@ -674,7 +674,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
         // write the ref id and mate ref as string
         std::tuple<std::string, std::optional<int32_t>, int32_t> mate_str{"", rid, 0};
 
-        seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
         // std::string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0], std::string(""),
@@ -689,7 +689,7 @@ TYPED_TEST_P(sam_file_write, special_cases)
 
 TYPED_TEST_P(sam_file_write, format_errors)
 {
-    seqan3::alignment_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
+    seqan3::sam_file_output fout{this->ostream, TypeParam{}, sam_fields{}};
 
     // ensure that only a ref_id that is listed in the header is allowed
     EXPECT_THROW(fout.emplace_back(&(this->header), this->ids[0], this->flags[0],

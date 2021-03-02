@@ -8,7 +8,7 @@
 
 int main()
 {
-    seqan3::alignment_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_output fout{std::ostringstream{}, seqan3::format_sam{}};
 
     std::string ref_id;
     std::string read_id;

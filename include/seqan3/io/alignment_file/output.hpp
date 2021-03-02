@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_output and corresponding traits classes.
+ * \brief Provides seqan3::sam_file_output and corresponding traits classes.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -41,7 +41,7 @@ namespace seqan3
 {
 
 // ----------------------------------------------------------------------------
-// alignment_file_output
+// sam_file_output
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing alignment files, e.g. SAM, BAL, BLAST, ...
@@ -49,7 +49,7 @@ namespace seqan3
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of
  *                              fields IDs; only relevant if these can't be deduced.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each
- *                              must model seqan3::alignment_file_output_format).
+ *                              must model seqan3::sam_file_output_format).
  *
  * \details
  *
@@ -75,12 +75,12 @@ namespace seqan3
  *
  * \include test/snippet/io/sam_file/sam_file_output_cout_write.cpp
  *
- * Note that this is not the same as writing `alignment_file_output<>`
+ * Note that this is not the same as writing `sam_file_output<>`
  * (with angle brackets). In the latter case they are explicitly set to their
  * default values, in the former case
  * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction)
  * happens which chooses different parameters depending on the constructor arguments.
- * For opening from file, `alignment_file_output<>` would have also worked, but for
+ * For opening from file, `sam_file_output<>` would have also worked, but for
  * opening from stream it would not have.
  *
  * ### Writing record-wise
@@ -101,7 +101,7 @@ namespace seqan3
  *
  * If you want to omit non-required parameter or
  * change the order of the parameters, you can pass a non-empty fields trait object to the
- * seqan3::alignment_file_output constructor to select the fields that are used for interpreting the arguments.
+ * seqan3::sam_file_output constructor to select the fields that are used for interpreting the arguments.
  *
  * The following snippets demonstrates the usage of such a field_traits object.
  *
@@ -158,9 +158,9 @@ template <detail::fields_specialisation selected_field_ids_ =
                      field::evalue,
                      field::bit_score,
                      field::header_ptr>,
-          detail::type_list_of_alignment_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
+          detail::type_list_of_sam_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
           typename ref_ids_type = ref_info_not_given>
-class alignment_file_output
+class sam_file_output
 {
 public:
     /*!\name Template arguments
@@ -202,7 +202,7 @@ public:
                   }(),
                   "You selected a field that is not valid for alignment files, "
                   "please refer to the documentation of "
-                  "seqan3::alignment_file_output::field_ids for the accepted values.");
+                  "seqan3::sam_file_output::field_ids for the accepted values.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -220,7 +220,7 @@ public:
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type   = std::ptrdiff_t;
     //!\brief The iterator type of this view (an output iterator).
-    using iterator          = detail::out_file_iterator<alignment_file_output>;
+    using iterator          = detail::out_file_iterator<sam_file_output>;
     //!\brief The const iterator type is void, because files are not const-iterable.
     using const_iterator    = void;
     //!\brief The type returned by end().
@@ -231,17 +231,17 @@ public:
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    alignment_file_output() = delete;
+    sam_file_output() = delete;
     //!\brief Copy construction is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output(alignment_file_output const &) = delete;
+    sam_file_output(sam_file_output const &) = delete;
     //!\brief Copy assignment is explicitly deleted, because you can't have multiple access to the same file.
-    alignment_file_output & operator=(alignment_file_output const &) = delete;
+    sam_file_output & operator=(sam_file_output const &) = delete;
     //!\brief Move construction is defaulted.
-    alignment_file_output(alignment_file_output &&) = default;
+    sam_file_output(sam_file_output &&) = default;
     //!\brief Move assignment is defaulted.
-    alignment_file_output & operator=(alignment_file_output &&) = default;
+    sam_file_output & operator=(sam_file_output &&) = default;
     //!\brief Destructor is defaulted.
-    ~alignment_file_output() = default;
+    ~sam_file_output() = default;
 
     /*!\brief Construct from filename.
      * \param[in] filename      Path to the file you wish to open.
@@ -268,8 +268,8 @@ public:
      *
      * \include test/snippet/io/sam_file/sam_file_output_format_construction.cpp
      */
-    alignment_file_output(std::filesystem::path filename,
-                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_output(std::filesystem::path filename,
+                    selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new std::ofstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
@@ -289,7 +289,7 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam stream_type   The type of stream to write to; must model seqan3::output_stream.
-     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::alignment_file_output_format.
+     * \tparam file_format   The format of the file in the stream, must satisfy seqan3::sam_file_output_format.
      * \param[out] stream    The stream to write to, must be derived of std::basic_ostream<stream_char_t>.
      * \param[in] format_tag The file format tag.
      * \param[in] fields_tag A seqan3::fields tag. [optional]
@@ -303,32 +303,32 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <output_stream stream_type, alignment_file_output_format file_format>
+    template <output_stream stream_type, sam_file_output_format file_format>
     //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
     //!\endcond
-    alignment_file_output(stream_type              & stream,
-                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_output(stream_type & stream,
+                    file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                    selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format_exposer<file_format>{}}
+        format{detail::sam_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
     }
 
     //!\overload
-    template <output_stream stream_type, alignment_file_output_format file_format>
+    template <output_stream stream_type, sam_file_output_format file_format>
     //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
     //!\endcond
-    alignment_file_output(stream_type             && stream,
-                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+    sam_file_output(stream_type && stream,
+                    file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                    selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_type{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
-        format{detail::alignment_file_output_format_exposer<file_format>{}}
+        format{detail::sam_file_output_format_exposer<file_format>{}}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -368,11 +368,11 @@ public:
     //!\cond
         requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
     //!\endcond
-    alignment_file_output(std::filesystem::path const & filename,
-                          ref_ids_type_              && ref_ids,
-                          ref_lengths_type           && ref_lengths,
-                          selected_field_ids    const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        alignment_file_output{filename, selected_field_ids{}}
+    sam_file_output(std::filesystem::path const & filename,
+                    ref_ids_type_ && ref_ids,
+                    ref_lengths_type && ref_lengths,
+                    selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        sam_file_output{filename, selected_field_ids{}}
 
     {
         initialise_header_information(ref_ids, ref_lengths);
@@ -380,7 +380,7 @@ public:
 
     /*!\brief Construct from an existing stream and with specified format.
      * \tparam stream_type      The type of stream to write to; must model seqan3::output_stream.
-     * \tparam file_format      The format of the file in the stream, must model seqan3::alignment_file_output_format.
+     * \tparam file_format      The format of the file in the stream, must model seqan3::sam_file_output_format.
      * \tparam ref_ids_type_    The type of range over reference ids; must model std::forward_range.
      * \tparam ref_lengths_type The type of range over reference lengths; must model std::forward_range.
      *
@@ -400,18 +400,18 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <output_stream stream_type,
-              alignment_file_output_format file_format,
+              sam_file_output_format file_format,
               typename ref_ids_type_, // generic type to capture lvalue references
               std::ranges::forward_range ref_lengths_type>
     //!\cond
         requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
     //!\endcond
-    alignment_file_output(stream_type             && stream,
-                          ref_ids_type_           && ref_ids,
-                          ref_lengths_type        && ref_lengths,
-                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
-                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
-        alignment_file_output{std::forward<stream_type>(stream), file_format{}, selected_field_ids{}}
+    sam_file_output(stream_type && stream,
+                    ref_ids_type_ && ref_ids,
+                    ref_lengths_type && ref_lengths,
+                    file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
+                    selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
+        sam_file_output{std::forward<stream_type>(stream), file_format{}, selected_field_ids{}}
     {
         initialise_header_information(ref_ids, ref_lengths);
     }
@@ -607,7 +607,7 @@ public:
      * \include test/snippet/io/sam_file/sam_file_output_write_range.cpp
      */
     template <typename rng_t>
-    alignment_file_output & operator=(rng_t && range)
+    sam_file_output & operator=(rng_t && range)
     //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
@@ -625,7 +625,7 @@ public:
      *
      * \details
      *
-     * This operator enables alignment_file_output to be at the end of a piping operation. It just calls
+     * This operator enables sam_file_output to be at the end of a piping operation. It just calls
      * operator=() internally.
      *
      * ### Complexity
@@ -646,7 +646,7 @@ public:
      *
      */
     template <typename rng_t>
-    friend alignment_file_output & operator|(rng_t && range, alignment_file_output & f)
+    friend sam_file_output & operator|(rng_t && range, sam_file_output & f)
     //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
@@ -657,7 +657,7 @@ public:
 
     //!\overload
     template <typename rng_t>
-    friend alignment_file_output operator|(rng_t && range, alignment_file_output && f)
+    friend sam_file_output operator|(rng_t && range, sam_file_output && f)
     //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
@@ -668,7 +668,7 @@ public:
     //!\}
 
     //!\brief The options are public and its members can be set directly.
-    alignment_file_output_options options;
+    sam_file_output_options options;
 
     /*!\cond DEV
      * \brief Expose a reference to the secondary stream. [public, but not documented as part of the API]
@@ -721,7 +721,7 @@ protected:
 
     //!\brief Type of the format, an std::variant over the `valid_formats`.
     using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::alignment_file_output_format_exposer>::type;
+                                                           detail::sam_file_output_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -801,138 +801,105 @@ protected:
 };
 
 /*!\name Type deduction guides
- * \relates seqan3::alignment_file_output
+ * \relates seqan3::sam_file_output
  * \{
  */
 
-/*!\brief Deduces selected_field_ids from input and sets alignment_file_output::ref_ids_type to
+/*!\brief Deduces selected_field_ids from input and sets sam_file_output::ref_ids_type to
  *        seqan3::detail::ref_info_not_given. valid_formats is set to the default.
  */
 template <detail::fields_specialisation selected_field_ids>
-alignment_file_output(std::filesystem::path, selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             typename alignment_file_output<>::valid_formats,
-                             ref_info_not_given>;
+sam_file_output(std::filesystem::path, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids, typename sam_file_output<>::valid_formats, ref_info_not_given>;
 
 /*!\brief Deduces selected_field_ids, and the valid format from input and
- *        sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+ *        sets sam_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
 template <output_stream stream_type,
-          alignment_file_output_format file_format,
+          sam_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_output(stream_type &&, file_format const &, selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             ref_info_not_given>;
+sam_file_output(stream_type &&, file_format const &, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
 /*!\brief Deduces selected_field_ids, and the valid format from input and
- *        sets alignment_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
+ *        sets sam_file_output::ref_ids_type to seqan3::detail::ref_info_not_given.
  */
 template <output_stream stream_type,
-          alignment_file_output_format file_format,
+          sam_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_output(stream_type &, file_format const &, selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             ref_info_not_given>;
+sam_file_output(stream_type &, file_format const &, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
-/*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
+/*!\brief Deduces the valid format from input and sets sam_file_output::ref_ids_type to
  *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
 template <output_stream stream_type,
-          alignment_file_output_format file_format>
-alignment_file_output(stream_type &&, file_format const &)
-    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
-                             type_list<file_format>,
-                             ref_info_not_given>;
+          sam_file_output_format file_format>
+sam_file_output(stream_type &&, file_format const &)
+    -> sam_file_output<typename sam_file_output<>::selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
-/*!\brief Deduces the valid format from input and sets alignment_file_output::ref_ids_type to
+/*!\brief Deduces the valid format from input and sets sam_file_output::ref_ids_type to
  *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
 template <output_stream stream_type,
-          alignment_file_output_format file_format>
-alignment_file_output(stream_type &, file_format const &)
-    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
-                             type_list<file_format>,
-                             ref_info_not_given>;
+          sam_file_output_format file_format>
+sam_file_output(stream_type &, file_format const &)
+    -> sam_file_output<typename sam_file_output<>::selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
 //!\brief Deduces selected_field_ids and ref_ids_type from input. valid_formats is set to the default.
 template <detail::fields_specialisation selected_field_ids,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
-alignment_file_output(std::filesystem::path const &,
-                      ref_ids_type &&,
-                      ref_lengths_type &&,
-                      selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             typename alignment_file_output<>::valid_formats,
-                             std::remove_reference_t<ref_ids_type>>;
+sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type &&, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids,
+                       typename sam_file_output<>::valid_formats,
+                       std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are set to the default.
 template <std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type>
-alignment_file_output(std::filesystem::path const &,
-                      ref_ids_type &&,
-                      ref_lengths_type &&)
-    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
-                             typename alignment_file_output<>::valid_formats,
-                             std::remove_reference_t<ref_ids_type>>;
+sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type &&)
+    -> sam_file_output<typename sam_file_output<>::selected_field_ids,
+                       typename sam_file_output<>::valid_formats,
+                       std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces selected_field_ids, the valid format, and the ref_ids_type from input.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
-          alignment_file_output_format file_format,
+          sam_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_output(stream_type &&,
-                      ref_ids_type &&,
-                      ref_lengths_type &&,
-                      file_format const &,
-                      selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             std::remove_reference_t<ref_ids_type>>;
+sam_file_output(stream_type &&, ref_ids_type &&, ref_lengths_type &&, file_format const &, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids, type_list<file_format>, std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces selected_field_ids, the valid format, and the ref_ids_type from input.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
-          alignment_file_output_format file_format,
+          sam_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-alignment_file_output(stream_type &,
-                      ref_ids_type &&,
-                      ref_lengths_type &&,
-                      file_format const &,
-                      selected_field_ids const &)
-    -> alignment_file_output<selected_field_ids,
-                             type_list<file_format>,
-                             std::remove_reference_t<ref_ids_type>>;
+sam_file_output(stream_type &, ref_ids_type &&, ref_lengths_type &&, file_format const &, selected_field_ids const &)
+    -> sam_file_output<selected_field_ids, type_list<file_format>, std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids set to the default.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
-          alignment_file_output_format file_format>
-alignment_file_output(stream_type &&,
-                      ref_ids_type &&,
-                      ref_lengths_type &&,
-                      file_format const &)
-    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
-                             type_list<file_format>,
-                             std::remove_reference_t<ref_ids_type>>;
+          sam_file_output_format file_format>
+sam_file_output(stream_type &&, ref_ids_type &&, ref_lengths_type &&, file_format const &)
+    -> sam_file_output<typename sam_file_output<>::selected_field_ids,
+                       type_list<file_format>,
+                       std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces the valid format, and the ref_ids_type from input. selected_field_ids set to the default.
 template <output_stream stream_type,
           std::ranges::forward_range ref_ids_type,
           std::ranges::forward_range ref_lengths_type,
-          alignment_file_output_format file_format>
-alignment_file_output(stream_type &,
-                      ref_ids_type &&,
-                      ref_lengths_type &&,
-                      file_format const &)
-    -> alignment_file_output<typename alignment_file_output<>::selected_field_ids,
-                             type_list<file_format>,
-                             std::remove_reference_t<ref_ids_type>>;
+          sam_file_output_format file_format>
+sam_file_output(stream_type &, ref_ids_type &&, ref_lengths_type &&, file_format const &)
+    -> sam_file_output<typename sam_file_output<>::selected_field_ids,
+                       type_list<file_format>,
+                       std::remove_reference_t<ref_ids_type>>;
 //!\}
 
 } // namespace seqan3

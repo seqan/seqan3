@@ -132,7 +132,7 @@ protected:
               typename mate_type,
               typename tag_dict_type>
     void write_alignment_record([[maybe_unused]] stream_type &  stream,
-                                [[maybe_unused]] alignment_file_output_options const & options,
+                                [[maybe_unused]] sam_file_output_options const & options,
                                 [[maybe_unused]] header_type && header,
                                 [[maybe_unused]] seq_type && seq,
                                 [[maybe_unused]] qual_type && qual,
@@ -588,7 +588,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         std::swap(cigar_vector, tmp_cigar_vector);
 }
 
-//!\copydoc alignment_file_output_format::write_alignment_record
+//!\copydoc sam_file_output_format::write_alignment_record
 template <typename stream_type,
           typename header_type,
           typename seq_type,
@@ -601,7 +601,7 @@ template <typename stream_type,
           typename mate_type,
           typename tag_dict_type>
 inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  stream,
-                                               [[maybe_unused]] alignment_file_output_options const & options,
+                                               [[maybe_unused]] sam_file_output_options const & options,
                                                [[maybe_unused]] header_type && header,
                                                [[maybe_unused]] seq_type && seq,
                                                [[maybe_unused]] qual_type && qual,

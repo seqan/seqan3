@@ -131,7 +131,7 @@ protected:
 
     template <typename stream_t, typename ref_ids_type>
     void write_header(stream_t & stream,
-                      alignment_file_output_options const & options,
+                      sam_file_output_options const & options,
                       sam_file_header<ref_ids_type> & header);
 };
 
@@ -649,7 +649,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
  */
 template <typename stream_t, typename ref_ids_type>
 inline void format_sam_base::write_header(stream_t & stream,
-                                          alignment_file_output_options const & options,
+                                          sam_file_output_options const & options,
                                           sam_file_header<ref_ids_type> & header)
 {
     // -----------------------------------------------------------------

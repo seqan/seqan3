@@ -371,7 +371,7 @@ std::string input_gz
 
 TEST_F(sam_file_input_f, decompression_by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.gz"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.gz"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
@@ -430,7 +430,7 @@ std::string input_bgzf
 
 TEST_F(sam_file_input_f, decompression_by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bgzf"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.bgzf"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};
@@ -483,7 +483,7 @@ std::string input_bz2
 
 TEST_F(sam_file_input_f, decompression_by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"alignment_file_output_test.sam.bz2"};
+    seqan3::test::tmp_filename filename{"sam_file_output_test.sam.bz2"};
 
     {
         std::ofstream of{filename.get_path(), std::ios::binary};

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::alignment_file_output_format and auxiliary classes.
+ * \brief Provides seqan3::sam_file_output_format and auxiliary classes.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -41,12 +41,12 @@ namespace seqan3::detail
  * call the proper function for the selected format.
  */
 template <typename format_type>
-struct alignment_file_output_format_exposer : public format_type
+struct sam_file_output_format_exposer : public format_type
 {
 public:
     // Can't use `using format_type::write_alignment_record` as it produces a hard failure in the format concept check
     // for types that do not model the format concept, i.e. don't offer the proper write_alignment_record interface.
-    //!\brief Forwards to the seqan3::alignment_file_output_format::write_alignment_record interface.
+    //!\brief Forwards to the seqan3::sam_file_output_format::write_alignment_record interface.
     template <typename ...ts>
     void write_alignment_record(ts && ...args)
     {
@@ -59,7 +59,7 @@ public:
 namespace seqan3
 {
 
-/*!\interface seqan3::alignment_file_output_format <>
+/*!\interface seqan3::sam_file_output_format <>
  * \brief The generic concept for alignment file out formats.
  * \ingroup io_sam_file
  *
@@ -72,10 +72,10 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alignment_file_output_format =
-    requires (detail::alignment_file_output_format_exposer<t>                      & v,
+SEQAN3_CONCEPT sam_file_output_format =
+    requires (detail::sam_file_output_format_exposer<t>                            & v,
               std::ofstream                                                        & stream,
-              alignment_file_output_options                                        & options,
+              sam_file_output_options                                              & options,
               sam_file_header<>                                                    & header,
               dna5_vector                                                          & seq,
               std::vector<phred42>                                                 & qual,
@@ -117,14 +117,14 @@ SEQAN3_CONCEPT alignment_file_output_format =
 };
 //!\endcond
 
-/*!\name Requirements for seqan3::alignment_file_output_format
- * \brief You can expect these **members** on all types that implement seqan3::alignment_file_output_format.
- * \memberof seqan3::alignment_file_output_format
+/*!\name Requirements for seqan3::sam_file_output_format
+ * \brief You can expect these **members** on all types that implement seqan3::sam_file_output_format.
+ * \memberof seqan3::sam_file_output_format
  * \{
  */
 
 /*!\fn void write_alignment_record(stream_type                            &  stream,
-                                   alignment_file_output_options const    &  options,
+                                   sam_file_output_options const          &  options,
                                    sam_file_header<>                      &  header,
                                    seq_type                               && seq,
                                    qual_type                              && qual,
@@ -178,7 +178,7 @@ SEQAN3_CONCEPT alignment_file_output_format =
  * \param[in] bit_score The data for seqan3::field::, e.g. the bit score of the alignment (BLAST).
  *
  */
-/*!\var static inline std::vector<std::string> seqan3::alignment_file_output_format::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::sam_file_output_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 
@@ -190,27 +190,26 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::alignment_file_output_format [default is false].
+ * seqan3::sam_file_output_format [default is false].
  * \ingroup core
- * \see seqan3::type_list_specialisationOfalignment_file_output_formats
+ * \see seqan3::type_list_of_sam_file_output_formats
  */
 template <typename t>
-constexpr bool is_type_list_of_alignment_file_output_formats_v = false;
+constexpr bool is_type_list_of_sam_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::alignment_file_output_format [overload].
+ * seqan3::sam_file_output_format [overload].
  * \ingroup core
- * \see seqan3::type_list_specialisationOfalignment_file_output_formats
+ * \see seqan3::type_list_of_sam_file_output_formats
  */
 template <typename ...ts>
-constexpr bool is_type_list_of_alignment_file_output_formats_v<type_list<ts...>>
-                = (alignment_file_output_format<ts> && ...);
+constexpr bool is_type_list_of_sam_file_output_formats_v<type_list<ts...>> = (sam_file_output_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::alignment_file_output_format.
+ * seqan3::sam_file_output_format.
  * \ingroup core
- * \see seqan3::is_type_list_of_alignment_file_formats_v
+ * \see seqan3::is_type_list_of_sam_file_output_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_alignment_file_output_formats = is_type_list_of_alignment_file_output_formats_v<t>;
+SEQAN3_CONCEPT type_list_of_sam_file_output_formats = is_type_list_of_sam_file_output_formats_v<t>;
 } // namespace seqan3::detail

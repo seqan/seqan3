@@ -227,9 +227,9 @@ Additionally, there should be no more debug output.
 Try to write all available information into the SAM file. We can introduce a naive mapping quality by using
 `mapping quality = 60 + alignment score`.
 
-This is the alignment_file_output construction:
+This is the sam_file_output construction:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp alignment_file_output
+\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp sam_file_output
 \endhint
 \endassignment
 \solution

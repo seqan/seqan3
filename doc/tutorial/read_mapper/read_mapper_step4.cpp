@@ -48,15 +48,15 @@ void map_reads(std::filesystem::path const & query_path,
 
     seqan3::sequence_file_input query_file_in{query_path};
 
-//! [alignment_file_output]
-    seqan3::alignment_file_output sam_out{sam_path, seqan3::fields<seqan3::field::seq,
-                                                                   seqan3::field::id,
-                                                                   seqan3::field::ref_id,
-                                                                   seqan3::field::ref_offset,
-                                                                   seqan3::field::alignment,
-                                                                   seqan3::field::qual,
-                                                                   seqan3::field::mapq>{}};
-//! [alignment_file_output]
+//! [sam_file_output]
+    seqan3::sam_file_output sam_out{sam_path, seqan3::fields<seqan3::field::seq,
+                                                             seqan3::field::id,
+                                                             seqan3::field::ref_id,
+                                                             seqan3::field::ref_offset,
+                                                             seqan3::field::alignment,
+                                                             seqan3::field::qual,
+                                                             seqan3::field::mapq>{}};
+//! [sam_file_output]
 
     seqan3::configuration const search_config = seqan3::search_cfg::max_error_total{
                                                     seqan3::search_cfg::error_count{errors}} |

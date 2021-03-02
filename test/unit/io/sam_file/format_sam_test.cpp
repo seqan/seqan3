@@ -300,9 +300,9 @@ TEST_F(sam_format, write_different_header)
 
     auto write_header = [&] ()
     {
-        seqan3::alignment_file_output fout{ostream, seqan3::format_sam{}, seqan3::fields<seqan3::field::header_ptr,
-                                                                                         seqan3::field::ref_id,
-                                                                                         seqan3::field::ref_offset>{}};
+        seqan3::sam_file_output fout{ostream, seqan3::format_sam{}, seqan3::fields<seqan3::field::header_ptr,
+                                                                                   seqan3::field::ref_id,
+                                                                                   seqan3::field::ref_offset>{}};
         ASSERT_NO_THROW(fout.emplace_back(&header, this->ref_id, 0));
     };
 
