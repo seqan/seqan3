@@ -547,7 +547,7 @@ TYPED_TEST_P(sam_file_write, with_header)
     header.ref_id_info.push_back({this->ref_seq.size(), "AN:other_name"});
     header.ref_dict[this->ref_id] = 0;
     header.program_infos.push_back({"prog1", "cool_program", "./prog1", "a", "b", "c"});
-    header.read_groups.emplace_back("group1", "more info");
+    header.read_groups.emplace_back("group1", "DS:more info");
     header.comments.push_back("This is a comment.");
 
     this->tag_dicts[0]["NM"_tag] = -7;
