@@ -22,7 +22,7 @@
  * many additional information. Well-known formats include the SAM/BAM format used to store read mapping data or the
  * BLAST format that stores the results of a query search against a data base.
  *
- * \note For a step-by-step guide take a look at our tutorial: \ref tutorial_alignment_file.
+ * \note For a step-by-step guide take a look at our tutorial: \ref tutorial_sam_file.
  *
  * \copydetails seqan3::sam_file_input::field_ids
  *
