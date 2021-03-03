@@ -271,6 +271,10 @@ private:
                               value_type value);
 
     template <typename stream_view_type>
+    void read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant,
+                              stream_view_type && stream_view);
+
+    template <typename stream_view_type>
     void read_field(stream_view_type && stream_view, sam_tag_dictionary & target);
 
     template <typename stream_it_t, std::ranges::forward_range field_type>
@@ -944,6 +948,43 @@ inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
     variant = std::move(tmp_vector);
 }
 
+/*!\brief Reads a list of byte pairs as it is the case for SAM tag byte arrays.
+ * \tparam stream_view_type The type of the stream as a view.
+ *
+ * \param[in, out] variant      A std::variant object to store the tag arrays.
+ * \param[in, out] stream_view  The stream view to iterate over.
+ *
+ * \details
+ *
+ * Reading the byte tags is done according to the official
+ * [SAM format specifications](https://samtools.github.io/hts-specs/SAMv1.pdf).
+ *
+ * The function throws a seqan3::format_error if there was an uneven number of bytes.
+ */
+template <typename stream_view_type>
+inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & variant,
+                                             stream_view_type && stream_view)
+{
+    std::vector<std::byte> tmp_vector;
+    std::byte value;
+
+    while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
+    {
+        try
+        {
+            read_field(stream_view | views::take_exactly_or_throw(2), value);
+        }
+        catch (std::exception const & e)
+        {
+            throw format_error{"Hexadecimal tag has an uneven number of digits!"};
+        }
+
+        tmp_vector.push_back(value);
+    }
+
+    variant = std::move(tmp_vector);
+}
+
 /*!\brief Reads the optional tag fields into the seqan3::sam_tag_dictionary.
  * \tparam stream_view_type   The type of the stream as a view.
  *
@@ -1007,7 +1048,7 @@ inline void format_sam::read_field(stream_view_type && stream_view, sam_tag_dict
         }
         case 'H' :
         {
-            // TODO
+            read_sam_byte_vector(target[tag], stream_view);
             break;
         }
         case 'B' : // Array. Value type depends on second char [cCsSiIf]

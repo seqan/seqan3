@@ -53,7 +53,8 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
                                                                              "\tbS:B:S,300,40,500"
                                                                              "\tbi:B:i,-3,200,-66000"
                                                                              "\tbI:B:I,294967296"
-                                                                             "\tbf:B:f,3.5,0.1,43.8\n"
+                                                                             "\tbf:B:f,3.5,0.1,43.8"
+                                                                             "\tbH:H:1AE301\n"
         "read3\t43\tref\t3\t63\t1S1M1P1M1I1M1I1D1M1S\tref\t10\t300\tGGAGTATA\t!!*+,-./\n"};
 
     std::string empty_input{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\t*\t0\t0\t*\t*\t0\t0\t*\t*\n"};
@@ -93,6 +94,10 @@ R"(@HD	VN:1.6
 read1	41	*	1	61	1S1M1D1M1I	*	0	0	ACGT	!##$
 )"};
 
+    std::string wrong_hexadecimal_tag{
+R"(@SQ	SN:ref	LN:150
+read1	41	ref	1	61	1S1M1D1M1I	=	10	300	ACGT	!##$	bH:H:1AE30
+)"};
 };
 
 // ---------------------------------------------------------------------------------------------------------------------

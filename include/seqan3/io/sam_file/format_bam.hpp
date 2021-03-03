@@ -1046,10 +1046,26 @@ inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dict
             target[tag] = string_buffer;
             break;
         }
-        case 'H' :
+        case 'H' : // byte array, represented as null-terminated string; specification requires even number of bytes
         {
-            // TODO
-            throw format_error{"'H' not implemented yet."};
+            std::vector<std::byte> byte_array;
+            std::byte value;
+            while (!is_char<'\0'>(*it))
+            {
+                string_buffer.clear();
+                string_buffer.push_back(*it);
+                ++it;
+
+                if (*it == '\0')
+                    throw format_error{"Hexadecimal tag has an uneven number of digits!"};
+
+                string_buffer.push_back(*it);
+                ++it;
+                read_field(string_buffer, value);
+                byte_array.push_back(value);
+            }
+            ++it; // skip \0
+            target[tag] = byte_array;
             break;
         }
         case 'B' : // Array. Value type depends on second char [cCsSiIf]
