@@ -423,6 +423,17 @@ TYPED_TEST_P(sam_file_read, format_error_uneven_hexadecimal_tag)
     EXPECT_THROW((fin.begin()), seqan3::format_error);
 }
 
+// https://github.com/seqan/seqan3/pull/2423
+TYPED_TEST_P(sam_file_read, issue2423)
+{
+    typename TestFixture::stream_type istream{this->many_refs};
+    seqan3::sam_file_input fin{istream, TypeParam{}};
+    ASSERT_NO_THROW(fin.begin());
+
+    EXPECT_EQ(fin.header().ref_id_info.size(), 64u);
+    EXPECT_EQ(fin.header().ref_dict.size(), 64u);
+}
+
 // ----------------------------------------------------------------------------
 // sam_file_write
 // ----------------------------------------------------------------------------
@@ -727,7 +738,8 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             read_mate_but_not_ref_id_without_ref,
                             cigar_vector,
                             format_error_ref_id_not_in_reference_information,
-                            format_error_uneven_hexadecimal_tag);
+                            format_error_uneven_hexadecimal_tag,
+                            issue2423);
 
 REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
                             write_empty_members,
