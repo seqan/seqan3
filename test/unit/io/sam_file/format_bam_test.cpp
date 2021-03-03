@@ -22,7 +22,10 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
     // formatted input
     // -----------------------------------------------------------------------------------------------------------------
     // See format_sam_test for the corresponding input in human readable-form.
-    // The byte sequence here are all uncompressed bam files since the file handles compression.
+    // The byte sequence here are all uncompressed (both gzip and bgzf) bam files since the file handles compression.
+    // Conversion can look like this: samtools view -u test.sam | bgzip -d
+    // -u disables gzip compression, but the output is still bgzf compressed (decompression via bgzip)
+    // pass --no-PG to samtools if you do not want PG tags which may be added automatically
 
     using stream_type = std::istringstream;
 
@@ -521,4 +524,44 @@ TEST_F(bam_format, too_long_cigar_string_write)
     os.flush();
 
     EXPECT_TRUE(os.str() == expected); // do not use EXPECT_EQ because if this fails the output will be huge :D
+}
+
+// https://github.com/seqan/seqan3/issues/2417
+TEST_F(bam_format, issue2417)
+{
+    std::string const input{
+        // @HD	VN:1.6
+        // @SQ	SN:ref	LN:1904
+        // read1	117	ref	1	0	*	=	1	0	ACGTA	IIIII
+        '\x42', '\x41', '\x4D', '\x01', '\x1E', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56', '\x4E',
+        '\x3A', '\x31', '\x2E', '\x36', '\x0A', '\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A', '\x72', '\x65',
+        '\x66', '\x09', '\x4C', '\x4E', '\x3A', '\x31', '\x39', '\x30', '\x34', '\x0A', '\x01', '\x00', '\x00', '\x00',
+        '\x04', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x70', '\x07', '\x00', '\x00', '\x2E', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x49', '\x12',
+        '\x00', '\x00', '\x75', '\x00', '\x05', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x12', '\x48',
+        '\x10', '\x28', '\x28', '\x28', '\x28', '\x28'
+    };
+
+    std::istringstream stream{input};
+
+    seqan3::sam_file_input fin{stream, seqan3::format_bam{}, seqan3::fields<seqan3::field::id,
+                                                                            seqan3::field::alignment>{}};
+
+    std::vector<seqan3::gapped<seqan3::dna5>> const empty_sequence{};
+
+    size_t num_records{0u};
+
+    // In 2417, the sequence was not consumed. Thus, wrong bytes were read for the following records.
+    // With the chosen `input` this also means that there will be more than 1 record in the alignment file.
+    // Hence, we need the for loop even though there is only 1 record.
+    for (auto && [id, alignment] : fin)
+    {
+        ++num_records;
+        EXPECT_RANGE_EQ(id, std::string{"read1"});
+        EXPECT_RANGE_EQ(std::get<0>(alignment), empty_sequence);
+        EXPECT_RANGE_EQ(std::get<1>(alignment), empty_sequence);
+    }
+
+    EXPECT_EQ(num_records, 1u);
 }
