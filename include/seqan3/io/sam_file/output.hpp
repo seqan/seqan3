@@ -171,6 +171,12 @@ public:
     using selected_field_ids    = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
     using valid_formats         = valid_formats_;
+#ifdef SEQAN3_DEPRECATED_310
+//!\privatesection
+    //!\deprecated This will be removed in 3.1.0.
+    using ref_ids_type_t        = ref_ids_type;
+//!\publicsection
+#endif
     //!\brief Character type of the stream(s).
     using stream_char_type      = char;
     //!\}
