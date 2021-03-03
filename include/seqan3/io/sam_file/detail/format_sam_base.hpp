@@ -26,7 +26,7 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/io/sam_file/detail.hpp>
+#include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/header.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
 #include <seqan3/io/sam_file/input_options.hpp>

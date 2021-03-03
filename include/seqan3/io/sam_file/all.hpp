@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-include for the alignment IO submodule.
+ * \brief Meta-include for the SAM IO submodule.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 

@@ -22,8 +22,8 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sam_file/header.hpp>
-#include <seqan3/io/sam_file/misc.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
+#include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 

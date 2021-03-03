@@ -16,7 +16,7 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/sam_file/misc.hpp>
+#include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 

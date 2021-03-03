@@ -35,8 +35,8 @@
 #include <seqan3/io/sam_file/format_bam.hpp>
 #include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
-#include <seqan3/io/sam_file/misc.hpp>
 #include <seqan3/io/sam_file/record.hpp>
+#include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
