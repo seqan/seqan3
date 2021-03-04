@@ -493,16 +493,40 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                                          ref_seqs_type & /*ref_id_to_pos_map*/)
 {
     auto it = std::ranges::begin(stream_view);
+    auto end = std::ranges::end(stream_view);
+    std::vector<char> string_buffer{};
 
-    auto parse_tag_value = [&stream_view, &it, this] (auto & value) // helper function to parse the next tag value
+    auto take_until_predicate = [&it, &string_buffer] (auto const & predicate)
     {
-        detail::consume(stream_view | views::take_until_or_throw(is_char<':'>)); // skip tag name
-        std::ranges::next(std::ranges::begin(stream_view));                     // skip ':'
-        read_field(stream_view | views::take_until_or_throw(is_char<'\t'> || is_char<'\n'>), value);
-        it = std::ranges::begin(stream_view);                                    // make sure iterator is up2date
+        string_buffer.clear();
+        while (!predicate(*it))
+        {
+            string_buffer.push_back(*it);
+            ++it;
+        }
     };
 
-    while (is_char<'@'>(*it))
+    auto skip_tag_name_and_colon = [&it] ()
+    {
+        while (!is_char<':'>(*it))
+            ++it;
+        ++it;
+    };
+
+    auto parse_tag_value = [&] (auto & value) // helper function to parse the next tag value
+    {
+        skip_tag_name_and_colon();
+        take_until_predicate(is_char<'\t'> || is_char<'\n'>);
+        read_field(string_buffer, value);
+    };
+
+    auto parse_until_newline = [&] (auto & value)
+    {
+        take_until_predicate(is_char<'\n'>);
+        read_field(string_buffer, value);
+    };
+
+    while (it != end && is_char<'@'>(*it))
     {
         ++it;                                                           // skip @
 
@@ -552,7 +576,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 if (is_char<'\t'>(*it))                                 // read rest of the tags
                 {
                     ++it;                                               // skip tab
-                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(info));
+                    parse_until_newline(get<1>(info));
                 }
                 ++it;                                                   // skip newline
 
@@ -594,7 +618,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 if (is_char<'\t'>(*it))                                 // read rest of the tags
                 {
                     ++it;
-                    read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), get<1>(tmp));
+                    parse_until_newline(get<1>(tmp));
                 }
                 ++it;                                                   // skip newline
 
@@ -653,7 +677,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 ++it;                                                   // skip C
                 ++it;                                                   // skip O
                 ++it;                                                   // skip :
-                read_field(stream_view | views::take_until_or_throw(is_char<'\n'>), tmp);
+                parse_until_newline(tmp);
                 ++it;                                                   // skip newline
 
                 hdr.comments.emplace_back(std::move(tmp));

@@ -65,6 +65,14 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
     std::string unknown_ref_header{"@HD\tVN:1.6\n@SQ\tSN:ref\tLN:34\n*\t0\tunknown_ref\t1\t0\t4M\t*\t0\t0\tAAAA\t*\n"};
 
+    std::string many_refs{[] ()
+    {
+        std::string result{"@HD\tVN:1.6\n"};
+        for (size_t i = 0; i < 64; ++i)
+            result += "@SQ\tSN:ref_" + std::to_string(i) + "\tLN:100\n";
+        return result;
+    }()};
+
     // -----------------------------------------------------------------------------------------------------------------
     // formatted output
     // -----------------------------------------------------------------------------------------------------------------

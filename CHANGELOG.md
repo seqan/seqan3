@@ -80,6 +80,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
+* BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
 
 ## API changes
 

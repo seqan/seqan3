@@ -180,6 +180,47 @@ struct sam_file_read<seqan3::format_bam> : public sam_file_data
         '\x66', '\x66', '\x66', '\x46', '\x40', '\x7A', '\x7A', '\x5A', '\x73', '\x74', '\x72', '\x00'
     };
 
+    std::string many_refs{[] ()
+    {
+        // X = non-printable character
+        std::array<char, 2> buffer;
+        //                   B       A       M       X      ----------- 1345 -----------     @       H       D
+        std::string result{'\x42', '\x41', '\x4D', '\x01', '\x41', '\x05', '\x00', '\x00', '\x40', '\x48', '\x44',
+        //                   \t      V       N       :       1       .       6       \n
+                           '\x09', '\x56', '\x4E', '\x3A', '\x31', '\x2E', '\x36', '\x0A'};
+        for (char i = '0'; i <= '9'; ++i)
+            //                      @       S       Q       \t      S       N       :       r       e       f
+            result += std::string{'\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A', '\x72', '\x65', '\x66',
+            //                      _          \t      L       N       :       1       0       0       \n
+                                  '\x5F', i, '\x09', '\x4C', '\x4E', '\x3A', '\x31', '\x30', '\x30', '\x0A'};
+        for (size_t i = 10; i < 64; ++i)
+        {
+            std::to_chars(buffer.data(), buffer.data() + buffer.size(), i);
+            //                      @       S       Q       \t      S       N       :       r       e       f
+            result += std::string{'\x40', '\x53', '\x51', '\x09', '\x53', '\x4E', '\x3A', '\x72', '\x65', '\x66',
+            //                      _                             \t      L       N       :       1       0       0
+                                  '\x5F', buffer[0], buffer[1], '\x09', '\x4C', '\x4E', '\x3A', '\x31', '\x30', '\x30',
+            //                      \n
+                                  '\x0A'};
+        }
+        //                     ------------ 64 ------------
+        result += std::string{'\x40', '\x00', '\x00', '\x00'};
+        for (char i = '0'; i <= '9'; ++i)
+            //                      X       X       X       X       r       e       f       _          X       d
+            result += std::string{'\x06', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x5F', i, '\x00', '\x64',
+            //                      X       X       X
+                                  '\x00', '\x00', '\x00'};
+        for (size_t i = 10; i < 64; ++i)
+        {
+            std::to_chars(buffer.data(), buffer.data() + buffer.size(), i);
+            //                      X       X       X       X       r       e       f       _
+            result += std::string{'\x07', '\x00', '\x00', '\x00', '\x72', '\x65', '\x66', '\x5F', buffer[0], buffer[1],
+            //                      X       d       X       X       X
+                                  '\x00', '\x64', '\x00', '\x00', '\x00'};
+        }
+        return result;
+    }()};
+
     /* bytes were modified to a ref id of 8448: \x00 \x00 \x21 \x00*/
     std::string unknown_ref_header{
         '\x42', '\x41', '\x4D', '\x01', '\x1C', '\x00', '\x00', '\x00', '\x40', '\x48', '\x44', '\x09', '\x56',
