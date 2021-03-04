@@ -208,6 +208,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
     this->tag_dicts[1]["bi"_tag] = std::vector<int32_t>{-3, 200, -66000};
     this->tag_dicts[1]["bI"_tag] = std::vector<uint32_t>{294967296u};
     this->tag_dicts[1]["bf"_tag] = std::vector<float>{3.5f, 0.1f, 43.8f};
+    this->tag_dicts[1]["bH"_tag] = std::vector<std::byte>{std::byte{0x1A}, std::byte{0xE3}, std::byte{0x01}};
 
     size_t i{0};
     for (auto & rec : fin)
@@ -413,6 +414,13 @@ TYPED_TEST_P(sam_file_read, format_error_ref_id_not_in_reference_information)
         seqan3::sam_file_input fin{istream, TypeParam{}};
         EXPECT_THROW((fin.begin()), seqan3::format_error);
     }
+}
+
+TYPED_TEST_P(sam_file_read, format_error_uneven_hexadecimal_tag)
+{
+    typename TestFixture::stream_type istream{this->wrong_hexadecimal_tag};
+    seqan3::sam_file_input fin{istream, TypeParam{}};
+    EXPECT_THROW((fin.begin()), seqan3::format_error);
 }
 
 // ----------------------------------------------------------------------------
@@ -718,7 +726,8 @@ REGISTER_TYPED_TEST_SUITE_P(sam_file_read,
                             read_mate_but_not_ref_id_with_ref,
                             read_mate_but_not_ref_id_without_ref,
                             cigar_vector,
-                            format_error_ref_id_not_in_reference_information);
+                            format_error_ref_id_not_in_reference_information,
+                            format_error_uneven_hexadecimal_tag);
 
 REGISTER_TYPED_TEST_SUITE_P(sam_file_write,
                             write_empty_members,

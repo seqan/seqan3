@@ -115,6 +115,9 @@ protected:
     template <typename stream_view_type>
     void read_field(stream_view_type && stream_view, detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target));
 
+    template <typename stream_view_t>
+    void read_field(stream_view_t && stream_view, std::byte & byte_target);
+
     template <typename stream_view_type, std::ranges::forward_range target_range_type>
     void read_field(stream_view_type && stream_view, target_range_type & target);
 
@@ -358,6 +361,37 @@ inline void format_sam_base::read_field(stream_view_type && stream_view,
                                         detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target))
 {
     detail::consume(stream_view);
+}
+
+/*!\brief Reads std::byte fields using std::from_chars.
+ * \tparam stream_view_t The type of the stream as a view.
+ *
+ * \param[in, out] stream_view  The stream view to iterate over.
+ * \param[out] byte_target The std::byte object to store the parsed value.
+ *
+ * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
+ *         of type std::byte.
+ */
+template <typename stream_view_t>
+inline void format_sam_base::read_field(stream_view_t && stream_view, std::byte & byte_target)
+{
+    // unfortunately std::from_chars only accepts char const * so we need a buffer.
+    auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
+    (void) ignore;
+
+    uint8_t byte{};
+    // std::from_chars cannot directly parse into a std::byte
+    std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, byte, 16);
+
+    if (res.ec == std::errc::invalid_argument || res.ptr != end)
+        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") +
+                                       std::string(arithmetic_buffer.begin(), end) +
+                                       "' could not be cast into type uint8_t."};
+
+    if (res.ec == std::errc::result_out_of_range)
+        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
+                                       "' into type uint8_t would cause an overflow."};
+    byte_target = std::byte{byte};
 }
 
 /*!\brief Reads a range by copying from stream_view to target, converting values with seqan3::views::char_to.
