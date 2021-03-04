@@ -88,7 +88,7 @@ read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     std::string verbose_output{
 R"(@HD	VN:1.6	SO:unknown	GO:none
 @SQ	SN:ref	LN:34	AN:other_name
-@RG	ID:group1	more info
+@RG	ID:group1	DS:more info
 @PG	ID:prog1	PN:cool_program	CL:./prog1	PP:a	DS:b	VN:c
 @CO	This is a comment.
 read1	41	ref	1	61	1S1M1D1M1I	ref	10	300	ACGT	!##$	AS:i:2	CC:i:300	NM:i:-7	aa:A:c	cc:i:-300	ff:f:3.1	zz:Z:str
