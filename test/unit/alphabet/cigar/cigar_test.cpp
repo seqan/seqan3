@@ -17,11 +17,26 @@ using seqan3::get;
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar, semi_alphabet_test, seqan3::cigar, );
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar, semi_alphabet_constexpr, seqan3::cigar, );
 
+TEST(cigar_operation, char_literal)
+{
+    using seqan3::operator""_cigar_operation;
+
+    EXPECT_EQ(seqan3::to_char('M'_cigar_operation), 'M');
+    EXPECT_EQ(seqan3::to_char('D'_cigar_operation), 'D');
+    EXPECT_EQ(seqan3::to_char('I'_cigar_operation), 'I');
+    EXPECT_EQ(seqan3::to_char('S'_cigar_operation), 'S');
+    EXPECT_EQ(seqan3::to_char('H'_cigar_operation), 'H');
+    EXPECT_EQ(seqan3::to_char('N'_cigar_operation), 'N');
+    EXPECT_EQ(seqan3::to_char('P'_cigar_operation), 'P');
+    EXPECT_EQ(seqan3::to_char('X'_cigar_operation), 'X');
+    EXPECT_EQ(seqan3::to_char('='_cigar_operation), '=');
+}
+
 TEST(cigar, brace_init)
 {
-    using seqan3::operator""_cigar_op;
+    using seqan3::operator""_cigar_operation;
 
-    seqan3::cigar c1{uint32_t{223}, 'M'_cigar_op};
+    seqan3::cigar c1{uint32_t{223}, 'M'_cigar_operation};
     EXPECT_EQ(c1.to_string(), seqan3::small_string<11>{"223M"});
 }
 
