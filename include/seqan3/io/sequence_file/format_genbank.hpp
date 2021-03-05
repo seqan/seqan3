@@ -82,6 +82,7 @@ public:
     format_genbank(format_genbank &&) noexcept = default; //!< Defaulted.
     format_genbank & operator=(format_genbank &&) noexcept = default; //!< Defaulted.
     ~format_genbank() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

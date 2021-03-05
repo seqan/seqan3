@@ -50,6 +50,7 @@ public:
     constexpr vectorised & operator=(vectorised const &) = default; //!< Defaulted.
     constexpr vectorised & operator=(vectorised &&) = default; //!< Defaulted.
     ~vectorised() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

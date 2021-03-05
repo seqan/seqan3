@@ -41,6 +41,7 @@ public:
     constexpr hit_all & operator=(hit_all const &) = default; //!< Defaulted.
     constexpr hit_all & operator=(hit_all &&) = default; //!< Defaulted.
     ~hit_all() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -64,6 +65,7 @@ public:
     constexpr hit_all_best & operator=(hit_all_best const &) = default; //!< Defaulted.
     constexpr hit_all_best & operator=(hit_all_best &&) = default; //!< Defaulted.
     ~hit_all_best() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -87,6 +89,7 @@ public:
     constexpr hit_single_best & operator=(hit_single_best const &) = default; //!< Defaulted.
     constexpr hit_single_best & operator=(hit_single_best &&) = default; //!< Defaulted.
     ~hit_single_best() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

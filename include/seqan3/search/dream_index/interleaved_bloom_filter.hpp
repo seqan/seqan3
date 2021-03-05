@@ -594,6 +594,7 @@ public:
     binning_bitvector(binning_bitvector &&) = default; //!< Defaulted.
     binning_bitvector & operator=(binning_bitvector &&) = default; //!< Defaulted.
     ~binning_bitvector() = default; //!< Defaulted.
+
     //!\}
 
     using sdsl::bit_vector::begin;

@@ -51,6 +51,7 @@ public:
     method_local & operator=(method_local const &) = default; //!< Defaulted.
     method_local & operator=(method_local &&) = default; //!< Defaulted.
     ~method_local() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

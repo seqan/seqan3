@@ -76,6 +76,7 @@ public:
     constexpr dssp9 & operator=(dssp9 const &)  noexcept = default; //!< Defaulted.
     constexpr dssp9 & operator=(dssp9 &&)       noexcept = default; //!< Defaulted.
     ~dssp9()                                    noexcept = default; //!< Defaulted.
+
     //!\}
 
 protected:

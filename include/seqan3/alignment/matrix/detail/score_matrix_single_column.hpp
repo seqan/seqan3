@@ -81,6 +81,7 @@ public:
     score_matrix_single_column & operator=(score_matrix_single_column const &) = default; //!< Defaulted.
     score_matrix_single_column & operator=(score_matrix_single_column &&) = default; //!< Defaulted.
     ~score_matrix_single_column() = default; //!< Defaulted.
+
     //!\}
 
     /*!\brief Resizes the matrix.

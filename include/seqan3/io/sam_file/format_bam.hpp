@@ -72,6 +72,7 @@ public:
     format_bam(format_bam &&) = default; //!< Defaulted.
     format_bam & operator=(format_bam &&) = default; //!< Defaulted.
     ~format_bam() = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

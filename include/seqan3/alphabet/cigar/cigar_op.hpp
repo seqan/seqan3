@@ -69,6 +69,7 @@ public:
     constexpr cigar_op & operator=(cigar_op const &) noexcept = default; //!< Defaulted.
     constexpr cigar_op & operator=(cigar_op &&)      noexcept = default; //!< Defaulted.
     ~cigar_op()                                      noexcept = default; //!< Defaulted.
+
     //!\}
 
 protected:

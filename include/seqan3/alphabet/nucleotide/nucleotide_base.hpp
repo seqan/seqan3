@@ -52,6 +52,7 @@ private:
     constexpr nucleotide_base & operator=(nucleotide_base const &) noexcept = default; //!< Defaulted.
     constexpr nucleotide_base & operator=(nucleotide_base &&)      noexcept = default; //!< Defaulted.
     ~nucleotide_base()                                             noexcept = default; //!< Defaulted.
+
     //!\}
 
     //! Befriend the derived_type so it can instantiate.

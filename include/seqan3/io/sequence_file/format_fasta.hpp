@@ -90,6 +90,7 @@ public:
     format_fasta(format_fasta &&) noexcept = default; //!< Defaulted.
     format_fasta & operator=(format_fasta &&) noexcept = default; //!< Defaulted.
     ~format_fasta() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

@@ -93,6 +93,7 @@ private:
         }
 
         ~reference_proxy_type() noexcept = default; //!< Defaulted.
+
         //!\}
 
         //!\brief Initialise from seqan3::dynamic_bitset's underlying data and a bit position.

@@ -88,6 +88,7 @@ public:
     format_fastq(format_fastq &&) noexcept = default; //!< Defaulted.
     format_fastq & operator=(format_fastq &&) noexcept = default; //!< Defaulted.
     ~format_fastq() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

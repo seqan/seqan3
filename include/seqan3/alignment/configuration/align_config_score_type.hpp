@@ -51,6 +51,7 @@ public:
     constexpr score_type & operator=(score_type const &) = default; //!< Defaulted.
     constexpr score_type & operator=(score_type &&) = default; //!< Defaulted.
     ~score_type() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

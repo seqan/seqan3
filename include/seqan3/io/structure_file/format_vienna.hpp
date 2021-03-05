@@ -93,6 +93,7 @@ public:
     format_vienna(format_vienna &&) noexcept = default; //!< Defaulted.
     format_vienna & operator=(format_vienna &&) noexcept = default; //!< Defaulted.
     ~format_vienna() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

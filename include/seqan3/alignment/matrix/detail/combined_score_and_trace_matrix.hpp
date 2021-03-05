@@ -70,6 +70,7 @@ public:
     combined_score_and_trace_matrix & operator=(combined_score_and_trace_matrix const &) = default; //!< Defaulted.
     combined_score_and_trace_matrix & operator=(combined_score_and_trace_matrix &&) = default; //!< Defaulted.
     ~combined_score_and_trace_matrix() = default; //!< Defaulted.
+
     //!\}
 
     /*!\brief Resizes the matrix.

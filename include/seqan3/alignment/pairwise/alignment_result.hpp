@@ -203,6 +203,7 @@ public:
     alignment_result & operator=(alignment_result const &) = default; //!< Defaulted.
     alignment_result & operator=(alignment_result &&) = default;      //!< Defaulted.
     ~alignment_result() = default;                                    //!< Defaulted.
+
     //!\}
 
     /*!\name Access functions

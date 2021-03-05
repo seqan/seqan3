@@ -51,6 +51,7 @@ public:
     constexpr output_score & operator=(output_score const &) = default; //!< Defaulted.
     constexpr output_score & operator=(output_score &&) = default; //!< Defaulted.
     ~output_score() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -94,6 +95,7 @@ public:
     constexpr output_end_position & operator=(output_end_position const &) = default; //!< Defaulted.
     constexpr output_end_position & operator=(output_end_position &&) = default; //!< Defaulted.
     ~output_end_position() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -137,6 +139,7 @@ public:
     constexpr output_begin_position & operator=(output_begin_position const &) = default; //!< Defaulted.
     constexpr output_begin_position & operator=(output_begin_position &&) = default; //!< Defaulted.
     ~output_begin_position() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -176,6 +179,7 @@ public:
     constexpr output_alignment & operator=(output_alignment const &) = default; //!< Defaulted.
     constexpr output_alignment & operator=(output_alignment &&) = default; //!< Defaulted.
     ~output_alignment() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -215,6 +219,7 @@ public:
     constexpr output_sequence1_id & operator=(output_sequence1_id const &) = default; //!< Defaulted.
     constexpr output_sequence1_id & operator=(output_sequence1_id &&) = default; //!< Defaulted.
     ~output_sequence1_id() = default; //!< Defaulted.
+
     //!\}
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
@@ -254,6 +259,7 @@ public:
     constexpr output_sequence2_id & operator=(output_sequence2_id const &) = default; //!< Defaulted.
     constexpr output_sequence2_id & operator=(output_sequence2_id &&) = default; //!< Defaulted.
     ~output_sequence2_id() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

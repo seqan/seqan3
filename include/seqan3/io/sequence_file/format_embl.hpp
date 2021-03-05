@@ -81,6 +81,7 @@ public:
     format_embl(format_embl &&) noexcept = default; //!< Defaulted.
     format_embl & operator=(format_embl &&) noexcept = default; //!< Defaulted.
     ~format_embl() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.

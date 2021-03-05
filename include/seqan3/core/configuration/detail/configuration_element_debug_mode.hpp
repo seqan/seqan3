@@ -38,6 +38,7 @@ public:
     constexpr debug_mode & operator=(debug_mode const &) = default; //!< Defaulted.
     constexpr debug_mode & operator=(debug_mode &&) = default; //!< Defaulted.
     ~debug_mode() = default; //!< Defaulted.
+
     //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
