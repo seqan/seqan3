@@ -86,6 +86,7 @@ public:
     trace_matrix_full & operator=(trace_matrix_full const &) = default; //!< Defaulted.
     trace_matrix_full & operator=(trace_matrix_full &&) = default; //!< Defaulted.
     ~trace_matrix_full() = default; //!< Defaulted.
+
     //!\}
 
     /*!\brief Resizes the matrix.

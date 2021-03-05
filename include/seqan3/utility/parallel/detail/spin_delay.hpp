@@ -45,6 +45,7 @@ public:
     constexpr spin_delay & operator=(spin_delay const &) noexcept = default;  //!< Defaulted.
     constexpr spin_delay & operator=(spin_delay &&)      noexcept = default;  //!< Defaulted.
     ~spin_delay()                                        noexcept = default;  //!< Defaulted.
+
     //!\}
 
     /*!\brief Delays the calling thread by either using active spinning or passive spinning.

@@ -109,6 +109,7 @@ public:
     search_result & operator=(search_result const &) = default; //!< Defaulted.
     search_result & operator=(search_result &&) = default; //!< Defaulted.
     ~search_result() = default; //!< Defaulted.
+
     //!\}
 
     /*!\name Accessors

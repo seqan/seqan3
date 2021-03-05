@@ -71,6 +71,7 @@ protected:
     format_sam_base(format_sam_base &&) = default; //!< Defaulted.
     format_sam_base & operator=(format_sam_base &&) = default; //!< Defaulted.
     ~format_sam_base() = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The format version string.

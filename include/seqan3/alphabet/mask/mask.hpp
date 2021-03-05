@@ -50,6 +50,7 @@ public:
     constexpr mask & operator=(mask const &) = default; //!< Defaulted.
     constexpr mask & operator=(mask &&) = default;      //!< Defaulted.
     ~mask() = default;                                  //!< Defaulted.
+
     //!\}
 
     /*!\name Boolean values

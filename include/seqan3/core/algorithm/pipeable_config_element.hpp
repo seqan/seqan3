@@ -42,6 +42,7 @@ private:
     constexpr pipeable_config_element & operator=(pipeable_config_element const &) = default; //!< Defaulted.
     constexpr pipeable_config_element & operator=(pipeable_config_element &&) = default; //!< Defaulted.
     ~pipeable_config_element() = default; //!< Defaulted.
+
     //!\}
 };
 

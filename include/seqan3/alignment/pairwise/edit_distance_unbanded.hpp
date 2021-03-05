@@ -56,6 +56,7 @@ protected:
     edit_distance_unbanded_max_errors_policy & operator=(edit_distance_unbanded_max_errors_policy &&) noexcept
         = default; //!< Defaulted.
     ~edit_distance_unbanded_max_errors_policy() noexcept = default; //!< Defaulted.
+
     //!\}
 
     using typename edit_traits::word_type;
@@ -225,6 +226,7 @@ protected:
     edit_distance_unbanded_global_policy & operator=(edit_distance_unbanded_global_policy &&) noexcept
         = default; //!< Defaulted.
     ~edit_distance_unbanded_global_policy() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\copydoc default_edit_distance_trait_type::score_type
@@ -349,6 +351,7 @@ protected:
     edit_distance_unbanded_semi_global_policy & operator=(edit_distance_unbanded_semi_global_policy &&) noexcept
         = default; //!< Defaulted.
     ~edit_distance_unbanded_semi_global_policy() noexcept = default; //!< Defaulted.
+
     //!\}
 
     //!\brief The base policy of this policy.
@@ -438,6 +441,7 @@ protected:
     edit_distance_unbanded_score_matrix_policy & operator=(edit_distance_unbanded_score_matrix_policy &&) noexcept
         = default; //!< Defaulted.
     ~edit_distance_unbanded_score_matrix_policy() noexcept = default; //!< Defaulted.
+
     //!\}
 
     using typename edit_traits::score_matrix_type;
@@ -517,6 +521,7 @@ protected:
     edit_distance_unbanded_trace_matrix_policy & operator=(edit_distance_unbanded_trace_matrix_policy &&) noexcept
         = default; //!< Defaulted.
     ~edit_distance_unbanded_trace_matrix_policy() noexcept = default; //!< Defaulted.
+
     //!\}
 
     using typename edit_traits::word_type;

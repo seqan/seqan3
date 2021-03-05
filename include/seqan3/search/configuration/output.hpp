@@ -38,6 +38,7 @@ public:
     constexpr output_query_id & operator=(output_query_id const &) = default; //!< Defaulted.
     constexpr output_query_id & operator=(output_query_id &&) = default; //!< Defaulted.
     ~output_query_id() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -61,6 +62,7 @@ public:
     constexpr output_reference_id & operator=(output_reference_id const &) = default; //!< Defaulted.
     constexpr output_reference_id & operator=(output_reference_id &&) = default; //!< Defaulted.
     ~output_reference_id() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -84,6 +86,7 @@ public:
     constexpr output_reference_begin_position & operator=(output_reference_begin_position const &) = default; //!< Defaulted.
     constexpr output_reference_begin_position & operator=(output_reference_begin_position &&) = default; //!< Defaulted.
     ~output_reference_begin_position() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection
@@ -107,6 +110,7 @@ public:
     constexpr output_index_cursor & operator=(output_index_cursor const &) = default; //!< Defaulted.
     constexpr output_index_cursor & operator=(output_index_cursor &&) = default; //!< Defaulted.
     ~output_index_cursor() = default; //!< Defaulted.
+
     //!\}
 
     //!\privatesection

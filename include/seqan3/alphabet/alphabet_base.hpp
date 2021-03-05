@@ -84,6 +84,7 @@ public:
     constexpr alphabet_base & operator=(alphabet_base const &)  noexcept = default; //!< Defaulted.
     constexpr alphabet_base & operator=(alphabet_base &&)       noexcept = default; //!< Defaulted.
     ~alphabet_base()                                            noexcept = default; //!< Defaulted.
+
     //!\}
 
     /*!\name Read functions

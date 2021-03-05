@@ -44,7 +44,7 @@ namespace seqan3::detail
  * submit new algorithm tasks.
  *
  * \note Instances of this class are not copyable.
- * 
+ *
  * \warning This class is only thread-safe in a single producer context. Multiple consumers are allowed.
  *          Concurrent invocation of the interfaces are undefined behaviour.
  *
@@ -92,15 +92,15 @@ public:
     /*!\brief Constructs the execution handler spawning 1 thread.
      *
      * \details
-     * 
+     *
      * ### Why only 1 thread?
-     * 
-     * This class is not public. It handles the thread pool when, e.g., using the alignment or search algorithms in 
-     * parallel via the config. This config requires a value (no default), hence the number of threads is always 
+     *
+     * This class is not public. It handles the thread pool when, e.g., using the alignment or search algorithms in
+     * parallel via the config. This config requires a value (no default), hence the number of threads is always
      * set by the user.
-     * 
-     * When we use an algorithm in parallel, we also default construct a execution_handler_parallel along the way. If 
-     * the default is set to use all threads, we have to generate the thread pool and a queue. However, this default 
+     *
+     * When we use an algorithm in parallel, we also default construct a execution_handler_parallel along the way. If
+     * the default is set to use all threads, we have to generate the thread pool and a queue. However, this default
      * constructed execution_handler_parallel is immediately moved away and destructed.
      */
     execution_handler_parallel() : execution_handler_parallel{1u}
@@ -111,6 +111,7 @@ public:
     execution_handler_parallel & operator=(execution_handler_parallel const &) = delete; //!< Deleted.
     execution_handler_parallel & operator=(execution_handler_parallel &&) = default; //!< Defaulted.
     ~execution_handler_parallel() = default; //!< Defaulted.
+
     //!\}
 
     /*!\brief Asynchronously schedules a new algorithm task with the given input and callback.
@@ -206,9 +207,9 @@ private:
     /*!\brief An internal state stored on the heap to allow safe move construction/assignment of the class.
      *
      * \details
-     * 
+     *
      * ### Thread safety
-     * 
+     *
      * This class is only intended for use with a single producer model.
      */
     class internal_state
@@ -234,9 +235,9 @@ private:
         /*!\brief Waits until all threads have been joined.
          *
          * \details
-         * 
+         *
          * ### Thread safety
-         * 
+         *
          * This function is not thread-safe.
          */
         void stop_and_wait()

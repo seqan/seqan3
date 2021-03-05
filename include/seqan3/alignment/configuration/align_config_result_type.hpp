@@ -57,6 +57,7 @@ public:
     constexpr result_type & operator=(result_type const &) = default; //!< Defaulted.
     constexpr result_type & operator=(result_type &&) = default; //!< Defaulted.
     ~result_type() = default; //!< Defaulted.
+
     //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
