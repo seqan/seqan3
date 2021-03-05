@@ -30,9 +30,9 @@
 #include <seqan3/io/sam_file/format_bam.hpp>
 #include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/io/sam_file/header.hpp>
-#include <seqan3/io/sam_file/misc.hpp>
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
+#include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
