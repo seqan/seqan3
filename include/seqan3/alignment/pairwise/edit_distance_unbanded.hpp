@@ -807,10 +807,10 @@ private:
     };
 
     //!\brief The internal state needed to compute the alignment.
-    struct compute_state : enable_state_t<compute_trace_matrix, compute_state_trace_matrix>
+    struct compute_state : enable_state_t<edit_traits::compute_trace_matrix, compute_state_trace_matrix>
     {
         //!\brief The type of hp.
-        using hp_type = std::conditional_t<compute_trace_matrix, proxy_reference<word_type>, word_type>;
+        using hp_type = std::conditional_t<edit_traits::compute_trace_matrix, proxy_reference<word_type>, word_type>;
 
         //!\brief The machine word which stores wether the current character matches.
         word_type b{};
