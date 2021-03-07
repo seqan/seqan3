@@ -88,8 +88,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
+            build_threads: 3
+            test_threads: 3
             cxx_flags: "-std=c++17 -fconcepts"
 
           - name: "Unit gcc10 (c++20) on Linux"
@@ -113,8 +113,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
+            build_threads: 3
+            test_threads: 3
 
           - name: "Unit gcc8 on Linux"
             os: ubuntu-20.04
@@ -137,8 +137,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
+            build_threads: 3
+            test_threads: 3
 
           - name: "Unit gcc7 on Linux"
             os: ubuntu-20.04
@@ -161,8 +161,8 @@ jobs:
             cmake: 3.8.2
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
+            build_threads: 3
+            test_threads: 3
 
           - name: "Performance gcc7"
             os: ubuntu-20.04
