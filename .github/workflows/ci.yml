@@ -317,20 +317,12 @@ jobs:
           sudo apt-get install --yes lcov
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
 
-      - name: Prepare ccache
-        if: matrix.requires_ccache
-        id: ccache_prepare
-        shell: cmake -P {0}
-        run: |
-          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S")
-          message("::set-output name=timestamp::${current_date}")
-
       - name: Load ccache
         if: matrix.requires_ccache
         uses: actions/cache@v2
         with:
           path: .ccache
-          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ steps.ccache_prepare.outputs.timestamp }}
+          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
           # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
           restore-keys: |
             ${{ matrix.name }}-ccache-${{ github.ref }}
