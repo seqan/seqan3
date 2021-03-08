@@ -7,6 +7,7 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
@@ -20,13 +21,19 @@ inline benchmark::Counter hashes_per_second(size_t const count)
 
 static void arguments(benchmark::internal::Benchmark* b)
 {
+    // Bins must be powers of two
     for (int32_t bins : {64, 8192})
     {
-        for (int32_t bits = 1<<15; bits <= 1<<20/* Increase for more extensive benchmarks*/; bits <<= 5)
+        // Size of the IBF will be 2^bits bits
+        for (int32_t bits = 15; bits <= 20; bits += 5)
         {
-            for (int32_t hash_num = 2; hash_num < 3/* Increase for more extensive benchmarks*/; ++hash_num)
+            // The bits per bin must fit in an int32_t
+            if (bits - std::countr_zero(static_cast<uint32_t>(bins)) < 32)
             {
-                b->Args({bins, bits/bins, hash_num, 1'000/* Increase for more extensive benchmarks*/});
+                for (int32_t hash_num = 2; hash_num < 3; ++hash_num)
+                {
+                    b->Args({bins, (1LL << bits)/bins, hash_num, 1'000});
+                }
             }
         }
     }
@@ -61,6 +68,52 @@ void emplace_benchmark(::benchmark::State & state)
     }
 
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
+}
+
+template <typename ibf_type>
+void clear_benchmark(::benchmark::State & state)
+{
+    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
+                                                                 state.range(1),
+                                                                 state.range(2),
+                                                                 state.range(3));
+    (void) bin_indices;
+    (void) hash_values;
+
+    std::vector<seqan3::bin_index> bin_range = std::views::iota(0u, static_cast<size_t>(state.range(0)))
+                                             | std::views::transform([] (size_t i) { return seqan3::bin_index{i}; })
+                                             | seqan3::views::to<std::vector>;
+
+    for (auto _ : state)
+    {
+        for (auto bin : bin_range)
+            ibf.clear(bin);
+    }
+
+    state.counters["bins/sec"] = hashes_per_second(std::ranges::size(bin_range));
+}
+
+template <typename ibf_type>
+void clear_range_benchmark(::benchmark::State & state)
+{
+    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
+                                                                 state.range(1),
+                                                                 state.range(2),
+                                                                 state.range(3));
+    (void) bin_indices;
+    (void) hash_values;
+
+    std::vector<seqan3::bin_index> bin_range = std::views::iota(0u, static_cast<size_t>(state.range(0)))
+                                             | std::views::transform([] (size_t i) { return seqan3::bin_index{i}; })
+                                             | seqan3::views::to<std::vector>;
+
+
+    for (auto _ : state)
+    {
+        ibf.clear(bin_range);
+    }
+
+    state.counters["bins/sec"] = hashes_per_second(std::ranges::size(bin_range));
 }
 
 template <typename ibf_type>
@@ -101,6 +154,10 @@ void bulk_count_benchmark(::benchmark::State & state)
 }
 
 BENCHMARK_TEMPLATE(emplace_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(clear_benchmark,
+                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(clear_range_benchmark,
                    seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
 
 BENCHMARK_TEMPLATE(bulk_contains_benchmark,

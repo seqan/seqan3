@@ -52,6 +52,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 * The `seqan3::interleaved_bloom_filter` supports counting occurrences of a range of values
   ([\#2373](https://github.com/seqan/seqan3/pull/2373)).
+* The `seqan3::interleaved_bloom_filter` supports clearing of bins
+  ([\#2428](https://github.com/seqan/seqan3/pull/2428)).
 
 ## Notable Bug-fixes
 

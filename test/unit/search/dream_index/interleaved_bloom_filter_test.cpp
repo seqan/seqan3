@@ -137,6 +137,61 @@ TYPED_TEST(interleaved_bloom_filter_test, emplace)
     }
 }
 
+TYPED_TEST(interleaved_bloom_filter_test, clear)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{64u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::views::iota(0, 64))
+        for (size_t hash : std::views::iota(0, 64))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Clear a bin
+    ibf.clear(seqan3::bin_index{17u});
+
+    // 3. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
+    TypeParam ibf2{ibf};
+    auto agent = ibf2.membership_agent();
+    sdsl::bit_vector expected(64, 1); // every hash value should be set for every bin...
+    expected[17] = 0; // ...except bin 17
+    for (size_t hash : std::views::iota(0, 64))
+    {
+        auto & res = agent.bulk_contains(hash);
+        EXPECT_EQ(res, expected);
+    }
+}
+
+TYPED_TEST(interleaved_bloom_filter_test, clear_range)
+{
+    // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.
+    seqan3::interleaved_bloom_filter ibf{seqan3::bin_count{64u},
+                                         seqan3::bin_size{1024u},
+                                         seqan3::hash_function_count{2u}};
+
+    for (size_t bin_idx : std::views::iota(0, 64))
+        for (size_t hash : std::views::iota(0, 64))
+            ibf.emplace(hash, seqan3::bin_index{bin_idx});
+
+    // 2. Clear a range of bins
+    std::vector<seqan3::bin_index> bin_range{seqan3::bin_index{8u}, seqan3::bin_index{17u}, seqan3::bin_index{45u}};
+    ibf.clear(bin_range);
+
+    // 3. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
+    TypeParam ibf2{ibf};
+    auto agent = ibf2.membership_agent();
+    sdsl::bit_vector expected(64, 1); // every hash value should be set for every bin...
+    expected[8] = 0; // ...except bin 8
+    expected[17] = 0; // ...except bin 17
+    expected[45] = 0; // ...except bin 45
+    for (size_t hash : std::views::iota(0, 64))
+    {
+        auto & res = agent.bulk_contains(hash);
+        EXPECT_EQ(res, expected);
+    }
+}
+
 TYPED_TEST(interleaved_bloom_filter_test, counting)
 {
     // 1. Test uncompressed interleaved_bloom_filter directly because the compressed one is not mutable.

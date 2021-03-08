@@ -278,7 +278,7 @@ public:
      *
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_emplace.cpp
      */
-    void emplace(size_t const value, bin_index const bin)
+    void emplace(size_t const value, bin_index const bin) noexcept
     //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
     //!\endcond
@@ -291,6 +291,59 @@ public:
             assert(idx < data.size());
             data[idx] = 1;
         };
+    }
+
+    /*!\brief Clears a specific bin.
+     * \param[in] bin The bin index to clear.
+     *
+     * \attention This function is only available for **uncompressed** Interleaved Bloom Filters.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/interleaved_bloom_filter_clear.cpp
+     */
+    void clear(bin_index const bin) noexcept
+    //!\cond
+        requires (data_layout_mode == data_layout::uncompressed)
+    //!\endcond
+    {
+        assert(bin.get() < bins);
+        for (size_t idx = bin.get(), i = 0; i < bin_size_; idx += technical_bins, ++i)
+            data[idx] = 0;
+    }
+
+    /*!\brief Clears a range of bins.
+     * \tparam rng_t The type of the range. Must model std::ranges::forward_range and the reference type must be
+     *               seqan3::bin_index.
+     * \param[in] bin_range The range of bins to clear.
+     *
+     * \attention This function is only available for **uncompressed** Interleaved Bloom Filters.
+     *
+     * \details
+     *
+     * ### Example
+     *
+     * \include test/snippet/search/dream_index/interleaved_bloom_filter_clear.cpp
+     */
+    template <typename rng_t>
+    //!\cond
+        requires (data_layout_mode == data_layout::uncompressed)
+    //!\endcond
+    void clear(rng_t && bin_range) noexcept
+    {
+        static_assert(std::ranges::forward_range<rng_t>, "The range of bins to clear must model a forward_range.");
+        static_assert(std::same_as<std::remove_cvref_t<std::ranges::range_reference_t<rng_t>>, bin_index>,
+                      "The reference type of the range to clear must be seqan3::bin_index.");
+#ifndef NDEBUG
+        for (auto && bin : bin_range)
+            assert(bin.get() < bins);
+#endif // NDEBUG
+
+        for (size_t offset = 0, i = 0; i < bin_size_; offset += technical_bins, ++i)
+            for (auto && bin : bin_range)
+                data[bin.get() + offset] = 0;
     }
 
     /*!\brief Increases the number of bins stored in the Interleaved Bloom Filter.
