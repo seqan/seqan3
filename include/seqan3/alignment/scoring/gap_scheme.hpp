@@ -34,7 +34,7 @@ namespace seqan3
  * \see seqan3::gap_scheme
  */
 template <arithmetic score_type>
-struct gap_score : detail::strong_type<score_type, gap_score<score_type>, detail::strong_type_skill::convert>
+struct SEQAN3_DEPRECATED_310 gap_score : detail::strong_type<score_type, gap_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, gap_score<score_type>, detail::strong_type_skill::convert>::strong_type;
 };
@@ -62,7 +62,7 @@ gap_score(score_type) -> gap_score<score_type>;
  * \see seqan3::gap_scheme
  */
 template <arithmetic score_type>
-struct gap_open_score : detail::strong_type<score_type, gap_open_score<score_type>, detail::strong_type_skill::convert>
+struct SEQAN3_DEPRECATED_310 gap_open_score : detail::strong_type<score_type, gap_open_score<score_type>, detail::strong_type_skill::convert>
 {
      using detail::strong_type<score_type, gap_open_score<score_type>, detail::strong_type_skill::convert>::strong_type;
 };
