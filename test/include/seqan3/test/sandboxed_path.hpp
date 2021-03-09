@@ -5,68 +5,66 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-/* \file
- * \brief Provides the sandboxed_path and related free functions
- * \author Simon Gene <simon.gottlieb AT fu-berlin.de>
+/*!\file
+ * \brief Provides seqan3::test::sandboxed_path and related free functions.
+ * \author Simon Gene Gottlieb <simon.gottlieb AT fu-berlin.de>
  */
 
 #pragma once
 
 #include <seqan3/std/filesystem>
 
+
 #include <seqan3/core/platform.hpp>
 
 namespace seqan3::test
 {
 
-/** \brief Utility class to stay inside a sandbox path.
+/*!\brief Utility class to stay inside a sandbox path.
  *
- * sandboxed_path inherits from std::filesystem::path and behaves mostly
- * like it. In addition, it receives a sandbox directory at construction time.
- * Functions are overloaded and a check for the invariant is added.
+ * seqan3::sandboxed_path provides the same functionality as std::filesystem::path, but restricts
+ * the access to a specified directory. This results in the following invariant, which is checked
+ * for at appropiate places, and some caveats.
  *
  *  Invariant:
- *  - sandboxed_path is always converted to an absolute path
- *  - sandboxed_path always points to a file inside a given sandbox directory.
- *  - sandbox directory is immutable during the life cycle of a sandboxed_path
+ *  - seqan3::sandboxed_path is always converted to an absolute path
+ *  - seqan3::sandboxed_path always points to a file or directory inside a given sandbox directory
+ *  - The sandbox directory is immutable during the life cycle of a sandboxed_path
  *
  * Caveat:
- *  - relative paths are not possible
- *  - some functions will leave the sandboxed environment.
- *    - e.g.: calling relative_path() leaves the environment of sandboxed_path.
+ *  - Relative paths are not possible
+ *  - Some functions will leave the sandboxed environment.
+ *    - calling relative_path() leaves the environment of sandboxed_path.
  */
 class sandboxed_path : public std::filesystem::path
 {
 private:
-    std::filesystem::path const sandbox_path;
+    std::filesystem::path const sandbox_directory;
 
 public:
     /*!\brief Construction of a sandboxed_path.
-     * \param path must be an absolute path.
+     * \param directory must be an absolute path.
      *
-     * A sandboxed_path initialised with this constructor will
-     * point to `path` and disallow extension that leave `path`.
+     * After construction, the sandboxed_path will point to `path`.
      */
-    explicit sandboxed_path(std::filesystem::path path)
-        : std::filesystem::path{path}
-        , sandbox_path{std::move(path)}
+    explicit sandboxed_path(std::filesystem::path directory)
+        : std::filesystem::path{directory}
+        , sandbox_directory{std::move(directory)}
     {
         normalise();
-        checkInvariant();
+        check_invariant();
     }
 
-    /*!\brief Construction of a sandboxed path.
-     * \param sandbox_path must be an absolute path.
-     * \param path must be a path that is inside of sandbox_path.
-     *
-     * path is allowed to be relative
+    /*!\brief Construction from a given sandbox directory and a path within the sandbox directory.
+     * \param sandbox_directory The absolute path to the sandbox directory.
+     * \param path The relative or absolute path that must be inside the sandbox directory.
      */
-    explicit sandboxed_path(std::filesystem::path sandbox_path, std::filesystem::path path)
-        : std::filesystem::path {path}
-        , sandbox_path             {std::move(sandbox_path)}
+    explicit sandboxed_path(std::filesystem::path sandbox_directory, std::filesystem::path path)
+        : std::filesystem::path {std::move(path)}
+        , sandbox_directory     {std::move(sandbox_directory)}
     {
         normalise();
-        checkInvariant();
+        check_invariant();
     }
 
     sandboxed_path() = delete; //!< Deleted.
@@ -75,7 +73,8 @@ public:
     ~sandboxed_path() = default; //!< Defaulted.
 
     /*!\brief Replaces the path with a new path.
-     * \tparam path_t The type of the path.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same way as std::filesystem::path::operator=
      * and additionally checks the invariant.
@@ -85,16 +84,17 @@ public:
      * Basic exception guarantee.
      */
     template <typename path_t>
-    sandboxed_path & operator=(path_t const & path)
+    sandboxed_path & operator=(path_t const & new_path)
     {
-        std::filesystem::path::operator=(path);
+        std::filesystem::path::operator=(new_path);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Replaces the path with a new path.
-     * \tparam path_t The type of the path.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::operator=
      * and additionally checks the invariant.
@@ -104,11 +104,11 @@ public:
      * Basic exception guarantee
      */
     template <typename path_t>
-    sandboxed_path & operator=(path_t && path)
+    sandboxed_path & operator=(path_t && new_path)
     {
-        std::filesystem::path::operator=(std::move(path));
+        std::filesystem::path::operator=(std::forward<path_t>(new_path));
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
@@ -123,21 +123,25 @@ private:
      */
     void normalise()
     {
-#if SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
+#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
         // convert into an absolute path
-        auto path = [this]() {
-            if (is_relative()) {
-                return (sandbox_path / *this).string();
-            } else {
+        auto const path_string = [this]()
+        {
+            if (is_relative())
+            {
+                return (sandbox_directory / *this).string();
+            } else
+            {
                 return string();
             }
         }();
         // Now we need to manually collapse any "." and ".."
-        size_t current_pos = path.find("/", 0); // find first "/" character
+        size_t current_pos = path_string.find('/', 0); // find first "/" character
         std::vector<std::string> path_parts;
-        while (current_pos < path.size()) {
-            auto end_pos = path.find("/", current_pos + 1);
-            auto word = path.substr(current_pos+1, end_pos-current_pos-1);
+        while (current_pos < path_string.size())
+        {
+            auto end_pos = path_string.find('/', current_pos + 1);
+            auto word = path_string.substr(current_pos+1, end_pos-current_pos-1);
             if (word == "." || word == "")
             {
                 if (!path_parts.empty() and path_parts.back() != "")
@@ -149,8 +153,9 @@ private:
             {
                 if (path_parts.empty())
                 {
-                    throw std::filesystem::filesystem_error("Path can not be normalised", *this,
-                                                             std::make_error_code(std::errc::invalid_argument));
+                    throw std::filesystem::filesystem_error("Path can not be normalised",
+                                                            *this,
+                                                            std::make_error_code(std::errc::invalid_argument));
                 }
                 path_parts.pop_back();
             }
@@ -168,65 +173,85 @@ private:
             current_pos = end_pos;
         }
         std::string normalised_path;
-        for (auto const& p : path_parts) {
-            normalised_path += "/" + p;
+        for (auto const& p : path_parts)
+        {
+            normalised_path += '/' + p;
         }
-        std::filesystem::path::operator=(normalised_path.data());
+        std::filesystem::path::operator=(normalised_path);
 #else
-        auto normalised_path = std::filesystem::weakly_canonical(sandbox_path / *this);
+        auto normalised_path = std::filesystem::weakly_canonical(sandbox_directory / *this);
         std::filesystem::path::operator=(normalised_path);
 #endif
     }
 
-public:
     /*!\brief Checks the invariant.
      *
      * Checks that the invariant of the class sandboxed_path is kept.
      * See class description for invariant.
      * \throws std::filesystem::filesystem_error if invariant was violated.
      */
-    void checkInvariant() const
+    void check_invariant() const
     {
-        // Checking that sandbox_path is an absolute path
-        if (!sandbox_path.is_absolute()) {
+        // Check that sandbox_directory is an absolute path
+        if (!sandbox_directory.is_absolute())
+        {
             throw std::filesystem::filesystem_error("sandbox path must be an absolute path",
-                                                sandbox_path, *this,
+                                                sandbox_directory,
+                                                *this,
+                                                std::make_error_code(std::errc::invalid_argument));
+        }
+        // Checking that *this is an absolute path
+        if (!is_absolute())
+        {
+            throw std::filesystem::filesystem_error("sandbox path must be an absolute path",
+                                                sandbox_directory,
+                                                *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
 
-#if SEQAN3_WORKAROUND_GCC7_INCOMPLETE_FILESYSTEM
+#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
         auto current_dir = string();
-        auto sandbox_dir = sandbox_path.string();
+        auto sandbox_dir = sandbox_directory.string();
 
-        // remove trailing '/' of path
-        if (!sandbox_dir.empty() and sandbox_dir.back() == '/') {
-            sandbox_dir.pop_back();
+        // add trailing '/'
+        if (sandbox_dir.back() != '/')
+        {
+            sandbox_dir += '/';
+        }
+        if (current_dir.back() != '/')
+        {
+            current_dir += '/';
         }
 
-        // Leaving the temporary directory is not allowed.
+
+        // Checks sandbox_dir is a prefix of current_dir
         bool starts_with_sandbox_dir = (current_dir.rfind(sandbox_dir, 0) == 0);
-        if (!starts_with_sandbox_dir or
-            (current_dir.size() > sandbox_dir.size() and current_dir.at(sandbox_dir.size()) != '/'))
+        if (!starts_with_sandbox_dir)
         {
             throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                sandbox_path, *this,
+                                                sandbox_directory,
+                                                *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
 
 #else
-        auto rel_path = lexically_relative(sandbox_path);
+        auto rel_path = lexically_relative(sandbox_directory);
 
         // Leaving the temporary directory is not allowed.
-        if (rel_path.string().find("..") == 0) {
+        if (rel_path.string().find("..") == 0)
+        {
             throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                sandbox_path, *this,
+                                                sandbox_directory,
+                                                *this,
                                                 std::make_error_code(std::errc::invalid_argument));
         }
 #endif
     }
 
+public:
     /*!\brief Replaces the path with a new path.
-     * \tparam source_t The type of the source.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -235,17 +260,19 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename source_t>
-    sandboxed_path & assign(source_t const & source)
+    template <typename path_t>
+    sandboxed_path & assign(path_t const & new_path)
     {
-        std::filesystem::path::assign(source);
+        std::filesystem::path::assign(new_path);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Replaces the path with a new path.
      * \tparam input_iter_t The type of the input iterators.
+     * \param  first The begin of a given range.
+     * \param  last  The end of a given range.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -259,12 +286,13 @@ public:
     {
         std::filesystem::path::assign(first, last);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Extends the path.
-     * \tparam source_t The type of the source.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::operator/=
      * and additionally checks the invariant.
@@ -273,14 +301,15 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename source_t>
-    sandboxed_path & operator/=(source_t const & source)
+    template <typename path_t>
+    sandboxed_path & operator/=(path_t const & new_path)
     {
-        return append(source);
+        return append(new_path);
     }
 
     /*!\brief Extends the path.
-     * \tparam source_t The type of the source.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -289,17 +318,19 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename source_t>
-    sandboxed_path & append(source_t const & source)
+    template <typename path_t>
+    sandboxed_path & append(path_t const & new_path)
     {
-        std::filesystem::path::append(source);
+        std::filesystem::path::append(new_path);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Extends the path.
      * \tparam input_iter_t The type of the input iterators.
+     * \param  first The begin of a given range.
+     * \param  last  The end of a given range.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -313,12 +344,13 @@ public:
     {
         std::filesystem::path::append(first, second);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Extends the path.
-     * \tparam source_t The type of the source.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::operator+=
      * and additionally checks the invariant.
@@ -327,14 +359,15 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename source_t>
-    sandboxed_path & operator+=(source_t const & source)
+    template <typename path_t>
+    sandboxed_path & operator+=(path_t const & new_path)
     {
-        return concat(source);
+        return concat(new_path);
     }
 
     /*!\brief Extends the path.
-     * \tparam source_t The type of the source.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -343,17 +376,19 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename source_t>
-    sandboxed_path & concat(source_t const & source)
+    template <typename path_t>
+    sandboxed_path & concat(path_t const & new_path)
     {
-        std::filesystem::path::concat(source);
+        std::filesystem::path::concat(new_path);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
     /*!\brief Extends the path.
      * \tparam input_iter_t The type of the input iterators.
+     * \param  first The begin of a given range.
+     * \param  last  The end of a given range.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -367,7 +402,7 @@ public:
     {
         std::filesystem::path::concat(first, last);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
@@ -384,11 +419,11 @@ public:
     {
         std::filesystem::path::remove_filename();
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
-    /*!\brief Replaces the filename.
+    /*!\brief Replaces the file name.
      *
      * This works the same as std::filesystem::path::replace_filename
      * and additionally checks the invariant.
@@ -401,7 +436,7 @@ public:
     {
         std::filesystem::path::replace_filename(p);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
@@ -418,7 +453,7 @@ public:
     {
         std::filesystem::path::replace_extension(replacement);
         normalise();
-        checkInvariant();
+        check_invariant();
         return *this;
     }
 
@@ -434,26 +469,32 @@ public:
     sandboxed_path parent_path() const
     {
         auto parent_path = std::filesystem::path::parent_path();
-        return sandboxed_path{sandbox_path, parent_path};
+        return sandboxed_path{sandbox_directory, parent_path};
     }
 
 
     void swap(sandboxed_path & other)
     {
         std::filesystem::path::swap(other);
-        checkInvariant();
-        other.checkInvariant();
+        check_invariant();
+        other.check_invariant();
     }
 
     void clear() = delete; //!< Not implemented. Invariant requires the path to be an absolute path.
 };
 
-/** Free sandboxed_path append operator.
- *  This work the same as std::filesystem::operator/(std::filesystem::path&)
- *  and additionally checks the invariant.
+/*!\brief Append a path to a seqan3::test::sanboxed_path.
+ * \tparam path_t The type of the path to append.
+ * \param lhs The seqan3::test::sandboxed_path.
+ * \param rhs The path to append.
+ * \relates seqan3::test::sandboxed_path *
+ *
+ * This work the same as std::filesystem::operator/(std::filesystem::path&)
+ * and additionally checks the invariant.
  */
 template <typename Rhs>
-sandboxed_path operator/(sandboxed_path lhs, Rhs const& rhs) {
+sandboxed_path operator/(sandboxed_path lhs, Rhs const& rhs)
+{
     lhs /= rhs;
     return lhs;
 }
