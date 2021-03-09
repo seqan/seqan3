@@ -15,7 +15,6 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/deep.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 namespace seqan3::views
@@ -36,20 +35,16 @@ TEST(view_deep_reverse, basic)
     seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::reverse} | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v0, "ATGCA"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep{std::views::reverse}, "ATGCA"_dna5);
 
     // pipe notation
-    seqan3::dna5_vector v = foo | seqan3::views::deep_reverse | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v, "ATGCA"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_reverse, "ATGCA"_dna5);
 
     // function notation
-    seqan3::dna5_vector v2(seqan3::views::deep_reverse(foo) | seqan3::views::to<std::vector>);
-    EXPECT_EQ(v2, "ATGCA"_dna5);
+    EXPECT_RANGE_EQ(seqan3::views::deep_reverse(foo), "ATGCA"_dna5);
 
     // combinability
-    seqan3::dna5_vector v3 = foo | seqan3::views::deep_reverse | std::views::reverse | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v3, "ACGTA"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_reverse | std::views::reverse, "ACGTA"_dna5);
 }
 
 TEST(view_deep_reverse, deep)
@@ -58,7 +53,7 @@ TEST(view_deep_reverse, deep)
 
     auto v = foo | seqan3::views::deep_reverse;
 
-    ASSERT_EQ(size(v), 2u);
+    ASSERT_EQ(std::ranges::size(v), 2u);
     EXPECT_RANGE_EQ(v[0], "ATGCA"_dna5);
     EXPECT_RANGE_EQ(v[1], "TACGT"_dna5);
 }
@@ -124,29 +119,26 @@ TEST(view_deep_take, basic)
     seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::take}(2) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v0, "AC"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep{std::views::take}(2), "AC"_dna5);
 
     // pipe notation
-    seqan3::dna5_vector v = foo | seqan3::views::deep_take(2) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v, "AC"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_take(2), "AC"_dna5);
 
     // function notation
-    seqan3::dna5_vector v2(seqan3::views::deep_take(foo, 2) | seqan3::views::to<std::vector>);
-    EXPECT_EQ(v2, "AC"_dna5);
+    EXPECT_RANGE_EQ(seqan3::views::deep_take(foo, 2), "AC"_dna5);
 
     // combinability
-    seqan3::dna5_vector v3 = foo | seqan3::views::deep_take(2) | std::views::reverse | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v3, "CA"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_take(2) | std::views::reverse, "CA"_dna5);
 }
 
 TEST(view_deep_take, deep)
 {
     std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
 
+    // pipe notation
     auto v = foo | seqan3::views::deep_take(2);
 
-    ASSERT_EQ(size(v), 3u);
+    ASSERT_EQ(std::ranges::size(v), 3u);
     EXPECT_RANGE_EQ(v[0], "AC"_dna5);
     EXPECT_RANGE_EQ(v[1], "TG"_dna5);
     EXPECT_RANGE_EQ(v[2], "NN"_dna5);
@@ -177,29 +169,26 @@ TEST(view_deep_take2, basic)
     seqan3::dna5_vector foo{"ACGTA"_dna5};
 
     // pipe notation, temporary
-    seqan3::dna5_vector v0 = foo | seqan3::views::deep{std::views::take(2)} | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v0, "AC"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep{std::views::take(2)}, "AC"_dna5);
 
     // pipe notation
-    seqan3::dna5_vector v = foo | seqan3::views::deep_take2 | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v, "AC"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_take2, "AC"_dna5);
 
     // function notation
-    seqan3::dna5_vector v2(seqan3::views::deep_take2(foo) | seqan3::views::to<std::vector>);
-    EXPECT_EQ(v2, "AC"_dna5);
+    EXPECT_RANGE_EQ(seqan3::views::deep_take2(foo), "AC"_dna5);
 
     // combinability
-    seqan3::dna5_vector v3 = foo | seqan3::views::deep_take2 | std::views::reverse | seqan3::views::to<std::vector>;
-    EXPECT_EQ(v3, "CA"_dna5);
+    EXPECT_RANGE_EQ(foo | seqan3::views::deep_take2 | std::views::reverse, "CA"_dna5);
 }
 
 TEST(view_deep_take2, deep)
 {
     std::vector<seqan3::dna5_vector> foo{"ACGTA"_dna5, "TGCAT"_dna5, "FOO"_dna5};
 
+    // pipe notation
     auto v = foo | seqan3::views::deep_take2;
 
-    ASSERT_EQ(size(v), 3u);
+    ASSERT_EQ(std::ranges::size(v), 3u);
     EXPECT_RANGE_EQ(v[0], "AC"_dna5);
     EXPECT_RANGE_EQ(v[1], "TG"_dna5);
     EXPECT_RANGE_EQ(v[2], "NN"_dna5);
