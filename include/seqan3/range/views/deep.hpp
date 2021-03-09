@@ -68,7 +68,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   | std::ranges::input_range           | std::ranges::input_range + std::ranges::view |
+ * | std::ranges::range_reference_t   | std::ranges::input_range              | std::ranges::input_range + std::ranges::view       |
  *
  * ### Examples
  *
