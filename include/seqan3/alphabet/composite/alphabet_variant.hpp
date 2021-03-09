@@ -435,15 +435,8 @@ public:
     //!\brief Validate whether a character is valid in the combined alphabet.
     static constexpr bool char_is_valid(char_type const chr) noexcept
     {
-        bool is_valid{false};
-
-        meta::for_each(alternatives{}, [&] (auto && alt)
-        {
-            if (char_is_valid_for<std::remove_cvref_t<decltype(alt)>>(chr))
-                is_valid = true;
-        });
-
-        return is_valid;
+        using index_t = std::make_unsigned_t<char_type>;
+        return first_valid_char_table[static_cast<index_t>(chr)] < sizeof...(alternative_types);
     }
 
 protected:
@@ -551,6 +544,40 @@ protected:
         return rank_by_index_<index>(alternative);
     }
 
+    /*!\brief Compile-time generated lookup table which maps the char to the index of the first alphabet that fulfils
+     *        char_is_valid_for.
+     */
+    static constexpr auto first_valid_char_table
+    {
+        [] () constexpr
+        {
+            constexpr size_t alternative_size = sizeof...(alternative_types);
+            constexpr size_t table_size = detail::size_in_values_v<char_type>;
+            using first_alphabet_t = detail::min_viable_uint_t<alternative_size>;
+
+            std::array<first_alphabet_t, table_size> lookup_table{};
+
+            for (size_t i = 0u; i < table_size; ++i)
+            {
+                char_type chr = static_cast<char_type>(i);
+
+                std::array<bool, alternative_size> valid_chars{char_is_valid_for<alternative_types>(chr)...};
+
+#if defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
+                // the following lines only works beginning from c++20
+                auto found_it = std::find(valid_chars.begin(), valid_chars.end(), true);
+                lookup_table[i] = found_it - valid_chars.begin();
+#else
+                size_t found_index = 0u;
+                for (; found_index < valid_chars.size() && !valid_chars[found_index]; ++found_index);
+                lookup_table[i] = found_index;
+#endif // defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
+            }
+
+            return lookup_table;
+        }()
+    };
+
     /*!\brief Compile-time generated lookup table which maps the char to rank.
      *
      * An map generated at compile time where the key is the char of one of the
@@ -560,6 +587,7 @@ protected:
      */
     static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank = []() constexpr
     {
+        constexpr size_t alternative_size = sizeof...(alternative_types);
         constexpr size_t table_size = detail::size_in_values_v<char_type>;
 
         std::array<rank_type, table_size> char_to_rank{};
@@ -568,29 +596,10 @@ protected:
         {
             char_type chr = static_cast<char_type>(i);
 
-            std::array<bool, sizeof...(alternative_types)> is_char_valid{char_is_valid_for<alternative_types>(chr)...};
-            std::array<rank_type, sizeof...(alternative_types)> ranks
-            {
-                rank_by_type_(assign_char_to(chr, alternative_types{}))...
-            };
+            std::array<rank_type, alternative_size> ranks{rank_by_type_(assign_char_to(chr, alternative_types{}))...};
 
             // if no char_is_valid_for any alternative use the rank of the first alternative
-#if defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
-            // the following lines only works beginning from c++20
-            auto found_it = std::find(is_char_valid.begin(), is_char_valid.end(), true);
-            auto found_index = found_it == is_char_valid.end() ? 0 : found_it - is_char_valid.begin();
-#else
-            size_t found_index = 0u;
-            for (size_t k = 0u; k < is_char_valid.size(); ++k)
-            {
-                if (is_char_valid[k])
-                {
-                    found_index = k;
-                    break;
-                }
-            }
-#endif // defined(__cpp_lib_constexpr_algorithms) && __cpp_lib_constexpr_algorithms >= 201806L
-            char_to_rank[i] = ranks[found_index];
+            char_to_rank[i] = first_valid_char_table[i] < alternative_size ? ranks[first_valid_char_table[i]] : 0;
         }
 
         return char_to_rank;
