@@ -46,7 +46,7 @@
 #       define SEQAN3_CONCEPT concept
 #   endif
 #else
-#   error "SeqAn3 requires C++ Concepts, either vie the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
+#   error "SeqAn3 requires C++ Concepts, either via the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
 
 //!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
