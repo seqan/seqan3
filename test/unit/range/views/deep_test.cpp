@@ -154,10 +154,18 @@ TEST(view_deep_take, deep)
     int i = 2;
     auto v2 = foo | seqan3::views::deep_take(i);
 
-    ASSERT_EQ(size(v2), 3u);
+    ASSERT_EQ(std::ranges::size(v2), 3u);
     EXPECT_RANGE_EQ(v2[0], "AC"_dna5);
     EXPECT_RANGE_EQ(v2[1], "TG"_dna5);
     EXPECT_RANGE_EQ(v2[2], "NN"_dna5);
+
+    // function notation
+    auto v3 = seqan3::views::deep_take(foo, 2);
+
+    ASSERT_EQ(std::ranges::size(v3), 3u);
+    EXPECT_RANGE_EQ(v3[0], "AC"_dna5);
+    EXPECT_RANGE_EQ(v3[1], "TG"_dna5);
+    EXPECT_RANGE_EQ(v3[2], "NN"_dna5);
 }
 
 // ------------------------------------------------------------------
@@ -195,4 +203,12 @@ TEST(view_deep_take2, deep)
     EXPECT_RANGE_EQ(v[0], "AC"_dna5);
     EXPECT_RANGE_EQ(v[1], "TG"_dna5);
     EXPECT_RANGE_EQ(v[2], "NN"_dna5);
+
+    // function notation
+    auto v2 = seqan3::views::deep_take2(foo);
+
+    ASSERT_EQ(std::ranges::size(v2), 3u);
+    EXPECT_RANGE_EQ(v2[0], "AC"_dna5);
+    EXPECT_RANGE_EQ(v2[1], "TG"_dna5);
+    EXPECT_RANGE_EQ(v2[2], "NN"_dna5);
 }
