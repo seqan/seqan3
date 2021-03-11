@@ -250,30 +250,33 @@ set (CXXSTD_TEST_SOURCE
     "static_assert (__cpp_concepts >= 201507);
     int main() {}")
 
-check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_BUILTIN)
+set (SEQAN3_FEATURE_CONCEPT_FLAG_BUILTIN "")
+set (SEQAN3_FEATURE_CONCEPT_FLAG_STD20 "-std=c++20")
+set (SEQAN3_FEATURE_CONCEPT_FLAG_STD2a "-std=c++2a")
+set (SEQAN3_FEATURE_CONCEPT_FLAG_GCC_TS "-fconcepts")
 
-if (CONCEPTS_BUILTIN)
-    seqan3_config_print ("C++ Concepts support:       builtin")
-else ()
-    set (CONCEPTS_FLAG "")
+set (SEQAN3_CONCEPTS_FLAG "")
 
-    foreach (_FLAG -std=c++20 -std=c++2a -fconcepts)
-        set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${_FLAG}")
+foreach (_FLAG BUILTIN STD20 STD2a GCC_TS)
+    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${SEQAN3_FEATURE_CONCEPT_FLAG_${_FLAG}}")
 
-        check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG${_FLAG})
+    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CONCEPTS_FLAG_${_FLAG})
 
-        if (CONCEPTS_FLAG${_FLAG})
-            set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${_FLAG}")
-            set (CONCEPTS_FLAG ${_FLAG})
-            break ()
-        endif ()
-    endforeach ()
-
-    if (CONCEPTS_FLAG)
-        seqan3_config_print ("C++ Concepts support:       via ${CONCEPTS_FLAG}")
-    else ()
-        seqan3_config_error ("SeqAn3 requires C++ Concepts, but your compiler does not support them.")
+    if (CONCEPTS_FLAG_${_FLAG})
+        set (SEQAN3_CONCEPTS_FLAG ${_FLAG})
+        break ()
     endif ()
+endforeach ()
+
+set (CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS_SAVE})
+
+if (SEQAN3_CONCEPTS_FLAG STREQUAL "BUILTIN")
+    seqan3_config_print ("C++ Concepts support:       builtin")
+elseif (SEQAN3_CONCEPTS_FLAG)
+    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${SEQAN3_FEATURE_CONCEPT_FLAG_${SEQAN3_CONCEPTS_FLAG}}")
+    seqan3_config_print ("C++ Concepts support:       via ${SEQAN3_FEATURE_CONCEPT_FLAG_${SEQAN3_CONCEPTS_FLAG}}")
+else ()
+    seqan3_config_error ("SeqAn3 requires C++ Concepts, but your compiler does not support them.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -311,31 +314,31 @@ endif ()
 # check if library is required
 set (CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
 
-check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" C++17FS_BUILTIN)
+set (SEQAN3_FEATURE_FILESYSTEM_BUILTIN "")
+set (SEQAN3_FEATURE_FILESYSTEM_LIB "stdc++fs")
 
-if (C++17FS_BUILTIN)
-    seqan3_config_print ("C++ Filesystem library:     builtin")
-else ()
-    set (C++17FS_LIB "")
+set (SEQAN3_FILESYSTEM_FLAG "")
 
-    foreach (_LIB stdc++fs)
-        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE} ${_LIB})
+foreach (_FLAG BUILTIN LIB)
+    set (CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES_SAVE} ${SEQAN3_FEATURE_FILESYSTEM_${_FLAG}}")
 
-        check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" C++17FS_LIB-l${_LIB})
+    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" FILESYSTEM_FLAG_${_FLAG})
 
-        if (C++17FS_LIB-l${_LIB})
-            set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${_LIB})
-            set (C++17FS_LIB ${_LIB})
-            break ()
-        endif ()
-        set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
-    endforeach ()
-
-    if (C++17FS_LIB)
-        seqan3_config_print ("C++ Filesystem library:     via -l${C++17FS_LIB}")
-    else ()
-        seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but your compiler does not offer it.")
+    if (FILESYSTEM_FLAG_${_FLAG})
+        set (SEQAN3_FILESYSTEM_FLAG ${_FLAG})
+        break ()
     endif ()
+endforeach ()
+
+set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
+
+if (SEQAN3_FILESYSTEM_FLAG STREQUAL "BUILTIN")
+    seqan3_config_print ("C++ Filesystem library:     builtin")
+elseif (SEQAN3_FILESYSTEM_FLAG)
+    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${SEQAN3_FEATURE_FILESYSTEM_${SEQAN3_FILESYSTEM_FLAG}})
+    seqan3_config_print ("C++ Filesystem library:     via -l${SEQAN3_FEATURE_FILESYSTEM_${SEQAN3_FILESYSTEM_FLAG}}")
+else ()
+    seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but your compiler does not offer it.")
 endif ()
 
 # ----------------------------------------------------------------------------
