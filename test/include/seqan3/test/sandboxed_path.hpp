@@ -12,8 +12,9 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <seqan3/std/filesystem>
-
+#include <numeric>
 
 #include <seqan3/core/platform.hpp>
 
@@ -119,6 +120,38 @@ public:
     //!\}
 
 private:
+#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
+    /*!\brief Splits a string into string_views
+     * \param str String that is going to be split
+     * \param delim Delimiter at which point the string should be split.
+     */
+    static std::vector<std::string_view> split_string(std::string const& str, char delim) {
+        std::vector<std::string_view> result{};
+        // If string is empty, nothing to split
+        if (str.empty()) {
+            return result;
+        }
+
+        size_t current_pos = str.find(delim, 0);
+
+        // If string doesn't contain any `delim` return view to the string
+        if (current_pos == std::string::npos) {
+            result.emplace_back(str);
+            return result;
+        }
+
+        while (current_pos < str.size())
+        {
+            auto end_pos = std::min(str.find(delim, current_pos + 1), str.size());
+            auto begin   = str.data() + current_pos + 1;
+            auto length  = end_pos - current_pos - 1;
+            result.emplace_back(begin, length);
+            current_pos = end_pos;
+        }
+        return result;
+    }
+#endif
+
     /*!\brief Normalises the path.
      *
      * Normalisation means that the path is converted to an absolute path and
@@ -142,13 +175,8 @@ private:
         }();
         // Manually collapse any "." and "..". This is being done by
         // splitting the string at every the '/' and looking at every path element.
-        size_t current_pos = path_string.find('/', 0); // find first "/" character
         std::vector<std::string> path_parts;
-        while (current_pos < path_string.size())
-        {
-            auto end_pos = path_string.find('/', current_pos + 1);
-            auto word = path_string.substr(current_pos+1, end_pos-current_pos-1);
-
+        for (auto word : split_string(path_string, '/')) {
             // If the path element is "." or empty ("") it means
             // that we are in a situation like "abc/./xyz" or abc//xyz"
             // In this case we ignore the path element.
@@ -184,13 +212,15 @@ private:
                     path_parts.emplace_back(word);
                 }
             }
-            current_pos = end_pos;
         }
+
+        // Joining the path elements to a path.
         std::string normalised_path;
         for (auto const& p : path_parts)
         {
             normalised_path += '/' + p;
         }
+
         std::filesystem::path::operator=(normalised_path);
 #else
         auto normalised_path = std::filesystem::weakly_canonical(sandbox_directory / *this);
