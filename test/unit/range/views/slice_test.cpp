@@ -14,8 +14,6 @@
 #include <string>
 #include <vector>
 
-#include <range/v3/view/unique.hpp>
-
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -38,19 +36,19 @@ TEST(view_slice, regular)
     EXPECT_RANGE_EQ("oob"sv, seqan3::views::slice(vec, 1, 4));
 
     // combinability
-    EXPECT_RANGE_EQ("o"sv, vec | seqan3::views::slice(0, 4) | seqan3::views::slice(1, 3) | ranges::views::unique);
-    EXPECT_RANGE_EQ("abo"sv, vec | std::views::reverse | seqan3::views::slice(1, 4) | ranges::views::unique);
+    EXPECT_RANGE_EQ("o"sv, vec | seqan3::views::slice(0, 4) | seqan3::views::slice(1, 3) | std::views::take(1));
+    EXPECT_RANGE_EQ("abo"sv, vec | std::views::reverse | seqan3::views::slice(1, 4) | std::views::take(3));
 
     // store arg
     auto a0 = seqan3::views::slice(1, 4);
     EXPECT_RANGE_EQ("oob"sv, vec | a0);
 
     // store combined
-    auto a1 = seqan3::views::slice(0, 4) | seqan3::views::slice(1, 3) | ranges::views::unique;
+    auto a1 = seqan3::views::slice(0, 4) | seqan3::views::slice(1, 3) | std::views::take(1);
     EXPECT_RANGE_EQ("o"sv, vec | a1);
 
     // store combined in middle
-    auto a2 = std::views::reverse | seqan3::views::slice(1, 4) | ranges::views::unique;
+    auto a2 = std::views::reverse | seqan3::views::slice(1, 4) | std::views::take(3);
     EXPECT_RANGE_EQ("abo"sv, vec | a2);
 }
 
