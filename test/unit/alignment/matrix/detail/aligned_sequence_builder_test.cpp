@@ -18,7 +18,6 @@
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator|;
@@ -104,8 +103,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0, 3}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0, 2}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"--ACG"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AG---"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"--ACG"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"AG---"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
@@ -116,8 +115,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AC"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AG"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"AC"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
@@ -128,8 +127,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A--"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"-AG"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"A--"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"-AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
@@ -140,8 +139,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"--"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AG"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"--"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
@@ -152,8 +151,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"--A"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"ACG"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"--A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
@@ -164,8 +163,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"-AC"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A--"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"-AC"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"A--"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
@@ -176,8 +175,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"A"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
@@ -188,8 +187,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"-"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"-"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"A"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
@@ -200,8 +199,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"---"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"ACG"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"---"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
@@ -212,8 +211,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AC"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"--"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"AC"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"--"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
@@ -224,8 +223,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"A"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"-"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"A"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"-"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
@@ -236,8 +235,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{""});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{""});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{""});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{""});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
@@ -253,8 +252,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{""});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{""});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{""});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{""});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
@@ -269,8 +268,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"--"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"AG"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"--"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"AG"});
 }
 
 TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
@@ -285,8 +284,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
     EXPECT_EQ(second_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
-    EXPECT_EQ(std::get<0>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"ACG"});
-    EXPECT_EQ(std::get<1>(alignment) | seqan3::views::to_char | seqan3::views::to<std::string>, std::string{"---"});
+    EXPECT_RANGE_EQ(std::get<0>(alignment) | seqan3::views::to_char, std::string{"ACG"});
+    EXPECT_RANGE_EQ(std::get<1>(alignment) | seqan3::views::to_char, std::string{"---"});
 }
 
 // https://github.com/seqan/seqan3/issues/1921
