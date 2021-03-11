@@ -5,82 +5,71 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/range/views/trim_quality.hpp>
 #include <seqan3/std/ranges>
 
+#include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/range/concept.hpp>
+#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/range/views/trim_quality.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
+
 using seqan3::operator""_dna5;
+using seqan3::operator""_phred42;
 
 TEST(view_trim, standalone)
 {
-    std::vector<seqan3::phred42> vec{ seqan3::phred42{40}, seqan3::phred42{40},
-                                      seqan3::phred42{30}, seqan3::phred42{20}, seqan3::phred42{10}};
-    std::vector<seqan3::phred42> cmp1{seqan3::phred42{40}, seqan3::phred42{40},
-                                      seqan3::phred42{30}, seqan3::phred42{20}};
-    std::vector<seqan3::phred42> cmp2{seqan3::phred42{40}, seqan3::phred42{40}};
+    using namespace std::literals;
+
+    std::vector<seqan3::phred42> vec{"II?5+"_phred42};
 
     // trim by phred_value
-    auto v1 = vec | seqan3::views::trim_quality(20u);                   // == ['I','I','?','5']
-    EXPECT_EQ(v1 | seqan3::views::to<std::vector>, cmp1);
+    EXPECT_RANGE_EQ("II?5"_phred42, vec | seqan3::views::trim_quality(20u));
 
     // trim by quality character
-    auto v2 = vec | seqan3::views::trim_quality(seqan3::phred42{40});   // == ['I','I']
-    EXPECT_EQ(v2 | seqan3::views::to<std::vector>, cmp2);
+    EXPECT_RANGE_EQ("II"_phred42, vec | seqan3::views::trim_quality(seqan3::phred42{40}));
 
     // function syntax
-    auto v3 = seqan3::views::trim_quality(vec, 20u);                    // == ['I','I','?','5']
-    EXPECT_EQ(v3 | seqan3::views::to<std::vector>, cmp1);
+    EXPECT_RANGE_EQ("II?5"_phred42, seqan3::views::trim_quality(vec, '5'_phred42));
 
     // combinability
-    std::string v4 = seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char | seqan3::views::to<std::string>; //=="II?5"
-    EXPECT_EQ("II?5", v4);
+    EXPECT_RANGE_EQ("II?5"sv, seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char);
 }
 
 TEST(view_trim, qualified)
 {
-    std::vector<seqan3::dna5q> vec{{'A'_dna5, seqan3::phred42{40}},
-                                   {'G'_dna5, seqan3::phred42{40}},
-                                   {'G'_dna5, seqan3::phred42{30}},
-                                   {'A'_dna5, seqan3::phred42{20}},
-                                   {'T'_dna5, seqan3::phred42{10}}};
-    std::vector<seqan3::dna5q> cmp1{{'A'_dna5, seqan3::phred42{40}},
-                                    {'G'_dna5, seqan3::phred42{40}},
-                                    {'G'_dna5, seqan3::phred42{30}},
-                                    {'A'_dna5, seqan3::phred42{20}}};
-    std::vector<seqan3::dna5q> cmp2{{'A'_dna5, seqan3::phred42{40}},
-                                    {'G'_dna5, seqan3::phred42{40}}};
+    using namespace std::literals;
+
+    std::vector<seqan3::dna5q> vec{{'A'_dna5, 'I'_phred42},
+                                   {'G'_dna5, 'I'_phred42},
+                                   {'G'_dna5, '?'_phred42},
+                                   {'A'_dna5, '5'_phred42},
+                                   {'T'_dna5, '+'_phred42}};
+    std::vector<seqan3::dna5q> cmp1{{'A'_dna5, 'I'_phred42},
+                                    {'G'_dna5, 'I'_phred42},
+                                    {'G'_dna5, '?'_phred42},
+                                    {'A'_dna5, '5'_phred42}};
+    std::vector<seqan3::dna5q> cmp2{{'A'_dna5, 'I'_phred42},
+                                    {'G'_dna5, 'I'_phred42}};
 
     // trim by phred_value
-    auto v1 = vec | seqan3::views::trim_quality(20u);
-    EXPECT_EQ(v1 | seqan3::views::to<std::vector>, cmp1);
+    EXPECT_RANGE_EQ(cmp1, vec | seqan3::views::trim_quality(20u));
 
     // trim by quality character
-    auto v2 = vec | seqan3::views::trim_quality(seqan3::dna5q{'C'_dna5, seqan3::phred42{40}});
-    EXPECT_EQ(v2 | seqan3::views::to<std::vector>, cmp2);
+    EXPECT_RANGE_EQ(cmp2, vec | seqan3::views::trim_quality(seqan3::dna5q{'C'_dna5, seqan3::phred42{40}}));
 
     // function syntax
-    auto v3 = seqan3::views::trim_quality(vec, 20u);
-    EXPECT_EQ(v3 | seqan3::views::to<std::vector>, cmp1);
+    EXPECT_RANGE_EQ(cmp1, seqan3::views::trim_quality(vec, 20u));
 
     // combinability
-    std::string v4 = seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char | seqan3::views::to<std::string>;
-    EXPECT_EQ("AGGA", v4);
+    EXPECT_RANGE_EQ("AGGA"sv, seqan3::views::trim_quality(vec, 20u) | seqan3::views::to_char);
 }
 
 TEST(view_trim, concepts)
 {
-    std::vector<seqan3::dna5q> vec{{'A'_dna5, seqan3::phred42{40}},
-                                   {'G'_dna5, seqan3::phred42{40}},
-                                   {'G'_dna5, seqan3::phred42{30}},
-                                   {'A'_dna5, seqan3::phred42{20}},
-                                   {'T'_dna5, seqan3::phred42{10}}};
+    std::vector<seqan3::dna5q> vec{};
     EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
