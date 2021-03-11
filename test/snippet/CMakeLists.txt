@@ -44,3 +44,5 @@ seqan3_require_test ()
 
 seqan3_snippets ("doc/snippet" "${CMAKE_SOURCE_DIR}/../../doc")
 seqan3_snippets ("snippet" "${CMAKE_SOURCE_DIR}")
+
+include (seqan3_generate_snippet)
