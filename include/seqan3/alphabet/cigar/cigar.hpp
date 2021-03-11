@@ -232,6 +232,12 @@ inline cigar::operation operator""_cigar_operation(char const c) noexcept
 {
     return cigar::operation{}.assign_char(c);
 }
+
+//!\deprecated Please use seqan3::""_cigar_operation instead.
+SEQAN3_DEPRECATED_310 inline cigar::operation operator""_cigar_op(char const c) noexcept
+{
+    return cigar::operation{}.assign_char(c);
+}
 //!\}
 
 } // namespace seqan3
