@@ -12,7 +12,6 @@
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
@@ -109,8 +108,8 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     EXPECT_EQ(res.sequence2_begin_position(), fixture.begin_positions.second);
 
     auto && [gapped_database, gapped_query] = res.alignment();
-    EXPECT_EQ(gapped_database | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence1);
-    EXPECT_EQ(gapped_query | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence2);
+    EXPECT_RANGE_EQ(gapped_database | seqan3::views::to_char, fixture.aligned_sequence1);
+    EXPECT_RANGE_EQ(gapped_query | seqan3::views::to_char, fixture.aligned_sequence2);
 
     using score_matrix_t = seqan3::detail::two_dimensional_matrix<std::optional<int32_t>>;
     using trace_matrix_t = seqan3::detail::two_dimensional_matrix<std::optional<seqan3::detail::trace_directions>>;
