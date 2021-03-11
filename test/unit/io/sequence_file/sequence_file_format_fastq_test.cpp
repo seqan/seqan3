@@ -115,9 +115,12 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
+#pragma GCC diagnostic pop
 
             EXPECT_RANGE_EQ((*it).id(), ids[i]);
             EXPECT_RANGE_EQ((*it).sequence(), seqs[i]);

@@ -15,14 +15,12 @@ r001	147	ref	237	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    using seqan3::get;
-
     seqan3::sam_file_input fin{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
 
 #if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length10_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(get<seqan3::field::seq>(rec)) >= 10;
+        return std::ranges::size(rec.sequence()) >= 10;
     });
 #endif // !SEQAN3_WORKAROUND_GCC_93983
 
@@ -31,5 +29,5 @@ int main()
 #else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length10_filter) // only records with sequence length >= 10 will "appear"
 #endif // SEQAN3_WORKAROUND_GCC_93983
-        seqan3::debug_stream << get<seqan3::field::id>(rec) << '\n';
+        seqan3::debug_stream << rec.id() << '\n';
 }

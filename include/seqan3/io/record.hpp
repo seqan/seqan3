@@ -338,7 +338,7 @@ namespace seqan3
 
 //!\brief Free function get() for seqan3::record based on seqan3::field.
 template <field f, typename field_types, typename field_ids>
-auto & get(record<field_types, field_ids> & r)
+SEQAN3_DEPRECATED_310 auto & get(record<field_types, field_ids> & r)
 {
     static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
     return std::get<field_ids::index_of(f)>(r);
@@ -346,7 +346,7 @@ auto & get(record<field_types, field_ids> & r)
 
 //!\overload
 template <field f, typename field_types, typename field_ids>
-auto const & get(record<field_types, field_ids> const & r)
+SEQAN3_DEPRECATED_310 auto const & get(record<field_types, field_ids> const & r)
 {
     static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
     return std::get<field_ids::index_of(f)>(r);
@@ -354,7 +354,7 @@ auto const & get(record<field_types, field_ids> const & r)
 
 //!\overload
 template <field f, typename field_types, typename field_ids>
-auto && get(record<field_types, field_ids> && r)
+SEQAN3_DEPRECATED_310 auto && get(record<field_types, field_ids> && r)
 {
     static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
     return std::get<field_ids::index_of(f)>(std::move(r));
@@ -362,7 +362,7 @@ auto && get(record<field_types, field_ids> && r)
 
 //!\overload
 template <field f, typename field_types, typename field_ids>
-auto const && get(record<field_types, field_ids> const && r)
+SEQAN3_DEPRECATED_310 auto const && get(record<field_types, field_ids> const && r)
 {
     static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
 #if SEQAN3_WORKAROUND_GCC_94967

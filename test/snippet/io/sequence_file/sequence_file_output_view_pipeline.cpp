@@ -22,22 +22,20 @@ GGAGTATAATATATATATATATAT
 int main()
 {
 #if !SEQAN3_WORKAROUND_GCC_96070
-    using seqan3::get;
-
     // minimum_average_quality_filter and minimum_sequence_length_filter need to be implemented first
     auto minimum_sequence_length_filter = std::views::filter([] (auto rec)
     {
-        return std::ranges::distance(get<seqan3::field::seq>(rec)) >= 50;
+        return std::ranges::distance(rec.sequence()) >= 50;
     });
 
     auto minimum_average_quality_filter = std::views::filter([] (auto const & rec)
     {
         double qual_sum{0}; // summation of the qualities
-        for (auto chr : get<seqan3::field::qual>(rec))
+        for (auto chr : rec.qualities())
             qual_sum += chr.to_phred();
 
                            // check if average quality is greater than 20.
-        return qual_sum / (std::ranges::distance(get<seqan3::field::qual>(rec))) >= 20;
+        return qual_sum / (std::ranges::distance(rec.qualities())) >= 20;
     });
 
     seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fastq{}}

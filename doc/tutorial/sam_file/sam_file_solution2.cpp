@@ -80,8 +80,8 @@ int main()
 
     for (auto && record : reference_file)
     {
-        ref_ids.push_back(std::move(seqan3::get<seqan3::field::id>(record)));
-        ref_seqs.push_back(std::move(seqan3::get<seqan3::field::seq>(record)));
+        ref_ids.push_back(std::move(record.id()));
+        ref_seqs.push_back(std::move(record.sequence()));
     }
 
     using field_type = seqan3::fields<seqan3::field::id,
@@ -92,7 +92,7 @@ int main()
     seqan3::sam_file_input mapping_file{tmp_dir/"mapping.sam", ref_ids, ref_seqs, field_type{}};
 
 #if !SEQAN3_WORKAROUND_GCC_93983
-    auto mapq_filter = std::views::filter([] (auto & rec) { return seqan3::get<seqan3::field::mapq>(rec) >= 30; });
+    auto mapq_filter = std::views::filter([] (auto & rec) { return rec.mapping_quality() >= 30; });
 #endif // !SEQAN3_WORKAROUND_GCC_93983
 
 #if SEQAN3_WORKAROUND_GCC_93983

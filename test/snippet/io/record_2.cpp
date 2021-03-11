@@ -20,6 +20,9 @@ int main()
 
     record_type my_record{};
     get<1>(my_record) = "the most important sequence in the database";            // access via index
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     get<seqan3::field::seq>(my_record) = "ACGT"_dna4;                             // access via seqan3::field
+#pragma GCC diagnostic pop
     get<std::string>(my_record) = "the least important sequence in the database"; // access via type
 }

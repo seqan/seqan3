@@ -67,21 +67,26 @@ int main()
 
     auto length_filter = std::views::filter([] (auto const & rec)
     {
-        return std::ranges::size(seqan3::get<seqan3::field::seq>(rec)) >= 5;
+        return std::ranges::size(rec.sequence()) >= 5;
     });
 
     // you can use a for loop
 
     // for (auto & rec : fin | length_filter | std::views::take(2))
     // {
-    //     seqan3::debug_stream << "ID: " << seqan3::get<seqan3::field::id>(rec) << '\n';
+    //     seqan3::debug_stream << "ID: " << rec.id() << '\n';
     // }
 
     // But you can also do this to retrieve all IDs into a vector:
     std::vector<std::string> ids = fin
                                  | length_filter                                    // apply length filter
                                  | std::views::take(2)                              // take first two records
-                                 | seqan3::views::get<seqan3::field::id>            // select only ID from record
+                                 | std::views::transform(&decltype(fin)::record_type::id) // select only ID from record
+                                 // this is the same as writing:
+//                                 | std::views::transform([](auto && record)         
+//                                   {
+//                                       return record.id();
+//                                   })
                                  | seqan3::views::move                              // mark ID to be moved out of record
                                  | seqan3::views::to<std::vector<std::string>>;     // convert to container
     // Note that you need to know the type of id (std::string)

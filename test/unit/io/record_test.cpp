@@ -100,15 +100,21 @@ TEST_F(record, get_by_field)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4);
+#pragma GCC diagnostic pop
 }
 
 TEST_F(record, gcc_issue_94967)
 {
     record_type r{"MY ID", "ACGT"_dna4};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     // gcc 7 implemented a different std::get(const &&) definition which was later changed by
     // https://wg21.link/lwg2485
     EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::id>(std::move(std::as_const(r)))));
+#pragma GCC diagnostic pop
 }

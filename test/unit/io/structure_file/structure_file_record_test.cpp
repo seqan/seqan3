@@ -85,10 +85,13 @@ TEST_F(structure_record, get_by_field)
 {
     record_type r{"MY ID", "ACGU"_rna5, "(())"_wuss51, 1.5};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGU"_rna5);
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(r), "(())"_wuss51);
     EXPECT_DOUBLE_EQ(seqan3::get<seqan3::field::energy>(r), 1.5);
+#pragma GCC diagnostic pop
 }
 
 TEST_F(structure_record, get_by_member)
@@ -105,6 +108,8 @@ TEST_F(structure_record, get_types)
 {
     record_type r{"MY ID", "ACGU"_rna5, "(())"_wuss51, 1.5};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::id>(r)));
     EXPECT_SAME_TYPE(seqan3::rna5_vector &, decltype(seqan3::get<seqan3::field::seq>(r)));
     EXPECT_SAME_TYPE(std::vector<seqan3::wuss51> &, decltype(seqan3::get<seqan3::field::structure>(r)));
@@ -127,6 +132,7 @@ TEST_F(structure_record, get_types)
     EXPECT_SAME_TYPE(std::vector<seqan3::wuss51> const &&,
                      decltype(seqan3::get<seqan3::field::structure>(std::move(std::as_const(r)))));
     EXPECT_SAME_TYPE(double const &&, decltype(seqan3::get<seqan3::field::energy>(std::move(std::as_const(r)))));
+#pragma GCC diagnostic pop
 }
 
 TEST_F(structure_record, member_types)

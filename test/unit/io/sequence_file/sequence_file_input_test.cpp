@@ -232,9 +232,12 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
+#pragma GCC diagnostic pop
 
         EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
@@ -300,13 +303,22 @@ TEST_F(sequence_file_input_f, record_reading_custom_options)
     fin.options.truncate_ids = true;
 
     auto it = fin.begin();
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID1");
+#pragma GCC diagnostic pop
     EXPECT_EQ((*it).id(), "ID1");
     ++it;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID2");
+#pragma GCC diagnostic pop
     EXPECT_EQ((*it).id(), "ID2");
     ++it;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID3");
+#pragma GCC diagnostic pop
     EXPECT_EQ((*it).id(), "ID3");
 }
 
@@ -331,9 +343,12 @@ TEST_F(sequence_file_input_f, file_view)
     for (auto & rec : fin | minimum_length_filter)
     {
 #endif // SEQAN3_WORKAROUND_GCC_93983
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
+#pragma GCC diagnostic pop
 
         EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
@@ -355,9 +370,12 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
+#pragma GCC diagnostic pop
 
         EXPECT_RANGE_EQ(rec.sequence(), fix.seq_comp[counter]);
         EXPECT_RANGE_EQ(rec.id(),  fix.id_comp[counter]);

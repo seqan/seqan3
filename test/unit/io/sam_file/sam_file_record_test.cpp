@@ -188,6 +188,8 @@ TEST_F(sam_record, get_by_field)
 {
     record_type r{construct()};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna5);
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(r), "!##$"_phred42);
@@ -204,6 +206,7 @@ TEST_F(sam_record, get_by_field)
                                                 {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
                                                 {1, 'I'_cigar_operation}}));
     EXPECT_EQ(seqan3::get<seqan3::field::tags>(r), seqan3::sam_tag_dictionary{});
+#pragma GCC diagnostic pop
 }
 
 TEST_F(sam_record, get_by_member)
@@ -234,6 +237,8 @@ TEST_F(sam_record, get_types)
 {
     record_type r{construct()};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::id>(r)));
     EXPECT_SAME_TYPE(seqan3::dna5_vector &, decltype(seqan3::get<seqan3::field::seq>(r)));
     EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &, decltype(seqan3::get<seqan3::field::qual>(r)));
@@ -302,6 +307,7 @@ TEST_F(sam_record, get_types)
                      decltype(seqan3::get<seqan3::field::cigar>(std::move(std::as_const(r)))));
     EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary const &&,
                      decltype(seqan3::get<seqan3::field::tags>(std::move(std::as_const(r)))));
+#pragma GCC diagnostic pop
 }
 
 TEST_F(sam_record, member_types)

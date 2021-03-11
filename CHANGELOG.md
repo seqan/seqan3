@@ -47,6 +47,16 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 * We now use Doxygen version 1.9.1 to build our documentation ([\#2327](https://github.com/seqan/seqan3/pull/2327)).
 
+#### I/O
+
+* Explicit record-classes with explicit member accessor for our file implementations. We added `seqan3::sequence_record`
+  for `seqan3::sequence_file_(in|out)put`, `seqan3::sam_record` for `seqan3::sam_file_(in|out)put` and
+  `seqan3::structure_record` for `seqan3::structure_file_(in|out)put`. You can now access the `id` in a sequence file
+  (e.g. `fasta` file) record via `record.id()` instead of `seqan3::get<seqan3::field::id>(record)`. This will allow us
+  to add convenient functions that compute information based on the record itself and to provide better documentation.
+  ([\#2340](https://github.com/seqan/seqan3/pull/2340), [\#2380](https://github.com/seqan/seqan3/pull/2380),
+  [\#2389](https://github.com/seqan/seqan3/pull/2389))
+
 #### Search
 
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
@@ -99,6 +109,41 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * `seqan3::option_spec::REQUIRED` is replaced by `seqan3::option_spec::required`.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
   * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.
+
+#### I/O
+
+* The `seqan3::get` accessor for I/O records, e.g. `seqan3::get<seqan3::field::id>(record)`, is deprecated, please use
+  the corresponding member accessor ([\#2420](https://github.com/seqan/seqan3/pull/2420)):
+  * If you used files as views with `seqan3::views::get<seqan3::field::id>` to project a single field, e.g.
+    * `seqan3::views::get<seqan3::field::id>(fin)` => `std::views::transform(fin, [](auto && record){ return record.id(); })`
+    * `fin | seqan3::views::get<seqan3::field::id>()` => `fin | std::views::transform([](auto && record){ return record.id(); })`
+    * or per projection: `fin | std::views::transform(&decltype(fin)::record_type::id)`
+  * `seqan3::sequence_record`:
+    * `seqan3::get<seqan3::field::id>(record)` => `record.id()`
+    * `seqan3::get<seqan3::field::seq>(record)` => `record.sequence()`
+    * `seqan3::get<seqan3::field::qual>(record)` => `record.base_qualities()`
+  * `seqan3::structure_record`:
+    * `seqan3::get<seqan3::field::id>(record)` => `record.id()`
+    * `seqan3::get<seqan3::field::seq>(record)` => `record.sequence()`
+    * `seqan3::get<seqan3::field::structure>(record)` => `record.sequence_structure()`
+    * `seqan3::get<seqan3::field::energy>(record)` => `record.energy()`
+    * `seqan3::get<seqan3::field::bpp>(record)` => `record.base_pair_probability_matrix()`
+  * `seqan3::sam_record`:
+    * `seqan3::get<seqan3::field::id>(record)` => `record.id()`
+    * `seqan3::get<seqan3::field::seq>(record)` => `record.sequence()`
+    * `seqan3::get<seqan3::field::qual>(record)` => `record.base_qualities()`
+    * `seqan3::get<seqan3::field::offset>(record)` => `record.sequence_position()`
+    * `seqan3::get<seqan3::field::alignment>(record)` => `record.alignment()`
+    * `seqan3::get<seqan3::field::ref_id>(record)` => `record.reference_id()`
+    * `seqan3::get<seqan3::field::ref_offset>(record)` => `record.reference_position()`
+    * `seqan3::get<seqan3::field::header_ptr>(record)` => `record.header_ptr()`
+    * `seqan3::get<seqan3::field::flag>(record)` => `record.flag()`
+    * `std::get<0>(seqan3::get<seqan3::field::mate>(record))` => `record.mate_reference_id()`
+    * `std::get<1>(seqan3::get<seqan3::field::mate>(record))` => `record.mate_position()`
+    * `std::get<2>(seqan3::get<seqan3::field::mate>(record))` => `record.template_length()`
+    * `seqan3::get<seqan3::field::mapq>(record)` => `record.mapping_quality()`
+    * `seqan3::get<seqan3::field::cigar>(record)` => `record.cigar_sequence()`
+    * `seqan3::get<seqan3::field::tags>(record)` => `record.tags()`
 
 # 3.0.2
 

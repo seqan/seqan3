@@ -213,6 +213,8 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
     size_t i{0};
     for (auto & rec : fin)
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_EQ(seqan3::get<seqan3::field::seq>(rec), this->seqs[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::id>(rec), this->ids[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::qual>(rec), this->quals[i]);
@@ -225,6 +227,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
         EXPECT_EQ(seqan3::get<seqan3::field::mapq>(rec), this->mapqs[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::mate>(rec), this->mates[i]);
         EXPECT_EQ(seqan3::get<seqan3::field::tags>(rec), this->tag_dicts[i]);
+#pragma GCC diagnostic pop
 
         EXPECT_EQ(rec.sequence(), this->seqs[i]);
         EXPECT_EQ(rec.id(), this->ids[i]);
@@ -249,6 +252,8 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
     typename TestFixture::stream_type istream{this->empty_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_TRUE(seqan3::get<seqan3::field::seq>(*fin.begin()).empty());
     EXPECT_TRUE(seqan3::get<seqan3::field::id>(*fin.begin()).empty());
     EXPECT_TRUE(seqan3::get<seqan3::field::qual>(*fin.begin()).empty());
@@ -263,6 +268,7 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
     EXPECT_TRUE(!std::get<1>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
     EXPECT_EQ(std::get<2>(seqan3::get<seqan3::field::mate>(*fin.begin())), int32_t{});
     EXPECT_TRUE(seqan3::get<seqan3::field::tags>(*fin.begin()).empty());
+#pragma GCC diagnostic pop
 
     EXPECT_TRUE((*fin.begin()).sequence().empty());
     EXPECT_TRUE((*fin.begin()).id().empty());
@@ -317,8 +323,11 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
                                    TypeParam{},
                                    seqan3::fields<seqan3::field::alignment>{}};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+#pragma GCC diagnostic pop
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
         EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
@@ -344,8 +353,11 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
         typename TestFixture::stream_type istream{this->empty_cigar};
         seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
         EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
+#pragma GCC diagnostic pop
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
         EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));

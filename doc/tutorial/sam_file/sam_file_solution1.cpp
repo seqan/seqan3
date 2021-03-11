@@ -43,7 +43,7 @@ int main()
 
     std::ranges::for_each(fin.begin(), fin.end(), [&sum, &c] (auto & rec)
     {
-        sum += seqan3::get<seqan3::field::mapq>(rec);
+        sum += rec.mapping_quality();
         ++c;
     });
 

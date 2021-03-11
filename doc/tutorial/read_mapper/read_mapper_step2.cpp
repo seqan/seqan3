@@ -58,7 +58,7 @@ void map_reads(std::filesystem::path const & query_path,
 #endif // SEQAN3_WORKAROUND_GCC_93983
     {
         seqan3::debug_stream << "Hits:" << '\n';
-        for (auto && result : search(seqan3::get<seqan3::field::seq>(record), index, search_config))
+        for (auto && result : search(record.sequence(), index, search_config))
             seqan3::debug_stream << result << '\n';
         seqan3::debug_stream << "======================" << '\n';
     }

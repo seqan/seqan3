@@ -38,6 +38,6 @@ int main()
     seqan3::sam_file_input fin{tmp_dir/"my.sam"}; // default fields
 
     for (auto & rec : fin)
-        seqan3::debug_stream << seqan3::get<seqan3::field::cigar>(rec) << '\n'; // access cigar vector
+        seqan3::debug_stream << rec.cigar_sequence() << '\n'; // access cigar vector
 }
 //![code]
