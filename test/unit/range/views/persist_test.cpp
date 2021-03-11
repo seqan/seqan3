@@ -13,9 +13,6 @@
 #include <seqan3/std/ranges>
 #include <string>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/unique.hpp>
-
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -38,11 +35,11 @@ TEST(view_persist, delegate_to_view_all)
     EXPECT_RANGE_EQ("foo"sv, seqan3::views::persist(vec));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, vec | seqan3::views::persist | ranges::views::unique);
-    EXPECT_RANGE_EQ("of"sv, vec | std::views::reverse | seqan3::views::persist | ranges::views::unique);
+    EXPECT_RANGE_EQ("fo"sv, vec | seqan3::views::persist | std::views::take(2));
+    EXPECT_RANGE_EQ("of"sv, vec | std::views::reverse | seqan3::views::persist | std::views::drop(1));
 
     // store combined
-    auto a1 = seqan3::views::persist | ranges::views::unique;
+    auto a1 = seqan3::views::persist | std::views::take(2);
     EXPECT_RANGE_EQ("fo"sv, vec | a1);
 }
 
@@ -57,10 +54,10 @@ TEST(view_persist, wrap_temporary)
     EXPECT_RANGE_EQ("foo"sv, seqan3::views::persist(std::string{"foo"}));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, std::string{"foo"} | seqan3::views::persist | ranges::views::unique);
+    EXPECT_RANGE_EQ("fo"sv, std::string{"foo"} | seqan3::views::persist | std::views::take(2));
     EXPECT_RANGE_EQ("o"sv, std::string{"foo"} | seqan3::views::persist
                                               | std::views::filter([](char const chr){return chr == 'o';})
-                                              | ranges::views::unique);
+                                              | std::views::take(1));
 }
 
 TEST(view_persist, const)
