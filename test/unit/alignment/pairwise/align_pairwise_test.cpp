@@ -9,6 +9,7 @@
 
 #include <seqan3/std/ranges>
 #include <stdexcept>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -18,7 +19,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
@@ -57,6 +58,8 @@ auto call_alignment(seq_t && seq, cfg_t && cfg)
 
 TYPED_TEST(align_pairwise_test, single_pair)
 {
+    using namespace std::literals;
+
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -86,8 +89,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+            EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+            EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
         }
     }
 
@@ -117,8 +120,8 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+            EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+            EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
         }
     }
 
@@ -148,14 +151,16 @@ TYPED_TEST(align_pairwise_test, single_pair)
             EXPECT_EQ(res.sequence1_end_position(), 8u);
             EXPECT_EQ(res.sequence2_end_position(), 9u);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+            EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+            EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
         }
     }
 }
 
 TYPED_TEST(align_pairwise_test, single_pair_double_score)
 {
+    using namespace std::literals;
+
     if constexpr (!TestFixture::is_vectorised)
     { // not building for vectorised version.
         auto seq1 = "ACGTGATG"_dna4;
@@ -192,8 +197,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
                 EXPECT_EQ(res.sequence1_end_position(), 8u);
                 EXPECT_EQ(res.sequence2_end_position(), 9u);
                 auto && [gap1, gap2] = res.alignment();
-                EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-                EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+                EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+                EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
             }
         }
     }
@@ -201,6 +206,8 @@ TYPED_TEST(align_pairwise_test, single_pair_double_score)
 
 TYPED_TEST(align_pairwise_test, single_view)
 {
+    using namespace std::literals;
+
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -224,14 +231,16 @@ TYPED_TEST(align_pairwise_test, single_view)
         {
             EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+            EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+            EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
         }
     }
 }
 
 TYPED_TEST(align_pairwise_test, collection)
 {
+    using namespace std::literals;
+
     auto seq1 = "ACGTGATG"_dna4;
     auto seq2 = "AGTGATACT"_dna4;
 
@@ -246,13 +255,15 @@ TYPED_TEST(align_pairwise_test, collection)
     {
         EXPECT_EQ(res.score(), -4);
         auto && [gap1, gap2] = res.alignment();
-        EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-        EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+        EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+        EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
     }
 }
 
 TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
 {
+    using namespace std::literals;
+
     if constexpr (!TestFixture::is_vectorised)
     {
         auto seq1 = "ACGTGATG"_dna4;
@@ -271,8 +282,8 @@ TYPED_TEST(align_pairwise_test, collection_with_double_score_type)
         {
             EXPECT_EQ(res.score(), -4);
             auto && [gap1, gap2] = res.alignment();
-            EXPECT_EQ(gap1 | seqan3::views::to_char | seqan3::views::to<std::string>, "ACGTGATG--");
-            EXPECT_EQ(gap2 | seqan3::views::to_char | seqan3::views::to<std::string>, "A-GTGATACT");
+            EXPECT_RANGE_EQ(gap1 | seqan3::views::to_char, "ACGTGATG--"sv);
+            EXPECT_RANGE_EQ(gap2 | seqan3::views::to_char, "A-GTGATACT"sv);
         }
     }
 }
