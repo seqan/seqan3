@@ -13,15 +13,17 @@
 
 #include <seqan3/alphabet/mask/masked.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/zip.hpp>
 #include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna4;
+using seqan3::operator""_phred42;
 
 TEST(view_get, basic)
 {
@@ -30,34 +32,17 @@ TEST(view_get, basic)
                                         {'C'_dna4, seqan3::phred42{1}},
                                         {'G'_dna4, seqan3::phred42{2}},
                                         {'T'_dna4, seqan3::phred42{3}}};
-    seqan3::dna4_vector cmp0{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-    std::vector<seqan3::phred42> cmp1{seqan3::phred42{0}, seqan3::phred42{1}, seqan3::phred42{2}, seqan3::phred42{3}};
 
     //functor
-    seqan3::dna4_vector functor0 = seqan3::views::get<0>(qv) | seqan3::views::to<std::vector>;
-    std::vector<seqan3::phred42> functor1 = seqan3::views::get<1>(qv) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp0, functor0);
-    EXPECT_EQ(cmp1, functor1);
+    EXPECT_RANGE_EQ("ACGT"_dna4, seqan3::views::get<0>(qv));
+    EXPECT_RANGE_EQ("!\"#$"_phred42, seqan3::views::get<1>(qv));
 
     // pipe notation
-    seqan3::dna4_vector pipe0 = qv | seqan3::views::get<0> | seqan3::views::to<std::vector>;
-    std::vector<seqan3::phred42> pipe1 = qv | seqan3::views::get<1> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp0, pipe0);
-    EXPECT_EQ(cmp1, pipe1);
+    EXPECT_RANGE_EQ("ACGT"_dna4, qv | seqan3::views::get<0>);
+    EXPECT_RANGE_EQ("!\"#$"_phred42, qv | seqan3::views::get<1>);
 
     // combinability
-    seqan3::dna4_vector cmp2{"TGCA"_dna4};
-    seqan3::dna4_vector comp = qv | seqan3::views::get<0> | seqan3::views::complement | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp2, comp);
-
-    std::string cmp3{"TGCA"};
-    std::string to_char_test = comp | seqan3::views::to_char | seqan3::views::to<std::string>;
-    EXPECT_EQ(cmp3, to_char_test);
-
-    // reference return check
-    functor1[0] = seqan3::phred42{4};
-    std::vector<seqan3::phred42> cmp4{seqan3::phred42{4}, seqan3::phred42{1}, seqan3::phred42{2}, seqan3::phred42{3}};
-    EXPECT_EQ(cmp4, functor1);
+    EXPECT_RANGE_EQ("TGCA"_dna4, qv | seqan3::views::get<0> | seqan3::views::complement);
 }
 
 TEST(view_get, advanced)
@@ -70,84 +55,53 @@ TEST(view_get, advanced)
                                                             {{'T'_dna4, seqan3::mask::UNMASKED}, seqan3::phred42{3}}};
 
     // functor notation
-    std::vector<seqan3::masked<seqan3::dna4>> cmp0{{'A'_dna4, seqan3::mask::MASKED},
-                                                   {'C'_dna4, seqan3::mask::UNMASKED},
-                                                   {'G'_dna4, seqan3::mask::MASKED},
-                                                   {'T'_dna4, seqan3::mask::UNMASKED}};
-    std::vector<seqan3::masked<seqan3::dna4>> functor0 = seqan3::views::get<0>(t) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp0, functor0);
+    std::vector<seqan3::masked<seqan3::dna4>> expected_sequence{{'A'_dna4, seqan3::mask::MASKED},
+                                                                {'C'_dna4, seqan3::mask::UNMASKED},
+                                                                {'G'_dna4, seqan3::mask::MASKED},
+                                                                {'T'_dna4, seqan3::mask::UNMASKED}};
 
-    std::vector<seqan3::phred42> cmp1{seqan3::phred42{0}, seqan3::phred42{1}, seqan3::phred42{2}, seqan3::phred42{3}};
-    std::vector<seqan3::phred42> functor1 = seqan3::views::get<1>(t) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp1, functor1);
+    EXPECT_RANGE_EQ(expected_sequence, seqan3::views::get<0>(t));
+    EXPECT_RANGE_EQ("!\"#$"_phred42, seqan3::views::get<1>(t));
 
-    seqan3::dna4_vector cmp00{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
-    seqan3::dna4_vector functor00 = seqan3::views::get<0>(seqan3::views::get<0>(t)) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp00, functor00);
+    EXPECT_RANGE_EQ("ACGT"_dna4, seqan3::views::get<0>(seqan3::views::get<0>(t)));
 
     // pipe notation
-    std::vector<seqan3::masked<seqan3::dna4>> pipe0 = t | seqan3::views::get<0> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp0, pipe0);
+    EXPECT_RANGE_EQ(expected_sequence, t | seqan3::views::get<0>);
+    EXPECT_RANGE_EQ("!\"#$"_phred42, t | seqan3::views::get<1>);
 
-    std::vector<seqan3::phred42> pipe1 = t | seqan3::views::get<1> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp1, pipe1);
-
-    seqan3::dna4_vector pipe00 = t | seqan3::views::get<0> | seqan3::views::get<0> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp00, pipe00);
+    EXPECT_RANGE_EQ("ACGT"_dna4, t | seqan3::views::get<0> | seqan3::views::get<0>);
 
     // combinability
-    std::vector<seqan3::masked<seqan3::dna4>> cmprev{{'T'_dna4, seqan3::mask::UNMASKED},
-                                                     {'G'_dna4, seqan3::mask::MASKED},
-                                                     {'C'_dna4, seqan3::mask::UNMASKED},
-                                                     {'A'_dna4, seqan3::mask::MASKED}};
-    std::vector<seqan3::masked<seqan3::dna4>> revtest = t
-                                                      | seqan3::views::get<0>
-                                                      | std::views::reverse
-                                                      | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmprev, revtest);
+    EXPECT_RANGE_EQ(expected_sequence | std::views::reverse, t | seqan3::views::get<0> | std::views::reverse);
+    EXPECT_RANGE_EQ("$#\"!"_phred42, t | seqan3::views::get<1> | std::views::reverse);
 
-    seqan3::dna4_vector cmprev2{'T'_dna4, 'G'_dna4, 'C'_dna4, 'A'_dna4};
-    seqan3::dna4_vector revtest2 = t
-                                 | seqan3::views::get<0>
-                                 | seqan3::views::get<0>
-                                 | std::views::reverse
-                                 | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmprev2, revtest2);
-
-    // reference check
-    functor0[0] = seqan3::masked<seqan3::dna4>{'T'_dna4, seqan3::mask::UNMASKED};
-    std::vector<seqan3::masked<seqan3::dna4>> cmpref{{'T'_dna4, seqan3::mask::UNMASKED},
-                                                     {'C'_dna4, seqan3::mask::UNMASKED},
-                                                     {'G'_dna4, seqan3::mask::MASKED},
-                                                     {'T'_dna4, seqan3::mask::UNMASKED}};
-    EXPECT_EQ(cmpref, functor0);
+    EXPECT_RANGE_EQ("TGCA"_dna4, t | seqan3::views::get<0> | seqan3::views::get<0> | std::views::reverse);
 }
 
-TEST(view_get, tuple_pair)
+TEST(view_get, pair_range)
 {
-    std::vector<std::pair<int, int>> pair_test{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
-    std::vector<std::tuple<int, int>> tuple_test{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
+    std::vector<std::pair<int, int>> pair_range{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
 
     // functor notation
-    std::vector<int> cmp{0, 1, 2, 3};
-    std::vector<int> pair_func = seqan3::views::get<0>(pair_test) | seqan3::views::to<std::vector>;
-    std::vector<int> tuple_func = seqan3::views::get<0>(tuple_test) | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp, pair_func);
-    EXPECT_EQ(cmp, tuple_func);
-
-    // reference test
-    cmp[0] = 4;
-    pair_func[0] = 4;
-    tuple_func[0] = 4;
-    EXPECT_EQ(cmp, pair_func);
-    EXPECT_EQ(cmp, tuple_func);
+    EXPECT_RANGE_EQ((std::vector{0, 1, 2, 3}), seqan3::views::get<0>(pair_range));
+    EXPECT_RANGE_EQ((std::vector{1, 2, 3, 4}), seqan3::views::get<1>(pair_range));
 
     // pipe notation
-    cmp[0] = 0;
-    std::vector<int> pair_pipe = pair_test | seqan3::views::get<0> | seqan3::views::to<std::vector>;
-    std::vector<int> tuple_pipe = tuple_test | seqan3::views::get<0> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp, pair_pipe);
-    EXPECT_EQ(cmp, tuple_pipe);
+    EXPECT_RANGE_EQ((std::vector{0, 1, 2, 3}), pair_range | seqan3::views::get<0>);
+    EXPECT_RANGE_EQ((std::vector{1, 2, 3, 4}), pair_range | seqan3::views::get<1>);
+}
+
+TEST(view_get, tuple_range)
+{
+    std::vector<std::tuple<int, int>> tuple_range{{0, 1}, {1, 2}, {2, 3}, {3, 4}};
+
+    // functor notation
+    EXPECT_RANGE_EQ((std::vector{0, 1, 2, 3}), seqan3::views::get<0>(tuple_range));
+    EXPECT_RANGE_EQ((std::vector{1, 2, 3, 4}), seqan3::views::get<1>(tuple_range));
+
+    // pipe notation
+    EXPECT_RANGE_EQ((std::vector{0, 1, 2, 3}), tuple_range | seqan3::views::get<0>);
+    EXPECT_RANGE_EQ((std::vector{1, 2, 3, 4}), tuple_range | seqan3::views::get<1>);
 }
 
 TEST(view_get, concepts)
