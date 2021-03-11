@@ -512,6 +512,28 @@ public:
     }
     //!\}
 
+    /*!\name Access
+     * \{
+     */
+    /*!\brief Provides direct, unsafe access to the underlying data structure.
+     * \returns A reference to an SDSL bitvector.
+     *
+     * \details
+     *
+     * \noapi{The exact representation of the data is implementation defined.}
+     */
+    constexpr data_type & raw_data() noexcept
+    {
+        return data;
+    }
+
+    //!\copydoc raw_data()
+    constexpr data_type const & raw_data() const noexcept
+    {
+        return data;
+    }
+    //!\}
+
     /*!\cond DEV
      * \brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
