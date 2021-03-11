@@ -15,8 +15,6 @@
 #include <string>
 #include <vector>
 
-#include <range/v3/view/unique.hpp>
-
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
@@ -41,8 +39,8 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_RANGE_EQ("foo"sv, adaptor(vec, 3));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, vec | adaptor(3) | adaptor(3) | ranges::views::unique);
-    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor(3) | ranges::views::unique);
+    EXPECT_RANGE_EQ("fo"sv, vec | adaptor(3) | adaptor(3) | std::views::take(2));
+    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor(3) | std::views::take(3));
 }
 
 template <typename adaptor_t>
