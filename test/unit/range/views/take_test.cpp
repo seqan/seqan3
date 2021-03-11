@@ -10,7 +10,6 @@
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
 #include <deque>
-#include <iostream>
 #include <list>
 #include <seqan3/std/ranges>
 #include <string>
@@ -23,7 +22,6 @@
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
@@ -34,26 +32,17 @@
 template <typename adaptor_t>
 void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
-    // pipe notation
-    auto v = vec | adaptor(3);
-    EXPECT_EQ("foo", v | seqan3::views::to<std::string>);
+    using namespace std::literals;
 
-    // iterators (code coverage)
-    EXPECT_EQ(v.begin(), v.begin());
-    EXPECT_NE(v.begin(), v.end());
+    // pipe notation
+    EXPECT_RANGE_EQ("foo"sv, vec | adaptor(3) );
 
     // function notation
-    std::string v2{adaptor(vec, 3) | seqan3::views::to<std::string>};
-    EXPECT_EQ("foo", v2);
+    EXPECT_RANGE_EQ("foo"sv, adaptor(vec, 3));
 
     // combinability
-    auto v3 = vec | adaptor(3) | adaptor(3) | ranges::views::unique;
-    EXPECT_EQ("fo", v3 | seqan3::views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::views::unique | seqan3::views::to<std::string>;
-    EXPECT_EQ("rab", v3b);
-
-    // comparability against self
-    EXPECT_RANGE_EQ(v, v);
+    EXPECT_RANGE_EQ("fo"sv, vec | adaptor(3) | adaptor(3) | ranges::views::unique);
+    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor(3) | ranges::views::unique);
 }
 
 template <typename adaptor_t>
@@ -137,16 +126,14 @@ TEST(view_take, concepts)
 
 TEST(view_take, underlying_is_shorter)
 {
+    using namespace std::literals;
+
     std::string vec{"foo"};
     EXPECT_NO_THROW(( seqan3::views::take(vec, 4) )); // no parsing
 
     std::string v;
     // full parsing on conversion
-    EXPECT_NO_THROW(( v = vec
-                        | seqan3::views::single_pass_input
-                        | seqan3::views::take(4)
-                        | seqan3::views::to<std::string>));
-    EXPECT_EQ("foo", v);
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::views::take(4));
 }
 
 TEST(view_take, type_erasure)
@@ -245,18 +232,16 @@ TEST(view_take_exactly, concepts)
 
 TEST(view_take_exactly, underlying_is_shorter)
 {
+    using namespace std::literals;
+
     std::string vec{"foo"};
     EXPECT_NO_THROW(( seqan3::views::take_exactly(vec, 4) )); // no parsing
 
-    std::string v;
-    EXPECT_NO_THROW(( v = vec
-                        | seqan3::views::single_pass_input
-                        | seqan3::views::take_exactly(4)
-                        | seqan3::views::to<std::string>)); // full parsing on conversion
-    EXPECT_EQ("foo", v);
+    // full parsing on conversion
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::views::take_exactly(4));
 
     auto v2 = vec | seqan3::views::single_pass_input | seqan3::views::take_exactly(4);
-    EXPECT_EQ(size(v2), 4u); // here be dragons
+    EXPECT_EQ(std::ranges::size(v2), 4u); // here be dragons
 }
 
 TEST(view_take_exactly, shrink_size_on_input_ranges)
@@ -303,10 +288,7 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
     EXPECT_THROW(( seqan3::detail::view_take<std::views::all_t<std::list<char> &>, true, true>(l, 4) ),
                    std::invalid_argument); // no parsing, but throws on construction
 
-    std::string v;
-    EXPECT_THROW(( v = vec
-                     | seqan3::views::single_pass_input
-                     | seqan3::views::take_exactly_or_throw(4)
-                     | seqan3::views::to<std::string>),
-                   seqan3::unexpected_end_of_input); // full parsing on conversion, throw on conversion
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::single_pass_input
+                                           | seqan3::views::take_exactly_or_throw(4), [](auto &&){}),
+                 seqan3::unexpected_end_of_input); // full parsing on conversion, throw on conversion
 }
