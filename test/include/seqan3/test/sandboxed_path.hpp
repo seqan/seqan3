@@ -42,6 +42,10 @@ private:
     std::filesystem::path const sandbox_directory;
 
 public:
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+
     /*!\brief Construction of a sandboxed_path.
      * \param directory must be an absolute path.
      *
@@ -67,10 +71,10 @@ public:
         check_invariant();
     }
 
-    sandboxed_path() = delete; //!< Deleted.
-    sandboxed_path(sandboxed_path const&) = default; //!< Defaulted.
+    sandboxed_path() = delete;                           //!< Deleted.
+    sandboxed_path(sandboxed_path const&) = default;     //!< Defaulted.
     sandboxed_path(sandboxed_path&&) noexcept = default; //!< Defaulted.
-    ~sandboxed_path() = default; //!< Defaulted.
+    ~sandboxed_path() = default;                         //!< Defaulted.
 
     /*!\brief Replaces the path with a new path.
      * \tparam path_t The type of the new_path.
@@ -112,6 +116,7 @@ public:
         return *this;
     }
 
+    //!\}
 
 private:
     /*!\brief Normalises the path.
@@ -135,20 +140,28 @@ private:
                 return string();
             }
         }();
-        // Now we need to manually collapse any "." and ".."
+        // Manually collapse any "." and "..". This is being done by
+        // splitting the string at every the '/' and looking at every path element.
         size_t current_pos = path_string.find('/', 0); // find first "/" character
         std::vector<std::string> path_parts;
         while (current_pos < path_string.size())
         {
             auto end_pos = path_string.find('/', current_pos + 1);
             auto word = path_string.substr(current_pos+1, end_pos-current_pos-1);
+
+            // If the path element is "." or empty ("") it means
+            // that we are in a situation like "abc/./xyz" or abc//xyz"
+            // In this case we ignore the path element.
             if (word == "." || word == "")
             {
+                // Special case, add empty path element to force a trailing '/' in the result
                 if (!path_parts.empty() and path_parts.back() != "")
                 {
                     path_parts.emplace_back("");
                 }
             }
+            // If the path element is ".." we have to remove the last added
+            // path element.
             else if (word == "..")
             {
                 if (path_parts.empty())
@@ -161,6 +174,7 @@ private:
             }
             else
             {
+                // Special case, ignore empty path elements
                 if (!path_parts.empty() and path_parts.back() == "")
                 {
                     path_parts.back() = word;
@@ -252,6 +266,7 @@ public:
     /*!\brief Replaces the path with a new path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -273,6 +288,7 @@ public:
      * \tparam input_iter_t The type of the input iterators.
      * \param  first The begin of a given range.
      * \param  last  The end of a given range.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::assign
      * and additionally checks the invariant.
@@ -293,6 +309,7 @@ public:
     /*!\brief Extends the path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::operator/=
      * and additionally checks the invariant.
@@ -310,6 +327,7 @@ public:
     /*!\brief Extends the path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -331,6 +349,7 @@ public:
      * \tparam input_iter_t The type of the input iterators.
      * \param  first The begin of a given range.
      * \param  last  The end of a given range.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::append
      * and additionally checks the invariant.
@@ -351,6 +370,7 @@ public:
     /*!\brief Extends the path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::operator+=
      * and additionally checks the invariant.
@@ -368,6 +388,7 @@ public:
     /*!\brief Extends the path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -389,6 +410,7 @@ public:
      * \tparam input_iter_t The type of the input iterators.
      * \param  first The begin of a given range.
      * \param  last  The end of a given range.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::concat
      * and additionally checks the invariant.
@@ -407,6 +429,7 @@ public:
     }
 
     /*!\brief Removes the filename.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::remove_filename
      * and additionally checks the invariant.
@@ -424,6 +447,8 @@ public:
     }
 
     /*!\brief Replaces the file name.
+     * \param filename The replacement filename.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::replace_filename
      * and additionally checks the invariant.
@@ -432,15 +457,17 @@ public:
      *
      * Basic exception guarantee
      */
-    sandboxed_path & replace_filename(std::filesystem::path const & p)
+    sandboxed_path & replace_filename(std::filesystem::path const & filename)
     {
-        std::filesystem::path::replace_filename(p);
+        std::filesystem::path::replace_filename(filename);
         normalise();
         check_invariant();
         return *this;
     }
 
     /*!\brief Replaces the extension.
+     * \param replacement The replacement extension.
+     * \return Reference to the sandboxed_path.
      *
      * This works the same as std::filesystem::path::replace_extension
      * and additionally checks the invariant.
@@ -458,6 +485,7 @@ public:
     }
 
     /*!\brief Returns sandboxed path to the parent path.
+     * \return A sandboxed_path pointing to the parent path.
      *
      * This works the same as std::filesystem::path::parent_path
      * and additionally checks the invariant.
@@ -472,7 +500,9 @@ public:
         return sandboxed_path{sandbox_directory, parent_path};
     }
 
-
+    /**!\brief Swaps the current path
+     * \param other Reference to a sandboxed_path.
+     */
     void swap(sandboxed_path & other)
     {
         std::filesystem::path::swap(other);
