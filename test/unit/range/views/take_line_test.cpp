@@ -9,9 +9,6 @@
 
 #include <seqan3/std/ranges>
 
-#include <range/v3/algorithm/copy.hpp>
-#include <range/v3/view/unique.hpp>
-
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -32,8 +29,8 @@ void do_test(adaptor_t const & adaptor, std::string const & vec)
     EXPECT_RANGE_EQ("foo"sv, adaptor(vec));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, vec | adaptor | ranges::views::unique);
-    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor | ranges::views::unique);
+    EXPECT_RANGE_EQ("fo"sv, vec | adaptor | std::views::take(2));
+    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor | std::views::take(3));
 
     // consuming behaviour
     auto v4 = vec | seqan3::views::single_pass_input;
