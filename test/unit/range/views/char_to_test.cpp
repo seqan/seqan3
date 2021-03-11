@@ -15,7 +15,6 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/char_to.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
@@ -26,31 +25,23 @@ TEST(view_char_to, basic)
     seqan3::dna5_vector cmp{"ACTTTGATA"_dna5};
 
     // pipe notation
-    seqan3::dna5_vector v = vec | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp, v);
+    EXPECT_RANGE_EQ(cmp, vec | seqan3::views::char_to<seqan3::dna5>);
 
     // function notation
-    seqan3::dna5_vector v2(seqan3::views::char_to<seqan3::dna5>(vec) | seqan3::views::to<std::vector>);
-    EXPECT_EQ(cmp, v2);
+    EXPECT_RANGE_EQ(cmp, seqan3::views::char_to<seqan3::dna5>(vec));
 
     // combinability
     seqan3::dna5_vector cmp2{"ATAGTTTCA"_dna5};
-    seqan3::dna5_vector v3 = vec
-                           | seqan3::views::char_to<seqan3::dna5>
-                           | std::views::reverse
-                           | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp2, v3);
+    EXPECT_RANGE_EQ(cmp2, vec | seqan3::views::char_to<seqan3::dna5> | std::views::reverse);
 }
 
 TEST(view_char_to, deep_view)
 {
     std::vector<std::string> foo{"ACGTA", "TGCAT"};
 
-    std::vector<seqan3::dna5_vector> v = foo
-                                       | seqan3::views::char_to<seqan3::dna5>
-                                       | seqan3::views::to<std::vector<seqan3::dna5_vector>>;
+    auto v = foo | seqan3::views::char_to<seqan3::dna5>;
 
-    ASSERT_EQ(size(v), 2u);
+    ASSERT_EQ(std::ranges::size(v), 2u);
     EXPECT_RANGE_EQ(v[0], "ACGTA"_dna5);
     EXPECT_RANGE_EQ(v[1], "TGCAT"_dna5);
 }
