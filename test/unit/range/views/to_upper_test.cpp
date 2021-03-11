@@ -7,55 +7,52 @@
 
 #include <gtest/gtest.h>
 
-#include <iostream>
+#include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/range/concept.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to_upper.hpp>
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
+
 
 using seqan3::operator""_dna5;
 
 TEST(view_to_upper, basic)
 {
+    using namespace std::literals;
+
     std::string input_string {"IAmADnaString"};
-    std::string cmp {"IAMADNASTRING"};
 
     // pipe notation string
-    std::string s(input_string | seqan3::views::to_upper | seqan3::views::to<std::string>);
-    EXPECT_EQ(cmp, s);
+    EXPECT_RANGE_EQ("IAMADNASTRING"sv, input_string | seqan3::views::to_upper);
 
     // custom conversion operator
-    std::string s2(seqan3::views::to_upper(input_string) | seqan3::views::to<std::string>);
-    EXPECT_EQ(cmp, s2);
+    EXPECT_RANGE_EQ("IAMADNASTRING"sv, seqan3::views::to_upper(input_string));
 }
 
 TEST(view_to_upper, combinability)
 {
-    std::string input_string {"IAmADnaString"};
-    std::string cmp{"GNIRTSANDAMAI"};
-
-    std::vector<seqan3::dna5> dna_vec {"aggcgt"_dna5};
-    std::string cmp2{"AGGCGT"};
+    using namespace std::literals;
 
     // output combinability
-    std::string s(input_string | seqan3::views::to_upper | std::views::reverse | seqan3::views::to<std::string>);
-    EXPECT_EQ(cmp, s);
+    std::string input_string {"IAmADnaString"};
+    EXPECT_RANGE_EQ("GNIRTSANDAMAI"sv, input_string | seqan3::views::to_upper | std::views::reverse);
 
     // input combinability
-    std::string s2(dna_vec | seqan3::views::to_char | seqan3::views::to_upper | seqan3::views::to<std::string>);
-    EXPECT_EQ(cmp2, s2);
+    std::vector<seqan3::dna5> dna_vec {"aggcgt"_dna5};
+    EXPECT_RANGE_EQ("AGGCGT"sv, dna_vec | seqan3::views::to_char | seqan3::views::to_upper);
 }
 
 TEST(view_to_upper, deep)
 {
-    std::vector<std::string> input_vec{"IAmADnaString", "IAmAProteinString"};
-    std::vector<std::string> cmp{"IAMADNASTRING", "IAMAPROTEINSTRING"};
+    using namespace std::literals;
 
-    std::vector<std::string> s(input_vec | seqan3::views::to_upper | seqan3::views::to<std::vector<std::string>>);
-    EXPECT_EQ(cmp, s);
+    std::vector<std::string> input_vec{"IAmADnaString", "IAmAProteinString"};
+
+    auto view = input_vec | seqan3::views::to_upper;
+    EXPECT_RANGE_EQ("IAMADNASTRING"sv, view[0]);
+    EXPECT_RANGE_EQ("IAMAPROTEINSTRING"sv, view[1]);
 }
 
 TEST(view_to_upper, concepts)
