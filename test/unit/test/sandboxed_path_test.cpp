@@ -45,15 +45,30 @@ TEST(sandboxed_path_init, init)
     EXPECT_EQ(sandboxed_path("/dir", "/dir/"), "/dir/");
     EXPECT_EQ(sandboxed_path("/dir/", "/dir/"), "/dir/");
 
-
-
     // Leaving the sandbox path is not allowed
     EXPECT_THROW(sandboxed_path("/dir", "/"), fs::filesystem_error);
     EXPECT_THROW(sandboxed_path("/dir", ".."), fs::filesystem_error);
     EXPECT_THROW(sandboxed_path("/dir", "/dir/.."), fs::filesystem_error);
     EXPECT_THROW(sandboxed_path("/dir", "somedir/../.."), fs::filesystem_error);
     EXPECT_THROW(sandboxed_path(".", ""), fs::filesystem_error);
+
+    // Leaving the root directory
+    EXPECT_THROW(sandboxed_path("/dir", "../.."), fs::filesystem_error);
+
+    // Misc
+    EXPECT_THROW(sandboxed_path("", ""), fs::filesystem_error);
 }
+
+
+// constructors
+TEST(sandboxed_path_copy_constructor, operator_copy_constructor)
+{
+    sandboxed_path sandbox("/dir", "/dir/anotherdir");
+
+    EXPECT_NO_THROW(sandboxed_path{sandbox});
+    EXPECT_NO_THROW(sandboxed_path{std::move(sandbox)});
+}
+//
 
 // assign
 TEST(sandboxed_path_operator_assign, operator_assign)
@@ -133,9 +148,9 @@ TEST(sandboxed_path_append, operator_append2)
     sandboxed_path path{"/dir"};
 
     // check append
-    std::string s1{"/dir/dir2"};
-    EXPECT_NO_THROW(path.append("dir2"));
-    EXPECT_EQ(path, s1);
+    std::string s1{"dir2"};
+    EXPECT_NO_THROW(path.append(begin(s1), end(s1)));
+    EXPECT_EQ(path, "/dir/dir2");
 
     // check invalid append
     std::string s2{"../.."};
