@@ -78,7 +78,6 @@ public:
     ~sandboxed_path() = default;                         //!< Defaulted.
 
     /*!\brief Replaces the path with a new path.
-     * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
      *
      * This works the same way as std::filesystem::path::operator=
@@ -88,17 +87,14 @@ public:
      *
      * Basic exception guarantee.
      */
-    template <typename path_t>
-    sandboxed_path & operator=(path_t const & new_path)
+    sandboxed_path & operator=(sandboxed_path const & new_path)
     {
         std::filesystem::path::operator=(new_path);
-        normalise();
         check_invariant();
         return *this;
     }
 
     /*!\brief Replaces the path with a new path.
-     * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
      *
      * This works the same as std::filesystem::path::operator=
@@ -108,15 +104,12 @@ public:
      *
      * Basic exception guarantee
      */
-    template <typename path_t>
-    sandboxed_path & operator=(path_t && new_path)
+    sandboxed_path & operator=(sandboxed_path && new_path)
     {
-        std::filesystem::path::operator=(std::forward<path_t>(new_path));
-        normalise();
+        std::filesystem::path::operator=(std::move(new_path));
         check_invariant();
         return *this;
     }
-
     //!\}
 
 private:
@@ -297,6 +290,46 @@ private:
     }
 
 public:
+    /*!\brief Replaces the path with a new path.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
+     *
+     * This works the same way as std::filesystem::path::operator=
+     * and additionally checks the invariant.
+     *
+     * ### Exceptions
+     *
+     * Basic exception guarantee.
+     */
+    template <typename path_t>
+    sandboxed_path & operator=(path_t const & new_path)
+    {
+        std::filesystem::path::operator=(new_path);
+        normalise();
+        check_invariant();
+        return *this;
+    }
+
+    /*!\brief Replaces the path with a new path.
+     * \tparam path_t The type of the new_path.
+     * \param  new_path The new path.
+     *
+     * This works the same as std::filesystem::path::operator=
+     * and additionally checks the invariant.
+     *
+     * ### Exceptions
+     *
+     * Basic exception guarantee
+     */
+    template <typename path_t>
+    sandboxed_path & operator=(path_t && new_path)
+    {
+        std::filesystem::path::operator=(std::forward<path_t>(new_path));
+        normalise();
+        check_invariant();
+        return *this;
+    }
+
     /*!\brief Replaces the path with a new path.
      * \tparam path_t The type of the new_path.
      * \param  new_path The new path.
