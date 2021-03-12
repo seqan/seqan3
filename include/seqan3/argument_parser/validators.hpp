@@ -933,12 +933,15 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<std::ranges::range_value_t<range_type>, option_value_type const &>
+        requires std::convertible_to<std::ranges::range_reference_t<range_type>, option_value_type const &>
     //!\endcond
     void operator()(range_type const & v) const
     {
-        for (option_value_type const & file_name : v)
-            (*this)(file_name);
+        for (auto && file_name : v)
+        {
+            // note: we explicitly copy/construct any reference type other than `std::string &`
+            (*this)(static_cast<option_value_type const &>(file_name));
+        }
     }
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
