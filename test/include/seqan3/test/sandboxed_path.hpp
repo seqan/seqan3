@@ -164,7 +164,8 @@ private:
             if (is_relative())
             {
                 return (sandbox_directory / *this).string();
-            } else
+            }
+            else
             {
                 return string();
             }
@@ -237,17 +238,17 @@ private:
         if (!sandbox_directory.is_absolute())
         {
             throw std::filesystem::filesystem_error("sandbox path must be an absolute path",
-                                                sandbox_directory,
-                                                *this,
-                                                std::make_error_code(std::errc::invalid_argument));
+                                                    sandbox_directory,
+                                                    *this,
+                                                    std::make_error_code(std::errc::invalid_argument));
         }
         // Checking that *this is an absolute path
         if (!is_absolute())
         {
             throw std::filesystem::filesystem_error("sandbox path must be an absolute path",
-                                                sandbox_directory,
-                                                *this,
-                                                std::make_error_code(std::errc::invalid_argument));
+                                                    sandbox_directory,
+                                                    *this,
+                                                    std::make_error_code(std::errc::invalid_argument));
         }
 
 #if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
@@ -270,9 +271,9 @@ private:
         if (!starts_with_sandbox_dir)
         {
             throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                sandbox_directory,
-                                                *this,
-                                                std::make_error_code(std::errc::invalid_argument));
+                                                    sandbox_directory,
+                                                    *this,
+                                                    std::make_error_code(std::errc::invalid_argument));
         }
 
 #else
@@ -282,9 +283,9 @@ private:
         if (rel_path.string().find("..") == 0)
         {
             throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                sandbox_directory,
-                                                *this,
-                                                std::make_error_code(std::errc::invalid_argument));
+                                                    sandbox_directory,
+                                                    *this,
+                                                    std::make_error_code(std::errc::invalid_argument));
         }
 #endif
     }
