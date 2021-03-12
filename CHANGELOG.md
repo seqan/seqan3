@@ -88,8 +88,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Alphabet
 
-* Removed seqan3::char_is_valid_for requirement from seqan3::detail::writable_alphabet and
-  seqan3::writable_constexpr_alphabet
+* Removed seqan3::char_is_valid_for requirement from seqan3::writable_alphabet and
+  seqan3::detail::writable_constexpr_alphabet
   ([\#2337](https://github.com/seqan/seqan3/pull/2337)).
 * Removed seqan3::cigar_op, please use seqan3::cigar::operation instead
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
