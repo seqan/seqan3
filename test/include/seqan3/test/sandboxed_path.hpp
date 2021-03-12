@@ -125,17 +125,20 @@ private:
      * \param str String that is going to be split
      * \param delim Delimiter at which point the string should be split.
      */
-    static std::vector<std::string_view> split_string(std::string const& str, char delim) {
+    static std::vector<std::string_view> split_string(std::string const & str, char const delim)
+    {
         std::vector<std::string_view> result{};
         // If string is empty, nothing to split
-        if (str.empty()) {
+        if (str.empty())
+        {
             return result;
         }
 
         size_t current_pos = str.find(delim, 0);
 
         // If string doesn't contain any `delim` return view to the string
-        if (current_pos == std::string::npos) {
+        if (current_pos == std::string::npos)
+        {
             result.emplace_back(str);
             return result;
         }
@@ -176,7 +179,8 @@ private:
         // Manually collapse any "." and "..". This is being done by
         // splitting the string at every the '/' and looking at every path element.
         std::vector<std::string> path_parts;
-        for (auto word : split_string(path_string, '/')) {
+        for (auto word : split_string(path_string, '/'))
+        {
             // If the path element is "." or empty ("") it means
             // that we are in a situation like "abc/./xyz" or abc//xyz"
             // In this case we ignore the path element.
