@@ -256,29 +256,44 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void to_char(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::to_char.
-struct to_char_fn
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_rank.
+//!\ingroup alphabet
+struct to_char_cpo : public detail::customisation_point_object<to_char_cpo, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_char(v))    // explicit customisation
-    SEQAN3_CPO_IMPL(1, to_char(v)                                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.to_char()                                      )    // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<to_char_cpo, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename alph_t>
-    //!\cond
-        requires requires (alph_t const a)
-        {
-            { impl(priority_tag<2>{}, a) };
-            requires noexcept(impl(priority_tag<2>{}, a));
-            requires builtin_character<decltype(impl(priority_tag<2>{}, a))>;
-        }
-    //!\endcond
-    constexpr decltype(auto) operator()(alph_t const a) const noexcept
-    {
-        return impl(priority_tag<2>{}, a);
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the character representation is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_t>::to_char(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `to_char(alphabet)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the character representation is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
+    (
+        /*return*/ to_char(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.to_char()`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the character representation is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
+    (
+        /*return*/ std::forward<alphabet_t>(alphabet).to_char() /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -325,7 +340,7 @@ namespace seqan3
  *
  * \stableapi{Since version 3.1.}
  */
-inline constexpr auto to_char = detail::adl_only::to_char_fn{};
+inline constexpr auto to_char = detail::adl_only::to_char_cpo{};
 //!\}
 
 /*!\brief The `char_type` of the alphabet; defined as the return type of seqan3::to_char.
