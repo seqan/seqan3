@@ -384,29 +384,44 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void pseudoknot_id(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::pseudoknot_id.
-struct pseudoknot_id_fn
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::pseudoknot_id_cpo.
+//!\ingroup structure
+struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_id_cpo, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::pseudoknot_id(v)) // explicit customisation
-    SEQAN3_CPO_IMPL(1, pseudoknot_id(v)                                       ) // ADL
-    SEQAN3_CPO_IMPL(0, v.pseudoknot_id()                                      ) // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<pseudoknot_id_cpo, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename rna_structure_t>
-    //!\cond
-        requires requires (rna_structure_t const chr) { { impl(priority_tag<2>{}, chr) }; }
-    //!\endcond
-    constexpr auto operator()(rna_structure_t const chr) const noexcept
-    {
-        static_assert(noexcept(impl(priority_tag<2>{}, chr)),
-            "Only overloads that are marked noexcept are picked up by seqan3::pseudoknot_id().");
-        static_assert(std::constructible_from<std::optional<size_t>, decltype(impl(priority_tag<2>{}, chr))>,
-            "The return type of your pseudoknot_id() implementation must be convertible to std::optional<size_t>.");
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the pseudoknot_id is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_t>::pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
 
-        return impl(priority_tag<2>{}, chr);
-    }
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `pseudoknot_id(alphabet)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the pseudoknot_id is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
+    (
+        /*return*/ pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.pseudoknot_id()`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the pseudoknot_id is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
+    (
+        /*return*/ std::forward<alphabet_t>(alphabet).pseudoknot_id() /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -449,7 +464,7 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_fn{};
+inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_cpo{};
 //!\}
 
 } // namespace seqan3
