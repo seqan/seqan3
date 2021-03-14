@@ -75,29 +75,44 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void to_rank(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::to_rank.
-struct to_rank_fn
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_rank.
+//!\ingroup alphabet
+struct to_rank_cpo : public detail::customisation_point_object<to_rank_cpo, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::to_rank(v))    // explicit customisation
-    SEQAN3_CPO_IMPL(1, to_rank(v)                                       )    // ADL
-    SEQAN3_CPO_IMPL(0, v.to_rank()                                      )    // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<to_rank_cpo, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename alph_t>
-    //!\cond
-        requires requires (alph_t const a)
-        {
-            { impl(priority_tag<2>{}, a) };
-            requires noexcept(impl(priority_tag<2>{}, a));
-            requires std::integral<decltype(impl(priority_tag<2>{}, a))>;
-        }
-    //!\endcond
-    constexpr auto operator()(alph_t const a) const noexcept
-    {
-        return impl(priority_tag<2>{}, a);
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the rank is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_t>::to_rank(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `to_rank(alphabet)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the rank is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
+    (
+        /*return*/ to_rank(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.to_rank()`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the rank is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
+    (
+        /*return*/ std::forward<alphabet_t>(alphabet).to_rank() /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -143,7 +158,7 @@ namespace seqan3
  *
  * \stableapi{Since version 3.1.}
  */
-inline constexpr auto to_rank = detail::adl_only::to_rank_fn{};
+inline constexpr auto to_rank = detail::adl_only::to_rank_cpo{};
 //!\}
 
 //!\brief The `rank_type` of the semi-alphabet; defined as the return type of seqan3::to_rank.
