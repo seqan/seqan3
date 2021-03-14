@@ -267,46 +267,66 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void max_pseudoknot_depth(args_t ...) = delete;
 
-/*!\brief Functor definition for seqan3::max_pseudoknot_depth.
- * \tparam alph_t   The type being queried.
- * \tparam s_alph_t `alph_t` with cvref removed and possibly wrapped in std::type_identity; never user-provide this!
+/*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::max_pseudoknot_depth.
+ * \tparam alphabet_t The alphabet type being queried.
  * \ingroup structure
  */
-template <typename alph_t,
-          typename s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>> &&
-                                                 seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alph_t>>,
-                                                 std::remove_cvref_t<alph_t>,
-                                                 std::type_identity<alph_t>>>
-struct max_pseudoknot_depth_fn
+template <typename alphabet_t>
+struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_pseudoknot_depth_cpo<alphabet_t>, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::max_pseudoknot_depth)) // custom
-    SEQAN3_CPO_IMPL(1, (max_pseudoknot_depth(v)                                                             )) // ADL
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::max_pseudoknot_depth          )) // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<max_pseudoknot_depth_cpo<alphabet_t>, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename dummy = int>
-    //!\cond
-        requires requires { { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) }; }
-    //!\endcond
-    constexpr auto operator()() const noexcept
-    {
-        static_assert(noexcept(impl(priority_tag<2>{}, s_alph_t{})),
-            "Only overloads that are marked noexcept are picked up by seqan3::max_pseudoknot_depth.");
-        static_assert(std::constructible_from<size_t, decltype(impl(priority_tag<2>{}, s_alph_t{}))>,
-            "The return type of your max_pseudoknot_depth implementation must be convertible to size_t.");
-        static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<2>{}, s_alph_t{})),
-            "Only overloads that are marked constexpr are picked up by seqan3::max_pseudoknot_depth.");
+    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, max_pseudoknot_depth will be called with
+     *        std::type_identity instead of a default constructed alphabet.
+     */
+    template <typename alphabet_type>
+    using alphabet_or_type_identity
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>> &&
+                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                             std::remove_cvref_t<alphabet_type>,
+                             std::type_identity<alphabet_type>>;
 
-        return impl(priority_tag<2>{}, s_alph_t{});
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<3>)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_type>::max_pseudoknot_depth /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e.
+     *        `max_pseudoknot_depth(alphabet_type{})`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     *
+     * \details
+     *
+     * If the alphabet_type isn't std::is_nothrow_default_constructible,
+     * `max_pseudoknot_depth(std::type_identity<alphabet_type>{})` will be called.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
+    (
+        /*return*/ max_pseudoknot_depth(alphabet_or_type_identity<alphabet_type>{}) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): static member access, i.e. `alphabet_type::max_pseudoknot_depth`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
+    (
+        /*return*/ std::remove_cvref_t<alphabet_type>::max_pseudoknot_depth /*;*/
+    );
 };
 
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
-    requires requires { { max_pseudoknot_depth_fn<alph_t>{} }; }
-inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_fn<alph_t>{};
+    requires requires { { max_pseudoknot_depth_cpo<alph_t>{} }; }
+inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_cpo<alph_t>{};
 #endif // SEQAN3_WORKAROUND_GCC_89953
 
 } // namespace seqan3::detail::adl_only
@@ -359,16 +379,16 @@ namespace seqan3
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl_only::max_pseudoknot_depth_fn<alph_t>{} }; } &&
+    requires requires { { detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{} }; } &&
              requires { { detail::adl_only::max_pseudoknot_depth_obj<alph_t>() }; }
 //!\endcond
 inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_obj<alph_t>();
 #else // ^^^ workaround / no workaround vvv
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl_only::max_pseudoknot_depth_fn<alph_t>{}() }; }
+    requires requires { { detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}() }; }
 //!\endcond
-inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_fn<alph_t>{}();
+inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}();
 #endif // SEQAN3_WORKAROUND_GCC_89953
 
 } // namespace seqan3
