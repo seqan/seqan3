@@ -27,31 +27,44 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void complement(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::complement.
-struct complement_fn
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::complement.
+//!\ingroup nucleotide
+struct complement_cpo : public detail::customisation_point_object<complement_cpo, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, seqan3::custom::alphabet<decltype(v)>::complement(v)) // explicit customisation
-    SEQAN3_CPO_IMPL(1, complement(v)                                       ) // ADL
-    SEQAN3_CPO_IMPL(0, v.complement()                                      ) // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<complement_cpo, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename nucleotide_t>
-    //!\cond
-        requires requires (nucleotide_t const nucl)
-        {
-            { impl(priority_tag<2>{}, nucl) };
-            requires noexcept(impl(priority_tag<2>{}, nucl));
-            // requires std::common_with<decltype(impl(priority_tag<2>{}, nucl)), nucleotide_t>; // triggers an ICE
-            requires alphabet<decltype(impl(priority_tag<2>{}, nucl))>;
-            { impl(priority_tag<2>{}, impl(priority_tag<2>{}, nucl)) }; // you can take the complement again
-        }
-    //!\endcond
-    constexpr auto operator()(nucleotide_t const nucl) const noexcept
-    {
-        return impl(priority_tag<2>{}, nucl);
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the complement is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_t>::complement(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `complement(alphabet)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the complement is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
+    (
+        /*return*/ complement(std::forward<alphabet_t>(alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.complement()`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param alphabet The alphabet the complement is returned from.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
+    (
+        /*return*/ std::forward<alphabet_t>(alphabet).complement() /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -85,14 +98,14 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/alphabet/nucleotide/complement_fn.cpp
+ * \include test/snippet/alphabet/nucleotide/complement_cpo.cpp
  *
  * ### Customisation point
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  */
-inline constexpr auto complement = detail::adl_only::complement_fn{};
+inline constexpr auto complement = detail::adl_only::complement_cpo{};
 //!\}
 
 // ============================================================================
