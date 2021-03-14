@@ -73,38 +73,49 @@ namespace seqan3::detail::adl_only
 template <typename t>
 std::unordered_map<std::string_view, t> enumeration_names(t) = delete;
 
-/*!\brief Functor definition for seqan3::enumeration_names.
- *
- * We need a class template here because we need the original option_t next to s_option_t that may be wrapped
- * std::type_identity to be default constructible. We need option_t to be default constructible because the
- * respective CPO should be callable without a function parameter.
- */
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enumeration_names.
+//!\ingroup alphabet
 template <typename option_t>
-struct enumeration_names_fn
+struct enumeration_names_cpo : public detail::customisation_point_object<enumeration_names_cpo<option_t>, 1>
 {
-    //!\brief `option_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_option_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_t>> &&
-                                          seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_t>>,
-                                          std::remove_cvref_t<option_t>,
-                                          std::type_identity<option_t>>;
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<enumeration_names_cpo<option_t>, 1>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-    SEQAN3_CPO_IMPL(1, (deferred_type_t<seqan3::custom::argument_parsing<option_t>, decltype(v)>::enumeration_names))
-    SEQAN3_CPO_IMPL(0, (enumeration_names(v))) // ADL
+    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
+     *        std::type_identity instead of a default constructed alphabet.
+     */
+    template <typename option_type>
+    using option_or_type_identity
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>> &&
+                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_type>>,
+                             std::remove_cvref_t<option_type>,
+                             std::type_identity<option_type>>;
 
-    //!\brief Operator definition.
-    template <typename dummy = int> // need to make this a template to enforce deferred initialisation
-    //!\cond
-        requires requires
-        {
-            { impl(priority_tag<1>{}, s_option_t{}, dummy{}) };
-            std::same_as<decltype(impl(priority_tag<1>{}, s_option_t{}, dummy{})),
-                         std::unordered_map<std::string_view, std::remove_cvref_t<option_t>>>;
-        }
-    //!\endcond
-    auto operator()() const
-    {
-        return impl(priority_tag<1>{}, s_option_t{});
-    }
+    /*!\brief CPO overload (1. out of 2 checks): explicit customisation via `seqan3::custom::argument_parsing`
+     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename option_type = option_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
+    (
+        /*return*/ seqan3::custom::argument_parsing<option_type>::enumeration_names /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 2 checks): argument dependent lookup (ADL), i.e.
+     *        `enumeration_names(option_type{})`
+     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types)
+     *
+     * \details
+     *
+     * If the option_type isn't std::is_nothrow_default_constructible,
+     * `enumeration_names(std::type_identity<alphabet_type>{})` will be called.
+     */
+    template <typename option_type = option_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
+    (
+        /*return*/ enumeration_names(option_or_type_identity<option_type>{}) /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -150,9 +161,9 @@ namespace seqan3
  */
 template <typename option_type>
 //!\cond
-    requires requires { { detail::adl_only::enumeration_names_fn<option_type>{}() }; }
+    requires requires { { detail::adl_only::enumeration_names_cpo<option_type>{}() }; }
 //!\endcond
-inline auto const enumeration_names = detail::adl_only::enumeration_names_fn<option_type>{}();
+inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<option_type>{}();
 //!\}
 
 /*!\interface seqan3::named_enumeration <>
