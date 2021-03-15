@@ -11,13 +11,10 @@
 
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
-
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 
 #include "fixture/alignment_fixture.hpp"
-
-#include <seqan3/test/pretty_printing.hpp>
 
 using namespace seqan3::test::alignment::fixture;
 
@@ -195,8 +192,8 @@ TYPED_TEST_P(edit_distance_unbanded_test, alignment)
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
 
     auto && [gapped_database, gapped_query] = alignment.alignment();
-    EXPECT_EQ(gapped_database | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence1);
-    EXPECT_EQ(gapped_query    | seqan3::views::to_char | seqan3::views::to<std::string>, fixture.aligned_sequence2);
+    EXPECT_RANGE_EQ(gapped_database | seqan3::views::to_char, fixture.aligned_sequence1);
+    EXPECT_RANGE_EQ(gapped_query | seqan3::views::to_char, fixture.aligned_sequence2);
 }
 
 REGISTER_TYPED_TEST_SUITE_P(edit_distance_unbanded_test,

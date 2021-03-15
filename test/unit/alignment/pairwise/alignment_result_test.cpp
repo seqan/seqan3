@@ -10,6 +10,7 @@
 #include <meta/meta.hpp>
 #include <tuple>
 #include <type_traits>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -17,10 +18,11 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_dna4;
@@ -169,6 +171,8 @@ TYPED_TEST(alignment_result_test, begin_positions)
 
 TYPED_TEST(alignment_result_test, alignment)
 {
+    using namespace std::literals;
+
     using alignment_t = decltype(std::declval<TypeParam>().alignment);
     aligned_seq_type seq{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'C'_dna4, seqan3::gap{}, seqan3::gap{}, 'A'_dna4};
 
@@ -189,22 +193,18 @@ TYPED_TEST(alignment_result_test, alignment)
     if constexpr (seqan3::tuple_like<alignment_t>)
     {
         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(std::get<0>(tmp.alignment()) | seqan3::views::persist
-                                               | seqan3::views::to_char
-                                               | seqan3::views::to<std::string>,
-                  std::string{"AT-C--A"});
-        EXPECT_EQ(std::get<1>(tmp.alignment()) | seqan3::views::persist
-                                               | seqan3::views::to_char
-                                               | seqan3::views::to<std::string>,
-                  std::string{"AT-C--A"});
+        EXPECT_RANGE_EQ(std::get<0>(tmp.alignment()) | seqan3::views::persist | seqan3::views::to_char,
+                        "AT-C--A"sv);
+        EXPECT_RANGE_EQ(std::get<1>(tmp.alignment()) | seqan3::views::persist | seqan3::views::to_char,
+                        "AT-C--A"sv);
     }
     else
     {
         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_EQ(tmp.alignment()[0] | seqan3::views::persist | seqan3::views::to_char | seqan3::views::to<std::string>,
-                  "AT-C--A");
-        EXPECT_EQ(tmp.alignment()[1] | seqan3::views::persist | seqan3::views::to_char | seqan3::views::to<std::string>,
-                  "AT-C--A");
+        EXPECT_RANGE_EQ(tmp.alignment()[0] | seqan3::views::persist | seqan3::views::to_char,
+                        "AT-C--A"sv);
+        EXPECT_RANGE_EQ(tmp.alignment()[1] | seqan3::views::persist | seqan3::views::to_char,
+                        "AT-C--A"sv);
     }
 }
 
