@@ -227,7 +227,8 @@ public:
     constexpr auto operator()(urng_t && urange, stored_arg_types && ...args) const
     {
         auto adaptor_closure = std::get<0>(this->arguments)(std::forward<stored_arg_types>(args)...);
-        return std::forward<urng_t>(urange) | std::move(adaptor_closure);
+        deep<decltype(adaptor_closure)> deep_adaptor{std::move(adaptor_closure)};
+        return deep_adaptor(std::forward<urng_t>(urange));
     }
 };
 
