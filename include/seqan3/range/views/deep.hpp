@@ -136,42 +136,35 @@ public:
     template <std::ranges::input_range urng_t, typename underlying_adaptor_t_>
     static constexpr auto impl(urng_t && urange, underlying_adaptor_t_ && adap)
     {
-        return std::forward<urng_t>(urange) | std::forward<underlying_adaptor_t_>(adap);
-    }
+        // this function recursively constructs a view (moves/forwards omitted for readability):
+        // return range | std::views::transform([adap](auto && inner_range_depth1)
+        // {
+        //     return inner_range_depth1 | std::views::transform([adap](auto && inner_range_depth2)
+        //     {
+        //         // ...
+        //         return inner_range_depth_n | std::views::transform([adap](auto && inner_most_range)
+        //         {
+        //             return inner_most_range | adap;
+        //         });
+        //         // ...
+        //     });
+        // });
 
-    /*!\brief Specialisation of the range-handling `operator()` for range-of-range (this is where deep
-     * changes the behaviour for nested ranges).
-     * \tparam    urng_t Type of the underlying range.
-     * \param[in] urange The view's underlying range.
-     * \returns A view with the inner adaptor applied on the innermost ranges.
-     *
-     * \details
-     *
-     * Recurses and calls std::views::transform if the underlying range is a range-of-ranges.
-     */
-    template <std::ranges::input_range urng_t>
-    //!\cond
-        requires std::ranges::input_range<std::ranges::range_reference_t<urng_t>>
-    //!\endcond
-    constexpr auto operator()(urng_t && urange) const &
-    {
-        return std::forward<urng_t>(urange) | std::views::transform([me = *this] (auto && e)
+        // Note: we avoid the (unqualified) pipe|-notation and use function notation here, to avoid problems with ADL.
+        if constexpr (std::ranges::input_range<std::ranges::range_reference_t<urng_t>>)
         {
-            return std::forward<decltype(e)>(e) | me;
-        });
-    }
-
-    //!\overload
-    template <std::ranges::input_range urng_t>
-    //!\cond
-        requires std::ranges::input_range<std::ranges::range_reference_t<urng_t>>
-    //!\endcond
-    constexpr auto operator()(urng_t && urange) &&
-    {
-        return std::forward<urng_t>(urange) | std::views::transform([me = std::move(*this)] (auto && e)
+            auto transform = [adaptor = std::forward<underlying_adaptor_t_>(adap)] (auto && inner_range)
+            {
+                // recursively call impl until inner most range is reached.
+                return impl(std::forward<decltype(inner_range)>(inner_range), std::forward<decltype(adaptor)>(adaptor));
+            };
+            return std::views::transform(std::forward<urng_t>(urange), std::move(transform));
+        }
+        else
         {
-            return std::forward<decltype(e)>(e) | me;
-        });
+            // recursion anchor: this is the inner most range
+            return std::forward<underlying_adaptor_t_>(adap)(std::forward<urng_t>(urange));
+        }
     }
 
     /*!\brief Called to produce a range adaptor closure object if the wrapped functor was **not** a range
