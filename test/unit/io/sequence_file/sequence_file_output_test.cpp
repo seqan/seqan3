@@ -5,17 +5,17 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/iterator>
 #include <sstream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/test/tmp_filename.hpp>
-#include <seqan3/std/iterator>
 
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
