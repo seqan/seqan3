@@ -5,35 +5,31 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
 
 TEST(view_to_char, basic)
 {
+    using namespace std::literals;
+
     seqan3::dna5_vector vec{"ACTTTGATA"_dna5};
-    std::string cmp{"ACTTTGATA"};
 
     // pipe notation
-    std::string v = vec | seqan3::views::to_char | seqan3::views::to<std::string>;
-    EXPECT_EQ(cmp, v);
+    EXPECT_RANGE_EQ("ACTTTGATA"sv, vec | seqan3::views::to_char);
 
     // function notation
-    std::string v2(seqan3::views::to_char(vec) | seqan3::views::to<std::string>);
-    EXPECT_EQ(cmp, v2);
+    EXPECT_RANGE_EQ("ACTTTGATA"sv, seqan3::views::to_char(vec));
 
     // combinability
-    std::string cmp2{"ATAGTTTCA"};
-    std::string v3 = vec | seqan3::views::to_char | std::views::reverse | seqan3::views::to<std::string>;
-    EXPECT_EQ(cmp2, v3);
+    EXPECT_RANGE_EQ("ATAGTTTCA"sv, vec | seqan3::views::to_char | std::views::reverse);
 }
 
 TEST(view_to_char, concepts)

@@ -5,15 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/to_rank.hpp>
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
 
@@ -23,17 +22,14 @@ TEST(view_to_rank, basic)
     std::vector<uint8_t> cmp{0,1,4,4,4,2,0,4,0};
 
     // pipe notation
-    std::vector<uint8_t> v = vec | seqan3::views::to_rank | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp, v);
+    EXPECT_RANGE_EQ(cmp, vec | seqan3::views::to_rank);
 
     // function notation
-    std::vector<uint8_t> v2(seqan3::views::to_rank(vec) | seqan3::views::to<std::vector>);
-    EXPECT_EQ(cmp, v2);
+    EXPECT_RANGE_EQ(cmp, seqan3::views::to_rank(vec));
 
     // combinability
     std::vector<uint8_t> cmp2{0, 4, 0, 2, 4, 4, 4, 1, 0};
-    std::vector<uint8_t> v3 = vec | seqan3::views::to_rank | std::views::reverse | seqan3::views::to<std::vector>;
-    EXPECT_EQ(cmp2, v3);
+    EXPECT_RANGE_EQ(cmp2, vec | seqan3::views::to_rank | std::views::reverse);
 }
 
 TEST(view_to_rank, concepts)
