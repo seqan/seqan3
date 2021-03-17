@@ -62,8 +62,8 @@ TYPED_TEST_P(pairwise_alignment_test, end_positions)
 
     EXPECT_EQ(res.score(), fixture.score);
     EXPECT_SAME_TYPE(decltype(res.score()), double);
-    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.sequence1_end_position);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.sequence2_end_position);
 }
 
 TYPED_TEST_P(pairwise_alignment_test, begin_positions)
@@ -80,10 +80,10 @@ TYPED_TEST_P(pairwise_alignment_test, begin_positions)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
-    EXPECT_EQ(res.sequence1_begin_position(), fixture.begin_positions.first);
-    EXPECT_EQ(res.sequence2_begin_position(), fixture.begin_positions.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.sequence1_end_position);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.sequence2_end_position);
+    EXPECT_EQ(res.sequence1_begin_position(), fixture.sequence1_begin_position);
+    EXPECT_EQ(res.sequence2_begin_position(), fixture.sequence2_begin_position);
 }
 
 TYPED_TEST_P(pairwise_alignment_test, alignment)
@@ -102,10 +102,10 @@ TYPED_TEST_P(pairwise_alignment_test, alignment)
     auto res = *alignment_rng.begin();
 
     EXPECT_EQ(res.score(), fixture.score);
-    EXPECT_EQ(res.sequence1_end_position(), fixture.end_positions.first);
-    EXPECT_EQ(res.sequence2_end_position(), fixture.end_positions.second);
-    EXPECT_EQ(res.sequence1_begin_position(), fixture.begin_positions.first);
-    EXPECT_EQ(res.sequence2_begin_position(), fixture.begin_positions.second);
+    EXPECT_EQ(res.sequence1_end_position(), fixture.sequence1_end_position);
+    EXPECT_EQ(res.sequence2_end_position(), fixture.sequence2_end_position);
+    EXPECT_EQ(res.sequence1_begin_position(), fixture.sequence1_begin_position);
+    EXPECT_EQ(res.sequence2_begin_position(), fixture.sequence2_begin_position);
 
     auto && [gapped_database, gapped_query] = res.alignment();
     EXPECT_RANGE_EQ(gapped_database | seqan3::views::to_char, fixture.aligned_sequence1);

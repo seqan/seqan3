@@ -75,8 +75,10 @@ static auto dna4_01_semi_first = []()
         10,
         "ACGT---ATGT",
         "ACGTAAAACGT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{13u}, seqan3::detail::row_index_type{11u}},
+        /*.sequence1_begin_position = */ 5u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 13u,
+        /*.sequence2_end_position = */ 11u,
         std::vector<std::optional<int32_t>>
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -127,8 +129,10 @@ static auto dna4_01_semi_first = []()
 //         -13,
 //         "-----ACGTA--------AAACGT",
 //         "TTTTTACGTATGTCCCCC------",
-//         seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-//         seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{18u}}
+//         0u,
+//         0u,
+//         5u,
+//         18u}
 //     };
 // }();
 
@@ -142,8 +146,10 @@ static auto dna4_03_semi_second = []()
         -19,
         "TTTTTACGTATGTCCCCC",
         "GTAAAACGT---------",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{2u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{18u}, seqan3::detail::row_index_type{11u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 2u,
+        /*.sequence1_end_position = */ 18u,
+        /*.sequence2_end_position = */ 11u,
         std::vector<std::optional<int32_t>>
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -189,8 +195,10 @@ static auto dna4_04_semi_second = []()
         -5,
         "ACGTAAAACGT",
         "------TACGT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{4u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{11u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 4u,
+        /*.sequence1_end_position = */ 11u,
+        /*.sequence2_end_position = */ 9u,
         std::vector<std::optional<int32_t>>
         {
         //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T
@@ -250,8 +258,10 @@ static auto dna4_free_lb_with_band_tl2br_no_matches = []()
         -34,
         "AAAAAAA-------",
         "-------TTTTTTT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{4u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{11u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 4u,
+        /*.sequence1_end_position = */ 7u,
+        /*.sequence2_end_position = */ 11u,
         std::vector<std::optional<int32_t>>
         {
         //      e,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,  A,
@@ -300,8 +310,10 @@ static auto dna4_free_tlbr_with_band_tl2b = [] ()
         5,
         "AG-AT",
         "AGCAT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{2u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{4u}, seqan3::detail::row_index_type{7u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 2u,
+        /*.sequence1_end_position = */ 4u,
+        /*.sequence2_end_position = */ 7u,
         std::vector<std::optional<int32_t>>
         {
         //    e  ,A  ,G  ,A  ,T  ,T  ,T  ,A  ,C  ,T  ,A  ,C  ,G  ,C  ,A  ,T  ,
@@ -342,8 +354,10 @@ static auto dna4_free_tlbr_with_band_tl2r = [] ()
         5,
         "AGCAT",
         "AG-AT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{2u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{4u}},
+        /*.sequence1_begin_position = */ 2u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 7u,
+        /*.sequence2_end_position = */ 4u,
         std::vector<std::optional<int32_t>>
         {
         //    e  ,G  ,T  ,A  ,G  ,C  ,A  ,T  ,

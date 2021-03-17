@@ -55,8 +55,10 @@ static auto dna4_01_semi_first = []()
         10,
         "ACGT---ATGT",
         "ACGTAAAACGT",
-        seqan3::alignment_coordinate{column_index_type{5u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{13u}, row_index_type{11u}},
+        /*.sequence1_begin_position = */ 5u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 13u,
+        /*.sequence2_end_position = */ 11u,
         std::vector
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -107,8 +109,10 @@ static auto dna4_02_semi_first = []()
         -13,
         "-----ACGTA--------",
         "TTTTTACGTATGTCCCCC",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{5u}, row_index_type{18u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 5u,
+        /*.sequence2_end_position = */ 18u,
         std::vector
         {
         //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T
@@ -173,8 +177,10 @@ static auto dna4_03_semi_second = []()
         -13,
         "TTTTTACGTATGTCCCCC",
         "-----ACGTA--------",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{18u}, row_index_type{5u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 18u,
+        /*.sequence2_end_position = */ 5u,
         std::vector
         {
         //      e,  T,  T,  T,  T,  T,  A,  C,  G,  T,  A,  T,  G,  T,  C,  C,  C,  C,  C
@@ -225,8 +231,10 @@ static auto dna4_04_semi_second = []()
         10,
         "ACGTAAAACGT",
         "ACGT---ATGT",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{5u}},
-        seqan3::alignment_coordinate{column_index_type{11u}, row_index_type{13u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 5u,
+        /*.sequence1_end_position = */ 11u,
+        /*.sequence2_end_position = */ 13u,
         std::vector
         {
         //      e,  A,  C,  G,  T,  A,  A,  A,  A,  C,  G,  T

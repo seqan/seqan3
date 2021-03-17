@@ -46,8 +46,10 @@ static auto dna4_01 = []()
         -5,
         "AC---CGGTT",
         "ACGTACG-TA",
-        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 9u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -94,8 +96,10 @@ static auto dna4_01T = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 16u,
         std::vector
         {
         //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -156,8 +160,10 @@ static auto dna4_02 = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        seqan3::alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 1u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 8u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //     e,  A,  A,  C,  C,  G,  G,  T,  A,  A,  A,  C,  C,  G,  G,  T,  T,
@@ -204,8 +210,10 @@ static auto dna4_02_s10u_15u = []()
         -4,
         "AC---CGGTA",
         "ACGTACG-TA",
-        seqan3::alignment_coordinate{column_index_type{1u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 1u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 8u,
+        /*.sequence2_end_position = */ 9u,
         dna4_02.score_matrix().sub_matrix(10u, 15u),
         dna4_02.trace_matrix().sub_matrix(10u, 15u)
     };
@@ -226,8 +234,10 @@ static auto dna4_02_s3u_15u = []()
         -0,
         "AC",
         "AC",
-        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{11u}, row_index_type{2u}},
+        /*.sequence1_begin_position = */ 9u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 11u,
+        /*.sequence2_end_position = */ 2u,
         dna4_02.score_matrix().sub_matrix(3u, 15u),
         dna4_02.trace_matrix().sub_matrix(3u, 15u)
     };
@@ -244,8 +254,10 @@ static auto dna4_02_s1u_15u = []()
         -0,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        /*.sequence1_begin_position = */ 14u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 14u,
+        /*.sequence2_end_position = */ 0u,
         dna4_02.score_matrix().sub_matrix(1u, 15u),
         dna4_02.trace_matrix().sub_matrix(1u, 15u)
     };
@@ -266,8 +278,10 @@ static auto dna4_01T_s17u_1u = []()
         -16,
         "----------------",
         "AACCGGTTAACCGGTT",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{16u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 16u,
         dna4_01T.score_matrix().sub_matrix(17u, 1u),
         dna4_01T.trace_matrix().sub_matrix(17u, 1u)
     };
@@ -284,8 +298,10 @@ static auto dna4_03 = []()
         -0,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 0u,
         std::vector<int>{0},
         std::vector<seqan3::detail::trace_directions>{N}
     };
@@ -306,8 +322,10 @@ static auto aa27_01 = []()
         -5,
         "UW---WRRII",
         "UWRIUWR-IU",
-        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 9u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //     e,  U,  U,  W,  W,  R,  R,  I,  I,  U,  U,  W,  W,  R,  R,  I,  I
@@ -354,8 +372,10 @@ static auto aa27_01T = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{9u}, row_index_type{16u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 16u,
         std::vector
         {
         //     e,  U,  W,  R,  I,  U,  W,  R,  I,  U

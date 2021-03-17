@@ -40,7 +40,7 @@ inline constexpr auto align_config_dna_score = align_config
 static auto dna4_match_4_mismatch_5_gap_1_open_10_part_01 = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         // score: 8 (7 insertions, 1 substitutions)
         // alignment:
@@ -53,8 +53,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_01 = []()
         -18,
         "AACCGGTTAACCG---GTT",
         "A----------CGTACGTA",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{16u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //      e,  A,  A,  C,  C,  G,  G,  T,  T,  A,  A,  C,  C,  G,  G,  T,  T
@@ -89,7 +91,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_01 = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_part_02 = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "ACGTACGTA"_dna4,
         "AACCGGTTAACCGGTT"_dna4,
@@ -97,8 +99,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_02 = []()
         -18,
         "ACGTAC----------GTA",
         "A---ACCGGTTAACCGGTT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{16u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 16u,
         std::vector
         {
         //      e,  A,  C,  G,  T,  A,  C,  G,  T,  A
@@ -147,7 +151,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_02 = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_part_03 = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "AGATCGACTAGCGAGCTACGAGCTAGC"_dna4,
         "AGACGATCGACGAGCGACTACGTACGA"_dna4,
@@ -155,8 +159,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_03 = []()
         26,
         "A---GATCGACTAGCGAGCTACGAGCTA-GC",
         "AGACGATCGACGAGCGA-CTACG---TACGA",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{27u}, seqan3::detail::row_index_type{27u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 27u,
+        /*.sequence2_end_position = */ 27u,
         std::vector
         {
         //      e,  A,  G,  A,  T,  C,  G,  A,  C,  T,  A,  G,  C,  G,  A,  G,  C,  T,  A,  C,  G,  A,  G,  C,  T,  A,  G,  C,
@@ -227,7 +233,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_03 = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_part_04 = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "AGATCGACTAGCG"_dna4,
         "G"_dna4,
@@ -235,8 +241,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_04 = []()
         -18,
         "AGATCGACTAGCG",
         "------------G",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{13u}, seqan3::detail::row_index_type{1u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 13u,
+        /*.sequence2_end_position = */ 1u,
         std::vector
         {
         //      e,  A,  G,  A,  T,  C,  G,  A,  C,  T,  A,  G,  C,  G,
@@ -255,7 +263,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_04 = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_part_05 = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "A"_dna4,
         "AGATCGACTAGCG"_dna4,
@@ -263,8 +271,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_05 = []()
         -18,
         "A------------",
         "AGATCGACTAGCG",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{1u}, seqan3::detail::row_index_type{13u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 1u,
+        /*.sequence2_end_position = */ 13u,
         std::vector
         {
         //       e,  A,
@@ -307,7 +317,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_part_05 = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_seq1_empty = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         ""_dna4,
         "AGATCGACT"_dna4,
@@ -315,8 +325,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_seq1_empty = []()
         -19,
         "---------",
         "AGATCGACT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //       e,
@@ -351,7 +363,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_seq1_empty = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_seq2_empty = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "AGATCGACT"_dna4,
         ""_dna4,
@@ -359,8 +371,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_seq2_empty = []()
         -19,
         "AGATCGACT",
         "---------",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //      e,  A,  G,  A,  T,  C,  G,  A,  C,  T,
@@ -377,7 +391,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_seq2_empty = []()
 static auto dna4_match_4_mismatch_5_gap_1_open_10_both_empty = []()
 {
     using seqan3::operator""_dna4;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         ""_dna4,
         ""_dna4,
@@ -385,8 +399,10 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_both_empty = []()
         0,
         "",
         "",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //    e
@@ -410,7 +426,7 @@ inline constexpr auto config_blosum62_scheme =
 static auto aa27_blosum62_gap_1_open_10 = [] ()
 {
     using seqan3::operator""_aa27;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "FNQSAEYPDISHCGVMQLKWRATLGT"_aa27,
         "EIKSDVLLHRWSMKNPGNILMIDVGMQVAESYFAT"_aa27,
@@ -418,8 +434,10 @@ static auto aa27_blosum62_gap_1_open_10 = [] ()
         -26,
         "--------FNQSAEYP-DISHCGVMQLKWRATLGT",
         "EIKSDVLLHRWSMKNPGNILMIDVGMQVAESYFAT",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{26u}, seqan3::detail::row_index_type{35u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 26u,
+        /*.sequence2_end_position = */ 35u,
         std::vector
         {
         //    e  ,F  ,N  ,Q  ,S  ,A  ,E  ,Y  ,P  ,D  ,I  ,S  ,H  ,C  ,G  ,V  ,M  ,Q  ,L  ,K  ,W  ,R  ,A  ,T  ,L  ,G  ,T  ,
@@ -506,7 +524,7 @@ static auto aa27_blosum62_gap_1_open_10 = [] ()
 static auto aa27_blosum62_gap_1_open_10_small = [] ()
 {
     using seqan3::operator""_aa27;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "RKFCYMD"_aa27,
         "GAYQW"_aa27,
@@ -514,8 +532,10 @@ static auto aa27_blosum62_gap_1_open_10_small = [] ()
         -11,
         "RKFCYMD",
         "G--AYQW",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{7u}, seqan3::detail::row_index_type{5u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 7u,
+        /*.sequence2_end_position = */ 5u,
         std::vector
         {
         //    e  ,R  ,K  ,F  ,C  ,Y  ,M  ,D  ,
@@ -542,7 +562,7 @@ static auto aa27_blosum62_gap_1_open_10_small = [] ()
 static auto aa27_blosum62_gap_1_open_10_empty_first = [] ()
 {
     using seqan3::operator""_aa27;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         "PPAMDYIRPW"_aa27,
         ""_aa27,
@@ -550,8 +570,10 @@ static auto aa27_blosum62_gap_1_open_10_empty_first = [] ()
         -20,
         "PPAMDYIRPW",
         "----------",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 10u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //    e  ,P  ,P  ,A  ,M  ,D  ,Y  ,I  ,R  ,P  ,W  ,
@@ -568,7 +590,7 @@ static auto aa27_blosum62_gap_1_open_10_empty_first = [] ()
 static auto aa27_blosum62_gap_1_open_10_empty_second = [] ()
 {
     using seqan3::operator""_aa27;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         ""_aa27,
         "PPAMDYIRPW"_aa27,
@@ -576,8 +598,10 @@ static auto aa27_blosum62_gap_1_open_10_empty_second = [] ()
         -20,
         "----------",
         "PPAMDYIRPW",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{10u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 10u,
         std::vector
         {
         //    e
@@ -614,7 +638,7 @@ static auto aa27_blosum62_gap_1_open_10_empty_second = [] ()
 static auto aa27_blosum62_gap_1_open_10_empty_both = [] ()
 {
     using seqan3::operator""_aa27;
-    return seqan3::test::alignment::fixture::alignment_fixture
+    return alignment_fixture
     {
         ""_aa27,
         ""_aa27,
@@ -622,8 +646,10 @@ static auto aa27_blosum62_gap_1_open_10_empty_both = [] ()
         0,
         "",
         "",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //     e

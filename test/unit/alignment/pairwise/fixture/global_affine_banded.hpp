@@ -55,8 +55,10 @@ static auto dna4_01 = []()
         -18,
         "A---ACCGGTTAACCGGTT",
         "ACGTAC----------GTA",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{16u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         std::vector<std::optional<int32_t>>
         {
         //   e  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,A  ,A  ,C  ,C  ,G  ,G  ,T  ,T  ,
@@ -112,8 +114,10 @@ static auto dna4_same_sequence_upper_diagonal_0 = []()
         36,
         "ACGTACGTA",
         "ACGTACGTA",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 9u,
         std::vector<std::optional<int32_t>>
         {
         //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
@@ -169,8 +173,10 @@ static auto dna4_same_sequence_lower_diagonal_0 = []()
         36,
         "ACGTACGTA",
         "ACGTACGTA",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{9u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 9u,
+        /*.sequence2_end_position = */ 9u,
         std::vector<std::optional<int32_t>>
         {
         //   e  ,A  ,C  ,G  ,T  ,A  ,C  ,G  ,T  ,A  ,
@@ -226,8 +232,10 @@ static auto dna4_small_band = []()
         -2,
         "ATCGACGATA",
         "A-CGACTAGC",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 10u,
+        /*.sequence2_end_position = */ 9u,
         std::vector<std::optional<int32_t>>
         {
         //   e  ,A  ,T  ,C  ,G  ,A  ,C  ,G  ,A  ,T  ,A  ,
@@ -280,8 +288,10 @@ static auto dna4_single_diagonal = []()
         -16,
         "ATCGA",
         "ACGAC",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{5u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 5u,
+        /*.sequence2_end_position = */ 5u,
         std::vector<std::optional<int32_t>>
         {
         //     e,  A,  T,  C,  G,  A,
@@ -326,8 +336,10 @@ static auto dna4_large_band = []()
         -6,
         "ATCGA-",
         "A-CGAC",
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}},
-        seqan3::alignment_coordinate{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{5u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 5u,
+        /*.sequence2_end_position = */ 5u,
         std::vector<std::optional<int32_t>>
         {
         //   e   ,A  ,T  ,C  ,G  ,A  ,

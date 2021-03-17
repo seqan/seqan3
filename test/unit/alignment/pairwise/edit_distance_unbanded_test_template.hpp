@@ -164,7 +164,8 @@ TYPED_TEST_P(edit_distance_unbanded_test, end_positions)
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
     auto end_positions = alignment.end_positions();
 
-    EXPECT_EQ(end_positions, fixture.end_positions);
+    EXPECT_EQ(end_positions.first, fixture.sequence1_end_position);
+    EXPECT_EQ(end_positions.second, fixture.sequence2_end_position);
 }
 
 TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
@@ -178,7 +179,8 @@ TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
     auto begin_positions = alignment.begin_positions();
 
-    EXPECT_EQ(begin_positions, fixture.begin_positions);
+    EXPECT_EQ(begin_positions.first,   fixture.sequence1_begin_position);
+    EXPECT_EQ(begin_positions.second,  fixture.sequence2_begin_position);
 }
 
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)
