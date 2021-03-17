@@ -16,7 +16,6 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/move.hpp>
 #include <seqan3/range/views/complement.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -36,11 +35,9 @@ TEST(view_move, basic)
 
     // combinability
     seqan3::dna5_vector vec2{"ACGTA"_dna5};
-    seqan3::dna5_vector v3 = vec2
-                           | seqan3::views::complement
-                           | seqan3::views::move        // NOP, because already temporaries
-                           | seqan3::views::to<std::vector>;
-    EXPECT_EQ("TGCAT"_dna5, v3);
+
+    EXPECT_RANGE_EQ("TGCAT"_dna5, vec2 | seqan3::views::complement
+                                       | seqan3::views::move /*NOP, because already temporaries*/);
 }
 
 TEST(view_move, concepts)
