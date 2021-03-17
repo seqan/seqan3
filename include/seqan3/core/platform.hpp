@@ -351,6 +351,16 @@
 #   endif
 #endif
 
+//!\brief GCC 7 only offers an experimental filesystems implementation.
+#ifndef SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
+#   if defined(__GNUC__) && (__GNUC__ == 7)
+#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 0
+#   endif
+#endif
+
+
 // ============================================================================
 //  Backmatter
 // ============================================================================
