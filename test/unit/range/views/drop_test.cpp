@@ -22,7 +22,6 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
@@ -33,29 +32,27 @@
 template <typename adaptor_t>
 void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
+    using namespace std::string_literals;
+
     // pipe notation
-    auto v = vec | adaptor(3);
-    EXPECT_EQ("bar", std::string(v));
+    EXPECT_RANGE_EQ("bar"s, vec | adaptor(3));
 
     // function notation
-    std::string v2{adaptor(vec, 3) | seqan3::views::to<std::string>};
-    EXPECT_EQ("bar", v2);
+    EXPECT_RANGE_EQ("bar"s, adaptor(vec, 3));
 
     // combinability
-    auto v3 = vec | adaptor(1) | adaptor(1) | ranges::views::unique;
-    EXPECT_EQ("obar", v3 | seqan3::views::to<std::string>);
-    std::string v3b = vec | std::views::reverse | adaptor(3) | ranges::views::unique | seqan3::views::to<std::string>;
-    EXPECT_EQ("of", v3b);
+    EXPECT_RANGE_EQ("obar"s, vec | adaptor(1) | adaptor(1) | ranges::views::unique);
+    EXPECT_RANGE_EQ("of"s, vec | std::views::reverse | adaptor(3) | ranges::views::unique);
 
     // store arg
     auto a0 = adaptor(3);
     auto v4 = vec | a0;
-    EXPECT_EQ("bar", v4 | seqan3::views::to<std::string>);
+    EXPECT_RANGE_EQ("bar"s, v4);
 
     // store combined
     auto a1 = adaptor(1) | adaptor(1) | ranges::views::unique;
     auto v5 = vec | a1;
-    EXPECT_EQ("obar", v5 | seqan3::views::to<std::string>);
+    EXPECT_RANGE_EQ("obar"s, v5);
 }
 
 template <typename adaptor_t>
@@ -113,16 +110,13 @@ TEST(view_drop, concepts)
 
 TEST(view_drop, underlying_is_shorter)
 {
+    using namespace std::string_literals;
+
     std::string vec{"foobar"};
     EXPECT_NO_THROW(( seqan3::views::drop(vec, 4) )); // no parsing
 
-    std::string v;
     // full parsing on conversion
-    EXPECT_NO_THROW(( v = vec
-                        | seqan3::views::single_pass_input
-                        | seqan3::views::drop(4)
-                        | seqan3::views::to<std::string>));
-    EXPECT_EQ("ar", v);
+    EXPECT_RANGE_EQ("ar"s, vec | seqan3::views::single_pass_input | seqan3::views::drop(4));
 }
 
 TEST(view_drop, type_erasure)
