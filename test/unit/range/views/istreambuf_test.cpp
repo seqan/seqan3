@@ -17,7 +17,6 @@
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
@@ -46,39 +45,32 @@ INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 TEST(view_istreambuf, basic)
 {
+    using namespace std::literals;
+
     std::string data{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
     std::istringstream is{data};
 
     // construct from istream:
-    auto v1 = seqan3::views::istreambuf(is);
-    size_t i = 0;
-    for (auto c : v1)
-        EXPECT_EQ(c, data[i++]);
-    EXPECT_EQ(i, data.size());
+    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is),
+                    data)
 
     // construct from streambuf
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v2 = seqan3::views::istreambuf(*is.rdbuf());
-    i = 0;
-    for (auto c : v2)
-        EXPECT_EQ(c, data[i++]);
-    EXPECT_EQ(i, data.size());
+    EXPECT_RANGE_EQ(seqan3::views::istreambuf(*is.rdbuf()),
+                    data)
 
     // combinability
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v3 = seqan3::views::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement;
-    std::vector<seqan3::dna5> comp{"TGCATATATATANTATATANAATNNNTATATT"_dna5};
-    EXPECT_RANGE_EQ(v3, comp);
+    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement,
+                    "TGCATATATATANTATATANAATNNNTATATT"_dna5);
 
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    auto v4 = seqan3::views::istreambuf(is) | seqan3::views::take_until(seqan3::is_space);
-    std::string out2 = v4 | seqan3::views::to<std::string>;
-    std::string comp2 = "ACGTATATATAT";
-    EXPECT_RANGE_EQ(out2, comp2);
+    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is) | seqan3::views::take_until(seqan3::is_space),
+                    "ACGTATATATAT"sv);
 }
 
 TEST(view_istreambuf, concepts)
@@ -100,6 +92,8 @@ TEST(view_istreambuf, concepts)
 
 TEST(view_istreambuf, big_file_stram)
 {
+    using namespace std::literals;
+
     seqan3::test::tmp_filename file_name{"istream_storage"};
 
     {
@@ -113,7 +107,7 @@ TEST(view_istreambuf, big_file_stram)
     while (v.begin() != v.end())
     {
         EXPECT_RANGE_EQ(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
-                        std::string_view{"halloballo"});
+                        "halloballo"sv);
     }
 
 }
