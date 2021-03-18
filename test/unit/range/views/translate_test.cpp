@@ -25,7 +25,165 @@
 #include <seqan3/range/views/translate.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
+#include "../iterator_test_template.hpp"
+#include "../range_test_template.hpp"
+
 using seqan3::operator""_aa27;
+
+template <seqan3::nucleotide_alphabet nucleotide_alphabet_t, seqan3::translation_frames translation_frames>
+struct translate_single_view_test_fixture : public range_test_fixture
+{
+    using range_value_t = seqan3::aa27;
+    using range_reference_t = seqan3::aa27;
+
+    static constexpr bool input_range = true;
+    static constexpr bool forward_range = true;
+    static constexpr bool bidirectional_range = true;
+    static constexpr bool random_access_range = true;
+    static constexpr bool contiguous_range = false;
+    static constexpr bool output_range = false;
+
+    static constexpr bool common_range = true;
+    static constexpr bool viewable_range = true;
+    static constexpr bool view = true;
+    static constexpr bool sized_range = true;
+    static constexpr bool const_iterable_range = true;
+    static constexpr bool size_member = true;
+    static constexpr bool subscript_member = true;
+
+    seqan3::aa27_vector expected_range()
+    {
+        switch (translation_frames)
+        {
+            case seqan3::translation_frames::FWD_FRAME_0:
+                return "TYVR"_aa27;
+            case seqan3::translation_frames::REV_FRAME_0:
+                return "YVRT"_aa27;
+            case seqan3::translation_frames::FWD_FRAME_1:
+                return "RTYV"_aa27;
+            case seqan3::translation_frames::REV_FRAME_1:
+                return "TYVR"_aa27;
+            case seqan3::translation_frames::FWD_FRAME_2:
+                return "VRT"_aa27;
+            case seqan3::translation_frames::REV_FRAME_2:
+                return "RTY"_aa27;
+        }
+        return {};
+    }
+
+    auto _underlying_range()
+    {
+        // string_view is a borrowed_range:
+        return std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<nucleotide_alphabet_t>;
+    }
+
+    auto range()
+    {
+        return _underlying_range() | seqan3::views::translate_single(translation_frames);
+    }
+};
+
+using translate_single_view_test_fixtures_t =
+    ::testing::Types<translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_0>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_0>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_1>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_1>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_2>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_2>>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(translate_single_view_test, range_test, translate_single_view_test_fixtures_t, );
+INSTANTIATE_TYPED_TEST_SUITE_P(translate_single_view_test, iterator_fixture, translate_single_view_test_fixtures_t, );
+
+template <seqan3::nucleotide_alphabet nucleotide_alphabet_t, seqan3::translation_frames translation_frames>
+struct translate_view_test_fixture : public range_test_fixture
+{
+    using _underlying_range_t = decltype(seqan3::views::char_to<nucleotide_alphabet_t>(std::string_view{}));
+
+    using range_value_t = decltype(seqan3::views::translate_single(_underlying_range_t{}, translation_frames));
+    using range_reference_t = range_value_t;
+
+    static constexpr bool input_range = true;
+    static constexpr bool forward_range = true;
+    static constexpr bool bidirectional_range = true;
+    static constexpr bool random_access_range = true;
+    static constexpr bool contiguous_range = false;
+    static constexpr bool output_range = false;
+
+    static constexpr bool common_range = true;
+    static constexpr bool viewable_range = true;
+    static constexpr bool view = true;
+    static constexpr bool sized_range = true;
+    static constexpr bool const_iterable_range = true;
+    static constexpr bool size_member = true;
+    static constexpr bool subscript_member = true;
+
+    template <typename range_value_t, typename expected_range_value_t>
+    static void expect_range_value_equal(range_value_t && range_value, expected_range_value_t && expected_range_value)
+    {
+        EXPECT_RANGE_EQ(range_value, expected_range_value);
+    }
+
+    std::vector<seqan3::aa27_vector> expected_range()
+    {
+        switch (translation_frames)
+        {
+            case seqan3::translation_frames::FWD_FRAME_0:
+                return {"TYVR"_aa27};
+            case seqan3::translation_frames::REV_FRAME_0:
+                return {"YVRT"_aa27};
+            case seqan3::translation_frames::FWD_FRAME_1:
+                return {"RTYV"_aa27};
+            case seqan3::translation_frames::REV_FRAME_1:
+                return {"TYVR"_aa27};
+            case seqan3::translation_frames::FWD_FRAME_2:
+                return {"VRT"_aa27};
+            case seqan3::translation_frames::REV_FRAME_2:
+                return {"RTY"_aa27};
+            case seqan3::translation_frames::FWD_REV_0:
+                return {"TYVR"_aa27, "YVRT"_aa27};
+            case seqan3::translation_frames::FWD_REV_1:
+                return {"RTYV"_aa27, "TYVR"_aa27};
+            case seqan3::translation_frames::FWD_REV_2:
+                return {"VRT"_aa27, "RTY"_aa27};
+            case seqan3::translation_frames::FWD:
+                return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27};
+            case seqan3::translation_frames::REV:
+                return {"YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
+            case seqan3::translation_frames::SIX_FRAME:
+                return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27, "YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
+        }
+
+        return {};
+    }
+
+    auto _underlying_range()
+    {
+        // string_view is a borrowed_range:
+        return std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<nucleotide_alphabet_t>;
+    }
+
+    auto range()
+    {
+        return seqan3::views::translate(_underlying_range(), translation_frames);
+    }
+};
+
+using translate_view_test_fixtures_t =
+    ::testing::Types<translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::SIX_FRAME>>;
+
+INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, range_test, translate_view_test_fixtures_t, );
+INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, iterator_fixture, translate_view_test_fixtures_t, );
 
 template <typename T>
 class nucleotide : public ::testing::Test
