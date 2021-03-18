@@ -351,7 +351,8 @@ public:
      */
     template <std::ranges::forward_range range_type>
     //!\cond
-        requires std::convertible_to<std::ranges::range_value_t<range_type>, std::filesystem::path const &>
+        requires (std::convertible_to<std::ranges::range_value_t<range_type>, std::filesystem::path const &>
+                 && !std::is_base_of_v<std::filesystem::path, range_type>)
     //!\endcond
     void operator()(range_type const & v) const
     {
