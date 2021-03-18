@@ -199,6 +199,7 @@ TEST(validator_test, input_file)
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
     }
+    tmp.clean();
 }
 
 TEST(validator_test, input_file_ext_from_file)
@@ -453,6 +454,7 @@ TEST(validator_test, input_directory)
 
         EXPECT_EQ(my_stdout, expected);
     }
+    tmp.clean();
 }
 
 TEST(validator_test, output_directory)
@@ -560,6 +562,7 @@ TEST(validator_test, inputfile_not_readable)
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::add);
+    tmp.clean();
 }
 
 TEST(validator_test, inputdir_not_readable)
@@ -587,6 +590,7 @@ TEST(validator_test, inputdir_not_readable)
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::add);
+    tmp.clean();
 }
 
 TEST(validator_test, outputfile_not_writable)
@@ -643,6 +647,7 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::add);
+        tmp.clean();
     }
 
     {  // this dir is not writable
@@ -670,6 +675,7 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::add);
+        tmp.clean();
     }
 }
 

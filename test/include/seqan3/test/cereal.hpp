@@ -63,6 +63,7 @@ void do_cerealisation(value_t && value)
         iarchive(value_from_archive);
         EXPECT_TRUE(value == value_from_archive);
     }
+    tmp.clean();
 }
 
 /*!\brief Tests if an object is serialise for all cereal archive types.
