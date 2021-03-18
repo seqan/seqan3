@@ -186,7 +186,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, range_test, translate_view_t
 INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, iterator_fixture, translate_view_test_fixtures_t, );
 
 template <typename T>
-class nucleotide : public ::testing::Test
+class translate_adaptor_test : public ::testing::Test
 {};
 
 // add all alphabets here
@@ -197,9 +197,27 @@ using nucleotide_types = ::testing::Types<seqan3::dna4,
                                           seqan3::rna5,
                                           seqan3::rna15>;
 
-TYPED_TEST_SUITE(nucleotide, nucleotide_types, );
+TYPED_TEST_SUITE(translate_adaptor_test, nucleotide_types, );
 
-TYPED_TEST(nucleotide, view_translate_single)
+TYPED_TEST(translate_adaptor_test, view_translate_single_exceptions)
+{
+    auto vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
+
+    // Construct with multiple frames
+    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::FWD), std::invalid_argument);
+
+    // Construct with default (empty) frame
+    auto view = seqan3::views::translate_single(vec, seqan3::translation_frames{});
+    EXPECT_THROW(view.size(), std::invalid_argument);
+    EXPECT_THROW(view[0], std::invalid_argument);
+
+    // Construct with default (empty) frame
+    auto const const_view = seqan3::views::translate_single(vec, seqan3::translation_frames{});
+    EXPECT_THROW(const_view.size(), std::invalid_argument);
+    EXPECT_THROW(const_view[0], std::invalid_argument);
+}
+
+TYPED_TEST(translate_adaptor_test, view_translate_single)
 {
     auto vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
 
@@ -216,45 +234,6 @@ TYPED_TEST(nucleotide, view_translate_single)
     EXPECT_RANGE_EQ("TYVR"_aa27, seqan3::views::translate_single(vec, seqan3::translation_frames::FWD_FRAME_0));
 
     // combinability
-    EXPECT_RANGE_EQ("CMHA"_aa27,  vec | seqan3::views::complement
-                                      | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0));
-
-    // combinability
-    EXPECT_RANGE_EQ("AHMC"_aa27, vec | seqan3::views::complement
-                                     | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0)
-                                     | std::views::reverse);
-
-    // Construct with multiple frames
-    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::FWD), std::invalid_argument);
-
-    // Construct with default (empty) frame
-    auto v7 = seqan3::views::translate_single(vec, seqan3::translation_frames{});
-    EXPECT_THROW(v7.size(), std::invalid_argument);
-    EXPECT_THROW(v7[0], std::invalid_argument);
-}
-
-TYPED_TEST(nucleotide, view_translate_single_const)
-{
-    auto const vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
-
-    // default parameter translation_frames
-    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single);
-
-    // default parameter translation_frames
-    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single());
-
-    // single frame translation
-    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0));
-    EXPECT_RANGE_EQ("YVRT"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_0));
-    EXPECT_RANGE_EQ("RTYV"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_1));
-    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_1));
-    EXPECT_RANGE_EQ("VRT"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_2));
-    EXPECT_RANGE_EQ("RTY"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_2));
-
-    // function syntax
-    EXPECT_RANGE_EQ("TYVR"_aa27, seqan3::views::translate_single(vec, seqan3::translation_frames::FWD_FRAME_0));
-
-    // combinability
     EXPECT_RANGE_EQ("CMHA"_aa27, vec | seqan3::views::complement
                                      | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0));
 
@@ -262,17 +241,9 @@ TYPED_TEST(nucleotide, view_translate_single_const)
     EXPECT_RANGE_EQ("AHMC"_aa27, vec | seqan3::views::complement
                                      | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0)
                                      | std::views::reverse);
-
-    // Construct with multiple frames
-    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::FWD), std::invalid_argument);
-
-    // Construct with default (empty) frame
-    auto const v7 = seqan3::views::translate_single(vec, seqan3::translation_frames{});
-    EXPECT_THROW(v7.size(), std::invalid_argument);
-    EXPECT_THROW(v7[0], std::invalid_argument);
 }
 
-TYPED_TEST(nucleotide, view_translate)
+TYPED_TEST(translate_adaptor_test, view_translate)
 {
     auto vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
 
@@ -301,190 +272,53 @@ TYPED_TEST(nucleotide, view_translate)
     EXPECT_EQ(v3.size(), 1u);
     EXPECT_RANGE_EQ(v3[0], "TYVR"_aa27);
 
-    // reverse translation
-    auto v4 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v4.size(), 2u);
-    EXPECT_RANGE_EQ(v4[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v4[1], "YVRT"_aa27);
-
-    // forward frames translation
-    auto v5 = vec | seqan3::views::translate(seqan3::translation_frames::FWD);
-    EXPECT_EQ(v5.size(), 3u);
-    EXPECT_RANGE_EQ(v5[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v5[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v5[2], "VRT"_aa27);
-
     // six frame translation
-    auto v6 = vec | seqan3::views::translate(seqan3::translation_frames::SIX_FRAME);
-    EXPECT_EQ(v6.size(), 6u);
-    EXPECT_RANGE_EQ(v6[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v6[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v6[2], "VRT"_aa27);
-    EXPECT_RANGE_EQ(v6[3], "YVRT"_aa27);
-    EXPECT_RANGE_EQ(v6[4], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v6[5], "RTY"_aa27);
+    auto v4 = vec | seqan3::views::translate(seqan3::translation_frames::SIX_FRAME);
+    EXPECT_EQ(v4.size(), 6u);
+    EXPECT_RANGE_EQ(v4[0], "TYVR"_aa27);
+    EXPECT_RANGE_EQ(v4[1], "RTYV"_aa27);
+    EXPECT_RANGE_EQ(v4[2], "VRT"_aa27);
+    EXPECT_RANGE_EQ(v4[3], "YVRT"_aa27);
+    EXPECT_RANGE_EQ(v4[4], "TYVR"_aa27);
+    EXPECT_RANGE_EQ(v4[5], "RTY"_aa27);
 
     // user-defined frame combination
-    auto v7 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_FRAME_0
-                  | seqan3::translation_frames::FWD_FRAME_2);
-    EXPECT_EQ(v7.size(), 2u);
-    EXPECT_RANGE_EQ(v7[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v7[1], "VRT"_aa27);
+    seqan3::translation_frames frames = seqan3::translation_frames::FWD_FRAME_0 |
+                                        seqan3::translation_frames::FWD_FRAME_2;
+    auto v5 = vec | seqan3::views::translate(frames);
+    EXPECT_EQ(v5.size(), 2u);
+    EXPECT_RANGE_EQ(v5[0], "TYVR"_aa27);
+    EXPECT_RANGE_EQ(v5[1], "VRT"_aa27);
 
     // function syntax
-    auto v8 = seqan3::views::translate(vec, seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v8.size(), 2u);
-    EXPECT_RANGE_EQ(v8[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v8[1], "YVRT"_aa27);
+    auto v6 = seqan3::views::translate(vec, seqan3::translation_frames::FWD_REV_0);
+    EXPECT_EQ(v6.size(), 2u);
+    EXPECT_RANGE_EQ(v6[0], "TYVR"_aa27);
+    EXPECT_RANGE_EQ(v6[1], "YVRT"_aa27);
 
     // combinability
-    auto v9 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
+    auto v7 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
+    EXPECT_EQ(v7.size(), 2u);
+    EXPECT_RANGE_EQ(v7[0], "CMHA"_aa27);
+    EXPECT_RANGE_EQ(v7[1], "MHAC"_aa27);
+
+    // combinability
+    auto v8 = vec
+            | seqan3::views::complement
+            | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0)
+            | std::views::take(1);
+    EXPECT_EQ(v8.size(), 1u);
+    EXPECT_RANGE_EQ(v8[0], "CMHA"_aa27);
+
+    // combinability and function syntax
+    auto v9 = seqan3::detail::view_translate(seqan3::views::complement(vec), seqan3::translation_frames::FWD_REV_0);
     EXPECT_EQ(v9.size(), 2u);
     EXPECT_RANGE_EQ(v9[0], "CMHA"_aa27);
     EXPECT_RANGE_EQ(v9[1], "MHAC"_aa27);
-
-    // combinability
-    auto v10 = vec
-             | seqan3::views::complement
-             | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0)
-             | std::views::take(1);
-    EXPECT_EQ(v10.size(), 1u);
-    EXPECT_RANGE_EQ(v10[0], "CMHA"_aa27);
-
-    // combinability and function syntax
-    auto v11 = seqan3::detail::view_translate(seqan3::views::complement(vec), seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v11.size(), 2u);
-    EXPECT_RANGE_EQ(v11[0], "CMHA"_aa27);
-    EXPECT_RANGE_EQ(v11[1], "MHAC"_aa27);
-}
-
-TYPED_TEST(nucleotide, view_translate_const)
-{
-    auto const vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
-
-    // default parameter translation_frames
-    auto const v1 = vec | seqan3::views::translate;
-    EXPECT_EQ(v1.size(), 6u);
-    EXPECT_RANGE_EQ(v1[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v1[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v1[2], "VRT"_aa27);
-    EXPECT_RANGE_EQ(v1[3], "YVRT"_aa27);
-    EXPECT_RANGE_EQ(v1[4], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v1[5], "RTY"_aa27);
-
-    // default parameter translation_frames
-    auto const v2 = vec | seqan3::views::translate();
-    EXPECT_EQ(v2.size(), 6u);
-    EXPECT_RANGE_EQ(v2[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v2[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v2[2], "VRT"_aa27);
-    EXPECT_RANGE_EQ(v2[3], "YVRT"_aa27);
-    EXPECT_RANGE_EQ(v2[4], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v2[5], "RTY"_aa27);
-
-    // single frame translation
-    auto const v3 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_FRAME_0);
-    EXPECT_EQ(v3.size(), 1u);
-    EXPECT_RANGE_EQ(v3[0], "TYVR"_aa27);
-
-    // reverse translation
-    auto const v4 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v4.size(), 2u);
-    EXPECT_RANGE_EQ(v4[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v4[1], "YVRT"_aa27);
-
-    // forward frames translation
-    auto const v5 = vec | seqan3::views::translate(seqan3::translation_frames::FWD);
-    EXPECT_EQ(v5.size(), 3u);
-    EXPECT_RANGE_EQ(v5[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v5[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v5[2], "VRT"_aa27);
-
-    // six frame translation
-    auto const v6 = vec | seqan3::views::translate(seqan3::translation_frames::SIX_FRAME);
-    EXPECT_EQ(v6.size(), 6u);
-    EXPECT_RANGE_EQ(v6[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v6[1], "RTYV"_aa27);
-    EXPECT_RANGE_EQ(v6[2], "VRT"_aa27);
-    EXPECT_RANGE_EQ(v6[3], "YVRT"_aa27);
-    EXPECT_RANGE_EQ(v6[4], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v6[5], "RTY"_aa27);
-
-    // user-defined frame combination
-    auto const v7 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_FRAME_0
-                  | seqan3::translation_frames::FWD_FRAME_2);
-    EXPECT_EQ(v7.size(), 2u);
-    EXPECT_RANGE_EQ(v7[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v7[1], "VRT"_aa27);
-
-    // function syntax
-    auto const v8 = seqan3::views::translate(vec, seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v8.size(), 2u);
-    EXPECT_RANGE_EQ(v8[0], "TYVR"_aa27);
-    EXPECT_RANGE_EQ(v8[1], "YVRT"_aa27);
-
-    // combinability
-    auto const v9 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v9.size(), 2u);
-    EXPECT_RANGE_EQ(v9[0], "CMHA"_aa27);
-    EXPECT_RANGE_EQ(v9[1], "MHAC"_aa27);
-
-    // combinability
-    auto const v10 = vec
-             | seqan3::views::complement
-             | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0)
-             | std::views::take(1);
-    EXPECT_EQ(v10.size(), 1u);
-    EXPECT_RANGE_EQ(v10[0], "CMHA"_aa27);
-
-    // combinability and function syntax
-    auto const v11 = seqan3::detail::view_translate(seqan3::views::complement(vec), seqan3::translation_frames::FWD_REV_0);
-    EXPECT_EQ(v11.size(), 2u);
-    EXPECT_RANGE_EQ(v11[0], "CMHA"_aa27);
-    EXPECT_RANGE_EQ(v11[1], "MHAC"_aa27);
-}
-
-TYPED_TEST(nucleotide, view_translate_single_concepts)
-{
-    std::vector<TypeParam> vec{};
-    EXPECT_TRUE(std::ranges::input_range<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
-
-    auto v1 = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0);
-    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
-    EXPECT_TRUE((std::is_same_v<seqan3::aa27, std::ranges::range_value_t<decltype(v1)>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::aa27, std::ranges::range_reference_t<decltype(v1)>>));
-}
-
-TYPED_TEST(nucleotide, view_translate_concepts)
-{
-    std::vector<TypeParam> vec{};
-    EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
-    EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
-
-    auto v1 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
-    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
-    EXPECT_TRUE(std::ranges::random_access_range<std::ranges::range_value_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::sized_range<std::ranges::range_value_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::view<std::ranges::range_value_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::random_access_range<std::ranges::range_reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::sized_range<std::ranges::range_reference_t<decltype(v1)>>);
-    EXPECT_TRUE(std::ranges::view<std::ranges::range_reference_t<decltype(v1)>>);
 }
 
 // https://github.com/seqan/seqan3/issues/1339
-TYPED_TEST(nucleotide, issue1339)
+TYPED_TEST(translate_adaptor_test, issue1339)
 {
     // empty input
     auto vec = std::string_view{} | seqan3::views::char_to<TypeParam>;
