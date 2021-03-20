@@ -371,7 +371,13 @@ public:
      */
     reference operator[](size_type const n)
     {
-        assert(n < size());
+        // size will throw (only in debug-builds!) if translation_frames is neither (FWD|REV)_FRAME_(0|1|2),
+        // we catch that error in debug-builds to make this function consistent with the behaviour in
+        // release-builds (-DNDEBUG).
+#ifndef NDEBUG
+        try { assert(n < size()); } catch (std::invalid_argument const &) {}
+#endif
+
         switch (tf)
         {
          case translation_frames::FWD_FRAME_0:
@@ -401,7 +407,13 @@ public:
     //!\overload
     const_reference operator[](size_type const n) const
     {
-        assert(n < size());
+        // size will throw (only in debug-builds!) if translation_frames is neither (FWD|REV)_FRAME_(0|1|2),
+        // we catch that error in debug-builds to make this function consistent with the behaviour in
+        // release-builds (-DNDEBUG).
+#ifndef NDEBUG
+        try { assert(n < size()); } catch (std::invalid_argument const &) {}
+#endif
+
         switch (tf)
         {
             case translation_frames::FWD_FRAME_0:
