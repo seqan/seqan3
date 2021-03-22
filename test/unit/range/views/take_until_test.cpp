@@ -11,8 +11,6 @@
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
-#include <range/v3/view/unique.hpp>
-
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -33,8 +31,8 @@ void do_test(adaptor_t const & adaptor, fun_t && fun, std::string const & vec)
     EXPECT_RANGE_EQ("foo"sv, adaptor(vec, fun));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, vec | adaptor(fun) | ranges::views::unique);
-    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor(fun) | ranges::views::unique);
+    EXPECT_RANGE_EQ("fo"sv, vec | adaptor(fun) | std::views::take(2));
+    EXPECT_RANGE_EQ("rab"sv, vec | std::views::reverse | adaptor(fun) | std::views::take(3));
 
     // Test combinability of take_until with std::reverse as second view, this caused a problem here:
     // https://github.com/seqan/seqan3/issues/1754
