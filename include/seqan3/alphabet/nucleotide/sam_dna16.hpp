@@ -41,8 +41,10 @@ namespace seqan3
  * therefore set to 'N'.
  *
  * \include test/snippet/alphabet/nucleotide/sam_dna16.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
-class sam_dna16 : public nucleotide_base<sam_dna16, 16>
+class dna16sam : public nucleotide_base<dna16sam, 16>
 {
 private:
     //!\brief The base class.
@@ -139,8 +141,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::sam_dna16.
-//!\relates sam_dna16
+/*!\brief Alias for an std::vector of seqan3::sam_dna16.
+ * \relates sam_dna16
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using sam_dna16_vector = std::vector<sam_dna16>;
 
 // ------------------------------------------------------------------
@@ -155,6 +160,8 @@ using sam_dna16_vector = std::vector<sam_dna16>;
  * \relates seqan3::sam_dna16
  * \returns seqan3::sam_dna16
  * \param[in] c The character to assign from.
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr sam_dna16 operator""_sam_dna16(char const c) noexcept
 {
@@ -170,6 +177,8 @@ constexpr sam_dna16 operator""_sam_dna16(char const c) noexcept
  * You can use this string literal to easily assign to seqan3::sam_dna16_vector:
  *
  * \include test/snippet/alphabet/nucleotide/sam_dna16_literal.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline sam_dna16_vector operator""_sam_dna16(char const * s, size_t n)
 {
