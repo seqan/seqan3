@@ -163,7 +163,7 @@ public:
     argument_parser & operator=(argument_parser &&) = default;      //!< Defaulted.
 
 #ifdef SEQAN3_DEPRECATED_310
-    //!\deprecated Please use seqan3::update_notifications::on if version_updates == true.
+    //!\deprecated Please use seqan3::update_notifications::on or seqan3::update_notifications::off for `version_updates`.
     SEQAN3_DEPRECATED_310
     argument_parser(std::string const app_name,
                     int const argc,
