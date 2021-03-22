@@ -197,12 +197,14 @@
 #endif
 
 //!\brief Deprecation message for SeqAn 3.1.0 release.
-#ifndef SEQAN3_DEPRECATED_310
-#   ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
-#       define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
-#   else
-#       define SEQAN3_DEPRECATED_310 /**/
-#   endif
+#ifndef SEQAN3_REMOVE_DEPRECATED_310
+#    ifndef SEQAN3_DEPRECATED_310
+#       ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#           define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#       else
+#           define SEQAN3_DEPRECATED_310 /**/
+#       endif
+#    endif
 #endif
 
 //!\brief Deprecation message for deprecated header.
