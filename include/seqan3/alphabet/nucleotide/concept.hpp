@@ -104,6 +104,11 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::complement, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto complement = detail::adl_only::complement_cpo{};
 //!\}
@@ -136,6 +141,8 @@ inline constexpr auto complement = detail::adl_only::complement_cpo{};
  *   * `t &`
  *   * `t const`
  *   * `t const &`
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>

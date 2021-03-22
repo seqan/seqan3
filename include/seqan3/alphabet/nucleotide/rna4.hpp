@@ -41,7 +41,9 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::rna4::assign_char().
  *
- *\include test/snippet/alphabet/nucleotide/rna4.cpp
+ * \include test/snippet/alphabet/nucleotide/rna4.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class rna4 : public nucleotide_base<rna4, 4>
 {
@@ -109,8 +111,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::rna4.
-//!\relates rna4
+/*!\brief Alias for an std::vector of seqan3::rna4.
+ * \relates rna4
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using rna4_vector = std::vector<rna4>;
 
 // ------------------------------------------------------------------
@@ -124,6 +129,8 @@ using rna4_vector = std::vector<rna4>;
 /*!\brief The seqan3::rna4 char literal.
  * \relates seqan3::rna4
  * \returns seqan3::rna4
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr rna4 operator""_rna4(char const c) noexcept
 {
@@ -138,6 +145,7 @@ constexpr rna4 operator""_rna4(char const c) noexcept
  *
  * \include test/snippet/alphabet/nucleotide/rna4_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 inline rna4_vector operator""_rna4(char const * s, std::size_t n)
 {

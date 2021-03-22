@@ -35,6 +35,8 @@ namespace seqan3
  *
  *   * `static std::array<THAT_TYPE, alphabet_size> complement_table` that defines for every possible rank value
  *     the corresponding complement.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, auto size>
 class nucleotide_base : public alphabet_base<derived_type, size, char>
@@ -71,7 +73,10 @@ public:
      * \{
      */
     // This constructor needs to be public, because constructor templates are not inherited otherwise
-    //!\brief Allow explicit construction from any other nucleotide type and convert via the character representation.
+    /*!\brief Allow explicit construction from any other nucleotide type and convert via the character representation.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <typename other_nucl_type>
     //!\cond
         requires (!std::same_as<nucleotide_base, other_nucl_type>) &&
@@ -104,6 +109,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr derived_type complement() const noexcept
     {
@@ -129,6 +136,8 @@ public:
      * ###Exceptions
      *
      * Guaranteed not to throw.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     static constexpr bool char_is_valid(char_type const c) noexcept
     {

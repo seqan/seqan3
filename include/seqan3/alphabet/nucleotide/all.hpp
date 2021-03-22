@@ -8,20 +8,8 @@
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Meta-header for the nucleotide submodule; includes all headers from alphabet/nucleotide/.
- */
-
-#pragma once
-
-#include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/nucleotide/dna3bs.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
-
-/*!\defgroup nucleotide Nucleotide
+ *
+ * \defgroup nucleotide Nucleotide
  * \brief Provides the different DNA and RNA alphabet types.
  * \ingroup alphabet
  *
@@ -65,7 +53,7 @@
  *   1. in most cases, take seqan3::dna15 (includes all IUPAC characters)
  *   2. if you are memory constrained and sequence data is actually the main memory consumer, use seqan3::dna5
  *   3. if you use specialised algorithms that profit from a 2-bit representation, use seqan3::dna4
- *   4. if you are doing only RNA input/output, use the respective seqan3::rna* type
+ *   4. if you are doing only RNA input/output, use the respective seqan3::rna4, seqan3::rna5, seqan3::rna15 type
  *   5. to actually save space from using smaller alphabets, you need a compressed container (e.g.
  *      seqan3::bitcompressed_vector)
  *   6. if you are working with bisulfite data use seqan3::dna3bs
@@ -146,3 +134,14 @@
  * individual complements.
  *
  */
+
+#pragma once
+
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna3bs.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
