@@ -41,7 +41,7 @@ SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<remove_cvref_t<t>, trace_directions> || simd_concept<t>;
+SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, trace_directions> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_cell <>
