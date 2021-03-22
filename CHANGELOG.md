@@ -35,6 +35,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument Parser
 
+* The `seqan3::argument_parser` constructor was changed to accept a strong-type `seqan3::update_notifications::(on|off)`
+  instead of a simple bool (which was subject to unexpected implicit conversion)
+  ([\#2180](https://github.com/seqan/seqan3/pull/2180)).
 * We expanded the `seqan3::output_file_validator`, with a parameter `seqan3::output_file_open_options` to allow overwriting
   output files ([\#2009](https://github.com/seqan/seqan3/pull/2009)).
 * The `seqan3::argument_parser` has a new member function `seqan3::argument_parser::is_option_set` that
