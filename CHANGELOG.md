@@ -150,6 +150,13 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
     * `seqan3::get<seqan3::field::cigar>(record)` => `record.cigar_sequence()`
     * `seqan3::get<seqan3::field::tags>(record)` => `record.tags()`
 
+#### Search
+
+* We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this, because we currently have only one
+  kind of each implementation and aren't completely sure if the current formulation of the concepts is the right one. If
+  you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a substitute.
+  ([\#2348](https://github.com/seqan/seqan3/pull/2348))
+
 # 3.0.2
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
