@@ -108,6 +108,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Argument Parser
 
+* `seqan3::output_file_validator` cannot be constructed with the extension list alone anymore, you need to specify one
+  of the seqan3::output_file_open_options options.
+  ([\#2009](https://github.com/seqan/seqan3/pull/2009)).
 * The enum names of `seqan3::option_spec` were changed to lower case
   ([\#2285](https://github.com/seqan/seqan3/pull/2285)):
   * `seqan3::option_spec::DEFAULT` is replaced by `seqan3::option_spec::standard`.
