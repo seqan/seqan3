@@ -152,10 +152,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Search
 
-* We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this, because we currently have only one
-  kind of each implementation and aren't completely sure if the current formulation of the concepts is the right one. If
-  you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a substitute.
-  ([\#2348](https://github.com/seqan/seqan3/pull/2348))
+* We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this because we currently have only one
+  implementation modelling each concept and are not completely sure if the current definition of the concepts is the 
+  right one. If you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a 
+  substitute. ([\#2348](https://github.com/seqan/seqan3/pull/2348))
 
 # 3.0.2
 
