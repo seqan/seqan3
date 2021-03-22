@@ -26,22 +26,46 @@
 namespace seqan3
 {
 
-//!\brief An alphabet that stores a seqan3::dna4 letter and an seqan3::phred42 letter at each position.
+/*!\brief An alphabet that stores a seqan3::dna4 letter and an seqan3::phred42 letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna4q = qualified<dna4, phred42>;
 
-//!\brief An alphabet that stores a seqan3::dna5 letter and an seqan3::phred42 letter at each position.
+/*!\brief An alphabet that stores a seqan3::dna5 letter and an seqan3::phred42 letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna5q = qualified<dna5, phred42>;
 
-//!\brief An alphabet that stores a seqan3::rna4 letter and an seqan3::phred42 letter at each position.
+/*!\brief An alphabet that stores a seqan3::rna4 letter and an seqan3::phred42 letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using rna4q = qualified<rna4, phred42>;
 
-//!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::phred42 letter at each position.
+/*!\brief An alphabet that stores a seqan3::rna5 letter and an seqan3::phred42 letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using rna5q = qualified<rna5, phred42>;
 
-//!\brief An alphabet that stores a seqan3::dna15 letter and an seqan3::qualified letter at each position.
+/*!\brief An alphabet that stores a seqan3::dna15 letter and an seqan3::qualified letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna15q = qualified<dna15, phred42>;
 
-//!\brief An alphabet that stores a seqan3::rna15 letter and an seqan3::qualified letter at each position.
+/*!\brief An alphabet that stores a seqan3::rna15 letter and an seqan3::qualified letter at each position.
+ * \ingroup quality
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using rna15q = qualified<rna15, phred42>;
 
 } // namespace seqan3

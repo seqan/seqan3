@@ -23,6 +23,8 @@ namespace seqan3
  * \ingroup quality
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, auto size>
 class quality_base : public alphabet_base<derived_type, size, char>
@@ -31,7 +33,10 @@ public:
     /*!\name Member types
      * \{
      */
-    //!\brief The integer representation of a quality score assignable with =operator.
+    /*!\brief The integer representation of the quality score.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using phred_type = int8_t;
     //!\}
 
@@ -74,7 +79,10 @@ public:
      * \{
      */
     // This constructor needs to be public, because constructor templates are not inherited otherwise
-    //!\brief Allow explicit construction from any other quality type by means of the Phred score representation.
+    /*!\brief Allow explicit construction from any other quality type by means of the Phred score representation.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <typename other_qual_type>
     //!\cond
         requires (!std::same_as<quality_base, other_qual_type>) &&
@@ -93,6 +101,8 @@ public:
     /*!\brief Return the alphabet's value in Phred score representation.
      *
      * \see quality
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr phred_type to_phred() const noexcept
     {
@@ -108,13 +118,16 @@ public:
      *
      * \details
      *
-     * Satisfies the seqan3::writable_quality_alphabet::assign_phred() requirement via the seqan3::assign_rank() wrapper.
+     * Satisfies the seqan3::writable_quality_alphabet requirement via the seqan3::assign_rank_to()
+     * wrapper.
      *
      * \see quality
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr derived_type & assign_phred(phred_type const p) noexcept
     {

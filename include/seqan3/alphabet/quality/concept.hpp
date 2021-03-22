@@ -100,12 +100,19 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::to_phred, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto to_phred = detail::adl_only::to_phred_cpo{};
 //!\}
 
 /*!\brief The `phred_type` of the alphabet; defined as the return type of seqan3::to_phred.
  * \ingroup quality
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_type>
 //!\cond
@@ -233,6 +240,11 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::assign_phred_to, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto assign_phred_to = detail::adl_only::assign_phred_to_cpo{};
 //!\}
@@ -272,6 +284,8 @@ namespace seqan3
  *   * `t &`
  *   * `t const`
  *   * `t const &`
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
@@ -310,12 +324,14 @@ SEQAN3_CONCEPT quality_alphabet = alphabet<t> && requires(t qual)
  *   * `t &`
  *
  * `const`-qualified types on the other hand are not assignable.
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename t>
 SEQAN3_CONCEPT writable_quality_alphabet = writable_alphabet<t> &&
-                                         quality_alphabet<t> &&
-                                         requires(t v, alphabet_phred_t<t> c)
+                                           quality_alphabet<t> &&
+                                           requires(t v, alphabet_phred_t<t> c)
 {
     { seqan3::assign_phred_to(c, v) };
 };
