@@ -143,7 +143,7 @@ The output should be `Hello world`.
 
 \remark Depending on the standard C++ on your system, you may need to specify the compiler via `-DCMAKE_CXX_COMPILER=`, for example:
 ```bash
-cmake ../source -DCMAKE_CXX_COMPILER=/path/to/executable/g++-7
+cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-7 ../source
 ```
 
 \note In some situations it can happen that the correct assembler is not found.
