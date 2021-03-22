@@ -230,6 +230,19 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Renamed `seqan3::gap_decorator::unaligned_seq_type` to `seqan3::gap_decorator::unaligned_sequence_type`
   ([\#2564](https://github.com/seqan/seqan3/pull/2564)).
 * Renamed `seqan3::views::get` to `seqan3::views::elements` ([\#2554](https://github.com/seqan/seqan3/pull/2554)).
+* Renamed `seqan3::translation_frames::*FRAME*` ([\#2565](https://github.com/seqan/seqan3/pull/2565)):
+  * `seqan3::translation_frames::FWD_FRAME_0` is replaced by `seqan3::translation_frames::forward_frame0`.
+  * `seqan3::translation_frames::FWD_FRAME_1` is replaced by `seqan3::translation_frames::forward_frame1`.
+  * `seqan3::translation_frames::FWD_FRAME_2` is replaced by `seqan3::translation_frames::forward_frame2`.
+  * `seqan3::translation_frames::REV_FRAME_0` is replaced by `seqan3::translation_frames::reverse_frame0`.
+  * `seqan3::translation_frames::REV_FRAME_1` is replaced by `seqan3::translation_frames::reverse_frame1`.
+  * `seqan3::translation_frames::REV_FRAME_2` is replaced by `seqan3::translation_frames::reverse_frame2`.
+  * `seqan3::translation_frames::FWD_REV_0` is replaced by `seqan3::translation_frames::forward_reverse0`.
+  * `seqan3::translation_frames::FWD_REV_1` is replaced by `seqan3::translation_frames::forward_reverse1`.
+  * `seqan3::translation_frames::FWD_REV_2` is replaced by `seqan3::translation_frames::forward_reverse2`.
+  * `seqan3::translation_frames::FWD` is replaced by `seqan3::translation_frames::forward_frames`.
+  * `seqan3::translation_frames::REV` is replaced by `seqan3::translation_frames::reverse_frames`.
+  * `seqan3::translation_frames::SIX_FRAME` is replaced by `seqan3::translation_frames::six_frames`.
 
 #### Search
 

@@ -55,17 +55,17 @@ struct translate_single_view_test_fixture : public range_test_fixture
     {
         switch (translation_frames)
         {
-            case seqan3::translation_frames::FWD_FRAME_0:
+            case seqan3::translation_frames::forward_frame0:
                 return "TYVR"_aa27;
-            case seqan3::translation_frames::REV_FRAME_0:
+            case seqan3::translation_frames::reverse_frame0:
                 return "YVRT"_aa27;
-            case seqan3::translation_frames::FWD_FRAME_1:
+            case seqan3::translation_frames::forward_frame1:
                 return "RTYV"_aa27;
-            case seqan3::translation_frames::REV_FRAME_1:
+            case seqan3::translation_frames::reverse_frame1:
                 return "TYVR"_aa27;
-            case seqan3::translation_frames::FWD_FRAME_2:
+            case seqan3::translation_frames::forward_frame2:
                 return "VRT"_aa27;
-            case seqan3::translation_frames::REV_FRAME_2:
+            case seqan3::translation_frames::reverse_frame2:
                 return "RTY"_aa27;
         }
         return {};
@@ -84,12 +84,12 @@ struct translate_single_view_test_fixture : public range_test_fixture
 };
 
 using translate_single_view_test_fixtures_t =
-    ::testing::Types<translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_0>,
-                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_0>,
-                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_1>,
-                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_1>,
-                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_2>,
-                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_2>>;
+    ::testing::Types<translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame0>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame0>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame1>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame1>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame2>,
+                     translate_single_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame2>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(translate_single_view_test, range_test, translate_single_view_test_fixtures_t, );
 INSTANTIATE_TYPED_TEST_SUITE_P(translate_single_view_test, iterator_fixture, translate_single_view_test_fixtures_t, );
@@ -127,29 +127,29 @@ struct translate_view_test_fixture : public range_test_fixture
     {
         switch (translation_frames)
         {
-            case seqan3::translation_frames::FWD_FRAME_0:
+            case seqan3::translation_frames::forward_frame0:
                 return {"TYVR"_aa27};
-            case seqan3::translation_frames::REV_FRAME_0:
+            case seqan3::translation_frames::reverse_frame0:
                 return {"YVRT"_aa27};
-            case seqan3::translation_frames::FWD_FRAME_1:
+            case seqan3::translation_frames::forward_frame1:
                 return {"RTYV"_aa27};
-            case seqan3::translation_frames::REV_FRAME_1:
+            case seqan3::translation_frames::reverse_frame1:
                 return {"TYVR"_aa27};
-            case seqan3::translation_frames::FWD_FRAME_2:
+            case seqan3::translation_frames::forward_frame2:
                 return {"VRT"_aa27};
-            case seqan3::translation_frames::REV_FRAME_2:
+            case seqan3::translation_frames::reverse_frame2:
                 return {"RTY"_aa27};
-            case seqan3::translation_frames::FWD_REV_0:
+            case seqan3::translation_frames::forward_reverse0:
                 return {"TYVR"_aa27, "YVRT"_aa27};
-            case seqan3::translation_frames::FWD_REV_1:
+            case seqan3::translation_frames::forward_reverse1:
                 return {"RTYV"_aa27, "TYVR"_aa27};
-            case seqan3::translation_frames::FWD_REV_2:
+            case seqan3::translation_frames::forward_reverse2:
                 return {"VRT"_aa27, "RTY"_aa27};
-            case seqan3::translation_frames::FWD:
+            case seqan3::translation_frames::forward_frames:
                 return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27};
-            case seqan3::translation_frames::REV:
+            case seqan3::translation_frames::reverse_frames:
                 return {"YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
-            case seqan3::translation_frames::SIX_FRAME:
+            case seqan3::translation_frames::six_frames:
                 return {"TYVR"_aa27, "RTYV"_aa27, "VRT"_aa27, "YVRT"_aa27, "TYVR"_aa27, "RTY"_aa27};
         }
 
@@ -169,18 +169,18 @@ struct translate_view_test_fixture : public range_test_fixture
 };
 
 using translate_view_test_fixtures_t =
-    ::testing::Types<translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_0>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_0>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_1>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_1>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_FRAME_2>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV_FRAME_2>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_0>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_1>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD_REV_2>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::FWD>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::REV>,
-                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::SIX_FRAME>>;
+    ::testing::Types<translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frame2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frame2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_reverse0>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_reverse1>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_reverse2>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::forward_frames>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::reverse_frames>,
+                     translate_view_test_fixture<seqan3::dna4, seqan3::translation_frames::six_frames>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, range_test, translate_view_test_fixtures_t, );
 INSTANTIATE_TYPED_TEST_SUITE_P(translate_view_test, iterator_fixture, translate_view_test_fixtures_t, );
@@ -204,7 +204,9 @@ TYPED_TEST(translate_adaptor_test, view_translate_single_exceptions)
     auto vec = std::string_view{"ACGTACGTACGTA"} | seqan3::views::char_to<TypeParam>;
 
     // Construct with multiple frames
-    EXPECT_THROW(seqan3::views::translate_single(vec, seqan3::translation_frames::FWD), std::invalid_argument);
+    EXPECT_THROW(seqan3::views::translate_single(vec,
+                                                 seqan3::translation_frames::forward_frames),
+                                                 std::invalid_argument);
 
     // Construct with default (empty) frame
     auto view = seqan3::views::translate_single(vec, seqan3::translation_frames{});
@@ -228,18 +230,18 @@ TYPED_TEST(translate_adaptor_test, view_translate_single)
     EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single());
 
     // single frame translation
-    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0));
+    EXPECT_RANGE_EQ("TYVR"_aa27, vec | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0));
 
     // function syntax
-    EXPECT_RANGE_EQ("TYVR"_aa27, seqan3::views::translate_single(vec, seqan3::translation_frames::FWD_FRAME_0));
+    EXPECT_RANGE_EQ("TYVR"_aa27, seqan3::views::translate_single(vec, seqan3::translation_frames::forward_frame0));
 
     // combinability
     EXPECT_RANGE_EQ("CMHA"_aa27, vec | seqan3::views::complement
-                                     | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0));
+                                     | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0));
 
     // combinability
     EXPECT_RANGE_EQ("AHMC"_aa27, vec | seqan3::views::complement
-                                     | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0)
+                                     | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0)
                                      | std::views::reverse);
 }
 
@@ -268,12 +270,12 @@ TYPED_TEST(translate_adaptor_test, view_translate)
     EXPECT_RANGE_EQ(v2[5], "RTY"_aa27);
 
     // single frame translation
-    auto v3 = vec | seqan3::views::translate(seqan3::translation_frames::FWD_FRAME_0);
+    auto v3 = vec | seqan3::views::translate(seqan3::translation_frames::forward_frame0);
     EXPECT_EQ(v3.size(), 1u);
     EXPECT_RANGE_EQ(v3[0], "TYVR"_aa27);
 
     // six frame translation
-    auto v4 = vec | seqan3::views::translate(seqan3::translation_frames::SIX_FRAME);
+    auto v4 = vec | seqan3::views::translate(seqan3::translation_frames::six_frames);
     EXPECT_EQ(v4.size(), 6u);
     EXPECT_RANGE_EQ(v4[0], "TYVR"_aa27);
     EXPECT_RANGE_EQ(v4[1], "RTYV"_aa27);
@@ -283,21 +285,21 @@ TYPED_TEST(translate_adaptor_test, view_translate)
     EXPECT_RANGE_EQ(v4[5], "RTY"_aa27);
 
     // user-defined frame combination
-    seqan3::translation_frames frames = seqan3::translation_frames::FWD_FRAME_0 |
-                                        seqan3::translation_frames::FWD_FRAME_2;
+    seqan3::translation_frames frames = seqan3::translation_frames::forward_frame0 |
+                                        seqan3::translation_frames::forward_frame2;
     auto v5 = vec | seqan3::views::translate(frames);
     EXPECT_EQ(v5.size(), 2u);
     EXPECT_RANGE_EQ(v5[0], "TYVR"_aa27);
     EXPECT_RANGE_EQ(v5[1], "VRT"_aa27);
 
     // function syntax
-    auto v6 = seqan3::views::translate(vec, seqan3::translation_frames::FWD_REV_0);
+    auto v6 = seqan3::views::translate(vec, seqan3::translation_frames::forward_reverse0);
     EXPECT_EQ(v6.size(), 2u);
     EXPECT_RANGE_EQ(v6[0], "TYVR"_aa27);
     EXPECT_RANGE_EQ(v6[1], "YVRT"_aa27);
 
     // combinability
-    auto v7 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0);
+    auto v7 = vec | seqan3::views::complement | seqan3::views::translate(seqan3::translation_frames::forward_reverse0);
     EXPECT_EQ(v7.size(), 2u);
     EXPECT_RANGE_EQ(v7[0], "CMHA"_aa27);
     EXPECT_RANGE_EQ(v7[1], "MHAC"_aa27);
@@ -305,13 +307,14 @@ TYPED_TEST(translate_adaptor_test, view_translate)
     // combinability
     auto v8 = vec
             | seqan3::views::complement
-            | seqan3::views::translate(seqan3::translation_frames::FWD_REV_0)
+            | seqan3::views::translate(seqan3::translation_frames::forward_reverse0)
             | std::views::take(1);
     EXPECT_EQ(v8.size(), 1u);
     EXPECT_RANGE_EQ(v8[0], "CMHA"_aa27);
 
     // combinability and function syntax
-    auto v9 = seqan3::detail::view_translate(seqan3::views::complement(vec), seqan3::translation_frames::FWD_REV_0);
+    auto v9 = seqan3::detail::view_translate(seqan3::views::complement(vec),
+                                             seqan3::translation_frames::forward_reverse0);
     EXPECT_EQ(v9.size(), 2u);
     EXPECT_RANGE_EQ(v9[0], "CMHA"_aa27);
     EXPECT_RANGE_EQ(v9[1], "MHAC"_aa27);

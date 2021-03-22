@@ -27,7 +27,7 @@ int main()
     seqan3::debug_stream << third_frame_second_seq << "\n"; // ESFS
 
     // Translation with custom translation frame
-    auto v2 = vec | seqan3::views::translate_join(seqan3::translation_frames::FWD_FRAME_0);
+    auto v2 = vec | seqan3::views::translate_join(seqan3::translation_frames::forward_frame0);
     seqan3::debug_stream << v2 << "\n"; // [TYVR,SRAL]
 
     return 0;
