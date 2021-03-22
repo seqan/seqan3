@@ -421,7 +421,7 @@ static auto dna4_match_4_mismatch_5_gap_1_open_10_both_empty = []()
 // ----------------------------------------------------------------------------
 
 inline constexpr auto config_blosum62_scheme =
-    seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62}};
+    seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62}};
 
 static auto aa27_blosum62_gap_1_open_10 = [] ()
 {

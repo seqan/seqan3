@@ -55,7 +55,7 @@ auto sc_nc = nc_scheme.score('A'_dna4, 'C'_dna4); // sc_nc == -5.
 
 // Define a amino acid similarity matrix and get the score.
 seqan3::aminoacid_scoring_scheme aa_scheme{};
-aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM30);
+aa_scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum30);
 auto sc_aa = aa_scheme.score('M'_aa27, 'K'_aa27); // sc_aa == 2.
 //! [scoring_scheme]
 (void) sc_nc;

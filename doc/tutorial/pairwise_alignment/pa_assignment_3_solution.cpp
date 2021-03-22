@@ -33,7 +33,7 @@ int main()
                       seqan3::align_cfg::free_end_gaps_sequence1_trailing{false},
                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{true}} |
                   seqan3::align_cfg::scoring_scheme{seqan3::aminoacid_scoring_scheme{
-                      seqan3::aminoacid_similarity_matrix::BLOSUM62}};
+                      seqan3::aminoacid_similarity_matrix::blosum62}};
 
     for (auto const & res : seqan3::align_pairwise(source, config))
         seqan3::debug_stream << "Score: " << res.score() << '\n';

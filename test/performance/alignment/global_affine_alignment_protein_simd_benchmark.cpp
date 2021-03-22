@@ -18,7 +18,7 @@ inline constexpr size_t deviation_step = 8;
 // SeqAn3
 // ----------------------------------------------------------------------------
 
-constexpr auto aa_score_scheme = seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62};
+constexpr auto aa_score_scheme = seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62};
 constexpr auto affine_cfg = seqan3::align_cfg::method_global{} |
                             seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
                                                                seqan3::align_cfg::extension_score{-1}} |

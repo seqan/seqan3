@@ -35,26 +35,26 @@ namespace seqan3
 enum class aminoacid_similarity_matrix
 {
     //ATTENTION: when you change this, also update set_similarity_matrix() below
-    /*!\brief The BLOSUM30 matrix for very distantly related proteins.
+    /*!\brief The blosum30 matrix for very distantly related proteins.
      * \details
      * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum30
      */
-    BLOSUM30,
-    /*!\brief The BLOSUM45 matrix for distantly related proteins.
+    blosum30,
+    /*!\brief The blosum45 matrix for distantly related proteins.
      * \details
      * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum45
      */
-    BLOSUM45,
-    /*!\brief The BLOSUM62 matrix recommended for most use-cases.
+    blosum45,
+    /*!\brief The blosum62 matrix recommended for most use-cases.
      * \details
      * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum62
      */
-    BLOSUM62,
-    /*!\brief The BLOSUM80 matrix for closely related proteins.
+    blosum62,
+    /*!\brief The blosum80 matrix for closely related proteins.
      * \details
      * \snippet include/seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp matrix_data blosum80
      */
-    BLOSUM80
+    blosum80
 };
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
@@ -115,7 +115,7 @@ public:
     /*!\name Scheme selection
      * \{
      */
-    /*!\brief Set the similarity matrix scheme (e.g. BLOSUM62).
+    /*!\brief Set the similarity matrix scheme (e.g. blosum62).
      * \param[in] matrix_id The enum ID of the matrix, see seqan3::aminoacid_similarity_matrix.
      * \throws std::invalid_argument If there is no matrix data for the given ID (usually a BUG).
      */
@@ -123,10 +123,10 @@ public:
     {
         switch (matrix_id)
         {
-            case aminoacid_similarity_matrix::BLOSUM30: std::ranges::copy(blosum30, begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM45: std::ranges::copy(blosum45, begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM62: std::ranges::copy(blosum62, begin(matrix)); break;
-            case aminoacid_similarity_matrix::BLOSUM80: std::ranges::copy(blosum80, begin(matrix)); break;
+            case aminoacid_similarity_matrix::blosum30: std::ranges::copy(blosum30, begin(matrix)); break;
+            case aminoacid_similarity_matrix::blosum45: std::ranges::copy(blosum45, begin(matrix)); break;
+            case aminoacid_similarity_matrix::blosum62: std::ranges::copy(blosum62, begin(matrix)); break;
+            case aminoacid_similarity_matrix::blosum80: std::ranges::copy(blosum80, begin(matrix)); break;
             default:
                 throw std::invalid_argument{"ERROR in set_similarity_matrix(), matrix_id has no matrix."};
         }
@@ -134,7 +134,7 @@ public:
     //!\}
 
 private:
-    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM30.
+    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::blosum30.
     static constexpr matrix_type blosum30
     {{
         //! [matrix_data blosum30]
@@ -169,7 +169,7 @@ private:
         //! [matrix_data blosum30]
     }};
 
-    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM45.
+    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::blosum45.
     static constexpr matrix_type blosum45
     {{
         //! [matrix_data blosum45]
@@ -204,7 +204,7 @@ private:
         //! [matrix_data blosum45]
     }};
 
-    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM62.
+    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::blosum62.
     static constexpr matrix_type blosum62
     {{
         //! [matrix_data blosum62]
@@ -239,7 +239,7 @@ private:
         //! [matrix_data blosum62]
     }};
 
-    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::BLOSUM80.
+    //!\brief The matrix data corresponding to seqan3::aminoacid_similarity_matrix::blosum80.
     static constexpr matrix_type blosum80
     {{
         //! [matrix_data blosum80]
