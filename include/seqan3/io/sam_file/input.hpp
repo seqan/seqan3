@@ -432,10 +432,12 @@ public:
     using cigar_type               = std::vector<cigar>;
     //!\brief The type of field::mate is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
     using mate_type                = std::tuple<ref_id_type, ref_offset_type, int32_t>;
+#ifdef SEQAN3_DEPRECATED_310
     //!\brief The type of field::evalue is fixed to double.
     using e_value_type             = double;
     //!\brief The type of field::bitscore is fixed to double.
     using bitscore_type            = double;
+#endif // SEQAN3_DEPRECATED_310
     //!\brief The type of field::header_ptr (default: sam_file_header<typename traits_type::ref_ids>).
     using header_type              = sam_file_header<typename traits_type::ref_ids>;
 
@@ -456,7 +458,9 @@ public:
     using field_types = type_list<sequence_type,
                                   id_type,
                                   offset_type,
+#ifdef SEQAN3_DEPRECATED_310
                                   ref_sequence_type,
+#endif // SEQAN3_DEPRECATED_310
                                   ref_id_type,
                                   ref_offset_type,
                                   alignment_type,
@@ -466,8 +470,10 @@ public:
                                   flag_type,
                                   mate_type,
                                   sam_tag_dictionary,
+#ifdef SEQAN3_DEPRECATED_310
                                   e_value_type,
                                   bitscore_type,
+#endif // SEQAN3_DEPRECATED_310
                                   header_type *>;
 
     /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.

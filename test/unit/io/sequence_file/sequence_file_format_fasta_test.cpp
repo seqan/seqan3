@@ -70,7 +70,11 @@ INSTANTIATE_TYPED_TEST_SUITE_P(fasta, sequence_file_write, seqan3::format_fasta,
 
 struct read : public sequence_file_data
 {
+#ifdef SEQAN3_DEPRECATED_310
     seqan3::sequence_file_input_options<seqan3::dna15, false> options{};
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    seqan3::sequence_file_input_options<seqan3::dna15> options{};
+#endif // SEQAN3_DEPRECATED_310
 
     std::string id;
     seqan3::dna5_vector seq;
@@ -86,11 +90,13 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
             EXPECT_EQ((*it).id(), ids[i]);
             EXPECT_RANGE_EQ((*it).sequence(), seqs[i]);

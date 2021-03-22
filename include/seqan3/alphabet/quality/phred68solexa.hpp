@@ -59,6 +59,7 @@ public:
     constexpr phred68solexa & operator=(phred68solexa &&)       noexcept = default; //!< Defaulted.
     ~phred68solexa()                                            noexcept = default; //!< Defaulted.
 
+#ifdef SEQAN3_DEPRECATED_310
     /*!\brief Allow construction from the Phred score value.
      * \details
      * \deprecated This will be removed in 3.1.0. Please use seqan3::phred68solexa::assign_phred() or '!'_phred68solexa.
@@ -67,6 +68,7 @@ public:
     {
         assign_phred(p);
     }
+#endif // SEQAN3_DEPRECATED_310
 
     // Inherit converting constructor
     using base_t::base_t;
@@ -89,8 +91,10 @@ public:
     //!\}
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\deprecated Please use seqan3::phred68solexa instead.
 using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
+#endif // SEQAN3_DEPRECATED_310
 
 inline namespace literals
 {
@@ -135,6 +139,7 @@ inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::
     return r;
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\deprecated Please use seqan3::operator""_phred68solexa instead.
 SEQAN3_DEPRECATED_310 constexpr phred68solexa operator""_phred68legacy(char const c) noexcept
 {
@@ -146,6 +151,7 @@ SEQAN3_DEPRECATED_310 inline std::vector<phred68solexa> operator""_phred68legacy
 {
     return seqan3::operator""_phred68solexa(s, n);
 }
+#endif // SEQAN3_DEPRECATED_310
 //!\}
 
 } // inline namespace literals

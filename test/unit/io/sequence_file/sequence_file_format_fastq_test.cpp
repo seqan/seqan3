@@ -104,7 +104,11 @@ struct read : public sequence_file_data
         "!!!!!!!\n"
     };
 
+#ifdef SEQAN3_DEPRECATED_310
     seqan3::sequence_file_input_options<seqan3::dna15, false> options{};
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    seqan3::sequence_file_input_options<seqan3::dna15> options{};
+#endif // SEQAN3_DEPRECATED_310
 
     void do_read_test(std::string const & input)
     {
@@ -115,12 +119,14 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
             EXPECT_RANGE_EQ((*it).id(), ids[i]);
             EXPECT_RANGE_EQ((*it).sequence(), seqs[i]);

@@ -78,6 +78,7 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
     }
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 /*!\brief Translate one nucleotide triplet into single amino acid (tuple interface).
  * \ingroup aminoacid
  * \tparam tuple_type Type of `input_tuple`. Usually std::tuple, but similar types like std::array
@@ -176,5 +177,6 @@ constexpr aa27 translate_triplet SEQAN3_DEPRECATED_310 (rng_t && input_range)
 
     return translate_triplet(input_range[0], input_range[1], input_range[2]);
 }
+#endif // SEQAN3_DEPRECATED_310
 
 } // namespace seqan3

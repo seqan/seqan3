@@ -79,6 +79,7 @@ enum class translation_frames : uint8_t
     reverse_frames = reverse_frame0 | reverse_frame1 | reverse_frame2, //!< All reverse frames
     six_frames = forward_frames | reverse_frames, //!< All frames
 
+#ifdef SEQAN3_DEPRECATED_310
     FWD_FRAME_0 SEQAN3_DEPRECATED_310 = forward_frame0, //!< \deprecated Use forward_frame0 instead.
     FWD_FRAME_1 SEQAN3_DEPRECATED_310 = forward_frame1, //!< \deprecated Use forward_frame1 instead.
     FWD_FRAME_2 SEQAN3_DEPRECATED_310 = forward_frame2, //!< \deprecated Use forward_frame2 instead.
@@ -91,6 +92,7 @@ enum class translation_frames : uint8_t
     FWD SEQAN3_DEPRECATED_310 = forward_frames, //!< \deprecated Use forward_frames instead.
     REV SEQAN3_DEPRECATED_310 = reverse_frames, //!< \deprecated Use reverse_frames instead.
     SIX_FRAME SEQAN3_DEPRECATED_310 = six_frames //!< \deprecated Use six_frames instead.
+#endif // SEQAN3_DEPRECATED_310
 };
 
 //!\cond DEV

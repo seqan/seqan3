@@ -27,7 +27,9 @@ namespace seqan3
 enum struct genetic_code : uint8_t
 {
     canonical = 1, //!< [The Standard Code](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1).
+#ifdef SEQAN3_DEPRECATED_310
     CANONICAL SEQAN3_DEPRECATED_310 = canonical, //!< \deprecated Use seqan3::genetic_code::canonical instead.
+#endif // SEQAN3_DEPRECATED_310
 //     vert_mitochondrial,
 //     yeast_mitochondrial,
 //     mold_mitochondrial,

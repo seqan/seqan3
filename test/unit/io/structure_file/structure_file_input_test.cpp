@@ -266,12 +266,15 @@ struct structure_file_input_read : public ::testing::Test
         counter = 0ul;
         for (auto & rec : fin)
         {
+
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
             EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
             EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
@@ -310,12 +313,15 @@ TEST_F(structure_file_input_read, record_general)
     size_t counter = 0ul;
     for (auto & rec : fin)
     {
+
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec), id_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);
@@ -386,6 +392,8 @@ TEST_F(structure_file_input_read, record_file_view)
     size_t counter = 0ul; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
+
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
@@ -394,6 +402,7 @@ TEST_F(structure_file_input_read, record_file_view)
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(rec), structure_comp[counter]);
         EXPECT_DOUBLE_EQ(seqan3::get<seqan3::field::energy>(rec).value(), energy_comp[counter]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
         EXPECT_RANGE_EQ(rec.id(), id_comp[counter]);

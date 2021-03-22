@@ -60,6 +60,7 @@ public:
      * \details Similar to an Enum interface.
      */
     //!\{
+#ifdef SEQAN3_DEPRECATED_310
     /*!\brief Member for unmasked.
      * \details
      * \deprecated Please use seqan3::mask::unmasked
@@ -71,6 +72,7 @@ public:
      * \deprecated Please use seqan3::mask::masked
      */
     SEQAN3_DEPRECATED_310 static const mask MASKED;
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\brief Member for unmasked.
      * \details
@@ -86,8 +88,10 @@ public:
     //!\}
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 mask constexpr mask::UNMASKED{mask{}.assign_rank(0)};
 mask constexpr mask::MASKED{mask{}.assign_rank(1)};
+#endif // SEQAN3_DEPRECATED_310
 mask constexpr mask::unmasked{mask{}.assign_rank(0)};
 mask constexpr mask::masked{mask{}.assign_rank(1)};
 } // namespace seqan3

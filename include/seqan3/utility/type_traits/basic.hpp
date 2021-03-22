@@ -33,7 +33,7 @@ namespace seqan3
 /*!\addtogroup type_traits
  * \{
  */
-
+#ifdef SEQAN3_DEPRECATED_310
 // ----------------------------------------------------------------------------
 // remove_cvref_t
 // ----------------------------------------------------------------------------
@@ -43,6 +43,7 @@ namespace seqan3
  */
 template <typename t>
 using remove_cvref_t SEQAN3_DEPRECATED_310 = std::remove_cv_t<std::remove_reference_t<t>>;
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // remove_rvalue_reference

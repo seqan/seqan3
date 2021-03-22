@@ -9,7 +9,6 @@
 int main()
 {
     using namespace seqan3::literals;
-    using seqan3::get;
 
     // The order of the types below represent a mapping between the type and the key.
     using types        = seqan3::type_list<seqan3::dna4_vector, std::string, std::vector<seqan3::phred42>>;
@@ -20,9 +19,13 @@ int main()
 
     record_type my_record{};
     get<1>(my_record) = "the most important sequence in the database";            // access via index
+    get<std::string>(my_record) = "the least important sequence in the database"; // access via type
+
+#ifdef SEQAN3_DEPRECATED_310
+    using seqan3::get;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     get<seqan3::field::seq>(my_record) = "ACGT"_dna4;                             // access via seqan3::field
 #pragma GCC diagnostic pop
-    get<std::string>(my_record) = "the least important sequence in the database"; // access via type
+#endif //SEQAN3_DEPRECATED_310
 }

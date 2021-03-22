@@ -44,7 +44,9 @@ TEST(fields, usage)
     EXPECT_TRUE(default_fields::contains(seqan3::field::seq));
     EXPECT_TRUE(default_fields::contains(seqan3::field::id));
     EXPECT_TRUE(default_fields::contains(seqan3::field::qual));
+#ifdef SEQAN3_DEPRECATED_310
     EXPECT_FALSE(default_fields::contains(seqan3::field::_seq_qual_deprecated));
+#endif // SEQAN3_DEPRECATED_310
     EXPECT_EQ(default_fields::index_of(seqan3::field::seq), 0ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::id),  1ul);
     EXPECT_EQ(default_fields::index_of(seqan3::field::qual), 2ul);
@@ -96,6 +98,7 @@ TEST_F(record, get_by_type)
     EXPECT_RANGE_EQ(std::get<seqan3::dna4_vector>(r), "ACGT"_dna4);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(record, get_by_field)
 {
     record_type r{"MY ID", "ACGT"_dna4};
@@ -118,3 +121,4 @@ TEST_F(record, gcc_issue_94967)
     EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::id>(std::move(std::as_const(r)))));
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310

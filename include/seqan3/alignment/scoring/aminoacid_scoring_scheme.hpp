@@ -56,11 +56,13 @@ enum class aminoacid_similarity_matrix
      */
     blosum80,
 
+#ifdef SEQAN3_DEPRECATED_310
     // deprecated uppercase:
     BLOSUM30 SEQAN3_DEPRECATED_310 = blosum30, //!< Please use the field name in lower case.
     BLOSUM45 SEQAN3_DEPRECATED_310 = blosum45, //!< Please use the field name in lower case.
     BLOSUM62 SEQAN3_DEPRECATED_310 = blosum62, //!< Please use the field name in lower case.
     BLOSUM80 SEQAN3_DEPRECATED_310 = blosum80 //!< Please use the field name in lower case.
+#endif // SEQAN3_DEPRECATED_310
 };
 
 /*!\brief A data structure for managing and computing the score of two amino acids.

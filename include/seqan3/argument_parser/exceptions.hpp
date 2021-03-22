@@ -19,6 +19,7 @@
 namespace seqan3
 {
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\brief This class is deprecated.
 //!\deprecated Use seqan3::argument_parser_error instead.
 class SEQAN3_DEPRECATED_310 parser_invalid_argument : public std::invalid_argument
@@ -29,6 +30,7 @@ public:
      */
     parser_invalid_argument(std::string const & s) : std::invalid_argument(s) {}
 };
+#endif // SEQAN3_DEPRECATED_310
 
 /*!\brief Argument parser exception that is thrown whenever there is an error
  * while parsing the command line arguments.
@@ -104,6 +106,7 @@ public:
     option_declared_multiple_times(std::string const & s) : argument_parser_error(s) {}
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\brief This class is deprecated.
 //!\deprecated Use seqan3::user_input_error instead.
 class SEQAN3_DEPRECATED_310 type_conversion_failed : public parser_invalid_argument
@@ -125,6 +128,7 @@ public:
      */
     overflow_error_on_conversion(std::string const & s) : parser_invalid_argument(s) {}
 };
+#endif // SEQAN3_DEPRECATED_310
 
 //!\brief Argument parser exception thrown when an incorrect argument is given as (positional) option value.
 class user_input_error : public argument_parser_error
@@ -146,6 +150,7 @@ public:
     validation_error(std::string const & s) : argument_parser_error(s) {}
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\brief This class is deprecated.
 //!\deprecated Use seqan3::validation_error instead.
 class SEQAN3_DEPRECATED_310 validation_failed : public argument_parser_error
@@ -156,6 +161,7 @@ public:
      */
     validation_failed(std::string const & s) : argument_parser_error(s) {}
 };
+#endif // SEQAN3_DEPRECATED_310
 
 /*!\brief Argument parser exception that is thrown whenever there is an design
  * error directed at the developer of the application (e.g. Reuse of option).
@@ -176,6 +182,7 @@ public:
     design_error(std::string const & s) : argument_parser_error(s) {}
 };
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\brief This class is deprecated.
 //!\deprecated Use seqan3::design_error instead.
 class SEQAN3_DEPRECATED_310 parser_design_error : std::logic_error
@@ -186,5 +193,6 @@ public:
      */
     parser_design_error(std::string const & s) : std::logic_error(s) {}
 };
+#endif // SEQAN3_DEPRECATED_310
 
 } // namespace seqan3

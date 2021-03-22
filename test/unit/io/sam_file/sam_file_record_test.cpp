@@ -184,6 +184,7 @@ TEST_F(sam_record, get_by_type)
     EXPECT_EQ(std::get<seqan3::sam_tag_dictionary>(r), seqan3::sam_tag_dictionary{});
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(sam_record, get_by_field)
 {
     record_type r{construct()};
@@ -208,6 +209,7 @@ TEST_F(sam_record, get_by_field)
     EXPECT_EQ(seqan3::get<seqan3::field::tags>(r), seqan3::sam_tag_dictionary{});
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sam_record, get_by_member)
 {
@@ -233,6 +235,7 @@ TEST_F(sam_record, get_by_member)
     EXPECT_EQ(r.tags(), seqan3::sam_tag_dictionary{});
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(sam_record, get_types)
 {
     record_type r{construct()};
@@ -309,6 +312,7 @@ TEST_F(sam_record, get_types)
                      decltype(seqan3::get<seqan3::field::tags>(std::move(std::as_const(r)))));
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sam_record, member_types)
 {

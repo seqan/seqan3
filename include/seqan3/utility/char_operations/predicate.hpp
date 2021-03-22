@@ -48,6 +48,7 @@ template <uint8_t interval_first, uint8_t interval_last>
 //!\endcond
 inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_first, interval_last>{};
 
+#ifdef SEQAN3_DEPRECATED_310
 /*!\brief Checks whether a given letter is valid for the specified seqan3::alphabet.
  * \tparam alphabet_t The alphabet to check; must model seqan3::alphabet.
  * \ingroup char_operations
@@ -63,6 +64,7 @@ inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_firs
  */
 template <alphabet alphabet_t>
 SEQAN3_DEPRECATED_310 inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{};
+#endif // SEQAN3_DEPRECATED_310
 
 /*!\brief Checks whether a given letter is the same as the template non-type argument.
  * \tparam char_v The letter to compare against.
