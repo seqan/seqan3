@@ -115,6 +115,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
   * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.
 
+#### Core
+
+* We deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0.
+  ([\#2265](https://github.com/seqan/seqan3/pull/2265))
+
 #### I/O
 
 * The `seqan3::get` accessor for I/O records, e.g. `seqan3::get<seqan3::field::id>(record)`, is deprecated, please use

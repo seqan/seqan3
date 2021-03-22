@@ -269,18 +269,28 @@ constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_val
 // range_compatible [DEPRECATED]
 // ----------------------------------------------------------------------------
 
+#ifdef SEQAN3_DEPRECATED_310
 /*!\interface seqan3::range_compatible <>
  * \brief Two types are "compatible" if their seqan3::range_dimension_v and their seqan3::range_innermost_value_t are
  * the same.
  * \deprecated This concept is deprecated and will be removed in SeqAn-3.1.
  */
 //!\cond
+namespace deprecated
+{
 template <typename t1, typename t2>
-SEQAN3_DEPRECATED_310 constexpr bool range_compatible = (
-    std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>> &&
-    range_dimension_v<t1> == range_dimension_v<t2>
-);
+SEQAN3_CONCEPT range_compatible_concept = requires (t1, t2)
+{
+    requires (range_dimension_v<t1> == range_dimension_v<t2>);
+
+    requires std::is_same_v<range_innermost_value_t<t1>, range_innermost_value_t<t2>>;
+};
+} // namespace seqan3::deprecated
+
+template <typename t1, typename t2>
+SEQAN3_DEPRECATED_310 constexpr bool range_compatible = deprecated::range_compatible_concept<t1, t2>;
 //!\endcond
+#endif // SEQAN3_DEPRECATED_310
 
 //!\}
 
