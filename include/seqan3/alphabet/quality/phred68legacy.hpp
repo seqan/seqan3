@@ -33,8 +33,10 @@ namespace seqan3
  * the Illumina [1.0;1.8[ standard.
  *
  * \include test/snippet/alphabet/quality/phred68legacy.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
-class phred68legacy : public quality_base<phred68legacy, 68>
+class phred68solexa : public quality_base<phred68solexa, 68>
 {
 private:
     //!\brief The base class.
@@ -67,10 +69,16 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between Phred and rank score representation.
+    /*!\brief The projection offset between Phred and rank score representation.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr phred_type offset_phred{-5};
 
-    //!\brief The projection offset between char and rank score representation.
+    /*!\brief The projection offset between char and rank score representation.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr char_type offset_char{';'};
     //!\}
 };
@@ -81,6 +89,8 @@ public:
 /*!\brief The seqan3::phred68legacy char literal.
  * \relates seqan3::phred68legacy
  * \returns seqan3::phred68legacy
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr phred68legacy operator""_phred68legacy(char const c) noexcept
 {
@@ -96,6 +106,8 @@ constexpr phred68legacy operator""_phred68legacy(char const c) noexcept
  * You can use this string literal to easily assign to std::vector<seqan3::phred68legacy>:
  *
  * \include test/snippet/alphabet/quality/phred68legacy_literal.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline std::vector<phred68legacy> operator""_phred68legacy(char const * s, std::size_t n)
 {
