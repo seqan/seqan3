@@ -50,7 +50,7 @@ class combined_score_and_trace_matrix
 {
 private:
     //!\brief The score type extracted from the score matrix. (TODO: make this less complicated by exposing the score type).
-    using score_type = remove_cvref_t<std::tuple_element_t<0, range_innermost_value_t<score_matrix_t>>>;
+    using score_type = std::remove_cvref_t<std::tuple_element_t<0, range_innermost_value_t<score_matrix_t>>>;
 
     class iterator;
     class sentinel;
@@ -189,10 +189,10 @@ private:
 
     //!\brief The transform adaptor to convert the tuple from the zip view into a seqan3::detail::affine_cell_type.
     static constexpr auto transform_to_combined_matrix_cell = std::views::transform([] (auto && tpl)
-        -> affine_cell_proxy<remove_cvref_t<decltype(tpl)>>
+        -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
     {
         using fwd_tuple_t = decltype(tpl);
-        return affine_cell_proxy<remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
+        return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
     });
 
     //!\brief The current iterator over the score matrix.
