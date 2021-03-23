@@ -121,6 +121,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   * `seqan3::option_spec::ADVANCED` is replaced by `seqan3::option_spec::advanced`.
   * `seqan3::option_spec::HIDDEN` is replaced by `seqan3::option_spec::hidden`.
 
+#### Core
+
+* We deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0
+  ([\#2265](https://github.com/seqan/seqan3/pull/2265)).
+
 #### I/O
 
 * Renamed seqan3::alignment_file\* to seqan3::sam_file\*
