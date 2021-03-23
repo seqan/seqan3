@@ -240,6 +240,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: seqan3
+          fetch-depth: 2
           submodules: true
 
       - name: Checkout SeqAn2
@@ -385,8 +386,10 @@ jobs:
 
       - name: Submit coverage build
         if: matrix.build == 'coverage'
-        shell: bash
-        run: bash <(curl -s https://codecov.io/bash) -f ./seqan3-build/seqan3_coverage -R ./seqan3 || echo 'Codecov failed to upload'
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./seqan3-build/seqan3_coverage
+          root_dir: ./seqan3
 
       - name: Package documentation
         if: matrix.build == 'documentation'
