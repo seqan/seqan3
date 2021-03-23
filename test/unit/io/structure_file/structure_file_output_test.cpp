@@ -481,7 +481,7 @@ TEST_F(structure_file_output_compression, by_filename_gz)
     seqan3::test::tmp_filename filename{"structure_file_output_test.dbn.gz"};
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
-    EXPECT_EQ(buffer, expected_bgzf);
+    EXPECT_EQ(buffer, expected_gz);
 }
 
 TEST_F(structure_file_output_compression, by_stream_gz)

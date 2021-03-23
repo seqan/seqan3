@@ -12,7 +12,6 @@
 
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/std/ranges>
 #include <seqan3/test/tmp_filename.hpp>
 
 struct dummy_file

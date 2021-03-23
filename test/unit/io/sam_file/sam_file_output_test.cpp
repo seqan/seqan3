@@ -650,7 +650,7 @@ TEST(compression, by_filename_gz)
 
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte.
-    EXPECT_EQ(buffer, expected_bgzf);
+    EXPECT_EQ(buffer, expected_gz);
 }
 
 TEST(compression, by_stream_gz)
