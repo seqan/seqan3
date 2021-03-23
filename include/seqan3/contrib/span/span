@@ -13,11 +13,9 @@
 
 #include <array>        // for array
 #include <cstddef>      // for ptrdiff_t
-#include <iterator>     // for iterators
-#include <type_traits>  // for remove_cv, etc
-
 #include <seqan3/std/iterator>       // for iterator concepts
 #include <seqan3/std/ranges>         // for range concepts
+#include <seqan3/std/type_traits>    // for remove_cvref_t, etc
 
 namespace std
 {
@@ -236,13 +234,13 @@ public:
     constexpr span& operator=(const span&) noexcept = default;
 
     template <contiguous_iterator iterator_t>
-        requires is_convertible_v<remove_reference_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]>
+        requires is_convertible_v<remove_cvref_t<iter_reference_t<iterator_t>>(*)[], element_type(*)[]>
     constexpr span(iterator_t f, index_type count) noexcept : data_{addressof(*f)}, size_{count}
     {}
 
     template <contiguous_iterator iterator, typename sentinel_t>
         requires sized_sentinel_for<sentinel_t, iterator> &&
-                 is_convertible_v<remove_reference_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
+                 is_convertible_v<remove_cvref_t<iter_reference_t<iterator>>(*)[], element_type(*)[]> &&
                  (!is_convertible_v<sentinel_t, size_t>)
     constexpr span(iterator f, sentinel_t l) noexcept : data_{addressof(*f)}, size_{static_cast<index_type>(distance(f, l))}
     {}
@@ -257,11 +255,11 @@ public:
     inline constexpr span(const array<value_type, span_sz>& arr) noexcept : data_{arr.data()}, size_{span_sz} {}
 
     template <typename range_t>
-        requires (!same_as<remove_reference_t<remove_cv_t<range_t>>, span>) && // guard for recursive instantiation in constructible_from
-                 (!is_span<remove_reference_t<range_t>>::value) &&
-                 (!is_std_array<remove_reference_t<range_t>>::value) &&
-                 (!is_array_v<remove_reference_t<range_t>>) &&
-                 is_convertible_v<remove_reference_t<iter_reference_t<ranges::iterator_t<range_t>>>(*)[],
+        requires (!same_as<remove_cvref_t<range_t>, span>) && // guard for recursive instantiation in constructible_from
+                 (!is_span<remove_cvref_t<range_t>>::value) &&
+                 (!is_std_array<remove_cvref_t<range_t>>::value) &&
+                 (!is_array_v<remove_cvref_t<range_t>>) &&
+                 is_convertible_v<remove_cvref_t<ranges::range_reference_t<range_t>>(*)[],
                                   element_type(*)[]> &&
                  ranges::contiguous_range<range_t> &&
                  ranges::sized_range<range_t> &&
@@ -430,7 +428,7 @@ template <class span_tp, size_t span_sz>
     span(const array<span_tp, span_sz>&) -> span<const span_tp, span_sz>;
 
 template <ranges::contiguous_range range_t>
-    span(range_t &&) -> span<ranges::range_value_t<range_t>>;
+    span(range_t &&) -> span<remove_reference_t<ranges::range_reference_t<range_t&>>>;
 } // namespace std
 
 //!\endcond
