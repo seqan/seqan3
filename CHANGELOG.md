@@ -117,8 +117,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Core
 
-* We deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0.
-  ([\#2265](https://github.com/seqan/seqan3/pull/2265))
+* We deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0
+  ([\#2265](https://github.com/seqan/seqan3/pull/2265)).
 
 #### I/O
 
