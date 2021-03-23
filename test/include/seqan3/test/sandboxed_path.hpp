@@ -221,7 +221,7 @@ private:
 
         std::filesystem::path::operator=(normalised_path);
 #else
-        auto normalised_path = std::filesystem::weakly_canonical(sandbox_directory / *this);
+        auto normalised_path = (sandbox_directory / *this).lexically_normal();
         std::filesystem::path::operator=(normalised_path);
 #endif
     }
