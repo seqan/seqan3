@@ -10,7 +10,7 @@ It will take some time, but we hope to expand this document into containing nume
 If you have suggestions for how to improve the Cookbook and/or examples you would like included,
 please feel free to contact us.
 
-#  Read sequence files
+# Read sequence files
 \snippet doc/tutorial/introduction/introduction_file_input.cpp fileinput
 
 # Write a custom validator
@@ -29,14 +29,14 @@ Invalid values throw a seqan3::validation_error.
 This recipe creates a small program that
   1. reads a string from the command line (first argument to the program)
   2. "converts" the string to a range of seqan3::dna5 (Bonus: throws an exception if loss of information occurs)
-  3. prints the string and it's reverse complement
+  3. prints the string and its reverse complement
   4. prints the six-frame translation of the string
 
 \include doc/tutorial/ranges/range_solution3.cpp
 
 # Reading records
 After construction, you can now read the sequence records.
-Our file object behaves like a range so you can use a range-based for loop to conveniently iterate over the file:
+Our file object behaves like a range, you can use a range-based for loop to conveniently iterate over the file:
 
 \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
 
@@ -105,7 +105,7 @@ positive value and the scores for mismatch and gap must be negative in order to 
 # Calculate edit distance for a set of sequences
 
 This recipe can be used to calculate the edit distance for all six pairwise combinations. Here we only allow at most 7
-errors and filter all alignments with 6 or less errors.
+errors and filter all alignments with 6 or fewer errors.
 
 \include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
 
@@ -160,16 +160,16 @@ For a full recipe on creating your own readmapper, see the very end of the tutor
 
 \include doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp
 
-#  Serialise data structures with cereal
+# Serialise data structures with cereal
 
 \include doc/howto/use_cereal/load.hpp
 
-\section cookbook_custom_dna4_alphabet A custom dna4 alphabet that converts all unknown characters to `A`
+# A custom dna4 alphabet that converts all unknown characters to A {#cookbook_custom_dna4_alphabet}
 
 When assigning from `char` or converting from a larger nucleotide alphabet to a smaller one, *loss of information*
 can occur since obviously some bases are not available. When converting to seqan3::dna5 or seqan3::rna5,
-non-canonical bases (letters other than A, C, G, T, U) are converted to `'N'` to preserve ambiguity at that position.
-For seqan3::dna4 and seqan3::rna4 there is no letter `'N'` to represent ambiguity, so the conversion from `char` for
+non-canonical bases (letters other than A, C, G, T, U) are converted to ``'N'`` to preserve ambiguity at that position.
+For seqan3::dna4 and seqan3::rna4 there is no letter ``'N'`` to represent ambiguity, so the conversion from `char` for
 IUPAC characters tries to choose the best fitting alternative (see seqan3::dna4 for more details).
 
 If you would like to always convert unknown characters to `A` instead, you can create your own alphabet with a
