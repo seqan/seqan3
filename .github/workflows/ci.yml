@@ -388,8 +388,8 @@ jobs:
         if: matrix.build == 'coverage'
         uses: codecov/codecov-action@v1
         with:
-          files: ./seqan3-build/seqan3_coverage
-          root_dir: ./seqan3
+          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage
+          root_dir: ${{ github.workspace }}/seqan3
 
       - name: Package documentation
         if: matrix.build == 'documentation'
