@@ -26,11 +26,11 @@ cd /home/me/devel/seqan3-build/debug
 Invoke CMake (this is often referred to as the "Configure" step):
 
 ```bash
-cmake ../../seqan3/test/unit -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-7
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-7 ../../seqan3/test/unit
 ```
 
-The build type could be "Release", but stick to "Debug" for now. Specifying the compiler is optional; depending on
-your setup, you may need to give the full path.
+The build type could be "Release", but stick to "Debug" if you aim to make contributions to the SeqAn3 codebase. 
+Specifying the compiler is optional; depending on your setup, you may need to give the full path.
 
 ### Building all unit tests
 
@@ -99,7 +99,7 @@ This will setup snippet tests:
 mkdir -p /home/me/devel/seqan3-build/snippet
 cd /home/me/devel/seqan3-build/snippet
 
-cmake ../../seqan3/test/snippet -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-7
+cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-7 ../../seqan3/test/snippet
 
 make -j 4
 
