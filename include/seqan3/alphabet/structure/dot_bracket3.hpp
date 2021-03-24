@@ -44,9 +44,11 @@ namespace seqan3
  *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
  *```
  *
- * ###Usage
+ * ### Usage
  * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
  * \include test/snippet/alphabet/structure/dot_bracket3_general.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 class dot_bracket3 : public alphabet_base<dot_bracket3, 3>
 {
@@ -75,6 +77,8 @@ public:
 
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_open() const noexcept
     {
@@ -83,6 +87,8 @@ public:
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_close() const noexcept
     {
@@ -91,6 +97,8 @@ public:
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_unpaired() const noexcept
     {
@@ -100,12 +108,16 @@ public:
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
      * \details It is the number of distinct pairs of interaction symbols the format supports. The value 1 denotes no
      * pseudoknot support.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     static constexpr uint8_t max_pseudoknot_depth{1u};
 
     /*!\brief Get an identifier for a pseudoknotted interaction,
      * where opening and closing brackets of the same type have the same id.
      * \returns The pseudoknot id (always 0) if alph denotes an interaction, and no value otherwise.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
@@ -170,6 +182,8 @@ private:
  *
  * You can use this string literal to easily assign to a vector of seqan3::dot_bracket3 characters:
  * \include test/snippet/alphabet/structure/dot_bracket3_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
 {
@@ -189,6 +203,8 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
  *
  * You can use this string literal to assign a seqan3::dot_bracket3 character:
  * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 constexpr dot_bracket3 operator""_db3(char const ch) noexcept
 {

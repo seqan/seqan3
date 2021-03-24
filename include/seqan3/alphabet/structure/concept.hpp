@@ -96,7 +96,7 @@ namespace seqan3
  *   3. A member function called `is_pair_open()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended) and if the returned type is `bool.
+ * but recommended) and if the returned type is `bool`.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -108,6 +108,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_pair_open = detail::adl_only::is_pair_open_cpo{};
 //!\}
@@ -191,7 +193,7 @@ namespace seqan3
  *   3. A member function called `is_pair_close()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended) and if the returned type is `bool.
+ * but recommended) and if the returned type is `bool`.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -203,6 +205,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_pair_close = detail::adl_only::is_pair_close_cpo{};
 //!\}
@@ -286,7 +290,7 @@ namespace seqan3
  *   3. A member function called `is_unpaired()`.
  *
  * Functions are only considered for one of the above cases if they are marked `noexcept` (`constexpr` is not required,
- * but recommended) and if the returned type is `bool.
+ * but recommended) and if the returned type is `bool`.
  *
  * Every RNA structure alphabet type must provide one of the above.
  *
@@ -298,6 +302,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_unpaired = detail::adl_only::is_unpaired_cpo{};
 //!\}
@@ -423,6 +429,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
@@ -531,6 +539,8 @@ namespace seqan3
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_cpo{};
 //!\}
@@ -572,6 +582,8 @@ namespace seqan3
  *   * `t &`
  *   * `t const`
  *   * `t const &`
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 //!\cond
 template <typename t>

@@ -33,7 +33,7 @@ namespace seqan3
  * seqan3::rna_structure_alphabet and satisfy the requirements on arguments by seqan3::alphabet_tuple_base.
  *
  * This composite pairs a nucleotide alphabet with a structure alphabet. The rank values
- * correpsond to numeric values in the size of the composite, while the character values
+ * correspond to numeric values in the size of the composite, while the character values
  * are taken from the sequence alphabet and the structure annotation is taken from the structure
  * alphabet.
  *
@@ -44,6 +44,8 @@ namespace seqan3
  * \include test/snippet/alphabet/structure/structured_rna.cpp
  *
  * This seqan3::alphabet_tuple_base itself models both seqan3::nucleotide_alphabet and seqan3::rna_structure_alphabet.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <nucleotide_alphabet sequence_alphabet_t, rna_structure_alphabet structure_alphabet_t>
 //!\cond
@@ -58,12 +60,21 @@ private:
     using base_type = alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                             sequence_alphabet_t, structure_alphabet_t>;
 public:
-    //!\brief First template parameter as member type.
+    /*!\brief First template parameter as member type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using sequence_alphabet_type = sequence_alphabet_t;
-    //!\brief Second template parameter as member type.
+    /*!\brief Second template parameter as member type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using structure_alphabet_type = structure_alphabet_t;
 
-    //!\brief Equals the char_type of sequence_alphabet_type.
+    /*!\brief Equals the char_type of sequence_alphabet_type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
@@ -78,14 +89,39 @@ public:
 
     using base_type::base_type; // Inherit non-default constructors
 
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna(indirect_component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::operator=(component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(component_type const alph) noexcept {} ))
-    //!\copydoc alphabet_tuple_base::operator=(indirect_component_type const alph)
-    SEQAN3_DOXYGEN_ONLY(( constexpr structured_rna & operator=(indirect_component_type const alph) noexcept {} ))
+#if SEQAN3_DOXYGEN_ONLY(1)0
+    /*!\copybrief seqan3::alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
+     * \details
+     * \sa seqan3::alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    constexpr structured_rna(component_type const alph) noexcept {}
+
+    /*!\copybrief seqan3::alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
+     * \details
+     * \sa seqan3::alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    constexpr structured_rna(indirect_component_type const alph) noexcept {}
+
+    /*!\copybrief seqan3::alphabet_tuple_base::operator=(component_type const alph)
+     * \details
+     * \sa seqan3::alphabet_tuple_base::operator=(component_type const alph)
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    constexpr structured_rna & operator=(component_type const alph) noexcept {}
+
+    /*!\copybrief seqan3::alphabet_tuple_base::operator=(indirect_component_type const alph)
+     * \details
+     * \sa seqan3::alphabet_tuple_base::operator=(indirect_component_type const alph)
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    constexpr structured_rna & operator=(indirect_component_type const alph) noexcept {}
+#endif // SEQAN3_DOXYGEN_ONLY
     //!\}
 
     // Inherit operators from base
@@ -94,7 +130,10 @@ public:
     //!\name Write functions
     //!\{
 
-    //!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
+    /*!\brief Assign from a nucleotide character. This modifies the internal sequence letter.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr structured_rna & assign_char(char_type const c) noexcept
     {
         seqan3::assign_char_to(c, get<0>(*this));
@@ -105,7 +144,10 @@ public:
     //!\name Read functions
     //!\{
 
-    //!\brief Return a character. This reads the internal sequence letter.
+    /*!\brief Return a character. This reads the internal sequence letter.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr char_type to_char() const noexcept
     {
         return seqan3::to_char(get<0>(*this));
@@ -116,10 +158,12 @@ public:
      * See \ref nucleotide for the actual values.
      * Satisfies the seqan3::nucleotide_alphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
-     * ###Complexity
+     * ### Complexity
      * Constant.
-     * ###Exceptions
+     * ### Exceptions
      * Guaranteed not to throw.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr structured_rna complement() const noexcept
     {
@@ -127,7 +171,10 @@ public:
     }
     //!\}
 
-    //!\brief Validate whether a character is valid in the sequence alphabet.
+    /*!\brief Validate whether a character is valid in the sequence alphabet.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     static constexpr bool char_is_valid(char_type const c) noexcept
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
@@ -138,6 +185,8 @@ public:
 
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_open() const noexcept
     {
@@ -146,6 +195,8 @@ public:
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_close() const noexcept
     {
@@ -154,6 +205,8 @@ public:
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_unpaired() const noexcept
     {
@@ -165,7 +218,10 @@ public:
 
     /*!\brief Get an identifier for a pseudoknotted interaction.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * \details
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {

@@ -49,9 +49,11 @@ namespace seqan3
  * <<<<_AAAA____>>>>aaaa
  *```
  *
- * ###Usage
+ * ### Usage
  * The following code example creates a wuss vector, modifies it, and prints the result to stderr.
  * \include test/snippet/alphabet/structure/wuss_general.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <uint8_t SIZE = 51>
 class wuss : public alphabet_base<wuss<SIZE>, SIZE>
@@ -66,12 +68,14 @@ private:
     //!\brief Befriend seqan3::alphabet_base.
     friend base_t;
 
+protected:
+    using typename base_t::rank_type;
+    using typename base_t::char_type;
+
 public:
     using base_t::alphabet_size;
     using base_t::to_rank;
     using base_t::to_char;
-    using typename base_t::rank_type;
-    using typename base_t::char_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -90,6 +94,8 @@ public:
      */
     /*!\brief Check whether the character represents a rightward interaction in an RNA structure.
      * \returns True if the letter represents a rightward interaction, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_open() const noexcept
     {
@@ -98,6 +104,8 @@ public:
 
     /*!\brief Check whether the character represents a leftward interaction in an RNA structure.
      * \returns True if the letter represents a leftward interaction, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_pair_close() const noexcept
     {
@@ -106,6 +114,8 @@ public:
 
     /*!\brief Check whether the character represents an unpaired position in an RNA structure.
      * \returns True if the letter represents an unpaired site, False otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool is_unpaired() const noexcept
     {
@@ -114,14 +124,19 @@ public:
 
     /*!\brief The ability of this alphabet to represent pseudoknots, i.e. crossing interactions, up to a certain depth.
      *        It is the number of distinct pairs of interaction symbols the format supports: 4..30 (depends on size)
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     // formula: (alphabet size - 7 unpaired characters) / 2, as every bracket exists as opening/closing pair
     static constexpr uint8_t max_pseudoknot_depth{static_cast<uint8_t>((alphabet_size - 7) / 2)};
 
-    /*!\brief Get an identifier for a pseudoknotted interaction,
-     * where opening and closing brackets of the same type have the same id.
+    /*!\brief Get an identifier for a pseudoknotted interaction, where opening and closing brackets of the same
+     *        type have the same id.
      * \returns The pseudoknot id, if alph denotes an interaction, and no value otherwise.
+     * \details
      * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr std::optional<uint8_t> pseudoknot_id() const noexcept
     {
@@ -223,8 +238,9 @@ constexpr std::array<int8_t, SIZE> wuss<SIZE>::interaction_tab = [] () constexpr
     return interaction_table;
 } ();
 
-//!\brief Alias for the default type wuss51.
-//!\relates seqan3::wuss
+/*!\brief Alias for the default type wuss51.
+ * \relates seqan3::wuss
+ */
 using wuss51 = wuss<51>;
 
 /*!\name Literals
@@ -239,6 +255,8 @@ using wuss51 = wuss<51>;
  *
  * You can use this string literal to easily assign to a vector of seqan3::wuss51 characters:
  * \include test/snippet/alphabet/structure/wuss_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
 {
@@ -259,6 +277,8 @@ inline std::vector<wuss51> operator""_wuss51(const char * str, std::size_t len)
  * You can use this string literal to assign a seqan3::wuss51 character.
  * For different wuss alphabet sizes the `assign_char` function must be used.
  * \include test/snippet/alphabet/structure/wuss_char_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 constexpr wuss51 operator""_wuss51(char const ch) noexcept
 {
