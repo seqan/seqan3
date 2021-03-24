@@ -559,39 +559,26 @@ inline constexpr auto char_is_valid_for = detail::adl_only::char_is_valid_for_fn
 namespace seqan3::detail::adl_only
 {
 
-//!\brief Functor definition for seqan3::assign_char_strictly_to.
+//!\brief Function object definition for seqan3::assign_char_strictly_to.
 //!\ingroup alphabet
 struct assign_char_strictly_to_fn
 {
-    //!\brief Operator overload for lvalues.
-    template <typename alph_t>
-    //!\cond
-        requires requires (alph_t a, seqan3::alphabet_char_t<alph_t> r)
-        {
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::assign_char_to(r, a), std::convertible_to, alph_t);
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::char_is_valid_for<alph_t>(r), std::same_as, bool);
-        }
-    //!\endcond
-    decltype(auto) operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t & a) const
-    {
-        if (!seqan3::char_is_valid_for<alph_t>(r))
-            throw seqan3::invalid_char_assignment{detail::type_name_as_string<alph_t>, r};
-
-        return seqan3::assign_char_to(r, a);
-    }
-
     //!\brief Operator overload for rvalues.
-    template <typename alph_t>
+    template <typename alphabet_t>
+    constexpr decltype(auto) operator()(seqan3::alphabet_char_t<alphabet_t> const chr, alphabet_t && alphabet) const
     //!\cond
-        requires requires (alph_t a, seqan3::alphabet_char_t<alph_t> r)
+        requires requires ()
         {
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::assign_char_to(r, a), std::convertible_to, alph_t);
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::char_is_valid_for<alph_t>(r), std::same_as, bool);
+            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::assign_char_to(chr, std::forward<alphabet_t>(alphabet)),
+                                          std::convertible_to, alphabet_t);
+            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::char_is_valid_for<alphabet_t>(chr), std::same_as, bool);
         }
     //!\endcond
-    auto operator()(seqan3::alphabet_char_t<alph_t> const r, alph_t && a) const
     {
-        return operator()(r, a); // call above function but return by value
+        if (!seqan3::char_is_valid_for<alphabet_t>(chr))
+            throw seqan3::invalid_char_assignment{detail::type_name_as_string<alphabet_t>, chr};
+
+        return seqan3::assign_char_to(chr, std::forward<alphabet_t>(alphabet));
     }
 };
 
