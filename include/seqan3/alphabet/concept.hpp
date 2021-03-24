@@ -256,7 +256,7 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void to_char(args_t ...) = delete;
 
-//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_rank.
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_char.
 //!\ingroup alphabet
 struct to_char_cpo : public detail::customisation_point_object<to_char_cpo, 2>
 {
