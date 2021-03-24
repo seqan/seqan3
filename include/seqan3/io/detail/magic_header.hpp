@@ -99,14 +99,14 @@ struct bgzf_compression
         static_assert(seqan3::detail::weakly_equality_comparable_with<char_t, char>,
                       "The given char type of the span must be comparable with char.");
 
-        return (header[0] == magic_header[0] &&                                                     // GZ_ID1
-                header[1] == magic_header[1] &&                                                     // GZ_ID2
-                header[2] == magic_header[2] &&                                                     // GZ_CM
-                (header[3] & magic_header[3]) != 0 &&                                                // FLG_FEXTRA
-                to_little_endian(*reinterpret_cast<uint16_t *>(&header[10])) == magic_header[10] &&  // BGZF_ID1
-                header[12] == magic_header[12] &&                                                    // BGZF_ID2
-                header[13] == magic_header[13] &&                                                    // BGZF_SLEN
-                to_little_endian(*reinterpret_cast<uint16_t *>(&header[14])) == magic_header[14]);   // BGZF_XLEN
+        return (header[0] == magic_header[0] &&                                                            // GZ_ID1
+                header[1] == magic_header[1] &&                                                            // GZ_ID2
+                header[2] == magic_header[2] &&                                                            // GZ_CM
+                (header[3] & magic_header[3]) != 0 &&                                                      // FLG_FEXTRA
+                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[10])) == magic_header[10] &&  // BGZF_ID1
+                header[12] == magic_header[12] &&                                                          // BGZF_ID2
+                header[13] == magic_header[13] &&                                                          // BGZF_SLEN
+                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[14])) == magic_header[14]);   // BGZF_XLEN
     }
 };
 

@@ -21,7 +21,6 @@
 #include <string>
 #include <tuple>
 
-
 #ifdef SEQAN3_HAS_BZIP2
     #include <seqan3/contrib/stream/bz2_istream.hpp>
 #endif
@@ -31,6 +30,7 @@
     #include <seqan3/contrib/stream/gz_istream.hpp>
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
+#include <seqan3/io/exception.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 namespace seqan3::detail
