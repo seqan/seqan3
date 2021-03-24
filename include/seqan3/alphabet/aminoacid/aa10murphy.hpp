@@ -105,9 +105,9 @@ public:
     using base_t::base_t;
     //!\}
 
-protected:
-    //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[alphabet_size]
+private:
+    //!\copydoc seqan3::aa27::rank_to_char_table
+    static constexpr char_type rank_to_char_table[alphabet_size]
     {
         'A',
         'B',
@@ -118,11 +118,11 @@ protected:
         'I',
         'K',
         'P',
-        'S',
+        'S'
     };
 
-    //!\brief Char to value conversion table.
-    static constexpr std::array<rank_type, 256> char_to_rank
+    //!\copydoc seqan3::aa27::char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table
     {
         [] () constexpr
         {
@@ -135,8 +135,8 @@ protected:
             // reverse mapping for characters and their lowercase
             for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
             {
-                ret[static_cast<rank_type>(         rank_to_char[rnk]) ] = rnk;
-                ret[static_cast<rank_type>(to_lower(rank_to_char[rnk]))] = rnk;
+                ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
+                ret[static_cast<rank_type>(to_lower(rank_to_char_table[rnk]))] = rnk;
             }
 
             ret['D'] = ret['B']; ret['d'] = ret['B']; // Convert D to B (either D/N).
@@ -159,6 +159,19 @@ protected:
             return ret;
         }()
     };
+
+    //!\copydoc seqan3::aa27::rank_to_char
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
+
+    //!\copydoc seqan3::aa27::char_to_rank
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
 };
 
 // ------------------------------------------------------------------

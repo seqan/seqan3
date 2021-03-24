@@ -9,15 +9,32 @@ public:
     using nucleotide_base<my_dna4, 4>::nucleotide_base; // Use constructors of the base class.
 
 private:
-    // Value to char conversion table.
-    static constexpr char_type rank_to_char[alphabet_size] {'A', 'C', 'G', 'T'}; // rank 0,1,2,3
+    // Returns the character representation of rank. This is where rank conversion for to_char() is handled!
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
 
-    // Char-to-value conversion table. This is where char conversion for assign_char() is handled!
-    static constexpr std::array<rank_type, 256> char_to_rank
+    // Returns the rank representation of character. This is where char conversion for assign_char() is handled!
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
+
+private:
+    // === lookup-table implementation detail ===
+
+    // Value to char conversion table.
+    static constexpr char_type rank_to_char_table[alphabet_size] {'A', 'C', 'G', 'T'}; // rank 0,1,2,3
+
+    // Char-to-value conversion table.
+    static constexpr std::array<rank_type, 256> char_to_rank_table
     {
         [] () constexpr
         {
-            std::array<rank_type, 256> conversion_table{}; // By default now, everything has rank 0 which equals `A`.
+            // By default, everything has rank 0 which equals `A`.
+            std::array<rank_type, 256> conversion_table{};
 
             conversion_table['C'] = conversion_table['c'] = 1;
             conversion_table['G'] = conversion_table['g'] = 2;

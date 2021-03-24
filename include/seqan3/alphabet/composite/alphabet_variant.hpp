@@ -481,14 +481,8 @@ protected:
         return partial_sum;
     }();
 
-    /*!\brief Compile-time generated lookup table which maps the rank to char.
-     *
-     * A map generated at compile time where the key is the rank of the variant
-     * of all alternatives and the value is the corresponding char of that rank
-     * and alternative.
-     *
-     */
-    static constexpr std::array<char_type, alphabet_size> rank_to_char = []() constexpr
+    //!\copydoc seqan3::alphabet_variant::rank_to_char
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table = []() constexpr
     {
         // Explicitly writing assign_rank_to_char within assign_rank_to_char
         // causes this bug (g++-7 and g++-8):
@@ -578,14 +572,8 @@ protected:
         }()
     };
 
-    /*!\brief Compile-time generated lookup table which maps the char to rank.
-     *
-     * An map generated at compile time where the key is the char of one of the
-     * alternatives and the value is the corresponding rank over all alternatives (by
-     * conflict will default to the first).
-     *
-     */
-    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank = []() constexpr
+    //!\copydoc seqan3::alphabet_variant::char_to_rank
+    static constexpr std::array<rank_type, detail::size_in_values_v<char_type>> char_to_rank_table = []() constexpr
     {
         constexpr size_t alternative_size = sizeof...(alternative_types);
         constexpr size_t table_size = detail::size_in_values_v<char_type>;
@@ -604,6 +592,29 @@ protected:
 
         return char_to_rank;
     }();
+
+    /*!\brief Compile-time generated lookup table which maps the rank to char.
+     *
+     * A map generated at compile time where the key is the rank of the variant
+     * of all alternatives and the value is the corresponding char of that rank
+     * and alternative.
+     */
+    static constexpr char_type rank_to_char(rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
+
+    /*!\brief Compile-time generated lookup table which maps the char to rank.
+     *
+     * A map generated at compile time where the key is the char of one of the
+     * alternatives and the value is the corresponding rank over all alternatives (by
+     * conflict will default to the first).
+     */
+    static constexpr rank_type char_to_rank(char_type const chr)
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+        return char_to_rank_table[static_cast<index_t>(chr)];
+    }
 };
 
 } // namespace seqan3

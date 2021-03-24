@@ -136,7 +136,7 @@ public:
     //!\brief Return a character. This reads the internal sequence letter.
     constexpr char_type to_char() const noexcept
     {
-        return rank_to_char[to_rank()];
+        return rank_to_char(to_rank());
     }
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
@@ -156,11 +156,9 @@ public:
         return char_is_valid_for<sequence_alphabet_type>(c);
     }
 
-protected:
-    //!\privatesection
-
-    //!\brief Rank to char conversion table.
-    static std::array<char_type, alphabet_size> constexpr rank_to_char
+private:
+    //!\copydoc seqan3::dna4::rank_to_char_table
+    static std::array<char_type, alphabet_size> constexpr rank_to_char_table
     {
         [] () constexpr
         {
@@ -196,6 +194,12 @@ protected:
             return ret;
         }()
     };
+
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char(typename base_type::rank_type const rank)
+    {
+        return rank_to_char_table[rank];
+    }
 };
 
 //!\brief Type deduction guide enables usage of qualified without specifying template args.

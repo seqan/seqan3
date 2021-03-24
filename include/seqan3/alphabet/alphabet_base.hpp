@@ -19,6 +19,30 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
+namespace seqan3::detail
+{
+//!\cond
+// helper concept to deprecate old rank_to_char lookup tables
+template <typename alphabet_t>
+SEQAN3_CONCEPT has_rank_to_char_table = requires()
+{
+    { alphabet_t::rank_to_char[0] };
+};
+//!\endcond
+
+//!\cond
+// helper concept to deprecate old char_to_rank lookup tables
+template <typename alphabet_t>
+SEQAN3_CONCEPT has_char_to_rank_table = requires()
+{
+    { alphabet_t::char_to_rank[0] };
+};
+//!\endcond
+
+} // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
+
 namespace seqan3
 {
 
@@ -35,18 +59,20 @@ namespace seqan3
  * seqan3::alphabet, it is purely a way to avoid code duplication.
  *
  * The base class represents the alphabet value as the rank and automatically deduces the rank type from the size and
- * defines all required member functions. The derived type needs to define only the following two tables as static
- * member variables (can be private if the base class is befriended):
+ * defines all required member functions. The derived type needs to define only the following two static
+ * member functions (can be private if the base class is befriended):
  *
- *   * `static std::array<char_type, alphabet_size> constexpr rank_to_char` that defines for every possible rank value
- *     the corresponding char value.
- *   * `static std::array<rank_type, 256> constexpr char_to_rank` that defines for every possible character value the
- *     corresponding rank value (adapt size if char_type isn't `char`).
+ *   * `static constexpr char_type rank_to_char(rank_type const rank);` that defines for every possible rank value the
+ *     corresponding char value.
+ *     (The implementation can be a lookup-table or an arithmetic expression.)
+ *   * `static constexpr rank_type char_to_rank(char_type const chr);` that defines for every possible character value
+ *     the corresponding rank value (adapt size if char_type isn't `char`).
+ *     (The implementation can be a lookup-table or an arithmetic expression.)
  *
  * ### Example
  *
  * This creates an alphabet called `ab` which has size two and the two letters 'A' and 'B':
- * \include test/snippet/alphabet/detail/alphabet_base.cpp
+ * \include test/snippet/alphabet/alphabet_base.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -111,8 +137,30 @@ public:
         requires (!std::same_as<char_t, void>)
     //!\endcond
     {
+#ifdef SEQAN3_DEPRECATED_310
+        if constexpr (detail::has_rank_to_char_table<derived_type>)
+            return rank_to_char_table(rank);
+        else
+            return derived_type::rank_to_char(rank);
+#else // ^^^ before 3.1.0 release / after 3.1.0 release vvv
+        return derived_type::rank_to_char(rank);
+#endif // SEQAN3_DEPRECATED_310
+    }
+
+#ifdef SEQAN3_DEPRECATED_310
+private:
+
+    /*!\brief Before SeqAn 3.0.3, we defined derived_type::rank_to_char_table as a lookup table. We relaxed this to be a
+     *        function to give the implementer more freedom.
+     * \deprecated Define derived_type::rank_to_char_table as a function.
+     */
+    SEQAN3_DEPRECATED_310 static constexpr char_type rank_to_char_table(rank_type const rank) noexcept
+    {
         return derived_type::rank_to_char[rank];
     }
+
+public:
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\brief Return the letter's numeric value (rank in the alphabet).
      *
@@ -140,7 +188,7 @@ public:
      * \{
      */
     /*!\brief Assign from a character, implicitly converts invalid characters.
-     * \param c The character to be assigned.
+     * \param chr The character to be assigned.
      *
      * \details
      *
@@ -156,15 +204,41 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    constexpr derived_type & assign_char(char_type const c) noexcept
+    constexpr derived_type & assign_char(char_type const chr) noexcept
     //!\cond
         requires (!std::same_as<char_t, void>)
     //!\endcond
     {
-        using index_t = std::make_unsigned_t<char_type>;
-        rank = derived_type::char_to_rank[static_cast<index_t>(c)];
+#ifdef SEQAN3_DEPRECATED_310
+        if constexpr (detail::has_char_to_rank_table<derived_type>)
+            rank = char_to_rank_table(chr);
+        else
+            rank = derived_type::char_to_rank(chr);
+#else // ^^^ before 3.1.0 release / after 3.1.0 release vvv
+        rank = derived_type::char_to_rank(chr);
+#endif // SEQAN3_DEPRECATED_310
+
         return static_cast<derived_type &>(*this);
     }
+
+#ifdef SEQAN3_DEPRECATED_310
+private:
+
+    /*!\brief Before SeqAn 3.0.3, we defined derived_type::char_to_rank as a lookup table. We relaxed this to be a
+     *        function to give the implementer more freedom.
+     * \deprecated Define derived_type::char_to_rank as a function.
+     */
+    SEQAN3_DEPRECATED_310 static constexpr rank_type char_to_rank_table(char_type const chr) noexcept
+    {
+        using index_t = std::make_unsigned_t<char_type>;
+#if SEQAN3_WORKAROUND_GCC_99318
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif // SEQAN3_WORKAROUND_GCC_99318
+        return derived_type::char_to_rank[static_cast<index_t>(chr)];
+    }
+
+public:
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\brief Assign from a numeric value.
      * \param c The rank to be assigned.

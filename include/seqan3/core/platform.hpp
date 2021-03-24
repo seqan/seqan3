@@ -323,6 +323,15 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99318
+#ifndef SEQAN3_WORKAROUND_GCC_99318 // not yet fixed, this is a regression since gcc-10
+#   if defined(__GNUC__) && (__GNUC__ >= 10)
+#       define SEQAN3_WORKAROUND_GCC_99318 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_99318 0
+#   endif
+#endif
+
 /*!\brief This is needed to support CentOS 7 or RHEL 7; Newer CentOS's include a more modern default-gcc version making
  *        this macro obsolete.
  *

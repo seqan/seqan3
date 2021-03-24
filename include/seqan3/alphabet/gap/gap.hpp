@@ -42,11 +42,17 @@ private:
     //!\brief Befriend seqan3::alphabet_base.
     friend base_t;
 
-    //!\brief Value to char conversion table.
-    static constexpr char_type rank_to_char[1]{'-'};
+    //!\copydoc seqan3::dna4::rank_to_char
+    static constexpr char_type rank_to_char(rank_type const)
+    {
+        return '-';
+    }
 
-    //!\brief Char to value conversion table.
-    static constexpr std::array<rank_type, 256> char_to_rank{};
+    //!\copydoc seqan3::dna4::char_to_rank
+    static constexpr rank_type char_to_rank(char_type const)
+    {
+        return 0;
+    }
 
 public:
     /*!\name Constructors, destructor and assignment
