@@ -31,7 +31,7 @@ namespace seqan3::detail
  * \details
  *
  * Some characters, e.g. control commands, cannot be printed. This function converts them to a std::string
- * containing the visual representation of this character. For all control commands the value `'CTRL'` is returned.
+ * containing the visual representation of this character. For all control commands the value ``'CTRL'`` is returned.
  *
  * ### Exception
  *
