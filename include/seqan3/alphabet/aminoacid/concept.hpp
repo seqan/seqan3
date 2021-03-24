@@ -47,31 +47,58 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void enable_aminoacid(args_t ...) = delete;
 
-//!\brief Customisation point dispatcher for seqan3::enable_aminoacid.
-struct enable_aminoacid_dispatcher
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enable_aminoacid.
+//!\ingroup aminoacid
+template <typename alphabet_t>
+struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_aminoacid_cpo<alphabet_t>, 2>
 {
-public:
-    // explicit customisation
-    SEQAN3_CPO_IMPL(2, std::bool_constant<seqan3::custom::alphabet<strip_type_identity_t<t>>::enable_aminoacid>::value)
-    // ADL
-    SEQAN3_CPO_IMPL(1, std::bool_constant<enable_aminoacid(t{})>::value)
-    // default: derived from base class or not (valid for any type)
-    SEQAN3_CPO_IMPL(0, (std::is_base_of_v<seqan3::aminoacid_empty_base, strip_type_identity_t<t>>))
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<enable_aminoacid_cpo<alphabet_t>, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-    //!\brief Main dispatching function.
-    template <typename alph_t>
-    static constexpr bool dispatch() noexcept
-    {
-        if constexpr (std::is_nothrow_default_constructible_v<alph_t> &&
-                      seqan3::is_constexpr_default_constructible_v<alph_t>)
-        {
-            return impl(priority_tag<2>{}, alph_t{});
-        }
-        else
-        {
-            return impl(priority_tag<2>{}, std::type_identity<alph_t>{});
-        }
-    }
+    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, enable_aminoacid will be called with
+     *        std::type_identity instead of a default constructed alphabet.
+     */
+    template <typename alphabet_type>
+    using alphabet_or_type_identity
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>> &&
+                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                             std::remove_cvref_t<alphabet_type>,
+                             std::type_identity<alphabet_type>>;
+
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
+    (
+        /*return*/ std::bool_constant<seqan3::custom::alphabet<alphabet_type>::enable_aminoacid>::value == true /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e.
+     *        `enable_aminoacid(alphabet_type{})`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     *
+     * \details
+     *
+     * If the alphabet_type isn't std::is_nothrow_default_constructible,
+     * `enable_aminoacid(std::type_identity<alphabet_type>{})` will be called.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
+    (
+        /*return*/ std::bool_constant<enable_aminoacid(alphabet_or_type_identity<alphabet_type>{})>::value == true /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): `alphabet_type` is derived from seqan3::aminoacid_empty_base
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
+    (
+        /*return*/ std::is_base_of_v<seqan3::aminoacid_empty_base, alphabet_type> == true /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -125,7 +152,8 @@ namespace seqan3
  *            and Implementation 3 are stable and will not change.}
  */
 template <typename t>
-inline constexpr bool enable_aminoacid = detail::adl_only::enable_aminoacid_dispatcher::dispatch<std::remove_cvref_t<t>>();
+inline constexpr bool enable_aminoacid =
+    detail::adl_only::enable_aminoacid_cpo<std::remove_cvref_t<t>>::cpo_overload(detail::priority_tag<2>{});
 
 // ============================================================================
 // concept
