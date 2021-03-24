@@ -82,13 +82,13 @@ TYPED_TEST(interleaved_bloom_filter_test, member_getter)
 TYPED_TEST(interleaved_bloom_filter_test, bulk_contains)
 {
     TypeParam ibf{TestFixture::make_ibf(seqan3::bin_count{64u}, seqan3::bin_size{1024u})};
-    sdsl::bit_vector expected(64); // empty bitvector is expected since we did not insert anything
+    std::vector<bool> expected(64); // empty bitvector is expected since we did not insert anything
     auto agent = ibf.membership_agent();
 
     for (size_t hash : std::views::iota(0, 64)) // test correct resize for each bin individually
     {
         auto & res = agent.bulk_contains(hash);
-        EXPECT_EQ(res, expected);
+        EXPECT_RANGE_EQ(res, expected);
     }
 
     // Test iterator interface
@@ -129,11 +129,11 @@ TYPED_TEST(interleaved_bloom_filter_test, emplace)
     // 2. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
-    sdsl::bit_vector expected(64, 1); // every hash value should be set for every bin
+    std::vector<bool> expected(64, 1); // every hash value should be set for every bin
     for (size_t hash : std::views::iota(0, 64)) // test correct resize for each bin individually
     {
         auto & res = agent.bulk_contains(hash);
-        EXPECT_EQ(res, expected);
+        EXPECT_RANGE_EQ(res, expected);
     }
 }
 
@@ -154,12 +154,12 @@ TYPED_TEST(interleaved_bloom_filter_test, clear)
     // 3. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
-    sdsl::bit_vector expected(64, 1); // every hash value should be set for every bin...
+    std::vector<bool> expected(64, 1); // every hash value should be set for every bin...
     expected[17] = 0; // ...except bin 17
     for (size_t hash : std::views::iota(0, 64))
     {
         auto & res = agent.bulk_contains(hash);
-        EXPECT_EQ(res, expected);
+        EXPECT_RANGE_EQ(res, expected);
     }
 }
 
@@ -181,14 +181,14 @@ TYPED_TEST(interleaved_bloom_filter_test, clear_range)
     // 3. Construct either the uncompressed or compressed interleaved_bloom_filter and test set with bulk_contains
     TypeParam ibf2{ibf};
     auto agent = ibf2.membership_agent();
-    sdsl::bit_vector expected(64, 1); // every hash value should be set for every bin...
+    std::vector<bool> expected(64, 1); // every hash value should be set for every bin...
     expected[8] = 0; // ...except bin 8
     expected[17] = 0; // ...except bin 17
     expected[45] = 0; // ...except bin 45
     for (size_t hash : std::views::iota(0, 64))
     {
         auto & res = agent.bulk_contains(hash);
-        EXPECT_EQ(res, expected);
+        EXPECT_RANGE_EQ(res, expected);
     }
 }
 
@@ -324,14 +324,14 @@ TYPED_TEST(interleaved_bloom_filter_test, increase_bin_number_to)
         EXPECT_EQ(ibf.bin_count(), 73u);
         EXPECT_GE(ibf.bit_size(), 1024u);
 
-        sdsl::bit_vector expected(73, 0);
+        std::vector<bool> expected(73, 0);
         expected[current_bin] = 1; // none of the bins except current_bin stores the hash values.
         TypeParam tibf{ibf}; // test output on compressed and uncompressed
         auto agent = tibf.membership_agent();
         for (size_t const h : hashes)
         {
             auto & res = agent.bulk_contains(h);
-            EXPECT_EQ(res, expected);
+            EXPECT_RANGE_EQ(res, expected);
         }
     }
 }
