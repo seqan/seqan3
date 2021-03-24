@@ -134,16 +134,19 @@ tutorial
 Now we can switch to the directory `build` and run:
 
 ```bash
-cmake ../source
+cmake -DCMAKE_BUILD_TYPE=Release ../source
 make
 ./hello_world
 ```
 
-The output should be `Hello world`.
+The output should be `Hello world`. Note that the build type is specified with `-DCMAKE_BUILD_TYPE=Release`. 
+Specifying `Release` enables an optimized build where no debug information is available. Release mode is therefore 
+suitable for the end user. There is an example of a `Debug` build that is suitable for contributors in the next tutorial.
 
-\remark Depending on the standard C++ on your system, you may need to specify the compiler via `-DCMAKE_CXX_COMPILER=`, for example:
+\remark Depending on the standard C++ on your system, you may need to specify the compiler via `-DCMAKE_CXX_COMPILER=`, 
+for example:
 ```bash
-cmake ../source -DCMAKE_CXX_COMPILER=/path/to/executable/g++-7
+cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-7 ../source
 ```
 
 \note In some situations it can happen that the correct assembler is not found.
