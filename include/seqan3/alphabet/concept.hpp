@@ -456,39 +456,88 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void char_is_valid_for(args_t ...) = delete;
 
-/*!\brief Functor definition for seqan3::char_is_valid_for.
- * \tparam alph_t   The alphabet type being queried.
+/*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::char_is_valid_for.
+ * \tparam alphabet_t The alphabet type being queried.
  * \ingroup alphabet
  */
-template <typename alph_t>
-struct char_is_valid_for_fn
+template <typename alphabet_t>
+struct char_is_valid_for_cpo : public detail::customisation_point_object<char_is_valid_for_cpo<alphabet_t>, 3>
 {
-public:
-    //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>>,
-                                        std::remove_cvref_t<alph_t>,
-                                        std::type_identity<alph_t>>;
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<char_is_valid_for_cpo<alphabet_t>, 3>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-    SEQAN3_CPO_IMPL(3, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::char_is_valid(v))) // expl. cst.
-    SEQAN3_CPO_IMPL(2, (char_is_valid_for(v, s_alph_t{})                                                )) // ADL
-    SEQAN3_CPO_IMPL(1, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::char_is_valid(v)          )) // member
-    SEQAN3_CPO_IMPL(0, (seqan3::to_char(seqan3::assign_char_to(v, s_alph_t{})) == v                     )) // fallback
+    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, char_is_valid will be called with
+     *        std::type_identity instead of a default constructed alphabet.
+     */
+    template <typename alphabet_type>
+    using alphabet_or_type_identity
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                             std::remove_cvref_t<alphabet_type>,
+                             std::type_identity<alphabet_type>>;
 
-public:
-    //!\brief Operator definition.
-    template <typename dummy = int> // need to make this a template to enforce deferred instantiation
-    //!\cond
-        requires requires (alphabet_char_t<alph_t> const a)
-        {
-            { impl(priority_tag<3>{}, a, dummy{}) };
-            requires noexcept(impl(priority_tag<3>{}, a, dummy{}));
-            SEQAN3_RETURN_TYPE_CONSTRAINT(impl(priority_tag<3>{}, a, dummy{}), std::convertible_to, bool);
-        }
-    //!\endcond
-    constexpr bool operator()(alphabet_char_t<alph_t> const a) const noexcept
-    {
-        return impl(priority_tag<3>{}, a);
-    }
+    /*!\brief CPO overload (1. out of 4 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \param chr The character of the alphabet.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<3>, alphabet_char_t<alphabet_type> const chr)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_type>::char_is_valid(chr) == true /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 4 checks): argument dependent lookup (ADL), i.e.
+     *        `char_is_valid_for(chr, alphabet_type{})`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \param chr The character of the alphabet.
+     *
+     * \details
+     *
+     * If the alphabet_type isn't std::is_nothrow_default_constructible,
+     * `char_is_valid_for(chr, std::type_identity<alphabet_type>{})` will be called.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_char_t<alphabet_type> const chr)
+    (
+        /*return*/ char_is_valid_for(chr, alphabet_or_type_identity<alphabet_type>{}) == true /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 4 checks): static member access, i.e. `alphabet_type::char_is_valid(chr)`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \param chr The character of the alphabet.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_char_t<alphabet_type> const chr)
+    (
+        /*return*/ std::remove_cvref_t<alphabet_type>::char_is_valid(chr) == true /*;*/
+    );
+
+    /*!\brief CPO overload (4. out of 4 checks): seqan3::to_char, seqan3::assign_char_to composition identity.
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \param chr The character of the alphabet.
+     * \details
+     *
+     * This is the default implementation. If your alphabet does not differentiates between upper and lower case you
+     * need to implement a custom seqan3::char_is_valid_for overload.
+     *
+     * This function calls (if alphabet_type is std::is_nothrow_default_constructible)
+     *
+     * ```
+     * seqan3::to_char(seqan3::assign_char_to(chr, alphabet_type{})) == chr;
+     * ```
+     *
+     * otherwise calls
+     *
+     * ```
+     * seqan3::to_char(seqan3::assign_char_to(chr, std::type_identity<alphabet_type>{})) == chr;
+     * ```
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_char_t<alphabet_type> const chr)
+    (
+        /*return*/ seqan3::to_char(seqan3::assign_char_to(chr, alphabet_or_type_identity<alphabet_type>{})) == chr /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -548,7 +597,7 @@ template <typename alph_t>
 //!\cond
     requires requires { { to_char(std::declval<alph_t>()) }; } // to_char() is required by some defs
 //!\endcond
-inline constexpr auto char_is_valid_for = detail::adl_only::char_is_valid_for_fn<alph_t>{};
+inline constexpr auto char_is_valid_for = detail::adl_only::char_is_valid_for_cpo<alph_t>{};
 //!\}
 } // namespace seqan3
 
