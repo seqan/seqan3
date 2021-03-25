@@ -296,7 +296,7 @@ TEST(sandboxed_path_symbolic_link, symbolic_link)
     }
 
     // create symlink and a sandboxed_path
-    create_directory_symlink(tmp_base_dir, tmp_dir);
+    std::filesystem::create_directory_symlink(tmp_base_dir, tmp_dir);
     sandboxed_path path{tmp_dir};
 
     // check the sandboxed path did not resolve the symlink
