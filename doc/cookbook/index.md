@@ -178,3 +178,12 @@ respective char conversion table very easily like this:
 \include doc/cookbook/custom_dna4.cpp
 
 If you are interested in custom alphabets, also take a look at our tutorial \ref howto_write_an_alphabet.
+
+# Controlling threads of (de-)compression streams {#setting_compression_threads}
+
+When \ref io_compression "reading or writing compressed files", parallelisation is automatically applied when
+using BGZF-compressed files, e.g., BAM files.
+This will use all available threads by default and can be adjusted by setting `seqan3::contrib::bgzf_thread_count` to
+the desired value:
+
+\snippet doc/cookbook/compression_threads.cpp example

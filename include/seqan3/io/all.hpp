@@ -36,6 +36,9 @@
  *
  * The (de)compression stream wrappers are currently only used internally and not part of the API.
  *
+ * The number of threads used for (de-)compression of BGZF-streams can be adjusted via
+ * \ref setting_compression_threads "setting seqan3::contrib::bgzf_thread_count".
+ *
  * # Formatted I/O
  *
  * ## Files and formats {#io_files}
