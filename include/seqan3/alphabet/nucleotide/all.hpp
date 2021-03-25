@@ -59,7 +59,7 @@
  * SeqAn offers six distinct nucleotide alphabet types to accommodate for this.
  *
  * The specialised RNA alphabets are provided for convenience, however the DNA alphabets can handle being assigned a
- * `'U'` character, as well. See below for the details.
+ * ``'U'`` character, as well. See below for the details.
  *
  * Which alphabet to chose?
  *   1. in most cases, take seqan3::dna15 (includes all IUPAC characters)
@@ -91,9 +91,9 @@
  * When assigning from `char` or converting from a larger nucleotide alphabet to a smaller one, *loss of information*
  * can occur since obviously some bases are not available. When converting to seqan3::dna5 or seqan3::rna5,
  * non-canonical bases
- * (letters other than A, C, G, T, U) are converted to `'N'` to preserve ambiguity at that position, while
+ * (letters other than A, C, G, T, U) are converted to ``'N'`` to preserve ambiguity at that position, while
  * for seqan3::dna4 and seqan3::rna4 they are converted to the first of the possibilities they represent (because
- * there is no letter `'N'` to represent ambiguity). See the greyed out values in the table at the top for
+ * there is no letter ``'N'`` to represent ambiguity). See the greyed out values in the table at the top for
  * an overview of which conversions take place.
  *
  * `char` values that are none of the IUPAC symbols, e.g. 'P', are always converted to the equivalent of assigning 'N',
