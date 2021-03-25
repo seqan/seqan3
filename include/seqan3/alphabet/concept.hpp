@@ -676,49 +676,65 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void alphabet_size(args_t ...) = delete;
 
-/*!\brief Functor definition used indirectly by for seqan3::detail::alphabet_size.
- * \tparam alph_t   The type being queried.
+/*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::alphabet_size.
+ * \tparam alphabet_t The alphabet type being queried.
  * \ingroup alphabet
  */
-template <typename alph_t>
-struct alphabet_size_fn
+template <typename alphabet_t>
+struct alphabet_size_cpo : public detail::customisation_point_object<alphabet_size_cpo<alphabet_t>, 2>
 {
-public:
-    //!\brief `alph_t` with cvref removed and possibly wrapped in std::type_identity.
-    using s_alph_t = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alph_t>> &&
-                                        seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alph_t>>,
-                                        std::remove_cvref_t<alph_t>,
-                                        std::type_identity<alph_t>>;
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<alphabet_size_cpo<alphabet_t>, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-    SEQAN3_CPO_IMPL(2, (deferred_type_t<seqan3::custom::alphabet<alph_t>, decltype(v)>::alphabet_size)) // expl. cst.
-    SEQAN3_CPO_IMPL(1, (alphabet_size(v)                                                             )) // ADL
-    SEQAN3_CPO_IMPL(0, (deferred_type_t<std::remove_cvref_t<alph_t>, decltype(v)>::alphabet_size          )) // member
+    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, alphabet_size will be called with
+     *        std::type_identity instead of a default constructed alphabet.
+     */
+    template <typename alphabet_type>
+    using alphabet_or_type_identity
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>> &&
+                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                             std::remove_cvref_t<alphabet_type>,
+                             std::type_identity<alphabet_type>>;
 
-public:
-    //!\brief Operator definition.
-    template <typename dummy = int> // need to make this a template to enforce deferred instantiation
-    //!\cond
-        requires requires
-        {
-            { impl(priority_tag<2>{}, s_alph_t{}, dummy{}) };
-            requires noexcept(impl(priority_tag<2>{}, s_alph_t{}, dummy{}));
-            requires std::integral<std::remove_cvref_t<decltype(impl(priority_tag<2>{}, s_alph_t{}, dummy{}))>>;
-        }
-    //!\endcond
-    constexpr auto operator()() const noexcept
-    {
-        // The following cannot be added to the list of constraints, because it is not properly deferred
-        // for incomplete types which leads to breakage.
-        static_assert(SEQAN3_IS_CONSTEXPR(impl(priority_tag<2>{}, s_alph_t{})),
-            "Only overloads that are marked constexpr are picked up by seqan3::alphabet_size.");
-        return impl(priority_tag<2>{}, s_alph_t{});
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
+    (
+        /*return*/ seqan3::custom::alphabet<alphabet_type>::alphabet_size /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `alphabet_size(alphabet_type{})`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     *
+     * \details
+     *
+     * If the alphabet_type isn't std::is_nothrow_default_constructible,
+     * `alphabet_size(std::type_identity<alphabet_type>{})` will be called.
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
+    (
+        /*return*/ alphabet_size(alphabet_or_type_identity<alphabet_type>{}) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): static member access, i.e. `alphabet_type::alphabet_size`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     */
+    template <typename alphabet_type = alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
+    (
+        /*return*/ std::remove_cvref_t<alphabet_type>::alphabet_size /*;*/
+    );
 };
 
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
-    requires requires { { alphabet_size_fn<alph_t>{} }; }
-inline constexpr auto alphabet_size_obj = alphabet_size_fn<alph_t>{};
+    requires requires { { alphabet_size_cpo<alph_t>{} }; }
+inline constexpr auto alphabet_size_obj = alphabet_size_cpo<alph_t>{};
 #endif // SEQAN3_WORKAROUND_GCC_89953
 
 } // namespace seqan3::detail::adl_only
@@ -769,16 +785,16 @@ namespace seqan3
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl_only::alphabet_size_fn<alph_t>{} }; } &&
+    requires requires { { detail::adl_only::alphabet_size_cpo<alph_t>{} }; } &&
              requires { { detail::adl_only::alphabet_size_obj<alph_t>() }; } // ICE workarounds
 //!\endcond
 inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_obj<alph_t>();
 #else // ^^^ workaround / no workaround vvv
 template <typename alph_t>
 //!\cond
-    requires requires { { detail::adl_only::alphabet_size_fn<alph_t>{}() }; }
+    requires requires { { detail::adl_only::alphabet_size_cpo<alph_t>{}() }; }
 //!\endcond
-inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_fn<alph_t>{}();
+inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_cpo<alph_t>{}();
 #endif // SEQAN3_WORKAROUND_GCC_89953
 
 // ============================================================================
