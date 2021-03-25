@@ -182,30 +182,74 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void assign_rank_to(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::assign_rank_to.
+//!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::assign_rank_to.
 //!\ingroup alphabet
-struct assign_rank_to_fn
+struct assign_rank_to_cpo : public detail::customisation_point_object<assign_rank_to_cpo, 2>
 {
-public:
-    SEQAN3_CPO_IMPL(2, (seqan3::custom::alphabet<decltype(v)>::assign_rank_to(args..., v))) // explicit customisation
-    SEQAN3_CPO_IMPL(1, (assign_rank_to(args..., v)                                       )) // ADL
-    SEQAN3_CPO_IMPL(0, (v.assign_rank(args...)                                           )) // member
+    //!\brief CRTP base class seqan3::detail::customisation_point_object.
+    using base_t = detail::customisation_point_object<assign_rank_to_cpo, 2>;
+    //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
+    using base_t::base_t;
 
-public:
-    //!\brief Operator definition.
-    template <typename alph_t>
-    //!\cond
-        requires requires (seqan3::alphabet_rank_t<alph_t> const r, alph_t & a)
-            {
-                { impl(priority_tag<2>{}, a, r) };
-                requires noexcept(impl(priority_tag<2>{}, a, r));
-                requires std::same_as<alph_t &, decltype(impl(priority_tag<2>{}, a, r))>;
-            }
-    //!\endcond
-    constexpr alph_t operator()(seqan3::alphabet_rank_t<alph_t> const r, alph_t && a) const noexcept
-    {
-        return impl(priority_tag<2>{}, a, r);
-    }
+    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param rank The rank to assign the alphabet to.
+     * \param alphabet The alphabet the rank is assigned to.
+     *
+     * \details
+     *
+     * We don't perfect-forward `alphabet` when calling `assign_rank_to(rank, alphabet)`, because we assume that the
+     * static member function is only defined for lvalue-references.
+     *
+     * We static_cast<alphabet_t> (instead of std::forward) the result of the CPO overload expression, since we want to
+     * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>,
+                                              seqan3::alphabet_rank_t<alphabet_t> const rank,
+                                              alphabet_t && alphabet)
+    (
+        /*return*/ static_cast<alphabet_t>(seqan3::custom::alphabet<alphabet_t>::assign_rank_to(rank, alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `assign_rank_to(rank, alphabet)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param rank The rank to assign the alphabet to.
+     * \param alphabet The alphabet the rank is assigned to.
+     *
+     * \details
+     *
+     * We don't perfect-forward `alphabet` when calling `assign_rank_to(rank, alphabet)`, because we assume that the ADL
+     * function is only defined for lvalue-references.
+     *
+     * We static_cast<alphabet_t> (instead of std::forward) the result of the CPO overload expression, since we want to
+     * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
+     */
+    template <typename alphabet_t>
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>,
+                                              seqan3::alphabet_rank_t<alphabet_t> const rank,
+                                              alphabet_t && alphabet)
+    (
+        /*return*/ static_cast<alphabet_t>(assign_rank_to(rank, alphabet)) /*;*/
+    );
+
+    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.assign_rank(rank)`
+     * \tparam alphabet_t The type of the alphabet.
+     * \param rank The rank to assign the alphabet to.
+     * \param alphabet The alphabet the rank is assigned to.
+     *
+     * \details
+     *
+     * We static_cast<alphabet_t> (instead of std::forward) the result of the CPO overload expression, since we want to
+     * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
+     */
+    template <typename alphabet_t> // least priority
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>,
+                                              seqan3::alphabet_rank_t<alphabet_t> const rank,
+                                              alphabet_t && alphabet)
+    (
+        /*return*/ static_cast<alphabet_t>(std::forward<alphabet_t>(alphabet).assign_rank(rank)) /*;*/
+    );
 };
 
 } // namespace seqan3::detail::adl_only
@@ -256,7 +300,7 @@ namespace seqan3
  *
  * \stableapi{Since version 3.1.}
  */
-inline constexpr auto assign_rank_to = detail::adl_only::assign_rank_to_fn{};
+inline constexpr auto assign_rank_to = detail::adl_only::assign_rank_to_cpo{};
 //!\}
 } // namespace seqan3
 
