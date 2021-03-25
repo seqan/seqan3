@@ -293,7 +293,7 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
      * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<3>)
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
     (
         /*return*/ seqan3::custom::alphabet<alphabet_type>::max_pseudoknot_depth /*;*/
     );
@@ -308,7 +308,7 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
      * `max_pseudoknot_depth(std::type_identity<alphabet_type>{})` will be called.
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
     (
         /*return*/ max_pseudoknot_depth(alphabet_or_type_identity<alphabet_type>{}) /*;*/
     );
