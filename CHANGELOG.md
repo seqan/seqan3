@@ -96,6 +96,15 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
+* Writing `gz`-compressed output no longer results in `bgzf`-compressed output. This change may have following effects
+  ([\#2458](https://github.com/seqan/seqan3/pull/2458)):
+  * A noticeable slowdown when writing `gz`-compressed content since, in contrast to `bgzf`, `gz` does not feature
+    parallelisation (magnitude depends on the application and level of parallelisation).
+  * A reduced output size when writing `gz`-compressed content due to `gz` storing less metadata than `bgzf`
+    (up to 20% smaller file size).
+  * The processed data should experience no negative effects since `gz` and `bgzf` are **fully compatible**.
+  * This bug may also cause unexpected parallelisation when reading `gz`-compressed input. This is the case when the
+    `gz`-compressed input was also generated with SeqAn.
 
 ## API changes
 
@@ -174,8 +183,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### Search
 
 * We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this because we currently have only one
-  implementation modelling each concept and are not completely sure if the current definition of the concepts is the 
-  right one. If you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a 
+  implementation modelling each concept and are not completely sure if the current definition of the concepts is the
+  right one. If you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a
   substitute. ([\#2348](https://github.com/seqan/seqan3/pull/2348))
 
 # 3.0.2
