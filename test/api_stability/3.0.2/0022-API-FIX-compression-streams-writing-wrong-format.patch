@@ -1,0 +1,53 @@
+From 9426763cd3e300a0367e4acfd048060fc327efba Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Tue, 23 Mar 2021 11:59:03 +0100
+Subject: [PATCH 22/22] [API] [FIX] compression streams writing wrong format
+
+---
+ test/unit/io/alignment_file/alignment_file_output_test.cpp | 2 +-
+ test/unit/io/sequence_file/sequence_file_output_test.cpp   | 2 +-
+ test/unit/io/structure_file/structure_file_output_test.cpp | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/unit/io/alignment_file/alignment_file_output_test.cpp b/test/unit/io/alignment_file/alignment_file_output_test.cpp
+index 1a0984025..489c78b7f 100644
+--- a/test/unit/io/alignment_file/alignment_file_output_test.cpp
++++ b/test/unit/io/alignment_file/alignment_file_output_test.cpp
+@@ -653,7 +653,7 @@ TEST(compression, by_filename_gz)
+ 
+     std::string buffer = compression_by_filename_impl(filename);
+     buffer[9] = '\x00'; // zero out OS byte.
+-    EXPECT_EQ(buffer, expected_bgzf);
++    EXPECT_EQ(buffer, expected_gz);
+ }
+ 
+ TEST(compression, by_stream_gz)
+diff --git a/test/unit/io/sequence_file/sequence_file_output_test.cpp b/test/unit/io/sequence_file/sequence_file_output_test.cpp
+index 0367538f1..d5cb90fd5 100644
+--- a/test/unit/io/sequence_file/sequence_file_output_test.cpp
++++ b/test/unit/io/sequence_file/sequence_file_output_test.cpp
+@@ -528,7 +528,7 @@ TEST(compression, by_filename_gz)
+ 
+     std::string buffer = compression_by_filename_impl(filename);
+     buffer[9] = '\x00'; // zero out OS byte
+-    EXPECT_EQ(buffer, expected_bgzf);
++    EXPECT_EQ(buffer, expected_gz);
+ }
+ 
+ TEST(compression, by_stream_gz)
+diff --git a/test/unit/io/structure_file/structure_file_output_test.cpp b/test/unit/io/structure_file/structure_file_output_test.cpp
+index 2a710a204..40d58b9b1 100644
+--- a/test/unit/io/structure_file/structure_file_output_test.cpp
++++ b/test/unit/io/structure_file/structure_file_output_test.cpp
+@@ -481,7 +481,7 @@ TEST_F(structure_file_output_compression, by_filename_gz)
+     seqan3::test::tmp_filename filename{"structure_file_output_test.dbn.gz"};
+     std::string buffer = compression_by_filename_impl(filename);
+     buffer[9] = '\x00'; // zero out OS byte
+-    EXPECT_EQ(buffer, expected_bgzf);
++    EXPECT_EQ(buffer, expected_gz);
+ }
+ 
+ TEST_F(structure_file_output_compression, by_stream_gz)
+-- 
+2.31.0
+

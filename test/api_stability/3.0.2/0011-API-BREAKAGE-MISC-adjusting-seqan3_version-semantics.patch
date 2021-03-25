@@ -1,0 +1,116 @@
+From afbe87931ad253ca2830313d4fb8f0130b3d9b69 Mon Sep 17 00:00:00 2001
+From: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
+Date: Wed, 27 Jan 2021 16:46:04 +0100
+Subject: [PATCH 11/22] [API] [BREAKAGE] [MISC] adjusting seqan3_version
+ semantics (#2350)
+
+* [MISC] adjusting seqan3_version to have the same value as SEQAN3_VERSION
+
+- Adjusting seqan3_version to be the constexpr version of SEQAN_VERSION which is
+  an integer.
+- Added SEQAN3_VERSION_CSTRING which is a null terminated string of the version.
+- Added seqan3_version_cstring which is a constexpr version of
+  SEQAN3_VERSION_CSTRING.
+- Adjusted all files to use seqan3_version_cstring instead of seqan3_version.
+
+* [FIX] use brace-intialisation
+
+* [FIX] remove helper macros
+---
+ test/unit/argument_parser/detail/format_help_test.cpp     | 2 +-
+ test/unit/argument_parser/detail/format_html_test.cpp     | 4 ++--
+ test/unit/argument_parser/detail/version_check_test.hpp   | 8 ++++----
+ .../unit/argument_parser/format_parse_validators_test.cpp | 2 +-
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/test/unit/argument_parser/detail/format_help_test.cpp b/test/unit/argument_parser/detail/format_help_test.cpp
+index 6c2a985e1..5064efe4a 100644
+--- a/test/unit/argument_parser/detail/format_help_test.cpp
++++ b/test/unit/argument_parser/detail/format_help_test.cpp
+@@ -45,7 +45,7 @@ std::string const basic_options_str = "OPTIONS\n"
+ std::string const basic_version_str = "VERSION\n"
+                                       "    Last update: \n"
+                                       "    test_parser version: \n"
+-                                      "    SeqAn version: " + seqan3::seqan3_version + "\n";
++                                      "    SeqAn version: " + std::string{seqan3::seqan3_version_cstring} + "\n";
+ 
+ std::string license_text()
+ {
+diff --git a/test/unit/argument_parser/detail/format_html_test.cpp b/test/unit/argument_parser/detail/format_html_test.cpp
+index 3c95ed37e..887fbbe4d 100644
+--- a/test/unit/argument_parser/detail/format_html_test.cpp
++++ b/test/unit/argument_parser/detail/format_html_test.cpp
+@@ -51,7 +51,7 @@ TEST(html_format, empty_information)
+                            "<h2>Version</h2>\n"
+                            "<strong>Last update:</strong> <br>\n"
+                            "<strong>empty_options version:</strong> <br>\n"
+-                           "<strong>SeqAn version:</strong> " + seqan3::seqan3_version + "<br>\n"
++                           "<strong>SeqAn version:</strong> " + std::string{seqan3::seqan3_version_cstring} + "<br>\n"
+                            "<br>\n"
+                            "</body></html>");
+     EXPECT_EQ(my_stdout, expected);
+@@ -164,7 +164,7 @@ TEST(html_format, full_information_information)
+                           "<h2>Version</h2>\n"
+                           "<strong>Last update:</strong> <br>\n"
+                           "<strong>program_full_options version:</strong> <br>\n"
+-                          "<strong>SeqAn version:</strong> " + seqan3::seqan3_version + "<br>\n"
++                          "<strong>SeqAn version:</strong> " + std::string{seqan3::seqan3_version_cstring} + "<br>\n"
+                           "<h2>Url</h2>\n"
+                           "www.seqan.de<br>\n"
+                           "<br>\n"
+diff --git a/test/unit/argument_parser/detail/version_check_test.hpp b/test/unit/argument_parser/detail/version_check_test.hpp
+index c32ce3c78..e4e4f710d 100644
+--- a/test/unit/argument_parser/detail/version_check_test.hpp
++++ b/test/unit/argument_parser/detail/version_check_test.hpp
+@@ -390,7 +390,7 @@ TEST_F(version_check, greater_app_version)
+     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+ 
+     // create version file with equal seqan version and a smaller app version than the current
+-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"1.5.9\n" + seqan3::seqan3_version}));
++    ASSERT_TRUE(create_file(app_version_filename(), std::string{"1.5.9\n"} + seqan3::seqan3_version_cstring));
+ 
+     // create timestamp file that dates one day before current to trigger a message
+     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
+@@ -411,7 +411,7 @@ TEST_F(version_check, unregistered_app)
+     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+ 
+     // create version file with equal seqan version and a smaller app version than the current
+-    ASSERT_TRUE(create_file(app_version_filename(), std::string{ "UNREGISTERED_APP\n" + seqan3::seqan3_version}));
++    ASSERT_TRUE(create_file(app_version_filename(), std::string{"UNREGISTERED_APP\n"} + seqan3::seqan3_version_cstring));
+ 
+     // create timestamp file that dates one day before current to trigger a message
+     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401)); // one day = 86400 seconds
+@@ -435,7 +435,7 @@ TEST_F(version_check, smaller_app_version)
+     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+ 
+     // create version file with equal seqan version and a greater app version than the current
+-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
++    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n"} + seqan3::seqan3_version_cstring));
+ 
+     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
+     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
+@@ -463,7 +463,7 @@ TEST_F(version_check, smaller_app_version_custom_url)
+     const char * argv[3] = {app_name.c_str(), OPTION_VERSION_CHECK, OPTION_ON};
+ 
+     // create version file with equal seqan version and a greater app version than the current
+-    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n" + seqan3::seqan3_version}));
++    ASSERT_TRUE(create_file(app_version_filename(), std::string{"20.5.9\n"} + seqan3::seqan3_version_cstring));
+ 
+     // create timestamp file that dates one day before current to trigger a message (one day = 86400 seconds)
+     ASSERT_TRUE(create_file(app_timestamp_filename(), current_unix_timestamp() - 100401));
+diff --git a/test/unit/argument_parser/format_parse_validators_test.cpp b/test/unit/argument_parser/format_parse_validators_test.cpp
+index e2105d37e..616c8e603 100644
+--- a/test/unit/argument_parser/format_parse_validators_test.cpp
++++ b/test/unit/argument_parser/format_parse_validators_test.cpp
+@@ -49,7 +49,7 @@ std::string const basic_options_str = "OPTIONS\n"
+ std::string const basic_version_str = "VERSION\n"
+                                       "    Last update: \n"
+                                       "    test_parser version: \n"
+-                                      "    SeqAn version: " + seqan3::seqan3_version + "\n";
++                                      "    SeqAn version: " + std::string{seqan3::seqan3_version_cstring} + "\n";
+ 
+ namespace seqan3::detail
+ {
+-- 
+2.31.0
+

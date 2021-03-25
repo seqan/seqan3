@@ -1,0 +1,32 @@
+From c8798ca403aa9968e8843b517e0c726bc34ef8e2 Mon Sep 17 00:00:00 2001
+From: Evelin Aasna <evelin.aasna@fu-berlin.de>
+Date: Wed, 6 Jan 2021 17:40:03 +0100
+Subject: [PATCH 07/22] [NOAPI] [DETAIL] [FIX] renaming
+ strong_type_specialisation to derived_from_strong_type
+
+---
+ test/unit/core/detail/strong_type_test.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/unit/core/detail/strong_type_test.cpp b/test/unit/core/detail/strong_type_test.cpp
+index 3011aa52f..45313be2a 100644
+--- a/test/unit/core/detail/strong_type_test.cpp
++++ b/test/unit/core/detail/strong_type_test.cpp
+@@ -101,10 +101,10 @@ struct multi_skill_type : seqan3::detail::strong_type<int,
+ 
+ TEST(strong_type, concept)
+ {
+-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &>);
+-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &>);
+-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type &&>);
+-    EXPECT_TRUE(seqan3::detail::strong_type_specialisation<pure_type const &&>);
++    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type &>);
++    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type const &>);
++    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type &&>);
++    EXPECT_TRUE(seqan3::detail::derived_from_strong_type<pure_type const &&>);
+ }
+ 
+ TEST(strong_type, pure_type)
+-- 
+2.31.0
+

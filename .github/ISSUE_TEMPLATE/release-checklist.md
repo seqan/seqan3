@@ -106,6 +106,7 @@ assignees: ''
 
 - [ ] Merge release branch into master.
 - [ ] Bump succeeding version number in master. ([include/seqan3/version.hpp](https://github.com/seqan/seqan3/blob/3.0.2/include/seqan3/version.hpp#L19-L24))
+- [ ] Bump latest stable version number of the API-Stability test in master. ([test/api_stability/CMakeLists.txt](https://github.com/seqan/seqan3/blob/3.0.3/test/api_stability/CMakeLists.txt#L10))
 - [ ] Update the SeqAn version [here](https://github.com/OpenMS/usage_plots/blob/master/seqan_versions.txt) to ensure
       that the server in Tübingen, which takes care of the argument parser update notifications, is aware of it
       (@smehringer).

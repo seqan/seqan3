@@ -1,0 +1,33 @@
+From 1da6d887ff29653271ea326f5f465a62062c3432 Mon Sep 17 00:00:00 2001
+From: Marcel <marehr@users.noreply.github.com>
+Date: Thu, 25 Feb 2021 09:08:18 +0100
+Subject: [PATCH 19/22] [API] [FIX] arithmetic_range_validator should take any
+ integer type (#2391)
+
+* [FIX] arithmetic_range_validator should take any integer type
+
+* [DOC] value_list_validator: remove section that it decays to double
+
+* Apply suggestions from code review
+
+Co-authored-by: Enrico Seiler <eseiler@users.noreply.github.com>
+---
+ test/unit/argument_parser/format_parse_validators_test.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/unit/argument_parser/format_parse_validators_test.cpp b/test/unit/argument_parser/format_parse_validators_test.cpp
+index c2f051dac..3be81ab94 100644
+--- a/test/unit/argument_parser/format_parse_validators_test.cpp
++++ b/test/unit/argument_parser/format_parse_validators_test.cpp
+@@ -77,7 +77,7 @@ TEST(validator_test, fullfill_concept)
+     EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> &>);
+ 
+     EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<std::vector<int>>>);
+-    EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator>);
++    EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator<int>>);
+     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<double>>);
+     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<std::string>>);
+     EXPECT_TRUE(seqan3::validator<seqan3::input_file_validator<>>);
+-- 
+2.31.0
+

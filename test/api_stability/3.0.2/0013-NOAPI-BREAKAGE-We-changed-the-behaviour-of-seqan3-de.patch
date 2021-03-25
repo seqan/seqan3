@@ -1,0 +1,149 @@
+From 5b9cb28d7c4f5391080cb584add3c934480eba69 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 19 Feb 2021 00:22:49 +0100
+Subject: [PATCH 13/22] [NOAPI] [BREAKAGE] We changed the behaviour of
+ seqan3::detail::simd_matrix_scoring_scheme::score
+
+This behaviour changed in ef51ed80f6e6ed0e90dcf2db8b0697d5a60060b1
+---
+ .../simd_matrix_scoring_scheme_test.cpp       | 40 +++++++++----------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp b/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
+index 7b0927215..14a26829d 100644
+--- a/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
++++ b/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
+@@ -36,9 +36,9 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
+                                                                 seqan3::align_cfg::method_global>;
+ 
+     EXPECT_TRUE(std::is_nothrow_default_constructible_v<scheme_t>);
+-    EXPECT_TRUE(std::is_nothrow_copy_constructible_v<scheme_t>);
++    // EXPECT_TRUE(std::is_nothrow_copy_constructible_v<scheme_t>);
+     EXPECT_TRUE(std::is_nothrow_move_constructible_v<scheme_t>);
+-    EXPECT_TRUE(std::is_nothrow_copy_assignable_v<scheme_t>);
++    // EXPECT_TRUE(std::is_nothrow_copy_assignable_v<scheme_t>);
+     EXPECT_TRUE(std::is_nothrow_move_assignable_v<scheme_t>);
+     EXPECT_TRUE(std::is_nothrow_destructible_v<scheme_t>);
+     EXPECT_TRUE((std::is_constructible_v<scheme_t, seqan3::aminoacid_scoring_scheme<>>));
+@@ -55,10 +55,10 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothro
+ 
+     TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
+     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
+-    SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
++    // SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+ 
+     simd_value2 = seqan3::simd::fill<TypeParam>(1);
+-    SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-2));
++    // SIMD_EQ(simd_scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-2));
+ }
+ 
+ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_on_overflow)
+@@ -103,24 +103,24 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
+     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
+ 
+     // all match
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+ 
+     // all mismatch
+     simd_value2 = seqan3::simd::fill<TypeParam>(3);
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
+ 
+     // first matches, remaining mismatches.
+     simd_value2[0] = 2;
+     TypeParam result = seqan3::simd::fill<TypeParam>(-3);
+     result[0] = 17;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // first mismatches, remaining matches.
+     simd_value1 = simd_value2;
+     simd_value1[0] = 3;
+     result = seqan3::simd::fill<TypeParam>(9);
+     result[0] = -3;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ }
+ 
+ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
+@@ -135,20 +135,20 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
+     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(3);
+     TypeParam result = seqan3::simd::fill<TypeParam>(-3);
+ 
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is regular symbol; second value is padded symbol => score of 1.
+     simd_value2[0] = this->padded_value1;
+     result[0] = 1;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is padded symbol; second value is padded symbol => score of 1.
+     simd_value1[0] = this->padded_value1;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is padded symbol; second value is regular symbol => score of 1.
+     simd_value2[0] = 2;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ }
+ 
+ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
+@@ -164,24 +164,24 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
+     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
+ 
+     // all match
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(17));
+ 
+     // all mismatch
+     simd_value2 = seqan3::simd::fill<TypeParam>(3);
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), seqan3::simd::fill<TypeParam>(-3));
+ 
+     // first matches, remaining mismatches.
+     simd_value2[0] = 2;
+     TypeParam result = seqan3::simd::fill<TypeParam>(-3);
+     result[0] = 17;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // first mismatches, remaining matches.
+     simd_value1 = simd_value2;
+     simd_value1[0] = 3;
+     result = seqan3::simd::fill<TypeParam>(9);
+     result[0] = -3;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ }
+ 
+ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
+@@ -197,18 +197,18 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
+     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
+     TypeParam result = seqan3::simd::fill<TypeParam>(17);
+ 
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is regular symbol; second value is padded symbol => score of -1.
+     simd_value2[0] = this->padded_value2;
+     result[0] = -1;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is padded symbol; second value is padded symbol => score of -1.
+     simd_value1[0] = this->padded_value1;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ 
+     // First value is padded symbol; second value is regular symbol => score of -1.
+     simd_value2[0] = 3;
+-    SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
++    // SIMD_EQ(scheme.score(simd_value1, simd_value2), result);
+ }
+-- 
+2.31.0
+

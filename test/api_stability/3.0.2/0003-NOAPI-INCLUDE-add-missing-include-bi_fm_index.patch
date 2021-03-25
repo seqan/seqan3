@@ -1,0 +1,37 @@
+From 20e9f2c4aaf0ccb350c0097cc4cf9b084d22e4e5 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Thu, 18 Feb 2021 02:17:26 +0100
+Subject: [PATCH 03/22] [NOAPI] [INCLUDE] add missing include bi_fm_index
+
+---
+ .../bi_fm_index_cursor_collection_test_template.hpp              | 1 +
+ .../search/fm_index_cursor/bi_fm_index_cursor_test_template.hpp  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test_template.hpp b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test_template.hpp
+index 81020c0af..8cb0a8c01 100644
+--- a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test_template.hpp
++++ b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test_template.hpp
+@@ -10,6 +10,7 @@
+ 
+ #include <seqan3/range/views/slice.hpp>
+ #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
++#include <seqan3/search/fm_index/bi_fm_index.hpp>
+ #include <seqan3/std/algorithm>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+diff --git a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test_template.hpp b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test_template.hpp
+index 3b6bd69aa..e4f2a869b 100644
+--- a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test_template.hpp
++++ b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_test_template.hpp
+@@ -10,6 +10,7 @@
+ 
+ #include <seqan3/range/views/slice.hpp>
+ #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
++#include <seqan3/search/fm_index/bi_fm_index.hpp>
+ #include <seqan3/std/algorithm>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+-- 
+2.31.0
+

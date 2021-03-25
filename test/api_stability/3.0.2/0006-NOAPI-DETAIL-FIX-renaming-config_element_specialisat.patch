@@ -1,0 +1,179 @@
+From fe4a447e5a1e8d0d60e6618257a1bc1f653c3670 Mon Sep 17 00:00:00 2001
+From: Evelin Aasna <evelin.aasna@fu-berlin.de>
+Date: Wed, 6 Jan 2021 17:41:00 +0100
+Subject: [PATCH 06/22] [NOAPI] [DETAIL] [FIX] renaming
+ config_element_specialisation to config_element
+
+---
+ test/unit/alignment/configuration/align_config_band_test.cpp  | 4 ++--
+ .../unit/alignment/configuration/align_config_common_test.cpp | 4 ++--
+ .../configuration/align_config_gap_cost_affine_test.cpp       | 4 ++--
+ .../alignment/configuration/align_config_min_score_test.cpp   | 4 ++--
+ .../alignment/configuration/align_config_parallel_test.cpp    | 4 ++--
+ .../alignment/configuration/align_config_scoring_test.cpp     | 4 ++--
+ test/unit/core/algorithm/configuration_test.cpp               | 4 ++--
+ .../core/algorithm/pipeable_config_element_test_template.hpp  | 2 +-
+ test/unit/search/configuration/parallel_test.cpp              | 4 ++--
+ test/unit/search/search_configuration_test.cpp                | 4 ++--
+ 10 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/test/unit/alignment/configuration/align_config_band_test.cpp b/test/unit/alignment/configuration/align_config_band_test.cpp
+index ca53af334..473c4931b 100644
+--- a/test/unit/alignment/configuration/align_config_band_test.cpp
++++ b/test/unit/alignment/configuration/align_config_band_test.cpp
+@@ -18,9 +18,9 @@ using test_types = ::testing::Types<seqan3::align_cfg::band_fixed_size>;
+ 
+ INSTANTIATE_TYPED_TEST_SUITE_P(band_elements, pipeable_config_element_test, test_types, );
+ 
+-TEST(band_fixed_size, config_element_specialisation)
++TEST(band_fixed_size, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::band_fixed_size>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::band_fixed_size>));
+ }
+ 
+ TEST(band_fixed_size, construct)
+diff --git a/test/unit/alignment/configuration/align_config_common_test.cpp b/test/unit/alignment/configuration/align_config_common_test.cpp
+index 942ab64ce..7f6d7dc0a 100644
+--- a/test/unit/alignment/configuration/align_config_common_test.cpp
++++ b/test/unit/alignment/configuration/align_config_common_test.cpp
+@@ -55,9 +55,9 @@ TEST(alignment_configuration_test, number_of_configs)
+     EXPECT_EQ(static_cast<uint8_t>(seqan3::detail::align_config_id::SIZE), 18);
+ }
+ 
+-TYPED_TEST(alignment_configuration_test, config_element_specialisation)
++TYPED_TEST(alignment_configuration_test, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
++    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
+ }
+ 
+ TYPED_TEST(alignment_configuration_test, configuration_exists)
+diff --git a/test/unit/alignment/configuration/align_config_gap_cost_affine_test.cpp b/test/unit/alignment/configuration/align_config_gap_cost_affine_test.cpp
+index 3ee3923ae..7e927c6fa 100644
+--- a/test/unit/alignment/configuration/align_config_gap_cost_affine_test.cpp
++++ b/test/unit/alignment/configuration/align_config_gap_cost_affine_test.cpp
+@@ -11,9 +11,9 @@
+ #include <seqan3/core/algorithm/configuration.hpp>
+ #include <seqan3/std/concepts>
+ 
+-TEST(align_config_gap, config_element_specialisation)
++TEST(align_config_gap, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::gap_cost_affine>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::gap_cost_affine>));
+ }
+ 
+ TEST(align_config_gap, configuration)
+diff --git a/test/unit/alignment/configuration/align_config_min_score_test.cpp b/test/unit/alignment/configuration/align_config_min_score_test.cpp
+index d06b0e0e5..8c6e87bfd 100644
+--- a/test/unit/alignment/configuration/align_config_min_score_test.cpp
++++ b/test/unit/alignment/configuration/align_config_min_score_test.cpp
+@@ -13,9 +13,9 @@
+ #include <seqan3/alignment/configuration/align_config_min_score.hpp>
+ #include <seqan3/core/algorithm/configuration.hpp>
+ 
+-TEST(align_config_min_score, config_element_specialisation)
++TEST(align_config_min_score, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::min_score>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::min_score>));
+ }
+ 
+ TEST(align_config_min_score, configuration)
+diff --git a/test/unit/alignment/configuration/align_config_parallel_test.cpp b/test/unit/alignment/configuration/align_config_parallel_test.cpp
+index a77983173..e731bd210 100644
+--- a/test/unit/alignment/configuration/align_config_parallel_test.cpp
++++ b/test/unit/alignment/configuration/align_config_parallel_test.cpp
+@@ -27,9 +27,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test,
+ // individual tests
+ // ---------------------------------------------------------------------------------------------------------------------
+ 
+-TEST(align_config_parallel, config_element_specialisation)
++TEST(align_config_parallel, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::parallel>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::parallel>));
+ }
+ 
+ TEST(align_config_parallel, configuration)
+diff --git a/test/unit/alignment/configuration/align_config_scoring_test.cpp b/test/unit/alignment/configuration/align_config_scoring_test.cpp
+index 0e9ff45fc..f9e771d35 100644
+--- a/test/unit/alignment/configuration/align_config_scoring_test.cpp
++++ b/test/unit/alignment/configuration/align_config_scoring_test.cpp
+@@ -26,10 +26,10 @@ using test_types = ::testing::Types<std::tuple<seqan3::aminoacid_scoring_scheme<
+                                     std::tuple<seqan3::nucleotide_scoring_scheme<int8_t>, seqan3::dna15>>;
+ TYPED_TEST_SUITE(align_confg_scoring_test, test_types, );
+ 
+-TYPED_TEST(align_confg_scoring_test, config_element_specialisation)
++TYPED_TEST(align_confg_scoring_test, config_element)
+ {
+     using scheme_t = typename TestFixture::scheme_t;
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::align_cfg::scoring_scheme<scheme_t>>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::align_cfg::scoring_scheme<scheme_t>>));
+ }
+ 
+ TYPED_TEST(align_confg_scoring_test, configuration)
+diff --git a/test/unit/core/algorithm/configuration_test.cpp b/test/unit/core/algorithm/configuration_test.cpp
+index ef8952d2f..9494b6e61 100644
+--- a/test/unit/core/algorithm/configuration_test.cpp
++++ b/test/unit/core/algorithm/configuration_test.cpp
+@@ -16,8 +16,8 @@
+ 
+ TEST(configuration, concept_check)
+ {
+-    EXPECT_TRUE(seqan3::detail::config_element_specialisation<bar>);
+-    EXPECT_FALSE(seqan3::detail::config_element_specialisation<int>);
++    EXPECT_TRUE(seqan3::detail::config_element<bar>);
++    EXPECT_FALSE(seqan3::detail::config_element<int>);
+ 
+     EXPECT_TRUE((seqan3::tuple_like<seqan3::configuration<bax, bar>>));
+ }
+diff --git a/test/unit/core/algorithm/pipeable_config_element_test_template.hpp b/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
+index e113e478d..695d118a7 100644
+--- a/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
++++ b/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
+@@ -22,7 +22,7 @@ TYPED_TEST_SUITE_P(pipeable_config_element_test);
+ 
+ TYPED_TEST_P(pipeable_config_element_test, concept_check)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
++    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
+ }
+ 
+ TYPED_TEST_P(pipeable_config_element_test, standard_construction)
+diff --git a/test/unit/search/configuration/parallel_test.cpp b/test/unit/search/configuration/parallel_test.cpp
+index 9b1937d14..a477c8a19 100644
+--- a/test/unit/search/configuration/parallel_test.cpp
++++ b/test/unit/search/configuration/parallel_test.cpp
+@@ -44,9 +44,9 @@ TEST(search_config_parallel, member_variable)
+     }
+ }
+ 
+-TEST(search_config_parallel, config_element_specialisation)
++TEST(search_config_parallel, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<seqan3::search_cfg::parallel>));
++    EXPECT_TRUE((seqan3::detail::config_element<seqan3::search_cfg::parallel>));
+ }
+ 
+ TEST(search_config_parallel, configuration)
+diff --git a/test/unit/search/search_configuration_test.cpp b/test/unit/search/search_configuration_test.cpp
+index 69ab8364e..ce07aea48 100644
+--- a/test/unit/search/search_configuration_test.cpp
++++ b/test/unit/search/search_configuration_test.cpp
+@@ -62,9 +62,9 @@ TEST(search_configuration_test, symmetric_configuration)
+     }
+ }
+ 
+-TYPED_TEST(search_configuration_test, config_element_specialisation)
++TYPED_TEST(search_configuration_test, config_element)
+ {
+-    EXPECT_TRUE((seqan3::detail::config_element_specialisation<TypeParam>));
++    EXPECT_TRUE((seqan3::detail::config_element<TypeParam>));
+ }
+ 
+ TYPED_TEST(search_configuration_test, configuration_exists)
+-- 
+2.31.0
+

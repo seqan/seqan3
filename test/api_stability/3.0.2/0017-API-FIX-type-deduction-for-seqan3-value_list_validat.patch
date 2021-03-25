@@ -1,0 +1,38 @@
+From 68cbeceeaceb90980294a3eb5523153233662d92 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 19 Feb 2021 00:32:59 +0100
+Subject: [PATCH 17/22] [API] [FIX] type deduction for
+ seqan3::value_list_validator changed
+
+Commit d61d796efdaf904135b8050f44663ec844703011
+---
+ test/unit/argument_parser/format_parse_validators_test.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/unit/argument_parser/format_parse_validators_test.cpp b/test/unit/argument_parser/format_parse_validators_test.cpp
+index 45ecfea3a..c2f051dac 100644
+--- a/test/unit/argument_parser/format_parse_validators_test.cpp
++++ b/test/unit/argument_parser/format_parse_validators_test.cpp
+@@ -771,16 +771,16 @@ TEST(validator_test, value_list_validator_success)
+     // type deduction
+     // --------------
+     // all arithmetic types are deduced to double in order to easily allow chaining of arithmetic validators
+-    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
++    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<int>,
+                  decltype(seqan3::value_list_validator{1})>));
+     // except char
+     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
+                  decltype(seqan3::value_list_validator{'c'})>));
+     // The same holds for a range of arithmetic types
+     std::vector v{1, 2, 3};
+-    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
++    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<int>,
+                  decltype(seqan3::value_list_validator{v})>));
+-    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<double>,
++    EXPECT_TRUE((std::same_as<seqan3::value_list_validator<int>,
+                  decltype(seqan3::value_list_validator{v | std::views::take(2)})>));
+     std::vector v_char{'1', '2', '3'};
+     EXPECT_TRUE((std::same_as<seqan3::value_list_validator<char>,
+-- 
+2.31.0
+

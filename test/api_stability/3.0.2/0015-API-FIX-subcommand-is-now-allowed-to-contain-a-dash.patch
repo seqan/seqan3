@@ -1,0 +1,26 @@
+From 0fa3eaa9f15ac2ae22ce4ca55bdf80d94d0cf626 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 19 Feb 2021 00:25:36 +0100
+Subject: [PATCH 15/22] [API] [FIX] subcommand is now allowed to contain a dash
+
+Commit: f048ef6730b134c1c729c754046569d0f83c4d93
+---
+ test/unit/argument_parser/argument_parser_design_error_test.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/unit/argument_parser/argument_parser_design_error_test.cpp b/test/unit/argument_parser/argument_parser_design_error_test.cpp
+index f7101d760..ddf9c1efd 100644
+--- a/test/unit/argument_parser/argument_parser_design_error_test.cpp
++++ b/test/unit/argument_parser/argument_parser_design_error_test.cpp
+@@ -134,7 +134,7 @@ TEST(parse_test, subcommand_argument_parser_error)
+     {
+         const char * argv[]{"./top_level", "-f"};
+         EXPECT_THROW((seqan3::argument_parser{"top_level", 2, argv, false, {"with space"}}), seqan3::design_error);
+-        EXPECT_THROW((seqan3::argument_parser{"top_level", 2, argv, false, {"-dash"}}), seqan3::design_error);
++        EXPECT_NO_THROW((seqan3::argument_parser{"top_level", 2, argv, false, {"-dash"}}));
+     }
+ 
+     // no positional/options are allowed
+-- 
+2.31.0
+

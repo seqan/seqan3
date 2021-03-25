@@ -1,0 +1,48 @@
+From 43a5455c055be92c286b0f7f28ecf41a0083f7f5 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 19 Feb 2021 00:36:51 +0100
+Subject: [PATCH 18/22] [API] [FIX] the internal order of piping
+ seqan3::configuration changed
+
+Commit: ec2bd8a9ddf07a6cb749e2df712acd4ae8dccf15
+---
+ test/unit/core/algorithm/pipeable_config_element_test.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/unit/core/algorithm/pipeable_config_element_test.cpp b/test/unit/core/algorithm/pipeable_config_element_test.cpp
+index 2feeb214f..88beaf91d 100644
+--- a/test/unit/core/algorithm/pipeable_config_element_test.cpp
++++ b/test/unit/core/algorithm/pipeable_config_element_test.cpp
+@@ -79,25 +79,25 @@ TEST(pipeable_config_element, element_with_configuration)
+     // lvalue | lvalue
+     {
+         auto cfg = b2 | tmp;
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
++        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
+     }
+ 
+     // rvalue | lvalue
+     {
+         auto cfg = bax{} | tmp;
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
++        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
+     }
+ 
+     // lvalue | rvalue
+     {
+         auto cfg = b2 | seqan3::configuration<bar>{};
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
++        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
+     }
+ 
+     // rvalue | rvalue
+     {
+         auto cfg = bax{} | seqan3::configuration<bar>{};
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bar, bax>>));
++        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<bax, bar>>));
+     }
+ }
+ 
+-- 
+2.31.0
+

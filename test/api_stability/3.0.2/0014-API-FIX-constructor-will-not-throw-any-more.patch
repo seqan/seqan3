@@ -1,0 +1,27 @@
+From 97ccaccf31c495955cafb08233db25b26d0a14fb Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 19 Feb 2021 00:25:36 +0100
+Subject: [PATCH 14/22] [API] [FIX] constructor will not throw any more
+
+Commit 11bfdef7de4cd785a920f822c338c04d2538e5a0
+---
+ test/unit/argument_parser/format_parse_test.cpp | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/test/unit/argument_parser/format_parse_test.cpp b/test/unit/argument_parser/format_parse_test.cpp
+index ca4f9f95c..ad0576458 100644
+--- a/test/unit/argument_parser/format_parse_test.cpp
++++ b/test/unit/argument_parser/format_parse_test.cpp
+@@ -922,8 +922,7 @@ TEST(parse_test, subcommand_argument_parser_success)
+     // incorrect sub command
+     {
+         const char * argv[]{"./top_level", "-f", "2", "subiddysub", "foo"};
+-        EXPECT_THROW((seqan3::argument_parser{"top_level", 5, argv, false, {"sub1", "sub2"}}),
+-                     seqan3::argument_parser_error);
++        EXPECT_NO_THROW((seqan3::argument_parser{"top_level", 5, argv, false, {"sub1", "sub2"}}));
+     }
+ }
+ 
+-- 
+2.31.0
+
