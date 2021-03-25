@@ -97,7 +97,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
 * Writing `gz`-compressed output no longer results in `bgzf`-compressed output. This change may have following effects
-  ([\#2458](https://github.com/seqan/seqan3/pull/2458)).
+  ([\#2458](https://github.com/seqan/seqan3/pull/2458)):
   * A noticeable slowdown when writing `gz`-compressed content since, in contrast to `bgzf`, `gz` does not feature
     parallelisation (magnitude depends on the application and level of parallelisation).
   * A reduced output size when writing `gz`-compressed content due to `gz` storing less metadata than `bgzf`
