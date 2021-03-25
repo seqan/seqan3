@@ -50,8 +50,10 @@ static auto dna4_01 = []()
         11,
         "GTTTA",
         "GTCTA",
-        seqan3::alignment_coordinate{column_index_type{5u}, row_index_type{2u}},
-        seqan3::alignment_coordinate{column_index_type{10u}, row_index_type{7u}},
+        /*.sequence1_begin_position = */ 5u,
+        /*.sequence2_begin_position = */ 2u,
+        /*.sequence1_end_position = */ 10u,
+        /*.sequence2_end_position = */ 7u,
         std::vector
         {
         //     e, A, A, C, C, G, G, T, T, T, A, A, C, C, G, G, T, T
@@ -102,8 +104,10 @@ static auto dna4_02 = []()
         11,
         "GTCTA",
         "GTTTA",
-        seqan3::alignment_coordinate{column_index_type{2u}, row_index_type{5u}},
-        seqan3::alignment_coordinate{column_index_type{7u}, row_index_type{10u}},
+        /*.sequence1_begin_position = */ 2u,
+        /*.sequence2_begin_position = */ 5u,
+        /*.sequence1_end_position = */ 7u,
+        /*.sequence2_end_position = */ 10u,
         std::vector
         {
         //     e, A, C, G, T, C, T, A, C, G, T, A
@@ -169,8 +173,10 @@ static auto dna4_03 = []()
         9,
         "ATAAGCGT",
         "AT-AGAGT",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{2u}},
-        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 2u,
+        /*.sequence1_end_position = */ 8u,
+        /*.sequence2_end_position = */ 9u,
         std::vector
         {
         //    e,A,T,A,A,G,C,G,T,C,T,C,G
@@ -223,8 +229,10 @@ static auto dna4_04 = []()
         0,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //    e,A,A,A,A,A,A
@@ -265,8 +273,10 @@ static auto dna4_05 = []()
         24,
         "AAAAAA",
         "AAAAAA",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{7u}},
-        seqan3::alignment_coordinate{column_index_type{6u}, row_index_type{13u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 7u,
+        /*.sequence1_end_position = */ 6u,
+        /*.sequence2_end_position = */ 13u,
         std::vector
         {
         //     e, A, A, A, A, A, A, T, C, C, C, C, C, C
@@ -321,8 +331,10 @@ static auto rna5_01 = []()
         28,
         "AAAAAAUUUUNNUUUUCCCCCC",
         "AAAAAA----------CCCCCC",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{22u}, row_index_type{12u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 22u,
+        /*.sequence2_end_position = */ 12u,
         std::vector
         {
         //     e, A, A, A, A, A, A, U, U, U, U, N, N, U, U, U, U, C, C, C, C, C, C
@@ -375,8 +387,10 @@ static auto aa27_01 = []()
         13,
         "GATOR",
         "GALOR",
-        seqan3::alignment_coordinate{column_index_type{3u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{8u}, row_index_type{5u}},
+        /*.sequence1_begin_position = */ 3u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 8u,
+        /*.sequence2_end_position = */ 5u,
         std::vector
         {
         //     e, A, L, I, G, A, T, O, R
@@ -417,8 +431,10 @@ static auto aa27_02 = []()
         0,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{0u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 0u,
         std::vector
         {
         //e,A,L,I,G,A,T,O,R

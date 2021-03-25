@@ -43,8 +43,10 @@ static auto dna4_01_e255 = []()
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
-        dna4_01.begin_positions,
-        dna4_01.end_positions,
+        dna4_01.sequence1_begin_position,
+        dna4_01.sequence2_begin_position,
+        dna4_01.sequence1_end_position,
+        dna4_01.sequence2_end_position,
         dna4_01.score_vector,
         dna4_01.trace_vector
     };
@@ -60,8 +62,10 @@ static auto dna4_01T_e255 = []()
         -8,
         "A-C-G-T-A-C-G-TA",
         "AACCGGTTAACCGGTT",
-        dna4_01T.begin_positions,
-        dna4_01T.end_positions,
+        dna4_01T.sequence1_begin_position,
+        dna4_01T.sequence2_begin_position,
+        dna4_01T.sequence1_end_position,
+        dna4_01T.sequence2_end_position,
         dna4_01T.score_vector,
         dna4_01T.trace_vector
     };
@@ -93,8 +97,10 @@ static auto dna4_01_e8 = []()
         -8,
         "AACCGGTTAACCGGTT",
         "A-C-G-T-A-C-G-TA",
-        dna4_01.begin_positions,
-        dna4_01.end_positions,
+        dna4_01.sequence1_begin_position,
+        dna4_01.sequence2_begin_position,
+        dna4_01.sequence1_end_position,
+        dna4_01.sequence2_end_position,
         dna4_01.score_matrix().mask_matrix(masking_matrix),
         dna4_01.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -126,8 +132,10 @@ static auto dna4_01_e7 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 16u,
+        /*.sequence2_begin_position = */ 9u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         dna4_01.score_matrix().mask_matrix(masking_matrix),
         dna4_01.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -159,8 +167,10 @@ static auto dna4_01_e5 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 16u,
+        /*.sequence2_begin_position = */ 9u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         dna4_01.score_matrix().mask_matrix(masking_matrix),
         dna4_01.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -176,8 +186,10 @@ static auto dna4_02_e255 = []()
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
-        dna4_02.begin_positions,
-        dna4_02.end_positions,
+        dna4_02.sequence1_begin_position,
+        dna4_02.sequence2_begin_position,
+        dna4_02.sequence1_end_position,
+        dna4_02.sequence2_end_position,
         dna4_02.score_vector,
         dna4_02.trace_vector
     };
@@ -208,8 +220,10 @@ static auto dna4_02_e8 = []()
         -8,
         "AACCGGTAAACCGGTT",
         "A-C-G-TA--C-G-TA",
-        dna4_02.begin_positions,
-        dna4_02.end_positions,
+        dna4_02.sequence1_begin_position,
+        dna4_02.sequence2_begin_position,
+        dna4_02.sequence1_end_position,
+        dna4_02.sequence2_end_position,
         dna4_02.score_matrix().mask_matrix(masking_matrix),
         dna4_02.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -240,8 +254,10 @@ static auto dna4_02_e4 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
-        seqan3::alignment_coordinate{column_index_type{16u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 16u,
+        /*.sequence2_begin_position = */ 9u,
+        /*.sequence1_end_position = */ 16u,
+        /*.sequence2_end_position = */ 9u,
         dna4_02.score_matrix().mask_matrix(masking_matrix),
         dna4_02.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -273,8 +289,10 @@ static auto dna4_02_s10u_15u_e7 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{9u}},
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{9u}},
+        /*.sequence1_begin_position = */ 14u,
+        /*.sequence2_begin_position = */ 9u,
+        /*.sequence1_end_position = */ 14u,
+        /*.sequence2_end_position = */ 9u,
         dna4_02_s10u_15u.score_matrix().mask_matrix(masking_matrix),
         dna4_02_s10u_15u.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -295,8 +313,10 @@ static auto dna4_02_s1u_15u_e255 = []()
         -14,
         "AACCGGTAAACCGG",
         "--------------",
-        dna4_02_s1u_15u.begin_positions,
-        dna4_02_s1u_15u.end_positions,
+        dna4_02_s1u_15u.sequence1_begin_position,
+        dna4_02_s1u_15u.sequence2_begin_position,
+        dna4_02_s1u_15u.sequence1_end_position,
+        dna4_02_s1u_15u.sequence2_end_position,
         dna4_02_s1u_15u.score_vector,
         dna4_02_s1u_15u.trace_vector
     };
@@ -319,8 +339,10 @@ static auto dna4_02_s1u_15u_e5 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
-        seqan3::alignment_coordinate{column_index_type{14u}, row_index_type{0u}},
+        /*.sequence1_begin_position = */ 14u,
+        /*.sequence2_begin_position = */ 0u,
+        /*.sequence1_end_position = */ 14u,
+        /*.sequence2_end_position = */ 0u,
         dna4_02_s1u_15u.score_matrix().mask_matrix(masking_matrix),
         dna4_02_s1u_15u.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -341,8 +363,10 @@ static auto dna4_02T_s15u_1u_e255 = []()
         -14,
         "--------------",
         "AACCGGTAAACCGG",
-        dna4_02T_s15u_1u.begin_positions,
-        dna4_02T_s15u_1u.end_positions,
+        dna4_02T_s15u_1u.sequence1_begin_position,
+        dna4_02T_s15u_1u.sequence2_begin_position,
+        dna4_02T_s15u_1u.sequence1_end_position,
+        dna4_02T_s15u_1u.sequence2_end_position,
         dna4_02T_s15u_1u.score_vector,
         dna4_02T_s15u_1u.trace_vector
     };
@@ -379,8 +403,10 @@ static auto dna4_02T_s15u_1u_e5 = []()
         INF,
         "",
         "",
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{14u}},
-        seqan3::alignment_coordinate{column_index_type{0u}, row_index_type{14u}},
+        /*.sequence1_begin_position = */ 0u,
+        /*.sequence2_begin_position = */ 14u,
+        /*.sequence1_end_position = */ 0u,
+        /*.sequence2_end_position = */ 14u,
         dna4_02T_s15u_1u.score_matrix().mask_matrix(masking_matrix),
         dna4_02T_s15u_1u.trace_matrix().mask_matrix(masking_matrix)
     };
@@ -397,8 +423,10 @@ static auto dna4_03_e255 = []()
         -0,
         "",
         "",
-        dna4_03.begin_positions,
-        dna4_03.end_positions,
+        dna4_03.sequence1_begin_position,
+        dna4_03.sequence2_begin_position,
+        dna4_03.sequence1_end_position,
+        dna4_03.sequence2_end_position,
         dna4_03.score_vector,
         dna4_03.trace_vector
     };
@@ -414,8 +442,10 @@ static auto aa27_01_e255 = []()
         -8,
         "UUWWRRIIUUWWRRII",
         "U-W-R-I-U-W-R-IU",
-        aa27_01.begin_positions,
-        aa27_01.end_positions,
+        aa27_01.sequence1_begin_position,
+        aa27_01.sequence2_begin_position,
+        aa27_01.sequence1_end_position,
+        aa27_01.sequence2_end_position,
         aa27_01.score_vector,
         aa27_01.trace_vector
     };
@@ -431,8 +461,10 @@ static auto aa27_01T_e255 = []()
         -8,
         "U-W-R-I-U-W-R-IU",
         "UUWWRRIIUUWWRRII",
-        aa27_01T.begin_positions,
-        aa27_01T.end_positions,
+        aa27_01T.sequence1_begin_position,
+        aa27_01T.sequence2_begin_position,
+        aa27_01T.sequence1_end_position,
+        aa27_01T.sequence2_end_position,
         aa27_01T.score_vector,
         aa27_01T.trace_vector
     };

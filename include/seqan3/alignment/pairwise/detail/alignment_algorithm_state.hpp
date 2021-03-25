@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>

@@ -67,9 +67,9 @@ TYPED_TEST_P(pairwise_alignment_collection_test, end_positions)
         EXPECT_RANGE_EQ(res_vec |
                         std::views::transform([] (auto res)
                         {
-                            return seqan3::alignment_coordinate{
-                                    seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                    seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                            return std::pair<size_t, size_t>{
+                                res.sequence1_end_position(),
+                                res.sequence2_end_position()};
                         }),
                         fixture.get_end_positions());
     }
@@ -96,17 +96,17 @@ TYPED_TEST_P(pairwise_alignment_collection_test, begin_positions)
         EXPECT_RANGE_EQ(res_vec |
                         std::views::transform([] (auto res)
                         {
-                            return seqan3::alignment_coordinate{
-                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                            return std::pair<size_t, size_t>{
+                                res.sequence1_end_position(),
+                                res.sequence2_end_position()};
                         }),
                         fixture.get_end_positions());
         EXPECT_RANGE_EQ(res_vec |
                         std::views::transform([] (auto res)
                         {
-                            return seqan3::alignment_coordinate{
-                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
-                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                            return std::pair<size_t, size_t>{
+                                res.sequence1_begin_position(),
+                                res.sequence2_begin_position()};
                         }),
                         fixture.get_begin_positions());
     }
@@ -133,17 +133,17 @@ TYPED_TEST_P(pairwise_alignment_collection_test, alignment)
         EXPECT_RANGE_EQ(res_vec |
                         std::views::transform([] (auto res)
                         {
-                            return seqan3::alignment_coordinate{
-                                       seqan3::detail::column_index_type{res.sequence1_end_position()},
-                                       seqan3::detail::row_index_type{res.sequence2_end_position()}};
+                            return std::pair<size_t, size_t>{
+                                res.sequence1_end_position(),
+                                res.sequence2_end_position()};
                         }),
                         fixture.get_end_positions());
         EXPECT_RANGE_EQ(res_vec |
                         std::views::transform([] (auto res)
                         {
-                            return seqan3::alignment_coordinate{
-                                       seqan3::detail::column_index_type{res.sequence1_begin_position()},
-                                       seqan3::detail::row_index_type{res.sequence2_begin_position()}};
+                            return std::pair<size_t, size_t>{
+                                res.sequence1_begin_position(),
+                                res.sequence2_begin_position()};
                         }),
                         fixture.get_begin_positions());
         EXPECT_RANGE_EQ(res_vec |
