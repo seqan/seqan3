@@ -281,3 +281,27 @@ TEST(sandboxed_path_free_operator_append, free_operator_append)
 
     EXPECT_THROW(path / "../../../", fs::filesystem_error);
 }
+
+// Test special case when symbolic links are involved
+TEST(sandboxed_path_symbolic_link, symbolic_link)
+{
+    // We create a symbolic link from /tmp/seqan3_sandboxed_path_symbolic_link_test -> /tmp
+    auto tmp_base_dir = std::filesystem::temp_directory_path();
+    auto tmp_dir = tmp_base_dir / "seqan3_sandboxed_path_symbolic_link_test";
+
+    // if link already exists, remove it
+    if (std::filesystem::exists(tmp_dir))
+    {
+        std::filesystem::remove_all(tmp_dir);
+    }
+
+    // create symlink and a sandboxed_path
+    std::filesystem::create_directory_symlink(tmp_base_dir, tmp_dir);
+    sandboxed_path path{tmp_dir};
+
+    // check the sandboxed path did not resolve the symlink
+    EXPECT_EQ(tmp_dir, path);
+
+    // Cleanup, remove link
+    std::filesystem::remove_all(tmp_dir);
+}
