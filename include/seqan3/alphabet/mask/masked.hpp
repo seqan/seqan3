@@ -24,9 +24,6 @@ namespace seqan3
  * \ingroup mask
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
- * \implements seqan3::trivially_copyable
- * \implements seqan3::standard_layout
- * \implements std::regular
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::writable_alphabet and std::regular.
  *
@@ -36,8 +33,10 @@ namespace seqan3
  * without losing additional information by replacing the sequence directly.
  *
  * \include test/snippet/alphabet/mask/masked.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
- template <writable_alphabet sequence_alphabet_t>
+template <writable_alphabet sequence_alphabet_t>
 //!\cond
     requires std::regular<sequence_alphabet_t>
 //!\endcond
@@ -48,10 +47,16 @@ private:
     using base_t = alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>;
 
 public:
-    //!\brief First template parameter as member type.
+    /*!\brief First template parameter as member type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using sequence_alphabet_type = sequence_alphabet_t;
 
-    //!\brief Equals the char_type of sequence_alphabet_type.
+    /*!\brief Equals the char_type of sequence_alphabet_type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using char_type = alphabet_char_t<sequence_alphabet_type>;
 
     using base_t::alphabet_size;
@@ -76,7 +81,10 @@ public:
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character.
+    /*!\brief Assign from a character.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr masked & assign_char(char_type const c) noexcept
     {
         using index_t = std::make_unsigned_t<char_type>;
@@ -88,7 +96,10 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return a character.
+    /*!\brief Return a character.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr char_type to_char() const noexcept
     {
         return rank_to_char[base_t::to_rank()];

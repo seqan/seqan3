@@ -34,6 +34,8 @@ namespace seqan3
  * \include test/snippet/alphabet/gap/gapped.cpp
  *
  * \sa For more details see alphabet_variant, which is the base class and more general than the gapped alphabet.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_t>
 //!\cond

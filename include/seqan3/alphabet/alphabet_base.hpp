@@ -89,11 +89,15 @@ protected:
      * \details We need a return type for seqan3::alphabet_base::to_char and seqan3::alphabet_base::assign_char other
      *          than void to make these in-class definitions valid when `char_t` is void.
      *
+     * \attention Please use seqan3::alphabet_char_t to access this type.
+     *
      * \stableapi{Since version 3.1.}
      */
     using char_type = std::conditional_t<std::same_as<char_t, void>, char, char_t>;
 
     /*!\brief The type of the alphabet when represented as a number (e.g. via to_rank()).
+     *
+     * \attention Please use seqan3::alphabet_rank_t to access this type.
      *
      * \stableapi{Since version 3.1.}
      */

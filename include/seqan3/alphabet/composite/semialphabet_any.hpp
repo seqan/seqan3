@@ -40,6 +40,8 @@ namespace seqan3
  *
  * ### Example
  * \include test/snippet/alphabet/composite/semialphabet_any.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <size_t size>
 class semialphabet_any : public alphabet_base<semialphabet_any<size>, size, void>
@@ -65,7 +67,10 @@ public:
     constexpr semialphabet_any & operator=(semialphabet_any &&)      noexcept = default; //!< Defaulted.
     ~semialphabet_any()                                              noexcept = default; //!< Defaulted.
 
-    //!\brief Construct semialphabet_any from alphabet of the same size
+    /*!\brief Construct semialphabet_any from alphabet of the same size
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     template <semialphabet other_alph_t>
     //!\cond
         requires (alphabet_size<other_alph_t> == size)
@@ -76,7 +81,10 @@ public:
     }
     //!\}
 
-    //!\brief Enable conversion of semialphabet_any into other (semi-)alphabet of the same size
+    /*!\brief Enable conversion of semialphabet_any into other (semi-)alphabet of the same size
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     template <semialphabet other_alph_t>
     //!\cond
         requires ((alphabet_size<other_alph_t> == size) && std::regular<other_alph_t>)
