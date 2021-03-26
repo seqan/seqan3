@@ -122,14 +122,7 @@ The output of the command `tree -L 2` should now look like this:
 ├── seqan3
 │   ├── build_system
 │   ├── CHANGELOG.md
-│   ├── CMakeLists.txt
-│   ├── CODE_OF_CONDUCT.md
-│   ├── CONTRIBUTING.md
-│   ├── doc
-│   ├── include
-│   ├── LICENSE.md
-│   ├── README.md
-│   ├── submodules
+│   ├── ...
 │   └── test
 └── source
 
@@ -144,31 +137,27 @@ First we create the file `hello_world.cpp` in the `source` directory with the fo
 
 \include test/external_project/src/hello_world.cpp
 
-To compile it we first create a `CMakeLists.txt` file in the `source` directory:
-
-```cmake
-cmake_minimum_required (VERSION 3.4)
-project (seqan3_tutorial CXX)
-
-find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
-
-add_executable (hello_world hello_world.cpp)
-
-target_link_libraries (hello_world seqan3::seqan3)
-```
+To compile it, we first create a `CMakeLists.txt` file in the `source` directory:
+<!-- Parsing the snippet like this to avoid verbatim includes of the snippet identifiers if we used nested snippets. -->
+<!-- Snippet start -->
+\dontinclude test/external_project/seqan3_setup_tutorial/CMakeLists.txt
+\skipline cmake_minimum_required
+\until target_link_libraries
+<!-- Snippet end -->
 
 The directories should now look like this:
 
 ```
-tutorial
-├── source
+.
+├── build
+├── seqan3
+│   ├── build_system
+│   ├── CHANGELOG.md
+│   ├── ...
+│   └── test
+└── source
     ├── CMakeLists.txt
     └── hello_world.cpp
-├── build
-└── seqan3
-    ├── CMakeLists.txt
-    ├── LICENSE
-    ...
 ```
 
 Now we can switch to the directory `build` and run:
@@ -196,18 +185,7 @@ cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-10 ../source
 If you create a new `cpp` file and want to compile it, you need to add another `add_executable` and
 `target_link_libraries` directive to you `CMakeLists.txt`.
 For example, after adding `another_program.cpp` your `CMakeLists.txt` may look like this:
-```cmake
-cmake_minimum_required (VERSION 3.4)
-project (seqan3_tutorial CXX)
-
-find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
-
-add_executable (hello_world hello_world.cpp)
-add_executable (another_program another_program.cpp)
-
-target_link_libraries (hello_world seqan3::seqan3)
-target_link_libraries (another_program seqan3::seqan3)
-```
+\snippet test/external_project/seqan3_setup_tutorial/CMakeLists.txt adding_files
 
 # Encountered issues
 
