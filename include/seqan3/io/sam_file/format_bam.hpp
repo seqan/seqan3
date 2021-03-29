@@ -572,7 +572,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                                    "record.")};
 
                 auto cigar_view = std::views::all(std::get<std::string>(it->second));
-                std::tie(tmp_cigar_vector, ref_length, seq_length) = parse_cigar(cigar_view);
+                std::tie(tmp_cigar_vector, ref_length, seq_length) = detail::parse_cigar(cigar_view);
                 offset_tmp = soft_clipping_end = 0;
                 transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
                 tag_dict.erase(it); // remove redundant information
@@ -746,7 +746,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
         {
             int32_t dummy_seq_length{};
             for (auto & [count, operation] : cigar_vector)
-                update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
+                detail::update_alignment_lengths(ref_length, dummy_seq_length, operation.to_char(), count);
         }
         else if (!std::ranges::empty(get<0>(align)) && !std::ranges::empty(get<1>(align)))
         {
@@ -1147,7 +1147,7 @@ inline auto format_bam::parse_binary_cigar(cigar_input_type && cigar_input, uint
         operation = cigar_mapping[operation_and_count & cigar_mask];
         count = operation_and_count >> 4;
 
-        update_alignment_lengths(ref_length, seq_length, operation, count);
+        detail::update_alignment_lengths(ref_length, seq_length, operation, count);
         operations.emplace_back(count, cigar::operation{}.assign_char(operation));
         --n_cigar_op;
     }
