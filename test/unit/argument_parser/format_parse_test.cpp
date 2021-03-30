@@ -1032,9 +1032,6 @@ TEST(parse_type_test, parse_error_enum_option)
 TEST(parse_test, issue2464)
 {
     using option_t = foo::bar;
-
-    seqan3::value_list_validator enum_validator{(seqan3::enumeration_names<option_t> | std::views::values)};
-
     // Using a non-existing value of foo::bar should throw.
     {
         const char * argv[] = {"./argument_parser_test", "-e", "nine"};
@@ -1060,6 +1057,7 @@ TEST(parse_test, issue2464)
     {
         const char * argv[] = {"./argument_parser_test", "-e", "nine"};
 
+        seqan3::value_list_validator enum_validator{(seqan3::enumeration_names<option_t> | std::views::values)};
         option_t option_value{};
 
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
@@ -1070,6 +1068,7 @@ TEST(parse_test, issue2464)
     {
         const char * argv[] = {"./argument_parser_test", "-e", "one", "-e", "nine"};
 
+        seqan3::value_list_validator enum_validator{(seqan3::enumeration_names<option_t> | std::views::values)};
         std::vector<option_t> option_values{};
 
         seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
