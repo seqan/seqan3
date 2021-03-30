@@ -1034,26 +1034,34 @@ TEST(parse_test, issue2464)
     using option_t = foo::bar;
 
     seqan3::value_list_validator enum_validator{(seqan3::enumeration_names<option_t> | std::views::values)};
-    option_t option_value{};
-    std::vector<option_t> option_values{};
 
     // Using a non-existing value of foo::bar should throw.
     {
         const char * argv[] = {"./argument_parser_test", "-e", "nine"};
+
+        option_t option_value{};
+
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
         EXPECT_THROW(parser.parse(), seqan3::user_input_error);
     }
     {
         const char * argv[] = {"./argument_parser_test", "-e", "one", "-e", "nine"};
+
+        std::vector<option_t> option_values{};
+
         seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
         parser.add_option(option_values, 'e', "enum-option", "this is an enum option.");
         EXPECT_THROW(parser.parse(), seqan3::user_input_error);
     }
 
-    // The validator does not handle invalid inputs for enums. (No seqan3::validation_error)
+    // Invalid inputs for enums are handled before any validator is evaluated.
+    // Thus the exception will be seqan3::user_input_error and not seqan3::validation_error.
     {
         const char * argv[] = {"./argument_parser_test", "-e", "nine"};
+
+        option_t option_value{};
+
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         parser.add_option(option_value, 'e', "enum-option", "this is an enum option.", seqan3::option_spec::advanced,
                           enum_validator);
@@ -1061,6 +1069,9 @@ TEST(parse_test, issue2464)
     }
     {
         const char * argv[] = {"./argument_parser_test", "-e", "one", "-e", "nine"};
+
+        std::vector<option_t> option_values{};
+
         seqan3::argument_parser parser{"test_parser", 5, argv, seqan3::update_notifications::off};
         parser.add_option(option_values, 'e', "enum-option", "this is an enum option.", seqan3::option_spec::advanced,
                           enum_validator);
