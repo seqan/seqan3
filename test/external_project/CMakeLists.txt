@@ -121,3 +121,15 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to us
     )
     add_dependencies(seqan3_fetch_content_zip seqan3_test_prerequisite)
 endif ()
+
+# 5) This test is the same as 2) but emulates the settings within the setup tutorial.
+#    This test is used as snippet in the setup tutorial.
+ExternalProject_Add (
+    seqan3_setup_tutorial
+    PREFIX seqan3_setup_tutorial
+    SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial"
+    CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
+    CMAKE_ARGS
+        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+        "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+)

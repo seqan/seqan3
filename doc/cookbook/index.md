@@ -147,7 +147,7 @@ This recipe can be used to:
 
 \snippet doc/tutorial/sam_file/sam_file_solution2.cpp solution
 
-# Map reads ans write output to SAM file
+# Map reads and write output to SAM file
 For a full recipe on creating your own readmapper, see the very end of the tutorial \ref tutorial_read_mapper.
 
 \snippet doc/tutorial/read_mapper/read_mapper_step4.cpp solution

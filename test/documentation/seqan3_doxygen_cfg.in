@@ -96,6 +96,9 @@ ALIASES += experimentalapi="\experimentalapi{ }"
 ALIASES += stableapi{1}="\htmlonly<dl class=\"stable-api\">This entity is stable. \1</dl>\endhtmlonly"
 ALIASES += stableapi="\stableapi{ }"
 
+ALIASES += startcollapsible{1}="\htmlonly<details class=\"seqan\"><summary class = \"seqan\">\1</summary>\endhtmlonly"
+ALIASES += endcollapsible="\htmlonly</details>\endhtmlonly"
+
 ALIASES += header_file{1}="\htmlonly<b>Header File</b><br><div style='text-indent:3em;'><code>#include\endhtmlonly <\1>\htmlonly</code></div>\endhtmlonly"
 
 ### Extra files that we can link to

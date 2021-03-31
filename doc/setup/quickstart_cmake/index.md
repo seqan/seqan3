@@ -16,47 +16,87 @@ Requirements:
   - cmake >= 3.4
   - git
 
-SeqAn3 requires a compiler with full C++20 support *or* GCC >= 7. Current versions of LLVM/Clang and VisualStudio/MSVC are **not supported**.
-We will briefly explain how to install GCC-7 on some popular operating systems, but we recommend using the latest version of GCC available. For more information refer to your operating system's documentation.
+## Installing GCC
 
-**Ubuntu >= 18.04**
-```
+SeqAn requires a compiler with full C++20 support *or* GCC >= 7. Current versions of LLVM/Clang and VisualStudio/MSVC
+are **not yet supported**.
+We will briefly explain how to install GCC-10 (or the latest GCC if such an option is available) on some popular
+operating systems. We recommend using the latest version of GCC available. For more information, refer to your
+operating system's documentation.
+
+\startcollapsible{Linux-based}
+
+#### Ubuntu >= 18.04
+```bash
 sudo apt install g++
 ```
-**Ubuntu < 18.04**
-```
+
+#### Ubuntu < 18.04
+```bash
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt update
-sudo apt install g++-7
-```
-**MacOS** using [Homebrew](https://brew.sh/)
-```
-brew install gcc@7
+sudo apt install g++-10
 ```
 
-**MacOS** using [MacPorts](https://www.macports.org/)
+#### Using [conda](https://conda.io)
+To avoid interference with system packages, we recommend creating a new environment when using conda.
+```bash
+conda create -n conda_gcc_env -c conda-forge gcc_linux-64
+conda activate conda_gcc_env
 ```
-sudo port install gcc-7
+This will put GCC in a separate environment `conda_gcc_env` which can be activated via `conda activate conda_gcc_env`
+and deactivated via `conda deactivate`.
+
+\endcollapsible
+
+\startcollapsible{macOS}
+
+#### Using [Homebrew](https://brew.sh/)
+```bash
+brew install gcc
 ```
 
-**Linux** using [conda](https://conda.io)
+#### Using [MacPorts](https://www.macports.org/)
+```bash
+sudo port install gcc10
 ```
-conda create -n gcc7 -c quantstack gcc-7 libgcc-7
-conda activate gcc7
-```
-This will put GCC-7 in a separate environment called `gcc7` which can be activated via `conda activate gcc7` and deactivated via `conda deactivate gcc7`.
 
-\note \htmlonly <div class=\"assignment\"> <details><summary><b>Known Issue:</b></summary> \endhtmlonly If you encounter the error <code>/usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'CXXABI_1.3.11' not found</code>, you have to set the LD_LIBRARY_PATH:
-```
-export LD_LIBRARY_PATH=/home/user/miniconda3/envs/gcc7/lib/
-```
-where `/home/user/miniconda3/` is the path to your conda installation. \htmlonly </details> </div> \endhtmlonly
+\endcollapsible
 
-\attention After installing, `g++ --version` should print the desired version. If not, you may have to use, for example, `g++-7 --version` or even specify the full path to your executable.
+\startcollapsible{Windows}
 
-Similarly you need to install cmake and git, e.g. `apt install cmake git`.
+#### Using [WSL](https://docs.microsoft.com/en-us/windows/wsl/about)
+The Windows Subsystem for Linux offers an easy way to run a Linux distribution under Windows.
+Follow [Microsoft's setup guide](https://docs.microsoft.com/en-us/windows/wsl/about) to install WSL and then follow
+the steps listed for Linux-based systems.
+
+\endcollapsible
+
+\startcollapsible{Browser-based}
+
+#### Using [gitpod.io](https://gitpod.io/#https://github.com/seqan/seqan3/)
+[gitpod.io](https://gitpod.io) allows you to edit, compile and run code from within your browser. The free version includes 50
+hours of use per month, which is plenty for our tutorials. A GitHub account is required.
+[Click here](https://gitpod.io/#https://github.com/seqan/seqan3/) to open SeqAn3 in gitpod.
+
+#### Using [GitHub codespaces](https://github.com/codespaces)
+GitHub offers a service similar to gitpod. Codespaces are currently in **public beta** and may not be available to
+everyone. [Click here](https://github.com/codespaces) to check for availability.
+
+Please note that you may have to manually clone the submodules by running `git submodule update --init`.
+
+\endcollapsible
+
+\attention After installing, `g++ --version` should print the desired version.
+           If not, you may have to use, for example, `g++-10 --version` or even specify the full path to your compiler.
+
+Similarly, you may need to install CMake and git, e.g. `apt install cmake git`.
 
 # Directory Structure
+In this section we will use the `tree` command to show the directory structure. This program may not be installed
+on your system. If so, you may wish to install it or verify the directory structure in other ways, e.g. by using
+`ls -l`.
+
 For this project, we recommend following directory layout:
 
 ```
@@ -67,7 +107,7 @@ tutorial
 ```
 
 To set these directories up you can follow this script (note the <b>\--recurse-submodules</b> when cloning SeqAn3):
-```
+```bash
 mkdir tutorial
 cd tutorial
 mkdir build
@@ -75,21 +115,14 @@ mkdir source
 git clone --recurse-submodules https://github.com/seqan/seqan3.git
 ```
 
-The output of the command ``` tree -L 2 ``` should now look like this:
+The output of the command `tree -L 2` should now look like this:
 ```
 .
 ├── build
 ├── seqan3
 │   ├── build_system
 │   ├── CHANGELOG.md
-│   ├── CMakeLists.txt
-│   ├── CODE_OF_CONDUCT.md
-│   ├── CONTRIBUTING.md
-│   ├── doc
-│   ├── include
-│   ├── LICENSE.md
-│   ├── README.md
-│   ├── submodules
+│   ├── ...
 │   └── test
 └── source
 
@@ -102,33 +135,29 @@ To test whether everything works, we will now compile and run a small example.
 
 First we create the file `hello_world.cpp` in the `source` directory with the following contents:
 
-\include doc/setup/quickstart_cmake/hello_world.cpp
+\include test/external_project/src/hello_world.cpp
 
-To compile it we first create a `CMakeLists.txt` file in the `source` directory:
-
-```cmake
-cmake_minimum_required (VERSION 3.4)
-project (seqan3_tutorial CXX)
-
-find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
-
-add_executable (hello_world hello_world.cpp)
-
-target_link_libraries (hello_world seqan3::seqan3)
-```
+To compile it, we first create a `CMakeLists.txt` file in the `source` directory:
+<!-- Parsing the snippet like this to avoid verbatim includes of the snippet identifiers if we used nested snippets. -->
+<!-- Snippet start -->
+\dontinclude test/external_project/seqan3_setup_tutorial/CMakeLists.txt
+\skipline cmake_minimum_required
+\until target_link_libraries
+<!-- Snippet end -->
 
 The directories should now look like this:
 
 ```
-tutorial
-├── source
+.
+├── build
+├── seqan3
+│   ├── build_system
+│   ├── CHANGELOG.md
+│   ├── ...
+│   └── test
+└── source
     ├── CMakeLists.txt
     └── hello_world.cpp
-├── build
-└── seqan3
-    ├── CMakeLists.txt
-    ├── LICENSE
-    ...
 ```
 
 Now we can switch to the directory `build` and run:
@@ -139,38 +168,38 @@ make
 ./hello_world
 ```
 
-The output should be `Hello world`. Note that the build type is specified with `-DCMAKE_BUILD_TYPE=Release`. 
-Specifying `Release` enables an optimized build where no debug information is available. Release mode is therefore 
-suitable for the end user. There is an example of a `Debug` build that is suitable for contributors in the next tutorial.
+The output should be `Hello World!`. Note that the build type is specified with `-DCMAKE_BUILD_TYPE=Release`.
+Specifying `Release` enables an optimized build where no debug information is available. Release mode is therefore
+suitable for the end user. Programs built using `-DCMAKE_BUILD_TYPE=Debug` will run slower, but also make the detection
+of errors easier. `Debug` is suitable for contributors, and we recommend using it while working with our
+[Tutorials](usergroup1.html).
 
-\remark Depending on the standard C++ on your system, you may need to specify the compiler via `-DCMAKE_CXX_COMPILER=`, 
-for example:
+\remark Depending on the standard C++ compiler on your system, you may need to specify the compiler via
+`-DCMAKE_CXX_COMPILER=`, for example:
 ```bash
-cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-7 ../source
+cmake -DCMAKE_CXX_COMPILER=/path/to/executable/g++-10 ../source
 ```
-
-\note In some situations it can happen that the correct assembler is not found.
-You will see an error during the cmake configuration that says something like: `... could not understand flag m ...`.
-In this case you can try to export the Path:
-```
-export PATH=/util/bin:$PATH
-```
-and try running cmake again.
 
 # Adding a new source file to your project
 
 If you create a new `cpp` file and want to compile it, you need to add another `add_executable` and
 `target_link_libraries` directive to you `CMakeLists.txt`.
 For example, after adding `another_program.cpp` your `CMakeLists.txt` may look like this:
-```cmake
-cmake_minimum_required (VERSION 3.4)
-project (seqan3_tutorial CXX)
+\snippet test/external_project/seqan3_setup_tutorial/CMakeLists.txt adding_files
 
-find_package (SeqAn3 3.0.0 REQUIRED HINTS "${CMAKE_SOURCE_DIR}/../seqan3/build_system")
+# Encountered issues
 
-add_executable (hello_world hello_world.cpp)
-add_executable (another_program another_program.cpp)
+* **Using conda's gcc package:** ``/usr/lib/x86_64-linux-gnu/libstdc++.so.6: version 'CXXABI_1.3.11' not found``<br>
+  Try setting `LD_LIBRARY_PATH`:
+  ```bash
+  export LD_LIBRARY_PATH=<conda_install_path>/envs/conda_gcc_env/lib/
+  ```
+  where `<conda_install_path>` must be replaced by the path yo your conda installation.<br>
+  Usually this corresponds to the path printed by `conda info --base` and may look similar to `/home/user/miniconda3/`.
 
-target_link_libraries (hello_world seqan3::seqan3)
-target_link_libraries (another_program seqan3::seqan3)
-```
+* **Assembler not found:** `... could not understand flag m ...`<br>
+  Try adding `/usr/bin` to your `PATH`:
+  ```bash
+  export PATH=/usr/bin:$PATH
+  ```
+  and run `cmake` again.
