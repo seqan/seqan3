@@ -114,10 +114,6 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  *   * The function must also accept std::ignore as parameter for any of the fields.
  *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
- *   * Instead of passing the fields seqan3::field::seq and seqan3::field::qual, you may also pass
- *     seqan3::field::seq_qual to both parameters. If you do, the std::ranges::range_value_t of the argument must be
- *     a specialisation of seqan3::qualified and the second template parameter to
- *     seqan3::sequence_file_input_options must be set to true.
  */
  /*!\var static inline std::vector<std::string> seqan3::sequence_file_input_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.

@@ -114,8 +114,6 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  *
  *   * The format must also accept std::ignore as parameter for any of the fields, however it shall throw an exception
  * if one of the fields required for writing the format is marked as such. [this shall be checked inside the function]
- *   * The format does not handle seqan3::field::seq_qual, instead seqan3::sequence_file_output splits it into two views
- *     and passes it to the format as if they were separate.
  */
 /*!\var static inline std::vector<std::string> seqan3::sequence_file_output_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.

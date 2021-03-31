@@ -5,17 +5,17 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/iterator>
 #include <sstream>
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
 #include <range/v3/view/filter.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/test/tmp_filename.hpp>
-#include <seqan3/std/iterator>
 
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
@@ -360,7 +360,7 @@ TEST(row, writing_seq_qual)
 {
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fasta{},
-                                      seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>()};
+                                      seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>()};
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)
@@ -438,7 +438,7 @@ TEST(columns, writing_seq_qual)
 {
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fasta{},
-                                      seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>()};
+                                      seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>()};
     fout.options.fasta_letters_per_line = 0;
 
     std::vector<std::vector<seqan3::qualified<seqan3::dna5, seqan3::phred42>>> seq_quals{3};

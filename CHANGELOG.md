@@ -59,6 +59,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   to add convenient functions that compute information based on the record itself and to provide better documentation.
   ([\#2340](https://github.com/seqan/seqan3/pull/2340), [\#2380](https://github.com/seqan/seqan3/pull/2380),
   [\#2389](https://github.com/seqan/seqan3/pull/2389))
+* Deprecated `seqan3::field::seq_qual`. Use `seqan3::fiel::seq` and `seqan3::field::qual` instead.
+  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out 
+  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html)
+  for usage.
 
 #### Search
 

@@ -89,6 +89,11 @@ These work similarly to how they work on a std::vector.
 
 \include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
 
+The class seqan3::sequence_file_output takes an extra parameter allowing to custom select the
+fields and their order.
+
+\include test/snippet/io/sequence_file/sequence_file_output_fields_trait_1.cpp
+
 # File conversion
 
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp file_conversion

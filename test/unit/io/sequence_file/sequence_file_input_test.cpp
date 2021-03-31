@@ -12,8 +12,8 @@
 #include <seqan3/std/ranges>
 #include <sstream>
 
-#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -272,7 +272,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
     /* record based reading */
     seqan3::sequence_file_input fin{std::istringstream{input},
                                     seqan3::format_fasta{},
-                                    seqan3::fields<seqan3::field::id, seqan3::field::seq_qual>{}};
+                                    seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>{}};
 
     size_t counter = 0;
     for (auto & [ id, seq_qual ] : fin)

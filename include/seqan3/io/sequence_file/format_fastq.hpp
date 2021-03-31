@@ -34,11 +34,11 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 
@@ -58,9 +58,8 @@ namespace seqan3
  *
  * ### fields_specialisation
  *
- * The FastQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual; or alternatively
- * provides seqan3::field::seq_qual as a single field of sequence and quality. All three fields (or ID + SEQ_QUAL) are
- * required when writing and the sequence and qualities are required to be of the same length.
+ * The FastQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual. All three fields
+ * are required when writing and the sequence and qualities are required to be of the same length.
  *
  * ### Encodings
  *
