@@ -246,7 +246,7 @@ namespace views { using ::ranges::cpp20::views::reverse; }
 namespace views
 {
 // using ::ranges::cpp20::views::elements;
-// using ::ranges::cpp20::views::keys;
+using ::ranges::cpp20::views::keys;
 using ::ranges::cpp20::views::values;
 } // namespace views
 

@@ -313,8 +313,8 @@ private:
      * \tparam option_t Must model seqan3::named_enumeration.
      * \param[out] value Stores the parsed value.
      * \param[in] in The input argument to be parsed.
-     * \returns seqan3::option_parse_result::error if `in` could not be found in the
-     *          seqan3::enumeration_names<option_t> map and otherwise seqan3::option_parse_result::success.
+     * \throws seqan3::user_input_error if `in` is not a key in seqan3::enumeration_names<option_t>.
+     * \returns seqan3::option_parse_result::success.
      */
     template <named_enumeration option_t>
     option_parse_result parse_option_value(option_t & value, std::string const & in)
@@ -322,9 +322,14 @@ private:
         auto map = seqan3::enumeration_names<option_t>;
 
         if (auto it = map.find(in); it == map.end())
-            return option_parse_result::error;
+        {
+            throw user_input_error{detail::to_string("You have chosen an invalid input value: ", in,
+                                                     ". Please use one of: ", map | std::views::keys)};
+        }
         else
+        {
             value = it->second;
+        }
 
         return option_parse_result::success;
     }
