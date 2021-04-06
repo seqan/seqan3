@@ -592,10 +592,7 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    membership_agent(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf))
-    {
-        result_buffer.resize(ibf_ptr->bin_count());
-    };
+    membership_agent(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count()) {}
     //!\}
 
     //!\brief Stores the result of bulk_contains().
@@ -642,7 +639,7 @@ public:
                bloom_filter_indices[i] += 64;
            }
 
-           result_buffer.set_int(batch << 6, tmp);
+           result_buffer.data.set_int(batch << 6, tmp);
         }
 
         return result_buffer;
@@ -657,12 +654,23 @@ public:
 
 //!\brief A bitvector representing the result of a call to `bulk_contains` of the seqan3::interleaved_bloom_filter.
 template <data_layout data_layout_mode>
-class interleaved_bloom_filter<data_layout_mode>::membership_agent::binning_bitvector : private sdsl::bit_vector
+class interleaved_bloom_filter<data_layout_mode>::membership_agent::binning_bitvector
 {
+private:
+    //!\brief The underlying datatype to use.
+    using data_type = sdsl::bit_vector;
+    //!\brief The bitvector.
+    data_type data{};
+
+    friend class membership_agent;
+
+    template <std::integral value_t>
+    friend class counting_vector;
+
 public:
     /*!\name Constructors, destructor and assignment
-        * \{
-        */
+     * \{
+     */
     binning_bitvector() = default; //!< Defaulted.
     binning_bitvector(binning_bitvector const &) = default; //!< Defaulted.
     binning_bitvector & operator=(binning_bitvector const &) = default; //!< Defaulted.
@@ -670,41 +678,95 @@ public:
     binning_bitvector & operator=(binning_bitvector &&) = default; //!< Defaulted.
     ~binning_bitvector() = default; //!< Defaulted.
 
+    //!\brief Construct with given size.
+    binning_bitvector(size_t const size) : data(size) {}
     //!\}
 
-    using sdsl::bit_vector::begin;
-    using sdsl::bit_vector::end;
-    using sdsl::bit_vector::operator==;
-    using sdsl::bit_vector::operator[];
-    using sdsl::bit_vector::size;
+    //!\brief Returns the number of elements.
+    size_t size() const noexcept
+    {
+        return data.size();
+    }
 
-#if SEQAN3_DOXYGEN_ONLY(1)0
-    //!\brief The iterator type of the `binning_bitvector`;
-    using iterator_t = IMPLEMENTATION_DEFINED;
-    //!\brief The reference type of the `binning_bitvector`;
-    using reference_t = IMPLEMENTATION_DEFINED;
-    //!\brief The const_reference type of the `binning_bitvector`;
-    using const_reference_t = IMPLEMENTATION_DEFINED;
-    //!\brief Returns an iterator to the begin of the bitvector.
-    iterator_t begin() noexcept;
-    //!\brief Returns an iterator to the end of the bitvector.
-    iterator_t end() noexcept;
-    //!\brief Compares two bitvectors.
-    bool operator==(bit_vector const & other) const noexcept;
-    //!\brief Returns a reference to position `idx` of the bitvector.
-    reference_t operator[](size_t const & idx) noexcept;
-    //!\brief Returns a const_reference to position `idx` of the bitvector.
-    const_reference_t operator[](size_t const & idx) const noexcept;
-    //!\brief Returns the size of the bitvector.
-    size_t size() noexcept;
-#endif
+    /*!\name Iterators
+     * \{
+     */
+    //!\brief Returns an iterator to the first element of the container.
+    auto begin() noexcept
+    {
+        return data.begin();
+    }
 
-private:
-    friend class membership_agent;
-    using sdsl::bit_vector::resize;
-    using sdsl::bit_vector::set_int;
-    template <std::integral value_t>
-    friend class counting_vector;
+    //!\copydoc begin()
+    auto begin() const noexcept
+    {
+        return data.begin();
+    }
+
+    //!\brief Returns an iterator to the element following the last element of the container.
+    auto end() noexcept
+    {
+        return data.end();
+    }
+
+    //!\copydoc end()
+    auto end() const noexcept
+    {
+        return data.end();
+    }
+    //!\}
+
+    /*!\name Comparison operators
+     * \{
+     */
+    //!\brief Test for equality.
+    friend bool operator==(binning_bitvector const & lhs, binning_bitvector const & rhs) noexcept
+    {
+        return lhs.data == rhs.data;
+    }
+
+    //!\brief Test for inequality.
+    friend bool operator!=(binning_bitvector const & lhs, binning_bitvector const & rhs) noexcept
+    {
+        return !(lhs == rhs);
+    }
+    //!\}
+
+    /*!\name Access
+     * \{
+     */
+     //!\brief Return the i-th element.
+    auto operator[](size_t const i) noexcept
+    {
+        assert(i < size());
+        return data[i];
+    }
+
+    //!\copydoc operator[]()
+    auto operator[](size_t const i) const noexcept
+    {
+        assert(i < size());
+        return data[i];
+    }
+
+    /*!\brief Provides direct, unsafe access to the underlying data structure.
+     * \returns A reference to an SDSL bitvector.
+     *
+     * \details
+     *
+     * \noapi{The exact representation of the data is implementation defined.}
+     */
+    constexpr data_type & raw_data() noexcept
+    {
+        return data;
+    }
+
+    //!\copydoc raw_data()
+    constexpr data_type const & raw_data() const noexcept
+    {
+        return data;
+    }
+    //!\}
 };
 
 /*!\brief A data structure that behaves like a std::vector and can be used to consolidate the results of multiple calls
@@ -763,7 +825,11 @@ public:
      */
     template <typename rhs_t>
     //!\cond
-        requires std::is_base_of<sdsl::bit_vector, rhs_t>::value
+        requires std::same_as<rhs_t,
+                              interleaved_bloom_filter<data_layout::uncompressed>::membership_agent::binning_bitvector>
+                 ||
+                 std::same_as<rhs_t,
+                              interleaved_bloom_filter<data_layout::compressed>::membership_agent::binning_bitvector>
     //!\endcond
     counting_vector & operator+=(rhs_t const & rhs)
     {
@@ -772,7 +838,7 @@ public:
         // Each iteration can handle 64 bits, so we need to iterate `((rhs.size() + 63) >> 6` many times
         for (size_t batch = 0, bin = 0; batch < ((rhs.size() + 63) >> 6); bin = 64 * ++batch)
         {
-            size_t tmp = rhs.get_int(batch * 64); // get 64 bits starting at position `batch * 64`
+            size_t tmp = rhs.data.get_int(batch * 64); // get 64 bits starting at position `batch * 64`
             if (tmp ^ (1ULL<<63)) // This is a special case, because we would shift by 64 (UB) in the while loop.
             {
                 while (tmp > 0)
@@ -810,7 +876,6 @@ public:
 
         return *this;
     }
-
 };
 
 /*!\brief Manages counting ranges of values for the seqan3::interleaved_bloom_filter.
@@ -851,10 +916,9 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    counting_agent_type(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), membership_agent(ibf)
-    {
-        result_buffer.resize(ibf_ptr->bin_count());
-    };
+    counting_agent_type(ibf_t const & ibf) :
+        ibf_ptr(std::addressof(ibf)), membership_agent(ibf), result_buffer(ibf.bin_count())
+    {}
     //!\}
 
     //!\brief Stores the result of bulk_count().
