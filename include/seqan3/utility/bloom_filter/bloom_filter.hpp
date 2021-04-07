@@ -276,8 +276,7 @@ public:
     /*!\name Counting
      * \{
      */
-    /*!\brief Counts the occurrences in each bin for all values in a range.
-
+    /*!\brief Counts the occurrences for all values in a range.
      * \tparam value_range_t The type of the range of values. Must model std::ranges::input_range. The reference type
      *                       must model std::unsigned_integral.
      * \param[in] values The range of values to process.
