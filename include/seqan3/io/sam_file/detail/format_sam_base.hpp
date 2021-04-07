@@ -43,7 +43,6 @@
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/zip.hpp>
-#include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
@@ -95,11 +94,6 @@ protected:
                                  header_type      & header,
                                  ref_seqs_type    & /*tag*/);
 
-    static void update_alignment_lengths(int32_t & ref_length,
-                                         int32_t & seq_length,
-                                         char const cigar_operation,
-                                         uint32_t const cigar_count);
-
     template <typename align_type, typename ref_seqs_type>
     void construct_alignment(align_type                           & align,
                              std::vector<cigar>                   & cigar_vector,
@@ -109,9 +103,6 @@ protected:
                              size_t                                 ref_length);
 
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const;
-
-    template <typename cigar_input_type>
-    std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_type && cigar_input) const;
 
     template <typename stream_view_type>
     void read_field(stream_view_type && stream_view, detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target));
@@ -190,27 +181,6 @@ inline void format_sam_base::check_and_assign_ref_id(ref_id_type      & ref_id,
     }
 }
 
-/*!\brief Updates the sequence lengths by `cigar_count` depending on the cigar operation `op`.
- * \param[in, out]  ref_length      The reference sequence's length.
- * \param[in, out]  seq_length      The query sequence's length.
- * \param[in]       cigar_operation The cigar operation.
- * \param[in]       cigar_count     The cigar count value to add to the length depending on the cigar operation.
- */
-inline void format_sam_base::update_alignment_lengths(int32_t & ref_length,
-                                                      int32_t & seq_length,
-                                                      char const cigar_operation,
-                                                      uint32_t const cigar_count)
-{
-    switch (cigar_operation)
-    {
-        case 'M': case '=': case 'X': ref_length += cigar_count, seq_length += cigar_count; break;
-        case 'D': case 'N':           ref_length += cigar_count; break;
-        case 'I' :                    seq_length += cigar_count; break;
-        case 'S': case 'H': case 'P': break; // no op (soft-clipping or padding does not increase either length)
-        default: throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
-    }
-}
-
 /*!\brief Transfer soft clipping information from the \p cigar_vector to \p sc_begin and \p sc_end.
  * \param[in] cigar_vector The cigar information to parse for soft-clipping.
  * \param[out] sc_begin    The soft clipping at the beginning of the alignment to set.
@@ -245,49 +215,6 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
         sc_end = cigar_count_at(last_index);
     else if (vector_size_at_least(3) && hard_clipping_at(last_index) && soft_clipping_at(second_last_index))
         sc_end = cigar_count_at(second_last_index);
-}
-
-/*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
- * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
- *                          std::ranges::input_range.
- * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
- *
- * \returns A tuple of size three containing (1) std::vector over seqan3::cigar, that describes
- *          the alignment, (2) the aligned reference length, (3) the aligned query sequence length.
- *
- * \details
- *
- * For example, the view over the cigar string "1H4M1D2M2S" will return
- * `{[(H,1), (M,4), (D,1), (M,2), (S,2)], 7, 6}`.
- */
-template <typename cigar_input_type>
-inline std::tuple<std::vector<cigar>, int32_t, int32_t> format_sam_base::parse_cigar(cigar_input_type && cigar_input) const
-{
-    std::vector<cigar> operations{};
-    std::array<char, 20> buffer{}; // buffer to parse numbers with from_chars. Biggest number should fit in uint64_t
-    char cigar_operation{};
-    uint32_t cigar_count{};
-    int32_t ref_length{}, seq_length{}; // length of aligned part for ref and query
-
-    // transform input into a single input view if it isn't already
-    auto cigar_view = cigar_input | views::single_pass_input;
-
-    // parse the rest of the cigar
-    // -------------------------------------------------------------------------------------------------------------
-    while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
-    {
-        auto buff_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
-        cigar_operation = *std::ranges::begin(cigar_view);
-        std::ranges::next(std::ranges::begin(cigar_view));
-
-        if (std::from_chars(buffer.begin(), buff_end, cigar_count).ec != std::errc{})
-            throw format_error{"Corrupted cigar string encountered"};
-
-        update_alignment_lengths(ref_length, seq_length, cigar_operation, cigar_count);
-        operations.emplace_back(cigar_count, cigar::operation{}.assign_char(cigar_operation));
-    }
-
-    return {operations, ref_length, seq_length};
 }
 
 /*!\brief Construct the field::alignment depending on the given information.

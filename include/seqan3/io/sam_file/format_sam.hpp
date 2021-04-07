@@ -460,7 +460,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     {
         if (!is_char<'*'>(*std::ranges::begin(stream_view))) // no cigar information given
         {
-            std::tie(tmp_cigar_vector, ref_length, seq_length) = parse_cigar(field_view);
+            std::tie(tmp_cigar_vector, ref_length, seq_length) = detail::parse_cigar(field_view);
             transfer_soft_clipping_to(tmp_cigar_vector, offset_tmp, soft_clipping_end);
             // the actual cigar_vector is swapped with tmp_cigar_vector at the end to avoid copying
         }
