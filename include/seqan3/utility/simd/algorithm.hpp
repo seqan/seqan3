@@ -344,6 +344,46 @@ constexpr simd_t load(void const * mem_addr)
 }
 //!\endcond
 
+/*!\brief Store simd_t size bits of integral data into memory.
+ * \ingroup simd
+ * \tparam    simd_t   The simd type; must model seqan3::simd::simd_concept.
+ * \param[in] mem_addr The memory address to write to. Does not need to be aligned on any particular boundary.
+ * \param[in] simd_vec The simd vector to read the data from.
+ *
+ * \details
+ *
+ * \include test/snippet/utility/simd/simd_store.cpp
+ */
+template <simd::simd_concept simd_t>
+constexpr void store(void * mem_addr, simd_t const & simd_vec)
+{
+    assert(mem_addr != nullptr);
+    using scalar_t = typename simd_traits<simd_t>::scalar_type;
+
+    for (size_t i = 0; i < simd_traits<simd_t>::length; ++i)
+        *(static_cast<scalar_t *>(mem_addr) + i) = simd_vec[i];
+}
+
+//!\cond
+template <simd::simd_concept simd_t>
+    requires detail::is_builtin_simd_v<simd_t> &&
+             detail::is_native_builtin_simd_v<simd_t>
+constexpr void store(void * mem_addr, simd_t const & simd_vec)
+{
+    assert(mem_addr != nullptr);
+
+    if constexpr (simd_traits<simd_t>::max_length == 16)
+        detail::store_sse4<simd_t>(mem_addr, simd_vec);
+    else if constexpr (simd_traits<simd_t>::max_length == 32)
+        detail::store_avx2<simd_t>(mem_addr, simd_vec);
+    else if constexpr (simd_traits<simd_t>::max_length == 64)
+        detail::store_avx512<simd_t>(mem_addr, simd_vec);
+    else
+        static_assert(simd_traits<simd_t>::max_length >= 16 && simd_traits<simd_t>::max_length <= 64,
+                      "Unsupported simd type.");
+}
+//!\endcond
+
 /*!\brief Transposes the given simd vector matrix.
  * \ingroup simd
  * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in type.
