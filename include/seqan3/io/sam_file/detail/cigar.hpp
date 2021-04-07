@@ -27,7 +27,6 @@
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
-#include <range/v3/view/zip.hpp>
 
 namespace seqan3::detail
 {
