@@ -27,7 +27,6 @@
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
-
 namespace seqan3::detail
 {
 //!\brief Comparator that is able two compare two views
