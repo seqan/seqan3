@@ -7,10 +7,8 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/to.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 
 inline benchmark::Counter hashes_per_second(size_t const count)
 {
@@ -51,8 +49,8 @@ template <typename ibf_type>
 void emplace_benchmark(::benchmark::State & state)
 {
     auto && [ hash_values, bf ] = set_up<ibf_type>(state.range(0),
-                                                    state.range(1),
-                                                    state.range(2));
+                                                   state.range(1),
+                                                   state.range(2));
 
     for (auto _ : state)
     {
@@ -64,7 +62,7 @@ void emplace_benchmark(::benchmark::State & state)
 }
 
 template <typename bf_type>
-void clear_benchmark(::benchmark::State & state)
+void reset_benchmark(::benchmark::State & state)
 {
     auto && [ hash_values, bf ] = set_up<bf_type>(state.range(0),
                                                   state.range(1),
@@ -73,7 +71,7 @@ void clear_benchmark(::benchmark::State & state)
 
     for (auto _ : state)
     {
-        bf.clear();
+        bf.reset();
     }
 }
 
@@ -110,7 +108,7 @@ void count_benchmark(::benchmark::State & state)
 
 BENCHMARK_TEMPLATE(emplace_benchmark,
                    seqan3::bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(clear_benchmark,
+BENCHMARK_TEMPLATE(reset_benchmark,
                    seqan3::bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
 
 BENCHMARK_TEMPLATE(contains_benchmark,

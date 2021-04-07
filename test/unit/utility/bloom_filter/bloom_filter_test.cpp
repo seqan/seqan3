@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 
 template <typename bf_type>
 struct bloom_filter_test : public ::testing::Test
@@ -80,16 +80,31 @@ TYPED_TEST(bloom_filter_test, contains)
     }
 }
 
+TYPED_TEST(bloom_filter_test, emplace)
+{
+    // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
+    seqan3::bloom_filter bf{seqan3::bin_size{1024u},
+                            seqan3::hash_function_count{2u}};
+
+    for (size_t hash : std::views::iota(0u, 64u))
+        bf.emplace(hash);
+
+    // 2. Construct either the uncompressed or compressed Bloom Filter and test via contains
+    TypeParam bf2{bf};
+    for (size_t hash : std::views::iota(0u, 64u))
+        EXPECT_TRUE(bf.contains(hash));
+}
+
 TYPED_TEST(bloom_filter_test, counting)
 {
-    // 1. Test uncompressed bloom_filter directly because the compressed one is not mutable.
+    // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
     seqan3::bloom_filter bf{seqan3::bin_size{1024u},
                             seqan3::hash_function_count{2u}};
 
     for (size_t hash : std::views::iota(0u, 128u))
         bf.emplace(hash);
 
-    // 2. Construct either the uncompressed or compressed bloom_filter and test set with bulk_contains
+    // 2. Construct either the uncompressed or compressed Bloom Filter and test set with bulk_contains
     TypeParam bf2{bf};
     
     // Test counting with all elements
@@ -99,35 +114,21 @@ TYPED_TEST(bloom_filter_test, counting)
     EXPECT_EQ(bf2.count(std::views::iota(22u, 42u)), 20u);
 }
 
-TYPED_TEST(bloom_filter_test, emplace)
+TYPED_TEST(bloom_filter_test, reset)
 {
-    // 1. Test uncompressed bloom_filter directly because the compressed one is not mutable.
+    // 1. Test uncompressed Bloom Filter directly because the compressed one is not mutable.
     seqan3::bloom_filter bf{seqan3::bin_size{1024u},
                             seqan3::hash_function_count{2u}};
 
     for (size_t hash : std::views::iota(0u, 64u))
         bf.emplace(hash);
 
-    // 2. Construct either the uncompressed or compressed bloom_filter and test via hit counts
+    // 2. Reset the Bloom Filter
+    bf.reset();
+
+    // 3. Construct either the uncompressed or compressed Bloom Filter and test set with contains
     TypeParam bf2{bf};
-    EXPECT_EQ(bf.count(std::views::iota(0u, 64u)), 64u); // test inserted hashes
-}
-
-TYPED_TEST(bloom_filter_test, clear)
-{
-    // 1. Test uncompressed bloom_filter directly because the compressed one is not mutable.
-    seqan3::bloom_filter bf{seqan3::bin_size{1024u},
-                            seqan3::hash_function_count{2u}};
-
-    for (size_t hash : std::views::iota(0u, 64u))
-        bf.emplace(hash);
-
-    // 2. Clear the Bloom Filter
-    bf.clear();
-
-    // 3. Construct either the uncompressed or compressed bloom_filter and test set with contains
-    TypeParam bf2{bf};
-    EXPECT_EQ(bf.count(std::views::iota(0u, 64u)), 0u); // nothing should be present in the bloom filter
+    EXPECT_EQ(bf.count(std::views::iota(0u, 64u)), 0u); // nothing should be present in the Bloom Filter
 }
 
 TYPED_TEST(bloom_filter_test, data_access)
@@ -141,4 +142,3 @@ TYPED_TEST(bloom_filter_test, serialisation)
     TypeParam bf{TestFixture::make_bf(seqan3::bin_size{1024u})};
     seqan3::test::do_serialisation(bf);
 }
-

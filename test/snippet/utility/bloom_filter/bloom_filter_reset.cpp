@@ -26,10 +26,9 @@ int main()
     // Count all 5-mers of sequence2
     seqan3::debug_stream << bf.count(sequence2 | hash_adaptor) << '\n'; // 9
 
-    // Clear the Bloom Filter
-    bf.clear();
+    // Reset the Bloom Filter
+    bf.reset();
 
-    // After clearing, no 5-mers are found
+    // After reset, no 5-mers are found
     seqan3::debug_stream << bf.count(sequence2 | hash_adaptor) << '\n'; // 0
-
 }

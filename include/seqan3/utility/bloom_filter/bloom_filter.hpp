@@ -12,19 +12,15 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/bit>
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
-
-#include <sdsl/bit_vectors.hpp>
-
-#include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/core/detail/strong_type.hpp>
 
 namespace seqan3
 {
 
-/*!\brief The bloom filter. A data structure that efficiently answers set-membership queries.
+/*!\addtogroup submodule_bloom_filter
+ * \{
+ */
+/*!\brief The Bloom Filter. A data structure that efficiently answers set-membership queries.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
  * \implements seqan3::cerealisable
  *
@@ -43,22 +39,35 @@ namespace seqan3
  * will always return `true` if the query was inserted, i.e. there may be false positives, but no false negatives.
  * 
  * ### Querying
- * To query the Bloom Filter for a value, call seqan3::bloom_filter::contains(value) which returns
+ * To query the Bloom Filter for a value, call `seqan3::bloom_filter::contains` which returns
  * true if the k-mer hash is present in the index, and false if the hash is not present.
  * The value is a hash value of the k-mer to check membership for.
  * 
- * To query the Bloom Filter for a range of values, call seqan3::bloom_filter::count(values) which returns the
+ * To query the Bloom Filter for a range of values, call `seqan3::bloom_filter::count` which returns the
  * number of k-mer hits in the Bloom Filter for the given range of values.
  * 
  * Please note the results are based on a heuristic data structure and with a certain probability (depending on 
  * the selected size of the bit vector) you may receive a false positive result.
  *
- * Compared to the interleaved bloom filter implementation, the bloom filter does not make use of
- * agents to determine and count membership.
+ * ### Differences to the Interleaved Bloom Filter (IBF)
+ * 
+ * While the Bloom Filter provides a single linear bit vector to represent the underlying data, the Interleaved Bloom
+ * Filter provides a data structure that combines a set of Bloom Filters to enable efficient queries to multiple
+ * fractions of the data. In doing so, the Interleaved Bloom Filter can not only answer the question whether a hash
+ * value is present in the data, but also provides information in which fraction of the data it occurs.
+ * The design of the Interleaved Bloom Filter is particulary useful when the underlying data is systematically 
+ * structured; for example, if each fraction of the data represents a specific set of organisms. Important 
+ * applications of the Interleaved Bloom Filter include taxonomic classification of sequencing data, or prefiltering
+ * of specific fractions of an input data set to enable more efficient in-depth analysis.
+ * The Bloom Filter, on the other hand, is useful if the database does not contain any underlying structure, or it is
+ * not relevant for the analysis. A typical application is the removal of host sequences or different types of
+ * contamination where it is usually not of interest which part of the database was matched. In such cases, the Bloom
+ * Filter provides a lighter data structure and a more simple interface (for example, the use of agents for determining
+ * and counting membership is not necessary in this case).
  *
  * ### Compression
  *
- * The Bloom Filter can be compressed by passing `data_layout::compressed` as template argument.
+ * The Bloom Filter can be compressed by passing `seqan3::data_layout::compressed` as template argument.
  * The compressed `seqan3::bloom_filter<seqan3::data_layout::compressed>` can only be constructed from a
  * `seqan3::bloom_filter`, in which case the underlying bitvector is compressed.
  * The compressed Bloom Filter is immutable, i.e. only querying is supported.
@@ -69,6 +78,8 @@ namespace seqan3
  * calls to `const` member functions are safe from multiple threads (as long as no thread calls
  * a non-`const` member function at the same time).
  *
+ * \sa seqan3::interleaved_bloom_filter
+ * 
  */
 template <data_layout data_layout_mode_ = data_layout::uncompressed>
 class bloom_filter
@@ -190,7 +201,7 @@ public:
     /*!\name Modifiers
      * \{
      */
-    /*!\brief Inserts a value into the bloom filter.
+    /*!\brief Inserts a value into the Bloom Filter.
      * \param[in] value The raw numeric value to process.
      *
      * \attention This function is only available for **uncompressed** Bloom Filters.
@@ -224,9 +235,9 @@ public:
      * 
      * ### Example
      *
-     * \include test/snippet/utility/bloom_filter/bloom_filter_clear.cpp
+     * \include test/snippet/utility/bloom_filter/bloom_filter_reset.cpp
      */
-    void clear() noexcept
+    void reset() noexcept
     //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
     //!\endcond
@@ -266,7 +277,7 @@ public:
      * \{
      */
     /*!\brief Counts the occurrences in each bin for all values in a range.
-     * \tparam value_t The type of the return value. Must model std::integral. Defaults to uint16_t.
+
      * \tparam value_range_t The type of the range of values. Must model std::ranges::input_range. The reference type
      *                       must model std::unsigned_integral.
      * \param[in] values The range of values to process.
@@ -381,5 +392,7 @@ public:
     }
     //!\endcond
 };
+
+//!\}
 
 } // namespace seqan3

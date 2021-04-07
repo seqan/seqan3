@@ -11,7 +11,7 @@
  *
  * \defgroup submodule_bloom_filter Bloom Filter
  * \brief Provides seqan3:bloom_filter.
- * \ingroup search
+ * \ingroup utility
  */
 
  #pragma once
