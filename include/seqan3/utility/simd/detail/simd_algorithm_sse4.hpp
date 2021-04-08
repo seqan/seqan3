@@ -35,7 +35,7 @@ constexpr simd_t load_sse4(void const * mem_addr);
  * \attention This is the implementation for SSE4 intrinsics.
  */
 template <simd::simd_concept simd_t>
-constexpr void store_sse4(void * mem_addr, simd_t const &);
+constexpr void store_sse4(void * mem_addr, simd_t const & simd_vec);
 
 /*!\copydoc seqan3::simd::transpose
  * \attention This is the implementation for SSE4 intrinsics.
