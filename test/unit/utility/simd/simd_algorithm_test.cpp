@@ -101,7 +101,7 @@ TYPED_TEST(simd_algorithm_memory, store)
     seqan3::simd::store(out_memory.data(), seqan3::simd::iota<TypeParam>(0));
 
     for (size_t i = 0; i < count; ++i)
-        EXPECT_EQ(out_memory[i], i);
+        EXPECT_EQ(static_cast<size_t>(out_memory[i]), i);
 }
 
 //-----------------------------------------------------------------------------
