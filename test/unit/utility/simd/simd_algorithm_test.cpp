@@ -59,12 +59,13 @@ TEST(simd_algorithm, transpose)
 }
 
 //-----------------------------------------------------------------------------
-// Algorithm load
+// Algorithm load and store
 //-----------------------------------------------------------------------------
 
 template <typename simd_t>
-struct simd_algorithm_load : ::testing::Test
+struct simd_algorithm_memory : ::testing::Test
 {
+    using scalar_t = typename seqan3::simd::simd_traits<simd_t>::scalar_type;
 
     void SetUp()
     {
@@ -72,24 +73,35 @@ struct simd_algorithm_load : ::testing::Test
         std::iota(memory.begin(), memory.end(), 0);
     }
 
-    std::vector<typename seqan3::simd::simd_traits<simd_t>::scalar_type> memory;
+    std::vector<scalar_t> memory;
 };
 
-using simd_load_types = ::testing::Types<seqan3::simd::simd_type_t<int8_t>,
-                                         seqan3::simd::simd_type_t<uint8_t>,
-                                         seqan3::simd::simd_type_t<int16_t>,
-                                         seqan3::simd::simd_type_t<uint16_t>,
-                                         seqan3::simd::simd_type_t<int32_t>,
-                                         seqan3::simd::simd_type_t<uint32_t>,
-                                         seqan3::simd::simd_type_t<int64_t>,
-                                         seqan3::simd::simd_type_t<uint64_t>>;
+using simd_memory_types = ::testing::Types<seqan3::simd::simd_type_t<int8_t>,
+                                           seqan3::simd::simd_type_t<uint8_t>,
+                                           seqan3::simd::simd_type_t<int16_t>,
+                                           seqan3::simd::simd_type_t<uint16_t>,
+                                           seqan3::simd::simd_type_t<int32_t>,
+                                           seqan3::simd::simd_type_t<uint32_t>,
+                                           seqan3::simd::simd_type_t<int64_t>,
+                                           seqan3::simd::simd_type_t<uint64_t>>;
 
-TYPED_TEST_SUITE(simd_algorithm_load, simd_load_types, );
+TYPED_TEST_SUITE(simd_algorithm_memory, simd_memory_types, );
 
-TYPED_TEST(simd_algorithm_load, load)
+TYPED_TEST(simd_algorithm_memory, load)
 {
     SIMD_EQ(seqan3::simd::load<TypeParam>(this->memory.data()), seqan3::simd::iota<TypeParam>(0));
     SIMD_EQ(seqan3::simd::load<TypeParam>(this->memory.data() + 10), seqan3::simd::iota<TypeParam>(10));
+}
+
+TYPED_TEST(simd_algorithm_memory, store)
+{
+    constexpr size_t length = seqan3::simd_traits<TypeParam>::length;
+
+    std::vector<typename TestFixture::scalar_t> out_memory(length);
+    seqan3::simd::store(out_memory.data(), seqan3::simd::iota<TypeParam>(0));
+
+    for (size_t i = 0; i < length; ++i)
+        EXPECT_EQ(static_cast<size_t>(out_memory[i]), i);
 }
 
 //-----------------------------------------------------------------------------

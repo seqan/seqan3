@@ -31,6 +31,12 @@ namespace seqan3::detail
 template <simd::simd_concept simd_t>
 constexpr simd_t load_sse4(void const * mem_addr);
 
+/*!\copydoc seqan3::simd::store
+ * \attention This is the implementation for SSE4 intrinsics.
+ */
+template <simd::simd_concept simd_t>
+constexpr void store_sse4(void * mem_addr, simd_t const & simd_vec);
+
 /*!\copydoc seqan3::simd::transpose
  * \attention This is the implementation for SSE4 intrinsics.
  */
@@ -82,6 +88,12 @@ template <simd::simd_concept simd_t>
 constexpr simd_t load_sse4(void const * mem_addr)
 {
     return reinterpret_cast<simd_t>(_mm_loadu_si128(reinterpret_cast<__m128i const *>(mem_addr)));
+}
+
+template <simd::simd_concept simd_t>
+constexpr simd_t store_sse4(void * mem_addr, simd_t const & simd_vec)
+{
+    _mm_storeu_si128(reinterpret_cast<__m128i *>(mem_addr), reinterpret_cast<__m128i const &>(simd_vec));
 }
 
 template <simd::simd_concept simd_t>

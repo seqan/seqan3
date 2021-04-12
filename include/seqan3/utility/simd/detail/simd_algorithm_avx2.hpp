@@ -31,6 +31,12 @@ namespace seqan3::detail
 template <simd::simd_concept simd_t>
 constexpr simd_t load_avx2(void const * mem_addr);
 
+/*!\copydoc seqan3::simd::store
+ * \attention This is the implementation for AVX2 intrinsics.
+ */
+template <simd::simd_concept simd_t>
+constexpr void store_avx2(void * mem_addr, simd_t const & simd_vec);
+
 /*!\copydoc seqan3::simd::transpose
  * \attention This is the implementation for AVX2 intrinsics.
  */
@@ -82,6 +88,12 @@ template <simd::simd_concept simd_t>
 constexpr simd_t load_avx2(void const * mem_addr)
 {
     return reinterpret_cast<simd_t>(_mm256_loadu_si256(reinterpret_cast<__m256i const *>(mem_addr)));
+}
+
+template <simd::simd_concept simd_t>
+constexpr void store_avx2(void * mem_addr, simd_t const & simd_vec)
+{
+    _mm256_storeu_si256(reinterpret_cast<__m256i *>(mem_addr), reinterpret_cast<__m256i const &>(simd_vec));
 }
 
 template <simd::simd_concept simd_t>

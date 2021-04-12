@@ -31,6 +31,12 @@ namespace seqan3::detail
 template <simd::simd_concept simd_t>
 constexpr simd_t load_avx512(void const * mem_addr);
 
+/*!\copydoc seqan3::simd::store
+ * \attention This is the implementation for AVX512 intrinsics.
+ */
+template <simd::simd_concept simd_t>
+constexpr void store_avx512(void * mem_addr, simd_t const & simd_vec);
+
 /*!\copydoc seqan3::simd::transpose
  * \attention This is the implementation for AVX512 intrinsics.
  */
@@ -82,6 +88,12 @@ template <simd::simd_concept simd_t>
 constexpr simd_t load_avx512(void const * mem_addr)
 {
     return reinterpret_cast<simd_t>(_mm512_loadu_si512(mem_addr));
+}
+
+template <simd::simd_concept simd_t>
+constexpr void store_avx512(void * mem_addr, simd_t const & simd_vec)
+{
+    _mm512_storeu_si512(mem_addr, reinterpret_cast<__m512i const &>(simd_vec));
 }
 
 // TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::simd::transpose
