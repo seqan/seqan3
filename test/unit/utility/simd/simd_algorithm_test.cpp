@@ -95,12 +95,12 @@ TYPED_TEST(simd_algorithm_memory, load)
 
 TYPED_TEST(simd_algorithm_memory, store)
 {
-    constexpr size_t count = seqan3::simd_traits<TypeParam>::length;
+    constexpr size_t length = seqan3::simd_traits<TypeParam>::length;
 
-    std::vector<typename TestFixture::scalar_t> out_memory(count);
+    std::vector<typename TestFixture::scalar_t> out_memory(length);
     seqan3::simd::store(out_memory.data(), seqan3::simd::iota<TypeParam>(0));
 
-    for (size_t i = 0; i < count; ++i)
+    for (size_t i = 0; i < length; ++i)
         EXPECT_EQ(static_cast<size_t>(out_memory[i]), i);
 }
 
