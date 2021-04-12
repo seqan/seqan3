@@ -292,6 +292,10 @@ jobs:
         shell: bash
         run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
 
+      - name: Configure Homebrew
+        if: matrix.requires_toolchain && runner.os == 'macOS'
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Install ccache
         if: matrix.requires_ccache
         run: |
