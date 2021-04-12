@@ -312,7 +312,8 @@ jobs:
             sudo apt-get install --yes ${{ matrix.cxx }}
           else
             cxx_macos_name=$(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
-            brew install --force-bottle $cxx_macos_name
+            brew list --versions $cxx_macos_name || brew install --force-bottle $cxx_macos_name
+            brew upgrade --force-bottle $cxx_macos_name
             brew link $cxx_macos_name
           fi
 
