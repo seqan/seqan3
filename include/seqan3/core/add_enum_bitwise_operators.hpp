@@ -25,48 +25,48 @@ namespace seqan3
  * \relates seqan3::enum_bitwise_operators
  * \brief You can expect these member functions.
  * \{
- * \fn operator&(lhs_t lhs, rhs_t rhs)
+ * \fn operator&(t lhs, t rhs)
  * \brief Returns the binary `&` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
  *
  * \returns the binary conjunction of `lhs` and `rhs`.
  *
- * \fn operator|(lhs_t lhs, rhs_t rhs)
+ * \fn operator|(t lhs, t rhs)
  * \brief Returns the binary `|` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
  *
  * \returns the binary disjunction of `lhs` and `rhs`.
  *
- * \fn operator^(lhs_t lhs, rhs_t rhs)
+ * \fn operator^(t lhs, t rhs)
  * \brief Returns the binary `^` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
  *
  * \returns the binary XOR operation on `lhs` and `rhs`.
  *
- * \fn operator~(lhs_t lhs)
+ * \fn operator~(t lhs)
  * \brief Returns the binary `~` operator of lhs.
  * \param lhs First enum.
  *
  * \returns the binary NOT operation on `lhs`.
  *
- * \fn operator&=(lhs_t & lhs, rhs_t rhs)
+ * \fn operator&=(t & lhs, t rhs)
  * \brief Returns the binary `&=` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
  *
  * \returns the binary AND assigment on `lhs`.
  *
- * \fn operator|=(lhs_t & lhs, rhs_t rhs)
+ * \fn operator|=(t & lhs, t rhs)
  * \brief Returns the binary `|=` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
  *
  * \returns the binary OR assignment on `lhs`.
  *
- * \fn operator^=(lhs_t & lhs, rhs_t rhs)
+ * \fn operator^=(t & lhs, t rhs)
  * \brief Returns the binary `^=` operator of lhs and rhs.
  * \param lhs First enum.
  * \param rhs Second enum.
