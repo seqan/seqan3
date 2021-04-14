@@ -137,7 +137,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    using unaligned_seq_type = inner_type;
+    using unaligned_sequence_type = inner_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
