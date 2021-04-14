@@ -33,7 +33,6 @@
 // [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328
 namespace seqan3::detail
 {
-//!\privatesection
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
 //!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
@@ -51,8 +50,6 @@ struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std:
 //!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
-
-//!\publicsection
 
 } // seqan3::detail
 
@@ -75,6 +72,8 @@ namespace seqan3
  * \attention
  * Other than one might expect, `std::forward_list` does not satisfy this concept (because it does not provide
  * `.size()`).
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename type>
@@ -140,6 +139,8 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
  *
  * \attention
  * `std::array` and `std::forward_list` do not satisfy this concept.
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename type>
@@ -225,7 +226,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
  * \attention
  * `std::array`, `std::forward_list` and `std::list` do not satisfy this concept.
  *
- * \sa
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename type>
@@ -252,6 +253,8 @@ SEQAN3_CONCEPT random_access_container = requires (type val)
  *
  * \attention
  * `std::array`, `std::forward_list`, `std::list` and `std::deque` do not satisfy this concept.
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename type>

@@ -8,6 +8,12 @@
 /*!\file
  * \brief Meta-header for the \link container container submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ *
+ * \defgroup container Container
+ * \brief The container submodule contains special SeqAn containers and generic container concepts.
+ * \ingroup range
+ * \sa https://en.cppreference.com/w/cpp/container
+ * \sa range/container/all.hpp
  */
 
 #pragma once
@@ -18,10 +24,3 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/small_string.hpp>
 #include <seqan3/range/container/small_vector.hpp>
-
-/*!\defgroup container Container
- * \brief The container submodule contains special SeqAn containers and generic container concepts.
- * \ingroup range
- * \sa https://en.cppreference.com/w/cpp/container
- * \sa range/container/all.hpp
- */
