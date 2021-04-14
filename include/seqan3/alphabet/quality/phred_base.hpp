@@ -57,7 +57,10 @@ private:
     constexpr phred_base & operator=(phred_base &&)         noexcept = default; //!< Defaulted.
     ~phred_base()                                           noexcept = default; //!< Defaulted.
 
-    //!\brief Allow construction from the Phred score value.
+    /*!\brief Allow construction from the Phred score value.
+     * \details
+     * \deprecated This will be removed in 3.1.0. Please use, e.g., seqan3::phred42{}.assign_phred(p) or '!'_phred42.
+     */
     constexpr phred_base(phred_type const p) noexcept
     {
         static_cast<derived_type *>(this)->assign_phred(p);
