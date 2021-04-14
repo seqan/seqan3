@@ -37,6 +37,7 @@ namespace seqan3
  *
  * \include test/snippet/range/container/small_string.cpp
  *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <size_t capacity_>
 class small_string : public small_vector<char, capacity_ + 1>
@@ -78,6 +79,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr small_string(char const (&_lit)[N]) noexcept : small_string{}
@@ -92,6 +95,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     explicit constexpr small_string(char const c) noexcept : small_string{}
     {
@@ -111,6 +116,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr small_string & operator=(char const (&_lit)[N]) noexcept
@@ -133,6 +140,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr void assign(char const (&_lit)[N]) noexcept
@@ -156,6 +165,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -172,13 +183,19 @@ public:
     /*!\name Capacity
      * \{
      */
-    //!\brief Returns the maximal size which equals the capacity.
+    /*!\brief Returns the maximal size which equals the capacity.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     static constexpr size_type max_size() noexcept
     {
         return capacity_;
     }
 
-    //!\brief Returns the maximal capacity.
+    /*!\brief Returns the maximal capacity.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     static constexpr size_type capacity() noexcept
     {
         return capacity_;
@@ -247,6 +264,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr small_string & erase(size_type index = 0, size_type count = max_size()) noexcept
     {
@@ -273,6 +292,8 @@ public:
      * ### Complexity
      *
      * Linear in the size of the strings.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t capacity2>
     constexpr friend small_string<capacity_ + capacity2> operator+(small_string const & lhs,
@@ -299,6 +320,8 @@ public:
      * ### Complexity
      *
      * Linear in the size of the string.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     std::string str() const
     {
@@ -316,6 +339,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr char const * c_str() const noexcept
     {
@@ -331,6 +356,8 @@ public:
      * ### Complexity
      *
      * Linear in the size of the string.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     operator std::string() const
     {
@@ -350,6 +377,8 @@ public:
      * \details
      *
      * Internally calls `os << str.str()`.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend std::ostream & operator<<(std::ostream & os, small_string const & str)
     {
@@ -367,6 +396,8 @@ public:
      * Reads at most seqan3::small_string::max_size characters from the stream.
      * If a stream error occurred or no characters could be extracted the std::ios_base::failbit is set.
      * This may throw an exception.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend std::istream & operator>>(std::istream & is, small_string & str)
     {
@@ -401,18 +432,27 @@ public:
 /*!\name Deduction guides
  * \{
  */
-//!\brief Deduces small_string from string literals.
-//!\relates small_string
+/*!\brief Deduces small_string from string literals.
+  * \relates small_string
+  * \details
+  * \experimentalapi{Experimental since version 3.1.}
+  */
 template <size_t N>
 small_string(char const (&)[N]) -> small_string<N - 1>;
 
-//!\brief Deduces small_string from std::array of type char.
-//!\relates small_string
+/*!\brief Deduces small_string from std::array of type char.
+  * \relates small_string
+  * \details
+  * \experimentalapi{Experimental since version 3.1.}
+  */
 template <size_t N>
 small_string(std::array<char, N> const &) -> small_string<N>;
 
-//!\brief Deduces small_string from char.
-//!\relates small_string
+/*!\brief Deduces small_string from char.
+  * \relates small_string
+  * \details
+  * \experimentalapi{Experimental since version 3.1.}
+  */
 small_string(char const) -> small_string<1>;
 //!\}
 
