@@ -292,6 +292,10 @@ jobs:
         shell: bash
         run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
 
+      - name: Configure Homebrew
+        if: matrix.requires_toolchain && runner.os == 'macOS'
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Install ccache
         if: matrix.requires_ccache
         run: |
@@ -308,7 +312,8 @@ jobs:
             sudo apt-get install --yes ${{ matrix.cxx }}
           else
             cxx_macos_name=$(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
-            brew install --force-bottle $cxx_macos_name
+            brew list --versions $cxx_macos_name || brew install --force-bottle $cxx_macos_name
+            brew upgrade --force-bottle $cxx_macos_name
             brew link $cxx_macos_name
           fi
 
