@@ -13,24 +13,15 @@
 #pragma once
 
 #include <initializer_list>
-#include <iterator>
-#include <type_traits>
-
-// remove if is_basic_string is not needed anymore
-#include <string>
-
 #include <seqan3/std/iterator>
 #include <seqan3/std/concepts>
+#include <type_traits>
 
 #include <seqan3/core/platform.hpp>
 
-// TODO:
-// * remove is_basic_string
-// * remove #include <string> in this file
-// once the gcc bug [1] was fixed AND we require at least a gcc version which
-// contains this fix
-//
-// [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI || SEQAN3_WORKAROUND_GCC_83328
+#include <string>
+
 namespace seqan3::detail
 {
 
@@ -52,6 +43,7 @@ template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 
 } // seqan3::detail
+#endif // SEQAN3_WORKAROUND_GCC_83328
 
 namespace seqan3
 {
@@ -181,11 +173,13 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
                                       std::same_as, typename type::iterator);
         SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.begin(), val2.end()),
                                       std::same_as, typename type::iterator);
+#if SEQAN3_WORKAROUND_GCC_83328
     };
 
     requires detail::is_basic_string_v<type> || requires(type val)
     {
-        // TODO this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
+        // this function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328)
+#endif // SEQAN3_WORKAROUND_GCC_83328
         SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}),
                                       std::same_as, typename type::iterator);
     };
