@@ -37,12 +37,12 @@ namespace seqan3
  * \ingroup container
  *
  * This class template behaves just like std::vector<alphabet_type> but has an internal representation where
- * multiple values are packed into a single byte/word to save space, e.g. bitcompressed_vector<seqan3::dna4> uses a
- * quarter of of the memory that std::vector<seqan3::dna4> uses, because a single seqan3::dna4 letter can be represented
- * in two bits (instead of 8 which is the lower bound for a single object in C++).
+ * multiple values are packed into a single byte/word to save space, e.g. seqan3::bitcompressed_vector<seqan3::dna4>
+ * uses a quarter of of the memory that std::vector<seqan3::dna4> uses, because a single seqan3::dna4 letter can be
+ * represented in two bits (instead of 8 which is the lower bound for a single object in C++).
  *
  * The disadvantages are slightly slower operations and unsafety towards parallel writes to adjacent positions
- * in the bitcompressed_vector.
+ * in the seqan3::bitcompressed_vector.
  *
  * ### Example
  *
@@ -57,6 +57,8 @@ namespace seqan3
  * An important difference to std::vector is that calling `vec[i] = value;` and `vec[j] = value2;` from two different
  * threads at the same time **is not safe** and will lead to corruption if both values are stored in the same
  * 64bit-block, i.e. if the distance between `i` and `j` is smaller than 64 / alphabet_size.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <writable_semialphabet alphabet_type>
 //!\cond
@@ -76,8 +78,7 @@ private:
     //!\brief The data storage.
     data_type data;
 
-    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element unless the alphabet_type
-    //!       is uint8_t, uint16_t, uint32_t or uint64_t (in which case a regular & is returned).
+    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element.
     class reference_proxy_type : public alphabet_proxy<reference_proxy_type, alphabet_type>
     {
     private:
@@ -131,19 +132,41 @@ public:
     /*!\name Associated types
      * \{
      */
-    //!\brief Equals the alphabet_type.
+    /*!\brief Equals the alphabet_type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using value_type        = alphabet_type;
-    //!\brief A proxy type that enables assignment, if the underlying data structure also provides a proxy.
+    /*!\brief A proxy type (models seqan3::writable_semialphabet) that enables assignment, think of it as
+     *        `value_type &`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using reference         = reference_proxy_type;
-    //!\brief Equals the alphabet_type / value_type.
+    /*!\brief Equals the alphabet_type / value_type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using const_reference   = alphabet_type;
-    //!\brief The iterator type of this container (a random access iterator).
+    /*!\brief The iterator type of this container (a random access iterator).
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using iterator          = detail::random_access_iterator<bitcompressed_vector>;
-    //!\brief The const_iterator type of this container (a random access iterator).
+    /*!\brief The const_iterator type of this container (a random access iterator).
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using const_iterator    = detail::random_access_iterator<bitcompressed_vector const>;
-    //!\brief A signed integer type (usually std::ptrdiff_t)
+    /*!\brief A signed integer type (usually std::ptrdiff_t)
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using difference_type   = std::ranges::range_difference_t<data_type>;
-    //!\brief An unsigned integer type (usually std::size_t)
+    /*!\brief An unsigned integer type (usually std::size_t)
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using size_type         = std::ranges::range_size_t<data_type>;
     //!\}
 
@@ -174,6 +197,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
@@ -194,6 +219,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     bitcompressed_vector(size_type const count, value_type const value) :
         data(count, to_rank(value))
@@ -213,6 +240,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     bitcompressed_vector(begin_iterator_type begin_it, end_iterator_type end_it)
@@ -234,6 +263,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     bitcompressed_vector(std::initializer_list<value_type> ilist) :
         bitcompressed_vector(std::begin(ilist), std::end(ilist))
@@ -249,6 +280,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     bitcompressed_vector & operator=(std::initializer_list<value_type> ilist)
     {
@@ -268,6 +301,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     void assign(other_range_t && range)
@@ -290,6 +325,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     void assign(size_type const count, value_type const value)
     {
@@ -311,6 +348,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
@@ -333,6 +372,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     void assign(std::initializer_list<value_type> ilist)
     {
@@ -356,6 +397,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator begin() noexcept
     {
@@ -386,6 +429,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator end() noexcept
     {
@@ -420,6 +465,8 @@ public:
      * ### Exceptions
      *
      * Throws std::out_of_range if `i >= size()`.
+     *
+     * \stableapi{Since version 3.1.}
      */
     reference at(size_type const i)
     {
@@ -454,6 +501,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     reference operator[](size_type const i) noexcept
     {
@@ -480,6 +529,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     reference front() noexcept
     {
@@ -506,6 +557,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     reference back() noexcept
     {
@@ -525,9 +578,9 @@ public:
      *
      * \details
      *
-     * \noapi
-     *
      * The exact representation of the data is implementation defined. Do not rely on it for API stability.
+     *
+     * \noapi
      */
     constexpr data_type & raw_data() noexcept
     {
@@ -554,6 +607,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     bool empty() const noexcept
     {
@@ -570,6 +625,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     size_type size() const noexcept
     {
@@ -589,6 +646,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     size_type max_size() const noexcept
     {
@@ -609,6 +668,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     size_type capacity() const noexcept
     {
@@ -632,6 +693,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     void reserve(size_type const new_cap)
     {
@@ -652,6 +715,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     void shrink_to_fit()
     {
@@ -672,6 +737,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     void clear() noexcept
     {
@@ -695,6 +762,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator insert(const_iterator pos, value_type const value)
     {
@@ -719,6 +788,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator insert(const_iterator pos, size_type const count, value_type const value)
     {
@@ -752,6 +823,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type begin_it, end_iterator_type end_it)
@@ -787,6 +860,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator insert(const_iterator pos, std::initializer_list<value_type> const & ilist)
     {
@@ -811,6 +886,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator erase(const_iterator begin_it, const_iterator end_it)
     {
@@ -844,6 +921,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator erase(const_iterator pos)
     {
@@ -864,6 +943,8 @@ public:
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container may contain invalid data after exception is
      * thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     void push_back(value_type const value)
     {
@@ -885,6 +966,8 @@ public:
      * No exception is thrown in release mode.
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \stableapi{Since version 3.1.}
      */
     void pop_back()
     {
@@ -917,6 +1000,8 @@ public:
      *
      * New default value: Basic exception guarantee, i.e. guaranteed not to leak, but container my contain bogus data
      * after exceptions is thrown.
+     *
+     * \stableapi{Since version 3.1.}
      */
     void resize(size_type const count)
     {
@@ -944,6 +1029,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     constexpr void swap(bitcompressed_vector & rhs) noexcept
     {
@@ -967,6 +1054,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     friend constexpr void swap(bitcompressed_vector & lhs, bitcompressed_vector & rhs) noexcept
     {
@@ -984,37 +1073,55 @@ public:
      * \{
      */
 
-    //!\brief Checks whether `*this` is equal to `rhs`.
+    /*!\brief Checks whether `*this` is equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
     {
         return data == rhs.data;
     }
 
-    //!\brief Checks whether `*this` is not equal to `rhs`.
+    /*!\brief Checks whether `*this` is not equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator!=(bitcompressed_vector const & rhs) const noexcept
     {
         return data != rhs.data;
     }
 
-    //!\brief Checks whether `*this` is less than `rhs`.
+    /*!\brief Checks whether `*this` is less than `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator<(bitcompressed_vector const & rhs) const noexcept
     {
         return data < rhs.data;
     }
 
-    //!\brief Checks whether `*this` is greater than `rhs`.
+    /*!\brief Checks whether `*this` is greater than `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator>(bitcompressed_vector const & rhs) const noexcept
     {
         return data > rhs.data;
     }
 
-    //!\brief Checks whether `*this` is less than or equal to `rhs`.
+    /*!\brief Checks whether `*this` is less than or equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator<=(bitcompressed_vector const & rhs) const noexcept
     {
         return data <= rhs.data;
     }
 
-    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
+    /*!\brief Checks whether `*this` is greater than or equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr bool operator>=(bitcompressed_vector const & rhs) const noexcept
     {
         return data >= rhs.data;
