@@ -591,6 +591,8 @@ protected:
     record_type record_buffer;
     //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
     std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
+    //!\brief Buffer for the previous record position.
+    std::streampos position_buffer{};
     //!\}
 
     /*!\name Stream / file access
@@ -630,7 +632,7 @@ private:
             return;
         }
 
-        format->read_sequence_record(*secondary_stream, record_buffer, options);
+        format->read_sequence_record(*secondary_stream, record_buffer, position_buffer, options);
     }
 
     /*!\brief An abstract base class to store the selected input format.
@@ -660,6 +662,7 @@ private:
          *
          * \param[in, out] instream The input stream to extract the next record from.
          * \param[in, out] record_buffer The record buffer to fill.
+         * \param[in, out] position_buffer The buffer to store the position of the current record.
          * \param[in] options User specific format options set from outside.
          *
          * \details
@@ -668,6 +671,7 @@ private:
          */
         virtual void read_sequence_record(std::istream & instream,
                                           record_type & record_buffer,
+                                          std::streampos & position_buffer,
                                           sequence_file_input_options_type const & options) = 0;
     };
 
@@ -699,12 +703,14 @@ private:
         //!\copydoc sequence_format_base::read_sequence_record
         void read_sequence_record(std::istream & instream,
                                   record_type & record_buffer,
+                                  std::streampos & position_buffer,
                                   sequence_file_input_options_type const & options) override
         {
             // read new record
             {
                 _format.read_sequence_record(instream,
                                              options,
+                                             position_buffer,
                                              detail::get_or_ignore<field::seq>(record_buffer),
                                              detail::get_or_ignore<field::id>(record_buffer),
                                              detail::get_or_ignore<field::qual>(record_buffer));
