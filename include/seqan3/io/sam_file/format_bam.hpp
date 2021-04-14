@@ -71,6 +71,7 @@ protected:
               typename seq_legal_alph_type,
               typename ref_seqs_type,
               typename ref_ids_type,
+              typename stream_pos_type,
               typename seq_type,
               typename id_type,
               typename offset_type,
@@ -90,6 +91,7 @@ protected:
                                sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
+                               stream_pos_type & position_buffer,
                                seq_type & seq,
                                qual_type & qual,
                                id_type & id,
@@ -257,6 +259,7 @@ template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type,
           typename ref_seqs_type,
           typename ref_ids_type,
+          typename stream_pos_type,
           typename seq_type,
           typename id_type,
           typename offset_type,
@@ -276,6 +279,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                               ref_seqs_type & ref_seqs,
                                               sam_file_header<ref_ids_type> & header,
+                                              stream_pos_type & position_buffer,
                                               seq_type & seq,
                                               qual_type & qual,
                                               id_type & id,
@@ -385,6 +389,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read alignment record into buffer
     // -------------------------------------------------------------------------------------------------------------
+    position_buffer = stream.tellg();
     alignment_record_core core;
     std::ranges::copy(stream_view | detail::take_exactly_or_throw(sizeof(core)), reinterpret_cast<char *>(&core));
 

@@ -136,11 +136,13 @@ public:
 protected:
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
+              typename stream_pos_type,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void read_sequence_record(stream_type & stream,
                               sequence_file_input_options<seq_legal_alph_type> const & options,
+                              stream_pos_type & position_buffer,
                               seq_type & sequence,
                               id_type & id,
                               qual_type & qualities);
@@ -159,6 +161,7 @@ protected:
               typename seq_legal_alph_type,
               typename ref_seqs_type,
               typename ref_ids_type,
+              typename stream_pos_type,
               typename seq_type,
               typename id_type,
               typename offset_type,
@@ -178,6 +181,7 @@ protected:
                                sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                ref_seqs_type & ref_seqs,
                                sam_file_header<ref_ids_type> & header,
+                               stream_pos_type & position_buffer,
                                seq_type & seq,
                                qual_type & qual,
                                id_type & id,
@@ -278,11 +282,13 @@ private:
 //!\copydoc sequence_file_input_format::read_sequence_record
 template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type,
+          typename stream_pos_type,
           typename seq_type,        // other constraints checked inside function
           typename id_type,
           typename qual_type>
 inline void format_sam::read_sequence_record(stream_type & stream,
                                              sequence_file_input_options<seq_legal_alph_type> const & options,
+                                             stream_pos_type & position_buffer,
                                              seq_type & sequence,
                                              id_type & id,
                                              qual_type & qualities)
@@ -290,8 +296,8 @@ inline void format_sam::read_sequence_record(stream_type & stream,
     sam_file_input_options<seq_legal_alph_type> align_options;
 
     {
-        read_alignment_record(stream, align_options, std::ignore, default_header, sequence, qualities, id,
-                              std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
+        read_alignment_record(stream, align_options, std::ignore, default_header, position_buffer, sequence, qualities,
+                              id, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore);
     }
 
@@ -347,6 +353,7 @@ template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type,
           typename ref_seqs_type,
           typename ref_ids_type,
+          typename stream_pos_type,
           typename seq_type,
           typename id_type,
           typename offset_type,
@@ -366,6 +373,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
                                               sam_file_input_options<seq_legal_alph_type> const & SEQAN3_DOXYGEN_ONLY(options),
                                               ref_seqs_type & ref_seqs,
                                               sam_file_header<ref_ids_type> & header,
+                                              stream_pos_type & position_buffer,
                                               seq_type & seq,
                                               qual_type & qual,
                                               id_type & id,
@@ -406,6 +414,9 @@ inline void format_sam::read_alignment_record(stream_type & stream,
         if (std::ranges::begin(stream_view) == std::ranges::end(stream_view)) // file has no records
             return;
     }
+
+    // Store the current file position in the buffer.
+    position_buffer = stream.tellg();
 
     // Fields 1-5: ID FLAG REF_ID REF_OFFSET MAPQ
     // -------------------------------------------------------------------------------------------------------------
