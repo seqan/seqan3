@@ -46,6 +46,8 @@ namespace seqan3
  * This container provides no thread-safety beyond the promise given also by the STL that all
  * calls to `const` member functions are safe from multiple threads (as long as no thread calls
  * a non-`const` member function at the same time).
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <size_t bit_capacity = 58>
 class dynamic_bitset
@@ -163,20 +165,47 @@ public:
     /*!\name Associated types
      * \{
      */
-    //!\brief Equals `bool`.
-    using value_type      = bool;
-    //!\brief A proxy type that enables assignment.
-    using reference       = reference_proxy_type;
-    //!\brief Equals the value_type.
+    /*!\brief Equals `bool`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using value_type = bool;
+
+    /*!\brief A proxy type that enables assignment.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using reference = reference_proxy_type;
+
+    /*!\brief Equals the value_type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using const_reference = bool;
-    //!\brief The iterator type of this container (a random access iterator).
-    using iterator        = detail::random_access_iterator<dynamic_bitset>;
-    //!\brief The `const_iterator` type of this container (a random access iterator).
-    using const_iterator  = detail::random_access_iterator<dynamic_bitset const>;
-    //!\brief A `std::ptrdiff_t`.
+
+    /*!\brief The iterator type of this container (a random access iterator).
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using iterator = detail::random_access_iterator<dynamic_bitset>;
+
+    /*!\brief The `const_iterator` type of this container (a random access iterator).
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using const_iterator = detail::random_access_iterator<dynamic_bitset const>;
+
+    /*!\brief A `std::ptrdiff_t`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using difference_type = ptrdiff_t;
-    //!\brief An unsigned integer type (usually `std::size_t`).
-    using size_type       = detail::min_viable_uint_t<bit_capacity>;
+
+    /*!\brief An unsigned integer type (usually `std::size_t`).
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using size_type = detail::min_viable_uint_t<bit_capacity>;
     //!\}
 
     //!\cond
@@ -211,6 +240,8 @@ public:
      * ### Exceptions
      *
      * Throws std::invalid_argument value has a set bit past the 58 one, i.e. only bits in [0,58) may be set.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset(uint64_t const value)
     {
@@ -236,6 +267,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -262,6 +295,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
@@ -284,6 +319,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset(size_type const n, value_type const value) noexcept :
         dynamic_bitset{}
@@ -303,6 +340,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator=(std::initializer_list<value_type> const ilist) noexcept
     {
@@ -330,6 +369,8 @@ public:
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr dynamic_bitset(char const (&lit)[N]) : dynamic_bitset{}
@@ -354,6 +395,8 @@ public:
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr dynamic_bitset & operator=(char const (&lit)[N])
@@ -379,6 +422,8 @@ public:
      * ### Exceptions
      *
      * Throws std::invalid_argument if any character is not <code>'0'</code> or <code>'1'</code>.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t N>
     constexpr void assign(char const (&lit)[N])
@@ -420,6 +465,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void assign(std::initializer_list<value_type> const ilist) noexcept
     {
@@ -439,6 +486,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void assign(size_type const count, value_type const value) noexcept
     {
@@ -461,6 +510,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
@@ -487,6 +538,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -510,6 +563,8 @@ public:
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator begin() noexcept
     {
@@ -535,6 +590,8 @@ public:
      * ### Example
      *
      * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator end() noexcept
     {
@@ -577,6 +634,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator&=(dynamic_bitset const & rhs) noexcept
     {
@@ -605,6 +664,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator|=(dynamic_bitset const & rhs) noexcept
     {
@@ -633,6 +694,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator^=(dynamic_bitset const & rhs) noexcept
     {
@@ -661,6 +724,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset operator~() const noexcept
     {
@@ -686,6 +751,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator<<=(size_t const count) noexcept
     {
@@ -713,6 +780,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & operator>>=(size_t const count) noexcept
     {
@@ -739,6 +808,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset operator>>(size_t const count) const noexcept
     {
@@ -766,6 +837,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset operator<<(size_t const count) const noexcept
     {
@@ -792,6 +865,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & set() noexcept
     {
@@ -818,6 +893,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & set(size_t const i, bool const value = true)
     {
@@ -844,6 +921,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & reset() noexcept
     {
@@ -869,6 +948,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & reset(size_t const i)
     {
@@ -892,6 +973,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & flip() noexcept
     {
@@ -918,6 +1001,8 @@ public:
      * ### Complexity
      *
      * Constant.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr dynamic_bitset & flip(size_t const i)
     {
@@ -931,6 +1016,8 @@ public:
      */
     /*!\brief Checks if all bit are set.
      * \returns `true` if all bits are set or the bitset is empty, `false` otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool all() const noexcept
     {
@@ -939,6 +1026,8 @@ public:
 
     /*!\brief Checks if any bit is set.
      * \returns `true` if any bit is set, `false` otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool any() const noexcept
     {
@@ -947,13 +1036,18 @@ public:
 
     /*!\brief Checks if no bit is set.
      * \returns `true` if no bit is set, `false` otherwise.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool none() const noexcept
     {
         return count() == 0;
     }
 
-    //!\brief Returns the number of set bits.
+    /*!\brief Returns the number of set bits.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr size_type count() const noexcept
     {
         return std::popcount(data.bits);
@@ -973,6 +1067,8 @@ public:
      * ### Exceptions
      *
      * Throws std::out_of_range if `i >= size()`.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference at(size_t const i)
     {
@@ -1017,6 +1113,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference operator[](size_t const i) noexcept
     {
@@ -1046,6 +1144,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference front() noexcept
     {
@@ -1074,6 +1174,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference back() noexcept
     {
@@ -1088,7 +1190,10 @@ public:
         return (*this)[size() - 1];
     }
 
-    //!\brief Direct access to the underlying bit field.
+    /*!\brief Direct access to the underlying bit field.
+     * \details
+     * \noapi{The exact representation of the data is implementation defined.}
+     */
     constexpr bitfield * raw_data() noexcept
     {
         return &data;
@@ -1116,6 +1221,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool empty() const noexcept
     {
@@ -1134,6 +1241,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type size() const noexcept
     {
@@ -1157,6 +1266,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type max_size() const noexcept
     {
@@ -1175,19 +1286,27 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type capacity() const noexcept
     {
         return bit_capacity;
     }
 
-    //!\brief Since the capacity is fixed on compile time, this is a no-op.
+    /*!\brief Since the capacity is fixed on compile time, this is a no-op.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr void reserve(size_t) const noexcept
     {
         // no-op
     }
 
-    //!\brief Since the capacity is fixed on compile time, this is a no-op.
+    /*!\brief Since the capacity is fixed on compile time, this is a no-op.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr void shrink_to_fit() const noexcept
     {
         // no-op
@@ -1211,6 +1330,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void clear() noexcept
     {
@@ -1234,6 +1355,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, value_type const value) noexcept
     {
@@ -1257,6 +1380,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, size_type const count, value_type const value) noexcept
     {
@@ -1285,6 +1410,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -1328,6 +1455,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, std::initializer_list<value_type> const & ilist) noexcept
     {
@@ -1354,6 +1483,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator erase(const_iterator begin_it, const_iterator end_it) noexcept
     {
@@ -1389,6 +1520,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator erase(const_iterator pos) noexcept
     {
@@ -1409,6 +1542,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void push_back(value_type const value) noexcept
     {
@@ -1432,6 +1567,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void pop_back() noexcept
     {
@@ -1462,6 +1599,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void resize(size_type const count, value_type const value = false) noexcept
     {
@@ -1486,6 +1625,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void swap(dynamic_bitset & rhs) noexcept
     {
@@ -1515,6 +1656,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend constexpr void swap(dynamic_bitset & lhs, dynamic_bitset & rhs) noexcept
     {
@@ -1531,6 +1674,8 @@ public:
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
     //!\cond
@@ -1551,6 +1696,8 @@ public:
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
     //!\cond
@@ -1571,6 +1718,8 @@ public:
      *
      * \attention
      * Both dynamic_bitsets must have the same size. In debug mode an assertion checks this constraint.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
     //!\cond
@@ -1588,42 +1737,60 @@ public:
     /*!\name Comparison operators
      * \{
      */
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator==(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.size == rhs.raw_data()->size && lhs.data.bits == rhs.raw_data()->bits;
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator!=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator<(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits < rhs.raw_data()->bits;
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator>(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return lhs.data.bits > rhs.raw_data()->bits;
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator<=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap>
     friend constexpr bool operator>=(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
@@ -1636,8 +1803,8 @@ public:
      */
     /*!\brief Converts the `dynamic_bitset` to a `std::string`.
      * \tparam char_t Char type; must model seqan3::builtin_character.
-     * \param[in] zero builtin_characteracter of type char_t representing `false`. Default <code>'0'</code>.
-     * \param[in] one  builtin_characteracter of type char_t representing `true`. Default <code>'1'</code>.
+     * \param[in] zero builtin_character of type char_t representing `false`. Default <code>'0'</code>.
+     * \param[in] one  builtin_character of type char_t representing `true`. Default <code>'1'</code>.
      * \throws std::bad_alloc from the the std::string constructor.
      * \returns A `std::string` representing the `dynamic_bitset`.
      *
@@ -1653,6 +1820,8 @@ public:
      * ### Exceptions
      *
      * Throws std::bad_alloc from the `std::string` constructor.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename char_t = char>
     std::string to_string(char_t zero = char_t{'0'}, char_t one = char_t{'1'}) const
@@ -1678,6 +1847,8 @@ public:
      * ### Exceptions
      *
      * Throws std::overflow_error if the value cannot be represented in `unsigned long`.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     inline constexpr unsigned long to_ulong() const
     {
@@ -1703,6 +1874,8 @@ public:
      * ### Exceptions
      *
      * Throws std::overflow_error if the value cannot be represented in `unsigned long long`.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     inline constexpr unsigned long long to_ullong() const
     {
@@ -1727,6 +1900,8 @@ public:
      * \details
      *
      * Internally calls <code>os << \ref to_string() "arg.to_string()"</code>.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend std::ostream & operator<<(std::ostream & os, dynamic_bitset const & arg)
     {
@@ -1744,6 +1919,8 @@ public:
      * Reads at most `seqan3::dynamic_bitset::max_size()` characters from the stream.
      * If a stream error occurred or no characters could be extracted the `std::ios_base::failbit` is set.
      * This may throw an exception.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend std::istream & operator>>(std::istream & is, dynamic_bitset & arg)
     {
@@ -1782,6 +1959,8 @@ public:
      * \details
      *
      * Internally calls \ref to_string() "arg.to_string()" and inserts a <code>'</code> at every fourth position.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename char_t>
     friend debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, dynamic_bitset arg)
@@ -1800,6 +1979,8 @@ public:
      *
      * \attention
      * These functions are never called directly, see \ref serialisation for more details.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <cereal_archive archive_t>
     void CEREAL_SERIALIZE_FUNCTION_NAME(archive_t & archive)
@@ -1822,6 +2003,8 @@ namespace std
 /*!\brief Struct for hashing a `seqan3::dynamic_bitset`.
  * \ingroup container
  * \tparam cap Capacity of the `seqan3::dynamic_bitset`.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <size_t cap>
 struct hash<seqan3::dynamic_bitset<cap>>
@@ -1830,6 +2013,8 @@ struct hash<seqan3::dynamic_bitset<cap>>
      * \param[in] arg The `seqan3::dynamic_bitset` to process.
      * \returns `size_t`.
      * \sa seqan3::dynamic_bitset.to_ullong().
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_t operator()(seqan3::dynamic_bitset<cap> const arg) const noexcept
     {
