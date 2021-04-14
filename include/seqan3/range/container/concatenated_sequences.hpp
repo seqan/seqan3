@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 #include <type_traits>
 #include <vector>
 
@@ -22,8 +24,6 @@
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>
@@ -105,22 +105,23 @@ namespace seqan3
  * * Modifying elements is limited to operations on elements of that element, i.e. you can change a character,
  * but you can't assign a new member sequence to an existing position.
  *
- * ###Example
+ * ### Example
  *
  * \include test/snippet/range/container/concatenated_sequences.cpp
  *
- * ###Exceptions
+ * ### Exceptions
  *
  * Whenever a strong exception guarantee is given for this class, it presumes that
  * `std::is_nothrow_move_constructible<typename inner_type::value_type>` otherwise only basic exception safety can
  * be assumed.
  *
- * ###Thread safety
+ * ### Thread safety
  *
  * This container provides no thread-safety beyond the promise given also by the STL that all
  * calls to `const` member function are safe from multiple threads (as long as no thread calls
  * a non-`const` member function at the same time).
  *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename inner_type,
           typename data_delimiters_type = std::vector<typename inner_type::size_type>>
@@ -143,32 +144,54 @@ public:
     /*!\name Member types
      * \{
      */
-    //!\brief == inner_type.
-    //!\hideinitializer
+
+    /*!\brief == inner_type.
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using value_type = std::decay_t<inner_type>;
 
-    //!\brief A proxy of type views::slice that represents the range on the concatenated vector.
-    //!\hideinitializer
+    /*!\brief A proxy of type views::slice that represents the range on the concatenated vector.
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using reference = detail::concatenated_sequences_reference_proxy<value_type, false>;
 
-    //!\brief An immutable proxy of type views::slice that represents the range on the concatenated vector.
-    //!\hideinitializer
+    /*!\brief An immutable proxy of type views::slice that represents the range on the concatenated vector.
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using const_reference = detail::concatenated_sequences_reference_proxy<value_type, true>;
 
-    //!\brief The iterator type of this container (a random access iterator).
-    //!\hideinitializer
+    /*!\brief The iterator type of this container (a random access iterator).
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using iterator = detail::random_access_iterator<concatenated_sequences>;
 
-    //!\brief The const iterator type of this container (a random access iterator).
-    //!\hideinitializer
+    /*!\brief The const iterator type of this container (a random access iterator).
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using const_iterator = detail::random_access_iterator<concatenated_sequences const>;
 
-    //!\brief A signed integer type (usually std::ptrdiff_t)
-    //!\hideinitializer
+    /*!\brief A signed integer type (usually std::ptrdiff_t)
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using difference_type = std::ranges::range_difference_t<data_delimiters_type>;
 
-    //!\brief An unsigned integer type (usually std::size_t)
-    //!\hideinitializer
+    /*!\brief An unsigned integer type (usually std::size_t)
+     * \hideinitializer
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     using size_type = std::ranges::range_size_t<data_delimiters_type>;
     //!\}
 
@@ -198,14 +221,20 @@ protected:
     }
     //!\endcond
 
-    //!\brief Whether a type is compatible with this class's `value_type` or `reference` type.
-    //!\hideinitializer
+    /*!\brief Whether a type is compatible with this class's `value_type` or `reference` type.
+     * \hideinitializer
+     * \details
+     * \noapi{Exposition only.}
+     */
     // we explicitly check same-ness, because these types may not be fully resolved, yet
     template <std::ranges::range t>
     static constexpr bool is_compatible_with_value_type = is_compatible_with_value_type_aux(std::type_identity<t>{});
 
-    //!\brief Whether a type is compatible with this class.
-    //!\hideinitializer
+    /*!\brief Whether a type is compatible with this class.
+     * \hideinitializer
+     * \details
+     * \noapi{Exposition only.}
+     */
     // cannot use the concept, because this class is not yet fully defined
     template <typename t>
     //!\cond
@@ -213,8 +242,11 @@ protected:
     //!\endcond
     static constexpr bool iter_value_t_is_compatible_with_value_type = true;
 
-    //!\brief Whether a type is compatible with this class.
-    //!\hideinitializer
+    /*!\brief Whether a type is compatible with this class.
+     * \hideinitializer
+     * \details
+     * \noapi{Exposition only.}
+     */
     // cannot use the concept, because this class is not yet fully defined
     template <std::ranges::range t>
     //!\cond
@@ -245,13 +277,15 @@ public:
      *         \ref range_value_t_is_compatible_with_value_type.
      * \param rng_of_rng The sequences to construct/assign from.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of `rng_of_rng`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::input_range rng_of_rng_type>
     concatenated_sequences(rng_of_rng_type && rng_of_rng)
@@ -274,13 +308,15 @@ public:
      * \param count Number of elements.
      * \param value The initial value to be assigned.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * In \f$O(count*value)\f$.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     concatenated_sequences(size_type const count, rng_type && value)
@@ -302,13 +338,15 @@ public:
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of the ranges between `begin_it` and `end_it`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
@@ -324,13 +362,15 @@ public:
      * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
      * \param ilist an `std::initializer_list` of `value_type_t`.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of the ranges in `ilist`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range value_type_t = value_type>
     //!\cond
@@ -345,13 +385,15 @@ public:
      * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
      * \param ilist an `std::initializer_list` of `value_type_t`.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of the elements in `ilist`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range value_type_t>
     concatenated_sequences & operator=(std::initializer_list<value_type_t> ilist)
@@ -368,13 +410,15 @@ public:
      *         \ref range_value_t_is_compatible_with_value_type.
      * \param rng_of_rng The sequences to construct/assign from.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of `rng_of_rng`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::input_range rng_of_rng_type>
     void assign(rng_of_rng_type && rng_of_rng)
@@ -391,13 +435,15 @@ public:
      * \param count Number of elements.
      * \param value The initial value to be assigned.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * In \f$O(count*value)\f$.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     void assign(size_type const count, rng_type && value)
@@ -416,13 +462,15 @@ public:
      * \param begin_it begin of range to construct/assign from.
      * \param end_it end of range to construct/assign from.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of the ranges between `begin_it` and `end_it`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
@@ -439,13 +487,15 @@ public:
      * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
      * \param ilist an `std::initializer_list` of `rng_type`.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in the cumulative size of the elements in `ilist`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type = value_type>
     void assign(std::initializer_list<rng_type> ilist)
@@ -466,13 +516,15 @@ public:
      *
      * If the container is empty, the returned iterator will be equal to end().
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     iterator begin() noexcept
     {
@@ -496,13 +548,15 @@ public:
      *
      * This element acts as a placeholder; attempting to dereference it results in undefined behaviour.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     iterator end() noexcept
     {
@@ -530,13 +584,15 @@ public:
      * \throws std::out_of_range If you access an element behind the last.
      * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
-     * Strong exception guarantee (never modifies data)..
+     * Strong exception guarantee (never modifies data).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference at(size_type const i)
     {
@@ -561,13 +617,15 @@ public:
      *
      * Accessing an element behind the last causes undefined behaviour. In debug mode an assertion checks the size of
      * the container.
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
-     * Strong exception guarantee (never modifies data)..
+     * Strong exception guarantee (never modifies data).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference operator[](size_type const i)
     {
@@ -586,13 +644,15 @@ public:
      * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * Calling front on an empty container is undefined. In debug mode an assertion checks the size of the container.
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (never modifies data).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference front()
     {
@@ -611,13 +671,15 @@ public:
      * \returns A std::ranges::view on the underlying concatenated sequences that acts as a proxy for the element.
      *
      * Calling back on an empty container is undefined. In debug mode an assertion checks the size of the container.
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
-     * Strong exception guarantee (never modifies data)..
+     * Strong exception guarantee (never modifies data).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference back()
     {
@@ -638,13 +700,15 @@ public:
      * This is a safe way of accessing the internal concatenated representation, i.e. you cannot do operations
      * that would invalidate this container (like insert or resize), but you can write to the individual positions.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (never modifies data).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference concat()
     {
@@ -662,9 +726,7 @@ public:
      *
      * \details
      *
-     * \noapi
-     *
-     * The exact representation of the data is implementation defined. Do not rely on it for API stability.
+     * \noapi{The exact representation of the data is implementation defined.}
      */
     std::pair<decltype(data_values) &, decltype(data_delimiters) &> raw_data()
     {
@@ -698,13 +760,15 @@ public:
     /*!\brief Checks whether the container is empty.
      * \returns `true` if the container is empty, `false` otherwise.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     bool empty() const noexcept
     {
@@ -714,13 +778,15 @@ public:
     /*!\brief Returns the number of elements in the container, i.e. std::distance(begin(), end()).
      * \returns The number of elements in the container.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_type size() const noexcept
     {
@@ -733,13 +799,15 @@ public:
      *
      * This value typically reflects the theoretical limit on the size of the container. At runtime, the size
      * of the container may be limited to a value smaller than max_size() by the amount of RAM available.
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_type max_size() const noexcept
     {
@@ -753,13 +821,15 @@ public:
      *
      * This does not operate on underlying concat container, see concat_capacity().
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_type capacity() const noexcept
     {
@@ -776,17 +846,17 @@ public:
      * If new_cap is greater than capacity(), all iterators, including the past-the-end iterator, and all references
      * to the elements are invalidated. Otherwise, no iterators or references are invalidated.
      *
-     * \attention
+     * \attention This does not operate on underlying concat container, see concat_reserve().
      *
-     * This does not operate on underlying concat container, see concat_reserve().
-     *
-     * ###Complexity
+     * ### Complexity
      *
      * At most linear in the size() of the container.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void reserve(size_type const new_cap)
     {
@@ -800,17 +870,17 @@ public:
      * If reallocation occurs, all iterators, including the past the end iterator, and all references to the elements
      * are invalidated. If no reallocation takes place, no iterators or references are invalidated.
      *
-     * \attention
+     * \attention This affects both underlying data structures.
      *
-     * This effects both underlying data structures.
-     *
-     * ###Complexity
+     * ### Complexity
      *
      * At most linear in the size() of the container.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void shrink_to_fit()
     {
@@ -825,13 +895,15 @@ public:
     /*!\brief Returns the cumulative size of all elements in the container.
      * \returns The cumulative size of elements in the container.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_type concat_size() const noexcept
     {
@@ -841,13 +913,15 @@ public:
     /*!\brief Returns the concatenated size the container has currently allocated space for.
      * \returns The capacity of the currently allocated storage.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     size_type concat_capacity() const noexcept
     {
@@ -864,13 +938,15 @@ public:
      * nothing. If new_cap is greater than concat_capacity(), all iterators, including the past-the-end iterator, and
      * all references to the elements are invalidated. Otherwise, no iterators or references are invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * At most linear in the concat_size() of the container.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void concat_reserve(size_type const new_cap)
     {
@@ -885,13 +961,15 @@ public:
     /*!\brief Removes all elements from the container.
      * \returns The number of elements in the container.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void clear() noexcept
     {
@@ -911,18 +989,20 @@ public:
      * than capacity(), all iterators and references are invalidated. Otherwise, only the iterators and
      * references before the insertion point remain valid. The past-the-end iterator is also invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      *
-     * ###Example
+     * ### Example
      *
      * \include test/snippet/range/container/concatenated_sequences_insert.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, rng_type && value)
@@ -945,18 +1025,20 @@ public:
      * than capacity(), all iterators and references are invalidated. Otherwise, only the iterators and
      * references before the insertion point remain valid. The past-the-end iterator is also invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
      *
-     * ###Example
+     * ### Example
      *
      * \include test/snippet/range/container/concatenated_sequences_insert2.cpp
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, size_type const count, rng_type && value)
@@ -1031,14 +1113,16 @@ public:
      * than capacity(), all iterators and references are invalidated. Otherwise, only the iterators and
      * references before the insertion point remain valid. The past-the-end iterator is also invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type first, end_iterator_type last)
@@ -1105,14 +1189,16 @@ public:
      * than capacity(), all iterators and references are invalidated. Otherwise, only the iterators and
      * references before the insertion point remain valid. The past-the-end iterator is also invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Worst-case linear in concat_size(). This is a drawback over e.g. `std::vector<std::vector<alphabet>>`.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     iterator insert(const_iterator pos, std::initializer_list<rng_type> const & ilist)
@@ -1132,14 +1218,16 @@ public:
      *
      * The iterator first does not need to be dereferenceable if first==last: erasing an empty range is a no-op.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in concat_size().
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     iterator erase(const_iterator first, const_iterator last)
     {
@@ -1178,14 +1266,16 @@ public:
      * The iterator pos must be valid and dereferenceable. Thus the end() iterator (which is valid, but is not
      * dereferencable) cannot be used as a value for pos.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Linear in concat_size().
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     iterator erase(const_iterator pos)
     {
@@ -1199,14 +1289,16 @@ public:
      * If the new size() is greater than capacity() then all iterators and references (including the past-the-end
      * iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Amortised linear in the size of value. Wort-case linear in concat_size().
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
      * thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::ranges::forward_range rng_type>
     void push_back(rng_type && value)
@@ -1224,15 +1316,17 @@ public:
      *
      * No iterators or references except for back() and end() are invalidated.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No exception is thrown in release mode.
      *
      * Strong exception guarantee (no data is modified in case an exception is thrown).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void pop_back()
     {
@@ -1257,16 +1351,18 @@ public:
      * Capacity is never reduced when resizing to smaller size because that would invalidate all iterators, rather
      * than only the ones that would be invalidated by the equivalent sequence of pop_back() calls.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * At most linear in the size() of the container.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * Only new size: Strong exception guarantee (no data is modified in case an exception is thrown). [only new size]
      *
      * New default value: Basic exception guarantee, i.e. guaranteed not to leak, but container my contain bogus data
      * after exceptions is thrown.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     void resize(size_type const count)
     {
@@ -1298,13 +1394,15 @@ public:
     /*!\brief Swap contents with another instance.
      * \param rhs The other instance to swap with.
      *
-     * ###Complexity
+     * ### Complexity
      *
      * Constant.
      *
-     * ###Exceptions
+     * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void swap(concatenated_sequences & rhs) noexcept
     {
@@ -1324,37 +1422,55 @@ public:
      * \{
      */
 
-    //!\brief Checks whether `*this` is equal to `rhs`.
+    /*!\brief Checks whether `*this` is equal to `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator==(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() == rhs.raw_data();
     }
 
-    //!\brief Checks whether `*this` is not equal to `rhs`.
+    /*!\brief Checks whether `*this` is not equal to `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator!=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() != rhs.raw_data();
     }
 
-    //!\brief Checks whether `*this` is less than `rhs`.
+    /*!\brief Checks whether `*this` is less than `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator<(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() < rhs.raw_data();
     }
 
-    //!\brief Checks whether `*this` is greater than `rhs`.
+    /*!\brief Checks whether `*this` is greater than `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator>(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() > rhs.raw_data();
     }
 
-    //!\brief Checks whether `*this` is less than or equal to `rhs`.
+    /*!\brief Checks whether `*this` is less than or equal to `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator<=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() <= rhs.raw_data();
     }
 
-    //!\brief Checks whether `*this` is greater than or equal to `rhs`.
+    /*!\brief Checks whether `*this` is greater than or equal to `rhs`.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr bool operator>=(concatenated_sequences const & rhs) const noexcept
     {
         return raw_data() >= rhs.raw_data();
