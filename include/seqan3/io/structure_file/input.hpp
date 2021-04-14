@@ -764,6 +764,8 @@ protected:
     record_type record_buffer;
     //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
     std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
+    //!\brief Buffer for the previous record position.
+    std::streampos position_buffer{};
     //!\}
 
     /*!\name Stream / file access
@@ -799,6 +801,9 @@ protected:
     {
         // clear the record
         record_buffer.clear();
+
+        // store the current position in the position buffer
+        position_buffer = secondary_stream->tellg();
 
         // at end if we could not read further
         if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
