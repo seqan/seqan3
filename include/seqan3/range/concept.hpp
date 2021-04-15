@@ -37,6 +37,8 @@ namespace seqan3
  *   * certain views store a state with their algorithm that also changes when `begin()` is called or an
  * iterator is incremented; these may be not be `const`-iterable, because the standard library
  * (and also SeqAn) guarantees that it is safe to call `const`-qualified functions concurrently.
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename type>
@@ -77,6 +79,8 @@ SEQAN3_CONCEPT const_iterable_range =
  *
  * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename iterator_t>
@@ -112,6 +116,8 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
  *
  * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
+ *
+ * \noapi{Exposition only.}
  */
 //!\cond
 template <typename rng_t>
@@ -133,6 +139,8 @@ SEQAN3_CONCEPT pseudo_random_access_range =
  *
  * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
+ *
+ * \stableapi{Since version 3.1.}
  */
 //!\cond
 template <typename rng_t>

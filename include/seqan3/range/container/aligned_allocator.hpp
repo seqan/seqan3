@@ -64,6 +64,8 @@ namespace seqan3
  *
  * \see https://en.cppreference.com/w/cpp/named_req/Allocator
  * \see https://en.cppreference.com/w/cpp/memory/c/aligned_alloc
+ *
+ * \noapi{Utility for allocator-aware container.}
  */
 template <typename value_t, size_t alignment_v = __STDCPP_DEFAULT_NEW_ALIGNMENT__>
 class aligned_allocator
