@@ -53,9 +53,11 @@ namespace seqan3
  * C = coil/loop
  * X = unknown
  *
- * ###Usage
+ * ### Usage
  * The following code example creates a dssp9 vector, modifies it, and prints the result to stderr.
  * \include test/snippet/alphabet/structure/dssp9_general.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 class dssp9 : public alphabet_base<dssp9, 9>
 {
@@ -132,6 +134,8 @@ private:
  *
  * You can use this string literal to easily assign to a vector of seqan3::dssp9 characters:
  * \include test/snippet/alphabet/structure/dssp9_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 {
@@ -151,6 +155,8 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
  *
  * You can use this string literal to assign a seqan3::dssp9 character:
  * \include test/snippet/alphabet/structure/dssp9_char_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 constexpr dssp9 operator""_dssp9(char const ch) noexcept
 {
