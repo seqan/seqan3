@@ -13,7 +13,9 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
 #include <limits>
+#include <seqan3/std/ranges>
 #include <set>
 #include <tuple>
 #include <type_traits>
@@ -26,8 +28,6 @@
 #include <seqan3/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
 
 namespace seqan3
 {
@@ -75,6 +75,7 @@ namespace seqan3
  *            requirements of the STL because dereferencing the iterator returns a proxy and no operator-> is provided.
  *            It does model the C++20 std::bidirectional_iterator.
  *
+ * \stableapi{Since version 3.1.}
  */
 template <std::ranges::viewable_range inner_type>
 //!\cond
@@ -100,27 +101,54 @@ public:
     /*!\name Range-associated member types
      * \{
      */
-    //!\brief The variant type of the alphabet type and gap symbol type (see seqan3::gapped).
+    /*!\brief The variant type of the alphabet type and gap symbol type (see seqan3::gapped).
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using value_type = gapped<std::ranges::range_value_t<inner_type>>;
-    //!\brief Use the value type as reference type because the underlying sequence must not be modified.
+
+    /*!\brief Use the value type as reference type because the underlying sequence must not be modified.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using reference = value_type;
-    //!\brief const_reference type equals reference type equals value type because the underlying sequence must not
-    //!       be modified.
+
+    /*!\brief const_reference type equals reference type equals value type because the underlying sequence must not
+     *        be modified.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using const_reference = reference;
-    //!\brief The size_type of the underlying sequence.
+
+    /*!\brief The size_type of the underlying sequence.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using size_type = std::ranges::range_size_t<inner_type>;
-    //!\brief The difference type of the underlying sequence.
+
+    /*!\brief The difference type of the underlying sequence.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using difference_type = std::ranges::range_difference_t<inner_type>;
     //!\}
 
-    //!\brief The underlying ungapped range type.
+    /*!\brief The underlying ungapped range type.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     using unaligned_seq_type = inner_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    //!\brief Default constructor. Attention: all operations on a solely default constructed decorator,
-    //!       except assigning a new range, are UB.
+    /*!\brief Default constructor.
+     * \details
+     * \attention All operations on a default constructed decorator, except assigning a new range
+     *            (e.g., seqan3::gap_decorator::assign_unaligned), are undefined behaviour.
+     *
+     * \stableapi{Since version 3.1.}
+     */
     gap_decorator() = default;
     gap_decorator(gap_decorator const &) = default; //!< Defaulted.
     gap_decorator & operator=(gap_decorator const &) = default; //!< Defaulted.
@@ -128,7 +156,10 @@ public:
     gap_decorator & operator=(gap_decorator && rhs) = default; //!< Defaulted.
     ~gap_decorator() = default; //!< Defaulted.
 
-    //!\brief Construct with the ungapped range type.
+    /*!\brief Construct with the ungapped range type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
+     */
     template <typename other_range_t>
     //!\cond
          requires (!std::same_as<other_range_t, gap_decorator>) &&
@@ -149,6 +180,8 @@ public:
      * ### Exceptions
      *
      * Strong exception guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     size_type size() const
     {
@@ -170,6 +203,8 @@ public:
      *
      * Average and worst case (insertion before last gap): \f$O(k)\f$,
      * Best case (back insertion): \f$O(\log k)\f$.
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator insert_gap(const_iterator const it, size_type const count = 1)
     {
@@ -221,6 +256,8 @@ public:
     * ### Complexity
     *
     * \f$O(\log k)\f$
+     *
+     * \stableapi{Since version 3.1.}
     */
     iterator erase_gap(const_iterator const it)
     {
@@ -243,6 +280,8 @@ public:
      * ### Complexity
      *
      * \f$O(\log k)\f$
+     *
+     * \stableapi{Since version 3.1.}
      */
     iterator erase_gap(const_iterator const first, const_iterator const last)
     {
@@ -285,6 +324,9 @@ public:
     /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_seq_type to the decorator.
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
+     * \details
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename unaligned_seq_t> // generic template to use forwarding reference
     //!\cond
@@ -311,6 +353,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     const_iterator begin() const noexcept
     {
@@ -335,6 +379,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \stableapi{Since version 3.1.}
      */
     const_iterator end() const noexcept
     {
@@ -362,6 +408,8 @@ public:
      * ### Exceptions
      *
      * Throws std::out_of_range exception if \p i is out of range.
+     *
+     * \stableapi{Since version 3.1.}
      */
     reference at(size_type const i)
     {
@@ -388,6 +436,7 @@ public:
      *
      * \f$O(\log k)\f$ where \f$k\f$ is the number of gaps.
      *
+     * \stableapi{Since version 3.1.}
      */
     reference operator[](size_type const i) const
     {
@@ -414,7 +463,10 @@ public:
      * \{
      */
 
-    //!\brief Checks whether `lhs` is equal to `rhs`.
+    /*!\brief Checks whether `lhs` is equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator==(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         if (lhs.size()  == rhs.size()  &&
@@ -427,13 +479,19 @@ public:
         return false;
     }
 
-    //!\brief Checks whether `lhs` is not equal to `rhs`.
+    /*!\brief Checks whether `lhs` is not equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator!=(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Checks whether `lhs` is less than `rhs`.
+    /*!\brief Checks whether `lhs` is less than `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator<(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         auto lit = lhs.begin();
@@ -450,7 +508,10 @@ public:
         return *lit < *rit;
     }
 
-    //!\brief Checks whether `lhs` is less than or equal to `rhs`.
+    /*!\brief Checks whether `lhs` is less than or equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator<=(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         auto lit = lhs.begin();
@@ -467,13 +528,19 @@ public:
         return *lit < *rit;
     }
 
-    //!\brief Checks whether `lhs` is greater than `rhs`.
+    /*!\brief Checks whether `lhs` is greater than `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator>(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         return !(lhs <= rhs);
     }
 
-    //!\brief Checks whether `lhs` is greater than or equal to `rhs`.
+    /*!\brief Checks whether `lhs` is greater than or equal to `rhs`.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     friend bool operator>=(gap_decorator const & lhs, gap_decorator const & rhs)
     {
         return !(lhs < rhs);
@@ -564,14 +631,20 @@ private:
 /*!\name Type deduction guides
  * \{
  */
-//!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
+/*!\brief Ranges (not views!) always deduce to `const & range_type` since they are access-only anyway.
+ * \details
+ * \experimentalapi{Experimental since version 3.1.}
+ */
 template <std::ranges::viewable_range urng_t>
 //!\cond
     requires (!std::ranges::view<std::remove_reference_t<urng_t>>)
 //!\endcond
 gap_decorator(urng_t && range) -> gap_decorator<std::remove_reference_t<urng_t> const &>;
 
-//!\brief Views always deduce to their respective type because they are copied.
+/*!\brief Views always deduce to their respective type because they are copied.
+ * \details
+ * \experimentalapi{Experimental since version 3.1.}
+ */
 template <std::ranges::view urng_t>
 gap_decorator(urng_t range) -> gap_decorator<urng_t>;
 //!\}
