@@ -156,7 +156,10 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  *
- * \stableapi{Since version 3.1.}
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::to_rank, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto to_rank = detail::adl_only::to_rank_cpo{};
 //!\}
@@ -298,7 +301,10 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  *
- * \stableapi{Since version 3.1.}
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::assign_rank_to, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto assign_rank_to = detail::adl_only::assign_rank_to_cpo{};
 //!\}
@@ -397,7 +403,10 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  *
- * \stableapi{Since version 3.1.}
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::to_char, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto to_char = detail::adl_only::to_char_cpo{};
 //!\}
@@ -542,7 +551,10 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  *
- * \stableapi{Since version 3.1.}
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::assign_char_to, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 inline constexpr auto assign_char_to = detail::adl_only::assign_char_to_cpo{};
 //!\}
@@ -883,7 +895,10 @@ namespace seqan3
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own alphabet type,
  * simply provide one of the three functions specified above.
  *
- * \stableapi{Since version 3.1.}
+ * \experimentalapi{Implementation 2 (free function) is not stable.}
+ *
+ * \stableapi{Since version 3.1. The name seqan3::alphabet_size, Implementation 1,
+ *            and Implementation 3 are stable and will not change.}
  */
 #if SEQAN3_WORKAROUND_GCC_89953
 template <typename alph_t>

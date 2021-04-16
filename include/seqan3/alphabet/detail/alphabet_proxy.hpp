@@ -32,8 +32,6 @@ namespace seqan3
  *
  * \details
  *
- * \noapi
- *
  * Certain containers and other data structure hold alphabet values in a non-standard way so they can convert
  * to that alphabet when being accessed, but cannot return a reference to the held value. These data structures
  * may instead return a *proxy* to the held value which still allows changing it (and updating the underlying data
@@ -52,6 +50,8 @@ namespace seqan3
  * data structure.
  *
  * See seqan3::bitcompressed_vector or seqan3::alphabet_tuple_base for examples of how this class is used.
+ *
+ * \noapi{Exposition only}
  */
 template <typename derived_type, writable_semialphabet alphabet_type>
 //!\cond
@@ -111,7 +111,7 @@ private:
         base_t::assign_rank(seqan3::to_rank(a));
     }
 
-    //!\brief Assigment from the emulated type. This function triggers the specialisation in the derived_type.
+    //!\brief Assignment from the emulated type. This function triggers the specialisation in the derived_type.
     constexpr derived_type & operator=(alphabet_type const & c) noexcept
     {
         if constexpr (std::is_class_v<alphabet_type>)

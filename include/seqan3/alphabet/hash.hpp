@@ -19,6 +19,8 @@ namespace std
 /*!\brief Struct for hashing a character.
  * \ingroup alphabet
  * \tparam alphabet_t The type of character to hash; must model seqan3::semialphabet.
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_t>
 //!\cond
@@ -31,6 +33,8 @@ struct hash<alphabet_t>
      *
      * \returns The rank of the character.
      * \sa seqan3::to_rank.
+     * \details
+     * \stableapi{Since version 3.1.}
      */
     size_t operator()(alphabet_t const character) const noexcept
     {
