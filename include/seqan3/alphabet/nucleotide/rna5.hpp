@@ -41,7 +41,9 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::rna5::assign_char().
  *
- *\include test/snippet/alphabet/nucleotide/rna5.cpp
+ * \include test/snippet/alphabet/nucleotide/rna5.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class rna5 : public nucleotide_base<rna5, 5>
 {
@@ -68,7 +70,10 @@ public:
 
     using base_t::base_t;
 
-    //!\brief Allow implicit construction from dna/rna of the same size.
+    /*!\brief Allow implicit construction from dna/rna of the same size.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr rna5(dna5 const & r) noexcept
 #if SEQAN3_WORKAROUND_GCC_90897
         requires true
@@ -109,8 +114,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::rna5.
-//!\relates rna5
+/*!\brief Alias for an std::vector of seqan3::rna5.
+ * \relates rna5
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using rna5_vector = std::vector<rna5>;
 
 // ------------------------------------------------------------------
@@ -124,6 +132,8 @@ using rna5_vector = std::vector<rna5>;
 /*!\brief The seqan3::rna5 char literal.
  * \relates seqan3::rna5
  * \returns seqan3::rna5
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr rna5 operator""_rna5(char const c) noexcept
 {
@@ -138,6 +148,7 @@ constexpr rna5 operator""_rna5(char const c) noexcept
  *
  * \include test/snippet/alphabet/nucleotide/rna5_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 inline rna5_vector operator""_rna5(char const * s, std::size_t n)
 {

@@ -39,18 +39,23 @@ namespace seqan3
  * For completeness, this nucleotide alphabet has a complement table, however, it is not recommended to use
  * it when dealing with bisulfite data because the complement of T is ambiguous in reads from bisulfite
  * sequencing. A 'T' can represent a true thymidine or an unmethylated 'C' that was converted into a 'T'.
- * Therefore, complementing a dna4bs sequence will further reduce the alphabet to only 'T' and 'A', thereby
- * loosing all information about 'G'. When working with bisulfite data, we recommend to create the reverse
- * complement of the dna4/5/15 range first and convert to dna3bs later. This avoids simplifying the data by automatically
- * setting 'A' as the complement of 'C'. As an example: The sequence 'ACGTGC' in dna4 would be 'ATGTGT' in dna3bs.
- * The complement of this dna3bs sequence would be 'TATATA', however when complementing the dna4 sequence first
- * and afterwards transforming it into dna3bs, it would be 'TGTATG' which preserves more information from the original sequence.
+ * Therefore, complementing a seqan3::dna3bs sequence will further reduce the alphabet to only 'T' and 'A', thereby
+ * losing all information about 'G'. When working with bisulfite data, we recommend to create the reverse
+ * complement of the seqan3::dna4 / seqan3::dna5 / seqan3::dna15 range first and convert to seqan3::dna3bs later. This
+ * avoids simplifying the data by automatically setting 'A' as the complement of 'C'. As an example: The sequence
+ * 'ACGTGC' in seqan3::dna4 would be 'ATGTGT' in seqan3::dna3bs. The complement of this seqan3::dna3bs sequence would
+ * be 'TATATA', however when complementing the seqan3::dna4 sequence first and afterwards transforming it into
+ * seqan3::dna3bs, it would be 'TGTATG' which preserves more information from the original sequence.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
  * Instead initialise/assign from the character literal or use the
  * function seqan3::dna3bs::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna3bs.cpp
+ *
+ * \sa https://en.wikipedia.org/wiki/Bisulfite_sequencing
+ *
+ * \stableapi{Since version 3.1.}
  */
 class dna3bs : public nucleotide_base<dna3bs, 3>
 {
@@ -142,8 +147,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::dna3bs.
-//!\relates dna3bs
+/*!\brief Alias for an std::vector of seqan3::dna3bs.
+ * \relates dna3bs
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna3bs_vector = std::vector<dna3bs>;
 
 // ------------------------------------------------------------------
@@ -157,6 +165,8 @@ using dna3bs_vector = std::vector<dna3bs>;
 /*!\brief The seqan3::dna3bs char literal.
  * \relates seqan3::dna3bs
  * \returns seqan3::dna3bs
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr dna3bs operator""_dna3bs(char const c) noexcept
 {
@@ -171,6 +181,7 @@ constexpr dna3bs operator""_dna3bs(char const c) noexcept
  *
  * \include test/snippet/alphabet/nucleotide/dna3bs_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 inline dna3bs_vector operator""_dna3bs(char const * s, std::size_t n)
 {

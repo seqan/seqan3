@@ -44,8 +44,10 @@ class rna4;
  *
  * \include test/snippet/alphabet/nucleotide/dna4.cpp
  *
- * If the special char conversion of IUPAC characters is not your desired behavior, refer to our cookbook for an
- * example of \ref cookbook_custom_dna4_alphabet to change the conversion behavior.
+ * If the special char conversion of IUPAC characters is not your desired behaviour, refer to our cookbook for an
+ * example of \ref cookbook_custom_dna4_alphabet to change the conversion behaviour.
+ *
+ * \stableapi{Since version 3.1.}
  */
 class dna4 : public nucleotide_base<dna4, 4>
 {
@@ -176,8 +178,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::dna4.
-//!\relates dna4
+/*!\brief Alias for an std::vector of seqan3::dna4.
+ * \relates dna4
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna4_vector = std::vector<dna4>;
 
 // ------------------------------------------------------------------
@@ -191,6 +196,8 @@ using dna4_vector = std::vector<dna4>;
 /*!\brief The seqan3::dna4 char literal.
  * \relates seqan3::dna4
  * \returns seqan3::dna4
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr dna4 operator""_dna4(char const c) noexcept
 {
@@ -205,6 +212,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
  *
  * \include test/snippet/alphabet/nucleotide/dna4_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 {

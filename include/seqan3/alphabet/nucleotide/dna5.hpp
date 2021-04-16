@@ -43,7 +43,9 @@ class rna5;
  * Instead initialise/assign from the character literal or use the
  * function seqan3::dna5::assign_char().
  *
- *\include test/snippet/alphabet/nucleotide/dna5.cpp
+ * \include test/snippet/alphabet/nucleotide/dna5.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class dna5 : public nucleotide_base<dna5, 5>
 {
@@ -72,7 +74,10 @@ public:
 
     using base_t::base_t;
 
-    //!\brief Allow implicit construction from dna/rna of the same size.
+    /*!\brief Allow implicit construction from dna/rna of the same size.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     template <std::same_as<rna5> t>    // Accept incomplete type
     constexpr dna5(t const & r) noexcept
     {
@@ -138,8 +143,11 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-//!\brief Alias for an std::vector of seqan3::dna5.
-//!\relates dna5
+/*!\brief Alias for an std::vector of seqan3::dna5.
+ * \relates dna5
+ * \details
+ * \stableapi{Since version 3.1.}
+ */
 using dna5_vector = std::vector<dna5>;
 
 // ------------------------------------------------------------------
@@ -153,6 +161,8 @@ using dna5_vector = std::vector<dna5>;
 /*!\brief The seqan3::dna5 char literal.
  * \relates seqan3::dna5
  * \returns seqan3::dna5
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr dna5 operator""_dna5(char const c) noexcept
 {
@@ -167,6 +177,7 @@ constexpr dna5 operator""_dna5(char const c) noexcept
  *
  * \include test/snippet/alphabet/nucleotide/dna5_literal.cpp
  *
+ * \stableapi{Since version 3.1.}
  */
 inline dna5_vector operator""_dna5(char const * s, std::size_t n)
 {
