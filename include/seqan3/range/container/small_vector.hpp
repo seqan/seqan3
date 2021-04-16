@@ -1084,7 +1084,7 @@ public:
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <size_t capacity2, typename value_type>
-small_vector(const value_type (&array)[capacity2]) -> small_vector<value_type, capacity2>;
+small_vector(value_type const (&array)[capacity2]) -> small_vector<value_type, capacity2>;
 //!\}
 
 } // namespace seqan3
