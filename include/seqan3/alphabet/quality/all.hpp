@@ -35,26 +35,26 @@
  * the higher a Phred score is, the higher is the probabality that the corresponding nucleotide is correct for that
  * position.
  * There exists two common variants of its computation:
- *   - Sanger format with \f$Q = -10log_{10}(p)\f$
- *   - Solexa format with \f$Q = -10log_{10}(p/(1-p))\f$
+ *   - Sanger format with \f$Q = -10\cdot\log_{10}(p)\f$
+ *   - Solexa format with \f$Q = -10\cdot\log_{10}(\frac{p}{1-p})\f$
  *
  * Thus, despite implicit conversion between different quality types is supported, for very low quality levels the
- * scores vary significantly and need to be corrected by an offset before being compared. The Phred score range does not
- * fit into one digit, and is therefore mapped to ASCII characters. Depending on the format and the analyzer machine
- * generation, the mappings can differ.
+ * scores vary significantly and need to be corrected by an offset before being compared.
+ * For easy handling of the Phred score in file formats and console output, it is mapped to a single ASCII character.
+ * The sequencing / analyser machine, e.g. HiSeq, PacBio, will dictate which Phred format is used.
  * Output files storing DNA sequences and their quality scores are usually stored in the **FASTQ** format indicated by
- * the file endings *fastq* or *fq*.
+ * the file extensions *fastq* or *fq*.
  * This sub-module provides multiple quality alphabets that can be used in combination with regular containers and
  * ranges.
  *
- * ###Encoding Schemes
+ * ### Encoding Schemes
  *
- * | Standard Use Case   | Format                      | Encoding | Alphabet Type         | Phred Score Range | Rank Range | ASCII Range  |
- * |:-------------------:|:---------------------------:|:--------:|:----------------------|:-----------------:|:----------:|:------------:|
- * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred42       | [0 .. 41]         | [0 .. 41]  | ['!' .. 'J'] |
- * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred63       | [0 .. 62]         | [0 .. 62]  | ['!' .. '_'] |
- * | PacBio              | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred94       | [0 .. 93]         | [0 .. 93]  | ['!' .. '~'] |
- * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [';' .. '~'] |
+ * | Standard Use Case   | Format                      | Encoding | Alphabet Type         | Phred Score Range | Rank Range |  ASCII Range                  |
+ * |:-------------------:|:---------------------------:|:--------:|:----------------------|:-----------------:|:----------:|:-----------------------------:|
+ * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred42       | [0 .. 41]         | [0 .. 41]  | [33 .. 74]  <br> ['!' .. 'J'] |
+ * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred63       | [0 .. 62]         | [0 .. 62]  | [33 .. 95]  <br> ['!' .. '_'] |
+ * | PacBio              | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred94       | [0 .. 93]         | [0 .. 93]  | [33 .. 126] <br> ['!' .. '~'] |
+ * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [59 .. 126] <br> [';' .. '~'] |
  *
  * The most distributed format is the *Sanger* or *Illumina 1.8+* format.
  * Despite typical Phred scores for Illumina machines range from 0 to 41, it is possible that processed reads reach
@@ -99,7 +99,7 @@
  * bytes.
  * While we used DNA alphabets in this example, the same properties hold true for RNA alphabets.
  *
- * ###Concept
+ * ### Concept
  *
  * The quality submodule defines the seqan3::writable_quality_alphabet which encompasses all the alphabets, defined in
  * the submodule, and refines the seqan3::writable_alphabet by providing Phred score assignment and conversion
@@ -107,7 +107,7 @@
  * Additionally, this submodule defines the seqan3::quality_alphabet, which only requires readablity and not
  * assignability.
  *
- * ###Assignment and Conversion
+ * ### Assignment and Conversion
  *
  * Quality alphabets can be converted to their char and rank representation via `seqan3::to_char` and `seqan3::to_rank`
  * respectively (like all other alphabets). Additionally they can be converted to their Phred representation via

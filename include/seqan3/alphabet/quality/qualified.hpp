@@ -51,6 +51,8 @@ namespace seqan3
  * \include test/snippet/alphabet/quality/qualified.cpp
  *
  * This seqan3::alphabet_tuple_base itself fulfils both seqan3::writable_alphabet and seqan3::writable_quality_alphabet.
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <writable_alphabet sequence_alphabet_t, writable_quality_alphabet quality_alphabet_t>
 class qualified :
@@ -63,14 +65,26 @@ private:
                                             sequence_alphabet_t, quality_alphabet_t>;
 
 public:
-    //!\brief First template parameter as member type.
+    /*!\brief First template parameter as member type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using sequence_alphabet_type = sequence_alphabet_t;
-    //!\brief Second template parameter as member type.
+    /*!\brief Second template parameter as member type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using quality_alphabet_type = quality_alphabet_t;
 
-    //!\brief Equals the char_type of sequence_alphabet_type.
+    /*!\brief Equals the char_type of sequence_alphabet_type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using char_type = alphabet_char_t<sequence_alphabet_type>;
-    //!\brief Equals the phred_type of the quality_alphabet_type.
+    /*!\brief Equals the phred_type of the quality_alphabet_type.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     using phred_type = alphabet_phred_t<quality_alphabet_type>;
 
     /*!\name Constructors, destructor and assignment
@@ -102,7 +116,10 @@ public:
     /*!\name Write functions
      * \{
      */
-    //!\brief Assign from a character. This modifies the internal sequence letter.
+    /*!\brief Assign from a character. This modifies the internal sequence letter.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr qualified & assign_char(char_type const c) noexcept
     {
         base_type::assign_rank(
@@ -116,7 +133,10 @@ public:
         return *this;
     }
 
-    //!\brief Assign from a Phred score value. This modifies the internal quality letter.
+    /*!\brief Assign from a Phred score value. This modifies the internal quality letter.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr qualified & assign_phred(phred_type const c) noexcept
     {
         seqan3::assign_phred_to(c, get<1>(*this));
@@ -127,13 +147,19 @@ public:
     /*!\name Read functions
      * \{
      */
-    //!\brief Return the Phred score value. This reads the internal quality letter.
+    /*!\brief Return the Phred score value. This reads the internal quality letter.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr phred_type to_phred() const noexcept
     {
         return rank_to_phred[to_rank()];
     }
 
-    //!\brief Return a character. This reads the internal sequence letter.
+    /*!\brief Return a character. This reads the internal sequence letter.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     constexpr char_type to_char() const noexcept
     {
         return rank_to_char(to_rank());
@@ -141,16 +167,23 @@ public:
 
     /*!\brief Return a qualified where the quality is preserved, but the sequence letter is complemented.
      * \sa seqan3::complement
-     * \sa seqan3::nucleotide_alphabet::complement
+     * \sa seqan3::nucleotide
+     * \details
+     * \stableapi{Since version 3.1.}
      */
     constexpr qualified complement() const noexcept
+    //!\cond
         requires nucleotide_alphabet<sequence_alphabet_t>
+    //!\endcond
     {
         return qualified{seqan3::complement(get<0>(*this)), get<1>(*this)};
     }
     //!\}
 
-    //!\brief Validate whether a character is valid in the sequence alphabet.
+    /*!\brief Validate whether a character is valid in the sequence alphabet.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     static constexpr bool char_is_valid(char_type const c) noexcept
     {
         return char_is_valid_for<sequence_alphabet_type>(c);
@@ -202,8 +235,9 @@ private:
     }
 };
 
-//!\brief Type deduction guide enables usage of qualified without specifying template args.
-//!\relates qualified
+/*!\brief Type deduction guide enables usage of qualified without specifying template args.
+ * \relates qualified
+ */
 template <typename sequence_alphabet_type, typename quality_alphabet_type>
 qualified(sequence_alphabet_type &&, quality_alphabet_type &&)
     -> qualified<std::decay_t<sequence_alphabet_type>, std::decay_t<quality_alphabet_type>>;

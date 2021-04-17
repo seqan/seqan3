@@ -40,6 +40,8 @@ namespace seqan3
  * \include test/snippet/alphabet/quality/phred42.cpp
  *
  * \see quality, it contains a comprehensive overview over all Phred implementations and what a Phred score represents.
+ *
+ * \stableapi{Since version 3.1.}
  */
 class phred42 : public quality_base<phred42, 42>
 {
@@ -74,10 +76,16 @@ public:
     /*!\name Member variables.
      * \{
      */
-    //!\brief The projection offset between Phred and rank score representation.
+    /*!\brief The projection offset between Phred and rank score representation.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr phred_type offset_phred{0};
 
-    //!\brief The projection offset between char and rank score representation.
+    /*!\brief The projection offset between char and rank score representation.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
     static constexpr char_type offset_char{'!'};
     //!\}
 };
@@ -88,6 +96,8 @@ public:
 /*!\brief The seqan3::phred42 char literal.
  * \relates seqan3::phred42
  * \returns seqan3::phred42
+ * \details
+ * \stableapi{Since version 3.1.}
  */
 constexpr phred42 operator""_phred42(char const c) noexcept
 {
@@ -103,6 +113,8 @@ constexpr phred42 operator""_phred42(char const c) noexcept
  * You can use this string literal to easily assign to std::vector<seqan3::phred42>:
  *
  * \include test/snippet/alphabet/quality/phred42_literal.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 inline std::vector<phred42> operator""_phred42(char const * s, std::size_t n)
 {
