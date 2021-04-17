@@ -59,7 +59,9 @@
 #if SEQAN3_CPP_LIB_TO_CHARS >= 100000
 #include <charconv>
 
-namespace std::cpp20
+namespace std
+{
+namespace cpp20
 {
 enum class chars_format // gcc 8 and 9 did not define std::chars_format
 {
@@ -68,10 +70,8 @@ enum class chars_format // gcc 8 and 9 did not define std::chars_format
     hex = 0x4,
     general = fixed | scientific
 };
-} // namespace std::cpp20
+} // namespace cpp20
 
-namespace std
-{
 namespace
 {
 using std::cpp20::chars_format; // import in a way that works for any gcc >= 8 whether chars_format is defined or not
