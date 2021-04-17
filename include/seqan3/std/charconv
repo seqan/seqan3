@@ -61,8 +61,9 @@
 
 namespace std
 {
-namespace cpp20
+namespace
 {
+// define in a way that works for any gcc >= 8 whether chars_format is defined or not
 enum class chars_format // gcc 8 and 9 did not define std::chars_format
 {
     scientific = 0x1,
@@ -70,11 +71,6 @@ enum class chars_format // gcc 8 and 9 did not define std::chars_format
     hex = 0x4,
     general = fixed | scientific
 };
-} // namespace cpp20
-
-namespace
-{
-using std::cpp20::chars_format; // import in a way that works for any gcc >= 8 whether chars_format is defined or not
 } // anonymous namespace
 } // namespace std
 #endif // SEQAN3_CPP_LIB_TO_CHARS >= 100000
