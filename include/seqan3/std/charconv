@@ -83,7 +83,7 @@ using std::cpp20::chars_format; // import in a way that works for any gcc >= 8 w
 // If no std implementation is present use llvm's int implementation (for gcc 7)
 // =========================================================================
 
-#if SEQAN3_CPP_LIB_TO_CHARS < 100000
+#ifndef SEQAN3_CPP_LIB_TO_CHARS
 #include <seqan3/contrib/charconv/charconv>
 #include <seqan3/contrib/charconv/charconv.cpp>
 
@@ -95,13 +95,14 @@ using ::seqan3::contrib::charconv::to_chars;
 using ::seqan3::contrib::charconv::from_chars_result;
 using ::seqan3::contrib::charconv::from_chars;
 } // namespace std
-#endif // SEQAN3_CPP_LIB_TO_CHARS >= 100000
+#endif // SEQAN3_CPP_LIB_TO_CHARS
 
 // =========================================================================
 // if float implementation is missing add our own shim-implementation
 // =========================================================================
 
-#if SEQAN3_CPP_LIB_TO_CHARS <= 100000
+#if !defined(SEQAN3_CPP_LIB_TO_CHARS) || SEQAN3_CPP_LIB_TO_CHARS == 100000
+#include <cassert>
 #include <seqan3/std/concepts>
 #include <sstream>
 
@@ -109,8 +110,11 @@ using ::seqan3::contrib::charconv::from_chars;
  * \ingroup std
  * \brief The \<charconv\> header from C++17's standard library.
  */
-namespace std::cpp20
+namespace seqan3::contrib::charconv_float
 {
+using ::std::to_chars_result;
+using ::std::from_chars_result;
+using ::std::chars_format;
 
 //!\brief std::to_chars implementation for floating point via a std::stringstream for default base = 10.
 template <std::floating_point value_type>
@@ -237,9 +241,9 @@ inline from_chars_result from_chars_floating_point(char const * first,
     return {last, {}};
 }
 
-} // namespace std::cpp20
+} // namespace seqan3::contrib::charconv_float
 
-namespace std::cpp20
+namespace seqan3::contrib::charconv_float
 {
 // -----------------------------------------------------------------------------
 // to_chars for floating point types
@@ -320,14 +324,14 @@ inline from_chars_result from_chars(char const * first,
 {
     return from_chars_floating_point(first, last, value, fmt);
 }
-} // namespace std::cpp20
+} // namespace seqan3::contrib::charconv_float
 
 namespace std
 {
 // gcc-11 also defines float versions, but they don't clash with ours, because they use explicit overloads for each
 // float type. That means the stdlib has a higher priority in overload resolution then our shim implementation.
-using std::cpp20::to_chars; // import our shim-float version
-using std::cpp20::from_chars; // import our shim-float version
+using ::seqan3::contrib::charconv_float::to_chars; // import our shim-float version
+using ::seqan3::contrib::charconv_float::from_chars; // import our shim-float version
 } // namespace std
 
-#endif // SEQAN3_CPP_LIB_TO_CHARS <= 100000
+#endif // !defined(SEQAN3_CPP_LIB_TO_CHARS) || SEQAN3_CPP_LIB_TO_CHARS == 100000
