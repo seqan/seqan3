@@ -1,0 +1,58 @@
+From c285a9fa69198ad4f83f27581b336030539a8eca Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Thu, 18 Feb 2021 15:21:44 +0100
+Subject: [PATCH 12/22] [NOAPI] [INCLUDE] add missing include
+ seqan3::debug_stream
+
+---
+ doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp | 1 +
+ doc/tutorial/concepts/custom_validator_solution2.cpp          | 1 +
+ doc/tutorial/introduction/introduction_file_input.cpp         | 1 +
+ doc/tutorial/ranges/range_solution4.cpp                       | 1 +
+ 4 files changed, 4 insertions(+)
+
+diff --git a/doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp b/doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp
+index 49ecb1dc1..66fbc759e 100644
+--- a/doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp
++++ b/doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp
+@@ -1,4 +1,5 @@
+ #include <seqan3/argument_parser/all.hpp>
++#include <seqan3/core/debug_stream.hpp>
+ 
+ // =====================================================================================================================
+ // pull
+diff --git a/doc/tutorial/concepts/custom_validator_solution2.cpp b/doc/tutorial/concepts/custom_validator_solution2.cpp
+index 1b76ac5a3..c31712cd7 100644
+--- a/doc/tutorial/concepts/custom_validator_solution2.cpp
++++ b/doc/tutorial/concepts/custom_validator_solution2.cpp
+@@ -1,4 +1,5 @@
+ #include <seqan3/argument_parser/all.hpp>
++#include <seqan3/core/debug_stream.hpp>
+ //![validator]
+ #include <cmath>
+ 
+diff --git a/doc/tutorial/introduction/introduction_file_input.cpp b/doc/tutorial/introduction/introduction_file_input.cpp
+index 180bd0764..10fa47ba0 100644
+--- a/doc/tutorial/introduction/introduction_file_input.cpp
++++ b/doc/tutorial/introduction/introduction_file_input.cpp
+@@ -1,4 +1,5 @@
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in tmp file
++#include <seqan3/core/debug_stream.hpp>
+ #include <seqan3/io/sequence_file/output.hpp>   // to create tmp file
+ #include <seqan3/std/filesystem>                // to create tmp directory
+ 
+diff --git a/doc/tutorial/ranges/range_solution4.cpp b/doc/tutorial/ranges/range_solution4.cpp
+index 29d006d70..554225a0c 100644
+--- a/doc/tutorial/ranges/range_solution4.cpp
++++ b/doc/tutorial/ranges/range_solution4.cpp
+@@ -2,6 +2,7 @@
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/argument_parser/all.hpp>                       // include argument parser
++#include <seqan3/core/debug_stream.hpp>
+ #include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
+ 
+ using seqan3::operator""_dna4;
+-- 
+2.31.0
+

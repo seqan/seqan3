@@ -1,0 +1,25 @@
+From 3623ded92f807c6f662645c82815d21c37f08116 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Wed, 17 Feb 2021 22:18:25 +0100
+Subject: [PATCH 09/22] [NOAPI] [INCLUDE] add missing include sdsl::bits
+
+---
+ test/unit/core/bit_manipulation_test.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/test/unit/core/bit_manipulation_test.cpp b/test/unit/core/bit_manipulation_test.cpp
+index 4a1329287..315369924 100644
+--- a/test/unit/core/bit_manipulation_test.cpp
++++ b/test/unit/core/bit_manipulation_test.cpp
+@@ -11,6 +11,8 @@
+ 
+ #include <seqan3/core/bit_manipulation.hpp>
+ 
++#include <sdsl/bits.hpp>
++
+ static constexpr size_t max_iterations = 1 << 15;
+ 
+ TEST(bit_manipulation, sizeof_bits)
+-- 
+2.31.0
+

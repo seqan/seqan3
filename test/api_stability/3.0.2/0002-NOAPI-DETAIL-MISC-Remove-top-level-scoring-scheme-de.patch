@@ -1,0 +1,88 @@
+From 23d8e9fa2ec1376116fc7e6c93e4676afacf3533 Mon Sep 17 00:00:00 2001
+From: rrahn <rene.rahn@fu-berlin.de>
+Date: Fri, 11 Sep 2020 16:41:13 +0200
+Subject: [PATCH 02/22] [NOAPI] [DETAIL] [MISC] Remove top-level scoring scheme
+ dependency from simd scoring matrix class.
+
+Makes the class template independent of the scoring scheme since it will be transformed into another memory layput internally.
+---
+ .../simd_matrix_scoring_scheme_test.cpp       | 21 +++++++------------
+ 1 file changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp b/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
+index ef141a7e9..7b0927215 100644
+--- a/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
++++ b/test/unit/alignment/scoring/simd_matrix_scoring_scheme_test.cpp
+@@ -33,8 +33,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
+ {
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_global,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_global>;
+ 
+     EXPECT_TRUE(std::is_nothrow_default_constructible_v<scheme_t>);
+     EXPECT_TRUE(std::is_nothrow_copy_constructible_v<scheme_t>);
+@@ -50,8 +49,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothro
+ {
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_global,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_global>;
+ 
+     scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+ 
+@@ -68,8 +66,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_
+     using scalar_t = typename seqan3::simd_traits<TypeParam>::scalar_type;
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_global,
+-                                                                seqan3::aminoacid_scoring_scheme<int64_t>>;
++                                                                seqan3::align_cfg::method_global>;
+ 
+     int64_t too_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
+     int64_t too_small = static_cast<int64_t>(std::numeric_limits<scalar_t>::lowest()) - 1;
+@@ -98,8 +95,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
+ {
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_global,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_global>;
+ 
+     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+ 
+@@ -131,8 +127,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
+ {
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_global,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_global>;
+ 
+     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+ 
+@@ -161,8 +156,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
+     // In local alignment we always want to mismatch.
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_local,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_local>;
+ 
+     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+ 
+@@ -195,8 +189,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
+     // In local alignment we always want to mismatch.
+     using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
+                                                                 seqan3::aa27,
+-                                                                seqan3::align_cfg::method_local,
+-                                                                seqan3::aminoacid_scoring_scheme<>>;
++                                                                seqan3::align_cfg::method_local>;
+ 
+     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+ 
+-- 
+2.31.0
+

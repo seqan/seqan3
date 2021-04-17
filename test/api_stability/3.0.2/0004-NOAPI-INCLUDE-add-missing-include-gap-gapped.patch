@@ -1,0 +1,24 @@
+From 089bf1cbfc54a474565c878e2a6ee7bf3fcf65e4 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Wed, 17 Feb 2021 20:43:19 +0100
+Subject: [PATCH 04/22] [NOAPI] [INCLUDE] add missing include gap::gapped
+
+---
+ test/unit/alphabet/composite/alphabet_variant_test.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/unit/alphabet/composite/alphabet_variant_test.cpp b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+index b7f5f58cd..acbe102d7 100644
+--- a/test/unit/alphabet/composite/alphabet_variant_test.cpp
++++ b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+@@ -12,6 +12,7 @@
+ #include <seqan3/alphabet/adaptation/char.hpp>
+ #include <seqan3/alphabet/composite/alphabet_variant.hpp>
+ #include <seqan3/alphabet/gap/gap.hpp>
++#include <seqan3/alphabet/gap/gapped.hpp>
+ #include <seqan3/alphabet/nucleotide/all.hpp>
+ #include <seqan3/core/detail/pack_algorithm.hpp>
+ 
+-- 
+2.31.0
+

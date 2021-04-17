@@ -1,0 +1,41 @@
+From fae1f68cbe5320f5dc337ace99ee6cde031ce095 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Tue, 22 Dec 2020 14:24:55 +0100
+Subject: [PATCH 05/22] [NOAPI] [DETAIL] [MISC] rename
+ detail::char_predicate_{combiner,disjunction}
+
+---
+ test/unit/core/char_operations/char_predicate_test.cpp | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/test/unit/core/char_operations/char_predicate_test.cpp b/test/unit/core/char_operations/char_predicate_test.cpp
+index e4a1fdcae..af9c846e3 100644
+--- a/test/unit/core/char_operations/char_predicate_test.cpp
++++ b/test/unit/core/char_operations/char_predicate_test.cpp
+@@ -70,9 +70,9 @@ TEST(char_predicate, concept)
+     EXPECT_FALSE(seqan3::detail::char_predicate<int>);
+ }
+ 
+-TEST(char_predicate, char_predicate_combiner)
++TEST(char_predicate, char_predicate_disjunction)
+ {
+-    using cond_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
++    using cond_t = seqan3::detail::char_predicate_disjunction<foo<'a'>, foo<'A'>, foo<'0'>>;
+     EXPECT_TRUE(cond_t{}('a'));
+     EXPECT_TRUE(cond_t{}('A'));
+     EXPECT_TRUE(cond_t{}('0'));
+@@ -89,9 +89,9 @@ TEST(char_predicate, char_predicate_combiner)
+     EXPECT_FALSE(p('1'));
+ }
+ 
+-TEST(char_predicate, char_predicate_combiner_msg)
++TEST(char_predicate, char_predicate_disjunction_msg)
+ {
+-    using or_t = seqan3::detail::char_predicate_combiner<foo<'a'>, foo<'A'>, foo<'0'>>;
++    using or_t = seqan3::detail::char_predicate_disjunction<foo<'a'>, foo<'A'>, foo<'0'>>;
+     EXPECT_EQ(or_t::msg,   "(foo_a || foo_A || foo_0)"s);
+ }
+ 
+-- 
+2.31.0
+

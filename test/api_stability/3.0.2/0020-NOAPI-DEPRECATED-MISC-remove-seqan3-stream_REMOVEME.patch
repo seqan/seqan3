@@ -1,0 +1,43 @@
+From 082b1e365c8e4a81be6c912681fc2f9c7707f66d Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Sat, 20 Feb 2021 17:44:37 +0100
+Subject: [PATCH 20/22] [NOAPI] [DEPRECATED] [MISC] remove
+ seqan3::stream_REMOVEME
+
+---
+ test/unit/io/concept_test.cpp | 19 -------------------
+ 1 file changed, 19 deletions(-)
+
+diff --git a/test/unit/io/concept_test.cpp b/test/unit/io/concept_test.cpp
+index 3220ef265..95707cb4f 100644
+--- a/test/unit/io/concept_test.cpp
++++ b/test/unit/io/concept_test.cpp
+@@ -16,25 +16,6 @@
+ 
+ #include <seqan3/io/stream/concept.hpp>
+ 
+-TEST(io, stream_REMOVEME)
+-{
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::istream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ostream, char>));
+-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::iostream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ifstream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ofstream, char>));
+-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::fstream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::istringstream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::ostringstream, char>));
+-    EXPECT_TRUE((seqan3::stream_REMOVEME<std::stringstream, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::vector<char>, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
+-    EXPECT_FALSE((seqan3::stream_REMOVEME<std::string, char>));
+-}
+-
+ TEST(io, input_stream_over)
+ {
+     EXPECT_TRUE((seqan3::input_stream_over<std::istream, char>));
+-- 
+2.31.0
+

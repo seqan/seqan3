@@ -1,0 +1,74 @@
+From 70e77c3d54a62393cdfb9ad0fa33bda6337f6503 Mon Sep 17 00:00:00 2001
+From: rrahn <rene.rahn@fu-berlin.de>
+Date: Sat, 10 Oct 2020 17:01:38 +0200
+Subject: [PATCH 10/22] [API] [WRONG-USAGE] [MISC] Simplify the pipe operator
+ for the configurations.
+
+This merges the pipe-operator overloads into a single free function, which is implemented by means of the new append function.
+Futher, the pipe-operator uses concepts for to check for eligible types and does not cast to the base class of the configuration elements anymore.
+
+The pipeability test in the pipeable_config_test_template had to be removed since it was testing an invalid scenario.
+Later a better test template infrastructure will be introduced.
+---
+ .../pipeable_config_element_test_template.hpp | 43 +------------------
+ 1 file changed, 1 insertion(+), 42 deletions(-)
+
+diff --git a/test/unit/core/algorithm/pipeable_config_element_test_template.hpp b/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
+index 695d118a7..0ac9010af 100644
+--- a/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
++++ b/test/unit/core/algorithm/pipeable_config_element_test_template.hpp
+@@ -53,50 +53,9 @@ TYPED_TEST_P(pipeable_config_element_test, exists)
+     EXPECT_TRUE(configuration_t::template exists<TypeParam>());
+ }
+ 
+-// make mock config element foo always pipeable with any other config element
+-namespace seqan3::detail
+-{
+-
+-template <typename t>
+-struct is_configuration_valid<t, foo> : public std::true_type
+-{};
+-
+-template <typename t>
+-struct is_configuration_valid<foo, t> : public std::true_type
+-{};
+-
+-}
+-
+-TYPED_TEST_P(pipeable_config_element_test, pipeability)
+-{
+-    TypeParam elem{};
+-    foo dummy{};
+-
+-    {   // lvalue | lvalue
+-        auto cfg = dummy | elem;
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foo, TypeParam>>));
+-    }
+-
+-    {   // rvalue | lvalue
+-        auto cfg = TypeParam{} | dummy;
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<TypeParam, foo>>));
+-    }
+-
+-    {   // lvalue | rvalue
+-        auto cfg = dummy | TypeParam{};
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foo, TypeParam>>));
+-    }
+-
+-    {   // rvalue | rvalue
+-        auto cfg = foo{} | TypeParam{};
+-        EXPECT_TRUE((std::is_same_v<decltype(cfg), seqan3::configuration<foo, TypeParam>>));
+-    }
+-}
+-
+ REGISTER_TYPED_TEST_SUITE_P(pipeable_config_element_test,
+                             concept_check,
+                             standard_construction,
+                             configuration_construction,
+                             configuration_assignment,
+-                            exists,
+-                            pipeability);
++                            exists);
+-- 
+2.31.0
+

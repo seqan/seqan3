@@ -112,6 +112,13 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
+Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if 
+applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code. 
+You can either directly check the reported code or verify with our documentation how the new API should be used.
+
+For a complete list of behavioural changes in our public and internal API, you can consult our API stability
+regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stablility/3.0.2/.
+
 #### Alphabet
 
 * Removed seqan3::char_is_valid_for requirement from seqan3::writable_alphabet and
