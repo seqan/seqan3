@@ -652,7 +652,7 @@ public:
      : view_translate{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
 
-    //!\brief \deprecated Please use seqan3::detail::view_translate::view_translate(rng_t &&, translation_frames const)
+    //!\deprecated Please use seqan3::detail::view_translate::view_translate(rng_t &&, translation_frames const)
     #ifdef SEQAN3_DEPRECATED_310
     template <typename rng_t>
     //!\cond
