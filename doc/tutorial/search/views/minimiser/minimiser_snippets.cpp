@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/kmer_hash.hpp>
+#include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/search/views/minimiser.hpp>
 
 using seqan3::operator""_dna4;

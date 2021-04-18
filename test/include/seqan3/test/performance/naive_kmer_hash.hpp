@@ -94,7 +94,7 @@ namespace seqan3::views
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \snippet test/snippet/range/views/kmer_hash.cpp usage
+ * \snippet test/snippet/search/views/kmer_hash.cpp usage
  * \hideinitializer
  */
 inline auto constexpr naive_kmer_hash = detail::naive_kmer_hash_fn{};

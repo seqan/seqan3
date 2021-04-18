@@ -1,0 +1,1 @@
+seqan3_benchmark(view_kmer_hash_benchmark.cpp)
