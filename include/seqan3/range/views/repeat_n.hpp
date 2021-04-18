@@ -12,9 +12,10 @@
 
 #pragma once
 
-#include <seqan3/range/views/repeat.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/std/concepts>
+
+#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/utility/views/repeat.hpp>
 
 namespace seqan3::detail
 {
