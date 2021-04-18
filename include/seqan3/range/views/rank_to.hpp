@@ -63,6 +63,9 @@ namespace seqan3::views
  * ###Example
  * \include test/snippet/range/views/rank_to.cpp
  * \hideinitializer
+ *
+ * \stableapi{Since version 3.1.}
+ * TODO move to seqan3/include/alphabet/views/rank_to.hpp
  */
 template <typename alphabet_type>
 //!\cond
