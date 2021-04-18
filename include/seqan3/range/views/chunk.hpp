@@ -20,7 +20,11 @@
 namespace seqan3::views
 {
 
-//TODO reimplement me
-using ::ranges::views::chunk;
+/*!\brief A chunk view
+ * \ingroup views
+ * \details
+ * \noapi{This is currently range-v3's chunk implementation.}
+ */
+inline constexpr auto chunk = ::ranges::views::chunk;
 
 } // namespace seqan3::views
