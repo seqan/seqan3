@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Tobias Loka <LokaT AT rki.de>
- * \brief Provides seqan3::views::to_lower.
+ * \brief [DEPRECATED] Provides seqan3::views::to_lower.
  */
 
 #pragma once
@@ -63,13 +63,17 @@ namespace seqan3::views
  * ### Example
  * \include test/snippet/range/views/to_lower.cpp
  * \hideinitializer
+ *
+ * \deprecated Use std::views::transform([](auto && chr){return std::tolower(chr)});
  */
-inline auto const to_lower = deep{std::views::transform([] (auto const in) noexcept
+#ifdef SEQAN3_DEPRECATED_310
+SEQAN3_DEPRECATED_310 inline auto const to_lower = deep{std::views::transform([] (auto const in) noexcept
 {
     static_assert(builtin_character<std::remove_cvref_t<decltype(in)>>,
                   "The value type of seqan3::views::to_lower must model seqan3::builtin_character.");
     return seqan3::to_lower(in);
 })};
+#endif // SEQAN3_DEPRECATED_310
 
 //!\}
 
