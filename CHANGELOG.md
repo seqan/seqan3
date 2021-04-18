@@ -201,6 +201,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   [Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html#cookbook_convert_alphabet_range).
 * Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2540))
+* We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
+  `std::views::transform([](auto && chr){return std::toupper(chr)})`.
+  ([\#2540](https://github.com/seqan/seqan3/pull/2538))
 
 #### Search
 

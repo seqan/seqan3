@@ -15,6 +15,9 @@
 #include <seqan3/range/views/to_upper.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 using seqan3::operator""_dna5;
 
@@ -95,3 +98,5 @@ TEST(view_to_upper, concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(upper_view), char>));
     EXPECT_FALSE(std::ranges::contiguous_range<decltype(upper_view)>);
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
