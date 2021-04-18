@@ -14,13 +14,13 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
+#include <seqan3/io/views/async_input_buffer.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/async_input_buffer.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using seqan3::operator""_dna4;
 

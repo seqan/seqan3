@@ -2,7 +2,6 @@ add_subdirectories()
 
 seqan3_test(adaptor_base_test.cpp)
 seqan3_test(as_const_test.cpp)
-seqan3_test(async_input_buffer_test.cpp)
 seqan3_test(char_to_test.cpp)
 seqan3_test(complement_test.cpp)
 seqan3_test(convert_test.cpp)
