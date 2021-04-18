@@ -31,12 +31,12 @@
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
-#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
 
 namespace seqan3
 {

@@ -13,10 +13,10 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/complement.hpp>
-#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
 
 #include "../../range/iterator_test_template.hpp"
 
