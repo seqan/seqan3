@@ -24,7 +24,7 @@ namespace seqan3::detail
 /*!\brief The underlying type of seqan3::views::trim_quality.
  * \ingroup views
  *
- * Under the hood this delegates to views::take_until.
+ * Under the hood, this delegates to std::views::take_while.
  */
 struct trim_fn
 {
@@ -93,7 +93,8 @@ namespace seqan3::views
  *
  * \header_file{seqan3/range/views/trim_quality.hpp}
  *
- * This view can be used to do easy quality based trimming of sequences.
+ * This view can be used to trim sequences based on quality. Only bases at the end of the sequence not meeting the
+ * specified threshold are discarded.
  *
  * ### View properties
  *
@@ -125,8 +126,10 @@ namespace seqan3::views
  * Or operating on a range of seqan3::dna5q:
  * \include test/snippet/range/views/trim_quality_dna5q.cpp
  * \hideinitializer
+ *
+ * \experimentalapi{Experimental since version 3.1.}
+ * TODO move to include/alphabet/views/trim_quality.hpp
  */
-
 inline constexpr auto trim_quality = deep{seqan3::detail::trim_fn{}};
 
 //!\}
