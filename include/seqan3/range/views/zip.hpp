@@ -20,7 +20,11 @@
 namespace seqan3::views
 {
 
-//TODO reimplement me
-using ::ranges::views::zip;
+/*!\brief A zip view
+ * \ingroup views
+ * \details
+ * \noapi{This is currently range-v3's zip implementation.}
+ */
+inline constexpr auto zip = ::ranges::views::zip;
 
 } // namespace seqan3::views
