@@ -22,7 +22,9 @@ namespace std
 /*!\brief Struct for hashing a range of characters.
  * \ingroup alphabet
  * \tparam urng_t The type of the range; Must model std::ranges::input_range and the reference type of the range of the
-                  range must model seqan3::semialphabet.
+ *                range must model seqan3::semialphabet.
+ * \details
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <ranges::input_range urng_t>
 //!\cond
@@ -33,8 +35,10 @@ struct hash<urng_t>
     /*!\brief Compute the hash for a range of characters.
      * \tparam urng2_t  The same as `urng_t` (+- cvref); used to get forwarding reference in the interface.
      * \param[in] range The input range to process. Must model std::ranges::input_range and the reference type of the
-                        range of the range must model seqan3::semialphabet.
+     *                  range of the range must model seqan3::semialphabet.
      * \returns size_t.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <ranges::input_range urng2_t>
     //!\cond
