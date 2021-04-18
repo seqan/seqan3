@@ -29,6 +29,10 @@
 //  test templates
 // ============================================================================
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 template <typename adaptor_t>
 void do_test(adaptor_t const & adaptor, std::string const & vec)
 {
@@ -186,3 +190,6 @@ TEST(view_drop, type_erasure)
         EXPECT_RANGE_EQ(v2, (std::vector{4, 5, 6}));
     }
 }
+
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310

@@ -60,33 +60,36 @@ void sequential_read(benchmark::State & state)
     [[maybe_unused]] volatile uint8_t dummy2 = dummy;
 }
 
+//!brief Instance for usage until removed.
+inline constexpr auto seqan3_views_drop = seqan3::detail::drop_fn{};
+
 BENCHMARK_TEMPLATE(sequential_read, std::string,         void,                              void);
 BENCHMARK_TEMPLATE(sequential_read, std::string,         decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(sequential_read, std::string,         decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(sequential_read, std::string,         decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void,                              void);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>,  void,                              void);
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>,  decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>,  decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>,  decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>,   void,                              void);
-BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>,   decltype(seqan3::views::drop),      decltype(seqan3::views::take));
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>,   decltype(std::views::drop), decltype(std::views::take));
+BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>,   decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>,   void,                              void);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>,   decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>,   decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>,   decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void,                              void,                              true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::drop), decltype(std::views::take), true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3::views::drop),      decltype(seqan3::views::take),      true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3_views_drop),      decltype(seqan3::views::take),      true);
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void,                              void,                              true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::views::drop), decltype(std::views::take), true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3::views::drop),      decltype(seqan3::views::take),      true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3_views_drop),      decltype(seqan3::views::take),      true);
 
 // ============================================================================
 //  random access
@@ -137,15 +140,15 @@ void random_access(benchmark::State & state)
 
 BENCHMARK_TEMPLATE(random_access, std::string,          void,                              void);
 BENCHMARK_TEMPLATE(random_access, std::string,          decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(random_access, std::string,          decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(random_access, std::string,          decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, void,                              void);
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>,  void,                              void);
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>,  decltype(std::views::drop), decltype(std::views::take));
-BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>,  decltype(seqan3::views::drop),      decltype(seqan3::views::take));
+BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>,  decltype(seqan3_views_drop),      decltype(seqan3::views::take));
 
 // ============================================================================
 //  run
