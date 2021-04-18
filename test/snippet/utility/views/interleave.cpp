@@ -1,7 +1,7 @@
 #include <string>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/interleave.hpp>
+#include <seqan3/utility/views/interleave.hpp>
 
 int main()
 {

@@ -16,9 +16,9 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
+#include <seqan3/utility/views/interleave.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 
 namespace seqan3
