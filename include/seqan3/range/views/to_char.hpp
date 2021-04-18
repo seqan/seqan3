@@ -62,6 +62,9 @@ namespace seqan3::views
  * ### Example
  * \include test/snippet/range/views/range_view_to_char.cpp
  * \hideinitializer
+ *
+ * \stableapi{Since version 3.1.}
+ * TODO move to seqan3/include/alphabet/views/to_char.hpp
  */
 inline auto const to_char = deep{std::views::transform([] (auto const in) noexcept
 {
