@@ -10,13 +10,13 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/bitcompressed_vector.hpp>
-#include <seqan3/range/views/minimiser_hash.hpp>
 #include <seqan3/range/views/take_until.hpp>
+#include <seqan3/search/views/minimiser_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include <gtest/gtest.h>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
