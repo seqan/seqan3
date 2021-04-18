@@ -16,11 +16,13 @@
 
 #include <seqan3/utility/type_traits/function_traits.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
+
 namespace seqan3::detail
 {
 
 //!\brief Function object for seqan3::views::as_const.
-struct as_const_fn
+struct as_const_fn_deprecated
 {
     //!\brief Operator that returns rvalues as rvalues.
     template <typename t>
@@ -84,8 +86,12 @@ namespace seqan3::views
  *
  * \include test/snippet/range/views/as_const.cpp
  * \hideinitializer
+ *
+ * \deprecated No alternative.
  */
-inline auto const as_const = std::views::transform(seqan3::detail::as_const_fn{});
+SEQAN3_DEPRECATED_310 inline constexpr auto as_const = std::views::transform(seqan3::detail::as_const_fn_deprecated{});
 //!\}
 
 } // namespace seqan3::views
+
+#endif // SEQAN3_DEPRECATED_310
