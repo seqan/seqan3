@@ -336,7 +336,7 @@ that have a length of at least 5.
 
 Hints:
 * You can use `std::ranges::size` to retrieve the size of a range.
-* You need the following includes for std::views::filter and std::take
+* You need the following includes for std::views::filter and std::views::take
 \snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges
 
 
