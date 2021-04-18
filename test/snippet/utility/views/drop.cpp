@@ -1,3 +1,5 @@
+#include <seqan3/core/platform.hpp>
+
 #ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
