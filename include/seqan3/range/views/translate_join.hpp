@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Provides seqan3::views::translate_join.
+ * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  */
 
 #pragma once
@@ -347,30 +347,33 @@ namespace seqan3::views
  * for translation (index starting at zero).
  *
  * In short, this views behaves the same as:
+ *
+ * TODO: make this a snippet
  * ```cpp
  * std::vector<std::vector<dna5>> vec {...};
  * auto v = vec | views::translate | views::join;
- * Except that the performance is better and the returned range still models std::ranges::random_access_range and std::ranges::sized_range.
  * ```
+ *
+ * Except that the performance is better and the returned range still models std::ranges::random_access_range and std::ranges::sized_range.
  *
  * ### View properties
  *
- * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
- * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
- * | std::ranges::input_range         | *required*                            | *preserved*                                        |
- * | std::ranges::forward_range       | *required*                            | *preserved*                                        |
- * | std::ranges::bidirectional_range | *required*                            | *preserved*                                        |
- * | std::ranges::random_access_range | *required*                            | *preserved*                                        |
- * | std::ranges::contiguous_range    |                                       | *lost*                                             |
- * |                                  |                                       |                                                    |
- * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
- * | std::ranges::view                |                                       | *guaranteed*                                       |
- * | std::ranges::sized_range         | *required*                            | *preserved*                                        |
- * | std::ranges::common_range        |                                       | *guaranteed*                                       |
- * | std::ranges::output_range        |                                       | *lost*                                             |
- * | seqan3::const_iterable_range     | *required*                            | *preserved*                                        |
- * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet            | std::ranges::view && std::ranges::random_access_range && std::ranges::sized_range |
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                                                    |
+ * |----------------------------------|:-------------------------------------:|:---------------------------------------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                                                       |
+ * | std::ranges::forward_range       | *required*                            | *preserved*                                                                       |
+ * | std::ranges::bidirectional_range | *required*                            | *preserved*                                                                       |
+ * | std::ranges::random_access_range | *required*                            | *preserved*                                                                       |
+ * | std::ranges::contiguous_range    |                                       | *lost*                                                                            |
+ * |                                  |                                       |                                                                                   |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                                                      |
+ * | std::ranges::view                |                                       | *guaranteed*                                                                      |
+ * | std::ranges::sized_range         | *required*                            | *preserved*                                                                       |
+ * | std::ranges::common_range        |                                       | *guaranteed*                                                                      |
+ * | std::ranges::output_range        |                                       | *lost*                                                                            |
+ * | seqan3::const_iterable_range     | *required*                            | *preserved*                                                                       |
+ * |                                  |                                       |                                                                                   |
+ * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet           | std::ranges::view && std::ranges::random_access_range && std::ranges::sized_range |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_t` is the type of the range returned by this view.
@@ -381,6 +384,8 @@ namespace seqan3::views
  * Operating on a range of seqan3::dna5:
  * \snippet test/snippet/range/views/translate_join.cpp example
  * \hideinitializer
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto translate_join = detail::translate_join_fn{};
 //!\}
