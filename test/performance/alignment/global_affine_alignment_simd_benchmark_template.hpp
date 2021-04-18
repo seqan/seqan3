@@ -15,10 +15,10 @@
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2

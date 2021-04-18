@@ -20,11 +20,11 @@
 
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/utility/views/join_with.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3::detail
 {

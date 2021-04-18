@@ -39,12 +39,12 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail

@@ -41,12 +41,12 @@
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3
 {

@@ -2,7 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 int main()
 {

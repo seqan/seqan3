@@ -10,9 +10,9 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 #include "bi_fm_index_cursor_collection_test_template.hpp"
 

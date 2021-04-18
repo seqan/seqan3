@@ -7,9 +7,9 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 inline benchmark::Counter hashes_per_second(size_t const count)

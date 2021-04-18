@@ -27,7 +27,6 @@
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/elements.hpp>
@@ -35,6 +34,7 @@
 #include <seqan3/utility/views/interleave.hpp>
 #include <seqan3/utility/views/pairwise_combine.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 /*!\defgroup views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.

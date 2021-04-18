@@ -19,7 +19,7 @@
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 #if SEQAN3_HAS_SEQAN2
     #include <seqan/rna_io.h>
