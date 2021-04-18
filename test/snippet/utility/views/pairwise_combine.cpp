@@ -5,9 +5,17 @@
 
 int main()
 {
-    std::vector vec{'a', 'b', 'c', 'd'};
+    std::vector vec{'a', 'b', 'c', 'a'};
     for (auto res : vec | seqan3::views::pairwise_combine)
     {
-        seqan3::debug_stream << res << "\n";
+        seqan3::debug_stream << res << '\n';
     }
+
+    // Possible Output:
+    // (a,b)
+    // (a,c)
+    // (a,a)
+    // (b,c)
+    // (b,a)
+    // (c,a)
 }
