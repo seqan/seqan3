@@ -5,7 +5,7 @@
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/pairwise_combine.hpp>
+#include <seqan3/utility/views/pairwise_combine.hpp>
 
 int main()
 {

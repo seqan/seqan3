@@ -17,9 +17,9 @@
 
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/pairwise_combine.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/pretty_printing.hpp>
+#include <seqan3/utility/views/pairwise_combine.hpp>
 
 template <typename t>
 class pairwise_combine_base_test : public ::testing::Test
