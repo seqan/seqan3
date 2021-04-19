@@ -59,8 +59,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   to add convenient functions that compute information based on the record itself and to provide better documentation.
   ([\#2340](https://github.com/seqan/seqan3/pull/2340), [\#2380](https://github.com/seqan/seqan3/pull/2380),
   [\#2389](https://github.com/seqan/seqan3/pull/2389))
-* Deprecated `seqan3::field::seq_qual`. Use `seqan3::fiel::seq` and `seqan3::field::qual` instead.
-  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out 
+* Deprecated `seqan3::field::seq_qual`. Use `seqan3::field::seq` and `seqan3::field::qual` instead.
+  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out
   [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html)
   for usage.
 
@@ -112,12 +112,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
-Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if 
-applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code. 
+Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if
+applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code.
 You can either directly check the reported code or verify with our documentation how the new API should be used.
 
 For a complete list of behavioural changes in our public and internal API, you can consult our API stability
 regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stablility/3.0.2/.
+
+* Renamed `seqan3::sam_dna16` to `seqan3::dna16sam` ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
 
 #### Alphabet
 
