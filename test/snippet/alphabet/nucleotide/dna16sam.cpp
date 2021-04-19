@@ -1,4 +1,4 @@
-#include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
+#include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()

@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
+#include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 

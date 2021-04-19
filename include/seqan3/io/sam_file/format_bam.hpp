@@ -20,7 +20,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/detail/convert.hpp>
-#include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
+#include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_optional.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
