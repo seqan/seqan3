@@ -14,9 +14,9 @@
 
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/utility/views/convert.hpp>
 
 using seqan3::operator""_dna5;
 

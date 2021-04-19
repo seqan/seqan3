@@ -1,7 +1,6 @@
 #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/convert.hpp>
 
 using seqan3::operator""_aa10murphy;
 using seqan3::operator""_aa27;
@@ -14,14 +13,13 @@ int main()
     my_letter.assign_char('C');
     my_letter.assign_char('?'); // all unknown characters are converted to 'S'_aa10murphy implicitly
 
-    if (my_letter.to_char() == 'S')
-        seqan3::debug_stream << "yeah\n"; // "yeah";
+    seqan3::debug_stream << my_letter.to_char() << '\n'; // S
 
     // Convert aa27 alphabet to aa10_murphy
     seqan3::aa27_vector v1{"AVRSTXOUB"_aa27};
-    auto v2 = v1 | seqan3::views::convert<seqan3::aa10murphy>; // AIKSSSKCB
+    auto v2 = v1 | std::views::transform([] (auto const & in) { return static_cast<seqan3::aa10murphy>(in); });
 
-    seqan3::debug_stream << v2 << "\n";
+    seqan3::debug_stream << v2 << '\n'; // AIKSSSKCB
 
     return 0;
 }

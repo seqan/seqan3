@@ -9,7 +9,6 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/to.hpp>
 
 using seqan3::operator""_aa10murphy;
@@ -33,24 +32,32 @@ void algorithm(std::vector<seqan3::semialphabet_any<10> > & r, bool is_murphy)
 
     // Here we reify the type for printing
     if (is_murphy)
-        print(r | seqan3::views::convert<seqan3::aa10murphy>);
+        print(r | std::views::transform([] (auto const & in) { return static_cast<seqan3::aa10murphy>(in); }));
     else
-        print(r | seqan3::views::convert<seqan3::aa10li>);
+        print(r | std::views::transform([] (auto const & in) { return static_cast<seqan3::aa10li>(in); }));
 }
 
 // Two instances of algo_pre exist
 // They type erase the different arguments to the same type and encode the type information as a run-time parameter
 void algo_pre(seqan3::aa10li_vector const & v)
 {
-    std::vector<seqan3::semialphabet_any<10> > tmp = v | seqan3::views::convert<seqan3::semialphabet_any<10>>
-                                                       | seqan3::views::to<std::vector>;
+    std::vector<seqan3::semialphabet_any<10> > tmp = v
+                                                   | std::views::transform([] (auto const & in)
+                                                     {
+                                                         return static_cast<seqan3::semialphabet_any<10>>(in);
+                                                     })
+                                                   | seqan3::views::to<std::vector>;
     algorithm(tmp, false);
 }
 
 void algo_pre(seqan3::aa10murphy_vector const & v)
 {
-    std::vector<seqan3::semialphabet_any<10> > tmp = v | seqan3::views::convert<seqan3::semialphabet_any<10>>
-                                                       | seqan3::views::to<std::vector>;
+    std::vector<seqan3::semialphabet_any<10> > tmp = v
+                                                   | std::views::transform([] (auto const & in)
+                                                     {
+                                                         return static_cast<seqan3::semialphabet_any<10>>(in);
+                                                     })
+                                                   | seqan3::views::to<std::vector>;
     algorithm(tmp, true);
 }
 

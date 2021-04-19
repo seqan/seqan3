@@ -193,6 +193,12 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
     * `seqan3::get<seqan3::field::cigar>(record)` => `record.cigar_sequence()`
     * `seqan3::get<seqan3::field::tags>(record)` => `record.tags()`
 
+#### Range
+
+* We made `seqan3::views::convert` NOAPI and moved it to `seqan3/utility/views/convert.hpp`. You can still use
+  `seqan3::views::convert` in the meantime, but we encourage using `std::views::transform` instead as shown in our
+  [Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html#cookbook_convert_alphabet_range).
+
 #### Search
 
 * We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this because we currently have only one

@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 #include <sstream>
 #include <string>
 
@@ -14,9 +16,7 @@
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fastq.hpp>
-#include <seqan3/range/views/convert.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/views/convert.hpp>
 
 #include "sequence_file_format_test_template.hpp"
 
