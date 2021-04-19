@@ -45,18 +45,22 @@ struct slice_fn
      * \returns     An instance of seqan3::detail::view_slice.
      */
     template <std::ranges::viewable_range urng_t>
-    constexpr auto operator()(urng_t && urange, ptrdiff_t begin_pos, ptrdiff_t end_pos) const
+    constexpr auto operator()(urng_t && urange,
+                              std::ranges::range_difference_t<urng_t> begin_pos,
+                              std::ranges::range_difference_t<urng_t> end_pos) const
     {
         if constexpr (std::ranges::sized_range<urng_t>)
         {
-            begin_pos = std::min(begin_pos, static_cast<ptrdiff_t>(std::ranges::size(urange)));
-            end_pos = std::min(end_pos, static_cast<ptrdiff_t>(std::ranges::size(urange)));
+            using position_t = std::ranges::range_difference_t<urng_t>;
+            begin_pos = std::min(begin_pos, static_cast<position_t>(std::ranges::size(urange)));
+            end_pos = std::min(end_pos, static_cast<position_t>(std::ranges::size(urange)));
         }
 
         if (end_pos < begin_pos)
             throw std::invalid_argument{"end_pos argument to seqan3::views::slice must be >= the begin_pos argument."};
 
-        return std::forward<urng_t>(urange) | views::drop(begin_pos) | views::take(end_pos - begin_pos);
+        // urange | drop | take
+        return views::take(views::drop(std::forward<urng_t>(urange), begin_pos), end_pos - begin_pos);
     }
 
     // does not require special overloads, because views::drop and views::take handle the flattening.
