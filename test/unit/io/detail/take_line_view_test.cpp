@@ -9,7 +9,7 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/range/views/take_line.hpp>
+#include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
@@ -84,12 +84,12 @@ void do_concepts(adaptor_t const & adaptor)
 
 TEST(view_take_line, unix_eol)
 {
-    do_test(seqan3::views::take_line, "foo\nbar");
+    do_test(seqan3::detail::take_line, "foo\nbar");
 }
 
 TEST(view_take_line, windows_eol)
 {
-    do_test(seqan3::views::take_line, "foo\r\nbar");
+    do_test(seqan3::detail::take_line, "foo\r\nbar");
 }
 
 TEST(view_take_line, no_eol)
@@ -97,7 +97,7 @@ TEST(view_take_line, no_eol)
     using namespace std::literals;
 
     std::string vec{"foo"};
-    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::take_line);
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::detail::take_line);
 }
 
 TEST(view_take_line, eol_at_first_position)
@@ -109,13 +109,13 @@ TEST(view_take_line, eol_at_first_position)
     std::istringstream vec{"\n\nfoo"};
     auto stream_view = std::ranges::subrange<decltype(sbt{vec}), decltype(sbt{})> {sbt{vec}, sbt{}};
 
-    EXPECT_RANGE_EQ(""sv, stream_view | seqan3::views::take_line);
-    EXPECT_RANGE_EQ("foo"sv, stream_view | seqan3::views::take_line);
+    EXPECT_RANGE_EQ(""sv, stream_view | seqan3::detail::take_line);
+    EXPECT_RANGE_EQ("foo"sv, stream_view | seqan3::detail::take_line);
 }
 
 TEST(view_take_line, concepts)
 {
-    do_concepts(seqan3::views::take_line);
+    do_concepts(seqan3::detail::take_line);
 }
 
 // ============================================================================
@@ -124,24 +124,24 @@ TEST(view_take_line, concepts)
 
 TEST(view_take_line_or_throw, unix_eol)
 {
-    do_test(seqan3::views::take_line_or_throw, "foo\nbar");
+    do_test(seqan3::detail::take_line_or_throw, "foo\nbar");
 }
 
 TEST(view_take_line_or_throw, windows_eol)
 {
-    do_test(seqan3::views::take_line_or_throw, "foo\r\nbar");
+    do_test(seqan3::detail::take_line_or_throw, "foo\r\nbar");
 }
 
 TEST(view_take_line_or_throw, no_eol)
 {
     std::string vec{"foo"};
-    EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::take_line_or_throw, [](auto &&){}),
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_line_or_throw, [](auto &&){}),
                  seqan3::unexpected_end_of_input);
 }
 
 TEST(view_take_line_or_throw, concepts)
 {
-    do_concepts(seqan3::views::take_line_or_throw);
+    do_concepts(seqan3::detail::take_line_or_throw);
 }
 
 // ============================================================================
@@ -153,7 +153,7 @@ TEST(view_take_line, reverse_bug)
     using namespace std::literals;
 
     std::string vec{"foo\nbar"};
-    auto v1 = vec | seqan3::views::take_line;
+    auto v1 = vec | seqan3::detail::take_line;
     EXPECT_RANGE_EQ("foo"sv, v1);
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);

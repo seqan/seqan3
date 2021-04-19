@@ -219,6 +219,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Deprecated `seqan3::views::move`, use the `std::ranges::move` algorithm, `std::[cpp20::]move_iterator` or an explicit
   for loop where you move the value.
   ([\#2563](https://github.com/seqan/seqan3/pull/2563))
+* We deprecated `seqan3::views::take_line` and it will be removed in 3.1.0
+  [\#2525](https://github.com/seqan/seqan3/pull/2525).
 * We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2538))

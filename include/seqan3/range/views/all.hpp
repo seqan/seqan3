@@ -26,7 +26,6 @@
 #include <seqan3/range/views/move.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/views/convert.hpp>

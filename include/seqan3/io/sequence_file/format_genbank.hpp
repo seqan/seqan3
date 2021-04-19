@@ -29,13 +29,13 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take.hpp>
-#include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
@@ -121,7 +121,7 @@ protected:
 
                 while (!is_char<'O'>(*std::ranges::begin(stream_view)))
                 {
-                        std::ranges::copy(stream_view | views::take_line_or_throw
+                        std::ranges::copy(stream_view | detail::take_line_or_throw
                                                       | views::char_to<std::ranges::range_value_t<id_type>>,
                                                         std::cpp20::back_inserter(id));
                         id.push_back('\n');
@@ -143,16 +143,16 @@ protected:
                 else
                     read_id_until(is_cntrl);
 
-                detail::consume(stream_view | views::take_line_or_throw);
+                detail::consume(stream_view | detail::take_line_or_throw);
             }
         }
 
         // Jump to sequence
         while (!(is_char<'O'>(*std::ranges::begin(stream_view)) || options.embl_genbank_complete_header))
-            detail::consume(stream_view | views::take_line_or_throw);
+            detail::consume(stream_view | detail::take_line_or_throw);
 
         // Sequence
-        detail::consume(stream_view | views::take_line_or_throw); // consume "ORIGIN"
+        detail::consume(stream_view | detail::take_line_or_throw); // consume "ORIGIN"
         auto constexpr is_end = is_char<'/'> ;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
