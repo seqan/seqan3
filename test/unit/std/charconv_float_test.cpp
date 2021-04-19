@@ -7,11 +7,16 @@
 
 #include <gtest/gtest.h>
 
+#if __has_include(<charconv>)
+// make sure that including the std header does not produce any errors
+// see https://github.com/seqan/seqan3/issues/2352
+#include <charconv>
+#endif // __has_include(<charconv>)
+#include <seqan3/std/charconv>
+#include <cmath>
+#include <seqan3/std/concepts>
 #include <iostream>
 #include <limits>
-
-#include <seqan3/std/charconv>
-#include <seqan3/std/concepts>
 
 // =============================================================================
 // std::from_chars for float, double and long double
@@ -273,12 +278,17 @@ TYPED_TEST(from_char_real_test, non_valid_strings)
 
 TYPED_TEST(from_char_real_test, to_chars)
 {
-    TypeParam val{120.3};
+    // We use a power of two (i.e. 2^(-2)) for the fractional part to have a stable floating point number across
+    // different floating point types (e.g. `float`, `double`, `long double`).
+    // Other values, lets say 120.3, could have different string representations like `120.3`, `120.30000...01`, or
+    // `120.2999...9716` depending on the actual implementation.
+    TypeParam val{120.25};
     std::array<char, 10> buffer{};
 
     auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+    size_t used_buffer_size = res.ptr - buffer.data();
 
-    EXPECT_EQ(res.ptr, &buffer[5]);
+    EXPECT_EQ(used_buffer_size, 6u);
     EXPECT_EQ(res.ec, std::errc{});
-    EXPECT_EQ((std::string_view{buffer.data(), 5}), std::string_view{"120.3"});
+    EXPECT_EQ((std::string_view{buffer.data(), used_buffer_size}), std::string_view{"120.25"});
 }
