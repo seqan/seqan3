@@ -14,8 +14,8 @@
 
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/core/range/type_traits.hpp>

@@ -19,8 +19,8 @@
 #include <seqan3/utility/views/join_with.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/sequence.h>
 #include <seqan/seq_io.h>
+#include <seqan/sequence.h>
 #include <seqan/translation.h>
 #endif
 
