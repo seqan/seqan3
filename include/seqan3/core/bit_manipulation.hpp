@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <cassert>
+
 #include <seqan3/utility/detail/bits_of.hpp>
 #include <seqan3/utility/detail/to_little_endian.hpp>
 
