@@ -169,6 +169,10 @@ For a full recipe on creating your own readmapper, see the very end of the tutor
 
 \include doc/howto/use_cereal/load.hpp
 
+# Converting a range of an alphabet {#cookbook_convert_alphabet_range}
+
+\include doc/cookbook/alphabet_conversion.cpp
+
 # A custom dna4 alphabet that converts all unknown characters to A {#cookbook_custom_dna4_alphabet}
 
 When assigning from `char` or converting from a larger nucleotide alphabet to a smaller one, *loss of information*
