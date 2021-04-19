@@ -14,101 +14,101 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-using seqan3::operator""_sam_dna16;
+using seqan3::operator""_dna16sam;
 
 // ------------------------------------------------------------------
-// sam_dna16 alphabet
+// dna16sam alphabet
 // ------------------------------------------------------------------
 
-INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet, seqan3::sam_dna16, );
-INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_test, seqan3::sam_dna16, );
-INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, alphabet_constexpr, seqan3::sam_dna16, );
-INSTANTIATE_TYPED_TEST_SUITE_P(sam_dna16, semi_alphabet_constexpr, seqan3::sam_dna16, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna16sam, alphabet, seqan3::dna16sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna16sam, semi_alphabet_test, seqan3::dna16sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna16sam, alphabet_constexpr, seqan3::dna16sam, );
+INSTANTIATE_TYPED_TEST_SUITE_P(dna16sam, semi_alphabet_constexpr, seqan3::dna16sam, );
 
-// nucleotide test: (because the complement is not bijective for sam_dna16 we need to test it manually)
-TEST(sam_dna16, nucleotide)
+// nucleotide test: (because the complement is not bijective for dna16sam we need to test it manually)
+TEST(dna16sam, nucleotide)
 {
-    EXPECT_TRUE(seqan3::nucleotide_alphabet<seqan3::sam_dna16>);
-    EXPECT_TRUE(seqan3::nucleotide_alphabet<seqan3::sam_dna16 &>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<seqan3::dna16sam>);
+    EXPECT_TRUE(seqan3::nucleotide_alphabet<seqan3::dna16sam &>);
 
-    EXPECT_EQ(seqan3::complement('='_sam_dna16), 'N'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('A'_sam_dna16), 'T'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('C'_sam_dna16), 'G'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('M'_sam_dna16), 'K'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('G'_sam_dna16), 'C'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('R'_sam_dna16), 'Y'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('S'_sam_dna16), 'S'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('V'_sam_dna16), 'B'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('T'_sam_dna16), 'A'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('W'_sam_dna16), 'W'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('Y'_sam_dna16), 'R'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('H'_sam_dna16), 'D'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('K'_sam_dna16), 'M'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('D'_sam_dna16), 'H'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('B'_sam_dna16), 'V'_sam_dna16);
-    EXPECT_EQ(seqan3::complement('N'_sam_dna16), 'N'_sam_dna16);
+    EXPECT_EQ(seqan3::complement('='_dna16sam), 'N'_dna16sam);
+    EXPECT_EQ(seqan3::complement('A'_dna16sam), 'T'_dna16sam);
+    EXPECT_EQ(seqan3::complement('C'_dna16sam), 'G'_dna16sam);
+    EXPECT_EQ(seqan3::complement('M'_dna16sam), 'K'_dna16sam);
+    EXPECT_EQ(seqan3::complement('G'_dna16sam), 'C'_dna16sam);
+    EXPECT_EQ(seqan3::complement('R'_dna16sam), 'Y'_dna16sam);
+    EXPECT_EQ(seqan3::complement('S'_dna16sam), 'S'_dna16sam);
+    EXPECT_EQ(seqan3::complement('V'_dna16sam), 'B'_dna16sam);
+    EXPECT_EQ(seqan3::complement('T'_dna16sam), 'A'_dna16sam);
+    EXPECT_EQ(seqan3::complement('W'_dna16sam), 'W'_dna16sam);
+    EXPECT_EQ(seqan3::complement('Y'_dna16sam), 'R'_dna16sam);
+    EXPECT_EQ(seqan3::complement('H'_dna16sam), 'D'_dna16sam);
+    EXPECT_EQ(seqan3::complement('K'_dna16sam), 'M'_dna16sam);
+    EXPECT_EQ(seqan3::complement('D'_dna16sam), 'H'_dna16sam);
+    EXPECT_EQ(seqan3::complement('B'_dna16sam), 'V'_dna16sam);
+    EXPECT_EQ(seqan3::complement('N'_dna16sam), 'N'_dna16sam);
 }
 
-TEST(sam_dna16, to_char_assign_char)
+TEST(dna16sam, to_char_assign_char)
 {
-    using rank_t = seqan3::alphabet_rank_t<seqan3::sam_dna16>;
-    for (rank_t rank = 0; rank < seqan3::alphabet_size<seqan3::sam_dna16>; ++rank)
+    using rank_t = seqan3::alphabet_rank_t<seqan3::dna16sam>;
+    for (rank_t rank = 0; rank < seqan3::alphabet_size<seqan3::dna16sam>; ++rank)
     {
-        char chr = seqan3::to_char(seqan3::assign_rank_to(rank, seqan3::sam_dna16{}));
-        EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char(chr)), chr);
+        char chr = seqan3::to_char(seqan3::assign_rank_to(rank, seqan3::dna16sam{}));
+        EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char(chr)), chr);
     }
 
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('a')), 'A');
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('c')), 'C');
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('g')), 'G');
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('t')), 'T');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('a')), 'A');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('c')), 'C');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('g')), 'G');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('t')), 'T');
 
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('U')), 'T');
-    EXPECT_EQ(seqan3::to_char(seqan3::sam_dna16{}.assign_char('!')), 'N');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('U')), 'T');
+    EXPECT_EQ(seqan3::to_char(seqan3::dna16sam{}.assign_char('!')), 'N');
 }
 
-TEST(sam_dna16, char_literal)
+TEST(dna16sam, char_literal)
 {
-    EXPECT_EQ(seqan3::to_char('A'_sam_dna16), 'A');
-    EXPECT_EQ(seqan3::to_char('C'_sam_dna16), 'C');
-    EXPECT_EQ(seqan3::to_char('G'_sam_dna16), 'G');
+    EXPECT_EQ(seqan3::to_char('A'_dna16sam), 'A');
+    EXPECT_EQ(seqan3::to_char('C'_dna16sam), 'C');
+    EXPECT_EQ(seqan3::to_char('G'_dna16sam), 'G');
 
-    EXPECT_EQ(seqan3::to_char('U'_sam_dna16), 'T');
-    EXPECT_EQ(seqan3::to_char('T'_sam_dna16), 'T');
+    EXPECT_EQ(seqan3::to_char('U'_dna16sam), 'T');
+    EXPECT_EQ(seqan3::to_char('T'_dna16sam), 'T');
 
-    EXPECT_EQ(seqan3::to_char('R'_sam_dna16), 'R');
-    EXPECT_EQ(seqan3::to_char('Y'_sam_dna16), 'Y');
-    EXPECT_EQ(seqan3::to_char('S'_sam_dna16), 'S');
-    EXPECT_EQ(seqan3::to_char('W'_sam_dna16), 'W');
-    EXPECT_EQ(seqan3::to_char('K'_sam_dna16), 'K');
-    EXPECT_EQ(seqan3::to_char('M'_sam_dna16), 'M');
-    EXPECT_EQ(seqan3::to_char('B'_sam_dna16), 'B');
-    EXPECT_EQ(seqan3::to_char('D'_sam_dna16), 'D');
-    EXPECT_EQ(seqan3::to_char('H'_sam_dna16), 'H');
-    EXPECT_EQ(seqan3::to_char('V'_sam_dna16), 'V');
+    EXPECT_EQ(seqan3::to_char('R'_dna16sam), 'R');
+    EXPECT_EQ(seqan3::to_char('Y'_dna16sam), 'Y');
+    EXPECT_EQ(seqan3::to_char('S'_dna16sam), 'S');
+    EXPECT_EQ(seqan3::to_char('W'_dna16sam), 'W');
+    EXPECT_EQ(seqan3::to_char('K'_dna16sam), 'K');
+    EXPECT_EQ(seqan3::to_char('M'_dna16sam), 'M');
+    EXPECT_EQ(seqan3::to_char('B'_dna16sam), 'B');
+    EXPECT_EQ(seqan3::to_char('D'_dna16sam), 'D');
+    EXPECT_EQ(seqan3::to_char('H'_dna16sam), 'H');
+    EXPECT_EQ(seqan3::to_char('V'_dna16sam), 'V');
 
-    EXPECT_EQ(seqan3::to_char('='_sam_dna16), '=');
+    EXPECT_EQ(seqan3::to_char('='_dna16sam), '=');
 
-    EXPECT_EQ(seqan3::to_char('N'_sam_dna16), 'N');
-    EXPECT_EQ(seqan3::to_char('!'_sam_dna16), 'N');
+    EXPECT_EQ(seqan3::to_char('N'_dna16sam), 'N');
+    EXPECT_EQ(seqan3::to_char('!'_dna16sam), 'N');
 }
 
-TEST(sam_dna16, string_literal)
+TEST(dna16sam, string_literal)
 {
-    seqan3::sam_dna16_vector v;
-    v.resize(5, 'A'_sam_dna16);
-    EXPECT_EQ(v, "AAAAA"_sam_dna16);
+    seqan3::dna16sam_vector v;
+    v.resize(5, 'A'_dna16sam);
+    EXPECT_EQ(v, "AAAAA"_dna16sam);
 
-    std::vector<seqan3::sam_dna16> w{'A'_sam_dna16,
-                                     '='_sam_dna16,
-                                     'G'_sam_dna16,
-                                     'T'_sam_dna16,
-                                     'U'_sam_dna16,
-                                     'N'_sam_dna16};
-    EXPECT_EQ(w, "A=GTTN"_sam_dna16);
+    std::vector<seqan3::dna16sam> w{'A'_dna16sam,
+                                     '='_dna16sam,
+                                     'G'_dna16sam,
+                                     'T'_dna16sam,
+                                     'U'_dna16sam,
+                                     'N'_dna16sam};
+    EXPECT_EQ(w, "A=GTTN"_dna16sam);
 }
 
-TEST(sam_dna16, char_is_valid)
+TEST(dna16sam, char_is_valid)
 {
     constexpr auto validator = seqan3::is_char<'A'> || seqan3::is_char<'C'> || seqan3::is_char<'G'> ||
                                seqan3::is_char<'T'> || seqan3::is_char<'U'> || seqan3::is_char<'a'> ||
@@ -123,5 +123,5 @@ TEST(sam_dna16, char_is_valid)
                                seqan3::is_char<'h'> || seqan3::is_char<'v'> || seqan3::is_char<'='>;
 
     for (char c : std::views::iota(std::numeric_limits<char>::min(), std::numeric_limits<char>::max()))
-        EXPECT_EQ(seqan3::sam_dna16::char_is_valid(c), validator(c));
+        EXPECT_EQ(seqan3::dna16sam::char_is_valid(c), validator(c));
 }
