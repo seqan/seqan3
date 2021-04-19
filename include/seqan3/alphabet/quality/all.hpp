@@ -54,14 +54,14 @@
  * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred42       | [0 .. 41]         | [0 .. 41]  | [33 .. 74]  <br> ['!' .. 'J'] |
  * | Sanger, Illumina    | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred63       | [0 .. 62]         | [0 .. 62]  | [33 .. 95]  <br> ['!' .. '_'] |
  * | PacBio              | Sanger, Illumina 1.8+       | Phred+33 | seqan3::phred94       | [0 .. 93]         | [0 .. 93]  | [33 .. 126] <br> ['!' .. '~'] |
- * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68legacy | [-5 .. 62]        | [0 .. 67]  | [59 .. 126] <br> [';' .. '~'] |
+ * | Solexa              | Solexa, Illumina [1.0; 1.8[ | Phred+64 | seqan3::phred68solexa | [-5 .. 62]        | [0 .. 67]  | [59 .. 126] <br> [';' .. '~'] |
  *
  * The most distributed format is the *Sanger* or *Illumina 1.8+* format.
  * Despite typical Phred scores for Illumina machines range from 0 to 41, it is possible that processed reads reach
  * higher scores. If you do not intend handling Phred scores larger than 41, we recommend using seqan3::phred42 due to
  * its more space-efficient implementation (see below). If you want to store PacBio HiFi reads, we recommend to use
  * seqan3::phred94, as these use the full range of the Phred quality scores.
- * For other formats, like Solexa and Illumina 1.0 to 1.7, the type seqan3::phred68legacy is provided. To also cover the
+ * For other formats, like Solexa and Illumina 1.0 to 1.7, the type seqan3::phred68solexa is provided. To also cover the
  * Solexa format, the Phred score is stored as a **signed** integer starting at -5.
  *
  * The following figure gives a graphical explanation of the different Alphabet Types:
@@ -81,7 +81,7 @@
         <span style="color:DarkSlateBlue"> S - Sanger, Illumina 1.8+ - phred42</span>\n
         <span style="color:SeaGreen">      M - Sanger, Illumina 1.8+ - phred63</span>\n
         <span style="color:Chocolate">     P - Sanger, Illumina 1.8+ - phred94 (PacBio)</span>\n
-        <span style="color:BlueViolet">    O - Solexa - phred68legacy</span>\n\n
+        <span style="color:BlueViolet">    O - Solexa - phred68solexa</span>\n\n
         <span style="font-style:italic">Graphic was inspired by https://en.wikipedia.org/wiki/FASTQ_format#Encoding (last access 28.01.2021).</span>
    </span>
  *

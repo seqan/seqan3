@@ -3,7 +3,7 @@
 
 int main()
 {
-    seqan3::phred68legacy phred;
+    seqan3::phred68solexa phred;
     phred.assign_phred(-2);
     seqan3::debug_stream << (int) phred.to_phred() << "\n"; // -2
     seqan3::debug_stream << phred.to_char() << "\n";        // '>'

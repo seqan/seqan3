@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
- * \brief Provides seqan3::phred68legacy quality scores.
+ * \brief Provides seqan3::phred68solexa quality scores.
  */
 
 #pragma once
@@ -28,11 +28,11 @@ namespace seqan3
  *
  * \details
  *
- * The phred68legacy quality alphabet represents the -5-based Phred score range
+ * The phred68solexa quality alphabet represents the -5-based Phred score range
  * [-5..62] mapped to the ASCII range [';' .. '~']. It represents the Solexa and
  * the Illumina [1.0;1.8[ standard.
  *
- * \include test/snippet/alphabet/quality/phred68legacy.cpp
+ * \include test/snippet/alphabet/quality/phred68solexa.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -40,7 +40,7 @@ class phred68solexa : public quality_base<phred68solexa, 68>
 {
 private:
     //!\brief The base class.
-    using base_t = quality_base<phred68legacy, 68>;
+    using base_t = quality_base<phred68solexa, 68>;
 
     //!\brief Befriend seqan3::quality_base.
     friend base_t;
@@ -52,15 +52,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred68legacy()                                   noexcept = default; //!< Defaulted.
-    constexpr phred68legacy(phred68legacy const &)              noexcept = default; //!< Defaulted.
-    constexpr phred68legacy(phred68legacy &&)                   noexcept = default; //!< Defaulted.
-    constexpr phred68legacy & operator=(phred68legacy const &)  noexcept = default; //!< Defaulted.
-    constexpr phred68legacy & operator=(phred68legacy &&)       noexcept = default; //!< Defaulted.
-    ~phred68legacy()                                            noexcept = default; //!< Defaulted.
+    constexpr phred68solexa()                                   noexcept = default; //!< Defaulted.
+    constexpr phred68solexa(phred68solexa const &)              noexcept = default; //!< Defaulted.
+    constexpr phred68solexa(phred68solexa &&)                   noexcept = default; //!< Defaulted.
+    constexpr phred68solexa & operator=(phred68solexa const &)  noexcept = default; //!< Defaulted.
+    constexpr phred68solexa & operator=(phred68solexa &&)       noexcept = default; //!< Defaulted.
+    ~phred68solexa()                                            noexcept = default; //!< Defaulted.
 
     //!\brief Construct from Phred score value.
-    constexpr phred68legacy(phred_type const p) : base_t{p} {}
+    constexpr phred68solexa(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
     using base_t::base_t;
@@ -86,32 +86,32 @@ public:
 /*!\name Literals
  * \{
  */
-/*!\brief The seqan3::phred68legacy char literal.
- * \relates seqan3::phred68legacy
- * \returns seqan3::phred68legacy
+/*!\brief The seqan3::phred68solexa char literal.
+ * \relates seqan3::phred68solexa
+ * \returns seqan3::phred68solexa
  * \details
  * \stableapi{Since version 3.1.}
  */
-constexpr phred68legacy operator""_phred68legacy(char const c) noexcept
+constexpr phred68solexa operator""_phred68solexa(char const c) noexcept
 {
-    return phred68legacy{}.assign_char(c);
+    return phred68solexa{}.assign_char(c);
 }
 
-/*!\brief The seqan3::phred68legacy string literal.
+/*!\brief The seqan3::phred68solexa string literal.
  * \param[in] s A pointer to the character sequence to assign from.
  * \param[in] n The length of the character sequence to assign from.
- * \relates seqan3::phred68legacy
- * \returns seqan3::std::vector<seqan3::phred68legacy>
+ * \relates seqan3::phred68solexa
+ * \returns seqan3::std::vector<seqan3::phred68solexa>
  *
- * You can use this string literal to easily assign to std::vector<seqan3::phred68legacy>:
+ * You can use this string literal to easily assign to std::vector<seqan3::phred68solexa>:
  *
- * \include test/snippet/alphabet/quality/phred68legacy_literal.cpp
+ * \include test/snippet/alphabet/quality/phred68solexa_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
-inline std::vector<phred68legacy> operator""_phred68legacy(char const * s, std::size_t n)
+inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::size_t n)
 {
-    std::vector<phred68legacy> r;
+    std::vector<phred68solexa> r;
     r.resize(n);
 
     for (size_t i = 0; i < n; ++i)
