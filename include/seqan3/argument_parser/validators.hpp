@@ -26,11 +26,11 @@
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
+#include <seqan3/utility/views/join_with.hpp>
 
 namespace seqan3
 {
@@ -454,7 +454,7 @@ protected:
         if (extensions.empty())
             return "";
         else
-            return detail::to_string(" Valid file extensions are: [", extensions | views::join(std::string{", "}), "].");
+            return detail::to_string(" Valid file extensions are: [", extensions | views::join_with(std::string{", "}), "].");
     }
 
     /*!\brief Helper function that checks if a string is a suffix of another string. Case insensitive.

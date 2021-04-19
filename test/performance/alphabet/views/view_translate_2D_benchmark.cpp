@@ -13,10 +13,10 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/alphabet/views/translate_join.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/views/join_with.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
 #include <seqan/sequence.h>
@@ -26,7 +26,7 @@
 
 // Tags used to define the benchmark type
 struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
-struct translate_tag{}; // Benchmark view_translate followed by seqan3::views::join
+struct translate_tag{}; // Benchmark view_translate followed by std::views::join
 struct translate_join_tag{}; // Benchmark seqan3::views::translate_join
 
 // ============================================================================
@@ -59,7 +59,7 @@ void sequential_read(benchmark::State & state)
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
     {
-        auto translated_aa_view = dna_sequence_collection | seqan3::views::translate | seqan3::views::join;
+        auto translated_aa_view = dna_sequence_collection | seqan3::views::translate | std::views::join;
         sequential_read_impl(state, translated_aa_view);
     }
     else

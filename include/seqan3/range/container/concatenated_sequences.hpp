@@ -21,7 +21,6 @@
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/as_const.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/slice.hpp>
 
@@ -1111,7 +1110,7 @@ public:
             return begin() + pos_as_num;
 
         /* TODO implement views::flat_repeat_n that is like
-         *  views::repeat_n(value, count) | views::join | ranges::views::bounded;
+         *  views::repeat_n(value, count) | std::views::join | ranges::views::bounded;
          * but preserves random access and size.
          *
          * then do

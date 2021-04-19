@@ -7,12 +7,29 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief [DEPRECATED] Provides seqan3::views::join.
+ * \brief Provides seqan3::views::join_with.
  */
 
 #pragma once
 
-#include <seqan3/utility/views/join_with.hpp>
+#include <range/v3/view/join.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/join_with.hpp> instead.")
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::views
+{
+
+/*!\brief A join view.
+ * \ingroup views
+ * \deprecated Please use std::views::join or seqan3::views::join_with (if a separator is needed)
+ */
+SEQAN3_DEPRECATED_310 inline constexpr auto join = ::ranges::views::join;
+
+/*!\brief A join view, please use std::views::join if you don't need a separator.
+ * \ingroup views
+ * \details
+ * \noapi{This is currently range-v3's join implementation.}
+ */
+inline constexpr auto join_with = ::ranges::views::join;
+
+} // namespace seqan3::views
