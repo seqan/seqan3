@@ -18,7 +18,7 @@
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
-#include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp>
 
 /*!\defgroup quality Quality

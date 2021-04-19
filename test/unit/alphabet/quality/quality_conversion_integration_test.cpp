@@ -15,7 +15,7 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
-#include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp>
 
 template <typename T>

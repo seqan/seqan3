@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
