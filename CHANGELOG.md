@@ -59,10 +59,6 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   to add convenient functions that compute information based on the record itself and to provide better documentation.
   ([\#2340](https://github.com/seqan/seqan3/pull/2340), [\#2380](https://github.com/seqan/seqan3/pull/2380),
   [\#2389](https://github.com/seqan/seqan3/pull/2389))
-* Deprecated `seqan3::field::seq_qual`. Use `seqan3::fiel::seq` and `seqan3::field::qual` instead.
-  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out 
-  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html)
-  for usage.
 
 #### Search
 
@@ -112,8 +108,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
-Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if 
-applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code. 
+Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if
+applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code.
 You can either directly check the reported code or verify with our documentation how the new API should be used.
 
 For a complete list of behavioural changes in our public and internal API, you can consult our API stability
@@ -128,6 +124,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
 * The literal 'M'_cigar_op was renamed to 'M'_cigar_operation
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
+* Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 
 #### Argument Parser
 
@@ -148,6 +145,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 
 #### I/O
 
+* Deprecated `seqan3::field::seq_qual`. Use `seqan3::fiel::seq` and `seqan3::field::qual` instead.
+  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out
+  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html) for usage.
 * Renamed seqan3::alignment_file\* to seqan3::sam_file\*
   ([\#2459](https://github.com/seqan/seqan3/pull/2459)):
   * `seqan3::alignment_file_header` is replaced by `seqan3::sam_file_header`.
