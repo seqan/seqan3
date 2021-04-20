@@ -73,11 +73,11 @@
         <span style="color:BlueViolet">    ..........................OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO</span>\n\n
         <span style="font-weight:bold"> !\"\#\$\%\&'()*+,-\./0123456789:;\<\=\>?\@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{\|}~</span>\n
                                        \|.........................\|..............\|....................\|..............................\|\n
-                                           33........................59.............74...................95............................126\n\n
-        <span style="color:DarkSlateBlue"> 0________________________________________40....................................................</span>\n
-        <span style="color:SeaGreen">      0________________________________________40___________________62...............................</span>\n
-        <span style="color:Chocolate">     0________________________________________40___________________62_____________________________93</span>\n
-        <span style="color:BlueViolet">    .........................-5____0_________9____________________62_____________________________93</span>\n\n
+                                           33........................59............73....................95............................126\n\n
+        <span style="color:DarkSlateBlue"> 0_______________________________________40.....................................................</span>\n
+        <span style="color:SeaGreen">      0_______________________________________40____________________62...............................</span>\n
+        <span style="color:Chocolate">     0_______________________________________40____________________62_____________________________93</span>\n
+        <span style="color:BlueViolet">    .........................-5____0________9____________________________________________________62</span>\n\n
         <span style="color:DarkSlateBlue"> S - Sanger, Illumina 1.8+ - phred42</span>\n
         <span style="color:SeaGreen">      M - Sanger, Illumina 1.8+ - phred63</span>\n
         <span style="color:Chocolate">     P - Sanger, Illumina 1.8+ - phred94 (PacBio)</span>\n
