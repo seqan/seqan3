@@ -59,10 +59,6 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   to add convenient functions that compute information based on the record itself and to provide better documentation.
   ([\#2340](https://github.com/seqan/seqan3/pull/2340), [\#2380](https://github.com/seqan/seqan3/pull/2380),
   [\#2389](https://github.com/seqan/seqan3/pull/2389))
-* Deprecated `seqan3::field::seq_qual`. Use `seqan3::field::seq` and `seqan3::field::qual` instead.
-  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out
-  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html)
-  for usage.
 
 #### Search
 
@@ -128,6 +124,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
 * The literal 'M'_cigar_op was renamed to 'M'_cigar_operation
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
+* Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 * Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
   ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
 
@@ -150,6 +147,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 
 #### I/O
 
+* Deprecated `seqan3::field::seq_qual`. Use `seqan3::field::seq` and `seqan3::field::qual` instead.
+  ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out
+  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html) for usage.
 * Renamed seqan3::alignment_file\* to seqan3::sam_file\*
   ([\#2459](https://github.com/seqan/seqan3/pull/2459)):
   * `seqan3::alignment_file_header` is replaced by `seqan3::sam_file_header`.

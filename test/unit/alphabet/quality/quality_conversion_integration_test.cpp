@@ -15,7 +15,7 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
-#include <seqan3/alphabet/quality/phred68legacy.hpp>
+#include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp>
 
 template <typename T>
@@ -24,7 +24,7 @@ using quality_conversion = ::testing::Test;
 // add all alphabets from the quality sub module here
 using quality_conversion_types = seqan3::type_list<seqan3::phred42,
                                                    seqan3::phred63,
-                                                   seqan3::phred68legacy,
+                                                   seqan3::phred68solexa,
                                                    seqan3::phred94>;
 using quality_conversion_gtest_types = seqan3::detail::transfer_template_args_onto_t<quality_conversion_types,
                                                                                      ::testing::Types>;
