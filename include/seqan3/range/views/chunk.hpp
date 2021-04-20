@@ -7,20 +7,13 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief Provides seqan3::views::chunk.
+ * \brief [DEPRECATED] Provides seqan3::views::chunk.
+ * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/chunk.hpp instead.
  */
 
 #pragma once
 
-#include <range/v3/view/chunk.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 
-#include <seqan3/core/platform.hpp>
-#include <seqan3/std/ranges>
-
-namespace seqan3::views
-{
-
-//TODO reimplement me
-using ::ranges::views::chunk;
-
-} // namespace seqan3::views
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/chunk.hpp> instead.")
