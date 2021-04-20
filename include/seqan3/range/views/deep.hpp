@@ -130,40 +130,69 @@ public:
      * \tparam    urng_t                Type of the underlying range.
      * \tparam    underlying_adaptor_t_ Same as underlying_adaptor_t with possibly different cref qualification.
      * \param[in] urange                The view's underlying range.
-     * \param[in] adap                  The stored adaptor unwrapped by the base-classes explode()-member.
+     * \param[in] deep_adaptor          The stored adaptor unwrapped by the base-classes explode()-member.
      * \returns A view with the inner adaptor applied on the innermost ranges.
      */
     template <std::ranges::input_range urng_t, typename underlying_adaptor_t_>
-    static constexpr auto impl(urng_t && urange, underlying_adaptor_t_ && adap)
+    static constexpr auto impl(urng_t && urange, underlying_adaptor_t_ && deep_adaptor)
     {
-        // this function recursively constructs a view (moves/forwards omitted for readability):
-        // return range | std::views::transform([adap](auto && inner_range_depth1)
-        // {
-        //     return inner_range_depth1 | std::views::transform([adap](auto && inner_range_depth2)
-        //     {
-        //         // ...
-        //         return inner_range_depth_n | std::views::transform([adap](auto && inner_most_range)
-        //         {
-        //             return inner_most_range | adap;
-        //         });
-        //         // ...
-        //     });
-        // });
+        static_assert(std::same_as<underlying_adaptor_t_, underlying_adaptor_t>,
+                      "Internally stored deep-adaptor does not match!");
 
-        // Note: we avoid the (unqualified) pipe|-notation and use function notation here, to avoid problems with ADL.
-        if constexpr (std::ranges::input_range<std::ranges::range_reference_t<urng_t>>)
+        constexpr size_t range_dimension = range_dimension_v<urng_t>;
+
+        // note: if range_dimension == 1, the expression will actually be
+        // `std::forward<underlying_adaptor_t_>(adap)(urange)`, thus allowing the stateful adaptor to move its arguments
+        // into the view that will be constructed.
+        return recursive_adaptor<range_dimension>(std::forward<underlying_adaptor_t_>(deep_adaptor))(urange);
+    }
+
+    /*!\brief recursively construct the deep adaptor
+     * \details
+     *
+     * this function recursively constructs a range adaptor:
+     *
+     * ```cpp
+     * return std::views::transform([](auto && inner_range_depth1)
+     * {
+     *     return inner_range_depth1 | std::views::transform([](auto && inner_range_depth2)
+     *     {
+     *         // ...
+     *         return inner_range_depth_n | std::views::transform([adap](auto && innermost_range)
+     *         {
+     *             // only innermost std::views::transform stores the actual deep-adaptor (stored only once!)
+     *             return innermost_range | std::forward<underlying_adaptor_t>(deep_adaptor);
+     *         });
+     *         // ...
+     *     });
+     * });
+     * ```
+     */
+    template <std::size_t range_dimension>
+    static constexpr decltype(auto) recursive_adaptor(underlying_adaptor_t deep_adaptor)
+    {
+        if constexpr (range_dimension > 1u)
         {
-            auto transform = [adaptor = std::forward<underlying_adaptor_t_>(adap)] (auto && inner_range)
+            auto transform
+                = [adaptor = recursive_adaptor<range_dimension - 1u>(std::forward<underlying_adaptor_t>(deep_adaptor))]
+                  (auto && inner_range)
             {
-                // recursively call impl until inner most range is reached.
-                return impl(std::forward<decltype(inner_range)>(inner_range), std::forward<decltype(adaptor)>(adaptor));
+                // We don't want to move a stateful adaptor here, as this adaptor will be called on any element of this
+                // std::views::transform range.
+                return adaptor(std::forward<decltype(inner_range)>(inner_range));
             };
-            return std::views::transform(std::forward<urng_t>(urange), std::move(transform));
+            return std::views::transform(std::move(transform));
         }
         else
         {
-            // recursion anchor: this is the inner most range
-            return std::forward<underlying_adaptor_t_>(adap)(std::forward<urng_t>(urange));
+            // recursion anchor: only the innermost std::views::transform will store the deep_adaptor.
+            // In an earlier version of seqan3 we recursively passed the deep_adaptor through all std::view::transform
+            // instances and each depth stored the same deep_adaptor. The current approach can save memory as it only
+            // stores the deep_adaptor once in the innermost std::views::transform. It will also produce slightly better
+            // stack-traces by defining the recursion over the range_dimension.
+
+            // NOTE: to allow an lvalue to be returned we need to have the return type decltype(auto).
+            return deep_adaptor;
         }
     }
 
