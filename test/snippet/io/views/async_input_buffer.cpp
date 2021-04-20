@@ -4,7 +4,7 @@
 
 #include <seqan3/core/debug_stream.hpp>         // seqan3::debug_stream
 #include <seqan3/io/sequence_file/input.hpp>    // seqan3::sequence_file_input
-#include <seqan3/range/views/async_input_buffer.hpp>   // seqan3::views::async_input_buffer
+#include <seqan3/io/views/async_input_buffer.hpp>   // seqan3::views::async_input_buffer
 
 std::string fasta_file =
 R"(> seq1
