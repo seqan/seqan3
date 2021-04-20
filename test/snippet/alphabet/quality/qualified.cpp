@@ -6,9 +6,10 @@
 int main()
 {
     using seqan3::operator""_dna4;
+    using seqan3::operator""_phred42;
     using seqan3::get;
 
-    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter{'A'_dna4, seqan3::phred42{7}};
+    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter{'A'_dna4, '('_phred42};
     seqan3::debug_stream << int(seqan3::to_rank(letter)) << ' '
                          << int(seqan3::to_rank(get<0>(letter))) << ' '
                          << int(seqan3::to_rank(get<1>(letter))) << '\n';

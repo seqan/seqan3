@@ -236,10 +236,10 @@ TYPED_TEST(search_test, issue_2115)
                                       seqan3::search_cfg::hit_all_best{};
 
     std::vector<seqan3::dna4> const dna4_query{"ACGG"_dna4};
-    std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> const dna4q_query{{'A'_dna4, seqan3::phred42{0}},
-                                                                                    {'C'_dna4, seqan3::phred42{15}},
-                                                                                    {'G'_dna4, seqan3::phred42{30}},
-                                                                                    {'G'_dna4, seqan3::phred42{41}}};
+    std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> const dna4q_query{{'A'_dna4, '!'_phred42},
+                                                                                    {'C'_dna4, '0'_phred42},
+                                                                                    {'G'_dna4, '?'_phred42},
+                                                                                    {'G'_dna4, 'J'_phred42}};
 
     // Quality should not alter search results.
     EXPECT_RANGE_EQ(seqan3::search(dna4q_query, index, cfg), seqan3::search(dna4_query, index, cfg));
