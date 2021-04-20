@@ -1,11 +1,11 @@
-#include <seqan3/alphabet/nucleotide/sam_dna16.hpp>
+#include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()
 {
-    using seqan3::operator""_sam_dna16;
+    using seqan3::operator""_dna16sam;
 
-    seqan3::sam_dna16 my_letter{'A'_sam_dna16};
+    seqan3::dna16sam my_letter{'A'_dna16sam};
 
     my_letter.assign_char('=');
 
