@@ -39,6 +39,8 @@ namespace seqan3
  * It has a fixed capacity but a dynamic size and provides all functionality of a sequence container. Note
  * that it also models a reservable sequence container but all associated member functions are no-op because the
  * capacity is fixed.
+ *
+ * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename value_type_, size_t capacity_>
 class small_vector
@@ -51,19 +53,53 @@ public:
     /*!\name Associated types
      * \{
      */
-    using value_type      = value_type_;                          //!< The value_type type.
-    using reference       = value_type &;                         //!< The reference type.
-    using const_reference = const value_type &;                   //!< The const_reference type.
-    using iterator        = value_type *;                         //!< The iterator type.
-    using const_iterator  = value_type const *;                   //!< The const_iterator type.
-    using difference_type = ptrdiff_t;                            //!< The difference_type type.
-    using size_type       = detail::min_viable_uint_t<capacity_>; //!< The size_type type.
+    /*!\brief The value_type type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using value_type = value_type_;
+
+    /*!\brief The reference type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using reference = value_type &;
+
+    /*!\brief The const_reference type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using const_reference = const value_type &;
+
+    /*!\brief The iterator type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using iterator = value_type *;
+
+    /*!\brief The const_iterator type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using const_iterator = value_type const *;
+
+    /*!\brief The difference_type type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using difference_type = ptrdiff_t;
+
+    /*!\brief The size_type type.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
+    using size_type = detail::min_viable_uint_t<capacity_>;
 
     //!\}
 
     //!\cond
     // this signals to range-v3 that something is a container :|
-    using allocator_type    = void;
+    using allocator_type = void;
     //!\endcond
 
     /*!\name Constructors, destructor and assignment
@@ -86,6 +122,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     explicit constexpr small_vector(std::array<value_type, capacity_> const & array) noexcept(is_noexcept) :
         data_{array}, sz{capacity_}
@@ -111,6 +149,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t capacity2>
     explicit constexpr small_vector(value_type const (&array)[capacity2]) noexcept(is_noexcept) :
@@ -130,6 +170,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename ...other_value_type>
     //!\cond
@@ -155,6 +197,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -179,6 +223,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
@@ -200,6 +246,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr small_vector(size_type n, value_type value) noexcept(is_noexcept) :
         small_vector{}
@@ -217,6 +265,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr small_vector & operator=(std::initializer_list<value_type> ilist) noexcept(is_noexcept)
     {
@@ -234,6 +284,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void assign(std::initializer_list<value_type> ilist) noexcept(is_noexcept)
     {
@@ -251,6 +303,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void assign(size_type const count, value_type const value) noexcept(is_noexcept)
     {
@@ -271,6 +325,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
     //!\cond
@@ -295,6 +351,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -311,7 +369,10 @@ public:
     /*!\name Iterators
      * \{
      */
-    //!\brief Returns the begin to the string.
+    /*!\brief Returns the begin to the string.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr iterator begin() noexcept
     {
         return &data_[0];
@@ -329,7 +390,10 @@ public:
         return &data_[0];
     }
 
-    //!\brief Returns iterator past the end of the vector.
+    /*!\brief Returns iterator past the end of the vector.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr iterator end() noexcept
     {
         return &data_[sz];
@@ -365,6 +429,8 @@ public:
      * ### Exceptions
      *
      * Throws std::out_of_range if `i >= size()`.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     reference at(size_type const i)
     {
@@ -399,6 +465,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference operator[](size_type const i) noexcept
     {
@@ -425,6 +493,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference front() noexcept
     {
@@ -451,6 +521,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr reference back() noexcept
     {
@@ -465,7 +537,10 @@ public:
         return (*this)[size()-1];
     }
 
-    //!\brief Direct access to the underlying array.
+    /*!\brief Direct access to the underlying array.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr value_type * data() noexcept
     {
         return data_.data();
@@ -491,6 +566,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr bool empty() const noexcept
     {
@@ -507,6 +584,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type size() const noexcept
     {
@@ -526,6 +605,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type max_size() const noexcept
     {
@@ -542,19 +623,27 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr size_type capacity() const noexcept
     {
         return capacity_;
     }
 
-    //!\brief Since the capacity is fixed on compile time, this is a no-op.
+    /*!\brief Since the capacity is fixed on compile time, this is a no-op.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr void reserve(size_type) const noexcept
     {
         // no-op
     }
 
-    //!\brief Since the capacity is fixed on compile time, this is a no-op.
+    /*!\brief Since the capacity is fixed on compile time, this is a no-op.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     constexpr void shrink_to_fit() const noexcept
     {
         // no-op
@@ -573,6 +662,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void clear() noexcept
     {
@@ -593,6 +684,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, value_type const value) noexcept(is_noexcept)
     {
@@ -614,6 +707,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, size_type const count, value_type const value) noexcept(is_noexcept)
     {
@@ -640,6 +735,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
     //!\cond
@@ -678,6 +775,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator insert(const_iterator pos, std::initializer_list<value_type> const & ilist) noexcept(is_noexcept)
     {
@@ -701,6 +800,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator erase(const_iterator begin_it, const_iterator end_it) noexcept
     {
@@ -734,6 +835,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr iterator erase(const_iterator pos) noexcept
     {
@@ -752,6 +855,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void push_back(value_type const value) noexcept
     {
@@ -773,6 +878,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void pop_back() noexcept
     {
@@ -792,6 +899,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void resize(size_type const count) noexcept
     {
@@ -821,6 +930,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     constexpr void swap(small_vector & rhs) noexcept(is_noexcept)
     {
@@ -852,6 +963,8 @@ public:
      * ### Exceptions
      *
      * No-throw guarantee if value_type is std::is_nothrow_copy_constructible.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     friend constexpr void swap(small_vector & lhs, small_vector & rhs) noexcept(is_noexcept)
     {
@@ -864,24 +977,33 @@ public:
         lhs.swap(rhs);
     }
 
-    //!\name Comparison operators
-    //!\{
-
-    //!\brief Performs element-wise comparison.
+    /*!\name Comparison operators
+     * \{
+     */
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator==(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return std::ranges::equal(lhs, rhs);
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator!=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator<(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
@@ -893,7 +1015,10 @@ public:
         return lhs.size() < rhs.size();
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator>(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
@@ -905,14 +1030,20 @@ public:
         return lhs.size() > rhs.size();
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator<=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
         return !(lhs > rhs);
     }
 
-    //!\brief Performs element-wise comparison.
+    /*!\brief Performs element-wise comparison.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t cap2>
     friend constexpr bool operator>=(small_vector const & lhs, small_vector<value_type, cap2> const & rhs) noexcept
     {
@@ -928,7 +1059,6 @@ public:
     //!\brief The size of the actual contained data_.
     size_type sz{0};
 
-public:
     //!\cond DEV
     /*!\brief Serialisation support function.
      * \tparam archive_t Type of `archive`; must satisfy seqan3::cereal_archive.
@@ -949,9 +1079,12 @@ public:
  * \{
  */
 
-//!\brief Deducts the size and value type from an built-in array on construction.
+/*!\brief Deducts the size and value type from an built-in array on construction.
+ * \details
+ * \experimentalapi{Experimental since version 3.1.}
+ */
 template <size_t capacity2, typename value_type>
-small_vector(const value_type (&array)[capacity2]) -> small_vector<value_type, capacity2>;
+small_vector(value_type const (&array)[capacity2]) -> small_vector<value_type, capacity2>;
 //!\}
 
 } // namespace seqan3
