@@ -20,9 +20,9 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/detail.hpp>
-#include <seqan3/range/views/kmer_hash.hpp>
-#include <seqan3/range/views/minimiser.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/search/views/kmer_hash.hpp>
+#include <seqan3/search/views/minimiser.hpp>
 
 namespace seqan3::detail
 {

@@ -1,6 +1,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/minimiser_hash.hpp>
+#include <seqan3/search/views/minimiser_hash.hpp>
 
 using seqan3::operator""_dna4;
 
@@ -14,10 +14,4 @@ int main()
     // results in: [10322096095657499240, 10322096095657499142, 10322096095657499224]
     // representing the k-mers [GTAC, TCGA, GACG]
     seqan3::debug_stream << minimisers << '\n';
-
-    // Get hash values
-    uint64_t seed = 0x8F3F73B5CF1C9ADE; // The default seed from minimiser_hash
-    // Use XOR on all minimiser values
-    auto hash_values = minimisers | std::views::transform([seed] (uint64_t i) {return i ^ seed; });
-    seqan3::debug_stream << hash_values << '\n'; // results in: [182, 216, 134]
 }
