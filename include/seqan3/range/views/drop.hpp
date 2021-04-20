@@ -93,6 +93,7 @@ struct drop_fn
         else
         {
             using drop_size_t = std::ranges::range_difference_t<urng_t>;
+            // urange | std::views::drop(drop_size);
             return std::views::drop(std::forward<urng_t>(urange), static_cast<drop_size_t>(drop_size));
         }
     }
