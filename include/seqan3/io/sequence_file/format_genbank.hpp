@@ -24,6 +24,7 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
@@ -31,7 +32,6 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/to_char.hpp>

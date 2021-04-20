@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
@@ -33,7 +34,6 @@
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_line.hpp>
