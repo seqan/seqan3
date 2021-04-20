@@ -15,8 +15,9 @@
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/chunk.hpp>
 #include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/views/chunk.hpp>
+
 #include <seqan3/test/expect_same_type.hpp>
 
 using seqan3::operator""_dna4;
