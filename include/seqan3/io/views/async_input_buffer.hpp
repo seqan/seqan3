@@ -355,7 +355,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/async_input_buffer.hpp}
+ * \header_file{seqan3/io/views/async_input_buffer.hpp}
  *
  * ### Summary
  *
