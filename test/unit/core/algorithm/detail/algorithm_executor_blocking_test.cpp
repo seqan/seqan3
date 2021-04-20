@@ -13,8 +13,9 @@
 
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/pretty_printing.hpp>
+#include <seqan3/utility/views/zip.hpp>
+
 
 // A dummy algorithm that just counts the number of equal characters in two sequences.
 struct dummy_algorithm

@@ -5,7 +5,7 @@
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 using seqan3::operator""_dna4;
 

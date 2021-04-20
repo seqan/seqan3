@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <iostream>
+#include <seqan3/std/ranges>
 
 #include <gtest/gtest.h>
 
@@ -18,9 +19,9 @@
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/to_char.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/ranges>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/zip.hpp>
+
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_phred42;

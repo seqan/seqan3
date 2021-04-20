@@ -57,10 +57,10 @@
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
 {

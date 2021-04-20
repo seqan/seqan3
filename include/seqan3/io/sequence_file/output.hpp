@@ -37,10 +37,10 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/views/get.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3
 {

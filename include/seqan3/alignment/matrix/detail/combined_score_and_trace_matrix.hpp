@@ -17,8 +17,8 @@
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
 {

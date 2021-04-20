@@ -23,9 +23,9 @@
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_until.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
 {

@@ -20,13 +20,13 @@
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/configuration/on_result.hpp>
 #include <seqan3/search/configuration/parallel.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
 {

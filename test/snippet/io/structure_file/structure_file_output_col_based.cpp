@@ -6,7 +6,7 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 using seqan3::operator""_rna5;
 using seqan3::operator""_wuss51;

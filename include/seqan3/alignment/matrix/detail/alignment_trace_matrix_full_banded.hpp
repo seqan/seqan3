@@ -12,14 +12,15 @@
 
 #pragma once
 
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
+
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_base.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
 {

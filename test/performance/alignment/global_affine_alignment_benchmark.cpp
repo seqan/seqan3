@@ -10,17 +10,17 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <seqan3/std/ranges>
 #include <utility>
 #include <vector>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
     #include <seqan/align.h>
