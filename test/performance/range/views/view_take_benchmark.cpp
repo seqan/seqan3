@@ -14,9 +14,9 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
 
 // ============================================================================
 //  sequential_read
