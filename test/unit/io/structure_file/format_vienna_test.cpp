@@ -22,8 +22,8 @@
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/convert.hpp>
 
 using seqan3::operator""_rna5;
 using seqan3::operator""_wuss51;

@@ -14,7 +14,6 @@
 
 #include <seqan3/range/views/char_to.hpp>
 #include <seqan3/range/views/complement.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/range/views/get.hpp>
@@ -34,6 +33,7 @@
 #include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/translate.hpp>
 #include <seqan3/range/views/trim_quality.hpp>
+#include <seqan3/utility/views/convert.hpp>
 
 /*!\defgroup views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.

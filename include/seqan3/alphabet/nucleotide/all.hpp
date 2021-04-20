@@ -72,9 +72,10 @@
  *   * Nucleotide types defined here are **implicitly** convertible to each other if they have the same size
  *     (e.g. seqan3::dna4 ↔ seqan3::rna4).
  *   * Other nucleotide types are **explicitly** convertible to each other through their character representation.
- *   * All ranges of nucleotide alphabets are convertible to each other via seqan3::views::convert.
  *   * None of the nucleotide alphabets can be directly converted or assigned from `char`. You need to explicitly call
  *     `assign_char` or use a literal (see below).
+ *   * Ranges of nucleotides can be converted to each other by using `std::views::transform`. See our
+ *     \ref cookbook_convert_alphabet_range "cookbook" for an example.
  *
  * When assigning from `char` or converting from a larger nucleotide alphabet to a smaller one, *loss of information*
  * can occur since obviously some bases are not available. When converting to seqan3::dna5 or seqan3::rna5,

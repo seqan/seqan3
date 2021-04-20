@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <sstream>
 
 #include <benchmark/benchmark.h>
 
@@ -24,10 +25,8 @@
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
-#include <seqan3/range/views/convert.hpp>
 #include <seqan3/test/performance/units.hpp>
-
-#include <sstream>
+#include <seqan3/utility/views/convert.hpp>
 
 inline constexpr size_t iterations_per_run = 1024;
 
