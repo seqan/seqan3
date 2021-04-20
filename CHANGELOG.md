@@ -199,6 +199,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * We made `seqan3::views::convert` NOAPI and moved it to `seqan3/utility/views/convert.hpp`. You can still use
   `seqan3::views::convert` in the meantime, but we encourage using `std::views::transform` instead as shown in our
   [Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html#cookbook_convert_alphabet_range).
+* Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
+  ([\#2540](https://github.com/seqan/seqan3/pull/2540))
 
 #### Search
 
