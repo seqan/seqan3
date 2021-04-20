@@ -16,5 +16,12 @@
 
 #include <seqan3/alphabet/quality/phred_base.hpp>
 
+namespace seqan3
+{
+//!\deprecated Please use seqan3::phred_base instead.
+template <typename derived_type, size_t size>
+using quality_base SEQAN3_DEPRECATED_310 = seqan3::phred_base<derived_type, size>;
+} // namespace seqan3
+
 SEQAN3_DEPRECATED_HEADER(
    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/alphabet/quality/phred_base.hpp> instead.")

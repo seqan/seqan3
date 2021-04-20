@@ -26,7 +26,7 @@ namespace seqan3
  * \details
  * \stableapi{Since version 3.1.}
  */
-template <typename derived_type, auto size>
+template <typename derived_type, size_t size>
 class phred_base : public alphabet_base<derived_type, size, char>
 {
 public:
