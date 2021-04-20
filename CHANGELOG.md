@@ -96,6 +96,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
+* BAM files not containing a plain text header are now accepted ([\#2536](https://github.com/seqan/seqan3/pull/2536)).
 * Writing `gz`-compressed output no longer results in `bgzf`-compressed output. This change may have following effects
   ([\#2458](https://github.com/seqan/seqan3/pull/2458)):
   * A noticeable slowdown when writing `gz`-compressed content since, in contrast to `bgzf`, `gz` does not feature

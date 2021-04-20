@@ -336,7 +336,9 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         int32_t tmp32{};
         read_field(stream_view, tmp32);
 
-        if (tmp32 > 0) // header text is present
+        bool const header_present{tmp32 > 0};
+
+        if (header_present) // header text is present
             read_header(stream_view | views::take_exactly_or_throw(tmp32), header, ref_seqs);
 
         int32_t n_ref;
@@ -351,6 +353,15 @@ inline void format_bam::read_alignment_record(stream_type & stream,
             std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
 
             read_field(stream_view, tmp32); // l_ref (length of reference sequence)
+
+            // If there was no header text, we parse reference sequences block as header information
+            if (!header_present)
+            {
+                header.ref_ids().push_back(string_buffer);
+                header.ref_id_info.emplace_back(tmp32, "");
+                header.ref_dict[(header.ref_ids())[(header.ref_ids()).size() - 1]] = (header.ref_ids()).size() - 1;
+                continue;
+            }
 
             auto id_it = header.ref_dict.find(string_buffer);
 

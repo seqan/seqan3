@@ -666,3 +666,23 @@ TEST_F(bam_format, issue2417)
 
     EXPECT_EQ(num_records, 1u);
 }
+
+// https://github.com/seqan/seqan3/issues/1201
+TEST_F(bam_format, issue1201)
+{
+    // A BAM file with an l_text of 0
+    std::string const input{
+        // read1	117	ref	1	0	*	=	1	0	ACGTA	IIIII
+        '\x42', '\x41', '\x4d', '\x01', '\x00', '\x00', '\x00', '\x00', '\x01', '\x00', '\x00', '\x00', '\x04', '\x00',
+        '\x00', '\x00', '\x72', '\x65', '\x66', '\x00', '\x70', '\x07', '\x00', '\x00', '\x2e', '\x00', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x06', '\x00', '\x49', '\x12', '\x00', '\x00',
+        '\x75', '\x00', '\x05', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+        '\x00', '\x00', '\x00', '\x00', '\x72', '\x65', '\x61', '\x64', '\x31', '\x00', '\x12', '\x48', '\x10', '\x28',
+        '\x28', '\x28', '\x28', '\x28'
+    };
+
+    std::istringstream stream{input};
+    seqan3::sam_file_input fin{stream, seqan3::format_bam{}};
+
+    fin.header().format_version;
+}
