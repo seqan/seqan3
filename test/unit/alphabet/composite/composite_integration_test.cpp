@@ -23,6 +23,7 @@
 using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;
 using seqan3::operator""_phred42;
+using seqan3::operator""_phred63;
 using seqan3::operator""_rna4;
 
 // tests various combinations of alphabet_variant and alphabet_tuple
@@ -48,11 +49,11 @@ TEST(composite, custom_constructors)
     qualified_dna_phred42 t11{'C'_dna4};
     qualified_dna_phred42 t12{'C'_rna4};
     qualified_dna_phred42 t13{'$'_phred42};
-    qualified_dna_phred42 t14{seqan3::phred63{3}};
+    qualified_dna_phred42 t14{'$'_phred63};
 
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t20{'K'_aa27, seqan3::phred63{}};
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{'K'_aa27};
-    seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{seqan3::phred63{3}};
+    seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{'$'_phred63};
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t23{'$'_phred42};
 
     qualified_gapped_dna_phred42 t31{'C'_dna4};
@@ -116,10 +117,10 @@ TEST(composite_constexpr, custom_constructor)
     constexpr qualified_dna_phred42 t11{'C'_dna4};
     constexpr qualified_dna_phred42 t12{'C'_rna4};
     constexpr qualified_dna_phred42 t13{'$'_phred42};
-    constexpr qualified_dna_phred42 t14{seqan3::phred63{3}};
+    constexpr qualified_dna_phred42 t14{'$'_phred63};
 
     constexpr seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{'K'_aa27};
-    constexpr seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{seqan3::phred63{3}};
+    constexpr seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{'$'_phred63};
     constexpr seqan3::qualified<seqan3::aa27, seqan3::phred63> t23{'$'_phred42};
 
     constexpr qualified_gapped_dna_phred42 t31{'C'_dna4};
@@ -161,14 +162,14 @@ TEST(composite, custom_assignment)
     EXPECT_EQ(t11, t12);
     t11 = '$'_phred42;
     EXPECT_EQ(t11, t13);
-    // t11 = seqan3::phred63{3}; // does not work because of explicit conversion
+    // t11 = '$'_phred63; // does not work because of explicit conversion
 
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t20{'K'_aa27, seqan3::phred63{}};
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{};
-    seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{'K'_aa27, seqan3::phred63{3}};
+    seqan3::qualified<seqan3::aa27, seqan3::phred63> t22{'K'_aa27, '$'_phred63};
     t21 = 'K'_aa27;
     EXPECT_EQ(t20, t21);
-    t21 = seqan3::phred63{3};
+    t21 = '$'_phred63;
     EXPECT_EQ(t21, t22);
 
     qualified_gapped_dna_phred42 t31{};
@@ -247,11 +248,11 @@ constexpr bool do_assignment()
     t11 = 'C'_dna4;
     t11 = 'C'_rna4;
     t11 = '$'_phred42;
-    // t11 = seqan3::phred63{3}; // does not work because of explicit conversion
+    // t11 = '$'_phred63; // does not work because of explicit conversion
 
     seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{};
     t21 = 'K'_aa27;
-    t21 = seqan3::phred63{3};
+    t21 = '$'_phred63;
 
     qualified_gapped_dna_phred42 t31{};
     t31 = 'C'_dna4;
@@ -310,16 +311,16 @@ TEST(composite, custom_comparison)
     EXPECT_LT('A'_rna4, t11);
     EXPECT_LT('#'_phred42, t11);
 
-    seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{'K'_aa27, seqan3::phred63{3}};
+    seqan3::qualified<seqan3::aa27, seqan3::phred63> t21{'K'_aa27, '$'_phred63};
     EXPECT_EQ(t21, 'K'_aa27);
-    EXPECT_EQ(t21, seqan3::phred63{3});
+    EXPECT_EQ(t21, '$'_phred63);
     EXPECT_LT(t21, 'L'_aa27);
-    EXPECT_LT(t21, seqan3::phred63{4});
+    EXPECT_LT(t21, '%'_phred63);
 
     EXPECT_EQ('K'_aa27, t21);
-    EXPECT_EQ(seqan3::phred63{3}, t21);
+    EXPECT_EQ('$'_phred63, t21);
     EXPECT_LT('C'_aa27, t21);
-    EXPECT_LT(seqan3::phred63{2}, t21);
+    EXPECT_LT('#'_phred63, t21);
 
     qualified_gapped_dna_phred42 t31{'C'_dna4, '$'_phred42};
     EXPECT_EQ(t31, 'C'_dna4);
