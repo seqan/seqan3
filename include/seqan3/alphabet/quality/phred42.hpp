@@ -43,13 +43,13 @@ namespace seqan3
  *
  * \stableapi{Since version 3.1.}
  */
-class phred42 : public quality_base<phred42, 42>
+class phred42 : public phred_base<phred42, 42>
 {
 private:
     //!\brief The base class.
-    using base_t = quality_base<phred42, 42>;
+    using base_t = phred_base<phred42, 42>;
 
-    //!\brief Befriend seqan3::quality_base.
+    //!\brief Befriend seqan3::phred_base.
     friend base_t;
     //!\cond \brief Befriend seqan3::alphabet_base.
     friend base_t::base_t;

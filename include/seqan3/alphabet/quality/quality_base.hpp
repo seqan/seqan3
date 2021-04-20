@@ -27,7 +27,7 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <typename derived_type, auto size>
-class quality_base : public alphabet_base<derived_type, size, char>
+class phred_base : public alphabet_base<derived_type, size, char>
 {
 public:
     /*!\name Member types
@@ -50,15 +50,15 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr quality_base()                                  noexcept = default; //!< Defaulted.
-    constexpr quality_base(quality_base const &)              noexcept = default; //!< Defaulted.
-    constexpr quality_base(quality_base &&)                   noexcept = default; //!< Defaulted.
-    constexpr quality_base & operator=(quality_base const &)  noexcept = default; //!< Defaulted.
-    constexpr quality_base & operator=(quality_base &&)       noexcept = default; //!< Defaulted.
-    ~quality_base()                                           noexcept = default; //!< Defaulted.
+    constexpr phred_base()                                  noexcept = default; //!< Defaulted.
+    constexpr phred_base(phred_base const &)                noexcept = default; //!< Defaulted.
+    constexpr phred_base(phred_base &&)                     noexcept = default; //!< Defaulted.
+    constexpr phred_base & operator=(phred_base const &)    noexcept = default; //!< Defaulted.
+    constexpr phred_base & operator=(phred_base &&)         noexcept = default; //!< Defaulted.
+    ~phred_base()                                           noexcept = default; //!< Defaulted.
 
     //!\brief Allow construction from the Phred score value.
-    constexpr quality_base(phred_type const p) noexcept
+    constexpr phred_base(phred_type const p) noexcept
     {
         static_cast<derived_type *>(this)->assign_phred(p);
     }
@@ -85,11 +85,11 @@ public:
      */
     template <typename other_qual_type>
     //!\cond
-        requires (!std::same_as<quality_base, other_qual_type>) &&
+        requires (!std::same_as<phred_base, other_qual_type>) &&
                  (!std::same_as<derived_type, other_qual_type>) &&
                  quality_alphabet<other_qual_type>
     //!\endcond
-    explicit constexpr quality_base(other_qual_type const & other) noexcept
+    explicit constexpr phred_base(other_qual_type const & other) noexcept
     {
         assign_phred_to(seqan3::to_phred(other), static_cast<derived_type &>(*this));
     }
