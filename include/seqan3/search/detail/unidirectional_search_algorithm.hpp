@@ -223,7 +223,7 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
     if (query_pos == std::ranges::size(query) || error_left.total == 0)
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
-        if (query_pos == std::ranges::size(query) || cur.extend_right(views::drop(query, query_pos)))
+        if (query_pos == std::ranges::size(query) || cur.extend_right(std::views::drop(query, query_pos)))
         {
             delegate(cur);
             return true;

@@ -218,7 +218,7 @@ TEST_F(minimiser_test, combinability)
                                                                          text3 | stop_at_t | rev_gapped_kmer_view,
                                                                          5}));
 
-    auto start_at_a = seqan3::views::drop(6);
+    auto start_at_a = std::views::drop(6);
     EXPECT_RANGE_EQ(result3_start, (seqan3::detail::minimiser_view{text3 | start_at_a | kmer_view,
                                                                    text3 | start_at_a | rev_kmer_view,
                                                                    5}));
