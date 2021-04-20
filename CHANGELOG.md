@@ -128,6 +128,15 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 * Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
   ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
+* Removed phred constructors instead ([\#2537](https://github.com/seqan/seqan3/pull/2537)):
+  * Use instead of `seqan3::phred42(phred_type)` constructor `seqan3::phred42::assign_phred()` or
+    `seqan3::operator""_phred42`.
+  * Use instead of `seqan3::phred63(phred_type)` constructor `seqan3::phred63::assign_phred()` or
+    `seqan3::operator""_phred63`.
+  * Use instead of `seqan3::phred94(phred_type)` constructor `seqan3::phred94::assign_phred()` or
+    `seqan3::operator""_phred94`.
+  * Use instead of `seqan3::phred68legacy(phred_type)` constructor `seqan3::phred68legacy::assign_phred()` or
+    `seqan3::operator""_phred68legacy`.
 * Renamed `seqan3::quality_base` to `seqan3::phred_base`
   ([\#2539](https://github.com/seqan/seqan3/pull/2539)).
 
