@@ -124,11 +124,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
 * The literal 'M'_cigar_op was renamed to 'M'_cigar_operation
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
-
 * Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 * Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
   ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
-
 
 #### Argument Parser
 
