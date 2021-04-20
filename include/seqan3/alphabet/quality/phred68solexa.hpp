@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/quality/quality_base.hpp>
+#include <seqan3/alphabet/quality/phred_base.hpp>
 
 namespace seqan3
 {
