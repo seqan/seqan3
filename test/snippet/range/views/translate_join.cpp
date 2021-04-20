@@ -3,7 +3,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/range/views/translate_join.hpp>
 
 using seqan3::operator""_dna4;

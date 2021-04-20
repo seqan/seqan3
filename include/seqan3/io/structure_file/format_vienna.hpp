@@ -33,7 +33,7 @@
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_line.hpp>

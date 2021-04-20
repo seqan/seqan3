@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/range/views/slice.hpp>
-#include <seqan3/range/views/char_to.hpp>
+#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 
