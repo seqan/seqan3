@@ -119,8 +119,6 @@ You can either directly check the reported code or verify with our documentation
 For a complete list of behavioural changes in our public and internal API, you can consult our API stability
 regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stablility/3.0.2/.
 
-* Renamed `seqan3::sam_dna16` to `seqan3::dna16sam` ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
-
 #### Alphabet
 
 * Removed seqan3::char_is_valid_for requirement from seqan3::writable_alphabet and
@@ -130,6 +128,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
 * The literal 'M'_cigar_op was renamed to 'M'_cigar_operation
   ([\#2388](https://github.com/seqan/seqan3/pull/2388)).
+* Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
+  ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
 
 #### Argument Parser
 
