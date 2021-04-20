@@ -13,7 +13,6 @@
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 TEST(rows, assign_sequence_files)
@@ -96,14 +95,14 @@ TEST(integration, view)
     // valid without assignment?
     seqan3::sequence_file_input{std::istringstream{input},
                                 seqan3::format_fasta{}} | seqan3::detail::persist
-                                                        | seqan3::views::take(2)
+                                                        | std::views::take(2)
                                                         | seqan3::sequence_file_output{std::ostringstream{},
                                                                                        seqan3::format_fasta{}};
 
     // valid with assignment and check contents
     auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}}
               | seqan3::detail::persist
-              | seqan3::views::take(2)
+              | std::views::take(2)
               | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 
     fout.get_stream().flush();

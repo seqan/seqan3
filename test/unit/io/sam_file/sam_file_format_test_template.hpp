@@ -19,7 +19,6 @@
 #include <seqan3/io/sam_file/input_format_concept.hpp>
 #include <seqan3/io/sam_file/output.hpp>
 #include <seqan3/io/sam_file/output_format_concept.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -554,7 +553,7 @@ TYPED_TEST_P(sam_file_write, write_ref_id_with_different_types)
 
         // view on string
         ASSERT_NO_THROW(fout.emplace_back(&(this->header), this->ids[2], this->flags[2],
-        /*----------------------->*/      this->ref_id | seqan3::views::take(20),
+        /*----------------------->*/      this->ref_id | std::views::take(20),
                                           this->ref_offsets[2], this->mapqs[2], this->alignments[2], this->offsets[2],
                                           this->mates[2], this->seqs[2], this->quals[2], this->tag_dicts[2]));
     }

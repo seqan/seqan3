@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/range/views/take.hpp>
+#include <seqan3/io/detail/take_view.hpp>
 
 // ============================================================================
 //  views::take_exactly (adaptor instance definition)

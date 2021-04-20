@@ -25,7 +25,7 @@ int main()
     auto it = std::ranges::begin(sequence);
     while (it != std::ranges::end(sequence))
     {
-        /* Note that you need cannot use stream_it.write_range(rng | seqan3::views::take(10) here
+        /* Note that you need cannot use stream_it.write_range(rng | std::views::take(10)) here
          * because the returned iterator is not of the correct type.
          */
         auto current_end = it;
