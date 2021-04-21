@@ -6,13 +6,18 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::views::slice.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
+#include <seqan3/std/concepts>
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
+#include <seqan3/std/span>
 #include <stdexcept>
+#include <seqan3/std/type_traits>
 
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/concept.hpp>
@@ -20,11 +25,6 @@
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
-#include <seqan3/std/span>
-#include <seqan3/std/type_traits>
 
 namespace seqan3::detail
 {
