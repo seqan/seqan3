@@ -14,8 +14,8 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/deep.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/deep.hpp>
 
 namespace seqan3::views
 {

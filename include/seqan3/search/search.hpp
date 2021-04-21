@@ -18,7 +18,6 @@
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/range/views/deep.hpp>
 #include <seqan3/range/views/persist.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/configuration/on_result.hpp>
@@ -26,6 +25,7 @@
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
