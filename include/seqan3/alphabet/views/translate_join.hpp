@@ -335,7 +335,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/translate_join.hpp}
+ * \header_file{seqan3/alphabet/views/translate_join.hpp}
  *
  * This view can be used to translate nucleotide sequences into aminoacid sequences (see translation_frames for possible combination of frames).
  * This view only operates on two-dimensional input (range of ranges) and outputs a range of ranges no matter the number of input sequences or
