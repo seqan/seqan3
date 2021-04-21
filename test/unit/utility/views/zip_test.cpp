@@ -5,17 +5,17 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/algorithm>
 #include <deque>
 #include <iostream>
 #include <list>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/views/zip.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
+#include <seqan3/utility/views/zip.hpp>
 
 // https://github.com/ericniebler/range-v3/issues/1480
 TEST(zip_view, gcc10bug_rangev3_1480)

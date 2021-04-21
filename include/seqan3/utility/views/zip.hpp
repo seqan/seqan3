@@ -7,12 +7,25 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief [DEPRECATED] Provides seqan3::views::zip.
- * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/zip.hpp instead.
+ * \brief Provides seqan3::views::zip.
  */
 
 #pragma once
 
-#include <seqan3/utility/views/zip.hpp>
+#include <seqan3/std/ranges>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/zip.hpp> instead.")
+#include <range/v3/view/zip.hpp>
+
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::views
+{
+
+/*!\brief A zip view
+ * \ingroup views
+ * \details
+ * \noapi{This is currently range-v3's zip implementation.}
+ */
+inline constexpr auto zip = ::ranges::views::zip;
+
+} // namespace seqan3::views

@@ -15,8 +15,8 @@
 
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/persist.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 template <typename rng_type>
 class single_pass_input : public ::testing::Test

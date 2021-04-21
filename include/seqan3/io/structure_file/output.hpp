@@ -33,10 +33,10 @@
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/range/views/get.hpp>
-#include <seqan3/range/views/zip.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3
 {

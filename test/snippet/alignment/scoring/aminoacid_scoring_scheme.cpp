@@ -4,7 +4,7 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/zip.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 int main()
 {
