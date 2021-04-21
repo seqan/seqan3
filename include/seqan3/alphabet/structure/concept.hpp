@@ -40,7 +40,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
@@ -50,7 +50,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_pair_open(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `is_pair_open(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `is_pair_open(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
@@ -60,7 +60,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
         /*return*/ is_pair_open(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.is_pair_open()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.is_pair_open()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
@@ -137,7 +137,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
@@ -147,7 +147,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_pair_close(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `is_pair_close(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `is_pair_close(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
@@ -157,7 +157,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
         /*return*/ is_pair_close(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.is_pair_close()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.is_pair_close()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
@@ -234,7 +234,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
@@ -244,7 +244,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_unpaired(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `is_unpaired(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `is_unpaired(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
@@ -254,7 +254,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
         /*return*/ is_unpaired(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.is_unpaired()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.is_unpaired()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
@@ -343,8 +343,8 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
                              std::remove_cvref_t<alphabet_type>,
                              std::type_identity<alphabet_type>>;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
@@ -352,9 +352,9 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
         /*return*/ seqan3::custom::alphabet<alphabet_type>::max_pseudoknot_depth /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e.
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e.
      *        `max_pseudoknot_depth(alphabet_type{})`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      *
      * \details
      *
@@ -367,8 +367,8 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
         /*return*/ max_pseudoknot_depth(alphabet_or_type_identity<alphabet_type>{}) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): static member access, i.e. `alphabet_type::max_pseudoknot_depth`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): static member access, i.e. `alphabet_type::max_pseudoknot_depth`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
@@ -469,7 +469,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */
@@ -479,7 +479,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
         /*return*/ seqan3::custom::alphabet<alphabet_t>::pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `pseudoknot_id(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `pseudoknot_id(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */
@@ -489,7 +489,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
         /*return*/ pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.pseudoknot_id()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.pseudoknot_id()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */

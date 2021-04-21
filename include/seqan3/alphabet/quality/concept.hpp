@@ -35,7 +35,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the Phred is returned from.
      */
@@ -45,7 +45,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
         /*return*/ seqan3::custom::alphabet<alphabet_t>::to_phred(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `to_phred(alphabet)`
+    /*!\brief CPO overload (check 2 out of 3): argument dependent lookup (ADL), i.e. `to_phred(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the Phred is returned from.
      */
@@ -55,7 +55,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
         /*return*/ to_phred(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.to_phred()`
+    /*!\brief CPO overload (check 3 out of 3): member access, i.e. `alphabet.to_phred()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the Phred is returned from.
      */
@@ -142,7 +142,7 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param phred The Phred to assign the alphabet to.
      * \param alphabet The alphabet the Phred is assigned to.
@@ -163,7 +163,7 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
         /*return*/ static_cast<alphabet_t>(seqan3::custom::alphabet<alphabet_t>::assign_phred_to(phred, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e.
+    /*!\brief CPO overload (check 2 out of 3): argument dependent lookup (ADL), i.e.
      *        `assign_phred_to(phred, alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param phred The Phred to assign the alphabet to.
@@ -185,7 +185,7 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
         /*return*/ static_cast<alphabet_t>(assign_phred_to(phred, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.assign_phred(phred)`
+    /*!\brief CPO overload (check 3 out of 3): member access, i.e. `alphabet.assign_phred(phred)`
      * \tparam alphabet_t The type of the alphabet.
      * \param phred The Phred to assign the alphabet to.
      * \param alphabet The alphabet the Phred is assigned to.

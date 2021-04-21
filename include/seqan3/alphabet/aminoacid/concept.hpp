@@ -67,8 +67,8 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
                              std::remove_cvref_t<alphabet_type>,
                              std::type_identity<alphabet_type>>;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
@@ -76,9 +76,9 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
         /*return*/ std::bool_constant<seqan3::custom::alphabet<alphabet_type>::enable_aminoacid>::value == true /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e.
+    /*!\brief CPO overload (check 2 out of 3): argument dependent lookup (ADL), i.e.
      *        `enable_aminoacid(alphabet_type{})`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      *
      * \details
      *
@@ -91,8 +91,8 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
         /*return*/ std::bool_constant<enable_aminoacid(alphabet_or_type_identity<alphabet_type>{})>::value == true /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): `alphabet_type` is derived from seqan3::aminoacid_empty_base
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 3 out of 3): `alphabet_type` is derived from seqan3::aminoacid_empty_base
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)

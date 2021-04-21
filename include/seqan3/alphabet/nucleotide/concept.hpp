@@ -36,7 +36,7 @@ struct complement_cpo : public detail::customisation_point_object<complement_cpo
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the complement is returned from.
      */
@@ -46,7 +46,7 @@ struct complement_cpo : public detail::customisation_point_object<complement_cpo
         /*return*/ seqan3::custom::alphabet<alphabet_t>::complement(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `complement(alphabet)`
+    /*!\brief CPO overload (check 2 out of 3): argument dependent lookup (ADL), i.e. `complement(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the complement is returned from.
      */
@@ -56,7 +56,7 @@ struct complement_cpo : public detail::customisation_point_object<complement_cpo
         /*return*/ complement(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.complement()`
+    /*!\brief CPO overload (check 3 out of 3): member access, i.e. `alphabet.complement()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the complement is returned from.
      */

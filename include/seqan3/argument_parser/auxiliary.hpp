@@ -93,8 +93,8 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
                              std::remove_cvref_t<option_type>,
                              std::type_identity<option_type>>;
 
-    /*!\brief CPO overload (1. out of 2 checks): explicit customisation via `seqan3::custom::argument_parsing`
-     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 2): explicit customisation via `seqan3::custom::argument_parsing`
+     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types.)
      */
     template <typename option_type = option_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
@@ -102,9 +102,9 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
         /*return*/ seqan3::custom::argument_parsing<option_type>::enumeration_names /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 2 checks): argument dependent lookup (ADL), i.e.
+    /*!\brief CPO overload (check 1 out of 2): argument dependent lookup (ADL), i.e.
      *        `enumeration_names(option_type{})`
-     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types)
+     * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types.)
      *
      * \details
      *
