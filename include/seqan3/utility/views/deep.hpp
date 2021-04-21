@@ -75,11 +75,11 @@ namespace seqan3::views
  *
  * Wrapping an adaptor that takes no parameters ("range adaptor <i>closure</i> object"):
  *
- * \include test/snippet/range/views/deep_no_param.cpp
+ * \include test/snippet/utility/views/deep_no_param.cpp
  *
  * Wrapping an adaptor that takes parameters:
  *
- * \include test/snippet/range/views/deep_with_param.cpp
+ * \include test/snippet/utility/views/deep_with_param.cpp
  *
  * The above example illustrates that views::deep has two sets of arguments, the **arguments to construct** this adaptor,
  * and the arguments passed to the underlying adaptor when **calling** this adaptor. You can use `()` for both, but
@@ -89,11 +89,11 @@ namespace seqan3::views
  * of the underlying adaptor if they are temporaries. This is no problem for small objects like the integer above,
  * but might be expensive for larger ones. To avoid this, pass in references to external objects instead of temporaries:
  *
- * \include test/snippet/range/views/deep_pass_ref.cpp
+ * \include test/snippet/utility/views/deep_pass_ref.cpp
  *
  * Wrapping an adaptor including its arguments:
  *
- * \include test/snippet/range/views/deep_wrap_args.cpp
+ * \include test/snippet/utility/views/deep_wrap_args.cpp
  * In the above example the argument to the underlying adaptor is hardcoded and can't be changed at the call-site. It
  * is less flexible, but does not require workarounds for arguments that are expensive (or impossible) to copy.
  *
