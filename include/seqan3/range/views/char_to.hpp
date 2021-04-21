@@ -8,7 +8,7 @@
 /*!\file
  * \brief [DEPRECATED] Provides seqan3::views::char_to.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \deprecated This header will be removed in 3.1. Please use seqan3/utility/math.hpp instead.
+ * \deprecated This header will be removed in 3.1. Please use seqan3/alphabet/views/char_to.hpp instead.
  */
 
 #pragma once
