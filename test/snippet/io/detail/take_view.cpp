@@ -1,5 +1,5 @@
-#include <string>
 #include <seqan3/std/ranges>
+#include <string>
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/detail/take_view.hpp>
