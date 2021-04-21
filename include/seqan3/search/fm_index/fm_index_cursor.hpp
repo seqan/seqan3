@@ -36,9 +36,9 @@ namespace seqan3
 struct suffix_array_interval
 {
     //!\brief The begin position of the interval ("left boundary").
-    size_t begin_position;
+    size_t begin_position{};
     //!\brief The exclusive end position of the interval ("right boundary").
-    size_t end_position;
+    size_t end_position{};
 
     /*!\name Comparison operators
      * \{
