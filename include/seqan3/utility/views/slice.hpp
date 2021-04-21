@@ -184,7 +184,7 @@ namespace seqan3::views
  *
  * ### Example
  *
- * \include test/snippet/range/views/slice.cpp
+ * \include test/snippet/utility/views/slice.cpp
  *
  * \hideinitializer
  */
