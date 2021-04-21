@@ -91,7 +91,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/trim_quality.hpp}
+ * \header_file{seqan3/alphabet/views/trim_quality.hpp}
  *
  * This view can be used to trim sequences based on quality. Only bases at the end of the sequence not meeting the
  * specified threshold are discarded.

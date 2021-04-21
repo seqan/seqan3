@@ -34,7 +34,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/to_rank.hpp}
+ * \header_file{seqan3/alphabet/views/to_rank.hpp}
  *
  * ### View properties
  *

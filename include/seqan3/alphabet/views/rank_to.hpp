@@ -34,7 +34,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/rank_to.hpp}
+ * \header_file{seqan3/alphabet/views/rank_to.hpp}
  *
  * ### View properties
  *
@@ -65,7 +65,6 @@ namespace seqan3::views
  * \hideinitializer
  *
  * \stableapi{Since version 3.1.}
- * TODO move to seqan3/include/alphabet/views/rank_to.hpp
  */
 template <typename alphabet_type>
 //!\cond
