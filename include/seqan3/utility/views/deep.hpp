@@ -6,14 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief Provides seqan3::views::deep.
+ * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::views
 {
