@@ -13,7 +13,7 @@
 
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
@@ -256,7 +256,7 @@ TEST(range_and_iterator, range_size_t)
 {
     //TODO(h-2): add something that actually has a different size_type
 // iota is not a sized range, but take_exactly is
-    auto v = std::views::iota(0) | seqan3::views::take_exactly(2);
+    auto v = std::views::iota(0) | seqan3::detail::take_exactly(2);
     using type_list_example = seqan3::type_list<std::ranges::range_size_t<std::vector<int>>, // short
                                                 typename std::vector<int>::size_type, // member type
                                                 std::ranges::range_size_t<std::vector<int> const>, // const container

@@ -27,6 +27,7 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -37,7 +38,6 @@
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
@@ -328,7 +328,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     if (!header_was_read)
     {
         // magic BAM string
-        if (!std::ranges::equal(stream_view | views::take_exactly_or_throw(4), std::string_view{"BAM\1"}))
+        if (!std::ranges::equal(stream_view | detail::take_exactly_or_throw(4), std::string_view{"BAM\1"}))
             throw format_error{"File is not in BAM format."};
 
         int32_t l_text{}; // length of header text including \0 character
@@ -339,7 +339,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         read_field(stream_view, l_text);
 
         if (l_text > 0) // header text is present
-            read_header(stream_view | views::take_exactly_or_throw(l_text), header, ref_seqs);
+            read_header(stream_view | detail::take_exactly_or_throw(l_text), header, ref_seqs);
 
         read_field(stream_view, n_ref);
 
@@ -399,7 +399,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     // read alignment record into buffer
     // -------------------------------------------------------------------------------------------------------------
     alignment_record_core core;
-    std::ranges::copy(stream_view | views::take_exactly_or_throw(sizeof(core)), reinterpret_cast<char *>(&core));
+    std::ranges::copy(stream_view | detail::take_exactly_or_throw(sizeof(core)), reinterpret_cast<char *>(&core));
 
     if (core.refID >= static_cast<int32_t>(header.ref_ids().size()) || core.refID < -1) // [[unlikely]]
     {
@@ -430,7 +430,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read id
     // -------------------------------------------------------------------------------------------------------------
-    read_field(stream_view | views::take_exactly_or_throw(core.l_read_name - 1), id); // field::id
+    read_field(stream_view | detail::take_exactly_or_throw(core.l_read_name - 1), id); // field::id
     std::ranges::next(std::ranges::begin(stream_view)); // skip '\0'
 
     // read cigar string
@@ -443,7 +443,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     }
     else
     {
-        detail::consume(stream_view | views::take_exactly_or_throw(core.n_cigar_op * 4));
+        detail::consume(stream_view | detail::take_exactly_or_throw(core.n_cigar_op * 4));
     }
 
     offset = offset_tmp;
@@ -453,7 +453,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     if (core.l_seq > 0) // sequence information is given
     {
         auto seq_stream = stream_view
-                        | views::take_exactly_or_throw(core.l_seq / 2) // one too short if uneven
+                        | detail::take_exactly_or_throw(core.l_seq / 2) // one too short if uneven
                         | std::views::transform([] (char c) -> std::pair<dna16sam, dna16sam>
                           {
                               return {dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(c) >> 4)),
@@ -549,7 +549,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read qual string
     // -------------------------------------------------------------------------------------------------------------
-    read_field(stream_view | views::take_exactly_or_throw(core.l_seq)
+    read_field(stream_view | detail::take_exactly_or_throw(core.l_seq)
                            | std::views::transform([] (char chr) { return static_cast<char>(chr + 33); }), qual);
 
     // All remaining optional fields if any: SAM tags dictionary
@@ -557,7 +557,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     int32_t remaining_bytes = core.block_size - (sizeof(alignment_record_core) - 4/*block_size excluded*/) -
                               core.l_read_name - core.n_cigar_op * 4 - (core.l_seq + 1) / 2 - core.l_seq;
     assert(remaining_bytes >= 0);
-    auto tags_view = stream_view | views::take_exactly_or_throw(remaining_bytes);
+    auto tags_view = stream_view | detail::take_exactly_or_throw(remaining_bytes);
 
     while (tags_view.size() > 0)
         read_field(tags_view, tag_dict);
