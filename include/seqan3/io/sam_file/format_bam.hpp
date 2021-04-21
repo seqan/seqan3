@@ -333,24 +333,43 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         if (!std::ranges::equal(stream_view | views::take_exactly_or_throw(4), std::string_view{"BAM\1"}))
             throw format_error{"File is not in BAM format."};
 
-        int32_t tmp32{};
-        read_field(stream_view, tmp32);
+        int32_t l_text{}; // length of header text including \0 character
+        int32_t n_ref{}; // number of reference sequences
+        int32_t l_name{}; // 1 + length of reference name including \0 character
+        int32_t l_ref{}; // length of reference sequence
 
-        if (tmp32 > 0) // header text is present
-            read_header(stream_view | views::take_exactly_or_throw(tmp32), header, ref_seqs);
+        read_field(stream_view, l_text);
 
-        int32_t n_ref;
+        if (l_text > 0) // header text is present
+            read_header(stream_view | views::take_exactly_or_throw(l_text), header, ref_seqs);
+
         read_field(stream_view, n_ref);
 
         for (int32_t ref_idx = 0; ref_idx < n_ref; ++ref_idx)
         {
-            read_field(stream_view, tmp32); // l_name (length of reference name including \0 character)
+            read_field(stream_view, l_name);
 
-            string_buffer.resize(tmp32 - 1);
-            std::ranges::copy_n(std::ranges::begin(stream_view), tmp32 - 1, string_buffer.data()); // copy without \0 character
+            string_buffer.resize(l_name - 1);
+            std::ranges::copy_n(std::ranges::begin(stream_view), l_name - 1, string_buffer.data()); // copy without \0 character
             std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
 
-            read_field(stream_view, tmp32); // l_ref (length of reference sequence)
+            read_field(stream_view, l_ref);
+
+            if constexpr (detail::decays_to_ignore_v<ref_seqs_type>) // no reference information given
+            {
+                // If there was no header text, we parse reference sequences block as header information
+                if (l_text == 0)
+                {
+                    auto & reference_ids = header.ref_ids();
+                    // put the length of the reference sequence into ref_id_info
+                    header.ref_id_info.emplace_back(l_ref, "");
+                    // put the reference name into reference_ids
+                    reference_ids.push_back(string_buffer);
+                    // assign the reference name an ascending reference id (starts at index 0).
+                    header.ref_dict.emplace(reference_ids.back(), reference_ids.size() - 1);
+                    continue;
+                }
+            }
 
             auto id_it = header.ref_dict.find(string_buffer);
 
@@ -367,7 +386,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                                                      " does not correspond to the position ", id_it->second,
                                                      " in the header (header.ref_ids():", header.ref_ids(), ").")};
             }
-            else if (std::get<0>(header.ref_id_info[id_it->second]) != tmp32) // [unlikely]
+            else if (std::get<0>(header.ref_id_info[id_it->second]) != l_ref) // [unlikely]
             {
                 throw format_error{"Provided reference has unequal length as specified in the header."};
             }
