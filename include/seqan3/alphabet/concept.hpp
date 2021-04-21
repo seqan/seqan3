@@ -146,7 +146,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/alphabet/to_rank.cpp
+ * \include test/snippet/alphabet/views/to_rank.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
  * see seqan3::alphabet.
@@ -393,7 +393,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/alphabet/to_char.cpp
+ * \include test/snippet/alphabet/views/to_char.cpp
  *
  * For an example of a full alphabet definition with free function implementations (solution 1. above),
  * see seqan3::alphabet.

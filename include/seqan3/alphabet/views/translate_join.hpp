@@ -382,7 +382,7 @@ namespace seqan3::views
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * \snippet test/snippet/range/views/translate_join.cpp example
+ * \snippet test/snippet/alphabet/views/translate_join.cpp example
  * \hideinitializer
  *
  * \experimentalapi{Experimental since version 3.1.}

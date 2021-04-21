@@ -25,8 +25,8 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include "../iterator_test_template.hpp"
-#include "../range_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
+#include "../../range/range_test_template.hpp"
 
 using seqan3::operator""_aa27;
 

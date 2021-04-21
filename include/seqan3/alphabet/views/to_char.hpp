@@ -60,7 +60,7 @@ namespace seqan3::views
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
- * \include test/snippet/range/views/range_view_to_char.cpp
+ * \include test/snippet/alphabet/views/range_view_to_char.cpp
  * \hideinitializer
  *
  * \stableapi{Since version 3.1.}

@@ -1,0 +1,3 @@
+seqan3_benchmark(view_translate_1D_benchmark.cpp)
+seqan3_benchmark(view_translate_2D_1D_benchmark.cpp)
+seqan3_benchmark(view_translate_2D_benchmark.cpp)

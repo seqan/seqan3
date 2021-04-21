@@ -121,10 +121,10 @@ namespace seqan3::views
  * ###Example
  *
  * Operating on a range of seqan3::phred42:
- * \include test/snippet/range/views/trim_quality_phred42.cpp
+ * \include test/snippet/alphabet/views/trim_quality_phred42.cpp
  *
  * Or operating on a range of seqan3::dna5q:
- * \include test/snippet/range/views/trim_quality_dna5q.cpp
+ * \include test/snippet/alphabet/views/trim_quality_dna5q.cpp
  * \hideinitializer
  *
  * \experimentalapi{Experimental since version 3.1.}
