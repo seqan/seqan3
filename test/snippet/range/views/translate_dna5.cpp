@@ -1,6 +1,6 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/translate.hpp>
 
 int main()

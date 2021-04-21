@@ -12,8 +12,8 @@
 
 #pragma once
 
+#include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/range/views/complement.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/search/views/minimiser.hpp>
 

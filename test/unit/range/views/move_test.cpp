@@ -12,10 +12,10 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/move.hpp>
-#include <seqan3/range/views/complement.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
