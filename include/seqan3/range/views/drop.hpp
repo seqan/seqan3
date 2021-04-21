@@ -170,7 +170,7 @@ namespace seqan3::views
  *
  * ### Example
  *
- * \include test/snippet/range/views/drop.cpp
+ * \include test/snippet/utility/views/drop.cpp
  *
  * \hideinitializer
  *
