@@ -36,10 +36,10 @@ TYPED_TEST(quality_conversion, explicit_conversion)
     seqan3::detail::for_each<quality_conversion_types>([&] (auto qual) constexpr
     {
         using out_type = std::decay_t<typename decltype(qual)::type>;
-        EXPECT_EQ(static_cast<out_type>(TypeParam{ 0}), out_type{ 0});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{ 5}), out_type{ 5});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{15}), out_type{15});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{20}), out_type{20});
-        EXPECT_EQ(static_cast<out_type>(TypeParam{40}), out_type{40});
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred( 0)), out_type{}.assign_phred( 0));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred( 5)), out_type{}.assign_phred( 5));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(15)), out_type{}.assign_phred(15));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(20)), out_type{}.assign_phred(20));
+        EXPECT_EQ(static_cast<out_type>(TypeParam{}.assign_phred(40)), out_type{}.assign_phred(40));
     });
 }
