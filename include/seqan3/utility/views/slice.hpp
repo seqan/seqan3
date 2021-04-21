@@ -137,7 +137,7 @@ namespace seqan3::views
  *
  * \details
  *
- * \header_file{seqan3/range/views/slice.hpp}
+ * \header_file{seqan3/utility/views/slice.hpp}
  *
  * ### View properties
  *

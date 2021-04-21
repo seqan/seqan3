@@ -21,9 +21,9 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3
 {
