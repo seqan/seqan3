@@ -22,7 +22,6 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-
 using seqan3::operator""_dna4;
 using seqan3::operator""_phred42;
 

@@ -17,7 +17,6 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-
 #include "fixture/alignment_fixture.hpp"
 
 using namespace seqan3::test::alignment::fixture;

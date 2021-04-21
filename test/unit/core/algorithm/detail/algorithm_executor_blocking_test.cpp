@@ -16,7 +16,6 @@
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-
 // A dummy algorithm that just counts the number of equal characters in two sequences.
 struct dummy_algorithm
 {

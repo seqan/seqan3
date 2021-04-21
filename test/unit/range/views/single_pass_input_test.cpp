@@ -18,7 +18,6 @@
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-
 template <typename rng_type>
 class single_pass_input : public ::testing::Test
 {

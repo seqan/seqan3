@@ -15,7 +15,6 @@
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-
 TEST(detail, select_types_with_ids)
 {
     using types = seqan3::type_list<std::string, seqan3::dna4_vector, std::vector<seqan3::phred42>>;
