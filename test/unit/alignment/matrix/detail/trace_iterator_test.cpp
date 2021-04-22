@@ -38,7 +38,7 @@ struct trace_iterator_fixture : public ::testing::Test
         U,       LO | U, D,          L
     }};
 
-    using trace_iterator_type = decltype(seqan3::detail::trace_iterator{matrix.begin()});
+    using trace_iterator_type = seqan3::detail::trace_iterator<decltype(matrix.begin())>;
     using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
 
     path_type path(seqan3::detail::matrix_offset const & offset)
@@ -180,7 +180,7 @@ struct iterator_fixture<trace_iterator_fixture> : public trace_iterator_fixture
     using base_t = trace_iterator_fixture;
 
     using iterator_type = typename base_t::trace_iterator_type;
-    using const_iterator_type = decltype(seqan3::detail::trace_iterator{base_t::matrix.cbegin()});
+    using const_iterator_type = seqan3::detail::trace_iterator<decltype(base_t::matrix.cbegin())>;
 
     // Test forward iterator concept.
     using iterator_tag = std::forward_iterator_tag;

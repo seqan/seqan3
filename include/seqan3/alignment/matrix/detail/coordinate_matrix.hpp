@@ -195,7 +195,7 @@ public:
      */
     //!\brief The value type.
     using value_type = decltype(std::declval<iota_view_t>()
-                              | std::views::transform(convert_to_matrix_coordinate{column_id}));
+                              | std::views::transform(convert_to_matrix_coordinate{index_t{}/*column_id*/}));
     //!\brief The reference type.
     using reference = value_type;
     //!\brief The pointer type.

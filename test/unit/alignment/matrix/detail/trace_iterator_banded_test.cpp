@@ -46,8 +46,7 @@ struct trace_iterator_banded_test : public ::testing::Test
         //4        D  D  D UO
         //5           D  D  U
 
-    using trace_iterator_type = decltype(seqan3::detail::trace_iterator_banded{matrix.begin(),
-                                                                               seqan3::detail::column_index_type{0}});
+    using trace_iterator_type = seqan3::detail::trace_iterator_banded<decltype(matrix.begin())>;
     using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
 
     path_type path(seqan3::detail::matrix_offset const & offset)
@@ -122,8 +121,7 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
     using base_t = trace_iterator_banded_test;
 
     using iterator_type = typename base_t::trace_iterator_type;
-    using const_iterator_type = decltype(seqan3::detail::trace_iterator_banded{base_t::matrix.cbegin(),
-                                                                               seqan3::detail::column_index_type{0}});
+    using const_iterator_type = seqan3::detail::trace_iterator_banded<decltype(base_t::matrix.cbegin())>;
 
     // Test forward iterator concept.
     using iterator_tag = std::forward_iterator_tag;
