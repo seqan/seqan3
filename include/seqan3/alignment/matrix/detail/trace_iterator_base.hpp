@@ -119,7 +119,7 @@ public:
      */
     using value_type = trace_directions; //!< The value type.
     using reference = trace_directions const &; //!< The reference type.
-    using pointer = value_type *; //!< The pointer type.
+    using pointer = value_type const *; //!< The pointer type.
     using difference_type = std::ptrdiff_t; //!< The difference type.
     using iterator_category = std::forward_iterator_tag; //!< Forward iterator tag.
     //!\}
