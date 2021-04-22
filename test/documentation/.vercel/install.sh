@@ -15,7 +15,10 @@ tar -C ${CACHE_DIR}/doxygen-download -zxf ${CACHE_DIR}/doxygen-download/doxygen-
 
 pushd ${CACHE_DIR}/doxygen-download/doxygen-${DOXYGEN_VERSION}
 mkdir -p build && cd build
-cmake3 -G "Unix Makefiles" ..
+if ! cmake3 -G "Unix Makefiles" ..; then
+    rm -rf *
+    cmake3 -G "Unix Makefiles" ..
+fi
 make -j 4
 make install DESTDIR=${CACHE_DIR}/doxygen-${DOXYGEN_VERSION}
 popd
