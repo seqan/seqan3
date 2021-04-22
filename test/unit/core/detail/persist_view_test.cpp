@@ -13,7 +13,7 @@
 #include <seqan3/std/ranges>
 #include <string>
 
-#include <seqan3/range/views/persist.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -28,18 +28,18 @@ TEST(view_persist, delegate_to_view_all)
     std::string vec{"foo"};
 
     // pipe notation
-    auto v = vec | seqan3::views::persist;
+    auto v = vec | seqan3::detail::persist;
     EXPECT_RANGE_EQ("foo"sv, v);
 
     // function notation
-    EXPECT_RANGE_EQ("foo"sv, seqan3::views::persist(vec));
+    EXPECT_RANGE_EQ("foo"sv, seqan3::detail::persist(vec));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, vec | seqan3::views::persist | std::views::take(2));
-    EXPECT_RANGE_EQ("of"sv, vec | std::views::reverse | seqan3::views::persist | std::views::drop(1));
+    EXPECT_RANGE_EQ("fo"sv, vec | seqan3::detail::persist | std::views::take(2));
+    EXPECT_RANGE_EQ("of"sv, vec | std::views::reverse | seqan3::detail::persist | std::views::drop(1));
 
     // store combined
-    auto a1 = seqan3::views::persist | std::views::take(2);
+    auto a1 = seqan3::detail::persist | std::views::take(2);
     EXPECT_RANGE_EQ("fo"sv, vec | a1);
 }
 
@@ -48,14 +48,14 @@ TEST(view_persist, wrap_temporary)
     using namespace std::literals;
 
     // pipe notation
-    EXPECT_RANGE_EQ("foo"sv, std::string{"foo"} | seqan3::views::persist);
+    EXPECT_RANGE_EQ("foo"sv, std::string{"foo"} | seqan3::detail::persist);
 
     // function notation
-    EXPECT_RANGE_EQ("foo"sv, seqan3::views::persist(std::string{"foo"}));
+    EXPECT_RANGE_EQ("foo"sv, seqan3::detail::persist(std::string{"foo"}));
 
     // combinability
-    EXPECT_RANGE_EQ("fo"sv, std::string{"foo"} | seqan3::views::persist | std::views::take(2));
-    EXPECT_RANGE_EQ("o"sv, std::string{"foo"} | seqan3::views::persist
+    EXPECT_RANGE_EQ("fo"sv, std::string{"foo"} | seqan3::detail::persist | std::views::take(2));
+    EXPECT_RANGE_EQ("o"sv, std::string{"foo"} | seqan3::detail::persist
                                               | std::views::filter([](char const chr){return chr == 'o';})
                                               | std::views::take(1));
 }
@@ -66,15 +66,15 @@ TEST(view_persist, const)
 
     // inner const
     using t = std::string const;
-    EXPECT_RANGE_EQ("foo"sv, t{"foo"} | seqan3::views::persist);
+    EXPECT_RANGE_EQ("foo"sv, t{"foo"} | seqan3::detail::persist);
 
     // outer const
-    auto const & v2 = std::string{"foo"} | seqan3::views::persist;
+    auto const & v2 = std::string{"foo"} | seqan3::detail::persist;
     EXPECT_RANGE_EQ("foo"sv, v2);
 
     // inner + outer const
     using t = std::string const;
-    auto const & v3 = t{"foo"} | seqan3::views::persist;
+    auto const & v3 = t{"foo"} | seqan3::detail::persist;
     EXPECT_RANGE_EQ("foo"sv, v3);
 }
 
@@ -90,7 +90,7 @@ TEST(view_persist, concepts)
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(std::string{"foo"})>);
     EXPECT_TRUE((std::ranges::output_range<decltype(std::string{"foo"}), char>));
 
-    auto v1 = std::string{"foo"} | seqan3::views::persist;
+    auto v1 = std::string{"foo"} | seqan3::detail::persist;
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);

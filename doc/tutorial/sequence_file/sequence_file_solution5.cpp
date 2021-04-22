@@ -58,15 +58,15 @@ IIIIIHIIJJIIIII
 
 write_file_dummy_struct go{};
 
+#if !SEQAN3_WORKAROUND_GCC_93983
 //![solution]
-#include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
+#include <seqan3/io/sequence_file/all.hpp>
+
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_93983
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
     seqan3::sequence_file_input fin{tmp_dir/"my.fastq"};
@@ -81,6 +81,6 @@ int main()
 
     // This would also work:
     // fin | length_filter | fout;
-#endif // !SEQAN3_WORKAROUND_GCC_93983
 }
 //![solution]
+#endif // !SEQAN3_WORKAROUND_GCC_93983

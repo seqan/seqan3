@@ -142,7 +142,7 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
     len = (len + simulated_errors  > template_length) ? template_length - simulated_errors : len;
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
-         | seqan3::views::persist
+         | seqan3::detail::persist
          | seqan3::views::join
          | seqan3::views::to<std::vector>;
 }

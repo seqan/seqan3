@@ -12,7 +12,7 @@
 #include <string>
 
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
-#include <seqan3/range/views/persist.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
@@ -169,9 +169,9 @@ TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pair_view)
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{std::views::single(this->sequence_pair), 
-                    algorithm_t{dummy_algorithm{}}, 
-                    0u, 
+    executor_t exec{std::views::single(this->sequence_pair),
+                    algorithm_t{dummy_algorithm{}},
+                    0u,
                     this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_FALSE(static_cast<bool>(exec.next_result()));
@@ -196,16 +196,16 @@ TYPED_TEST(algorithm_executor_blocking_test, lvalue_sequence_pairs)
 
 TYPED_TEST(algorithm_executor_blocking_test, rvalue_sequence_pairs_view)
 {
-    using persist_pairs_t = decltype(this->sequence_pairs | seqan3::views::persist);
+    using persist_pairs_t = decltype(this->sequence_pairs | seqan3::detail::persist);
     using algorithm_t = typename algorithm_type_for_input<persist_pairs_t>::type;
     using executor_t = seqan3::detail::algorithm_executor_blocking<persist_pairs_t,
                                                                    algorithm_t,
                                                                    size_t,
                                                                    TypeParam>;
 
-    executor_t exec{this->sequence_pairs | seqan3::views::persist, 
-                    algorithm_t{dummy_algorithm{}}, 
-                    0u, 
+    executor_t exec{this->sequence_pairs | seqan3::detail::persist,
+                    algorithm_t{dummy_algorithm{}},
+                    0u,
                     this->execution_handler()};
     EXPECT_EQ(exec.next_result().value(), 7u);
     EXPECT_EQ(exec.next_result().value(), 7u);

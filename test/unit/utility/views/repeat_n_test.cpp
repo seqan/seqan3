@@ -11,8 +11,8 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
@@ -78,7 +78,7 @@ TEST(view, factory)
 
     // view
     {
-        auto view = std::string{"foobar"} | seqan3::views::persist | std::views::take(3);
+        auto view = std::string{"foobar"} | seqan3::detail::persist | std::views::take(3);
         auto v = seqan3::views::repeat_n(view, 5);
         EXPECT_RANGE_EQ(*v.begin(), std::string{"foo"});
     }

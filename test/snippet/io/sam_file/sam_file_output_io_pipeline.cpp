@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include <seqan3/io/sam_file/all.hpp>
-#include <seqan3/range/views/persist.hpp>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none
 @SQ	SN:ref	LN:45
@@ -15,9 +14,8 @@ r001	147	ref	237	30	*	=	7	-39	CAGCGGCAT	*	NM:i:1
 int main()
 {
 #if !SEQAN3_WORKAROUND_GCC_93983
-    seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}}
-        | seqan3::views::persist
-        | std::views::take(3) // take only the first 3 records
-        | seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
+    auto input_file = seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
+    input_file | std::views::take(3) // take only the first 3 records
+               | seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
 #endif // !SEQAN3_WORKAROUND_GCC_93983
 }

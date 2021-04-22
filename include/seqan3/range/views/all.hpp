@@ -20,7 +20,6 @@
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/move.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/rank_to.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
@@ -136,9 +135,9 @@
  * requirements, e.g. `std::ranges::random_access_range`. The concepts in the first block all build up on
  * each other, i.e. requiring one implies requiring those above; the other concepts are mostly independent of each
  * other. Most views also require that the underlying range satisfy std::ranges::viewable_range which means they don't
- * accept temporary range objects other than views (because they are cheap to copy). A prominent exception
- * to the latter is views::persist that exists exactly for this purpose. *Note that these being* requirements *means that
- * they are the minimal set of properties assumed. Views may very well make use of stronger properties if available.*
+ * accept temporary range objects other than views (because they are cheap to copy). *Note that these being*
+ * requirements *means that they are the minimal set of properties assumed. Views may very well make use of stronger
+ * properties if available.*
  *
  * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
  * `std::ranges::input_range` and also `std::ranges::view` (and conversely also `std::ranges::viewable_range`,

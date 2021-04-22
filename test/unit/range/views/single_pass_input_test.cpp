@@ -13,8 +13,8 @@
 
 #include <range/v3/view/slice.hpp>
 
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
@@ -99,7 +99,7 @@ TYPED_TEST(single_pass_input, deduction_guide_lvalue)
 
 TYPED_TEST(single_pass_input, deduction_guide_view)
 {
-    auto data_view = TypeParam{this->data} | seqan3::views::persist;
+    auto data_view = TypeParam{this->data} | seqan3::detail::persist;
 
     using uview_t = decltype(data_view);
     EXPECT_TRUE((std::ranges::viewable_range<uview_t>));
@@ -117,7 +117,7 @@ TYPED_TEST(single_pass_input, deduction_guide_view)
 
 TYPED_TEST(single_pass_input, view_construction)
 {
-    using rng_t = decltype(std::declval<TypeParam>() | seqan3::views::persist);
+    using rng_t = decltype(std::declval<TypeParam>() | seqan3::detail::persist);
     using view_t = seqan3::detail::single_pass_input_view<rng_t>;
     EXPECT_TRUE(std::is_default_constructible_v<view_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
@@ -132,7 +132,7 @@ TYPED_TEST(single_pass_input, view_construction)
     }
 
     {  // from view
-        [[maybe_unused]] seqan3::detail::single_pass_input_view v{TypeParam{this->data} | seqan3::views::persist};
+        [[maybe_unused]] seqan3::detail::single_pass_input_view v{TypeParam{this->data} | seqan3::detail::persist};
     }
 }
 
@@ -194,7 +194,7 @@ TYPED_TEST(single_pass_input, view_iterate)
 TYPED_TEST(single_pass_input, iterator_concepts)
 {
     using view_type = seqan3::detail::single_pass_input_view<
-                        decltype(std::declval<TypeParam>() | seqan3::views::persist)>;
+                        decltype(std::declval<TypeParam>() | seqan3::detail::persist)>;
     EXPECT_TRUE((std::input_iterator<std::ranges::iterator_t<view_type>>));
     EXPECT_FALSE((std::forward_iterator<std::ranges::iterator_t<view_type>>));
 }
@@ -202,7 +202,7 @@ TYPED_TEST(single_pass_input, iterator_concepts)
 TYPED_TEST(single_pass_input, iterator_construction)
 {
     using view_type = seqan3::detail::single_pass_input_view<
-                        decltype(std::declval<TypeParam>() | seqan3::views::persist)>;
+                        decltype(std::declval<TypeParam>() | seqan3::detail::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     EXPECT_TRUE(std::is_default_constructible_v<iterator_type>);
     EXPECT_TRUE(std::is_copy_constructible_v<iterator_type>);
@@ -308,7 +308,7 @@ TYPED_TEST(single_pass_input, iterator_neq_comparison)
 TYPED_TEST(single_pass_input, sentinel_concepts)
 {
     using view_type = seqan3::detail::single_pass_input_view<
-                        decltype(std::declval<TypeParam>() | seqan3::views::persist)>;
+                        decltype(std::declval<TypeParam>() | seqan3::detail::persist)>;
     using iterator_type = std::ranges::iterator_t<view_type>;
     using sentinel_type = std::ranges::sentinel_t<view_type>;
 
