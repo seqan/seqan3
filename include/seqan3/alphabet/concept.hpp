@@ -84,7 +84,7 @@ struct to_rank_cpo : public detail::customisation_point_object<to_rank_cpo, 2>
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the rank is returned from.
      */
@@ -94,7 +94,7 @@ struct to_rank_cpo : public detail::customisation_point_object<to_rank_cpo, 2>
         /*return*/ seqan3::custom::alphabet<alphabet_t>::to_rank(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `to_rank(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `to_rank(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the rank is returned from.
      */
@@ -104,7 +104,7 @@ struct to_rank_cpo : public detail::customisation_point_object<to_rank_cpo, 2>
         /*return*/ to_rank(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.to_rank()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.to_rank()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the rank is returned from.
      */
@@ -194,7 +194,7 @@ struct assign_rank_to_cpo : public detail::customisation_point_object<assign_ran
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param rank The rank to assign the alphabet to.
      * \param alphabet The alphabet the rank is assigned to.
@@ -215,7 +215,7 @@ struct assign_rank_to_cpo : public detail::customisation_point_object<assign_ran
         /*return*/ static_cast<alphabet_t>(seqan3::custom::alphabet<alphabet_t>::assign_rank_to(rank, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `assign_rank_to(rank, alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `assign_rank_to(rank, alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param rank The rank to assign the alphabet to.
      * \param alphabet The alphabet the rank is assigned to.
@@ -236,7 +236,7 @@ struct assign_rank_to_cpo : public detail::customisation_point_object<assign_ran
         /*return*/ static_cast<alphabet_t>(assign_rank_to(rank, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.assign_rank(rank)`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.assign_rank(rank)`
      * \tparam alphabet_t The type of the alphabet.
      * \param rank The rank to assign the alphabet to.
      * \param alphabet The alphabet the rank is assigned to.
@@ -330,7 +330,7 @@ struct to_char_cpo : public detail::customisation_point_object<to_char_cpo, 2>
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the character representation is returned from.
      */
@@ -340,7 +340,7 @@ struct to_char_cpo : public detail::customisation_point_object<to_char_cpo, 2>
         /*return*/ seqan3::custom::alphabet<alphabet_t>::to_char(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `to_char(alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `to_char(alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the character representation is returned from.
      */
@@ -350,7 +350,7 @@ struct to_char_cpo : public detail::customisation_point_object<to_char_cpo, 2>
         /*return*/ to_char(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.to_char()`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.to_char()`
      * \tparam alphabet_t The type of the alphabet.
      * \param alphabet The alphabet the character representation is returned from.
      */
@@ -444,7 +444,7 @@ struct assign_char_to_cpo : public detail::customisation_point_object<assign_cha
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_t The type of the alphabet.
      * \param chr The char to assign the alphabet to.
      * \param alphabet The alphabet the char is assigned to.
@@ -465,7 +465,7 @@ struct assign_char_to_cpo : public detail::customisation_point_object<assign_cha
         /*return*/ static_cast<alphabet_t>(seqan3::custom::alphabet<alphabet_t>::assign_char_to(chr, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `assign_char_to(chr, alphabet)`
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `assign_char_to(chr, alphabet)`
      * \tparam alphabet_t The type of the alphabet.
      * \param chr The char to assign the alphabet to.
      * \param alphabet The alphabet the char is assigned to.
@@ -486,7 +486,7 @@ struct assign_char_to_cpo : public detail::customisation_point_object<assign_cha
         /*return*/ static_cast<alphabet_t>(assign_char_to(chr, alphabet)) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): member access, i.e. `alphabet.assign_char(rank)`
+    /*!\brief CPO overload (check 1 out of 3): member access, i.e. `alphabet.assign_char(rank)`
      * \tparam alphabet_t The type of the alphabet.
      * \param chr The char to assign the alphabet to.
      * \param alphabet The alphabet the char is assigned to.
@@ -592,8 +592,8 @@ struct char_is_valid_for_cpo : public detail::customisation_point_object<char_is
                              std::remove_cvref_t<alphabet_type>,
                              std::type_identity<alphabet_type>>;
 
-    /*!\brief CPO overload (1. out of 4 checks): explicit customisation via `seqan3::custom::alphabet`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      * \param chr The character of the alphabet.
      */
     template <typename alphabet_type = alphabet_t>
@@ -602,9 +602,9 @@ struct char_is_valid_for_cpo : public detail::customisation_point_object<char_is
         /*return*/ seqan3::custom::alphabet<alphabet_type>::char_is_valid(chr) == true /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 4 checks): argument dependent lookup (ADL), i.e.
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e.
      *        `char_is_valid_for(chr, alphabet_type{})`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      * \param chr The character of the alphabet.
      *
      * \details
@@ -618,8 +618,8 @@ struct char_is_valid_for_cpo : public detail::customisation_point_object<char_is
         /*return*/ char_is_valid_for(chr, alphabet_or_type_identity<alphabet_type>{}) == true /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 4 checks): static member access, i.e. `alphabet_type::char_is_valid(chr)`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): static member access, i.e. `alphabet_type::char_is_valid(chr)`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      * \param chr The character of the alphabet.
      */
     template <typename alphabet_type = alphabet_t>
@@ -628,8 +628,8 @@ struct char_is_valid_for_cpo : public detail::customisation_point_object<char_is
         /*return*/ std::remove_cvref_t<alphabet_type>::char_is_valid(chr) == true /*;*/
     );
 
-    /*!\brief CPO overload (4. out of 4 checks): seqan3::to_char, seqan3::assign_char_to composition identity.
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): seqan3::to_char, seqan3::assign_char_to composition identity.
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      * \param chr The character of the alphabet.
      * \details
      *
@@ -813,8 +813,8 @@ struct alphabet_size_cpo : public detail::customisation_point_object<alphabet_si
                              std::remove_cvref_t<alphabet_type>,
                              std::type_identity<alphabet_type>>;
 
-    /*!\brief CPO overload (1. out of 3 checks): explicit customisation via `seqan3::custom::alphabet`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
@@ -822,8 +822,8 @@ struct alphabet_size_cpo : public detail::customisation_point_object<alphabet_si
         /*return*/ seqan3::custom::alphabet<alphabet_type>::alphabet_size /*;*/
     );
 
-    /*!\brief CPO overload (2. out of 3 checks): argument dependent lookup (ADL), i.e. `alphabet_size(alphabet_type{})`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): argument dependent lookup (ADL), i.e. `alphabet_size(alphabet_type{})`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      *
      * \details
      *
@@ -836,8 +836,8 @@ struct alphabet_size_cpo : public detail::customisation_point_object<alphabet_si
         /*return*/ alphabet_size(alphabet_or_type_identity<alphabet_type>{}) /*;*/
     );
 
-    /*!\brief CPO overload (3. out of 3 checks): static member access, i.e. `alphabet_type::alphabet_size`
-     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types)
+    /*!\brief CPO overload (check 1 out of 3): static member access, i.e. `alphabet_type::alphabet_size`
+     * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
