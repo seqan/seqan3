@@ -96,7 +96,7 @@ private:
     //!\brief The total number of chunks that can be cached.
     static constexpr uint8_t total_chunks = fast_load ? (chunks_per_load * chunks_per_load) : 1;
     //!\brief The alphabet size.
-    static constexpr auto alphabet_size = alphabet_size<std::ranges::range_value_t<inner_range_type>>;
+    static constexpr auto alphabet_size = seqan3::alphabet_size<std::ranges::range_value_t<inner_range_type>>;
     //!\}
 
     // Forward declare class' iterator type. See definition below.
