@@ -65,6 +65,7 @@ struct slice_fn
 
         // SEQAN3_WORKAROUND_GCC_100139 == 1 if std::views::{take, drop} does not type reduce (e.g. keep in type
         // std::basic_string_view, std::span, std::ranges::subrange).
+        // See https://github.com/seqan/seqan3/pull/2540/files#r617575294
 #if SEQAN3_WORKAROUND_GCC_100139
         // string_view
         if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string_view>)
