@@ -54,6 +54,7 @@ struct drop_fn
         // safeguard against wrong size
         if constexpr (std::ranges::sized_range<urng_t>)
         {
+            // in standard
             size_t urange_size = std::ranges::size(urange);
             drop_size = std::min(drop_size, urange_size);
             new_size = urange_size - drop_size;
@@ -62,12 +63,14 @@ struct drop_fn
         // string_view
         if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string_view>)
         {
+            // in standard
             return urange.substr(drop_size);
         }
         // string const &
         else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string> &&
                            std::is_const_v<std::remove_reference_t<urng_t>>)
         {
+            // not in standard
             return std::basic_string_view{std::ranges::data(urange) + drop_size, new_size};
         }
         // contiguous
@@ -75,6 +78,7 @@ struct drop_fn
                            std::ranges::contiguous_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
+            // in standard
             return std::span{std::ranges::data(urange) + drop_size, new_size};
         }
         // random_access
@@ -82,6 +86,7 @@ struct drop_fn
                            std::ranges::random_access_range<urng_t> &&
                            std::ranges::sized_range<urng_t>)
         {
+            // not in standard
             return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
             {
                 std::ranges::begin(urange) + drop_size,
@@ -165,11 +170,15 @@ namespace seqan3::views
  *
  * ### Example
  *
- * \include test/snippet/range/views/drop.cpp
+ * \include test/snippet/utility/views/drop.cpp
  *
  * \hideinitializer
+ *
+ * \deprecated Use std::views::drop or seqan3::views::type_reduce | std::views::drop.
  */
-inline constexpr auto drop = detail::drop_fn{};
+#ifdef SEQAN3_DEPRECATED_310
+SEQAN3_DEPRECATED_310 inline constexpr auto drop = detail::drop_fn{};
+#endif // SEQAN3_DEPRECATED_310
 
 //!\}
 

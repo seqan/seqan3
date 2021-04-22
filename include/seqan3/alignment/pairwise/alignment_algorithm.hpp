@@ -443,7 +443,7 @@ private:
         // ----------------------------------------------------------------------------
 
         size_t first_row_index = 0;
-        for (auto const & seq1_value : sequence1 | views::drop(this->score_matrix.band_col_index))
+        for (auto const & seq1_value : sequence1 | std::views::drop(this->score_matrix.band_col_index))
         {
             // In the second phase the band moves in every column one base down on the second sequence.
             compute_alignment_column<false>(seq1_value, sequence2 | views::slice(first_row_index++, ++last_row_index));

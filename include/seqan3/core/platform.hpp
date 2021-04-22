@@ -332,6 +332,16 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100139
+//!       std::views::{take, drop} do not type-erase. This is a defect within the standard lib.
+#ifndef SEQAN3_WORKAROUND_GCC_100139 // not yet fixed
+#   if defined(__GNUC__)
+#       define SEQAN3_WORKAROUND_GCC_100139 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_100139 0
+#   endif
+#endif
+
 /*!\brief This is needed to support CentOS 7 or RHEL 7; Newer CentOS's include a more modern default-gcc version making
  *        this macro obsolete.
  *

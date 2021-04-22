@@ -262,10 +262,10 @@ protected:
         // ---------------------------------------------------------------------
 
         size_t first_row_index = 0u;
-        for (auto alphabet1 : sequence1 | views::drop(column_size))
+        for (auto alphabet1 : sequence1 | std::views::drop(column_size))
         {
             compute_band_column(*++alignment_matrix_it,
-                                *++indexed_matrix_it | views::drop(first_row_index + 1),
+                                *++indexed_matrix_it | std::views::drop(first_row_index + 1),
                                 alphabet1,
                                 sequence2 | views::slice(first_row_index, ++row_size));
             ++first_row_index;
@@ -276,7 +276,7 @@ protected:
         // ---------------------------------------------------------------------
 
         auto alignment_column = *alignment_matrix_it;
-        auto cell_index_column = *indexed_matrix_it | views::drop(first_row_index);
+        auto cell_index_column = *indexed_matrix_it | std::views::drop(first_row_index);
 
         auto alignment_column_it = alignment_column.begin();
         auto cell_index_column_it = cell_index_column.begin();
@@ -371,7 +371,7 @@ protected:
         // Iteration phase: iterate over column and compute each cell
         // ---------------------------------------------------------------------
 
-        for (auto && alphabet2 : sequence2 | views::drop(1))
+        for (auto && alphabet2 : sequence2 | std::views::drop(1))
         {
             current_alignment_column_it = next_alignment_column_it;
             auto cell = *current_alignment_column_it;

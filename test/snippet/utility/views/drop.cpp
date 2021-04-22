@@ -1,3 +1,6 @@
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <string>
 
 #include <seqan3/core/debug_stream.hpp>
@@ -13,3 +16,5 @@ int main()
     auto v2 = s | std::views::reverse | seqan3::views::drop(3);
     seqan3::debug_stream << v2 << '\n';         // "oof"
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310

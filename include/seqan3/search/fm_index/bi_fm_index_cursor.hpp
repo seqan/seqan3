@@ -91,23 +91,23 @@ private:
     using locate_result_type = std::vector<locate_result_value_type>;
 
     //!\brief Type of the underlying FM index.
-    index_type const * index;
+    index_type const * index{nullptr};
 
     /*!\name Suffix array intervals of forward and reverse cursors.
      * \{
      */
      //!\brief Left suffix array interval of the forward cursor (for extend_right).
-    size_type fwd_lb;
+    size_type fwd_lb{};
     //!\brief Right suffix array interval of the forward cursor (for extend_right).
-    size_type fwd_rb;
+    size_type fwd_rb{};
     //!\brief Left suffix array interval of the reverse cursor (for extend_left).
-    size_type rev_lb;
+    size_type rev_lb{};
     //!\brief Right suffix array interval of the reverse cursor (for extend_left).
-    size_type rev_rb;
+    size_type rev_rb{};
     //\}
 
     //!\brief Alphabet size of the index without delimiters
-    sdsl_sigma_type sigma;
+    sdsl_sigma_type sigma{};
 
     /*!\name Information for on cycle_back() and cycle_front()
      * \brief Only stored for the cursor that has been used last to go down an edge because once one cursor is
@@ -124,11 +124,11 @@ private:
     //!\brief Left suffix array interval of the parent node.
     size_type parent_rb{};
     //!\brief Label of the last edge moved down. Needed for cycle_back() or cycle_front().
-    sdsl_char_type _last_char;
+    sdsl_char_type _last_char{};
     //\}
 
     //!\brief Depth of the node in the suffix tree, i.e. length of the searched query.
-    size_type depth; // equal for both cursors. only stored once
+    size_type depth{}; // equal for both cursors. only stored once
 
     // supports assertions to check whether cycle_back() resp. cycle_front() is called on the same direction as the last
     // extend_right([...]) resp. extend_left([...])

@@ -19,6 +19,7 @@
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/take.hpp>
+#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
@@ -49,21 +50,66 @@ struct slice_fn
                               std::ranges::range_difference_t<urng_t> begin_pos,
                               std::ranges::range_difference_t<urng_t> end_pos) const
     {
+        using position_t = std::ranges::range_difference_t<urng_t>;
         if constexpr (std::ranges::sized_range<urng_t>)
         {
-            using position_t = std::ranges::range_difference_t<urng_t>;
-            begin_pos = std::min(begin_pos, static_cast<position_t>(std::ranges::size(urange)));
-            end_pos = std::min(end_pos, static_cast<position_t>(std::ranges::size(urange)));
+            position_t urange_size = static_cast<position_t>(std::ranges::size(urange));
+
+            begin_pos = std::min(begin_pos, urange_size);
+            end_pos = std::min(end_pos, urange_size);
         }
+        position_t target_size = end_pos - begin_pos;
 
         if (end_pos < begin_pos)
             throw std::invalid_argument{"end_pos argument to seqan3::views::slice must be >= the begin_pos argument."};
 
-        // urange | drop | take
-        return views::take(views::drop(std::forward<urng_t>(urange), begin_pos), end_pos - begin_pos);
+        // SEQAN3_WORKAROUND_GCC_100139 == 1 if std::views::{take, drop} does not type reduce (e.g. keep in type
+        // std::basic_string_view, std::span, std::ranges::subrange).
+        // See https://github.com/seqan/seqan3/pull/2540/files#r617575294
+#if SEQAN3_WORKAROUND_GCC_100139
+        // string_view
+        if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string_view>)
+        {
+            return urange.substr(begin_pos, static_cast<size_t>(target_size));
+        }
+        // string const &
+        else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string> &&
+                           std::is_const_v<std::remove_reference_t<urng_t>>)
+        {
+            return std::basic_string_view{std::ranges::data(urange) + begin_pos, static_cast<size_t>(target_size)};
+        }
+        // contiguous
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
+                           std::ranges::contiguous_range<urng_t> &&
+                           std::ranges::sized_range<urng_t>)
+        {
+            return std::span{std::ranges::data(urange) + begin_pos, static_cast<size_t>(target_size)};
+        }
+        // random_access
+        else if constexpr (std::ranges::borrowed_range<urng_t> &&
+                           std::ranges::random_access_range<urng_t> &&
+                           std::ranges::sized_range<urng_t>)
+        {
+            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
+            {
+                std::ranges::begin(urange) + begin_pos,
+                std::ranges::begin(urange) + end_pos,
+                static_cast<size_t>(target_size)
+            };
+        }
+        // std::views::drop
+        else
+        {
+            // urange | drop | take
+            return std::views::take(std::views::drop(std::forward<urng_t>(urange), begin_pos), target_size);
+        }
+#else // ^^^ workaround / no workaround vvv
+        // urange | type_reduce | drop | take
+        return std::views::take(std::views::drop(seqan3::views::type_reduce(std::forward<urng_t>(urange)),
+                                                 begin_pos),
+                                target_size);
+#endif // SEQAN3_WORKAROUND_GCC_100139
     }
-
-    // does not require special overloads, because views::drop and views::take handle the flattening.
 };
 
 } // namespace seqan3::detail
@@ -114,7 +160,7 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * This adaptor is a combination of seqan3::views::drop and seqan3::views::take.
+ * This adaptor is a combination of std::views::drop and std::views::take.
  *
  * If `begin_pos` is larger than the size of the underlying range an empty range is returned.
  * If `end_pos` is larger than the size of the underlying range less elements are returned.
@@ -134,7 +180,7 @@ namespace seqan3::views
  *
  * ### Complexity
  *
- * Construction of the returned view is in \f$ O(begin\_pos) \f$ for some views, see seqan3::views::drop.
+ * Construction of the returned view is in \f$ O(begin\_pos) \f$ for some views, see std::views::drop.
  *
  * ### Example
  *
