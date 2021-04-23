@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
+ * \brief P<rovides seqan3::views::translate and seqan3::views::translate_single.
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Provides seqan3::views::translate and seqan3::views::translate_single.
  */
 
 #pragma once
@@ -60,9 +60,12 @@ class view_translate_single;
 namespace seqan3
 {
 
-//!\brief Specialisation values for single and multiple translation frames.
-//!\implements seqan3::enum_bitwise_operators
-//!\sa seqan3::enum_bitwise_operators enables combining enum values.
+/*!\brief Specialisation values for single and multiple translation frames.
+ * \implements seqan3::enum_bitwise_operators
+ * \sa seqan3::enum_bitwise_operators enables combining enum values.
+ * \details
+ * \experimentalapi{Experimental since version 3.1.}
+ */
 enum class translation_frames : uint8_t
 {
     FWD_FRAME_0 = 1,                                    //!< The first forward frame starting at position 0
@@ -494,7 +497,7 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     | *required*                            | *preserved*                                        |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet            | seqan3::aa27                                       |
+ * | std::ranges::range_reference_t   | seqan3::nucleotide_alphabet           | seqan3::aa27                                       |
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_type` is the type of the range returned by this view.
@@ -505,6 +508,9 @@ namespace seqan3::views
  * Operating on a range of seqan3::dna5:
  * \include test/snippet/range/views/translate_dna5.cpp
  * \hideinitializer
+ *
+ * \experimentalapi{Experimental since version 3.1.}
+ * TODO move to seqan3/include/alphabet/views/translate_single.hpp
  */
 inline constexpr auto translate_single = deep{detail::translate_fn<true>{}};
 
@@ -620,9 +626,22 @@ public:
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
-    view_translate(rng_t && _urange, translation_frames const _tf = translation_frames::SIX_FRAME)
+    view_translate(rng_t && _urange, translation_frames const _tf)
      : view_translate{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
+
+    //!\brief \deprecated Please use seqan3::detail::view_translate::view_translate(rng_t &&, translation_frames const)
+    #ifdef SEQAN3_DEPRECATED_310
+    template <typename rng_t>
+    //!\cond
+        requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate>) &&
+                 std::ranges::viewable_range<rng_t> &&
+                 std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
+    //!\endcond
+    view_translate(rng_t && _urange)
+     : view_translate{std::views::all(std::forward<rng_t>(_urange)), translation_frames::SIX_FRAME}
+    {}
+    #endif // SEQAN3_DEPRECATED_310
     //!\}
 
     /*!\name Iterators
@@ -731,6 +750,10 @@ public:
     //!\}
 };
 
+/*!\brief \deprecated This Class template argument deduction for view_translate is deprecated and will be removed in
+ *                    SeqAn 3.1.0.
+ */
+#ifdef SEQAN3_DEPRECATED_310
 //!\brief Class template argument deduction for view_translate.
 template <typename urng_t>
 //!\cond
@@ -738,8 +761,17 @@ template <typename urng_t>
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
 //!\endcond
-view_translate(urng_t &&, translation_frames const = translation_frames{}) -> view_translate<std::views::all_t<urng_t>>;
+view_translate (urng_t &&) -> view_translate<std::views::all_t<urng_t>>;
+#endif // SEQAN3_DEPRECATED_310
 
+//!\brief Class template argument deduction for view_translate.
+template <typename urng_t>
+//!\cond
+    requires std::ranges::sized_range<urng_t> &&
+             std::ranges::random_access_range<urng_t> &&
+             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
+//!\endcond
+view_translate(urng_t &&, translation_frames const) -> view_translate<std::views::all_t<urng_t>>;
 } // namespace seqan3::detail
 
 // ============================================================================
@@ -793,8 +825,14 @@ namespace seqan3::views
  *
  * Operating on a range of seqan3::dna5:
  * \include test/snippet/range/views/translate_usage.cpp
+ *
+ * \sa seqan3::translate_triplet
+ * \sa seqan3::views::translate_single
+ * \sa seqan3::views::translate_join
  * \hideinitializer
- */
+ *
+ * \experimentalapi{Experimental since version 3.1.}
+ * TODO move to seqan3/include/alphabet/views/translate.hpp */
 inline constexpr auto translate = deep{detail::translate_fn<false>{}};
 //!\}
 
