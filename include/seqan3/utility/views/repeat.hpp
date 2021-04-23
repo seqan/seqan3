@@ -351,7 +351,6 @@ namespace seqan3::views
  * \include test/snippet/utility/views/repeat.cpp
  *
  * \hideinitializer
- *
  */
 constexpr inline detail::repeat_fn repeat{};
 //!\}
