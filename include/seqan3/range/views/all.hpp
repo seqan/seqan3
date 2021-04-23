@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/views/char_to.hpp>
+#include <seqan3/alphabet/views/rank_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/range/views/complement.hpp>
 #include <seqan3/range/views/enforce_random_access.hpp>
@@ -21,7 +22,6 @@
 #include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/move.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>
-#include <seqan3/range/views/rank_to.hpp>
 #include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
