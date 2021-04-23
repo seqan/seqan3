@@ -14,9 +14,9 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/enforce_random_access.hpp>
-#include <seqan3/range/views/to_char.hpp>
 
 #include "../iterator_test_template.hpp"
 #include "../../alignment/aligned_sequence_test_template.hpp"

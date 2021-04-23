@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-
-#include <seqan3/range/views/enforce_random_access.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/algorithm>
 #include <seqan3/std/ranges>
+#include <vector>
+
+#include <seqan3/alphabet/views/to_char.hpp>
+#include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "../iterator_test_template.hpp"

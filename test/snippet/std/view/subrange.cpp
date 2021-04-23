@@ -1,7 +1,8 @@
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main()
 {

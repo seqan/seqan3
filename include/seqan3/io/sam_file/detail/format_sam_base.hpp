@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/views/char_to.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
@@ -40,7 +41,6 @@
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>

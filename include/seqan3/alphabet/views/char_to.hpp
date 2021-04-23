@@ -65,6 +65,8 @@ namespace seqan3::views
  *
  * \include test/snippet/alphabet/views/char_to.cpp
  * \hideinitializer
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <alphabet alphabet_type>
 inline auto const char_to = deep{std::views::transform([] (auto && in)

@@ -1,9 +1,9 @@
+#include <seqan3/std/ranges>
 #include <sstream>
 
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/range/views/to_char.hpp>
-#include <seqan3/std/ranges>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA

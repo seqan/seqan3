@@ -17,7 +17,7 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator|;

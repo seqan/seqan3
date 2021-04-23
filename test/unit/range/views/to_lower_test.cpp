@@ -10,8 +10,8 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/to_lower.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 

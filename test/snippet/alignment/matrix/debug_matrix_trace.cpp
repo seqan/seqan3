@@ -2,8 +2,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/matrix/debug_matrix.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/to_char.hpp>
 
 int main()
 {

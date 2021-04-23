@@ -11,6 +11,7 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
@@ -19,7 +20,6 @@
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
 #include <seqan3/range/views/to.hpp>
-#include <seqan3/range/views/to_char.hpp>
 
 #if SEQAN3_HAS_SEQAN2
     #include <seqan/rna_io.h>

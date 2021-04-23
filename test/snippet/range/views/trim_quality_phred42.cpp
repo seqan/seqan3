@@ -2,8 +2,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/range/views/trim_quality.hpp>
-#include <seqan3/range/views/to_char.hpp>
 
 using seqan3::operator""_phred42;
 

@@ -1,6 +1,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/range/views/to_char.hpp>
 
 int main()
 {
