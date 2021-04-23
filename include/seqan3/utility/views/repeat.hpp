@@ -350,12 +350,6 @@ namespace seqan3::views
  *
  * \include test/snippet/utility/views/repeat.cpp
  *
- * \todo add snippet for code smells like this:
- *
- * // std::string str1 = seqan3::views::repeat_n('A', 5) | seqan3::views::to<std::string>;
- * // same as
- * // std::string str2{5, 'A'};
- *
  * \hideinitializer
  *
  */
