@@ -1,3 +1,7 @@
+#include <seqan3/core/platform.hpp>
+
+#if !SEQAN3_WORKAROUND_GCC_93983
+//![snippet]
 #include <seqan3/std/ranges>
 #include <sstream>
 
@@ -13,9 +17,9 @@ r001	147	ref	237	30	*	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_93983
     auto input_file = seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}};
     input_file | std::views::take(3) // take only the first 3 records
                | seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
-#endif // !SEQAN3_WORKAROUND_GCC_93983
 }
+//![snippet]
+#endif // !SEQAN3_WORKAROUND_GCC_93983

@@ -1,3 +1,7 @@
+#include <seqan3/core/platform.hpp>
+
+#if !SEQAN3_WORKAROUND_GCC_96070
+//![snippet]
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <sstream>
@@ -20,7 +24,6 @@ GGAGTATAATATATATATATATAT
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_96070
     // minimum_average_quality_filter and minimum_sequence_length_filter need to be implemented first
     auto minimum_sequence_length_filter = std::views::filter([] (auto rec)
     {
@@ -42,5 +45,6 @@ int main()
                | minimum_sequence_length_filter
                | std::views::take(3)
                | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
-#endif // !SEQAN3_WORKAROUND_GCC_96070
 }
+//![snippet]
+#endif // !SEQAN3_WORKAROUND_GCC_96070

@@ -133,7 +133,7 @@ namespace seqan3
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * \include test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp
+ * \snippet test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp snippet
  *
  * ### Formats
  *
@@ -648,7 +648,7 @@ public:
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \include test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp
+     * \snippet test/snippet/io/sam_file/sam_file_output_io_pipeline.cpp snippet
      *
      */
     template <typename rng_t>
