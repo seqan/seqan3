@@ -1,3 +1,6 @@
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <string>
 #include <vector>
 
@@ -14,3 +17,5 @@ int main()
     seqan3::debug_stream << v1 << '\n'; // => "changed!"
     seqan3::debug_stream << v2 << '\n'; // => ["changed", "unchanged!"]
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
