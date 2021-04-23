@@ -128,6 +128,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 * Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
   ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
+* Renamed `seqan3::quality_base` to `seqan3::phred_base`
+  ([\#2539](https://github.com/seqan/seqan3/pull/2539)).
 
 #### Argument Parser
 

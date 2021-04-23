@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/quality/quality_base.hpp>
+#include <seqan3/alphabet/quality/phred_base.hpp>
 
 namespace seqan3
 {
@@ -36,13 +36,13 @@ namespace seqan3
  *
  * \stableapi{Since version 3.1.}
  */
-class phred68solexa : public quality_base<phred68solexa, 68>
+class phred68solexa : public phred_base<phred68solexa, 68>
 {
 private:
     //!\brief The base class.
-    using base_t = quality_base<phred68solexa, 68>;
+    using base_t = phred_base<phred68solexa, 68>;
 
-    //!\brief Befriend seqan3::quality_base.
+    //!\brief Befriend seqan3::phred_base.
     friend base_t;
     //!\cond \brief Befriend seqan3::alphabet_base.
     friend base_t::base_t;
