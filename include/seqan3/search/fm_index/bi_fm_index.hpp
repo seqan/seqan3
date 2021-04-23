@@ -16,7 +16,6 @@
 #include <seqan3/std/ranges>
 #include <utility>
 
-#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
