@@ -13,7 +13,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/views/persist.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/search/configuration/max_error.hpp>
 #include <seqan3/search/configuration/on_result.hpp>
@@ -28,9 +28,9 @@ using seqan3::operator""_phred42;
 
 using namespace std::string_literals;
 
-auto position = seqan3::views::persist |
+auto position = seqan3::detail::persist |
                 std::views::transform([] (auto && res) { return res.reference_begin_position(); });
-auto query_id = seqan3::views::persist | std::views::transform([] (auto && res) { return res.query_id(); });
+auto query_id = seqan3::detail::persist | std::views::transform([] (auto && res) { return res.query_id(); });
 
 template <typename index_t>
 class search_test : public ::testing::Test

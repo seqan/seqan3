@@ -55,9 +55,9 @@ class combined_adaptor;
  *
  * ## "Direct derivation"
  *
- * From include/seqan3/range/views/persist.hpp:
+ * From include/seqan3/core/detail/persist_view.hpp:
  *
- * \snippet include/seqan3/range/views/persist.hpp adaptor_def
+ * \snippet include/seqan3/core/detail/persist_view.hpp adaptor_def
  *
  * This adaptor directly derives from adaptor_base (instead of just using
  * `seqan3::detail::adaptor_for_view_without_args`) so that it can decide between

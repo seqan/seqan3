@@ -140,7 +140,7 @@ namespace seqan3
  *
  * This can be combined with file-based views to create I/O pipelines:
  *
- * \include test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp
+ * \snippet test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp snippet
  *
  * ### Column-based writing
  *
@@ -516,7 +516,7 @@ public:
      *
      * This is especially useful in combination with file-based filters:
      *
-     * \include test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp
+     * \snippet test/snippet/io/sequence_file/sequence_file_output_view_pipeline.cpp snippet
      */
     template <std::ranges::input_range rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)

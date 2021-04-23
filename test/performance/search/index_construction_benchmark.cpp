@@ -9,7 +9,7 @@
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/persist.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/views/rank_to.hpp>
 #include <seqan3/search/fm_index/all.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
@@ -51,7 +51,7 @@ struct sequence_store_seqan3
     std::vector<seqan3::dna4> const dna4_rng{seqan3::test::generate_sequence<seqan3::dna4>(max_length, 0, seed)};
     std::vector<seqan3::aa27> const aa27_rng{seqan3::test::generate_sequence<seqan3::aa27>(max_length, 0, seed)};
     std::string const char_rng{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)
-                               | seqan3::views::persist
+                               | seqan3::detail::persist
                                | seqan3::views::rank_to<char>
                                | seqan3::views::to<std::string>};
 };
@@ -100,7 +100,7 @@ struct sequence_store_seqan2
                                                                                                             0,
                                                                                                             seed)};
     seqan::String<char> const char_rng{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)
-                                       | seqan3::views::persist
+                                       | seqan3::detail::persist
                                        | seqan3::views::rank_to<char>
                                        | seqan3::views::to<std::string>};
 };

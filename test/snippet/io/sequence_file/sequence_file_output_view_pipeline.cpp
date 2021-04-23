@@ -1,10 +1,13 @@
+#include <seqan3/core/platform.hpp>
+
+#if !SEQAN3_WORKAROUND_GCC_96070
+//![snippet]
+#include <seqan3/std/iterator>
+#include <seqan3/std/ranges>
 #include <sstream>
 
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/range/views/persist.hpp>
-#include <seqan3/std/iterator>
-#include <seqan3/std/ranges>
 
 auto input = R"(@TEST1
 ACGT
@@ -21,7 +24,6 @@ GGAGTATAATATATATATATATAT
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_96070
     // minimum_average_quality_filter and minimum_sequence_length_filter need to be implemented first
     auto minimum_sequence_length_filter = std::views::filter([] (auto rec)
     {
@@ -38,11 +40,11 @@ int main()
         return qual_sum / (std::ranges::distance(rec.qualities())) >= 20;
     });
 
-    seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fastq{}}
-        | seqan3::views::persist
-        | minimum_average_quality_filter
-        | minimum_sequence_length_filter
-        | std::views::take(3)
-        | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
-#endif // !SEQAN3_WORKAROUND_GCC_96070
+    auto input_file = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fastq{}};
+    input_file | minimum_average_quality_filter
+               | minimum_sequence_length_filter
+               | std::views::take(3)
+               | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 }
+//![snippet]
+#endif // !SEQAN3_WORKAROUND_GCC_96070

@@ -18,10 +18,10 @@
 
 #include <range/v3/view/chunk.hpp>
 
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/join.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 #include <seqan3/utility/type_traits/pre.hpp>
@@ -120,11 +120,11 @@ public:
     template <typename orng_t, typename oirng_t>
         //!\cond
         requires std::constructible_from<urng_t, decltype(views::type_reduce(std::declval<orng_t>()))> &&
-                 std::constructible_from<inserted_rng_t, decltype(views::persist(std::declval<oirng_t>()))>
+                 std::constructible_from<inserted_rng_t, decltype(detail::persist(std::declval<oirng_t>()))>
         //!\endcond
     view_interleave(orng_t && _urange, size_t const _step_size, oirng_t && _inserted_range) :
         view_interleave{views::type_reduce(std::forward<orng_t>(_urange)), _step_size,
-                        views::persist(std::forward<oirng_t>(_inserted_range))}
+                        detail::persist(std::forward<oirng_t>(_inserted_range))}
     {}
     //!\}
 
@@ -253,7 +253,7 @@ template <std::ranges::random_access_range urng_t, std::ranges::random_access_ra
     //!\endcond
 view_interleave(urng_t &&, size_t, inserted_rng_t &&)
     -> view_interleave<decltype(views::type_reduce(std::declval<urng_t>())),
-                       decltype(views::persist(std::declval<inserted_rng_t>()))>;
+                       decltype(detail::persist(std::declval<inserted_rng_t>()))>;
 
 // ============================================================================
 //  interleave_fn (adaptor definition)

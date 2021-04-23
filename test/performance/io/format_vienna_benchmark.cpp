@@ -11,13 +11,13 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
 #include <seqan3/test/seqan2.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/to_char.hpp>
 
@@ -29,7 +29,7 @@ inline constexpr size_t iterations_per_run = 1024;
 
 inline std::string const header{"seq foobar blobber"};
 auto const sequence = seqan3::test::generate_sequence<seqan3::rna4>(474, 0, 0) |
-                                                      seqan3::views::persist |
+                                                      seqan3::detail::persist |
                                                       seqan3::views::to_char |
                                                       seqan3::views::to<std::string>;
 

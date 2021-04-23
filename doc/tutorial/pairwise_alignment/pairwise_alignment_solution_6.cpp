@@ -1,3 +1,4 @@
+#include <seqan3/std/ranges>
 #include <utility>
 #include <vector>
 
@@ -6,7 +7,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>
-#include <seqan3/std/ranges>
 
 using seqan3::operator""_dna4;
 
@@ -23,10 +23,11 @@ int main()
                   seqan3::align_cfg::min_score{-7} |
                   seqan3::align_cfg::output_score{};
 
+    auto alignment_results = seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config);
     auto filter_v = std::views::filter([](auto && res) { return res.score() >= -6;});
 
-    for (auto const & res : seqan3::align_pairwise(seqan3::views::pairwise_combine(vec), config) | seqan3::views::persist | filter_v)
+    for (auto const & result : alignment_results | filter_v)
     {
-        seqan3::debug_stream << "Score: " << res.score() << '\n';
+        seqan3::debug_stream << "Score: " << result.score() << '\n';
     }
 }

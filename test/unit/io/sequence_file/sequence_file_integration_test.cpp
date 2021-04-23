@@ -5,16 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/iterator>
 #include <sstream>
 
 #include <gtest/gtest.h>
 
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/range/views/persist.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/test/tmp_filename.hpp>
-#include <seqan3/std/iterator>
 
 TEST(rows, assign_sequence_files)
 {
@@ -95,14 +95,14 @@ TEST(integration, view)
 #if !SEQAN3_WORKAROUND_GCC_93983
     // valid without assignment?
     seqan3::sequence_file_input{std::istringstream{input},
-                                seqan3::format_fasta{}} | seqan3::views::persist
+                                seqan3::format_fasta{}} | seqan3::detail::persist
                                                         | seqan3::views::take(2)
                                                         | seqan3::sequence_file_output{std::ostringstream{},
                                                                                        seqan3::format_fasta{}};
 
     // valid with assignment and check contents
     auto fout = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fasta{}}
-              | seqan3::views::persist
+              | seqan3::detail::persist
               | seqan3::views::take(2)
               | seqan3::sequence_file_output{std::ostringstream{}, seqan3::format_fasta{}};
 

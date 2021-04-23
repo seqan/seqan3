@@ -8,6 +8,7 @@
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
@@ -142,7 +143,7 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
     len = (len + simulated_errors  > template_length) ? template_length - simulated_errors : len;
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
-         | seqan3::views::persist
+         | seqan3::detail::persist
          | seqan3::views::join
          | seqan3::views::to<std::vector>;
 }
