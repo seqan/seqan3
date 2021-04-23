@@ -22,8 +22,8 @@
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/as_const.hpp>
 #include <seqan3/range/views/join.hpp>
-#include <seqan3/range/views/repeat_n.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
 
 #if SEQAN3_WITH_CEREAL
 #include <cereal/types/vector.hpp>

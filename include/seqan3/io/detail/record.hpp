@@ -17,9 +17,9 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/io/record.hpp>
-#include <seqan3/range/views/repeat.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/views/repeat.hpp>
 
 namespace seqan3::detail
 {

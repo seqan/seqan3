@@ -1,6 +1,7 @@
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/repeat.hpp>
 #include <seqan3/std/ranges>
+
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/utility/views/repeat.hpp>
 
 int main()
 {
