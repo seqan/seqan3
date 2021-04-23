@@ -91,10 +91,6 @@ namespace seqan3::views
  * \include test/snippet/utility/views/repeat_n.cpp
  *
  * \hideinitializer
- *
- * \experimentalapi{Experimental since version 3.1.}
- *
- * TODO move to seqan3/utility/views
  */
 constexpr inline auto repeat_n = detail::repeat_n_fn{};
 //!\}

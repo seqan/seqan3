@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief  Provides the views::repeat_view.
+ * \brief  Provides the seqan3::views::repeat.
  */
 
 #pragma once
@@ -358,9 +358,6 @@ namespace seqan3::views
  *
  * \hideinitializer
  *
- * \experimentalapi{Experimental since version 3.1.}
- *
- * TODO move to seqan3/utility/views
  */
 constexpr inline detail::repeat_fn repeat{};
 //!\}
