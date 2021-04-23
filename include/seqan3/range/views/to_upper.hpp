@@ -70,7 +70,7 @@ namespace seqan3::views
 SEQAN3_DEPRECATED_310 inline auto const to_upper = deep{std::views::transform([] (auto const in) noexcept
 {
     static_assert(builtin_character<std::remove_cvref_t<decltype(in)>>,
-                 "The value type of seqan3::views::to_upper must model the seqan3::builtin_character.");
+                  "The value type of seqan3::views::to_upper must model the seqan3::builtin_character.");
     return seqan3::to_upper(in);
 })};
 #endif // SEQAN3_DEPRECATED_310
