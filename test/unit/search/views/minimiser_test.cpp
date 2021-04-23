@@ -69,11 +69,15 @@ struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
     static constexpr bool const_iterable = true;
 
     seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
-    decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4})) vec = text | kmer_view;
+    using kmer_hash_view_t = decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4}));
+
+    kmer_hash_view_t vec = kmer_view(text);
     result_t expected_range{26, 97, 27, 6, 1};
 
-    decltype(seqan3::detail::minimiser_view{seqan3::views::kmer_hash(text, seqan3::ungapped{4}), text | rev_kmer_view, 5})
-    test_range = seqan3::detail::minimiser_view{vec, text | rev_kmer_view, 5};
+    using reverse_kmer_hash_view_t = decltype(rev_kmer_view(text));
+
+    using test_range_t = decltype(seqan3::detail::minimiser_view{kmer_hash_view_t{}, reverse_kmer_hash_view_t{}, 5});
+    test_range_t test_range = seqan3::detail::minimiser_view{vec, rev_kmer_view(text), 5};
 };
 
 using test_types = ::testing::Types<iterator_type, two_ranges_iterator_type>;
