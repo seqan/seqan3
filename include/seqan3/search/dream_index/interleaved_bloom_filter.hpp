@@ -592,7 +592,9 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    membership_agent(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count()) {}
+    explicit membership_agent(ibf_t const & ibf) :
+        ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count())
+    {}
     //!\}
 
     //!\brief Stores the result of bulk_contains().
@@ -679,7 +681,9 @@ public:
     ~binning_bitvector() = default; //!< Defaulted.
 
     //!\brief Construct with given size.
-    binning_bitvector(size_t const size) : data(size) {}
+    explicit binning_bitvector(size_t const size) :
+        data(size)
+    {}
     //!\}
 
     //!\brief Returns the number of elements.
@@ -916,7 +920,7 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    counting_agent_type(ibf_t const & ibf) :
+    explicit counting_agent_type(ibf_t const & ibf) :
         ibf_ptr(std::addressof(ibf)), membership_agent(ibf), result_buffer(ibf.bin_count())
     {}
     //!\}
