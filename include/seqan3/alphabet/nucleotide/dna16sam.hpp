@@ -217,3 +217,24 @@ constexpr std::array<dna16sam, dna16sam::alphabet_size> dna16sam::complement_tab
 };
 
 } // namespace seqan3
+
+namespace seqan3
+{
+//!\deprecated Please use seqan3::dna16sam instead.
+using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
+
+//!\deprecated Please use seqan3::dna16sam_vector instead.
+using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
+
+//!\deprecated Please use seqan3::operator""_dna16sam instead.
+SEQAN3_DEPRECATED_310 constexpr dna16sam operator""_sam_dna16(char const c) noexcept
+{
+    return seqan3::operator""_dna16sam(c);
+}
+
+//!\deprecated Please use seqan3::operator""_dna16sam instead.
+SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s, size_t n)
+{
+    return seqan3::operator""_dna16sam(s, n);
+}
+} // namespace seqan3

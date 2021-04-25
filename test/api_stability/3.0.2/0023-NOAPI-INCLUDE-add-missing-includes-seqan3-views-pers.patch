@@ -1,0 +1,38 @@
+From 12b7805b266a7477492657756fa77dda9b8f5fe5 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Sun, 25 Apr 2021 18:12:55 +0200
+Subject: [PATCH 23/24] [NOAPI] [INCLUDE] add missing includes
+ seqan3::views::persist
+
+---
+ .../pairwise_alignment/pairwise_alignment_solution_6.cpp         | 1 +
+ .../fm_index_cursor/bi_fm_index_cursor_collection_test.cpp       | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp b/doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
+index 1ed35c8cd..32b6077d2 100644
+--- a/doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
++++ b/doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
+@@ -6,6 +6,7 @@
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/core/debug_stream.hpp>
+ #include <seqan3/range/views/pairwise_combine.hpp>
++#include <seqan3/range/views/persist.hpp>
+ #include <seqan3/std/ranges>
+ 
+ using seqan3::operator""_dna4;
+diff --git a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
+index 48be041bc..5d055adb9 100644
+--- a/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
++++ b/test/unit/search/fm_index_cursor/bi_fm_index_cursor_collection_test.cpp
+@@ -9,6 +9,7 @@
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
++#include <seqan3/range/views/persist.hpp>
+ #include <seqan3/range/views/slice.hpp>
+ #include <seqan3/range/views/char_to.hpp>
+ #include <seqan3/range/views/to.hpp>
+-- 
+2.31.1
+

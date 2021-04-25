@@ -15,11 +15,5 @@
 
 #include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 
-namespace seqan3
-{
-//!\deprecated Please use seqan3::dna16sam instead.
-using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
-} // namespace seqan3
-
 SEQAN3_DEPRECATED_HEADER(
    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/alphabet/nucleotide/dna16sam.hpp> instead.")
