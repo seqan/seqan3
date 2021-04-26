@@ -125,3 +125,21 @@ inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::
 //!\}
 
 } // namespace seqan3
+
+namespace seqan3
+{
+//!\deprecated Please use seqan3::phred68solexa instead.
+using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
+
+//!\deprecated Please use seqan3::operator""_phred68solexa instead.
+SEQAN3_DEPRECATED_310 constexpr phred68solexa operator""_phred68legacy(char const c) noexcept
+{
+    return seqan3::operator""_phred68solexa(c);
+}
+
+//!\deprecated Please use seqan3::operator""_phred68solexa instead.
+SEQAN3_DEPRECATED_310 inline std::vector<phred68solexa> operator""_phred68legacy(char const * s, size_t n)
+{
+    return seqan3::operator""_phred68solexa(s, n);
+}
+} // namespace seqan3

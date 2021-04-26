@@ -16,11 +16,5 @@
 
 #include <seqan3/alphabet/quality/phred68solexa.hpp>
 
-namespace seqan3
-{
-//!\deprecated Please use seqan3::phred68solexa instead.
-using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
-} // namespace seqan3
-
 SEQAN3_DEPRECATED_HEADER(
    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/alphabet/quality/phred68solexa.hpp> instead.")

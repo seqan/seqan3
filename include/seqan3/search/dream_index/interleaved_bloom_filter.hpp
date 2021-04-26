@@ -592,7 +592,9 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    membership_agent(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count()) {}
+    explicit membership_agent(ibf_t const & ibf) :
+        ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count())
+    {}
     //!\}
 
     //!\brief Stores the result of bulk_contains().
@@ -679,7 +681,9 @@ public:
     ~binning_bitvector() = default; //!< Defaulted.
 
     //!\brief Construct with given size.
-    binning_bitvector(size_t const size) : data(size) {}
+    explicit binning_bitvector(size_t const size) :
+        data(size)
+    {}
     //!\}
 
     //!\brief Returns the number of elements.
@@ -730,6 +734,36 @@ public:
     {
         return !(lhs == rhs);
     }
+
+#ifdef SEQAN3_DEPRECATED_310
+    //!\brief Test for equality.
+    //!\deprecated Use binning_bitvector.raw_data() == rhs
+    SEQAN3_DEPRECATED_310 friend bool operator==(binning_bitvector const & lhs, sdsl::bit_vector const & rhs) noexcept
+    {
+        return lhs.data == rhs;
+    }
+
+    //!\brief Test for equality.
+    //!\deprecated Use lhs == binning_bitvector.raw_data()
+    SEQAN3_DEPRECATED_310 friend bool operator==(sdsl::bit_vector const & lhs, binning_bitvector const & rhs) noexcept
+    {
+        return lhs == rhs.data;
+    }
+
+    //!\brief Test for inequality.
+    //!\deprecated Use binning_bitvector.raw_data() != rhs
+    SEQAN3_DEPRECATED_310 friend bool operator!=(binning_bitvector const & lhs, sdsl::bit_vector const & rhs) noexcept
+    {
+        return !(lhs.data == rhs);
+    }
+
+    //!\brief Test for inequality.
+    //!\deprecated Use lhs != binning_bitvector.raw_data()
+    SEQAN3_DEPRECATED_310 friend bool operator!=(sdsl::bit_vector const & lhs, binning_bitvector const & rhs) noexcept
+    {
+        return !(lhs == rhs.data);
+    }
+#endif // SEQAN3_DEPRECATED_310
     //!\}
 
     /*!\name Access
@@ -916,7 +950,7 @@ public:
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    counting_agent_type(ibf_t const & ibf) :
+    explicit counting_agent_type(ibf_t const & ibf) :
         ibf_ptr(std::addressof(ibf)), membership_agent(ibf), result_buffer(ibf.bin_count())
     {}
     //!\}
