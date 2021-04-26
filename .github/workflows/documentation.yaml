@@ -24,10 +24,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install CMake
-        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
+        run: bash .github/workflows/scripts/install_cmake.sh
 
       - name: Install Doxygen
-        run: bash ./seqan3/.github/workflows/scripts/install_doxygen.sh
+        run: bash .github/workflows/scripts/install_doxygen.sh
 
       - name: Load cached documentation
         uses: actions/cache@v2
