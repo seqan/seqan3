@@ -11,14 +11,7 @@
 #include <seqan3/std/ranges>
 #include <vector>
 
-<<<<<<< HEAD:test/unit/range/views/enforce_random_access_test.cpp
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/range/views/enforce_random_access.hpp>
-=======
-#include <seqan3/range/views/to_char.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/ranges>
->>>>>>> [MISC] move seqan3::views::enforce_random_access to seqan3/utility/views/:test/unit/utility/views/enforce_random_access_test.cpp
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
 
