@@ -12,10 +12,10 @@
 #include <vector>
 
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/enforce_random_access.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 class common_pseudo_random_access_range
 {

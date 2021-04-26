@@ -51,17 +51,17 @@ public:
     }
     phred_type value_2()
     {
-        return phred_type{6};
+        return phred_type{}.assign_phred(6);
     }
     phred_type assignable_to_value_2()
     {
-        return phred_type{6}; // replace if assignable subtype becomes available
+        return phred_type{}.assign_phred(6);
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */alphabet_type{}.assign_char('A'), phred_type{1},
-                               /*mid */alphabet_type{}.assign_char('C'), phred_type{4},
-                               /*high*/alphabet_type{}.assign_char('T'), phred_type{9});
+        return std::make_tuple(/*low */alphabet_type{}.assign_char('A'), phred_type{}.assign_phred(1),
+                               /*mid */alphabet_type{}.assign_char('C'), phred_type{}.assign_phred(4),
+                               /*high*/alphabet_type{}.assign_char('T'), phred_type{}.assign_phred(9));
     }
 };
 

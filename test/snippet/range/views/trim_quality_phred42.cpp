@@ -15,7 +15,7 @@ int main()
     auto v1 = vec | seqan3::views::trim_quality(20u);                            // == ['I','I','?','5']
 
     // trim by quality character
-    auto v2 = vec | seqan3::views::trim_quality(seqan3::phred42{40});            // == ['I','I']
+    auto v2 = vec | seqan3::views::trim_quality('I'_phred42);                    // == ['I','I']
 
     // function syntax
     auto v3 = seqan3::views::trim_quality(vec, '5'_phred42);                     // == ['I','I','?','5']

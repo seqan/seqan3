@@ -59,8 +59,11 @@ public:
     constexpr phred68solexa & operator=(phred68solexa &&)       noexcept = default; //!< Defaulted.
     ~phred68solexa()                                            noexcept = default; //!< Defaulted.
 
-    //!\brief Construct from Phred score value.
-    constexpr phred68solexa(phred_type const p) : base_t{p} {}
+    /*!\brief Allow construction from the Phred score value.
+     * \details
+     * \deprecated This will be removed in 3.1.0. Please use seqan3::phred68solexa::assign_phred() or '!'_phred68solexa.
+     */
+    SEQAN3_DEPRECATED_310 constexpr phred68solexa(phred_type const p) : base_t{p} {}
 
     // Inherit converting constructor
     using base_t::base_t;

@@ -18,7 +18,6 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
-#include <seqan3/range/views/enforce_random_access.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
@@ -32,6 +31,7 @@
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/range/views/translate.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/enforce_random_access.hpp>
 #include <seqan3/utility/views/deep.hpp>
 
 /*!\defgroup views Views

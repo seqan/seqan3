@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  CMAKE_VERSION: 3.7.2
+  CMAKE_VERSION: 3.8.2
   DOXYGEN_VERSION: 1.9.1
   TZ: Europe/Berlin
 
@@ -23,34 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get cached Doxygen
-        uses: actions/cache@v2
-        with:
-          path: /tmp/doxygen-download
-          key: ${{ runner.os }}-Doxygen_${{ env.DOXYGEN_VERSION }}
+      - name: Install CMake
+        run: bash .github/workflows/scripts/install_cmake.sh
 
-      - name: Setup Doxygen
-        run: |
-          mkdir -p /tmp/doxygen-download
-          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/doxygen-download/ https://sourceforge.net/projects/doxygen/files/rel-${DOXYGEN_VERSION}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-          tar -C /tmp/ -zxf /tmp/doxygen-download/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-          echo "/tmp/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH # Only available in subsequent steps!
-
-      - name: Get cached CMake
-        uses: actions/cache@v2
-        with:
-          path: /tmp/cmake-download
-          key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
-
-      - name: Setup CMake
-        run: |
-          mkdir -p /tmp/cmake-download
-          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-          tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-          echo "/tmp/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" >> $GITHUB_PATH # Only available in subsequent steps!
-
-      - name: Install Dependencies
-        run: sudo apt-get install texlive-font-utils ghostscript texlive-latex-extra graphviz libclang-9-dev libclang-cpp9 # graphviz for dot, latex to parse formulas, libclang for doxygen
+      - name: Install Doxygen
+        run: bash .github/workflows/scripts/install_doxygen.sh
 
       - name: Load cached documentation
         uses: actions/cache@v2
@@ -74,7 +51,7 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-avzr --delete --timeout=60 --omit-dir-times'
+          flags: '-azr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_usr/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-user'
 
@@ -86,6 +63,6 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
         with:
-          flags: '-avzr --delete --timeout=60 --omit-dir-times'
+          flags: '-azr --delete --timeout=60 --omit-dir-times'
           src: 'doc-build/doc_dev/html/'
           dest: '$REMOTE_USER@$REMOTE_HOST:$TARGET/3-master-dev'

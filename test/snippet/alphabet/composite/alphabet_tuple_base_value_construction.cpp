@@ -6,11 +6,10 @@
 int main()
 {
     using seqan3::operator""_dna4;
+    using seqan3::operator""_phred42;
 
-    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter1{'C'_dna4};
-    // creates {'C'_dna4, seqan3::phred42{0}}
-    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter2{seqan3::phred42{1}};
-    // creates {'A'_dna4, seqan3::phred42{1}}
+    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter1{'C'_dna4};     // creates {'C'_dna4, '!'_phred42}
+    seqan3::qualified<seqan3::dna4, seqan3::phred42> letter2{'"'_phred42};  // creates {'A'_dna4, '"'_phred42}
 
     if (letter1 == letter2)
         seqan3::debug_stream << "yeah\n"; // yeah

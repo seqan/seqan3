@@ -35,22 +35,11 @@ jobs:
           ref: develop
           path: seqan3/submodules/seqan
 
-      - name: Get cached CMake
-        uses: actions/cache@v2
-        with:
-          path: /tmp/cmake-download
-          key: ${{ runner.os }}-CMake_${{ env.CMAKE_VERSION }}
-
-      - name: Setup CMake
-        run: |
-          mkdir -p /tmp/cmake-download
-          wget --retry-connrefused --waitretry=30 --read-timeout=30 --timeout=30 --tries=20 --no-clobber --quiet --directory-prefix=/tmp/cmake-download/ https://github.com/Kitware/CMake/releases/download/v${{ env.CMAKE_VERSION }}/cmake-${{ env.CMAKE_VERSION }}-Linux-x86_64.tar.gz
-          tar -C /tmp/ -zxf /tmp/cmake-download/cmake-${{ env.CMAKE_VERSION }}-Linux-x86_64.tar.gz
-          echo "/tmp/cmake-${{ env.CMAKE_VERSION }}-Linux-x86_64/bin" >> $GITHUB_PATH # Only available in subsequent steps!
-
       - name: Add package source
-        shell: bash
         run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
+
+      - name: Install CMake
+        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
       - name: Install ccache
         run: sudo apt-get install --yes ccache
@@ -78,7 +67,7 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 5G
+          CCACHE_MAXSIZE: 1G
         run: |
           ccache -p || true
           cd seqan3-build

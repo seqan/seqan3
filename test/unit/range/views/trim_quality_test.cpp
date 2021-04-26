@@ -29,7 +29,7 @@ TEST(view_trim, standalone)
     EXPECT_RANGE_EQ("II?5"_phred42, vec | seqan3::views::trim_quality(20u));
 
     // trim by quality character
-    EXPECT_RANGE_EQ("II"_phred42, vec | seqan3::views::trim_quality(seqan3::phred42{40}));
+    EXPECT_RANGE_EQ("II"_phred42, vec | seqan3::views::trim_quality('I'_phred42));
 
     // function syntax
     EXPECT_RANGE_EQ("II?5"_phred42, seqan3::views::trim_quality(vec, '5'_phred42));
@@ -58,7 +58,7 @@ TEST(view_trim, qualified)
     EXPECT_RANGE_EQ(cmp1, vec | seqan3::views::trim_quality(20u));
 
     // trim by quality character
-    EXPECT_RANGE_EQ(cmp2, vec | seqan3::views::trim_quality(seqan3::dna5q{'C'_dna5, seqan3::phred42{40}}));
+    EXPECT_RANGE_EQ(cmp2, vec | seqan3::views::trim_quality(seqan3::dna5q{'C'_dna5, 'I'_phred42}));
 
     // function syntax
     EXPECT_RANGE_EQ(cmp1, seqan3::views::trim_quality(vec, 20u));

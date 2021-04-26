@@ -67,11 +67,13 @@ TYPED_TEST_P(phred, conversion_phred)
 // test user-defined constructor
 TYPED_TEST_P(phred, conversion_rank)
 {
-    TypeParam v{0};
+    TypeParam v;
+    v.assign_phred(0);
     EXPECT_EQ(v.to_phred(), 0);
     EXPECT_EQ(v.to_rank(),  -TypeParam::offset_phred);
 
-    TypeParam v2{23};
+    TypeParam v2;
+    v2.assign_phred(23);
     EXPECT_EQ(v2.to_phred(), 23);
     EXPECT_EQ(v2.to_rank(),  23 - TypeParam::offset_phred);
 }
