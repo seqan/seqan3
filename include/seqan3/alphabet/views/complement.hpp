@@ -15,7 +15,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/range/views/deep.hpp>
+#include <seqan3/utility/views/deep.hpp>
 
 namespace seqan3::views
 {
