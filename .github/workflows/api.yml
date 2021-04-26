@@ -14,7 +14,7 @@ env:
 
 defaults:
   run:
-    shell: bash -ex {0}
+    shell: bash -exo pipefail {0}
 
 jobs:
   build:
@@ -71,8 +71,21 @@ jobs:
         run: |
           ccache -p || true
           cd seqan3-build
-          CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build . -- -k
+          CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build . -- -k 2>&1 | tee build.log
           ccache -s || true
+
+      - name: Setup Python
+        if: ${{ failure() }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Process Log
+        if: ${{ failure() }}
+        run: |
+          echo "API_LOG<<EOF" >> $GITHUB_ENV # API_LOG is the env variable. EOF is set as delimiter for multiline vars.
+          echo "$(python3 seqan3/.github/workflows/scripts/process_compiler_error_log.py seqan3-build/build.log)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Create issue
         if: ${{ failure() }}
