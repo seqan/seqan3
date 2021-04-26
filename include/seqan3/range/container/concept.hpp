@@ -141,7 +141,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
     requires container<type>;
 
     // construction
-    { type{typename type::size_type{}, typename type::value_type{}} };
+    { type(typename type::size_type{}, typename type::value_type{}) };
     { type{val2.begin(), val2.end()}                                }; // NOTE that this could be any input iterator:
     { type{std::initializer_list<typename type::value_type>{}}      };
     SEQAN3_RETURN_TYPE_CONSTRAINT(val = std::initializer_list<typename type::value_type>{}, std::same_as, type &);

@@ -14,7 +14,9 @@ int main()
     seqan3::debug_stream << phred.to_char() << "\n";  // '#'
     seqan3::debug_stream << phred.to_rank() << "\n";  // 2
 
-    seqan3::phred42 another_phred;
+    seqan3::phred42 another_phred = '('_phred42;
+    seqan3::debug_stream << another_phred.to_phred() << "\n"; // 52
+
     another_phred.assign_phred(49); // converted down to 41
     seqan3::debug_stream << another_phred.to_phred() << "\n"; // 41
 

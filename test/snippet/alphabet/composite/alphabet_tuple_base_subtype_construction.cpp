@@ -7,10 +7,11 @@ int main()
 {
     using seqan3::operator""_dna4;
     using seqan3::operator""_rna4;
+    // using seqan3::operator""_phred42;
 
-    // The following creates {'C'_dna4, phred42{0}}
+    // The following creates {'C'_dna4, '!'_phred42}
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter1{'C'_dna4};
-    // The following also creates {'C'_dna4, seqan3::phred42{0}}, since rna4 assignable to dna4
+    // The following also creates {'C'_dna4, '!'_phred42}, since rna4 assignable to dna4
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter2{'C'_rna4};
 
     if (letter1 == letter2)

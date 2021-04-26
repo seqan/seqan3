@@ -28,10 +28,10 @@ using seqan3::operator""_phred42;
 TEST(view_get, basic)
 {
     // TODO remove const-ness from input vector once alphabet_proxy's complement doesnt cause ICE
-    std::vector<seqan3::dna4q> const qv{{'A'_dna4, seqan3::phred42{0}},
-                                        {'C'_dna4, seqan3::phred42{1}},
-                                        {'G'_dna4, seqan3::phred42{2}},
-                                        {'T'_dna4, seqan3::phred42{3}}};
+    std::vector<seqan3::dna4q> const qv{{'A'_dna4, '!'_phred42},
+                                        {'C'_dna4, '"'_phred42},
+                                        {'G'_dna4, '#'_phred42},
+                                        {'T'_dna4, '$'_phred42}};
 
     //functor
     EXPECT_RANGE_EQ("ACGT"_dna4, seqan3::views::get<0>(qv));
@@ -49,10 +49,10 @@ TEST(view_get, advanced)
 {
     // TODO remove const-ness from input vector once alphabet_proxy inherits it's alphabet
     std::vector<seqan3::qualified<seqan3::masked<seqan3::dna4>,
-                                  seqan3::phred42>> const t{{{'A'_dna4, seqan3::mask::MASKED}, seqan3::phred42{0}},
-                                                            {{'C'_dna4, seqan3::mask::UNMASKED}, seqan3::phred42{1}},
-                                                            {{'G'_dna4, seqan3::mask::MASKED}, seqan3::phred42{2}},
-                                                            {{'T'_dna4, seqan3::mask::UNMASKED}, seqan3::phred42{3}}};
+                                  seqan3::phred42>> const t{{{'A'_dna4, seqan3::mask::MASKED}, '!'_phred42},
+                                                            {{'C'_dna4, seqan3::mask::UNMASKED}, '"'_phred42},
+                                                            {{'G'_dna4, seqan3::mask::MASKED}, '#'_phred42},
+                                                            {{'T'_dna4, seqan3::mask::UNMASKED}, '$'_phred42}};
 
     // functor notation
     std::vector<seqan3::masked<seqan3::dna4>> expected_sequence{{'A'_dna4, seqan3::mask::MASKED},
