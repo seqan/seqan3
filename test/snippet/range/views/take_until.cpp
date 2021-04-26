@@ -2,9 +2,9 @@
 #include <string>
 
 #include <seqan3/core/debug_stream.hpp>                 // for debug_stream
-#include <seqan3/range/views/single_pass_input.hpp>     // for views::single_pass_input
 #include <seqan3/range/views/take_until.hpp>            // for views::take_until*
 #include <seqan3/utility/char_operations/predicate.hpp> // for is_char
+#include <seqan3/utility/views/single_pass_input.hpp>   // for views::single_pass_input
 
 int main()
 {

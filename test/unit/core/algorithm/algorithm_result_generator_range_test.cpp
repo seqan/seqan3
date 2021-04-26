@@ -13,7 +13,7 @@
 #include <range/v3/view/iota.hpp>
 
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
-#include <seqan3/range/views/single_pass_input.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
 
 #include "../../range/iterator_test_template.hpp"
 

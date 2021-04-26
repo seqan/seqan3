@@ -9,9 +9,9 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
 
 // ============================================================================
 //  test templates

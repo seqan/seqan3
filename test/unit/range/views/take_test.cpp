@@ -17,11 +17,11 @@
 
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/views/single_pass_input.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
 
 // ============================================================================
 //  test templates

@@ -276,16 +276,16 @@ public:
  *
  * # Example
  *
- * (from include/seqan3/range/views/single_pass_input.hpp)
+ * (from include/seqan3/utility/views/single_pass_input.hpp)
  *
  * This is the signature of the view type template in namespace seqan3::detail:
  *
- * \snippet include/seqan3/range/views/single_pass_input.hpp view_def
+ * \snippet include/seqan3/utility/views/single_pass_input.hpp view_def
  *
  * This is the definition of the range adaptor closure object, it will always delegate to the
  * constructor: seqan3::detail::single_pass_input_view::single_pass_input_view():
  *
- * \snippet include/seqan3/range/views/single_pass_input.hpp adaptor_def
+ * \snippet include/seqan3/utility/views/single_pass_input.hpp adaptor_def
  */
 template <template <typename, typename ...> typename view_type>
 class adaptor_for_view_without_args : public adaptor_base<adaptor_for_view_without_args<view_type>>
