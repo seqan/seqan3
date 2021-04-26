@@ -3,7 +3,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/views/enforce_random_access.hpp>
+#include <seqan3/utility/views/enforce_random_access.hpp>
 
 int main()
 {
