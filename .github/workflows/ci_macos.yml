@@ -1,0 +1,140 @@
+name: SeqAn3 CI on macOS
+on:
+  push:
+    branches:
+      # Push events to branches matching refs/heads/master
+      - 'master'
+      # Push events to branches matching refs/heads/release*
+      - 'release*'
+  pull_request:
+
+env:
+  CMAKE_VERSION: 3.8.2
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -ex {0}
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: macos-10.15
+    timeout-minutes: 120
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: "Unit gcc10"
+            os: macos-10.15
+            cxx: "g++-10"
+            cc: "gcc-10"
+            build: unit
+            build_type: Release
+            build_threads: 3
+            test_threads: 3
+
+          - name: "Unit gcc9 (c++2a)"
+            os: macos-10.15
+            cxx: "g++-9"
+            cc: "gcc-9"
+            build: unit
+            build_type: Release
+            build_threads: 3
+            test_threads: 3
+            cxx_flags: "-std=c++2a"
+
+          - name: "Unit gcc8"
+            os: macos-10.15
+            cxx: "g++-8"
+            cc: "gcc-8"
+            build: unit
+            build_type: Release
+            build_threads: 3
+            test_threads: 3
+
+          - name: "Unit gcc7"
+            os: macos-10.15
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Release
+            build_threads: 3
+            test_threads: 3
+
+    steps:
+      - name: Checkout SeqAn3
+        uses: actions/checkout@v2
+        with:
+          path: seqan3
+          fetch-depth: 2
+          submodules: true
+
+      - name: Checkout SeqAn2
+        uses: actions/checkout@v2
+        with:
+          repository: seqan/seqan
+          ref: develop
+          path: seqan3/submodules/seqan
+
+      - name: Configure Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install CMake
+        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
+
+      - name: Install ccache
+        run: |
+          brew list --versions ccache || brew install --force-bottle ccache
+
+      - name: Install compiler ${{ matrix.cxx }}
+        run: |
+          package_name=$(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
+          brew list --versions $package_name || brew install --force-bottle $package_name
+          brew upgrade --force-bottle $package_name
+          brew link $package_name
+
+      - name: Load ccache
+        uses: actions/cache@v2
+        with:
+          path: .ccache
+          key: ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
+          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.ref }}
+            ${{ runner.os }}-${{ matrix.name }}-ccache-${{ github.base_ref }}
+            ${{ runner.os }}-${{ matrix.name }}-ccache-
+
+      - name: Tool versions
+        run: |
+          env cmake --version
+          env ${{ matrix.cxx }} --version
+
+      - name: Configure tests
+        env:
+          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.cc }}
+        run: |
+          mkdir seqan3-build
+          cd seqan3-build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+          make gtest_build
+
+      - name: Build tests
+        env:
+          CCACHE_BASEDIR: ${{ github.workspace }}
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+          CCACHE_COMPRESS: true
+          CCACHE_COMPRESSLEVEL: 6
+          CCACHE_MAXSIZE: 1G
+        run: |
+          ccache -p || true
+          cd seqan3-build
+          make -k -j${{ matrix.build_threads }}
+          ccache -s || true
+
+      - name: Run tests
+        run: |
+          cd seqan3-build
+          ctest . -j${{ matrix.test_threads }} --output-on-failure

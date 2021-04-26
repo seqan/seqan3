@@ -1,0 +1,208 @@
+name: SeqAn3 CI misc
+
+on:
+  push:
+    branches:
+      # Push events to branches matching refs/heads/master
+      - 'master'
+      # Push events to branches matching refs/heads/release*
+      - 'release*'
+  pull_request:
+
+env:
+  SEQAN3_NO_VERSION_CHECK: 1
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -ex {0}
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-20.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Snippet gcc7"
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: snippet
+            build_type: Release
+            build_threads: 2
+            test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
+            cmake: 3.8.2
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: false
+            skip_run_tests: false
+            use_include_dependencies: false
+
+          - name: "Performance gcc7"
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: performance
+            build_type: Release
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.8.2
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: false
+            skip_run_tests: false
+            use_include_dependencies: false
+
+          - name: "Header gcc7"
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: header
+            build_type: Release
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.8.2
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: false
+            skip_run_tests: false
+            use_include_dependencies: false
+
+          - name: "Non-cyclic tests"
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: unit
+            build_type: Debug
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.8.2
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: true
+            skip_run_tests: true
+            use_include_dependencies: true
+
+          - name: "CMake external project"
+            cxx: "g++-7"
+            cc: "gcc-7"
+            build: external_project
+            build_type: Debug
+            build_threads: 1 # output is important to be in sequential order
+            test_threads: 2
+            cmake: 3.14.6 # the whole test suite needs at least cmake 3.14
+            requires_toolchain: true
+            requires_ccache: false
+            skip_build_tests: false
+            skip_run_tests: true
+            use_include_dependencies: false
+
+          - name: "Documentation"
+            build: documentation
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.8.2
+            doxygen: 1.9.1
+            requires_toolchain: false
+            requires_ccache: false
+            skip_build_tests: true
+            skip_run_tests: false
+            use_include_dependencies: false
+
+    steps:
+      - name: Checkout SeqAn3
+        uses: actions/checkout@v2
+        with:
+          path: seqan3
+          fetch-depth: 2
+          submodules: true
+
+      - name: Checkout SeqAn2
+        uses: actions/checkout@v2
+        with:
+          repository: seqan/seqan
+          ref: develop
+          path: seqan3/submodules/seqan
+
+      - name: Install CMake
+        env:
+          BUILD: ${{ matrix.build }}
+          CMAKE_VERSION: ${{ matrix.cmake }}
+        run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
+
+      - name: Install Doxygen
+        if: matrix.build == 'documentation'
+        env:
+          DOXYGEN_VERSION: ${{ matrix.doxygen }}
+        run: bash ./seqan3/.github/workflows/scripts/install_doxygen.sh
+
+      - name: Install ccache
+        if: matrix.requires_ccache
+        run: sudo apt-get install --yes ccache
+
+      - name: Install compiler ${{ matrix.cxx }}
+        if: matrix.requires_toolchain
+        run: sudo apt-get install --yes ${{ matrix.cxx }}
+
+      - name: Load ccache
+        if: matrix.requires_ccache
+        uses: actions/cache@v2
+        with:
+          path: .ccache
+          key: ${{ matrix.name }}-ccache-${{ github.ref }}-${{ github.run_number }}
+          # Restoring: From current branch, otherwise from base branch, otherwise from any branch.
+          restore-keys: |
+            ${{ matrix.name }}-ccache-${{ github.ref }}
+            ${{ matrix.name }}-ccache-${{ github.base_ref }}
+            ${{ matrix.name }}-ccache-
+
+      - name: Tool versions
+        run: |
+          env cmake --version
+          env doxygen --version || true
+          env ${{ matrix.cxx }} --version || true
+
+      - name: Configure tests
+        env:
+          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.cc }}
+        run: |
+          mkdir seqan3-build
+          cd seqan3-build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+          if [[ "${{ matrix.build }}" =~ ^(header|snippet)$ ]]; then
+            make gtest_build
+          fi
+          if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
+            make gbenchmark_build
+          fi
+          if [[ "${{ matrix.build }}" =~ ^(external_project)$ ]]; then
+            make seqan3_test_prerequisite
+          fi
+          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
+            make download-cppreference-doxygen-web-tag
+          fi
+          if [[ "${{ matrix.use_include_dependencies }}" == "true" ]]; then
+            cmake -DSEQAN3_USE_INCLUDE_DEPENDENCIES=1 .
+            make all_dependencies
+            cmake . # are tests cyclic?
+          fi
+
+      - name: Build tests
+        if: ${{!matrix.skip_build_tests}}
+        env:
+          CCACHE_BASEDIR: ${{ github.workspace }}
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+          CCACHE_COMPRESS: true
+          CCACHE_COMPRESSLEVEL: 6
+          CCACHE_MAXSIZE: 1G
+        run: |
+          ccache -p || true
+          cd seqan3-build
+          make -k -j${{ matrix.build_threads }}
+          ccache -s || true
+
+      - name: Run tests
+        if: ${{!matrix.skip_run_tests}}
+        run: |
+          cd seqan3-build
+          ctest . -j${{ matrix.test_threads }} --output-on-failure
