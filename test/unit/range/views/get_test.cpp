@@ -14,11 +14,11 @@
 
 #include <seqan3/alphabet/mask/masked.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/complement.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/zip.hpp>
 

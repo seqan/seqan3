@@ -13,7 +13,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/zip.hpp>
 

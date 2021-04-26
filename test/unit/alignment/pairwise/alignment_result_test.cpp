@@ -18,10 +18,10 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 

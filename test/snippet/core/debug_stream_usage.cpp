@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/to_rank.hpp>
 
 int main()
 {

@@ -18,9 +18,9 @@
 
 #include <sdsl/suffix_trees.hpp>
 
+#include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/views/join.hpp>
-#include <seqan3/range/views/to_rank.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>

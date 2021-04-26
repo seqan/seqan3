@@ -22,6 +22,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
@@ -31,7 +32,6 @@
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/istreambuf.hpp>
-#include <seqan3/range/views/to_char.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>

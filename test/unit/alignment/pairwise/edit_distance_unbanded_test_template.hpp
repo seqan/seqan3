@@ -11,7 +11,7 @@
 
 #include <seqan3/alignment/configuration/align_config_result_type.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
-#include <seqan3/range/views/to_char.hpp>
+#include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "fixture/alignment_fixture.hpp"

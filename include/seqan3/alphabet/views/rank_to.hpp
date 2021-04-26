@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::char_to.
+ * \brief Provides seqan3::views::rank_to.
  */
 
 #pragma once
@@ -15,7 +15,6 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/utility/views/deep.hpp>
 
 namespace seqan3::views
@@ -25,17 +24,17 @@ namespace seqan3::views
  * \{
  */
 
-/*!\brief               A view over an alphabet, given a range of characters.
+/*!\brief                A view over an alphabet, given a range of ranks.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
- * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::alphabet.
+ * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::writable_semialphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
  * \ingroup views
  *
  * \details
  *
- * \header_file{seqan3/alphabet/views/char_to.hpp}
+ * \header_file{seqan3/alphabet/views/rank_to.hpp}
  *
  * ### View properties
  *
@@ -57,24 +56,23 @@ namespace seqan3::views
  * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
  * |                                  |                                       |                                                    |
- * | std::ranges::range_reference_t   | seqan3::alphabet_char_t<alphabet_t>   | `alphabet_t`                                       |
+ * | std::ranges::range_reference_t   | seqan3::alphabet_rank_t<alphabet_t>   | `alphabet_t`                                       |
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * ### Example
- *
- * \include test/snippet/alphabet/views/char_to.cpp
+ * ###Example
+ * \include test/snippet/range/views/rank_to.cpp
  * \hideinitializer
  *
  * \stableapi{Since version 3.1.}
  */
-template <alphabet alphabet_type>
-inline auto const char_to = deep{std::views::transform([] (auto && in)
+template <typename alphabet_type>
+//!\cond
+    requires writable_semialphabet<alphabet_type>
+//!\endcond
+inline auto const rank_to = deep{std::views::transform([] (alphabet_rank_t<alphabet_type> const in) -> alphabet_type
 {
-    static_assert(std::common_reference_with<decltype(in), alphabet_char_t<alphabet_type>>,
-                  "The innermost value type must have a common reference to underlying char type of alphabet_type.");
-    // call element-wise assign_char from the alphabet
-    return assign_char_to(in, alphabet_type{});
+    return assign_rank_to(in, alphabet_type{});
 })};
 
 //!\}
