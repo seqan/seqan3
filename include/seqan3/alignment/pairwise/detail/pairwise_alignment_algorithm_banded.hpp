@@ -241,33 +241,36 @@ protected:
         auto alignment_matrix_it = alignment_matrix.begin();
         auto indexed_matrix_it = index_matrix.begin();
 
-        size_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
-        size_t const column_size = std::max<int32_t>(0, this->upper_diagonal);
+        using row_index_t = std::ranges::range_difference_t<sequence2_t>; // row_size = |sequence2| + 1
+        using column_index_t = std::ranges::range_difference_t<sequence1_t>; // column_size = |sequence1| + 1
+
+        row_index_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
+        column_index_t const column_size = std::max<int32_t>(0, this->upper_diagonal);
         this->initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2 | views::take(row_size));
 
         // ---------------------------------------------------------------------
         // 1st recursion phase: band intersects with the first row.
         // ---------------------------------------------------------------------
 
-        for (auto alphabet1 : sequence1 | views::take(column_size))
+        for (auto alphabet1 : std::views::take(sequence1, column_size))
         {
             this->compute_column(*++alignment_matrix_it,
                                  *++indexed_matrix_it,
                                  alphabet1,
-                                 sequence2 | views::take(++row_size));
+                                 std::views::take(sequence2, ++row_size));
         }
 
         // ---------------------------------------------------------------------
         // 2nd recursion phase: iterate until the end of the matrix.
         // ---------------------------------------------------------------------
 
-        size_t first_row_index = 0u;
-        for (auto alphabet1 : sequence1 | std::views::drop(column_size))
+        row_index_t first_row_index = 0u;
+        for (auto alphabet1 : std::views::drop(sequence1, column_size))
         {
             compute_band_column(*++alignment_matrix_it,
-                                *++indexed_matrix_it | std::views::drop(first_row_index + 1),
+                                std::views::drop(*++indexed_matrix_it, first_row_index + 1),
                                 alphabet1,
-                                sequence2 | views::slice(first_row_index, ++row_size));
+                                views::slice(sequence2, first_row_index, ++row_size));
             ++first_row_index;
         }
 
@@ -276,14 +279,14 @@ protected:
         // ---------------------------------------------------------------------
 
         auto alignment_column = *alignment_matrix_it;
-        auto cell_index_column = *indexed_matrix_it | std::views::drop(first_row_index);
+        auto cell_index_column = std::views::drop(*indexed_matrix_it, first_row_index);
 
         auto alignment_column_it = alignment_column.begin();
         auto cell_index_column_it = cell_index_column.begin();
 
         this->track_last_column_cell(*alignment_column_it, *cell_index_column_it);
 
-        for (size_t last_row = std::min<size_t>(std::ranges::distance(sequence2), row_size);
+        for (row_index_t last_row = std::min<row_index_t>(std::ranges::distance(sequence2), row_size);
              first_row_index < last_row;
              ++first_row_index)
             this->track_last_column_cell(*++alignment_column_it, *++cell_index_column_it);
