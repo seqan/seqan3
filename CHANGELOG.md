@@ -218,6 +218,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
    ([\#2556](https://github.com/seqan/seqan3/pull/2556))
 * Deprecated `seqan3::views::persist`. There is no replacement, use lvalues instead of rvalues
   ([\#2553](https://github.com/seqan/seqan3/pull/2553)).
+* We renamed `seqan3::gap_decorator::unaligned_seq_type` to `seqan3::gap_decorator::unaligned_sequence_type`.
+  ([\#2564](https://github.com/seqan/seqan3/pull/2564))
 
 #### Search
 
