@@ -82,7 +82,7 @@ public:
      * \copydoc seqan3::doxygen::cigar_operation_table
      *
      * Example usage:
-     * \include test/snippet/alphabet/cigar/cigar_op.cpp
+     * \include test/snippet/alphabet/cigar/cigar_operation.cpp
      *
      * \if DEV
      * \note Usually you do not want to manipulate cigar elements and vectors on
@@ -214,6 +214,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cig
     return s;
 }
 
+inline namespace literals
+{
+
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
@@ -225,6 +228,9 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, cig
 /*!\brief The seqan3::cigar::operation char literal.
  * \relates seqan3::cigar
  * \returns seqan3::cigar::operation
+ *
+ * You can use this char literal to assign a seqan3::cigar_operation character:
+ * \include test/snippet/alphabet/cigar/cigar_operation_char_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -239,5 +245,7 @@ SEQAN3_DEPRECATED_310 inline cigar::operation operator""_cigar_op(char const c) 
     return cigar::operation{}.assign_char(c);
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

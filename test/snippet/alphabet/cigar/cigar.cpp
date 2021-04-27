@@ -1,13 +1,15 @@
 #include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_cigar_operation;
-
 int main()
 {
-    seqan3::cigar c{13, 'M'_cigar_operation};
-    seqan3::debug_stream << c << '\n'; // "13M"
+    using namespace seqan3::literals;
 
-    c.assign_string("14X");
-    seqan3::debug_stream << c << '\n'; // "14X"
+    seqan3::cigar letter{12, 'M'_cigar_operation};
+
+    letter.assign_string("10D");
+    seqan3::debug_stream << letter << '\n'; // prints "10D"
+
+    letter.assign_string("20Z"); // Unknown strings are implicitly converted to 0P.
+    seqan3::debug_stream << letter << '\n'; // prints "0P"
 }

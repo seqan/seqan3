@@ -3,7 +3,7 @@
 
 int main()
 {
-    using seqan3::operator""_cigar_operation;
+    using namespace seqan3::literals;
 
     // creates 10M, as the cigar_op field is not provided.
     seqan3::cigar letter1{10};

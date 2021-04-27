@@ -3,7 +3,7 @@
 
 int main()
 {
-    using seqan3::operator""_cigar_operation;
+    using namespace seqan3::literals;
 
     seqan3::cigar letter{10, 'I'_cigar_operation};
     seqan3::debug_stream << "letter: " << letter << '\n'; // 10I
