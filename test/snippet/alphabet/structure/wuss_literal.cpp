@@ -2,10 +2,9 @@
 
 int main()
 {
-    using seqan3::operator""_wuss51;
+    using namespace seqan3::literals;
 
-    // Using the string literal to assign a vector of WUSS characters:
-    std::vector<seqan3::wuss<>> foo{".<..>."_wuss51};
-    std::vector<seqan3::wuss<>> bar = ".<..>."_wuss51;
-    auto bax = ".<..>."_wuss51;
+    std::vector<seqan3::wuss51> sequence1{".<..>."_wuss51};
+    std::vector<seqan3::wuss51> sequence2 = ".<..>."_wuss51;
+    auto sequence3 = ".<..>."_wuss51;
 }
