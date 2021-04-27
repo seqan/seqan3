@@ -56,7 +56,7 @@ namespace seqan3
  * in the human genome: a comparison with sense codon usage.
  * BMC Genomics, 17, 366. https://doi.org/10.1186/s12864-016-2692-4
  *
- * \include test/snippet/alphabet/aminoacid/aa20_construction.cpp
+ * \include test/snippet/alphabet/aminoacid/aa20.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -155,14 +155,10 @@ private:
     }
 };
 
-} // namespace seqan3
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
-namespace seqan3
-{
 /*!\brief Alias for an std::vector of seqan3::aa20.
  * \relates aa20
  *
@@ -170,24 +166,21 @@ namespace seqan3
  */
 using aa20_vector = std::vector<aa20>;
 
-} // namespace seqan3
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
-
-namespace seqan3
+inline namespace literals
 {
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::aa20 char literal.
  * \param[in] c The character to assign.
  * \relates seqan3::aa20
  * \returns seqan3::aa20
  *
+ * You can use this char literal to assign a seqan3::aa20 character:
  * \include test/snippet/alphabet/aminoacid/aa20_char_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -204,11 +197,7 @@ constexpr aa20 operator""_aa20(char const c) noexcept
  * \returns seqan3::aa20_vector
  *
  * You can use this string literal to easily assign to aa20_vector:
- *
  * \include test/snippet/alphabet/aminoacid/aa20_literal.cpp
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3!
  *
  * \stableapi{Since version 3.1.}
  */
@@ -223,5 +212,7 @@ inline aa20_vector operator""_aa20(char const * const s, size_t const n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

@@ -2,9 +2,9 @@
 
 int main()
 {
-    using seqan3::operator""_aa20;
-    
-    seqan3::aa20_vector foo{"ABFUYR"_aa20};
-    seqan3::aa20_vector bar = "ABFUYR"_aa20;
-    auto bax = "ABFUYR"_aa20;
+    using namespace seqan3::literals;
+
+    seqan3::aa20_vector sequence1{"ACGTTA"_aa20};
+    seqan3::aa20_vector sequence2 = "ACGTTA"_aa20;
+    auto sequence3 = "ACGTTA"_aa20;
 }

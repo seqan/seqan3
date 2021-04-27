@@ -188,15 +188,19 @@ using aa10murphy_vector = std::vector<aa10murphy>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::aa10murphy char literal.
  * \param[in] c The character to assign.
  * \relates seqan3::aa10murphy
  * \returns seqan3::aa10murphy
+ *
+ * You can use this char literal to assign a seqan3::aa10murphy character:
+ * \include test/snippet/alphabet/aminoacid/aa10murphy_char_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -212,9 +216,7 @@ constexpr aa10murphy operator""_aa10murphy(char const c) noexcept
  * \returns seqan3::aa10murphy_vector
  *
  * You can use this string literal to easily assign to aa10murphy_vector:
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3!
+ * \include test/snippet/alphabet/aminoacid/aa10murphy_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -229,5 +231,7 @@ inline aa10murphy_vector operator""_aa10murphy(char const * const s, size_t cons
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

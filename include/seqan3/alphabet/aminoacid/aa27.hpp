@@ -37,7 +37,7 @@ namespace seqan3
  * Instead initialise/assign from the character literal or use the
  * function seqan3::aa27::assign_char().
  *
- * \include test/snippet/alphabet/aminoacid/aa27_construction.cpp
+ * \include test/snippet/alphabet/aminoacid/aa27.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -137,14 +137,10 @@ private:
     }
 };
 
-} // namespace seqan3
-
 // ------------------------------------------------------------------
 // containers
 // ------------------------------------------------------------------
 
-namespace seqan3
-{
 /*!\brief Alias for an std::vector of seqan3::aa27.
  * \relates aa27
  *
@@ -152,24 +148,21 @@ namespace seqan3
  */
 using aa27_vector = std::vector<aa27>;
 
-} // namespace seqan3
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
-
-namespace seqan3
+inline namespace literals
 {
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::aa27 char literal.
  * \param[in] c The character to assign.
  * \relates seqan3::aa27
  * \returns seqan3::aa27
  *
+ * You can use this char literal to assign a seqan3::aa27 character:
  * \include test/snippet/alphabet/aminoacid/aa27_char_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -186,11 +179,7 @@ constexpr aa27 operator""_aa27(char const c) noexcept
  * \returns seqan3::aa27_vector
  *
  * You can use this string literal to easily assign to aa27_vector:
- *
  * \include test/snippet/alphabet/aminoacid/aa27_literal.cpp
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3!
  *
  * \stableapi{Since version 3.1.}
  */
@@ -205,5 +194,7 @@ inline aa27_vector operator""_aa27(char const * const s, size_t const n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3
