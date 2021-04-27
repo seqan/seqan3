@@ -30,13 +30,13 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/get.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
+#include <seqan3/utility/views/elements.hpp>
 
 namespace seqan3::detail
 {
@@ -204,8 +204,8 @@ public:
         static_assert(simd_concept<typename traits_t::trace_type>, "Expected simd trace type.");
 
         // Extract the batch of sequences for the first and the second sequence.
-        auto sequence1_range = indexed_sequence_pairs | views::get<0> | views::get<0>;
-        auto sequence2_range = indexed_sequence_pairs | views::get<0> | views::get<1>;
+        auto sequence1_range = indexed_sequence_pairs | views::elements<0> | views::elements<0>;
+        auto sequence2_range = indexed_sequence_pairs | views::elements<0> | views::elements<1>;
 
         // Initialise the find_optimum policy in the simd case.
         this->initialise_find_optimum_policy(sequence1_range,

@@ -132,7 +132,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * Use `seqan3::phred42::assign_phred()` or `seqan3::operator""_phred42` instead of `seqan3::phred42(phred_type)`.
   * Use `seqan3::phred63::assign_phred()` or `seqan3::operator""_phred63` instead of `seqan3::phred63(phred_type)`.
   * Use `seqan3::phred94::assign_phred()` or `seqan3::operator""_phred94` instead of `seqan3::phred94(phred_type)`.
-  * Use `seqan3::phred68legacy::assign_phred()` or `seqan3::operator""_phred68legacy` instead of 
+  * Use `seqan3::phred68legacy::assign_phred()` or `seqan3::operator""_phred68legacy` instead of
     `seqan3::phred68legacy(phred_type)`.
 * Renamed `seqan3::quality_base` to `seqan3::phred_base`
   ([\#2539](https://github.com/seqan/seqan3/pull/2539)).
@@ -218,6 +218,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
    ([\#2556](https://github.com/seqan/seqan3/pull/2556))
 * Deprecated `seqan3::views::persist`. There is no replacement, use lvalues instead of rvalues
   ([\#2553](https://github.com/seqan/seqan3/pull/2553)).
+* Renamed `seqan3::views::get` to `seqan3::views::elements` ([\#2554](https://github.com/seqan/seqan3/pull/2554)).
 
 #### Search
 

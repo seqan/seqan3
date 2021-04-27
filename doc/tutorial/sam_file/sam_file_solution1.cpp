@@ -30,7 +30,6 @@ write_file_dummy_struct go{};
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sam_file/all.hpp>
-#include <seqan3/range/views/get.hpp>
 
 int main()
 {

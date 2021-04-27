@@ -5,7 +5,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/get.hpp>
+#include <seqan3/utility/views/elements.hpp>
 
 int main()
 {
@@ -18,6 +18,6 @@ int main()
                                   {'G'_dna4, '2'_phred42},
                                   {'T'_dna4, '3'_phred42}};
 
-    seqan3::debug_stream << (qv | seqan3::views::get<0> | seqan3::views::to_char) << '\n'; // Prints [A,C,G,T]
-    seqan3::debug_stream << (qv | seqan3::views::get<1> | seqan3::views::to_char) << '\n'; // Prints [!,",#,$]
+    seqan3::debug_stream << (qv | seqan3::views::elements<0> | seqan3::views::to_char) << '\n'; // Prints [A,C,G,T]
+    seqan3::debug_stream << (qv | seqan3::views::elements<1> | seqan3::views::to_char) << '\n'; // Prints [!,",#,$]
 }

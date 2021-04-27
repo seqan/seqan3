@@ -17,8 +17,8 @@
 
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/slice.hpp>
+#include <seqan3/range/views/take.hpp>
 
 namespace seqan3::detail
 {
@@ -123,8 +123,8 @@ public:
         using original_score_t = typename traits_type::original_score_type;
 
         // Extract the batch of sequences for the first and the second sequence.
-        auto seq1_collection = indexed_sequence_pairs | views::get<0> | views::get<0>;
-        auto seq2_collection = indexed_sequence_pairs | views::get<0> | views::get<1>;
+        auto seq1_collection = indexed_sequence_pairs | views::elements<0> | views::elements<0>;
+        auto seq2_collection = indexed_sequence_pairs | views::elements<0> | views::elements<1>;
 
         this->initialise_tracker(seq1_collection, seq2_collection);
 
