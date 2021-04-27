@@ -139,6 +139,9 @@ public:
      */
     using unaligned_sequence_type = inner_type;
 
+    //!\deprecated Please use seqan3::gap_decorator::unaligned_sequence_type instead.   
+    using unaligned_seq_type SEQAN3_DEPRECATED_310 = unaligned_sequence_type;
+
     /*!\name Constructors, destructor and assignment
      * \{
      */
