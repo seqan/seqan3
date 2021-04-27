@@ -41,6 +41,9 @@ namespace seqan3::detail
 namespace seqan3
 {
 
+inline namespace literals
+{
+
 /*!\brief The SAM tag literal, such that tags can be used in constant expressions.
  * \ingroup io_sam_file
  * \tparam char_t The char type. Usually `char`. Parameter pack `...s` must be of
@@ -86,6 +89,8 @@ constexpr uint16_t operator""_tag()
 
     return static_cast<uint16_t>(char0) * 256 + static_cast<uint16_t>(char1);
 }
+
+} // inline namespace literals
 
 /*!\brief The generic base class.
  * \ingroup io_sam_file

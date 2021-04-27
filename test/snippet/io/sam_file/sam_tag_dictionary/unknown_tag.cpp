@@ -23,7 +23,7 @@ auto print_fn = [] (auto && arg)
 
 int main()
 {
-    using seqan3::operator""_tag;
+    using namespace seqan3::literals;
 
     seqan3::sam_tag_dictionary dict{};          // initialise empty dictionary
 
