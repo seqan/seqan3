@@ -86,6 +86,12 @@ public:
     //!\}
 };
 
+//!\deprecated Please use seqan3::phred68solexa instead.
+using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
+
+inline namespace literals
+{
+
 /*!\name Literals
  * \{
  */
@@ -93,6 +99,10 @@ public:
  * \relates seqan3::phred68solexa
  * \returns seqan3::phred68solexa
  * \details
+ *
+ * You can use this char literal to assign a seqan3::phred68solexa character:
+ * \include test/snippet/alphabet/quality/phred68solexa_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr phred68solexa operator""_phred68solexa(char const c) noexcept
@@ -107,7 +117,6 @@ constexpr phred68solexa operator""_phred68solexa(char const c) noexcept
  * \returns seqan3::std::vector<seqan3::phred68solexa>
  *
  * You can use this string literal to easily assign to std::vector<seqan3::phred68solexa>:
- *
  * \include test/snippet/alphabet/quality/phred68solexa_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -122,14 +131,6 @@ inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::
 
     return r;
 }
-//!\}
-
-} // namespace seqan3
-
-namespace seqan3
-{
-//!\deprecated Please use seqan3::phred68solexa instead.
-using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
 
 //!\deprecated Please use seqan3::operator""_phred68solexa instead.
 SEQAN3_DEPRECATED_310 constexpr phred68solexa operator""_phred68legacy(char const c) noexcept
@@ -142,4 +143,8 @@ SEQAN3_DEPRECATED_310 inline std::vector<phred68solexa> operator""_phred68legacy
 {
     return seqan3::operator""_phred68solexa(s, n);
 }
+//!\}
+
+} // inline namespace literals
+
 } // namespace seqan3

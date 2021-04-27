@@ -93,6 +93,9 @@ public:
     //!\}
 };
 
+inline namespace literals
+{
+
 /*!\name Literals
  * \{
  */
@@ -100,6 +103,10 @@ public:
  * \relates seqan3::phred63
  * \returns seqan3::phred63
  * \details
+ *
+ * You can use this char literal to assign a seqan3::phred63 character:
+ * \include test/snippet/alphabet/quality/phred63_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr phred63 operator""_phred63(char const c) noexcept
@@ -114,7 +121,6 @@ constexpr phred63 operator""_phred63(char const c) noexcept
  * \returns seqan3::std::vector<seqan3::phred63>
  *
  * You can use this string literal to easily assign to std::vector<seqan3::phred63>:
- *
  * \include test/snippet/alphabet/quality/phred63_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -130,5 +136,7 @@ inline std::vector<phred63> operator""_phred63(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3
