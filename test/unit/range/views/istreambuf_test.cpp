@@ -15,7 +15,7 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -25,7 +25,7 @@
 
 using seqan3::operator""_dna5;
 
-using iterator_type = decltype(seqan3::views::istreambuf(std::declval<std::istringstream &>()).begin());
+using iterator_type = decltype(seqan3::detail::istreambuf(std::declval<std::istringstream &>()).begin());
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -36,7 +36,7 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     std::string expected_range{"ACGTATATATAT ATATAT TTA \n AUAUAA"};
     std::istringstream is{expected_range};
 
-    decltype(seqan3::views::istreambuf(is)) test_range = seqan3::views::istreambuf(is);
+    decltype(seqan3::detail::istreambuf(is)) test_range = seqan3::detail::istreambuf(is);
 };
 
 using test_type = ::testing::Types<iterator_type>;
@@ -51,25 +51,25 @@ TEST(view_istreambuf, basic)
     std::istringstream is{data};
 
     // construct from istream:
-    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is),
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is),
                     data)
 
     // construct from streambuf
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::views::istreambuf(*is.rdbuf()),
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(*is.rdbuf()),
                     data)
 
     // combinability
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement,
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::views::char_to<seqan3::dna5> | seqan3::views::complement,
                     "TGCATATATATANTATATANAATNNNTATATT"_dna5);
 
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::views::istreambuf(is) | seqan3::views::take_until(seqan3::is_space),
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::views::take_until(seqan3::is_space),
                     "ACGTATATATAT"sv);
 }
 
@@ -77,7 +77,7 @@ TEST(view_istreambuf, concepts)
 {
     std::string data{""};
     std::istringstream is{data};
-    auto v1 = seqan3::views::istreambuf(is);
+    auto v1 = seqan3::detail::istreambuf(is);
 
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
     EXPECT_FALSE(std::ranges::forward_range<decltype(v1)>);
@@ -103,7 +103,7 @@ TEST(view_istreambuf, big_file_stram)
     }
 
     std::ifstream istream{file_name.get_path()};
-    auto v = seqan3::views::istreambuf(istream);
+    auto v = seqan3::detail::istreambuf(istream);
     while (v.begin() != v.end())
     {
         EXPECT_RANGE_EQ(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::istreambuf.
+ * \brief Provides seqan3::detail::istreambuf.
  */
 
 #pragma once
@@ -62,10 +62,10 @@ struct istreambuf_fn
 } // namespace seqan3::detail
 
 // ============================================================================
-//  views::istreambuf (adaptor instance definition)
+//  detail::istreambuf (adaptor instance definition)
 // ============================================================================
 
-namespace seqan3::views
+namespace seqan3::detail
 {
 
 /*!\name General purpose views
@@ -114,4 +114,4 @@ namespace seqan3::views
 inline constexpr auto istreambuf = detail::istreambuf_fn{};
 //!\}
 
-} // namespace seqan3::views
+} // namespace seqan3::detail

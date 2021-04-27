@@ -27,6 +27,7 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
@@ -34,7 +35,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/interleave.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
@@ -106,7 +106,7 @@ protected:
                               id_type     & id,
                               qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = views::istreambuf(stream);
+        auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
         if (!(std::ranges::equal(stream_view | views::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
