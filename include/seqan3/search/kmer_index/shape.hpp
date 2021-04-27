@@ -110,6 +110,9 @@ public:
     //!\}
 };
 
+inline namespace literals
+{
+
 /*!\brief The seqan3::shape literal.
  * \param[in] value The unsigned integer to assign.
  * \relates seqan3::shape
@@ -119,5 +122,7 @@ constexpr shape operator""_shape(unsigned long long const value)
 {
     return shape{bin_literal{value}};
 }
+
+} // inline namespace literals
 
 }// namespace seqan3
