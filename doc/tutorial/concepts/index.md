@@ -170,13 +170,12 @@ Write a small program, similar to the one above with the following "skeleton":
 ```cpp
 // which includes?
 
-using seqan3::operator""_dna5;
-using seqan3::operator""_aa27;
-
 // Add one or more `void print` function template(s) here //
 
 int main()
 {
+    using namespace seqan3::literals;
+
     auto d = 'A'_dna5;
     auto a = 'L'_aa27;
     auto g = seqan3::gap{};

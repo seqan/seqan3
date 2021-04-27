@@ -8,10 +8,10 @@
 //! [create]
 #include <seqan3/alphabet/all.hpp> // for working with alphabets directly
 
-using seqan3::operator""_dna4;
-
 int main ()
 {
+    using namespace seqan3::literals;
+
     // Two objects of seqan3::dna4 alphabet constructed with a char literal.
     seqan3::dna4 ade = 'A'_dna4;
     seqan3::dna4 gua = 'G'_dna4;
@@ -79,8 +79,7 @@ int main ()
     assert(some_nucl == "AGT"_dna4);
 
 //! [phred]
-    using seqan3::operator""_dna4;
-    using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     seqan3::phred42 phred;
     phred.assign_phred(2);
@@ -98,7 +97,7 @@ int main ()
     // Assign a gap symbol to a gapped RNA alphabet.
     seqan3::gapped<seqan3::rna5> sym = seqan3::gap{};                         // => -
 
-    using seqan3::operator""_rna5;
+    using namespace seqan3::literals;
     // Each seqan3::rna5 symbol is still valid.
     sym = 'U'_rna5;                                   // => U
 
@@ -108,7 +107,7 @@ int main ()
     assert(size2 == 6u);
 
 //! [containers]
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     // Examples of different container types with SeqAn's alphabets.
     std::vector<seqan3::dna5> dna_sequence{"GATTANAG"_dna5};

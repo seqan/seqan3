@@ -8,10 +8,11 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/all.hpp>       // optional: use views to convert the input string to a dna5 sequence
 
-using seqan3::operator""_dna5;
 
 int main (int argc, char * argv[])
 {
+    using namespace seqan3::literals;
+
     std::string input{};
     seqan3::argument_parser parser("GC-Content", argc, argv);
     parser.add_positional_option(input, "Specify an input sequence.");

@@ -5,10 +5,10 @@
 #include <seqan3/core/debug_stream.hpp>                         // for debug_stream
 #include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
 
-using seqan3::operator""_dna4;
-
 int main(int argc, char ** argv)
 {
+    using namespace seqan3::literals;
+
     seqan3::argument_parser myparser("Vector-implementations-comparison", argc, argv);
     size_t size{};
     bool use_bitvector{};

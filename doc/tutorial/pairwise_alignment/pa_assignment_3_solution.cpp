@@ -7,10 +7,10 @@
 #include <seqan3/alphabet/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_aa27;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     std::vector vec{"MANLGYZW"_aa27,
                     "LCKRLGNM"_aa27,
                     "KPSKPRDYEDG"_aa27,

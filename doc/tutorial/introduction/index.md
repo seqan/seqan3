@@ -155,7 +155,7 @@ to learn more.
 \note
 We encourage you to avoid declaring `using namespace seqan3;`. This has the additional benefit of easily distinguishing
 between library features and standard C++. The only exception are string literals, where we often use
-`using seqan3::operator""_dna4;` for convenience.
+`using namespace seqan3::literals` for convenience.
 
 \note
 We use a lot of Modern C++ in SeqAn so some things might look alien at first,
