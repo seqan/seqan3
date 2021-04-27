@@ -2,9 +2,9 @@
 
 int main()
 {
-    using seqan3::operator""_rna4;
-    
-    seqan3::rna4_vector foo{"ACGTTA"_rna4};
-    seqan3::rna4_vector bar = "ACGTTA"_rna4;
-    auto bax = "ACGTTA"_rna4;
+    using namespace seqan3::literals;
+
+    seqan3::rna4_vector sequence1{"ACGTTA"_rna4};
+    seqan3::rna4_vector sequence2 = "ACGTTA"_rna4;
+    auto sequence3 = "ACGTTA"_rna4;
 }

@@ -1,7 +1,7 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 
-using seqan3::operator""_rna5;
+using namespace seqan3::literals;
 
 int main()
 {

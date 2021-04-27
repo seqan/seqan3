@@ -2,9 +2,9 @@
 
 int main()
 {
-    using seqan3::operator""_dna15;
-    
-    seqan3::dna15_vector foo{"ACGTTA"_dna15};
-    seqan3::dna15_vector bar = "ACGTTA"_dna15;
-    auto bax = "ACGTTA"_dna15;
+    using namespace seqan3::literals;
+
+    seqan3::dna15_vector sequence1{"ACGTTA"_dna15};
+    seqan3::dna15_vector sequence2 = "ACGTTA"_dna15;
+    auto sequence3 = "ACGTTA"_dna15;
 }

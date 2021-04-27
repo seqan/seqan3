@@ -157,15 +157,20 @@ using dna3bs_vector = std::vector<dna3bs>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::dna3bs char literal.
  * \relates seqan3::dna3bs
  * \returns seqan3::dna3bs
  * \details
+ *
+ * You can use this char literal to assign a seqan3::dna3bs character:
+ * \include test/snippet/alphabet/nucleotide/dna3bs_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr dna3bs operator""_dna3bs(char const c) noexcept
@@ -178,7 +183,6 @@ constexpr dna3bs operator""_dna3bs(char const c) noexcept
  * \returns seqan3::dna3bs_vector
  *
  * You can use this string literal to easily assign to dna3bs_vector:
- *
  * \include test/snippet/alphabet/nucleotide/dna3bs_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -194,6 +198,8 @@ inline dna3bs_vector operator""_dna3bs(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // dna3bs (deferred definition)

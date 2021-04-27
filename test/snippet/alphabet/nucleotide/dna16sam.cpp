@@ -3,12 +3,13 @@
 
 int main()
 {
-    using seqan3::operator""_dna16sam;
+    using namespace seqan3::literals;
 
-    seqan3::dna16sam my_letter{'A'_dna16sam};
+    seqan3::dna16sam letter{'A'_dna16sam};
 
-    my_letter.assign_char('=');
+    letter.assign_char('=');
+    seqan3::debug_stream << letter << '\n'; // prints "="
 
-    my_letter.assign_char('F'); // unknown characters are implicitly converted to N.
-    seqan3::debug_stream << my_letter << '\n'; // "N";
+    letter.assign_char('F'); // Unknown characters are implicitly converted to N.
+    seqan3::debug_stream << letter << '\n'; // "N";
 }

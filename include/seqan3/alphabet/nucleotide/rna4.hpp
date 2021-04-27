@@ -121,15 +121,20 @@ using rna4_vector = std::vector<rna4>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::rna4 char literal.
  * \relates seqan3::rna4
  * \returns seqan3::rna4
  * \details
+ *
+ * You can use this char literal to assign a seqan3::rna4 character:
+ * \include test/snippet/alphabet/nucleotide/rna4_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr rna4 operator""_rna4(char const c) noexcept
@@ -142,7 +147,6 @@ constexpr rna4 operator""_rna4(char const c) noexcept
  * \returns seqan3::rna4_vector
  *
  * You can use this string literal to easily assign to rna4_vector:
- *
  * \include test/snippet/alphabet/nucleotide/rna4_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -158,6 +162,8 @@ inline rna4_vector operator""_rna4(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // rna4 (deferred definition)

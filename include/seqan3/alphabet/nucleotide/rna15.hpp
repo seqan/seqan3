@@ -136,15 +136,20 @@ using rna15_vector = std::vector<rna15>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::rna15 char literal.
  * \relates seqan3::rna15
  * \returns seqan3::rna15
  * \details
+ *
+ * You can use this char literal to assign a seqan3::rna15 character:
+ * \include test/snippet/alphabet/nucleotide/rna15_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr rna15 operator""_rna15(char const c) noexcept
@@ -157,7 +162,6 @@ constexpr rna15 operator""_rna15(char const c) noexcept
  * \returns seqan3::rna15_vector
  *
  * You can use this string literal to easily assign to rna15_vector:
- *
  * \include test/snippet/alphabet/nucleotide/rna15_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -173,6 +177,8 @@ inline rna15_vector operator""_rna15(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // rna15 (deferred definition)
