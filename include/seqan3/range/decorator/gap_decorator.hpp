@@ -331,11 +331,11 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    template <typename unaligned_seq_t> // generic template to use forwarding reference
+    template <typename unaligned_sequence_t> // generic template to use forwarding reference
     //!\cond
-        requires std::assignable_from<gap_decorator &, unaligned_seq_t>
+        requires std::assignable_from<gap_decorator &, unaligned_sequence_t>
     //!\endcond
-    friend void assign_unaligned(gap_decorator & dec, unaligned_seq_t && unaligned)
+    friend void assign_unaligned(gap_decorator & dec, unaligned_sequence_t && unaligned)
     {
         dec = unaligned;
     }
