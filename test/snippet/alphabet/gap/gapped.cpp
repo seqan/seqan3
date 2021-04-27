@@ -3,7 +3,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     seqan3::gapped<seqan3::dna4> gapped_letter{};
     seqan3::gapped<seqan3::dna4> converted_letter{'C'_dna4};

@@ -4,7 +4,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     seqan3::dna5_vector vec{"ACGTACGTACGTA"_dna5};
 

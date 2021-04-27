@@ -8,7 +8,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
     using seqan3::get;
 
     // The order of the types below represent a mapping between the type and the key.

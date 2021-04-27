@@ -6,8 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_rna4;
-    using seqan3::operator""_wuss51;
+    using namespace seqan3::literals;
 
     seqan3::structure_file_output fout{std::cout, seqan3::format_vienna{}};
     //                           ^ no need to specify the template arguments

@@ -6,7 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     std::vector<seqan3::dna4> genome{"ATCGATCGAAGGCTAGCTAGCTAAGGGA"_dna4};
     seqan3::fm_index index{genome};                                    // build the index

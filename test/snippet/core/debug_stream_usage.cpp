@@ -6,7 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     // The alphabet normally needs to be converted to char explicitly:
     std::cout << seqan3::to_char('C'_dna5);                // prints 'C'

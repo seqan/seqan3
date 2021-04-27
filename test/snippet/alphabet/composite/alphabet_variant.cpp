@@ -4,8 +4,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
-    using seqan3::operator""_rna5;
+    using namespace seqan3::literals;
 
     seqan3::alphabet_variant<seqan3::dna5, seqan3::gap> letter{};          // implicitly 'A'_dna5
     seqan3::alphabet_variant<seqan3::dna5, seqan3::gap> letter2{'C'_dna5}; // constructed from alternative (== 'C'_dna5)

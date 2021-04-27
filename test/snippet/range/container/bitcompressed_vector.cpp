@@ -5,7 +5,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     std::vector<seqan3::dna4>                  v0{"ACGT"_dna4}; // data occupies 4 bytes in memory
     seqan3::bitcompressed_vector<seqan3::dna4> v1{"ACGT"_dna4}; // data occupies 1 byte in memory

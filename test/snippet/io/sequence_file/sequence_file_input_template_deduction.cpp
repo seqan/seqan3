@@ -5,7 +5,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     auto tmp_file = std::filesystem::temp_directory_path() / "my.fasta";
 

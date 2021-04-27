@@ -18,7 +18,7 @@ bool search(fwd_rng_type & rng, unsigned const w, unsigned const e)
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     std::vector<seqan3::dna4> my_range = "ACGTT"_dna4;
     // do something

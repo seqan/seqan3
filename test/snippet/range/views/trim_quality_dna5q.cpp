@@ -9,8 +9,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
-    using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     std::vector<seqan3::dna5q> vec{{'A'_dna5, 'I'_phred42},
                                    {'G'_dna5, 'I'_phred42},

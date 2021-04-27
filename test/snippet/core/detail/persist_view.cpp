@@ -4,7 +4,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     // explicitly create an l-value of our dna vector:
     auto vec = "ACGT"_dna4;

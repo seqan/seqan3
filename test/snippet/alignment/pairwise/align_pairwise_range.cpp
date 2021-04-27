@@ -8,7 +8,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     std::vector data1{"AGTGCTACG"_dna4, "AGTAGACTACG"_dna4, "AGTTACGAC"_dna4};
     std::vector data2{"ACGTGCGACTAG"_dna4, "ACGTACGACACG"_dna4, "AGTAGCGATCG"_dna4};

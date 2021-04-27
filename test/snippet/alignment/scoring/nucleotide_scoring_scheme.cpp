@@ -8,9 +8,7 @@
 
 int main()
 {
-using seqan3::operator""_dna5;
-using seqan3::operator""_dna15;
-using seqan3::operator""_rna15;
+using namespace seqan3::literals;
 
 // You can score two letters:
 seqan3::nucleotide_scoring_scheme scheme; // hamming is default

@@ -5,7 +5,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     std::ostringstream o;
     seqan3::debug_stream.set_underlying_stream(o);

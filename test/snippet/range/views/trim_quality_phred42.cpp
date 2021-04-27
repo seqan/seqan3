@@ -5,7 +5,7 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
 
-using seqan3::operator""_phred42;
+using namespace seqan3::literals;
 
 int main()
 {

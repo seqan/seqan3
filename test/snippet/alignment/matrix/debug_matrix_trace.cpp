@@ -8,7 +8,7 @@
 int main()
 {
     using seqan3::detail::debug_matrix;
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
     using seqan3::operator|;
 
     std::vector<seqan3::dna4> database = "AACCGGTT"_dna4;

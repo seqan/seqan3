@@ -11,7 +11,7 @@ inline auto const deep_take1 = seqan3::views::deep{std::views::take(1)};
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     std::vector<seqan3::dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
 

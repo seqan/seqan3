@@ -6,7 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
     seqan3::dna4_vector s{"ACTTTGATAA"_dna4};
     using iterator = seqan3::dna4_vector::iterator;
     auto v1 = std::ranges::subrange<iterator, iterator>{std::ranges::begin(s) + 2, std::ranges::end(s)}

@@ -11,8 +11,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
-    using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     seqan3::sequence_file_output fout{std::ostringstream{},
                                       seqan3::format_fastq{},

@@ -9,8 +9,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
-    using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     // Create a vector of dna4 quality composite alphabet.
     std::vector<seqan3::dna4q> qv{{'A'_dna4, '0'_phred42},

@@ -7,7 +7,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     // A gap decorator is a pseudo random access range using logarithmic time complexity internally.
     auto seq = "ACGTACGACT"_dna4;

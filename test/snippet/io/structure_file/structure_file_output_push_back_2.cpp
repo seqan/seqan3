@@ -9,8 +9,7 @@
 
 int main()
 {
-    using seqan3::operator""_rna5;
-    using seqan3::operator""_wuss51;
+    using namespace seqan3::literals;
 
     seqan3::structure_file_output fout{std::ostringstream{}, seqan3::format_vienna{}};
 

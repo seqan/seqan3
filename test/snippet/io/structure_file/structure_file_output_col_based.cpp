@@ -8,8 +8,7 @@
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-using seqan3::operator""_rna5;
-using seqan3::operator""_wuss51;
+using namespace seqan3::literals;
 
 struct data_storage_t
 {

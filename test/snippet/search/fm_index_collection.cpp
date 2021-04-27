@@ -6,7 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     std::vector<std::vector<seqan3::dna4>> genomes{"ATCTGACGAAGGCTAGCTAGCTAAGGGA"_dna4,
                                                    "TAGCTGAAGCCATTGGCATCTGATCGGACT"_dna4,
