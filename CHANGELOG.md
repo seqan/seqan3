@@ -136,6 +136,10 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
     `seqan3::phred68legacy(phred_type)`.
 * Renamed `seqan3::quality_base` to `seqan3::phred_base`
   ([\#2539](https://github.com/seqan/seqan3/pull/2539)).
+* Added the `seqan3::literals` namespace containing all literals. This adds the option to use
+  `using namespace seqan3::literals` to import literal operators. The old way of explicitly importing specific
+  operators via `using seqan3::operator""_{dna4, rna4, ...}` is not affected by this change
+  ([\#2568](https://github.com/seqan/seqan3/pull/2568)).
 
 #### Argument Parser
 
