@@ -321,7 +321,7 @@ public:
         return iterator{*this, pos1};
     }
 
-    /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_seq_type to the decorator.
+    /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_sequence_type to the decorator.
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
      * \details
