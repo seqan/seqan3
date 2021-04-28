@@ -20,6 +20,7 @@
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
 #ifdef SEQAN3_DEPRECATED_310
+#include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #endif // SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/interleave.hpp>

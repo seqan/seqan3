@@ -16,14 +16,3 @@
 
 SEQAN3_DEPRECATED_HEADER(
   "This header is deprecated and will be removed along all its content in SeqAn-3.1.0.")
-
-namespace seqan3::views
-{
-
-/*!\brief A view adaptor that wraps rvalue references of non-views.
- * \ingroup views
- * \deprecated This view is deprecated and will be removed in SeqAn3.1.
- */
-SEQAN3_DEPRECATED_310 inline auto constexpr persist = detail::persist_fn{};
-
-} // namespace seqan3::views
