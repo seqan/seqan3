@@ -80,7 +80,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * \header_file{seqan3/range/views/istreambuf.hpp}
+ * \header_file{seqan3/io/detail/istreambuf_view.hpp}
  *
  * ### View properties
  *
