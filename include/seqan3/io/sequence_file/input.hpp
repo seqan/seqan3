@@ -450,7 +450,16 @@ public:
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
 
         // initialise format handler or throw if format is not found
-        detail::set_format(format, filename);
+        using format_variant_t = typename detail::variant_from_tags<valid_formats,
+                                                                    detail::sequence_file_input_format_exposer>::type;
+        format_variant_t format_variant{};
+        detail::set_format(format_variant, filename);
+
+        std::visit([&] (auto && selected_format)
+        {
+            using format_t = std::remove_cvref_t<decltype(selected_format)>;
+            format = std::make_unique<selected_sequence_format<format_t>>();
+        }, format_variant);
     }
     /* NOTE(h-2): Curiously we do not need a user-defined deduction guide for the above constructor.
      * A combination of default template parameters and auto-deduction guides works as expected,
@@ -482,7 +491,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
-        format{detail::sequence_file_input_format_exposer<file_format>{}}
+        format{std::make_unique<selected_sequence_format<file_format>>()}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -501,7 +510,7 @@ public:
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
-        format{detail::sequence_file_input_format_exposer<file_format>{}}
+        format{std::make_unique<selected_sequence_format<file_format>>()}
     {
         static_assert(list_traits::contains<file_format, valid_formats>,
                       "You selected a format that is not in the valid_formats of this file.");
@@ -588,9 +597,12 @@ public:
     }
     //!\}
 
+    //!\brief The input file options type.
+    using sequence_file_input_options_type
+        = sequence_file_input_options<typename traits_type::sequence_legal_alphabet,
+                                      selected_field_ids::contains(field::_seq_qual_deprecated)>;
     //!\brief The options are public and its members can be set directly.
-    sequence_file_input_options<typename traits_type::sequence_legal_alphabet,
-                             selected_field_ids::contains(field::_seq_qual_deprecated)> options;
+    sequence_file_input_options_type options;
 
 protected:
     //!\privatesection
@@ -623,14 +635,9 @@ protected:
     bool first_record_was_read{false};
     //!\brief File is at position 1 behind the last record.
     bool at_end{false};
-
-    //!\brief Type of the format, an std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::sequence_file_input_format_exposer>::type;
-    //!\brief The actual std::variant holding a pointer to the detected/selected format.
-    format_type format;
     //!\}
 
+private:
     //!\brief Tell the format to move to the next record and update the buffer.
     void read_next_record()
     {
@@ -645,28 +652,102 @@ protected:
             return;
         }
 
-        assert(!format.valueless_by_exception());
-        std::visit([&] (auto & f)
+        format->read_sequence_record(*secondary_stream, record_buffer, options);
+    }
+
+    /*!\brief An abstract base class to store the selected input format.
+     *
+     * \details
+     *
+     * This abstract base class is used to store the user given input format as a type-erased base class in a
+     * std::unique_ptr. There is exactly one derived type that implements this abstract base class called
+     * seqan3::sequence_file_input::selected_sequence_format which is a private subclass of
+     * seqan3::sequence_file_input. It is not exposed to the user and allows to hide the implementation detail of
+     * storing a specfic format instance which is first known at runtime.
+     */
+    struct sequence_format_base
+    {
+        /*!\name Constructors, destructor and assignment
+         * \{
+         */
+        sequence_format_base() = default; //!< Default.
+        sequence_format_base(sequence_format_base const &) = default; //!< Default.
+        sequence_format_base(sequence_format_base &&) = default; //!< Default.
+        sequence_format_base & operator=(sequence_format_base const &) = default; //!< Default.
+        sequence_format_base & operator=(sequence_format_base &&) = default; //!< Default.
+        virtual ~sequence_format_base() = default; //!< Virtual default.
+        //!\}
+
+        /*!\brief Reads the next format specific record from the given istream.
+         *
+         * \param[in, out] instream The input stream to extract the next record from.
+         * \param[in, out] record_buffer The record buffer to fill.
+         * \param[in] options User specific format options set from outside.
+         *
+         * \details
+         *
+         * Invokes the actual read sequence record function for the selected format and fills the record accordingly.
+         */
+        virtual void read_sequence_record(std::istream & instream,
+                                          record_type & record_buffer,
+                                          sequence_file_input_options_type const & options) = 0;
+    };
+
+    /*!\brief The specific selected format to read the records from.
+     *
+     * \tparam format_t The user specific format type to store.
+     *
+     * \details
+     *
+     * This class implements the format specific read operation based on the instantiated format type.
+     * The specfic format type is selected at runtime and stored through a pointer to the abstract
+     * seqan3::sequence_file_input::sequence_format_base class. A virtual function call then ensures that the
+     * specific read record function of the selected format is invoked.
+     */
+    template <typename format_t>
+    struct selected_sequence_format final : public sequence_format_base
+    {
+        /*!\name Constructors, destructor and assignment
+         * \{
+         */
+        selected_sequence_format() = default; //!< Default.
+        selected_sequence_format(selected_sequence_format const &) = default; //!< Default.
+        selected_sequence_format(selected_sequence_format &&) = default; //!< Default.
+        selected_sequence_format & operator=(selected_sequence_format const &) = default; //!< Default.
+        selected_sequence_format & operator=(selected_sequence_format &&) = default; //!< Default.
+        ~selected_sequence_format() = default; //!< Default.
+        //!\}
+
+        //!\copydoc sequence_format_base::read_sequence_record
+        void read_sequence_record(std::istream & instream,
+                                  record_type & record_buffer,
+                                  sequence_file_input_options_type const & options) override
         {
             // read new record
             if constexpr (selected_field_ids::contains(field::_seq_qual_deprecated))
             {
-                f.read_sequence_record(*secondary_stream,
-                                       options,
-                                       detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer),
-                                       detail::get_or_ignore<field::id>(record_buffer),
-                                       detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer));
+                _format.read_sequence_record(instream,
+                                             options,
+                                             detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer),
+                                             detail::get_or_ignore<field::id>(record_buffer),
+                                             detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer));
             }
             else
             {
-                f.read_sequence_record(*secondary_stream,
-                                       options,
-                                       detail::get_or_ignore<field::seq>(record_buffer),
-                                       detail::get_or_ignore<field::id>(record_buffer),
-                                       detail::get_or_ignore<field::qual>(record_buffer));
+                _format.read_sequence_record(instream,
+                                             options,
+                                             detail::get_or_ignore<field::seq>(record_buffer),
+                                             detail::get_or_ignore<field::id>(record_buffer),
+                                             detail::get_or_ignore<field::qual>(record_buffer));
             }
-        }, format);
-    }
+        };
+
+        //!\brief The selected format stored as a format exposer object.
+        detail::sequence_file_input_format_exposer<format_t> _format{};
+    };
+
+    //!\brief An instance of the detected/selected format.
+    std::unique_ptr<sequence_format_base> format{};
 
     //!\brief Befriend iterator so it can access the buffers.
     friend iterator;
