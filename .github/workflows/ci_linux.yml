@@ -35,6 +35,14 @@ jobs:
             build_threads: 2
             test_threads: 2
 
+          - name: "Unit gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
+            build: unit
+            build_type: Release
+            build_threads: 2
+            test_threads: 2
+
           - name: "Unit gcc10"
             cxx: "g++-10"
             cc: "gcc-10"
@@ -84,7 +92,10 @@ jobs:
           path: seqan3/submodules/seqan
 
       - name: Add package source
-        run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
+        run: |
+          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
+          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
 
       - name: Install CMake
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
