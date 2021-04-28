@@ -54,7 +54,7 @@ struct unaligned_seq
 //!\brief Exposes the unaligned sequence type given an aligned sequence container type.
 template <typename t>
 //!\cond
-    requires (!requires { typename std::remove_reference_t<t>::unaligned_seq_type; }) &&
+    requires (!requires { typename std::remove_reference_t<t>::unaligned_sequence_type; }) &&
               requires { remove_gap_from_value_type(std::declval<t>()); }
 //!\endcond
 struct unaligned_seq<t>
@@ -64,14 +64,14 @@ struct unaligned_seq<t>
 };
 
 // customisation point for our gap decorators.
-//!\brief Exposes the unaligned sequence type if *t* exposes the type member `unaligned_seq_type`.
+//!\brief Exposes the unaligned sequence type if *t* exposes the type member `unaligned_sequence_type`.
 template <typename t>
 //!\cond
-    requires requires { typename std::remove_reference_t<t>::unaligned_seq_type; }
+    requires requires { typename std::remove_reference_t<t>::unaligned_sequence_type; }
 //!\endcond
 struct unaligned_seq<t>
 {
-    using type = typename std::remove_reference_t<t>::unaligned_seq_type; //!< The unaligned sequence type of t
+    using type = typename std::remove_reference_t<t>::unaligned_sequence_type; //!< The unaligned sequence type of t
 };
 
 //!\brief Helper type that delegates to seqan3::detail::unaligned_seq::type.

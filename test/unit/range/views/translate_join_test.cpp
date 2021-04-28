@@ -21,9 +21,9 @@
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
+#include <seqan3/alphabet/views/translate_join.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/translate_join.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "../iterator_test_template.hpp"

@@ -137,7 +137,10 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    using unaligned_seq_type = inner_type;
+    using unaligned_sequence_type = inner_type;
+
+    //!\deprecated Please use seqan3::gap_decorator::unaligned_sequence_type instead.   
+    using unaligned_seq_type SEQAN3_DEPRECATED_310 = unaligned_sequence_type;
 
     /*!\name Constructors, destructor and assignment
      * \{
@@ -321,18 +324,18 @@ public:
         return iterator{*this, pos1};
     }
 
-    /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_seq_type to the decorator.
+    /*!\brief Assigns a new sequence of type seqan3::gap_decorator::unaligned_sequence_type to the decorator.
      * \param[in,out] dec       The decorator to modify.
      * \param[in]     unaligned The unaligned sequence to assign.
      * \details
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    template <typename unaligned_seq_t> // generic template to use forwarding reference
+    template <typename unaligned_sequence_t> // generic template to use forwarding reference
     //!\cond
-        requires std::assignable_from<gap_decorator &, unaligned_seq_t>
+        requires std::assignable_from<gap_decorator &, unaligned_sequence_t>
     //!\endcond
-    friend void assign_unaligned(gap_decorator & dec, unaligned_seq_t && unaligned)
+    friend void assign_unaligned(gap_decorator & dec, unaligned_sequence_t && unaligned)
     {
         dec = unaligned;
     }
