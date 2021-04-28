@@ -53,7 +53,7 @@ endmacro ()
 macro (seqan3_require_test)
     enable_testing ()
 
-    set (gtest_git_tag "release-1.10.0")
+    set (gtest_git_tag "252ce9c52d304659eff6be558209c811b7191963") # 26-04-2021
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
         message (STATUS "Fetch googletest:")
