@@ -36,10 +36,10 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/range/views/get.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/elements.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3
@@ -603,9 +603,9 @@ protected:
             {
                 f.write_sequence_record(*secondary_stream,
                                         options,
-                                        seq_qual | views::get<0>,
+                                        seq_qual | views::elements<0>,
                                         id,
-                                        seq_qual | views::get<1>);
+                                        seq_qual | views::elements<1>);
             }
             else
             {

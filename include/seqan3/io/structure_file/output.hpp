@@ -32,10 +32,10 @@
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
-#include <seqan3/range/views/get.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/elements.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3
@@ -627,10 +627,10 @@ protected:
             {
                 f.write_structure_record(*secondary_stream,
                                          options,
-                                         structured_seq | views::get<0>,
+                                         structured_seq | views::elements<0>,
                                          id,
                                          bpp,
-                                         structured_seq | views::get<1>,
+                                         structured_seq | views::elements<1>,
                                          energy,
                                          react,
                                          react_error,

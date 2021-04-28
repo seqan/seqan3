@@ -114,7 +114,8 @@ public:
  */
 template <detail::tuple_size tuple_t>
 using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
-} // namespace::seqan3
+
+} // namespace seqan3::detail
 
 namespace seqan3
 {

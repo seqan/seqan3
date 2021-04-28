@@ -1,6 +1,4 @@
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/range/views/all.hpp>
-#include <seqan3/range/views/get.hpp>
 
 namespace foo
 {
@@ -29,7 +27,7 @@ int main(int argc, char const * argv[])
     // Because of the enumeration_names function
     // you can now add an option that takes a value of type bar:
     parser.add_option(value, 'f', "foo", "Give me a foo value.", seqan3::option_spec::standard,
-                      seqan3::value_list_validator{(seqan3::enumeration_names<foo::bar> | seqan3::views::get<1>)});
+                      seqan3::value_list_validator{(seqan3::enumeration_names<foo::bar> | std::views::values)});
 
     try
     {

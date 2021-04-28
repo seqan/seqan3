@@ -50,17 +50,17 @@ IIIIIHIIJJIIIII
 
 write_file_dummy_struct go{};
 
+#if !SEQAN3_WORKAROUND_GCC_96070
 //![solution]
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/range/views/get.hpp>
-#include <seqan3/range/views/move.hpp>
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/io/sequence_file/all.hpp>
+#include <seqan3/range/views/move.hpp>
+
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_96070
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
 
     seqan3::sequence_file_input fin{tmp_dir/"my.fastq"};
@@ -83,7 +83,7 @@ int main()
                                  | std::views::take(2)                              // take first two records
                                  | std::views::transform(&decltype(fin)::record_type::id) // select only ID from record
                                  // this is the same as writing:
-//                                 | std::views::transform([](auto && record)         
+//                                 | std::views::transform([](auto && record)
 //                                   {
 //                                       return record.id();
 //                                   })
@@ -92,6 +92,6 @@ int main()
     // Note that you need to know the type of id (std::string)
 
     seqan3::debug_stream << ids << '\n';
-#endif // !SEQAN3_WORKAROUND_GCC_96070
 }
 //![solution]
+#endif // !SEQAN3_WORKAROUND_GCC_96070
