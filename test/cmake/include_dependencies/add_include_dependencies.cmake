@@ -57,6 +57,14 @@ function (add_include_dependencies target target_cyclic_depending_includes)
         return ()
     endif ()
 
+    # in cmake 3.20 they changed the way how the dependency files are generated,
+    # we can for now re-enable the old behaviour by setting this config.
+    if (NOT CMAKE_VERSION VERSION_LESS 3.20) # cmake >= 3.20
+        if (NOT (DEFINED CMAKE_DEPENDS_USE_COMPILER) OR CMAKE_DEPENDS_USE_COMPILER)
+            message (FATAL_ERROR "Starting with CMake 3.20, you need to specify -DCMAKE_DEPENDS_USE_COMPILER=OFF when using -DSEQAN3_USE_INCLUDE_DEPENDENCIES=ON.")
+        endif ()
+    endif ()
+
     get_include_target (include_target TARGET "${target}")
     add_include_target ("${include_target}")
     add_dependencies (${include_target} ${target})
@@ -78,7 +86,9 @@ function (add_include_dependencies target target_cyclic_depending_includes)
 
     # e.g. alphabet/nucleotide/CMakeFiles/dna4_test.dir which is internally used by CMake Makefiles
     get_filename_component (target_internal_dir "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/${target}.dir/${CMAKE_CFG_INTDIR}" REALPATH)
+    set (target_internal_dependency_info "${target_internal_dir}/DependInfo.cmake")
     set (target_internal_dependency_file "${target_internal_dir}/depend.internal")
+    set (target_internal_dependency_make_file "${target_internal_dir}/depend.make")
 
     add_custom_command (OUTPUT "${target_internal_dependency_file}" "${target_dependencies_file}"
                         # generate alphabet/nucleotide/CMakeFiles/dna4_test.dir/depend.internal
@@ -89,11 +99,12 @@ function (add_include_dependencies target target_cyclic_depending_includes)
                                 "${CMAKE_CURRENT_SOURCE_DIR}"
                                 "${CMAKE_BINARY_DIR}"
                                 "${CMAKE_CURRENT_BINARY_DIR}"
-                                "${target_internal_dir}/DependInfo.cmake"
+                                "${target_internal_dependency_info}"
+                                "-DCMAKE_DEPENDS_USE_COMPILER=OFF"
                         # generate alphabet/nucleotide/dna4_test_dependencies.cmake
                         COMMAND "${CMAKE_COMMAND}"
                                 "-DTARGET=${target}"
-                                "-DTARGET_INTERNAL_DEPENDENCY_MAKE_FILE=${target_internal_dir}/depend.make"
+                                "-DTARGET_INTERNAL_DEPENDENCY_MAKE_FILE=${target_internal_dependency_make_file}"
                                 "-DSEQAN3_INCLUDE_DIR=${SEQAN3_INCLUDE_DIR}"
                                 "-DSEQAN3_TEST_CMAKE_MODULE_DIR=${SEQAN3_TEST_CMAKE_MODULE_DIR}"
                                 "-DTARGET_DEPENDENCIES_FILE=${target_dependencies_file}"
