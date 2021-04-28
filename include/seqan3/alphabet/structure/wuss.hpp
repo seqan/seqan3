@@ -246,11 +246,11 @@ using wuss51 = wuss<51>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Structure literals
  * \{
  */
 /*!\brief The seqan3::wuss51 char literal.
- * \relates seqan3::wuss
+ * \relatesalso seqan3::wuss
  * \param[in] ch The character to represent as wuss.
  * \returns seqan3::wuss51
  *
@@ -265,7 +265,7 @@ constexpr wuss51 operator""_wuss51(char const ch) noexcept
 }
 
 /*!\brief The seqan3::wuss51 string literal.
- * \relates seqan3::wuss
+ * \relatesalso seqan3::wuss
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::wuss51>

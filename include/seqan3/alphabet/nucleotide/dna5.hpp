@@ -156,11 +156,11 @@ using dna5_vector = std::vector<dna5>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::dna5 char literal.
- * \relates seqan3::dna5
+ * \relatesalso seqan3::dna5
  * \returns seqan3::dna5
  * \details
  *
@@ -175,7 +175,7 @@ constexpr dna5 operator""_dna5(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna5 string literal.
- * \relates seqan3::dna5
+ * \relatesalso seqan3::dna5
  * \returns seqan3::dna5_vector
  *
  * You can use this string literal to easily assign to dna5_vector:

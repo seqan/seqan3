@@ -128,11 +128,11 @@ using rna5_vector = std::vector<rna5>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::rna5 char literal.
- * \relates seqan3::rna5
+ * \relatesalso seqan3::rna5
  * \returns seqan3::rna5
  * \details
  *
@@ -147,7 +147,7 @@ constexpr rna5 operator""_rna5(char const c) noexcept
 }
 
 /*!\brief The seqan3::rna5 string literal.
- * \relates seqan3::rna5
+ * \relatesalso seqan3::rna5
  * \returns seqan3::rna5_vector
  *
  * You can use this string literal to easily assign to rna5_vector:

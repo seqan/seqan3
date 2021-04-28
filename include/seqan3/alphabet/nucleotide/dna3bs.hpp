@@ -160,11 +160,11 @@ using dna3bs_vector = std::vector<dna3bs>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::dna3bs char literal.
- * \relates seqan3::dna3bs
+ * \relatesalso seqan3::dna3bs
  * \returns seqan3::dna3bs
  * \details
  *
@@ -179,7 +179,7 @@ constexpr dna3bs operator""_dna3bs(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna3bs string literal.
- * \relates seqan3::dna3bs
+ * \relatesalso seqan3::dna3bs
  * \returns seqan3::dna3bs_vector
  *
  * You can use this string literal to easily assign to dna3bs_vector:

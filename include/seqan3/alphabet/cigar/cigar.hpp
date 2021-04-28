@@ -221,12 +221,12 @@ inline namespace literals
 // literals
 // ------------------------------------------------------------------
 
-/*!\name Literals
+/*!\name Other literals
  * \{
  */
 
 /*!\brief The seqan3::cigar::operation char literal.
- * \relates seqan3::cigar
+ * \relatesalso seqan3::cigar
  * \returns seqan3::cigar::operation
  *
  * You can use this char literal to assign a seqan3::cigar_operation character:

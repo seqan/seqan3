@@ -192,12 +192,12 @@ inline namespace literals
 // literals
 // ------------------------------------------------------------------
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 
 /*!\brief The seqan3::dna4 char literal.
- * \relates seqan3::dna4
+ * \relatesalso seqan3::dna4
  * \returns seqan3::dna4
  * \details
  *
@@ -212,7 +212,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna4 string literal.
- * \relates seqan3::dna4
+ * \relatesalso seqan3::dna4
  * \returns seqan3::dna4_vector
  *
  * You can use this string literal to easily assign to dna4_vector:

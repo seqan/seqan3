@@ -139,11 +139,11 @@ using rna15_vector = std::vector<rna15>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::rna15 char literal.
- * \relates seqan3::rna15
+ * \relatesalso seqan3::rna15
  * \returns seqan3::rna15
  * \details
  *
@@ -158,7 +158,7 @@ constexpr rna15 operator""_rna15(char const c) noexcept
 }
 
 /*!\brief The seqan3::rna15 string literal.
- * \relates seqan3::rna15
+ * \relatesalso seqan3::rna15
  * \returns seqan3::rna15_vector
  *
  * You can use this string literal to easily assign to rna15_vector:

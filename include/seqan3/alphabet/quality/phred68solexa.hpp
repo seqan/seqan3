@@ -92,11 +92,11 @@ using phred68legacy SEQAN3_DEPRECATED_310 = seqan3::phred68solexa;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Quality literals
  * \{
  */
 /*!\brief The seqan3::phred68solexa char literal.
- * \relates seqan3::phred68solexa
+ * \relatesalso seqan3::phred68solexa
  * \returns seqan3::phred68solexa
  * \details
  *

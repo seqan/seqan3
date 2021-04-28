@@ -174,11 +174,11 @@ private:
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Structure literals
  * \{
  */
 /*!\brief The seqan3::db3 char literal.
- * \relates seqan3::dot_bracket3
+ * \relatesalso seqan3::dot_bracket3
  * \param[in] ch The character to represent as dot bracket.
  * \returns seqan3::dot_bracket3
  *
@@ -193,7 +193,7 @@ constexpr dot_bracket3 operator""_db3(char const ch) noexcept
 }
 
 /*!\brief The seqan3::db3 string literal.
- * \relates seqan3::dot_bracket3
+ * \relatesalso seqan3::dot_bracket3
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dot_bracket3>

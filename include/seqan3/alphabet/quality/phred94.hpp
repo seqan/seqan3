@@ -93,11 +93,11 @@ public:
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Quality literals
  * \{
  */
 /*!\brief The seqan3::phred94 char literal.
- * \relates seqan3::phred94
+ * \relatesalso seqan3::phred94
  * \returns seqan3::phred94
  * \details
  *
@@ -119,7 +119,7 @@ constexpr phred94 operator""_phred94(char const c) noexcept
  *
  * You can use this string literal to easily assign to std::vector<seqan3::phred94>:
  * \include test/snippet/alphabet/quality/phred94_literal.cpp
- * 
+ *
  * \stableapi{Since version 3.1.}
  */
 inline std::vector<phred94> operator""_phred94(char const * s, std::size_t n)

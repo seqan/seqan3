@@ -44,24 +44,24 @@ namespace seqan3
 inline namespace literals
 {
 
+/*!\name Other literals
+ * \{
+ */
 /*!\brief The SAM tag literal, such that tags can be used in constant expressions.
  * \ingroup io_sam_file
- * \tparam char_t The char type. Usually `char`. Parameter pack `...s` must be of
- *                length 2, since SAM tags consist of two letters (char0 and char1).
+ * \tparam char_t The char type. Usually `char`. Parameter pack `...s` must be of length 2 since SAM tags consist of two
+ *                letters (char0 and char1).
+ * \relatesalso seqan3::sam_tag_dictionary
  * \returns The unique identifier of the SAM tag computed by char0 * 128 + char1.
  *
  * \details
  *
- * A SAM tag consists of two letters, initialized via the string literal ""_tag,
- * which delegate to its unique id.
- * e.g.
+ * A SAM tag consists of two letters, initialized via the string literal ""_tag, which delegate to its unique id.
  *
  * \snippet test/snippet/io/sam_file/sam_tag_dictionary/sam_tag_dictionary.cpp tag
  *
- * The purpose of those tags is to fill or query the seqan3::sam_tag_dictionary
- * for a specific key (tag_id) and retrieve the corresponding value.
- *
- * \sa seqan3::sam_tag_dictionary
+ * The purpose of those tags is to fill or query the seqan3::sam_tag_dictionary for a specific key (tag_id) and
+ * retrieve the corresponding value.
  */
 
 #ifdef __cpp_nontype_template_parameter_class
@@ -89,6 +89,7 @@ constexpr uint16_t operator""_tag()
 
     return static_cast<uint16_t>(char0) * 256 + static_cast<uint16_t>(char1);
 }
+//!\}
 
 } // inline namespace literals
 

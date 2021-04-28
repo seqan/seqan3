@@ -96,11 +96,11 @@ public:
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Quality literals
  * \{
  */
 /*!\brief The seqan3::phred42 char literal.
- * \relates seqan3::phred42
+ * \relatesalso seqan3::phred42
  * \returns seqan3::phred42
  * \details
  *

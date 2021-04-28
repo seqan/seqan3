@@ -124,11 +124,11 @@ using rna4_vector = std::vector<rna4>;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::rna4 char literal.
- * \relates seqan3::rna4
+ * \relatesalso seqan3::rna4
  * \returns seqan3::rna4
  * \details
  *
@@ -143,7 +143,7 @@ constexpr rna4 operator""_rna4(char const c) noexcept
 }
 
 /*!\brief The seqan3::rna4 string literal.
- * \relates seqan3::rna4
+ * \relatesalso seqan3::rna4
  * \returns seqan3::rna4_vector
  *
  * You can use this string literal to easily assign to rna4_vector:

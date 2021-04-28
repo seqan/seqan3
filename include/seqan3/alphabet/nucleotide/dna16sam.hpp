@@ -160,11 +160,11 @@ using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 /*!\brief The seqan3::dna16sam char literal.
- * \relates seqan3::dna16sam
+ * \relatesalso seqan3::dna16sam
  * \returns seqan3::dna16sam
  * \param[in] c The character to assign from.
  * \details
@@ -180,7 +180,7 @@ constexpr dna16sam operator""_dna16sam(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna16sam string literal.
- * \relates seqan3::dna16sam
+ * \relatesalso seqan3::dna16sam
  * \returns seqan3::dna16sam_vector
  * \param[in] s The string literal to assign from.
  * \param[in] n The length of the string literal s.

@@ -126,11 +126,11 @@ private:
 inline namespace literals
 {
 
-/*!\name Literals
+/*!\name Structure literals
  * \{
  */
 /*!\brief The seqan3::dssp9 char literal.
- * \relates seqan3::dssp9
+ * \relatesalso seqan3::dssp9
  * \param[in] ch The character to represent as dssp.
  * \returns seqan3::dssp9
  *
@@ -145,7 +145,7 @@ constexpr dssp9 operator""_dssp9(char const ch) noexcept
 }
 
 /*!\brief The seqan3::dssp9 string literal.
- * \relates seqan3::dssp9
+ * \relatesalso seqan3::dssp9
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dssp9>
