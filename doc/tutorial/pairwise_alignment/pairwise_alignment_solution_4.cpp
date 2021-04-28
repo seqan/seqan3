@@ -5,10 +5,10 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_dna4;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     auto seq1 = "TTACGTACGGACTAGCTACAACATTACGGACTAC"_dna4;
     auto seq2 = "GGACGACATGACGTACGACTTTACGTACGACTAGC"_dna4;
 

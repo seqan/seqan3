@@ -169,6 +169,14 @@
  * A container over an seqan3::alphabet automatically models the seqan3::sequence concept.
  */
 
+/*!\namespace seqan3::literals
+ * \brief The SeqAn namespace for literals.
+ * \details
+ *
+ * This namespace can be imported to use SeqAn3's literal operators:
+ * \include test/snippet/alphabet/all_literal.cpp
+ */
+
 #pragma once
 
 #include <seqan3/alphabet/adaptation/all.hpp>

@@ -6,7 +6,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     seqan3::debug_stream << "Example cycle_back() and cycle_front()\n";
 

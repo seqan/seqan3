@@ -185,18 +185,25 @@ private:
  */
 using dna4_vector = std::vector<dna4>;
 
+inline namespace literals
+{
+
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
 
 /*!\brief The seqan3::dna4 char literal.
- * \relates seqan3::dna4
+ * \relatesalso seqan3::dna4
  * \returns seqan3::dna4
  * \details
+ *
+ * You can use this char literal to assign a seqan3::dna4 character:
+ * \include test/snippet/alphabet/nucleotide/dna4_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr dna4 operator""_dna4(char const c) noexcept
@@ -205,11 +212,10 @@ constexpr dna4 operator""_dna4(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna4 string literal.
- * \relates seqan3::dna4
+ * \relatesalso seqan3::dna4
  * \returns seqan3::dna4_vector
  *
  * You can use this string literal to easily assign to dna4_vector:
- *
  * \include test/snippet/alphabet/nucleotide/dna4_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -225,6 +231,8 @@ inline dna4_vector operator""_dna4(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // dna4 (deferred definition)

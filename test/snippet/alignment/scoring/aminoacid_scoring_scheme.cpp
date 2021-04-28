@@ -8,8 +8,7 @@
 
 int main()
 {
-using seqan3::operator""_aa27;
-using seqan3::operator""_aa20;
+using namespace seqan3::literals;
 
 seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62};
 // How to score two letters:

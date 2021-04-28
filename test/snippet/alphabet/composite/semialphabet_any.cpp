@@ -11,8 +11,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/to.hpp>
 
-using seqan3::operator""_aa10murphy;
-using seqan3::operator""_aa10li;
+using namespace seqan3::literals;
 
 // Print is a template and gets instantiated two times because the behaviour is different for both types
 template <typename rng_t>

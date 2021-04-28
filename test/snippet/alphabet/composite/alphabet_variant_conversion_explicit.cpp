@@ -4,7 +4,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     // possible:
     seqan3::alphabet_variant<seqan3::dna4, seqan3::gap> letter1{'C'_dna5};

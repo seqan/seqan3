@@ -3,8 +3,7 @@
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/search/views/minimiser.hpp>
 
-using seqan3::operator""_dna4;
-using seqan3::operator""_shape;
+using namespace seqan3::literals;
 
 int main()
 {

@@ -5,7 +5,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna5;
+    using namespace seqan3::literals;
 
     seqan3::sequence_file_output fout{std::cout, seqan3::format_fasta{}};
     //                          ^ no need to specify the template arguments

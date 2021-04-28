@@ -13,13 +13,13 @@
 
 int main()
 {
+    using namespace seqan3::literals;
+
     auto tmp_dir = std::filesystem::temp_directory_path();
     std::string filename{tmp_dir/"seq.fasta"};
     {
         // Create a /tmp/seq.fasta file.
         seqan3::sequence_file_output file_out{filename};
-
-        using seqan3::operator""_dna5;
 
         file_out.emplace_back("ACGTGATG"_dna5, std::string{"seq1"});
         file_out.emplace_back("AGTGATACT"_dna5, std::string{"seq2"});

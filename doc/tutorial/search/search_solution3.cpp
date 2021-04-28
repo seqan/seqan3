@@ -4,10 +4,10 @@
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/std/span>
 
-using seqan3::operator""_dna4;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     seqan3::dna4_vector
                 text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTAACCCGATGAGCTACCCAGTAGTCGAACTGGGCCAGACAACCCGGCGCTAATGCACTCA"_dna4};
     seqan3::fm_index index{text};

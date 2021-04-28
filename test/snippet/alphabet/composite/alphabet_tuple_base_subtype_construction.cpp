@@ -5,9 +5,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
-    using seqan3::operator""_rna4;
-    // using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     // The following creates {'C'_dna4, '!'_phred42}
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter1{'C'_dna4};

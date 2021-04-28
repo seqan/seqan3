@@ -8,7 +8,7 @@ using uint16x8_t = seqan3::simd_type_t<uint16_t, 8>;
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     // Adds 7 sequences. The eighth will be set to a default value.
     std::vector<seqan3::dna4_vector> batch;

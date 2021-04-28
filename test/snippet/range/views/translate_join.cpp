@@ -6,7 +6,7 @@
 #include <seqan3/alphabet/views/translate_join.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_dna4;
+using namespace seqan3::literals;
 
 int main()
 {

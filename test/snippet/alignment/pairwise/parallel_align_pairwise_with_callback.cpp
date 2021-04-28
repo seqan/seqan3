@@ -9,7 +9,7 @@
 int main()
 {
     // Generate some sequences.
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
     using sequence_pair_t = std::pair<seqan3::dna4_vector, seqan3::dna4_vector>;
     std::vector<sequence_pair_t> sequences{100, {"AGTGCTACG"_dna4, "ACGTGCGACTAG"_dna4}};
 

@@ -17,8 +17,7 @@ int main()
 {
     auto tmp_file = std::filesystem::temp_directory_path() / "my.dbn";
 
-    using seqan3::operator""_rna4;
-    using seqan3::operator""_wuss51;
+    using namespace seqan3::literals;
 
     // First, make /tmp/input.dbn
     {

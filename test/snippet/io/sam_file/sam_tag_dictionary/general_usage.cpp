@@ -3,8 +3,8 @@
 
 int main()
 {
-    using seqan3::operator""_tag;
-    
+    using namespace seqan3::literals;
+
     seqan3::sam_tag_dictionary dict{};         // initialise empty dictionary
 
     dict.get<"NM"_tag>() = 3;          // set SAM tag 'NM' to 3 (integer type)

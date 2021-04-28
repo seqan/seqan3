@@ -8,7 +8,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 //![start]
 
     // Configure the alignment kernel.

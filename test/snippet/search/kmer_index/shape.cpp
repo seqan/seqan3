@@ -2,7 +2,7 @@
 #include <seqan3/search/kmer_index/shape.hpp> // For seqan3::shape
 #include <seqan3/std/ranges>                  // For std::ranges::size()
 
-using seqan3::operator""_shape;
+using namespace seqan3::literals;
 
 int main()
 {

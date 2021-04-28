@@ -5,10 +5,10 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_dna4;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     seqan3::dna4_vector s1 = "ACGTGAACTGACT"_dna4;
     seqan3::dna4_vector s2 = "ACGAAGACCGAT"_dna4;
 

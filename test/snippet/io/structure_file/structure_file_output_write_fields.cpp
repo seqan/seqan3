@@ -10,8 +10,7 @@
 
 int main()
 {
-    using seqan3::operator""_rna5;
-    using seqan3::operator""_wuss51;
+    using namespace seqan3::literals;
 
     seqan3::structured_rna<seqan3::rna5, seqan3::wuss51> sr{'G'_rna5, '.'_wuss51};
 

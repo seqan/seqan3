@@ -4,8 +4,8 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
-    
+    using namespace seqan3::literals;
+
     seqan3::concatenated_sequences<seqan3::dna4_vector> foobar;
     foobar.insert(foobar.end(), 2, "ACGT"_dna4);
     seqan3::debug_stream << foobar[0] << '\n'; // "ACGT"

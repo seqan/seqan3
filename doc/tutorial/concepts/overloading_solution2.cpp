@@ -14,11 +14,10 @@ void print(t const v)
               << " and my complement is: " << seqan3::to_char(seqan3::complement(v)) << '\n';
 }
 
-using seqan3::operator""_dna5;
-using seqan3::operator""_aa27;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     auto d = 'A'_dna5;
     auto a = 'L'_aa27;
     auto g = seqan3::gap{};

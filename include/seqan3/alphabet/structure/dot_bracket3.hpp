@@ -44,9 +44,9 @@ namespace seqan3
  *     (((((((..((((........)))).((((.........)))).....(((((.......)))))))))))).
  *```
  *
- * ### Usage
- * The following code example creates a dot_bracket3 vector, modifies it, and prints the result to stderr.
- * \include test/snippet/alphabet/structure/dot_bracket3_general.cpp
+ * ### Example
+ *
+ * \include test/snippet/alphabet/structure/dot_bracket3.cpp
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
@@ -171,16 +171,34 @@ private:
     }
 };
 
-/*!\name Literals
+inline namespace literals
+{
+
+/*!\name Structure literals
  * \{
  */
+/*!\brief The seqan3::db3 char literal.
+ * \relatesalso seqan3::dot_bracket3
+ * \param[in] ch The character to represent as dot bracket.
+ * \returns seqan3::dot_bracket3
+ *
+ * You can use this char literal to assign a seqan3::dot_bracket3 character:
+ * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
+ */
+constexpr dot_bracket3 operator""_db3(char const ch) noexcept
+{
+    return dot_bracket3{}.assign_char(ch);
+}
+
 /*!\brief The seqan3::db3 string literal.
- * \relates seqan3::dot_bracket3
+ * \relatesalso seqan3::dot_bracket3
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dot_bracket3>
  *
- * You can use this string literal to easily assign to a vector of seqan3::dot_bracket3 characters:
+ * You can use this string literal to easily assign to std::vector<seqan3::dot_bracket3>:
  * \include test/snippet/alphabet/structure/dot_bracket3_literal.cpp
  *
  * \experimentalapi{Experimental since version 3.1.}
@@ -195,22 +213,8 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
 
     return vec;
 }
-
-/*!\brief The seqan3::db3 char literal.
- * \relates seqan3::dot_bracket3
- * \param[in] ch The character to represent as dot bracket.
- * \returns seqan3::dot_bracket3
- *
- * You can use this string literal to assign a seqan3::dot_bracket3 character:
- * \include test/snippet/alphabet/structure/dot_bracket3_char_literal.cpp
- *
- * \experimentalapi{Experimental since version 3.1.}
- */
-constexpr dot_bracket3 operator""_db3(char const ch) noexcept
-{
-    return dot_bracket3{}.assign_char(ch);
-}
-
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

@@ -90,13 +90,20 @@ public:
     //!\}
 };
 
-/*!\name Literals
+inline namespace literals
+{
+
+/*!\name Quality literals
  * \{
  */
 /*!\brief The seqan3::phred94 char literal.
- * \relates seqan3::phred94
+ * \relatesalso seqan3::phred94
  * \returns seqan3::phred94
  * \details
+ *
+ * You can use this char literal to assign a seqan3::phred94 character:
+ * \include test/snippet/alphabet/quality/phred94_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr phred94 operator""_phred94(char const c) noexcept
@@ -111,9 +118,8 @@ constexpr phred94 operator""_phred94(char const c) noexcept
  * \returns seqan3::std::vector<seqan3::phred94>
  *
  * You can use this string literal to easily assign to std::vector<seqan3::phred94>:
- *
  * \include test/snippet/alphabet/quality/phred94_literal.cpp
- * \details
+ *
  * \stableapi{Since version 3.1.}
  */
 inline std::vector<phred94> operator""_phred94(char const * s, std::size_t n)
@@ -127,5 +133,7 @@ inline std::vector<phred94> operator""_phred94(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

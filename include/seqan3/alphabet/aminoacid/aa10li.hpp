@@ -189,15 +189,19 @@ using aa10li_vector = std::vector<aa10li>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
 /*!\name Literals
  * \{
  */
-
 /*!\brief The seqan3::aa10li char literal.
  * \param[in] c The character to assign.
  * \relates seqan3::aa10li
  * \returns seqan3::aa10li
+ *
+ * You can use this char literal to assign a seqan3::aa10li character:
+ * \include test/snippet/alphabet/aminoacid/aa10li_char_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -206,16 +210,14 @@ constexpr aa10li operator""_aa10li(char const c) noexcept
     return aa10li{}.assign_char(c);
 }
 
-/*!\brief The seqan3::aa10li  string literal.
+/*!\brief The seqan3::aa10li string literal.
  * \param[in] s A pointer to the character string to assign.
  * \param[in] n The size of the character string to assign.
  * \relates seqan3::aa10li
  * \returns seqan3::aa10li_vector
  *
  * You can use this string literal to easily assign to aa10li_vector:
- *
- * \attention
- * All seqan3 literals are in the namespace seqan3!
+ * \include test/snippet/alphabet/aminoacid/aa10li_literal.cpp
  *
  * \stableapi{Since version 3.1.}
  */
@@ -230,5 +232,7 @@ inline aa10li_vector operator""_aa10li(char const * const s, size_t const n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

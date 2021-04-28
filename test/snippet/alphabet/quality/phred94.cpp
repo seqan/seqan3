@@ -1,23 +1,16 @@
 #include <seqan3/alphabet/quality/phred94.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_phred94;
-
 int main()
 {
-    seqan3::phred94 phred;
-    phred.assign_phred(2);
-    seqan3::debug_stream << phred.to_phred() << "\n"; // 2
-    seqan3::debug_stream << phred.to_char() << "\n";  // '#'
-    seqan3::debug_stream << phred.to_rank() << "\n";  // 2
+    using namespace seqan3::literals;
 
-    seqan3::phred94 another_phred = '('_phred94;
-    seqan3::debug_stream << another_phred.to_phred() << "\n"; // 7
+    seqan3::phred94 letter{'@'_phred94};
 
-    another_phred.assign_phred(75);
-    seqan3::debug_stream << another_phred.to_phred() << "\n"; // 75
+    letter.assign_char('!');
+    seqan3::debug_stream << letter.to_phred() << '\n'; // prints "0"
+    seqan3::debug_stream << letter.to_char() << '\n';  // prints "!"
 
-    seqan3::phred94 a_third_phred;
-    a_third_phred.assign_phred(105); // converted down to 93
-    seqan3::debug_stream << a_third_phred.to_phred() << "\n"; // 93
+    letter.assign_phred(99); // Values exceeding the maximum are implicitly limited to the maximum phred value.
+    seqan3::debug_stream << letter.to_phred() << '\n'; // prints "93"
 }

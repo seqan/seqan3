@@ -8,8 +8,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
-    using seqan3::operator""_phred42;
+    using namespace seqan3::literals;
 
     seqan3::dna4_vector vec = "ACTTTGATA"_dna4;
     auto v = vec | seqan3::views::to_rank;

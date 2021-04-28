@@ -47,8 +47,7 @@ int main()
 
 {
 //! [scoring_scheme]
-using seqan3::operator""_dna4;
-using seqan3::operator""_aa27;
+using namespace seqan3::literals;
 
 // Define a simple scoring scheme with match and mismatch cost and get the score.
 seqan3::nucleotide_scoring_scheme nc_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-5}};

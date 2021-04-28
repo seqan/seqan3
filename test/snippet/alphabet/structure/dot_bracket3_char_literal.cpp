@@ -2,10 +2,8 @@
 
 int main()
 {
-    using seqan3::operator""_db3;
+    using namespace seqan3::literals;
 
-    // Using the char literal to assign a single dot bracket:
-    seqan3::dot_bracket3 my_letter{'('_db3};
-    
-    my_letter.assign_char(')');             // <- assigns the char explicitly
+    seqan3::dot_bracket3 letter1{'('_db3};
+    auto letter2 = '('_db3;
 }

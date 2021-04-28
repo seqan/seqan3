@@ -4,10 +4,10 @@
 #include <seqan3/alphabet/aminoacid/aa27.hpp>       // for seqan3::operator""_aa27
 #include <seqan3/core/debug_stream.hpp>
 
-using seqan3::operator""_aa27;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     auto seq1 = "QFSEEILSDIYCWMLQCGQERAV"_aa27;
     auto seq2 = "AFLPGWQEENKLSKIWMKDCGCLW"_aa27;
 

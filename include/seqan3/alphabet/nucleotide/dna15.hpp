@@ -162,15 +162,20 @@ using dna15_vector = std::vector<dna15>;
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
-
 /*!\brief The seqan3::dna15 char literal.
- * \relates seqan3::dna15
+ * \relatesalso seqan3::dna15
  * \returns seqan3::dna15
  * \details
+ *
+ * You can use this char literal to assign a seqan3::dna15 character:
+ * \include test/snippet/alphabet/nucleotide/dna15_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr dna15 operator""_dna15(char const c) noexcept
@@ -179,11 +184,10 @@ constexpr dna15 operator""_dna15(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna15 string literal.
- * \relates seqan3::dna15
+ * \relatesalso seqan3::dna15
  * \returns seqan3::dna15_vector
  *
  * You can use this string literal to easily assign to dna15_vector:
- *
  * \include test/snippet/alphabet/nucleotide/dna15_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -199,6 +203,8 @@ inline dna15_vector operator""_dna15(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // dna15 (deferred definition)

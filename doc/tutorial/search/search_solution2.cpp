@@ -3,7 +3,7 @@
 #include <seqan3/search/search.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 
-using seqan3::operator""_dna4;
+using namespace seqan3::literals;
 
 void run_text_single()
 {

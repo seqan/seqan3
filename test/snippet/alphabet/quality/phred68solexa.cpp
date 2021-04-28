@@ -3,9 +3,14 @@
 
 int main()
 {
-    seqan3::phred68solexa phred;
-    phred.assign_phred(-2);
-    seqan3::debug_stream << (int) phred.to_phred() << "\n"; // -2
-    seqan3::debug_stream << phred.to_char() << "\n";        // '>'
-    seqan3::debug_stream << (int) phred.to_rank() << "\n";  // 3
+    using namespace seqan3::literals;
+
+    seqan3::phred68solexa letter{'@'_phred68solexa};
+
+    letter.assign_char(';');
+    seqan3::debug_stream << letter.to_phred() << '\n'; // prints "-5"
+    seqan3::debug_stream << letter.to_char() << '\n';  // prints ";"
+
+    letter.assign_phred(72); // Values exceeding the maximum are implicitly limited to the maximum phred value.
+    seqan3::debug_stream << letter.to_phred() << '\n'; // prints "62"
 }

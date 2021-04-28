@@ -148,19 +148,30 @@ private:
  */
 using dna16sam_vector = std::vector<dna16sam>;
 
+//!\deprecated Please use seqan3::dna16sam instead.
+using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
+
+//!\deprecated Please use seqan3::dna16sam_vector instead.
+using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
+
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
+inline namespace literals
+{
 
-/*!\name Literals
+/*!\name Nucleotide literals
  * \{
  */
-
 /*!\brief The seqan3::dna16sam char literal.
- * \relates seqan3::dna16sam
+ * \relatesalso seqan3::dna16sam
  * \returns seqan3::dna16sam
  * \param[in] c The character to assign from.
  * \details
+ *
+ * You can use this char literal to assign a seqan3::dna16sam character:
+ * \include test/snippet/alphabet/nucleotide/dna16sam_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr dna16sam operator""_dna16sam(char const c) noexcept
@@ -169,13 +180,12 @@ constexpr dna16sam operator""_dna16sam(char const c) noexcept
 }
 
 /*!\brief The seqan3::dna16sam string literal.
- * \relates seqan3::dna16sam
+ * \relatesalso seqan3::dna16sam
  * \returns seqan3::dna16sam_vector
  * \param[in] s The string literal to assign from.
  * \param[in] n The length of the string literal s.
  *
  * You can use this string literal to easily assign to seqan3::dna16sam_vector:
- *
  * \include test/snippet/alphabet/nucleotide/dna16sam_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -190,7 +200,21 @@ inline dna16sam_vector operator""_dna16sam(char const * s, size_t n)
 
     return r;
 }
+
+//!\deprecated Please use seqan3::operator""_dna16sam instead.
+SEQAN3_DEPRECATED_310 constexpr dna16sam operator""_sam_dna16(char const c) noexcept
+{
+    return seqan3::operator""_dna16sam(c);
+}
+
+//!\deprecated Please use seqan3::operator""_dna16sam instead.
+SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s, size_t n)
+{
+    return seqan3::operator""_dna16sam(s, n);
+}
 //!\}
+
+} // inline namespace literals
 
 // ------------------------------------------------------------------
 // complement deferred definition
@@ -216,25 +240,4 @@ constexpr std::array<dna16sam, dna16sam::alphabet_size> dna16sam::complement_tab
     'N'_dna16sam    // complement of 'N'_dna16sam
 };
 
-} // namespace seqan3
-
-namespace seqan3
-{
-//!\deprecated Please use seqan3::dna16sam instead.
-using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
-
-//!\deprecated Please use seqan3::dna16sam_vector instead.
-using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
-
-//!\deprecated Please use seqan3::operator""_dna16sam instead.
-SEQAN3_DEPRECATED_310 constexpr dna16sam operator""_sam_dna16(char const c) noexcept
-{
-    return seqan3::operator""_dna16sam(c);
-}
-
-//!\deprecated Please use seqan3::operator""_dna16sam instead.
-SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s, size_t n)
-{
-    return seqan3::operator""_dna16sam(s, n);
-}
 } // namespace seqan3

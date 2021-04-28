@@ -93,13 +93,20 @@ public:
     //!\}
 };
 
-/*!\name Literals
+inline namespace literals
+{
+
+/*!\name Quality literals
  * \{
  */
 /*!\brief The seqan3::phred42 char literal.
- * \relates seqan3::phred42
+ * \relatesalso seqan3::phred42
  * \returns seqan3::phred42
  * \details
+ *
+ * You can use this char literal to assign a seqan3::phred42 character:
+ * \include test/snippet/alphabet/quality/phred42_char_literal.cpp
+ *
  * \stableapi{Since version 3.1.}
  */
 constexpr phred42 operator""_phred42(char const c) noexcept
@@ -114,7 +121,6 @@ constexpr phred42 operator""_phred42(char const c) noexcept
  * \returns seqan3::std::vector<seqan3::phred42>
  *
  * You can use this string literal to easily assign to std::vector<seqan3::phred42>:
- *
  * \include test/snippet/alphabet/quality/phred42_literal.cpp
  *
  * \stableapi{Since version 3.1.}
@@ -130,5 +136,7 @@ inline std::vector<phred42> operator""_phred42(char const * s, std::size_t n)
     return r;
 }
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

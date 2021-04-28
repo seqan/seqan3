@@ -2,7 +2,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/views/minimiser_hash.hpp>
 
-using seqan3::operator""_dna4;
+using namespace seqan3::literals;
 
 int main()
 {

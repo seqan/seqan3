@@ -7,7 +7,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     // Basic alignment algorithm configuration.
     auto config = seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme;

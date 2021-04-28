@@ -3,10 +3,10 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sam_file/all.hpp>
 
-using seqan3::operator""_dna4;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     std::vector<std::string> ids = {"read1", "read2"};
     std::vector<std::vector<seqan3::dna4>> seqs = {"ACGATCGACTAGCTACGATCAGCTAGCAG"_dna4,
                                                    "AGAAAGAGCGAGGCTATTTTAGCGAGTTA"_dna4};

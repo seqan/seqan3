@@ -7,10 +7,10 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/range/views/pairwise_combine.hpp>
 
-using seqan3::operator""_dna4;
-
 int main()
 {
+    using namespace seqan3::literals;
+
     std::vector vec{"ACGTGAACTGACT"_dna4,
                     "ACGAAGACCGAT"_dna4,
                     "ACGTGACTGACT"_dna4,

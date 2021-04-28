@@ -4,7 +4,7 @@
 
 int main()
 {
-    using seqan3::operator""_dna4;
+    using namespace seqan3::literals;
 
     seqan3::masked<seqan3::dna4> dna4_masked{};
     seqan3::masked<seqan3::dna4> dna4_another_masked{'A'_dna4, seqan3::mask::UNMASKED};

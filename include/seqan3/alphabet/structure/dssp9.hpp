@@ -53,9 +53,9 @@ namespace seqan3
  * C = coil/loop
  * X = unknown
  *
- * ### Usage
- * The following code example creates a dssp9 vector, modifies it, and prints the result to stderr.
- * \include test/snippet/alphabet/structure/dssp9_general.cpp
+ * ### Example
+ *
+ * \include test/snippet/alphabet/structure/dssp9.cpp
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
@@ -123,16 +123,34 @@ private:
     }
 };
 
-/*!\name Literals
+inline namespace literals
+{
+
+/*!\name Structure literals
  * \{
  */
+/*!\brief The seqan3::dssp9 char literal.
+ * \relatesalso seqan3::dssp9
+ * \param[in] ch The character to represent as dssp.
+ * \returns seqan3::dssp9
+ *
+ * You can use this char literal to assign a seqan3::dssp9 character:
+ * \include test/snippet/alphabet/structure/dssp9_char_literal.cpp
+ *
+ * \experimentalapi{Experimental since version 3.1.}
+ */
+constexpr dssp9 operator""_dssp9(char const ch) noexcept
+{
+    return dssp9{}.assign_char(ch);
+}
+
 /*!\brief The seqan3::dssp9 string literal.
- * \relates seqan3::dssp9
+ * \relatesalso seqan3::dssp9
  * \param[in] str A pointer to the character string to assign.
  * \param[in] len The size of the character string to assign.
  * \returns std::vector<seqan3::dssp9>
  *
- * You can use this string literal to easily assign to a vector of seqan3::dssp9 characters:
+ * You can use this string literal to easily assign to std::vector<seqan3::dssp9>:
  * \include test/snippet/alphabet/structure/dssp9_literal.cpp
  *
  * \experimentalapi{Experimental since version 3.1.}
@@ -147,22 +165,8 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 
     return vec;
 }
-
-/*!\brief The seqan3::dssp9 char literal.
- * \relates seqan3::dssp9
- * \param[in] ch The character to represent as dssp.
- * \returns seqan3::dssp9
- *
- * You can use this string literal to assign a seqan3::dssp9 character:
- * \include test/snippet/alphabet/structure/dssp9_char_literal.cpp
- *
- * \experimentalapi{Experimental since version 3.1.}
- */
-constexpr dssp9 operator""_dssp9(char const ch) noexcept
-{
-    return dssp9{}.assign_char(ch);
-}
-
 //!\}
+
+} // inline namespace literals
 
 } // namespace seqan3

@@ -6,7 +6,7 @@
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/std/span>
 
-using seqan3::operator""_dna4;
+using namespace seqan3::literals;
 
 // Define the pairwise alignment configuration globally.
 inline constexpr auto align_config = seqan3::align_cfg::method_global{
