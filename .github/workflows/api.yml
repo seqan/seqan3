@@ -4,6 +4,7 @@ name: SeqAn3 API-Stability
 on:
   schedule:
     - cron: "0 4 * * SUN"
+  workflow_dispatch:
 
 env:
   CC: gcc-10
