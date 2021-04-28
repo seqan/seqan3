@@ -88,8 +88,6 @@ struct as_const_fn
  *
  * \include test/snippet/range/views/as_const.cpp
  * \hideinitializer
- *
- * \todo make seqan3::detail and concatenated_sequences
  */
 inline constexpr auto as_const = std::views::transform(seqan3::detail::as_const_fn{});
 
