@@ -212,6 +212,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   `seqan3::views::convert` in the meantime, but we encourage using `std::views::transform` instead as shown in our
   [Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html#cookbook_convert_alphabet_range)
   ([\#2524](https://github.com/seqan/seqan3/pull/2524)).
+* Deprecated `seqan3::views::as_const`, there is no alternative other than reimplementing it yourself
+  ([\#2567](https://github.com/seqan/seqan3/pull/2567)).
 * Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2540))
 * We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use

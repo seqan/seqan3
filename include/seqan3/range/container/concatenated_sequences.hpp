@@ -32,6 +32,65 @@
 namespace seqan3::detail
 {
 
+//!\brief Function object for seqan3::views::as_const.
+struct as_const_fn
+{
+    //!\brief Operator that returns rvalues as rvalues.
+    template <typename t>
+    t operator()(t const && arg) const
+    {
+        return std::move(arg);
+    }
+
+    //!\brief Operator that returns lvalue references as lvalue-to-const-references.
+    template <typename t>
+    t const & operator()(t const & arg) const
+    {
+        return arg;
+    }
+};
+
+/*!\brief               A view that provides only `const &` to elements of the underlying range.
+ * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
+ *                      omitted in pipe notation]
+ * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
+ * \returns             A range of `const`-protected elements.
+ * \ingroup views
+ *
+ * \details
+ *
+ * \header_file{seqan3/range/views/as_const.hpp}
+ *
+ * ### View properties
+ *
+ *
+ * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)                     |
+ * |----------------------------------|:-------------------------------------:|:--------------------------------------------------:|
+ * | std::ranges::input_range         | *required*                            | *preserved*                                        |
+ * | std::ranges::forward_range       |                                       | *preserved*                                        |
+ * | std::ranges::bidirectional_range |                                       | *preserved*                                        |
+ * | std::ranges::random_access_range |                                       | *preserved*                                        |
+ * | std::ranges::contiguous_range    |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::viewable_range      | *required*                            | *guaranteed*                                       |
+ * | std::ranges::view                |                                       | *guaranteed*                                       |
+ * | std::ranges::sized_range         |                                       | *preserved*                                        |
+ * | std::ranges::common_range        |                                       | *preserved*                                        |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
+ * | seqan3::const_iterable_range     |                                       | *preserved*                                        |
+ * | std::semiregular                 |                                       | *preserved*                                        |
+ * |                                  |                                       |                                                    |
+ * | std::ranges::range_reference_t   |                                       | `t &` -> `t const &` but `t` -> `t`                |
+ *
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
+ *
+ * ### Example
+ *
+ * \include test/snippet/range/views/as_const.cpp
+ * \hideinitializer
+ */
+inline constexpr auto as_const = std::views::transform(seqan3::detail::as_const_fn{});
+
 /*!\brief The reference type of seqan3::concatenated_sequences.
  * \tparam value_type The value_type of the seqan3::concatenated_sequences.
  * \tparam is_const_ref Reference type or const reference type.
@@ -47,13 +106,13 @@ namespace seqan3::detail
 template <typename value_type, bool const_>
 struct concatenated_sequences_reference_proxy :
     public std::conditional_t<const_,
-                              decltype(std::declval<value_type const &>() | views::as_const | views::slice(0,1)),
+                              decltype(std::declval<value_type const &>() | detail::as_const | views::slice(0,1)),
                               decltype(std::declval<value_type &>() | views::slice(0,1))>
 {
     //!\brief The base type.
     using base_t =
         std::conditional_t<const_,
-                           decltype(std::declval<value_type const &>() | views::as_const | views::slice(0,1)),
+                           decltype(std::declval<value_type const &>() | detail::as_const | views::slice(0,1)),
                            decltype(std::declval<value_type &>() | views::slice(0,1))>;
 
     //!\brief Inherit the base type's constructors.
@@ -637,7 +696,7 @@ public:
     const_reference operator[](size_type const i) const
     {
         assert(i < size());
-        return data_values | views::as_const | views::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | detail::as_const | views::slice(data_delimiters[i], data_delimiters[i+1]);
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
@@ -718,7 +777,7 @@ public:
     //!\copydoc concat()
     const_reference concat() const
     {
-        return data_values | views::as_const | views::slice(static_cast<size_type>(0), concat_size());
+        return data_values | detail::as_const | views::slice(static_cast<size_type>(0), concat_size());
     }
 
     /*!\brief Provides direct, unsafe access to underlying data structures.

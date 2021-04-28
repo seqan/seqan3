@@ -15,8 +15,14 @@
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/range/concept.hpp>
+#ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/as_const.hpp>
+#endif // SEQAN3_DEPRECATED_310
 #include <seqan3/test/expect_range_eq.hpp>
+
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 using seqan3::operator""_dna5;
 
@@ -67,3 +73,6 @@ TEST(view_as_const, concepts)
 
     EXPECT_TRUE((std::is_same_v<decltype(v2[0]), seqan3::dna5>)); // don't add const-ness to values
 }
+
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
