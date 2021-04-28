@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <limits>
 #include <stdexcept>
 
 #include <seqan3/core/algorithm/bound.hpp>

@@ -18,6 +18,7 @@
 #include <fstream>
 #include <future>
 #include <iostream>
+#include <optional>
 #include <regex>
 
 #include <seqan3/argument_parser/auxiliary.hpp>
