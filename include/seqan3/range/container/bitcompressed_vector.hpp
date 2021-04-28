@@ -200,9 +200,11 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
-    template <std::ranges::input_range other_range_t>
+    template <typename other_range_t>
     //!\cond
-        requires has_same_value_type_v<other_range_t>
+        requires (!std::same_as<bitcompressed_vector, std::remove_cvref_t<other_range_t>>) &&
+                 std::ranges::input_range<other_range_t> &&
+                 has_same_value_type_v<other_range_t>
     //!\endcond
     explicit bitcompressed_vector(other_range_t && range) :
         bitcompressed_vector{std::ranges::begin(range), std::ranges::end(range)}
