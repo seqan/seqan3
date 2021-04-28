@@ -28,6 +28,7 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
@@ -35,7 +36,6 @@
 #include <seqan3/io/structure_file/output_format_concept.hpp>
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
@@ -129,7 +129,7 @@ protected:
                                comment_type & SEQAN3_DOXYGEN_ONLY(comment),
                                offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
-        auto stream_view = views::istreambuf(stream);
+        auto stream_view = detail::istreambuf(stream);
 
         // READ ID (if present)
         auto constexpr is_id = is_char<'>'>;

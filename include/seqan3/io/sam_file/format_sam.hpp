@@ -40,7 +40,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
@@ -410,7 +409,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
                   detail::is_type_specialisation_of_v<ref_offset_type, std::optional>,
                   "The ref_offset must be a specialisation of std::optional.");
 
-    auto stream_view = views::istreambuf(stream);
+    auto stream_view = detail::istreambuf(stream);
     auto field_view = stream_view | views::take_until_or_throw_and_consume(is_char<'\t'>);
 
     // these variables need to be stored to compute the ALIGNMENT

@@ -38,7 +38,6 @@
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
@@ -317,7 +316,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     static_assert(detail::decays_to_ignore_v<flag_type> || std::same_as<flag_type, sam_flag>,
                   "The type of field::flag must be seqan3::sam_flag.");
 
-    auto stream_view = seqan3::views::istreambuf(stream);
+    auto stream_view = seqan3::detail::istreambuf(stream);
 
     // these variables need to be stored to compute the ALIGNMENT
     [[maybe_unused]] int32_t offset_tmp{};

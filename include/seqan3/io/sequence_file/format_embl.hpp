@@ -24,6 +24,7 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/range/type_traits.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
@@ -31,7 +32,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/istreambuf.hpp>
 #include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
@@ -103,7 +103,7 @@ protected:
                               id_type     & id,
                               qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        auto stream_view = views::istreambuf(stream);
+        auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
