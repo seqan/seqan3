@@ -61,7 +61,7 @@ function (add_include_dependencies target target_cyclic_depending_includes)
     # we can for now re-enable the old behaviour by setting this config.
     if (NOT CMAKE_VERSION VERSION_LESS 3.20) # cmake >= 3.20
         if (NOT (DEFINED CMAKE_DEPENDS_USE_COMPILER) OR CMAKE_DEPENDS_USE_COMPILER)
-            message (FATAL_ERROR "Since cmake 3.20, when using -DSEQAN3_USE_INCLUDE_DEPENDENCIES=ON you need to specify -DCMAKE_DEPENDS_USE_COMPILER=OFF, too")
+            message (FATAL_ERROR "Starting with CMake 3.20, you need to specify -DCMAKE_DEPENDS_USE_COMPILER=OFF when using -DSEQAN3_USE_INCLUDE_DEPENDENCIES=ON.")
         endif ()
     endif ()
 

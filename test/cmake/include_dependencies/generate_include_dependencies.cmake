@@ -20,7 +20,7 @@ function (generate_include_dependencies_impl)
         return ()
     endif ()
 
-    # file content can look like this:
+    # File content may look like this:
     #
     # alphabet/nucleotide/CMakeFiles/dna4_test.dir/depend.make
     #
@@ -40,13 +40,13 @@ function (generate_include_dependencies_impl)
     # store original file for diagnostics
     set (header_files_raw "${header_files}")
 
-    # filter out "\;" as they would escape semi-colons which are the seperators for cmake list elements
+    # filter out "\;" as they would escape semicolons which are the separators for cmake list elements
     string(REPLACE "\;" ";" header_files "${header_files}")
 
-    # only include lines that contain <seqan3>/include/seqan3
+    # only use lines that contain a seqan3 include
     list (FILTER header_files INCLUDE REGEX "${_SEQAN3_INCLUDE_DIR}/seqan3")
 
-    # filter out object files, i.e. filter out "utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o:" in each line
+    # filter out object files, e.g., discard "utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o: " in the line
     # `utility/views/CMakeFiles/zip_test.dir/zip_test.cpp.o: /seqan3/include/seqan3/core/platform.hpp`
     if (CMAKE_VERSION VERSION_LESS 3.12)
         set (_header_files "${header_files}")
@@ -62,12 +62,12 @@ function (generate_include_dependencies_impl)
 
     if (NOT header_files)
         # The pre-processing step that generates the dependency file did not produce it.
-        # We'll warn about this.
+        # We will warn about this.
         #
         # There might be the following reasons:
         #
-        # 1. The generation of the dependency file changed (this happend once in cmake 3.20)
-        # 2. The header list only contains includes other than from seqan3.
+        # 1. The generation of the dependency file changed (this happened once with cmake 3.20)
+        # 2. The header does not contain any seqan3 include.
         message (AUTHOR_WARNING "no seqan3 header files contained: ${_TARGET_INTERNAL_DEPENDENCY_MAKE_FILE}\n"
                                 "file: ${header_files_raw}")
     endif ()
