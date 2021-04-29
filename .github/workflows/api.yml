@@ -1,14 +1,13 @@
 name: SeqAn3 API-Stability
 
-# Will always run on the default branch
 on:
+  # Will always run on the default branch
   schedule:
     - cron: "0 4 * * SUN"
+  # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
 env:
-  CC: gcc-10
-  CXX: g++-10
   CMAKE_VERSION: 3.8.2
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
@@ -19,9 +18,14 @@ defaults:
 
 jobs:
   build:
-    name: API-Stability
+    name: API-Stability gcc${{ matrix.compiler }}
     runs-on: ubuntu-20.04
     timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [9, 10, 11]
+
     steps:
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
@@ -37,43 +41,30 @@ jobs:
           path: seqan3/submodules/seqan
 
       - name: Add package source
-        run: sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/ppa && sudo apt-get update
+        run: |
+          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
+          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
 
       - name: Install CMake
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
-      - name: Install ccache
-        run: sudo apt-get install --yes ccache
-
-      - name: Install compiler g++-10
-        run: sudo apt-get install --yes g++-10
-
-      - name: Load ccache
-        uses: actions/cache@v2
-        with:
-          path: .ccache
-          key: API-ccache-${{ github.run_number }}
-          restore-keys: |
-            API-ccache
+      - name: Install compiler g++-${{ matrix.compiler }}
+        run: sudo apt-get install --yes g++-${{ matrix.compiler }}
 
       - name: Configure tests
+        env:
+          CXX: g++-${{ matrix.compiler }}
+          CC: gcc-${{ matrix.compiler }}
         run: |
           mkdir seqan3-build
           cd seqan3-build
           cmake ../seqan3/test/api_stability -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1"
 
       - name: Build tests
-        env:
-          CCACHE_BASEDIR: ${{ github.workspace }}
-          CCACHE_DIR: ${{ github.workspace }}/.ccache
-          CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
         run: |
-          ccache -p || true
           cd seqan3-build
           CMAKE_BUILD_PARALLEL_LEVEL=2 cmake --build . -- -k 2>&1 | tee build.log
-          ccache -s || true
 
       - name: Setup Python
         if: ${{ failure() }}
@@ -93,6 +84,7 @@ jobs:
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          COMPILER: ${{ matrix.compiler }}
         with:
           filename: seqan3/.github/ISSUE_TEMPLATE/api_cron_template.md
           update_existing: true
