@@ -61,7 +61,7 @@ namespace seqan3::views
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ###Example
- * \include test/snippet/range/views/rank_to.cpp
+ * \include test/snippet/alphabet/views/rank_to.cpp
  * \hideinitializer
  *
  * \stableapi{Since version 3.1.}

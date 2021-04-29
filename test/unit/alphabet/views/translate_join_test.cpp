@@ -26,7 +26,7 @@
 #include <seqan3/range/concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;

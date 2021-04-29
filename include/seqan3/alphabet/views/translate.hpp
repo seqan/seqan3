@@ -506,7 +506,7 @@ namespace seqan3::views
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * \include test/snippet/range/views/translate_dna5.cpp
+ * \include test/snippet/alphabet/views/translate_dna5.cpp
  * \hideinitializer
  *
  * \experimentalapi{Experimental since version 3.1.}
@@ -822,7 +822,7 @@ namespace seqan3::views
  * ### Example
  *
  * Operating on a range of seqan3::dna5:
- * \include test/snippet/range/views/translate_usage.cpp
+ * \include test/snippet/alphabet/views/translate_usage.cpp
  *
  * \sa seqan3::translate_triplet
  * \sa seqan3::views::translate_single
