@@ -42,8 +42,9 @@ TEST(bitcompressed_vector_test, issue1743_view_combinability)
     EXPECT_RANGE_EQ(complement, (seqan3::dna4_vector{'T'_dna4, 'G'_dna4, 'C'_dna4, 'A'_dna4}));
 }
 
+// https://github.com/seqan/product_backlog/issues/371
 TEST(bitcompressed_vector_test, issue371)
-{ // https://github.com/seqan/product_backlog/issues/371
+{ 
     using alphabet_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna15>;
     seqan3::bitcompressed_vector<alphabet_t> source{};
     auto it = source.begin();
