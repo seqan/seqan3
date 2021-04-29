@@ -1,5 +1,5 @@
 ---
-title: '[CRON] API Stability Failure'
+title: '[CRON] API Stability Failure on gcc{{ env.COMPILER }}'
 labels: 'bug'
 ---
 
