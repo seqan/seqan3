@@ -23,12 +23,12 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/detail/is_class_template_declarable.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/type_traits/concept.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3::detail
 {

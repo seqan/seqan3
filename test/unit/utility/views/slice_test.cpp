@@ -14,10 +14,10 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 // ============================================================================
 //  view_slice

@@ -39,11 +39,11 @@
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/range/decorator/gap_decorator.hpp>
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3
 {

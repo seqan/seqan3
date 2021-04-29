@@ -17,8 +17,8 @@
 
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/range/views/take.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3::detail
 {

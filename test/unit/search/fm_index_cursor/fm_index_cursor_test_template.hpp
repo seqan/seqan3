@@ -10,9 +10,9 @@
 #include <seqan3/std/algorithm>
 #include <type_traits>
 
-#include <seqan3/range/views/slice.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/views/slice.hpp>
 
 #include "../helper.hpp"
 
