@@ -348,7 +348,6 @@ namespace seqan3::views
  *
  * In short, this views behaves the same as:
  *
- * TODO: make this a snippet
  * ```cpp
  * std::vector<std::vector<dna5>> vec {...};
  * auto v = vec | views::translate | views::join;
