@@ -66,12 +66,16 @@ namespace seqan3::views
  *
  * A more useful example can be found in \link sequence_file_section_fun_with_ranges the tutorial \endlink.
  * \hideinitializer
+ * \deprecated Use the std::ranges::move algorithm, std::[cpp20::]move_iterator or an explicit for loop where you move
+ *             the value.
  */
-inline auto const move = std::views::transform(detail::multi_invocable
+#ifdef SEQAN3_DEPRECATED_310
+SEQAN3_DEPRECATED_310 inline auto const move = std::views::transform(detail::multi_invocable
 {
     [] (auto && arg) -> std::remove_cvref_t<decltype(arg)> { return std::move(arg); },
     [] (auto  & arg) -> decltype(auto)                { return std::move(arg); }
 });
+#endif // SEQAN3_DEPRECATED_310
 //!\}
 
 } // namespace seqan3::views

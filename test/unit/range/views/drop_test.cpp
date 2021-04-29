@@ -20,7 +20,9 @@
 
 #include <seqan3/range/concept.hpp>
 #include <seqan3/range/container/concept.hpp>
+#ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/drop.hpp>
+#endif // SEQAN3_DEPRECATED_310
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>

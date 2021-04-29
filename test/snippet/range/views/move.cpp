@@ -1,3 +1,8 @@
+#include <seqan3/core/platform.hpp>
+
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include <string>
 
 #include <seqan3/range/views/move.hpp>
@@ -18,3 +23,5 @@ int main()
     std::ranges::copy(vec_in | seqan3::views::move, // moves strings from in to out
                       vec_out1.begin());
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
