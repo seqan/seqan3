@@ -1088,7 +1088,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    friend constexpr bool operator==(bitcompressed_vector && lhs, bitcompressed_vector && rhs) noexcept
+    friend constexpr bool operator!=(bitcompressed_vector && lhs, bitcompressed_vector && rhs) noexcept
     {
         return lhs.data != rhs.data;
     }
