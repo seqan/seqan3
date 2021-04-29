@@ -46,8 +46,7 @@ TEST(bitcompressed_vector_test, issue371)
 { // https://github.com/seqan/product_backlog/issues/371
     using alphabet_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna15>;
     seqan3::bitcompressed_vector<alphabet_t> source{};
-    alphabet_t a{};
-
-    for (auto && c : source)
-        c = a;
+    auto it = source.begin();
+    auto end = source.end();
+    it != end; // This line causes error.
 }
