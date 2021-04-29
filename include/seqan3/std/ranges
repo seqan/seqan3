@@ -17,6 +17,23 @@
 #include <ranges>
 #endif // __has_include(<ranges>)
 
+//!\cond
+#ifndef RANGES_DEEP_STL_INTEGRATION
+    // including a header of the ranges-v3 library is fine as long as -DRANGES_DEEP_STL_INTEGRATION=1 is fulfilled
+    // in range-v3 0.11.0 #include <range/v3/iterator/access.hpp> and #include <range/v3/iterator/traits.hpp> (that one
+    // included range/v3/iterator/access.hpp) were the only header that used -DRANGES_DEEP_STL_INTEGRATION
+    // We check range/v3/iterator/access.hpp and not e.g. range/v3/range_fwd.hpp, because we sometimes use utility that
+    // include range-v3 header that doesn't needs the -DRANGES_DEEP_STL_INTEGRATION flag.
+#   ifdef RANGES_V3_ITERATOR_ACCESS_HPP
+#       pragma GCC warning "You included a range-v3 header before including `#include <seqan3/std/ranges>`, please be aware that seqan3 might fail to compile if `#define RANGES_DEEP_STL_INTEGRATION 1` isn't fulfilled."
+#   endif // RANGES_V3_ITERATOR_ACCESS_HPP
+
+#   define RANGES_DEEP_STL_INTEGRATION 1
+#elif !RANGES_DEEP_STL_INTEGRATION
+#   pragma GCC warning "Please be aware that seqan3 might fail to compile if `#define RANGES_DEEP_STL_INTEGRATION 1` isn't fulfilled."
+#endif // RANGES_DEEP_STL_INTEGRATION
+//!\endcond
+
 #if defined(__cpp_lib_ranges) // C++20 ranges available
 #include <seqan3/std/iterator>
 
@@ -66,12 +83,6 @@ inline constexpr bool enable_borrowed_range<T> = true;
 } // namespace std::ranges
 
 #else // implement via range-v3
-
-//!\cond
-#ifndef RANGES_DEEP_STL_INTEGRATION
-#define RANGES_DEEP_STL_INTEGRATION 1
-#endif
-//!\endcond
 
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/iterator/insert_iterators.hpp>
