@@ -1079,7 +1079,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-        constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
     {
         return data == rhs.data;
     }
