@@ -15,35 +15,37 @@ int main()
     seqan3::debug_stream << v1[1] << '\n';
 
     // First forward frame
-    auto v2 = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_0);
+    auto v2 = vec | seqan3::views::translate_single(seqan3::translation_frames::forward_frame0);
     // == [T,Y,V,R]
 
     // First reverse frame
-    auto v3 = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_0);
+    auto v3 = vec | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame0);
     // == [Y,V,R,T]
 
     // Second forward frame
-    auto v4 = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_1);
+    auto v4 = vec | seqan3::views::translate_single(seqan3::translation_frames::forward_frame1);
     // == [R,T,Y,V]
 
     // Second reverse frame
-    auto v5 = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_1);
+    auto v5 = vec | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame1);
     // == [T,Y,V,R]
 
     // Third forward frame
-    auto v6 = vec | seqan3::views::translate_single(seqan3::translation_frames::FWD_FRAME_2);
+    auto v6 = vec | seqan3::views::translate_single(seqan3::translation_frames::forward_frame2);
     // == [V,R,T]
 
     // Third reverse frame
-    auto v7 = vec | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_2);
+    auto v7 = vec | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame2);
     // == [R,T,Y]
 
     // function syntax
-    auto v8 = seqan3::views::translate_single(vec, seqan3::translation_frames::FWD_FRAME_0);
+    auto v8 = seqan3::views::translate_single(vec, seqan3::translation_frames::forward_frame0);
     // == [T,Y,V,R]
 
     // combinability
-    auto v9 = vec | seqan3::views::complement | seqan3::views::translate_single(seqan3::translation_frames::REV_FRAME_0);
+    auto v9 = vec
+            | seqan3::views::complement
+            | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame0);
     // == [M,H,A,C]
 
     // combinability with default parameter

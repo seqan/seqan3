@@ -68,18 +68,31 @@ namespace seqan3
  */
 enum class translation_frames : uint8_t
 {
-    FWD_FRAME_0 = 1,                                    //!< The first forward frame starting at position 0
-    FWD_FRAME_1 = 1 << 1,                               //!< The second forward frame starting at position 1
-    FWD_FRAME_2 = 1 << 2,                               //!< The third forward frame starting at position 2
-    REV_FRAME_0 = 1 << 3,                               //!< The first reverse frame starting at position 0
-    REV_FRAME_1 = 1 << 4,                               //!< The second reverse frame starting at position 1
-    REV_FRAME_2 = 1 << 5,                               //!< The third reverse frame starting at position 2
-    FWD_REV_0 = FWD_FRAME_0 | REV_FRAME_0,              //!< The first forward and first reverse frame
-    FWD_REV_1 = FWD_FRAME_1 | REV_FRAME_1,              //!< The second forward and second reverse frame
-    FWD_REV_2 = FWD_FRAME_2 | REV_FRAME_2,              //!< The first third and third reverse frame
-    FWD = FWD_FRAME_0 | FWD_FRAME_1 | FWD_FRAME_2,      //!< All forward frames
-    REV = REV_FRAME_0 | REV_FRAME_1 | REV_FRAME_2,      //!< All reverse frames
-    SIX_FRAME = FWD | REV                               //!< All frames
+    forward_frame0 = 1, //!< The first forward frame starting at position 0
+    forward_frame1 = 1 << 1, //!< The second forward frame starting at position 1
+    forward_frame2 = 1 << 2, //!< The third forward frame starting at position 2
+    reverse_frame0 = 1 << 3, //!< The first reverse frame starting at position 0
+    reverse_frame1 = 1 << 4, //!< The second reverse frame starting at position 1
+    reverse_frame2 = 1 << 5, //!< The third reverse frame starting at position 2
+    forward_reverse0 = forward_frame0 | reverse_frame0, //!< The first forward and first reverse frame
+    forward_reverse1 = forward_frame1 | reverse_frame1, //!< The second forward and second reverse frame
+    forward_reverse2 = forward_frame2 | reverse_frame2, //!< The first third and third reverse frame
+    forward_frames = forward_frame0 | forward_frame1 | forward_frame2, //!< All forward frames
+    reverse_frames = reverse_frame0 | reverse_frame1 | reverse_frame2, //!< All reverse frames
+    six_frames = forward_frames | reverse_frames, //!< All frames
+
+    FWD_FRAME_0 SEQAN3_DEPRECATED_310 = forward_frame0, //!< \deprecated Use forward_frame0 instead.
+    FWD_FRAME_1 SEQAN3_DEPRECATED_310 = forward_frame1, //!< \deprecated Use forward_frame1 instead.
+    FWD_FRAME_2 SEQAN3_DEPRECATED_310 = forward_frame2, //!< \deprecated Use forward_frame2 instead.
+    REV_FRAME_0 SEQAN3_DEPRECATED_310 = reverse_frame0, //!< \deprecated Use reverse_frame0 instead.
+    REV_FRAME_1 SEQAN3_DEPRECATED_310 = reverse_frame1, //!< \deprecated Use reverse_frame1 instead.
+    REV_FRAME_2 SEQAN3_DEPRECATED_310 = reverse_frame2, //!< \deprecated Use reverse_frame2 instead.
+    FWD_REV_0 SEQAN3_DEPRECATED_310 = forward_reverse0, //!< \deprecated Use forward_reverse0 instead.
+    FWD_REV_1 SEQAN3_DEPRECATED_310 = forward_reverse1, //!< \deprecated Use forward_reverse1 instead.
+    FWD_REV_2 SEQAN3_DEPRECATED_310 = forward_reverse2, //!< \deprecated Use forward_reverse2 instead.
+    FWD SEQAN3_DEPRECATED_310 = forward_frames, //!< \deprecated Use forward_frames instead.
+    REV SEQAN3_DEPRECATED_310 = reverse_frames, //!< \deprecated Use reverse_frames instead.
+    SIX_FRAME SEQAN3_DEPRECATED_310 = six_frames //!< \deprecated Use six_frames instead.
 };
 
 //!\cond DEV
@@ -106,8 +119,8 @@ struct translate_fn
 {
     //!\brief The default frames parameter for the translation view adaptors.
     static constexpr translation_frames default_frames = single ?
-                                                         translation_frames::FWD_FRAME_0 :
-                                                         translation_frames::SIX_FRAME;
+                                                         translation_frames::forward_frame0 :
+                                                         translation_frames::six_frames;
 
     //!\brief Store the argument and return a range adaptor closure object.
     constexpr auto operator()(translation_frames const tf = default_frames) const
@@ -170,9 +183,9 @@ private:
     //!\brief The frame that should be used for translation.
     translation_frames tf;
     //!\brief Error thrown if tried to be used with multiple frames.
-    static constexpr small_string multiple_frame_error{"Error: Invalid type of frame. Choose one out of FWD_FRAME_0, "
-                                                       "REV_FRAME_0, FWD_FRAME_1, REV_FRAME_1, FWD_FRAME_2 and "
-                                                       "REV_FRAME_2."};
+    static constexpr small_string multiple_frame_error{"Error: Invalid type of frame. Choose one out of "
+                                                       "forward_frame0, reverse_frame0, forward_frame1, "
+                                                       "reverse_frame1, forward_frame2 and reverse_frame2."};
 public:
     /*!\name Member types
      * \{
@@ -212,7 +225,7 @@ public:
      *
      * Throws if multiple frames are given as _tf input argument.
      */
-    view_translate_single(urng_t _urange, translation_frames const _tf = translation_frames::FWD_FRAME_0)
+    view_translate_single(urng_t _urange, translation_frames const _tf = translation_frames::forward_frame0)
         : urange{std::move(_urange)}, tf{_tf}
     {
         if (__builtin_popcount(static_cast<uint8_t>(_tf)) > 1)
@@ -235,7 +248,7 @@ public:
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
-    view_translate_single(rng_t && _urange, translation_frames const _tf = translation_frames::FWD_FRAME_0)
+    view_translate_single(rng_t && _urange, translation_frames const _tf = translation_frames::forward_frame0)
      : view_translate_single{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
     //!\}
@@ -307,19 +320,19 @@ public:
     {
         switch (tf)
         {
-            case translation_frames::FWD_FRAME_0:
+            case translation_frames::forward_frame0:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_0:
+            case translation_frames::reverse_frame0:
                 return std::ranges::size(urange) / 3;
                 break;
-            case translation_frames::FWD_FRAME_1:
+            case translation_frames::forward_frame1:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_1:
+            case translation_frames::reverse_frame1:
                 return (std::max<size_type>(std::ranges::size(urange), 1) - 1) / 3;
                 break;
-            case translation_frames::FWD_FRAME_2:
+            case translation_frames::forward_frame2:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_2:
+            case translation_frames::reverse_frame2:
                 return (std::max<size_type>(std::ranges::size(urange), 2) - 2) / 3;
                 break;
             default:
@@ -333,19 +346,19 @@ public:
     {
         switch (tf)
         {
-            case translation_frames::FWD_FRAME_0:
+            case translation_frames::forward_frame0:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_0:
+            case translation_frames::reverse_frame0:
                 return std::ranges::size(urange) / 3;
                 break;
-            case translation_frames::FWD_FRAME_1:
+            case translation_frames::forward_frame1:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_1:
+            case translation_frames::reverse_frame1:
                 return (std::max<size_type>(std::ranges::size(urange), 1) - 1) / 3;
                 break;
-            case translation_frames::FWD_FRAME_2:
+            case translation_frames::forward_frame2:
                 [[fallthrough]];
-            case translation_frames::REV_FRAME_2:
+            case translation_frames::reverse_frame2:
                 return (std::max<size_type>(std::ranges::size(urange), 2) - 2) / 3;
                 break;
             default:
@@ -383,23 +396,29 @@ public:
 
         switch (tf)
         {
-         case translation_frames::FWD_FRAME_0:
+         case translation_frames::forward_frame0:
              return translate_triplet((urange)[n * 3], (urange)[n * 3 + 1], (urange)[n * 3 + 2]);
              break;
-         case translation_frames::REV_FRAME_0:
-             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 1]), complement((urange)[(urange).size() - n * 3 - 2]), complement((urange)[(urange).size() - n * 3 - 3]));
+         case translation_frames::reverse_frame0:
+             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 1]),
+                                      complement((urange)[(urange).size() - n * 3 - 2]),
+                                      complement((urange)[(urange).size() - n * 3 - 3]));
              break;
-         case translation_frames::FWD_FRAME_1:
+         case translation_frames::forward_frame1:
              return translate_triplet((urange)[n * 3 + 1], (urange)[n * 3 + 2], (urange)[n * 3 + 3]);
              break;
-         case translation_frames::REV_FRAME_1:
-             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 2]), complement((urange)[(urange).size() - n * 3 - 3]), complement((urange)[(urange).size() - n * 3 - 4]));
+         case translation_frames::reverse_frame1:
+             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 2]),
+                                      complement((urange)[(urange).size() - n * 3 - 3]),
+                                      complement((urange)[(urange).size() - n * 3 - 4]));
              break;
-         case translation_frames::FWD_FRAME_2:
+         case translation_frames::forward_frame2:
              return translate_triplet((urange)[n * 3 + 2], (urange)[n * 3 + 3], (urange)[n * 3 + 4]);
              break;
-         case translation_frames::REV_FRAME_2:
-             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 3]), complement((urange)[(urange).size() - n * 3 - 4]), complement((urange)[(urange).size() - n * 3 - 5]));
+         case translation_frames::reverse_frame2:
+             return translate_triplet(complement((urange)[(urange).size() - n * 3 - 3]),
+                                      complement((urange)[(urange).size() - n * 3 - 4]),
+                                      complement((urange)[(urange).size() - n * 3 - 5]));
              break;
          default:
              throw std::invalid_argument(multiple_frame_error.c_str());
@@ -419,23 +438,29 @@ public:
 
         switch (tf)
         {
-            case translation_frames::FWD_FRAME_0:
+            case translation_frames::forward_frame0:
                 return translate_triplet((urange)[n * 3], (urange)[n * 3 + 1], (urange)[n * 3 + 2]);
                 break;
-            case translation_frames::REV_FRAME_0:
-                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 1]), complement((urange)[(urange).size() - n * 3 - 2]), complement((urange)[(urange).size() - n * 3 - 3]));
+            case translation_frames::reverse_frame0:
+                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 1]),
+                                         complement((urange)[(urange).size() - n * 3 - 2]),
+                                         complement((urange)[(urange).size() - n * 3 - 3]));
                 break;
-            case translation_frames::FWD_FRAME_1:
+            case translation_frames::forward_frame1:
                 return translate_triplet((urange)[n * 3 + 1], (urange)[n * 3 + 2], (urange)[n * 3 + 3]);
                 break;
-            case translation_frames::REV_FRAME_1:
-                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 2]), complement((urange)[(urange).size() - n * 3 - 3]), complement((urange)[(urange).size() - n * 3 - 4]));
+            case translation_frames::reverse_frame1:
+                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 2]),
+                                         complement((urange)[(urange).size() - n * 3 - 3]),
+                                         complement((urange)[(urange).size() - n * 3 - 4]));
                 break;
-            case translation_frames::FWD_FRAME_2:
+            case translation_frames::forward_frame2:
                 return translate_triplet((urange)[n * 3 + 2], (urange)[n * 3 + 3], (urange)[n * 3 + 4]);
                 break;
-            case translation_frames::REV_FRAME_2:
-                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 3]), complement((urange)[(urange).size() - n * 3 - 4]), complement((urange)[(urange).size() - n * 3 - 5]));
+            case translation_frames::reverse_frame2:
+                return translate_triplet(complement((urange)[(urange).size() - n * 3 - 3]),
+                                         complement((urange)[(urange).size() - n * 3 - 4]),
+                                         complement((urange)[(urange).size() - n * 3 - 5]));
                 break;
             default:
                 throw std::invalid_argument(multiple_frame_error.c_str());
@@ -598,21 +623,21 @@ public:
      * \param[in] _urange The underlying range (of ranges).
      * \param[in] _tf The frames that should be used for translation.
      */
-    view_translate(urng_t _urange, translation_frames const _tf = translation_frames::SIX_FRAME)
+    view_translate(urng_t _urange, translation_frames const _tf = translation_frames::six_frames)
         : urange{std::move(_urange)}, tf{_tf}
     {
-        if ((_tf & translation_frames::FWD_FRAME_0) == translation_frames::FWD_FRAME_0)
-            selected_frames.push_back(translation_frames::FWD_FRAME_0);
-        if ((_tf & translation_frames::FWD_FRAME_1) == translation_frames::FWD_FRAME_1)
-            selected_frames.push_back(translation_frames::FWD_FRAME_1);
-        if ((_tf & translation_frames::FWD_FRAME_2) == translation_frames::FWD_FRAME_2)
-            selected_frames.push_back(translation_frames::FWD_FRAME_2);
-        if ((_tf & translation_frames::REV_FRAME_0) == translation_frames::REV_FRAME_0)
-            selected_frames.push_back(translation_frames::REV_FRAME_0);
-        if ((_tf & translation_frames::REV_FRAME_1) == translation_frames::REV_FRAME_1)
-            selected_frames.push_back(translation_frames::REV_FRAME_1);
-        if ((_tf & translation_frames::REV_FRAME_2) == translation_frames::REV_FRAME_2)
-            selected_frames.push_back(translation_frames::REV_FRAME_2);
+        if ((_tf & translation_frames::forward_frame0) == translation_frames::forward_frame0)
+            selected_frames.push_back(translation_frames::forward_frame0);
+        if ((_tf & translation_frames::forward_frame1) == translation_frames::forward_frame1)
+            selected_frames.push_back(translation_frames::forward_frame1);
+        if ((_tf & translation_frames::forward_frame2) == translation_frames::forward_frame2)
+            selected_frames.push_back(translation_frames::forward_frame2);
+        if ((_tf & translation_frames::reverse_frame0) == translation_frames::reverse_frame0)
+            selected_frames.push_back(translation_frames::reverse_frame0);
+        if ((_tf & translation_frames::reverse_frame1) == translation_frames::reverse_frame1)
+            selected_frames.push_back(translation_frames::reverse_frame1);
+        if ((_tf & translation_frames::reverse_frame2) == translation_frames::reverse_frame2)
+            selected_frames.push_back(translation_frames::reverse_frame2);
     }
 
     /*!\brief Construct from another range.
@@ -638,7 +663,7 @@ public:
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     view_translate(rng_t && _urange)
-     : view_translate{std::views::all(std::forward<rng_t>(_urange)), translation_frames::SIX_FRAME}
+     : view_translate{std::views::all(std::forward<rng_t>(_urange)), translation_frames::six_frames}
     {}
     #endif // SEQAN3_DEPRECATED_310
     //!\}

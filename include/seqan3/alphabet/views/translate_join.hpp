@@ -109,21 +109,21 @@ public:
      * \param[in] _urange The underlying range (of ranges).
      * \param[in] _tf The frames that should be used for translation.
      */
-    view_translate_join(urng_t _urange, translation_frames const _tf = translation_frames::SIX_FRAME)
+    view_translate_join(urng_t _urange, translation_frames const _tf = translation_frames::six_frames)
         : urange{std::move(_urange)}, tf{_tf}
     {
-        if ((_tf & translation_frames::FWD_FRAME_0) == translation_frames::FWD_FRAME_0)
-            selected_frames.push_back(translation_frames::FWD_FRAME_0);
-        if ((_tf & translation_frames::FWD_FRAME_1) == translation_frames::FWD_FRAME_1)
-            selected_frames.push_back(translation_frames::FWD_FRAME_1);
-        if ((_tf & translation_frames::FWD_FRAME_2) == translation_frames::FWD_FRAME_2)
-            selected_frames.push_back(translation_frames::FWD_FRAME_2);
-        if ((_tf & translation_frames::REV_FRAME_0) == translation_frames::REV_FRAME_0)
-            selected_frames.push_back(translation_frames::REV_FRAME_0);
-        if ((_tf & translation_frames::REV_FRAME_1) == translation_frames::REV_FRAME_1)
-            selected_frames.push_back(translation_frames::REV_FRAME_1);
-        if ((_tf & translation_frames::REV_FRAME_2) == translation_frames::REV_FRAME_2)
-            selected_frames.push_back(translation_frames::REV_FRAME_2);
+        if ((_tf & translation_frames::forward_frame0) == translation_frames::forward_frame0)
+            selected_frames.push_back(translation_frames::forward_frame0);
+        if ((_tf & translation_frames::forward_frame1) == translation_frames::forward_frame1)
+            selected_frames.push_back(translation_frames::forward_frame1);
+        if ((_tf & translation_frames::forward_frame2) == translation_frames::forward_frame2)
+            selected_frames.push_back(translation_frames::forward_frame2);
+        if ((_tf & translation_frames::reverse_frame0) == translation_frames::reverse_frame0)
+            selected_frames.push_back(translation_frames::reverse_frame0);
+        if ((_tf & translation_frames::reverse_frame1) == translation_frames::reverse_frame1)
+            selected_frames.push_back(translation_frames::reverse_frame1);
+        if ((_tf & translation_frames::reverse_frame2) == translation_frames::reverse_frame2)
+            selected_frames.push_back(translation_frames::reverse_frame2);
     }
 
     /*!\brief Construct from another range.
@@ -136,7 +136,7 @@ public:
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
-    view_translate_join(rng_t && _urange, translation_frames const _tf = translation_frames::SIX_FRAME)
+    view_translate_join(rng_t && _urange, translation_frames const _tf = translation_frames::six_frames)
      : view_translate_join{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
     //!\}
@@ -268,7 +268,7 @@ view_translate_join(urng_t &&, translation_frames const = translation_frames{}) 
 struct translate_join_fn
 {
     //!\brief Store the argument and return a range adaptor closure object.
-    constexpr auto operator()(translation_frames const tf = translation_frames::SIX_FRAME) const
+    constexpr auto operator()(translation_frames const tf = translation_frames::six_frames) const
     {
         return detail::adaptor_from_functor{*this, tf};
     }
@@ -279,7 +279,7 @@ struct translate_join_fn
      * \returns          A range of translated sequence(s).
      */
     template <std::ranges::range urng_t>
-    constexpr auto operator()(urng_t && urange, translation_frames const tf = translation_frames::SIX_FRAME) const
+    constexpr auto operator()(urng_t && urange, translation_frames const tf = translation_frames::six_frames) const
     {
         static_assert(range_dimension_v<urng_t> == 2,
                       "This adaptor only handles range-of-range (two dimensions) as input.");
