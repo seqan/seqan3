@@ -23,9 +23,7 @@
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #endif // SEQAN3_DEPRECATED_310
-#include <seqan3/range/views/interleave.hpp>
 #include <seqan3/range/views/move.hpp>
-#include <seqan3/range/views/pairwise_combine.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
@@ -35,6 +33,8 @@
 #include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/elements.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
+#include <seqan3/utility/views/interleave.hpp>
+#include <seqan3/utility/views/pairwise_combine.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
 /*!\defgroup views Views
