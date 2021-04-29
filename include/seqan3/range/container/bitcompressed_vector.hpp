@@ -1079,18 +1079,18 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    friend constexpr bool operator==(bitcompressed_vector && lhs, bitcompressed_vector && rhs) noexcept
+        constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
     {
-        return lhs.data == rhs.data;
+        return data == rhs.data;
     }
 
     /*!\brief Checks whether `*this` is not equal to `rhs`.
      * \details
      * \stableapi{Since version 3.1.}
      */
-    friend constexpr bool operator!=(bitcompressed_vector && lhs, bitcompressed_vector && rhs) noexcept
+    constexpr bool operator!=(bitcompressed_vector const & rhs) const noexcept
     {
-        return lhs.data != rhs.data;
+        return data != rhs.data;
     }
 
     /*!\brief Checks whether `*this` is less than `rhs`.
