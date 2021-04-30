@@ -226,10 +226,10 @@ public:
     //!\endcond
     constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        assign_rank(
-            rank_by_type_(
-                meta::front<meta::find_if<alternatives,
-                                          detail::implicitly_convertible_from<indirect_alternative_t>>>(rhs)));
+        using alternative_t = seqan3::list_traits::front<
+                                  meta::find_if<alternatives,
+                                                detail::implicitly_convertible_from<indirect_alternative_t>>>;
+        assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
     /*!\brief Constructor for arguments explicitly (but not implicitly) convertible to an alternative.
@@ -257,8 +257,10 @@ public:
     //!\endcond
     constexpr explicit alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        assign_rank(rank_by_type_(meta::front<meta::find_if<alternatives,
-                                                            detail::constructible_from<indirect_alternative_t>>>(rhs)));
+        using alternative_t = seqan3::list_traits::front<
+                                  meta::find_if<alternatives,
+                                                detail::constructible_from<indirect_alternative_t>>>;
+        assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
 
@@ -277,7 +279,9 @@ public:
     //!\endcond
     constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
-        using alternative_t = meta::front<meta::find_if<alternatives, detail::assignable_from<indirect_alternative_t>>>;
+        using alternative_t = seqan3::list_traits::front<
+                                  meta::find_if<alternatives,
+                                                detail::assignable_from<indirect_alternative_t>>>;
         alternative_t alternative{};
         alternative = rhs;
         assign_rank(rank_by_type_(alternative));
@@ -390,8 +394,8 @@ public:
                             bool>
     {
         using alternative_t =
-            meta::front<meta::find_if<alternatives,
-                                      detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
+            seqan3::list_traits::front<meta::find_if<alternatives,
+                                       detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
         return lhs.template is_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
     }
 

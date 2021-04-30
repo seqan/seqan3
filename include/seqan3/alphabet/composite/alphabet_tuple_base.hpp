@@ -240,9 +240,11 @@ public:
     //!\endcond
     constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
-       using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
-       component_type tmp(alph); // delegate construction
-       get<component_type>(*this) = tmp;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::implicitly_convertible_from<indirect_component_type>>>;
+        component_type tmp(alph); // delegate construction
+        get<component_type>(*this) = tmp;
     }
 
     //!\cond
@@ -255,9 +257,11 @@ public:
                      detail::tuple_general_guard<derived_type, indirect_component_type, component_types...>> || ...))
     constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
-       using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
-       component_type tmp(alph); // delegate construction
-       get<component_type>(*this) = tmp;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::constructible_from<indirect_component_type>>>;
+        component_type tmp(alph); // delegate construction
+        get<component_type>(*this) = tmp;
     }
     //!\endcond
 
@@ -301,7 +305,9 @@ public:
     //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::assignable_from<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::assignable_from<indirect_component_type>>>;
         get<component_type>(*this) = alph; // delegate assignment
         return static_cast<derived_type &>(*this);
     }
@@ -314,7 +320,9 @@ public:
                   (std::convertible_to<indirect_component_type, component_types> || ...))
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::implicitly_convertible_from<indirect_component_type>>>;
         component_type tmp(alph);
         get<component_type>(*this) = tmp;
         return static_cast<derived_type &>(*this);
@@ -328,7 +336,9 @@ public:
                   (std::constructible_from<component_types, indirect_component_type> || ...))
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::constructible_from<indirect_component_type>>>;
         component_type tmp(alph); // delegate construction
         get<component_type>(*this) = tmp;
         return static_cast<derived_type &>(*this);
@@ -441,7 +451,9 @@ public:
         -> std::enable_if_t<detail::tuple_eq_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_equality_comparable_with_<indirect_component_type>>>;
         return get<component_type>(lhs) == rhs;
     }
 
@@ -460,7 +472,9 @@ public:
         -> std::enable_if_t<detail::tuple_eq_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_equality_comparable_with_<indirect_component_type>>>;
         return get<component_type>(lhs) != rhs;
     }
 
@@ -479,7 +493,9 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(lhs) < rhs;
     }
 
@@ -498,7 +514,9 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(lhs) <= rhs;
     }
 
@@ -517,7 +535,9 @@ public:
           -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(lhs) > rhs;
     }
 
@@ -536,7 +556,9 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_type = seqan3::list_traits::front<
+                                   meta::find_if<component_list,
+                                                 detail::weakly_ordered_with_<indirect_component_type>>>;
         return get<component_type>(lhs) >= rhs;
     }
 
