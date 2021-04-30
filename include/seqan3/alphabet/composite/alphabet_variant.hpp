@@ -336,7 +336,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return is_alternative<index>();
     }
 
@@ -350,7 +350,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, true>();
     }
 
@@ -363,7 +363,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, false>();
     }
     //!\}
@@ -542,7 +542,7 @@ protected:
     //!\endcond
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return rank_by_index_<index>(alternative);
     }
 

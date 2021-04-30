@@ -138,7 +138,7 @@ private:
     template <typename type>
     static constexpr bool is_unique_component =
         is_component<type> &&
-        (meta::find_index<component_list, type>::value == meta::reverse_find_index<component_list, type>::value);
+        (seqan3::list_traits::find<type, component_list> == meta::reverse_find_index<component_list, type>::value);
 
     // forward declaration: see implementation below
     template <typename alphabet_type, size_t index>
@@ -385,7 +385,7 @@ public:
         requires is_unique_component<type>
     //!\endcond
     {
-        return get<meta::find_index<component_list, type>::value>(l);
+        return get<seqan3::list_traits::find<type, component_list>>(l);
     }
 
     /*!\copybrief get
@@ -416,7 +416,7 @@ public:
         requires is_unique_component<type>
     //!\endcond
     {
-        return get<meta::find_index<component_list, type>::value>(l);
+        return get<seqan3::list_traits::find<type, component_list>>(l);
     }
 
     /*!\brief Implicit cast to a single letter. Works only if the type is unique in the type list.
