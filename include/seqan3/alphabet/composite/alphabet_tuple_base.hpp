@@ -132,8 +132,7 @@ private:
 
     //!\brief Is set to `true` if the type is contained in the type list.
     template <typename type>
-    static constexpr bool is_component =
-        meta::in<component_list, type>::value;
+    static constexpr bool is_component = seqan3::list_traits::contains<type, component_list>;
 
     //!\brief Is set to `true` if the type is uniquely contained in the type list.
     template <typename type>
