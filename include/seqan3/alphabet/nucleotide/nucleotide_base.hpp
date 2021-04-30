@@ -114,7 +114,8 @@ public:
      */
     constexpr derived_type complement() const noexcept
     {
-        return derived_type::complement_table[to_rank()];
+        return derived_type{}.assign_rank(derived_type{}.rank_complement(to_rank()));
+        // return derived_type::complement_table[to_rank()];
     }
     //!\}
 

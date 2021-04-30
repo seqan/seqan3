@@ -122,8 +122,21 @@ private:
         }()
     };
 
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna5, alphabet_size> complement_table;
+    //!\copydoc seqan3::dna4::rank_complement_table
+    static constexpr rank_type rank_complement_table[alphabet_size]
+    {
+        4, // T is complement of 'A'_dna5
+        2, // G is complement of 'C'_dna5
+        1, // C is complement of 'G'_dna5
+        3, // N is complement of 'N'_dna5
+        0  // A is complement of 'T'_dna5
+    };
+
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return rank_complement_table[rank];
+    }
 
     //!\copydoc seqan3::dna4::rank_to_char
     static constexpr char_type rank_to_char(rank_type const rank)
@@ -196,18 +209,5 @@ inline dna5_vector operator""_dna5(char const * s, std::size_t n)
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// dna5 (deferred definition)
-// ------------------------------------------------------------------
-
-constexpr std::array<dna5, dna5::alphabet_size> dna5::complement_table
-{
-    'T'_dna5,    // complement of 'A'_dna5
-    'G'_dna5,    // complement of 'C'_dna5
-    'C'_dna5,    // complement of 'G'_dna5
-    'N'_dna5,    // complement of 'N'_dna5
-    'A'_dna5     // complement of 'T'_dna5
-};
 
 } // namespace seqan3

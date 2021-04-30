@@ -117,8 +117,32 @@ private:
         }()
     };
 
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna16sam, alphabet_size> complement_table;
+    //!\copydoc seqan3::dna4::rank_complement_table
+    static constexpr rank_type rank_complement_table[alphabet_size]
+    {
+        15, // N is complement of '='_dna16sam  0
+        8,  // T is complement of 'A'_dna16sam  1
+        4,  // G is complement of 'C'_dna16sam  2
+        12, // K is complement of 'M'_dna16sam  3
+        2,  // C is complement of 'G'_dna16sam  4
+        10, // Y is complement of 'R'_dna16sam  5
+        6,  // S is complement of 'S'_dna16sam  6
+        14, // B is complement of 'V'_dna16sam  7
+        1,  // A is complement of 'T'_dna16sam  8
+        9,  // W is complement of 'W'_dna16sam  9
+        5,  // R is complement of 'Y'_dna16sam 10
+        13, // D is complement of 'H'_dna16sam 11
+        3,  // M is complement of 'K'_dna16sam 12
+        11, // H is complement of 'D'_dna16sam 13
+        7,  // V is complement of 'B'_dna16sam 14
+        15  // N is complement of 'N'_dna16sam 15
+    };
+
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return rank_complement_table[rank];
+    }
 
     /*!\copydoc seqan3::dna4::rank_to_char
      *
@@ -215,29 +239,5 @@ SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// complement deferred definition
-// ------------------------------------------------------------------
-
-constexpr std::array<dna16sam, dna16sam::alphabet_size> dna16sam::complement_table
-{
-    'N'_dna16sam,   // complement of '='_dna16sam
-    'T'_dna16sam,   // complement of 'A'_dna16sam
-    'G'_dna16sam,   // complement of 'C'_dna16sam
-    'K'_dna16sam,   // complement of 'M'_dna16sam
-    'C'_dna16sam,   // complement of 'G'_dna16sam
-    'Y'_dna16sam,   // complement of 'R'_dna16sam
-    'S'_dna16sam,   // complement of 'S'_dna16sam
-    'B'_dna16sam,   // complement of 'V'_dna16sam
-    'A'_dna16sam,   // complement of 'T'_dna16sam
-    'W'_dna16sam,   // complement of 'W'_dna16sam
-    'R'_dna16sam,   // complement of 'Y'_dna16sam
-    'D'_dna16sam,   // complement of 'H'_dna16sam
-    'M'_dna16sam,   // complement of 'K'_dna16sam
-    'H'_dna16sam,   // complement of 'D'_dna16sam
-    'V'_dna16sam,   // complement of 'B'_dna16sam
-    'N'_dna16sam    // complement of 'N'_dna16sam
-};
 
 } // namespace seqan3

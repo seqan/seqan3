@@ -131,6 +131,32 @@ private:
         }()
     };
 
+    //!\copydoc seqan3::dna4::rank_complement_table
+    static constexpr rank_type rank_complement_table[alphabet_size]
+    {
+        11, // T is complement of 'A'_dna15
+        12, // V is complement of 'B'_dna15
+        4,  // G is complement of 'C'_dna15
+        5,  // H is complement of 'D'_dna15
+        2,  // C is complement of 'G'_dna15
+        3,  // D is complement of 'H'_dna15
+        7,  // M is complement of 'K'_dna15
+        6,  // K is complement of 'M'_dna15
+        8,  // N is complement of 'N'_dna15
+        14, // Y is complement of 'R'_dna15
+        10, // S is complement of 'S'_dna15
+        0,  // A is complement of 'T'_dna15
+        1,  // B is complement of 'V'_dna15
+        13, // W is complement of 'W'_dna15
+        9   // R is complement of 'Y'_dna15
+    };
+
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return rank_complement_table[rank];
+    }
+
     //!\copydoc seqan3::dna4::rank_to_char
     static constexpr char_type rank_to_char(rank_type const rank)
     {
@@ -143,9 +169,6 @@ private:
         using index_t = std::make_unsigned_t<char_type>;
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
-
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<dna15, alphabet_size> complement_table;
 };
 
 // ------------------------------------------------------------------
@@ -205,28 +228,5 @@ inline dna15_vector operator""_dna15(char const * s, std::size_t n)
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// dna15 (deferred definition)
-// ------------------------------------------------------------------
-
-constexpr std::array<dna15, dna15::alphabet_size> dna15::complement_table
-{
-    'T'_dna15,    // complement of 'A'_dna15
-    'V'_dna15,    // complement of 'B'_dna15
-    'G'_dna15,    // complement of 'C'_dna15
-    'H'_dna15,    // complement of 'D'_dna15
-    'C'_dna15,    // complement of 'G'_dna15
-    'D'_dna15,    // complement of 'H'_dna15
-    'M'_dna15,    // complement of 'K'_dna15
-    'K'_dna15,    // complement of 'M'_dna15
-    'N'_dna15,    // complement of 'N'_dna15
-    'Y'_dna15,    // complement of 'R'_dna15
-    'S'_dna15,    // complement of 'S'_dna15
-    'A'_dna15,    // complement of 'T'_dna15
-    'B'_dna15,    // complement of 'V'_dna15
-    'W'_dna15,    // complement of 'W'_dna15
-    'R'_dna15     // complement of 'Y'_dna15
-};
 
 } // namespace seqan3
