@@ -226,9 +226,10 @@ public:
     //!\endcond
     constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        using alternative_t = seqan3::list_traits::front<
-                                  meta::find_if<alternatives,
-                                                detail::implicitly_convertible_from<indirect_alternative_t>>>;
+        using alternative_predicate = detail::implicitly_convertible_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
@@ -257,9 +258,10 @@ public:
     //!\endcond
     constexpr explicit alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        using alternative_t = seqan3::list_traits::front<
-                                  meta::find_if<alternatives,
-                                                detail::constructible_from<indirect_alternative_t>>>;
+        using alternative_predicate = detail::constructible_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
@@ -279,9 +281,10 @@ public:
     //!\endcond
     constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
-        using alternative_t = seqan3::list_traits::front<
-                                  meta::find_if<alternatives,
-                                                detail::assignable_from<indirect_alternative_t>>>;
+        using alternative_predicate = detail::assignable_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         alternative_t alternative{};
         alternative = rhs;
         assign_rank(rank_by_type_(alternative));
@@ -393,9 +396,10 @@ public:
                                                              alternative_types...>,
                             bool>
     {
-        using alternative_t =
-            seqan3::list_traits::front<meta::find_if<alternatives,
-                                       detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
+        using alternative_predicate = detail::weakly_equality_comparable_with_<indirect_alternative_type>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         return lhs.template is_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
     }
 
