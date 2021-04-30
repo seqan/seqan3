@@ -9,6 +9,7 @@
 # Usage process_compiler_error_log.py <log_file>
 #
 # Processes a build log and writes a GitHub-Markdown-formatted list of build errors to stdcout.
+import html
 import re
 import sys
 
@@ -24,7 +25,7 @@ counter = 1
 log = ''
 # One `group` (a string) is all messages in the log associated with one failing compilation
 for group in [match.groups()[0] for match in tokenise_regex.finditer(content)]:
-    error_message = re.search(error_regex, group).group().rstrip()
+    error_message = html.escape(re.search(error_regex, group).group().rstrip()[:110])
     log += '<details><summary>Error {}: <code>{}</code></summary>\n\n```text\n'.format(counter, error_message)
     log += '\n'.join(group.split('\n')[:30]).rstrip() # Only take first 30 lines
     log += '\n```\n</details>\n'
