@@ -16,8 +16,6 @@
 #include <functional>
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/detail/template_inspection.hpp>
 
 namespace seqan3

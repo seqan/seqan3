@@ -15,8 +15,6 @@
 #include <array>
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/configuration/detail/concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
