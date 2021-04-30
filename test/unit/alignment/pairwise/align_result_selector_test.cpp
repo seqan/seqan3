@@ -12,8 +12,6 @@
 #include <utility>
 #include <vector>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alignment/configuration/align_config_edit.hpp>
 #include <seqan3/alignment/configuration/align_config_method.hpp>
 #include <seqan3/alignment/configuration/align_config_output.hpp>

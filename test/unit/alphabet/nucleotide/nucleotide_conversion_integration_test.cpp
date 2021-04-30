@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
