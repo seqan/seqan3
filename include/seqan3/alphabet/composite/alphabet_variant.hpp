@@ -138,8 +138,8 @@ private:
     //!\brief Befriend the base type.
     friend base_t;
 
-    //!\brief A meta::list of the types of each alternative in the composite
-    using alternatives = meta::list<alternative_types...>;
+    //!\brief A seqan3::type_list of the types of each alternative in the composite
+    using alternatives = seqan3::type_list<alternative_types...>;
 
     static_assert(std::same_as<alternatives, meta::unique<alternatives>>,
                   "All types in a alphabet_variant must be distinct.");

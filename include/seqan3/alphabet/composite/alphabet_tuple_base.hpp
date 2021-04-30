@@ -16,8 +16,6 @@
 #include <seqan3/std/concepts>
 #include <utility>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/concept.hpp>
@@ -25,6 +23,7 @@
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
@@ -128,8 +127,8 @@ private:
                                 (1 * ... * alphabet_size<component_types>),
                                 void>; // no char type, because this is only semi_alphabet
 
-    //!\brief A meta::list The types of each component in the composite
-    using component_list = meta::list<component_types...>;
+    //!\brief A seqan3::type_list The types of each component in the composite
+    using component_list = seqan3::type_list<component_types...>;
 
     //!\brief Is set to `true` if the type is contained in the type list.
     template <typename type>
@@ -180,7 +179,7 @@ public:
     using seqan3_recursive_required_types =
         meta::concat<component_list,
                      detail::transformation_trait_or_t<detail::recursive_required_types<component_types>,
-                                                       meta::list<>>...>;
+                                                       seqan3::type_list<>>...>;
     //!\brief Make specialisations of this template identifiable in metapgrogramming contexts.
     //!\private
     static constexpr bool seqan3_alphabet_tuple_like = true;
