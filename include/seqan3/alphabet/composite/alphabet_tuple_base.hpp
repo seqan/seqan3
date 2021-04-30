@@ -20,6 +20,7 @@
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
@@ -616,9 +617,10 @@ private:
             std::array<rank_type, component_list::size() + 1> ret{};
             ret[0] = 1;
             size_t count = 1;
-            meta::for_each(meta::reverse<component_list>{}, [&] (auto alph) constexpr
+            seqan3::detail::for_each<meta::reverse<component_list>>([&] (auto alphabet_type_identity) constexpr
             {
-                ret[count] = static_cast<rank_type>(seqan3::alphabet_size<decltype(alph)> * ret[count - 1]);
+                using alphabet_t = typename decltype(alphabet_type_identity)::type;
+                ret[count] = static_cast<rank_type>(seqan3::alphabet_size<alphabet_t> * ret[count - 1]);
                 ++count;
             });
 
