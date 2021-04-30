@@ -74,5 +74,6 @@ int main()
 
     my_letter.assign_char('S'); // Characters other than A,C,G,T are implicitly converted to `A`.
 
-    seqan3::debug_stream << my_letter; // "A";
+    seqan3::debug_stream << my_letter << "\n"; // "A";
+    seqan3::debug_stream << seqan3::complement(my_letter) << "\n"; // "T";
 }
