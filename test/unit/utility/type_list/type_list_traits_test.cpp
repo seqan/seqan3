@@ -211,3 +211,25 @@ TEST(list_traits_detail, unique)
     EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int, int, int, int, float, float, float>{})),
                      (seqan3::type_list<int, float>));
 }
+
+TEST(list_traits_detail, reverse)
+{
+    auto reverse = [] (auto && type_list)
+    {
+        return seqan3::list_traits::detail::reverse(type_list);
+    };
+
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<>{})), (seqan3::type_list<>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<float>{})), (seqan3::type_list<float>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<float, double, char, short>{})),
+                     (seqan3::type_list<short, char, double, float>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int>{})), (seqan3::type_list<int>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int, int, int, int>{})),
+                     (seqan3::type_list<int, int, int, int>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<float, int>{})), (seqan3::type_list<int, float>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int, float>{})), (seqan3::type_list<float, int>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int, float, int, int, double, int, char, short, int>{})),
+                     (seqan3::type_list<int, short, char, int, double, int, int, float, int>));
+    EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int, int, int, int, float, float, float>{})),
+                     (seqan3::type_list<float, float, float, int, int, int, int>));
+}

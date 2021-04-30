@@ -615,7 +615,8 @@ private:
             std::array<rank_type, component_list::size() + 1> ret{};
             ret[0] = 1;
             size_t count = 1;
-            seqan3::detail::for_each<meta::reverse<component_list>>([&] (auto alphabet_type_identity) constexpr
+            using reverse_list_t = decltype(seqan3::list_traits::detail::reverse(component_list{}));
+            seqan3::detail::for_each<reverse_list_t>([&] (auto alphabet_type_identity) constexpr
             {
                 using alphabet_t = typename decltype(alphabet_type_identity)::type;
                 ret[count] = static_cast<rank_type>(seqan3::alphabet_size<alphabet_t> * ret[count - 1]);
