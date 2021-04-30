@@ -176,9 +176,9 @@ public:
     //!\brief Export this type's components and possibly the components' components in a visible manner.
     //!\private
     using seqan3_recursive_required_types =
-        meta::concat<component_list,
-                     detail::transformation_trait_or_t<detail::recursive_required_types<component_types>,
-                                                       seqan3::type_list<>>...>;
+        list_traits::concat<component_list,
+                            detail::transformation_trait_or_t<detail::recursive_required_types<component_types>,
+                                                              seqan3::type_list<>>...>;
     //!\brief Make specialisations of this template identifiable in metapgrogramming contexts.
     //!\private
     static constexpr bool seqan3_alphabet_tuple_like = true;
