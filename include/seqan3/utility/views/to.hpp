@@ -25,6 +25,6 @@ namespace seqan3::views
  * \details
  * \noapi{This is currently range-v3's to implementation.}
  */
-inline constexpr auto to = ::ranges::views::to;
+inline constexpr auto to = ::ranges::to;
 
 } // namespace seqan3::views
