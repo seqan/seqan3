@@ -64,114 +64,114 @@ TEST(list_traits, contains)
 TEST(list_traits, at)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::at<2, test_types_list>, double const>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::at<-2, test_types_list>, long>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::at<2, test_types_list>), double const);
+    EXPECT_SAME_TYPE((seqan3::list_traits::at<-2, test_types_list>), long);
 }
 
 TEST(list_traits, front)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::front<test_types_list>, int>));
+    EXPECT_SAME_TYPE(seqan3::list_traits::front<test_types_list>, int);
 }
 
 TEST(list_traits, back)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::back<test_types_list>, float>));
+    EXPECT_SAME_TYPE(seqan3::list_traits::back<test_types_list>, float);
 }
 
 TEST(list_traits, concat)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::concat<seqan3::type_list<int, bool &, double const>,
-                                                            seqan3::type_list<long, float>>, test_types_list>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::concat<seqan3::type_list<int, bool &, double const>,
+                                                  seqan3::type_list<long, float>>),
+                     test_types_list);
 
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::concat<seqan3::type_list<int, bool &, double const>,
-                                                            seqan3::type_list<long, float>,
-                                                            seqan3::type_list<>,
-                                                            seqan3::type_list<long &>>,
-                                seqan3::type_list<int, bool &, double const, long, float, long &>>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::concat<seqan3::type_list<int, bool &, double const>,
+                                                  seqan3::type_list<long, float>,
+                                                  seqan3::type_list<>,
+                                                  seqan3::type_list<long &>>),
+                     (seqan3::type_list<int, bool &, double const, long, float, long &>));
 }
 
 TEST(list_traits, drop_front)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop_front<test_types_list>,
-                                seqan3::type_list<bool &, double const, long, float>>));
+    EXPECT_SAME_TYPE(seqan3::list_traits::drop_front<test_types_list>,
+                     (seqan3::type_list<bool &, double const, long, float>));
 }
 
 TEST(list_traits, take)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take<0, test_types_list>, seqan3::type_list<>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take<3, test_types_list>,
-                                seqan3::type_list<int, bool &, double const>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take<5, test_types_list>, test_types_list>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::take<0, test_types_list>), seqan3::type_list<>);
+    EXPECT_SAME_TYPE((seqan3::list_traits::take<3, test_types_list>), (seqan3::type_list<int, bool &, double const>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::take<5, test_types_list>), test_types_list);
 }
 
 TEST(list_traits, drop)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop<0, test_types_list>, test_types_list>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop<3, test_types_list>, seqan3::type_list<long, float>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop<5, test_types_list>, seqan3::type_list<>>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop<0, test_types_list>), test_types_list);
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop<3, test_types_list>), (seqan3::type_list<long, float>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop<5, test_types_list>), seqan3::type_list<>);
 }
 
 TEST(list_traits, take_last)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take_last<0, test_types_list>, seqan3::type_list<>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take_last<3, test_types_list>,
-                                seqan3::type_list<double const, long, float>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::take_last<5, test_types_list>, test_types_list>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::take_last<0, test_types_list>), seqan3::type_list<>);
+    EXPECT_SAME_TYPE((seqan3::list_traits::take_last<3, test_types_list>),
+                     (seqan3::type_list<double const, long, float>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::take_last<5, test_types_list>), test_types_list);
 }
 
 TEST(list_traits, drop_last)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop_last<0, test_types_list>, test_types_list>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop_last<3, test_types_list>, seqan3::type_list<int, bool &>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::drop_last<5, test_types_list>, seqan3::type_list<>>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop_last<0, test_types_list>), test_types_list);
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop_last<3, test_types_list>), (seqan3::type_list<int, bool &>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::drop_last<5, test_types_list>), seqan3::type_list<>);
 }
 
 TEST(list_traits, split_after)
 {
     using test_types_list = seqan3::type_list<int, bool &, double const, long, float>;
     using split0 = seqan3::list_traits::split_after<0, test_types_list>;
-    EXPECT_TRUE((std::is_same_v<typename split0::first_type, seqan3::type_list<>>));
-    EXPECT_TRUE((std::is_same_v<typename split0::second_type, test_types_list>));
+    EXPECT_SAME_TYPE(typename split0::first_type, seqan3::type_list<>);
+    EXPECT_SAME_TYPE(typename split0::second_type, test_types_list);
 
     using split3 = seqan3::list_traits::split_after<3, test_types_list>;
-    EXPECT_TRUE((std::is_same_v<typename split3::first_type, seqan3::type_list<int, bool &, double const>>));
-    EXPECT_TRUE((std::is_same_v<typename split3::second_type, seqan3::type_list<long, float>>));
+    EXPECT_SAME_TYPE(typename split3::first_type, (seqan3::type_list<int, bool &, double const>));
+    EXPECT_SAME_TYPE(typename split3::second_type, (seqan3::type_list<long, float>));
 
 
     using split5 = seqan3::list_traits::split_after<5, test_types_list>;
-    EXPECT_TRUE((std::is_same_v<typename split5::first_type, test_types_list>));
-    EXPECT_TRUE((std::is_same_v<typename split5::second_type, seqan3::type_list<>>));
+    EXPECT_SAME_TYPE(typename split5::first_type, test_types_list);
+    EXPECT_SAME_TYPE(typename split5::second_type, seqan3::type_list<>);
 }
 
 TEST(list_traits, transform)
 {
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::transform<std::ranges::range_value_t,
-                                                               seqan3::type_list<>>,
-                                seqan3::type_list<>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::transform<std::ranges::range_value_t,
-                                                               seqan3::type_list<std::vector<int>, std::list<bool>>>,
-                                seqan3::type_list<int, bool>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::transform<std::ranges::range_reference_t,
-                                                               seqan3::type_list<std::vector<int>, std::list<bool>>>,
-                                seqan3::type_list<int &, bool &>>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::transform<std::ranges::range_value_t,
+                                                     seqan3::type_list<>>),
+                     seqan3::type_list<>);
+    EXPECT_SAME_TYPE((seqan3::list_traits::transform<std::ranges::range_value_t,
+                                                     seqan3::type_list<std::vector<int>, std::list<bool>>>),
+                     (seqan3::type_list<int, bool>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::transform<std::ranges::range_reference_t,
+                                                     seqan3::type_list<std::vector<int>, std::list<bool>>>),
+                     (seqan3::type_list<int &, bool &>));
 }
 
 TEST(list_traits, replace_at)
 {
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::replace_at<double, 0, seqan3::type_list<int, float, bool>>,
-                                seqan3::type_list<double, float, bool>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::replace_at<double, 1, seqan3::type_list<int, float, bool>>,
-                                seqan3::type_list<int, double, bool>>));
-    EXPECT_TRUE((std::is_same_v<seqan3::list_traits::replace_at<double, 2, seqan3::type_list<int, float, bool>>,
-                                seqan3::type_list<int, float, double>>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::replace_at<double, 0, seqan3::type_list<int, float, bool>>),
+                     (seqan3::type_list<double, float, bool>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::replace_at<double, 1, seqan3::type_list<int, float, bool>>),
+                     (seqan3::type_list<int, double, bool>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::replace_at<double, 2, seqan3::type_list<int, float, bool>>),
+                     (seqan3::type_list<int, float, double>));
 }
 
 template <typename type_list>
