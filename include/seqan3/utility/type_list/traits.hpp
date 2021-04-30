@@ -104,6 +104,30 @@ template <typename replace_t,
           typename ...pack_t>
 pack_traits::replace_at<replace_t, idx, pack_t...> replace_at(type_list<pack_t...>);
 
+//!\brief A helper for seqan3::list_traits::detail::unique [recursion anchor]
+template <typename query_t>
+type_list<> remove(type_list<>);
+
+//!\brief A helper for seqan3::list_traits::detail::unique [recursion]
+template <typename query_t, typename head_t, typename ...pack_t>
+auto remove(type_list<head_t, pack_t...>)
+{
+    if constexpr(std::same_as<query_t, head_t>)
+        return remove<query_t>(type_list<pack_t...>{});
+    else
+        return concat(type_list<head_t>{}, remove<query_t>(type_list<pack_t...>{}));
+}
+
+//!\brief A replacement for meta::unique [recursion anchor]
+inline constexpr type_list<> unique(type_list<>) { return {}; }
+
+//!\brief A replacement for meta::unique [recursion]
+template <typename head_t, typename ...pack_t>
+auto unique(type_list<head_t, pack_t...>)
+{
+    return concat(type_list<head_t>{}, unique(remove<head_t>(type_list<pack_t...>{})));
+}
+
 } // namespace seqan3::list_traits::detail
 
 // ----------------------------------------------------------------------------

@@ -137,9 +137,7 @@ private:
 
     //!\brief Is set to `true` if the type is uniquely contained in the type list.
     template <typename type>
-    static constexpr bool is_unique_component =
-        is_component<type> &&
-        (seqan3::list_traits::find<type, component_list> == meta::reverse_find_index<component_list, type>::value);
+    static constexpr bool is_unique_component = (seqan3::list_traits::count<type, component_list> == 1);
 
     // forward declaration: see implementation below
     template <typename alphabet_type, size_t index>
