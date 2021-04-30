@@ -65,24 +65,6 @@ SEQAN3_CONCEPT tuple_get = requires (tuple_t & v, tuple_t const & v_c)
 };
 //!\endcond
 
-/*!\brief   Helper type trait function to check for std::totally_ordered on all elements of
- *          the given tuple type.
- * \ingroup utility
- * \tparam  state_t   The last state of the fold operation.
- * \tparam  element_t The current processed element by the meta::fold operation.
- *
- * \returns std::true_type if std::totally_ordered<element_t> and state_t::value evaluate to `true`,
- *          std::false_type otherwise.
- */
-template <typename state_t, typename element_t>
-struct models_strict_totally_ordered
-{
-    //!\brief The resulting type definition.
-    using type =  std::conditional_t<state_t::value && std::totally_ordered<element_t>,
-                                    std::true_type,
-                                    std::false_type>;
-};
-
 /*!\brief   Transformation trait to expose the tuple element types as seqan3::type_list
  * \ingroup utility
  * \tparam  tuple_t The tuple to extract the element types from.
@@ -115,6 +97,26 @@ public:
 template <detail::tuple_size tuple_t>
 using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
 
+/*!\brief Helper type function to check for std::totally_ordered on all elements of the given tuple type.
+ * \ingroup utility
+ */
+template <typename ...elements_t>
+inline constexpr auto all_elements_model_totally_ordered(seqan3::type_list<elements_t...>)
+    -> std::bool_constant<(std::totally_ordered<elements_t> && ... && true)>;
+
+/*!\brief Helper type trait function to check for std::totally_ordered on all elements of the given tuple type.
+ * \tparam  tuple_t The tuple to check if all elements model std::totally_ordered.
+ * \ingroup utility
+ */
+template <typename tuple_t>
+//!\cond
+    requires requires()
+    {
+        { detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}) };
+    }
+//!\endcond
+static constexpr bool all_elements_model_totally_ordered_v =
+    decltype(detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}))::value;
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -183,10 +185,8 @@ SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && re
     //              empty. Furthermore, the std::totally_ordered can only be checked if all elements in the
     //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
     requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-                (detail::tuple_get<std::remove_cvref_t<t>> &&
-                (!meta::fold<detail::tuple_type_list_t<std::remove_cvref_t<t>>,
-                             std::true_type,
-                             meta::quote_trait<detail::models_strict_totally_ordered>>::value ||
+             (detail::tuple_get<std::remove_cvref_t<t>> &&
+              (!detail::all_elements_model_totally_ordered_v<std::remove_cvref_t<t>> ||
                 std::totally_ordered<std::remove_cvref_t<t>>));
 };
 //!\endcond
