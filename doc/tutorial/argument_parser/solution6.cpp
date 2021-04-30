@@ -1,8 +1,6 @@
 #include <fstream>
 #include <numeric>
 
-#include <range/v3/view/split.hpp>
-
 #include <seqan3/argument_parser/all.hpp> // includes all necessary headers
 #include <seqan3/core/debug_stream.hpp>   // our custom output stream
 #include <seqan3/std/charconv>            // includes std::from_chars

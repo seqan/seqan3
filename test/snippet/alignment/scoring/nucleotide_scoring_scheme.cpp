@@ -1,5 +1,3 @@
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
