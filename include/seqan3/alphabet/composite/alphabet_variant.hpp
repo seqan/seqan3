@@ -455,10 +455,10 @@ protected:
      * \tparam throws Whether to perform checks (and throw) or not.
      */
     template <size_t index, bool throws>
-    constexpr auto convert_impl() const noexcept(!throws) -> meta::at_c<alternatives, index>
+    constexpr auto convert_impl() const noexcept(!throws) -> seqan3::list_traits::at<index, alternatives>
     {
         static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
-        using alternative_t = meta::at_c<alternatives, index>;
+        using alternative_t = seqan3::list_traits::at<index, alternatives>;
 
         if constexpr (throws)
         {

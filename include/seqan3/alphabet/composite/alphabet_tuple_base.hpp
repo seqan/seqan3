@@ -366,7 +366,7 @@ public:
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
-        using t = meta::at_c<component_list, index>;
+        using t = seqan3::list_traits::at<index, component_list>;
         t val{};
 
         seqan3::assign_rank_to(l.to_component_rank<index>(), val);
@@ -400,7 +400,7 @@ public:
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
-        using t = meta::at_c<component_list, index>;
+        using t = seqan3::list_traits::at<index, component_list>;
 
         return seqan3::assign_rank_to(l.to_component_rank<index>(), t{});
     }
@@ -810,7 +810,7 @@ template <std::size_t i, seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
-    using type = meta::at_c<typename tuple_t::seqan3_required_types, i>;
+    using type = seqan3::list_traits::at<i, typename tuple_t::seqan3_required_types>;
 };
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
