@@ -572,7 +572,7 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
  *</td>
  *<td style="border: 1px solid black"> <code>\41</code>–<code>\57</code>
  *</td>
- *<td style="border: 1px solid black"> <code>!"#$%&amp;'()*+,-./</code>
+ *<td style="border: 1px solid black"> <code>!\"#$%&amp;'()*+,-./</code>
  *</td>
  *<td style="background:#ff9090; color:black; vertical-align: middle; text-align: center; border: 1px solid black;" class="table-no"> <b><code>0</code></b>
  *</td>
