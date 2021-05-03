@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#pragma once
+
 #include <gtest/gtest.h>
 
 #include <range/v3/algorithm/equal.hpp>

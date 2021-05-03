@@ -13,11 +13,11 @@
 
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/test/range/container_test_template.hpp>
 #include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/container/small_vector.hpp>
 
-#include "container_test_template.hpp"
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using small_vector_over_dna4_t = seqan3::small_vector<seqan3::dna4, 1000>;
 INSTANTIATE_TYPED_TEST_SUITE_P(small_vector, container_over_dna4_test, small_vector_over_dna4_t, );
