@@ -14,8 +14,8 @@
 #include <string>
 
 #include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
+#include <seqan3/utility/range/concept.hpp>
 
 // ============================================================================
 //  test templates

@@ -16,7 +16,6 @@
 
 #include <seqan3/alphabet/hash.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/concept.hpp>
 
 namespace std
 {

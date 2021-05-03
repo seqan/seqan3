@@ -13,7 +13,6 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 using seqan3::operator""_dna5;
