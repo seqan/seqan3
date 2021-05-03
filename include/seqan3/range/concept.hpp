@@ -6,12 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Additional non-standard concepts for ranges.
+ * \brief [DEPRECATED] Additional non-standard concepts for ranges.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/alphabet/range/sequence.hpp> or
+ *             \#include <seqan3/utility/range/concept.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/alphabet/range/concept.hpp>
+#include <seqan3/alphabet/range/sequence.hpp>
 #include <seqan3/utility/range/concept.hpp>
 
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0 Please #include <seqan3/alphabet/range/sequence.hpp> or #include <seqan3/utility/range/concept.hpp> instead.")
