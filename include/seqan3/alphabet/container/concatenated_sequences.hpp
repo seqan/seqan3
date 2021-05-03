@@ -164,7 +164,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/range/container/concatenated_sequences.cpp
+ * \include test/snippet/alphabet/container/concatenated_sequences.cpp
  *
  * ### Exceptions
  *
@@ -1057,7 +1057,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/concatenated_sequences_insert.cpp
+     * \include test/snippet/alphabet/container/concatenated_sequences_insert.cpp
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
@@ -1093,7 +1093,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/concatenated_sequences_insert2.cpp
+     * \include test/snippet/alphabet/container/concatenated_sequences_insert2.cpp
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
