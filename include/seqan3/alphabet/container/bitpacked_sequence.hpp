@@ -1145,4 +1145,19 @@ public:
     //!\endcond
 };
 
+#ifdef SEQAN3_DEPRECATED_310
+//!\deprecated Use seqan3::bitpacked_sequence instead.
+#if SEQAN3_DOXYGEN_ONLY(1)0
+template <writable_semialphabet alphabet_type>
+struct bitcompressed_vector : public bitpacked_sequence<alphabet_type>
+{};
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
+//!\cond
+template <writable_semialphabet alphabet_type>
+    requires std::regular<alphabet_type>
+using bitcompressed_vector SEQAN3_DEPRECATED_310 = bitpacked_sequence<alphabet_type>;
+//!\endcond
+#endif // SEQAN3_DEPRECATED_310
+
 } // namespace seqan3
