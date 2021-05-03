@@ -16,9 +16,9 @@
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
-#include "container_test_template.hpp"
+#include "../../range/container/container_test_template.hpp"
 
-INSTANTIATE_TYPED_TEST_SUITE_P(bitcompressed, container_over_dna4_test, seqan3::bitpacked_sequence<seqan3::dna4>, );
+INSTANTIATE_TYPED_TEST_SUITE_P(bitpacked_sequence, container_over_dna4_test, seqan3::bitpacked_sequence<seqan3::dna4>, );
 
 using seqan3::operator""_dna4;
 

@@ -1,0 +1,1 @@
+seqan3_test(bitpacked_sequence_test.cpp)

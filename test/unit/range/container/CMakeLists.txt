@@ -1,7 +1,6 @@
 seqan3_test(aligned_allocator_test.cpp)
 seqan3_test(container_concept_test.cpp)
 seqan3_test(container_of_container_test.cpp)
-seqan3_test(bitcompressed_vector_test.cpp)
 seqan3_test(debug_stream_container_of_container_test.cpp)
 seqan3_test(debug_stream_container_test.cpp)
 seqan3_test(dynamic_bitset_test.cpp)
