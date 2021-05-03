@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  * \brief Create a mask composite which can be applied with another alphabet.
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
 #pragma once
@@ -18,15 +18,19 @@
 namespace seqan3
 {
 /*!\brief Implementation of a masked alphabet to be used for tuple composites.
- * \ingroup mask
  * \implements seqan3::writable_semialphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *
+ * \ingroup mask
+ *
  * \details
+ *
  * This alphabet is not usually used directly, but instead via seqan3::masked.
- * For more information see the \link mask Mask submodule \endlink.
  *
  * \include test/snippet/alphabet/mask/mask.cpp
+ *
+ * \see \link mask Mask submodule \endlink, it contains an explanation of hard-masking (UNKNOWN character) and
+ *      soft-masking (lower/upper case letters).
  *
  * \stableapi{Since version 3.1.}
  */

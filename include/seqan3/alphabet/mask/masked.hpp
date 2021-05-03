@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  * \brief Extends a given alphabet with the mask alphabet.
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
 #pragma once
@@ -19,20 +19,24 @@
 
 namespace seqan3
 {
-/*!\brief Implementation of a masked composite, which extends a given alphabet
- * with a mask.
- * \ingroup mask
+/*!\brief Implementation of a masked composite, which extends a given alphabet with a mask.
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *
  * \tparam sequence_alphabet_t Type of the first letter; must satisfy seqan3::writable_alphabet and std::regular.
  *
+ * \ingroup mask
+ *
  * \details
- * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the
- * masked alphabet. It allows one to specify which portions of a sequence should be masked,
- * without losing additional information by replacing the sequence directly.
+ *
+ * The masked composite represents a seqan3::alphabet_tuple_base of any given alphabet with the masked alphabet. It
+ * allows one to specify which portions of a sequence should be masked, without losing additional information by
+ * replacing the sequence directly.
  *
  * \include test/snippet/alphabet/mask/masked.cpp
+ *
+ * \see \link mask Mask submodule \endlink, it contains an explanation of hard-masking (UNKNOWN character) and
+ *      soft-masking (lower/upper case letters).
  *
  * \stableapi{Since version 3.1.}
  */
