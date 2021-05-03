@@ -1,3 +1,0 @@
-seqan3_test(container_of_container_test.cpp)
-seqan3_test(debug_stream_container_of_container_test.cpp)
-seqan3_test(debug_stream_container_test.cpp)
