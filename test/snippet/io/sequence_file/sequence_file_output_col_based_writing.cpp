@@ -1,10 +1,10 @@
 #include <sstream>
 #include <string>
 
+#include <seqan3/alphabet/container/concatenated_sequences.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 using namespace seqan3::literals;
