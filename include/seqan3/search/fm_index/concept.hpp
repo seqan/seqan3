@@ -12,12 +12,12 @@
 
 #pragma once
 
+#include <seqan3/std/concepts>
 #include <type_traits>
 
 #include <sdsl/suffix_arrays.hpp>
 
-#include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/core/platform.hpp>
 
 namespace seqan3::detail
 {

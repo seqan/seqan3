@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/std/ranges>
 #include <string>
 #include <utility>
 
 #include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/container/small_string.hpp>
-#include <seqan3/std/ranges>
 #include <seqan3/test/pretty_printing.hpp>
 
 using namespace std::literals;

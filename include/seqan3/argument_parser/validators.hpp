@@ -25,7 +25,6 @@
 #include <seqan3/core/detail/debug_stream_range.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>

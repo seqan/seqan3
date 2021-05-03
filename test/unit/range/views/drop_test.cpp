@@ -18,7 +18,7 @@
 
 #include <range/v3/view/unique.hpp>
 
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/core/platform.hpp>
 #ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/drop.hpp>
 #endif // SEQAN3_DEPRECATED_310
