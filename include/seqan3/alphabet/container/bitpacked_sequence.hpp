@@ -46,7 +46,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/range/container/bitcompressed_vector.cpp
+ * \include test/snippet/alphabet/container/bitpacked_sequence.cpp
  *
  * ### Thread safety
  *
