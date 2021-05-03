@@ -11,9 +11,9 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/small_string.hpp>
 #include <seqan3/test/pretty_printing.hpp>
+#include <seqan3/utility/container/concept.hpp>
+#include <seqan3/utility/container/small_string.hpp>
 
 using namespace std::literals;
 

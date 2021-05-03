@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/dynamic_bitset.hpp>
 #include <seqan3/test/cereal.hpp>
+#include <seqan3/utility/container/concept.hpp>
+#include <seqan3/utility/container/dynamic_bitset.hpp>
 #include <seqan3/utility/detail/bits_of.hpp>
 
 // Standard construction.

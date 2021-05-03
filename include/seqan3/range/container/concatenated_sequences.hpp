@@ -18,8 +18,8 @@
 #include <vector>
 
 #include <seqan3/core/concept/cereal.hpp>
-#include <seqan3/range/container/concept.hpp>
 #include <seqan3/range/views/as_const.hpp>
+#include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/slice.hpp>
 

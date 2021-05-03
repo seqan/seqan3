@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/range/container/dynamic_bitset.hpp>
+#include <seqan3/utility/container/dynamic_bitset.hpp>
 
 namespace seqan3
 {

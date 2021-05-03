@@ -21,7 +21,7 @@
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/utility/container/concept.hpp>
 
 TEST(range_concept, forward_range)
 {

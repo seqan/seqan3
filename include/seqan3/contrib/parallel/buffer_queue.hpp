@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/parallel/detail/spin_delay.hpp>
 
 namespace seqan3::contrib

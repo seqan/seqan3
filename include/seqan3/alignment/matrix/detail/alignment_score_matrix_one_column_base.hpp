@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 

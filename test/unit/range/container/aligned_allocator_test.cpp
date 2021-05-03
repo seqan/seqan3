@@ -13,7 +13,7 @@
 #include <map>
 #include <vector>
 
-#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
 
 // standard construction.
 TEST(aligned_allocator, standard_construction)

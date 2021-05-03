@@ -11,10 +11,10 @@
 #include <string>
 #include <utility>
 
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/small_vector.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/container/concept.hpp>
+#include <seqan3/utility/container/small_vector.hpp>
 
 #include "container_test_template.hpp"
 #include "../iterator_test_template.hpp"
