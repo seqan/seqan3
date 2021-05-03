@@ -20,7 +20,6 @@
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/range/container/small_string.hpp>
-#include <seqan3/range/detail/random_access_iterator.hpp>
 
 namespace seqan3::detail
 {

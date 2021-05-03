@@ -17,7 +17,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/core/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>

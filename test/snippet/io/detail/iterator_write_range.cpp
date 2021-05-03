@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/range/detail/misc.hpp>
 
 int main()
 {

@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/detail/random_access_iterator.hpp>
+#include <seqan3/core/range/detail/random_access_iterator.hpp>
 
 #include "../iterator_test_template.hpp"
 
