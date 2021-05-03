@@ -12,10 +12,11 @@
 
 #pragma once
 
+#include <seqan3/std/ranges>
+
 #include <range/v3/range/conversion.hpp>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/std/ranges>
 
 namespace seqan3::views
 {
@@ -25,6 +26,10 @@ namespace seqan3::views
  * \details
  * \noapi{This is currently range-v3's to implementation.}
  */
-inline constexpr auto to = ::ranges::to;
+#if SEQAN3_DOXYGEN_ONLY(1)0
+inline constexpr auto to;
+#else // ^^^ doxygen only / real import vvv
+using ::ranges::to;
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
 
 } // namespace seqan3::views
