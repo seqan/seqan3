@@ -118,6 +118,19 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 
 #### Alphabet
 
+* We relaxed some requirements of `seqan3::alphabet_base<alphabet_t>`
+  ([\#2427](https://github.com/seqan/seqan3/pull/2427)):
+  * Old requirements: `alphabet_t::rank_to_char` and `alphabet_t::char_to_rank` must be lookup tables.
+  * New requirements: `alphabet_t::rank_to_char` and `alphabet_t::char_to_rank` must be static member functions.
+
+  This allows for more flexible rank <-> char conversion implementations. Lookup tables are still possible within those 
+  static member functions. However, alphabets that do not need a lookup table can now use easier and/or more efficient
+  implementations. For example, `seqan3::gap` always returns rank `0` or char `-`, or `seqan3::phred42` where the rank 
+  and char representations are offset by a fixed value.
+* We relaxed a requirement of `seqan3::nucleotide_base<alphabet_t>`
+  ([\#2584](https://github.com/seqan/seqan3/pull/2584)):
+  * Old requirement: `alphabet_t::complement_table` must be a lookup table.
+  * New requirement: `alphabet_t::rank_complement` must be a static member function.
 * Removed seqan3::char_is_valid_for requirement from seqan3::writable_alphabet and
   seqan3::detail::writable_constexpr_alphabet
   ([\#2337](https://github.com/seqan/seqan3/pull/2337)).
