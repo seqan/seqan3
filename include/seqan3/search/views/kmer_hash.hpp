@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/range/hash.hpp>
+#include <seqan3/alphabet/range/hash.hpp>
 #include <seqan3/search/kmer_index/shape.hpp>
 #include <seqan3/utility/math.hpp>
 
