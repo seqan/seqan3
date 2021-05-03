@@ -3,7 +3,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/argument_parser/all.hpp>                       // include argument parser
 #include <seqan3/core/debug_stream.hpp>                         // for debug_stream
-#include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>     // include bitcompressed vector
 
 int main(int argc, char ** argv)
 {

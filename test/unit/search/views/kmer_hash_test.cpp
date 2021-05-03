@@ -9,10 +9,10 @@
 #include <list>
 #include <type_traits>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

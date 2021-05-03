@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
@@ -44,7 +44,7 @@ TEST(bitcompressed_vector_test, issue1743_view_combinability)
 
 // https://github.com/seqan/product_backlog/issues/371
 TEST(bitcompressed_vector_test, issue371)
-{ 
+{
     using alphabet_t = seqan3::alphabet_variant<seqan3::dna4, seqan3::dna15>;
     seqan3::bitcompressed_vector<alphabet_t> source{};
     auto it = source.begin();

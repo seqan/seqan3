@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
