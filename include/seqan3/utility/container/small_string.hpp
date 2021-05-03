@@ -35,7 +35,7 @@ namespace seqan3
  *
  * Usage:
  *
- * \include test/snippet/range/container/small_string.cpp
+ * \include test/snippet/utility/container/small_string.cpp
  *
  * \experimentalapi{Experimental since version 3.1.}
  */

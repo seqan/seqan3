@@ -39,7 +39,7 @@ namespace seqan3
  *
  * ### Example
  *
- * \include test/snippet/range/container/dynamic_bitset_usage.cpp
+ * \include test/snippet/utility/container/dynamic_bitset_usage.cpp
  *
  * ### Thread safety
  *
@@ -231,7 +231,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_construct_uint64_t.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_construct_uint64_t.cpp
      *
      * ### Complexity
      *
@@ -360,7 +360,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_construct_string.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_construct_string.cpp
      *
      * ### Complexity
      *
@@ -562,7 +562,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_begin.cpp
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
@@ -589,7 +589,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_begin.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_begin.cpp
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
@@ -625,7 +625,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_binary_and_member.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_binary_and_member.cpp
      *
      * ### Exception
      *
@@ -655,7 +655,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_binary_or_member.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_binary_or_member.cpp
      *
      * ### Exception
      *
@@ -685,7 +685,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_binary_xor_member.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_binary_xor_member.cpp
      *
      * ### Exception
      *
@@ -711,7 +711,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_flip.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_flip.cpp
      *
      * ### Exception
      *
@@ -742,7 +742,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_shift_left_inplace.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_shift_left_inplace.cpp
      *
      * ### Exception
      *
@@ -771,7 +771,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_shift_right_inplace.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_shift_right_inplace.cpp
      *
      * ### Exception
      *
@@ -799,7 +799,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_shift_right_copy.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_shift_right_copy.cpp
      *
      * ### Exception
      *
@@ -828,7 +828,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_shift_left_copy.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_shift_left_copy.cpp
      *
      * ### Exception
      *
@@ -856,7 +856,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_set_all.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_set_all.cpp
      *
      * ### Exception
      *
@@ -884,7 +884,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_set_pos.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_set_pos.cpp
      *
      * ### Exception
      *
@@ -912,7 +912,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_reset_all.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_reset_all.cpp
      *
      * ### Exception
      *
@@ -939,7 +939,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_reset_pos.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_reset_pos.cpp
      *
      * ### Exception
      *
@@ -964,7 +964,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_flip_all.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_flip_all.cpp
      *
      * ### Exception
      *
@@ -992,7 +992,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_flip_pos.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_flip_pos.cpp
      *
      * ### Exception
      *
@@ -1104,7 +1104,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_subscript.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_subscript.cpp
      *
      * ### Complexity
      *
@@ -1590,7 +1590,7 @@ public:
      *
      * ### Example
      *
-     * \include test/snippet/range/container/dynamic_bitset_resize.cpp
+     * \include test/snippet/utility/container/dynamic_bitset_resize.cpp
      *
      * ### Complexity
      *

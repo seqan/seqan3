@@ -38,7 +38,7 @@ namespace seqan3
  * specified by the value `alignment`. Otherwise, the storage is aligned for any object that does not have new-extended
  * alignment, e.g. `int` or `double`, and is of the requested size.
  *
- * \include test/snippet/range/container/aligned_allocator.cpp
+ * \include test/snippet/utility/container/aligned_allocator.cpp
  *
  * Will output something like:
  * ```console
