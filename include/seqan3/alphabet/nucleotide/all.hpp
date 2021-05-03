@@ -55,7 +55,7 @@
  *   3. if you use specialised algorithms that profit from a 2-bit representation, use seqan3::dna4
  *   4. if you are doing only RNA input/output, use the respective seqan3::rna4, seqan3::rna5, seqan3::rna15 type
  *   5. to actually save space from using smaller alphabets, you need a compressed container (e.g.
- *      seqan3::bitcompressed_vector)
+ *      seqan3::bitpacked_sequence)
  *   6. if you are working with bisulfite data use seqan3::dna3bs
  *
  * ###Printing and conversion to char

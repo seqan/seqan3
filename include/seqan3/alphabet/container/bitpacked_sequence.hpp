@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::bitcompressed_vector.
+ * \brief Provides seqan3::bitpacked_sequence.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -37,12 +37,12 @@ namespace seqan3
  * \ingroup container
  *
  * This class template behaves just like std::vector<alphabet_type> but has an internal representation where
- * multiple values are packed into a single byte/word to save space, e.g. seqan3::bitcompressed_vector<seqan3::dna4>
+ * multiple values are packed into a single byte/word to save space, e.g. seqan3::bitpacked_sequence<seqan3::dna4>
  * uses a quarter of of the memory that std::vector<seqan3::dna4> uses, because a single seqan3::dna4 letter can be
  * represented in two bits (instead of 8 which is the lower bound for a single object in C++).
  *
  * The disadvantages are slightly slower operations and unsafety towards parallel writes to adjacent positions
- * in the seqan3::bitcompressed_vector.
+ * in the seqan3::bitpacked_sequence.
  *
  * ### Example
  *
@@ -64,7 +64,7 @@ template <writable_semialphabet alphabet_type>
 //!\cond
     requires std::regular<alphabet_type>
 //!\endcond
-class bitcompressed_vector
+class bitpacked_sequence
 {
 private:
     //!\brief The number of bits needed to represent a single letter of the alphabet_type.
@@ -78,7 +78,7 @@ private:
     //!\brief The data storage.
     data_type data;
 
-    //!\brief Proxy data type returned by seqan3::bitcompressed_vector as reference to element.
+    //!\brief Proxy data type returned by seqan3::bitpacked_sequence as reference to element.
     class reference_proxy_type : public alphabet_proxy<reference_proxy_type, alphabet_type>
     {
     private:
@@ -105,11 +105,11 @@ private:
          */
         //!\brief Deleted, because using this proxy without a parent would be undefined behaviour.
         reference_proxy_type() = delete;
-        constexpr reference_proxy_type(reference_proxy_type const &)             noexcept = default; //!< Defaulted.
-        constexpr reference_proxy_type(reference_proxy_type &&)                  noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type const &) noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type &&) noexcept = default; //!< Defaulted.
         constexpr reference_proxy_type & operator=(reference_proxy_type const &) noexcept = default; //!< Defaulted.
-        constexpr reference_proxy_type & operator=(reference_proxy_type &&)      noexcept = default; //!< Defaulted.
-        ~reference_proxy_type()                                                  noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type & operator=(reference_proxy_type &&) noexcept = default; //!< Defaulted.
+        ~reference_proxy_type() noexcept = default; //!< Defaulted.
 
         //!\brief Initialise from internal proxy type.
         reference_proxy_type(std::ranges::range_reference_t<data_type> const & internal) noexcept :
@@ -152,12 +152,12 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    using iterator          = detail::random_access_iterator<bitcompressed_vector>;
+    using iterator          = detail::random_access_iterator<bitpacked_sequence>;
     /*!\brief The const_iterator type of this container (a random access iterator).
      * \details
      * \stableapi{Since version 3.1.}
      */
-    using const_iterator    = detail::random_access_iterator<bitcompressed_vector const>;
+    using const_iterator    = detail::random_access_iterator<bitpacked_sequence const>;
     /*!\brief A signed integer type (usually std::ptrdiff_t)
      * \details
      * \stableapi{Since version 3.1.}
@@ -178,12 +178,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bitcompressed_vector()                                                   = default; //!< Defaulted.
-    constexpr bitcompressed_vector(bitcompressed_vector const &)             = default; //!< Defaulted.
-    constexpr bitcompressed_vector(bitcompressed_vector &&)                  = default; //!< Defaulted.
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector const &) = default; //!< Defaulted.
-    constexpr bitcompressed_vector & operator=(bitcompressed_vector &&)      = default; //!< Defaulted.
-    ~bitcompressed_vector()                                                  = default; //!< Defaulted.
+    bitpacked_sequence() = default; //!< Defaulted.
+    constexpr bitpacked_sequence(bitpacked_sequence const &) = default; //!< Defaulted.
+    constexpr bitpacked_sequence(bitpacked_sequence &&) = default; //!< Defaulted.
+    constexpr bitpacked_sequence & operator=(bitpacked_sequence const &) = default; //!< Defaulted.
+    constexpr bitpacked_sequence & operator=(bitpacked_sequence &&) = default; //!< Defaulted.
+    ~bitpacked_sequence() = default; //!< Defaulted.
 
     /*!\brief Construct from a different range.
      * \tparam other_range_t The type of range to construct from; must satisfy std::ranges::input_range and
@@ -202,12 +202,12 @@ public:
      */
     template <typename other_range_t>
     //!\cond
-        requires (!std::same_as<bitcompressed_vector, std::remove_cvref_t<other_range_t>>) &&
+        requires (!std::same_as<bitpacked_sequence, std::remove_cvref_t<other_range_t>>) &&
                  std::ranges::input_range<other_range_t> &&
                  has_same_value_type_v<other_range_t>
     //!\endcond
-    explicit bitcompressed_vector(other_range_t && range) :
-        bitcompressed_vector{std::ranges::begin(range), std::ranges::end(range)}
+    explicit bitpacked_sequence(other_range_t && range) :
+        bitpacked_sequence{std::ranges::begin(range), std::ranges::end(range)}
     {}
 
     /*!\brief Construct with `count` times `value`.
@@ -224,7 +224,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    bitcompressed_vector(size_type const count, value_type const value) :
+    bitpacked_sequence(size_type const count, value_type const value) :
         data(count, to_rank(value))
     {}
 
@@ -246,7 +246,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
-    bitcompressed_vector(begin_iterator_type begin_it, end_iterator_type end_it)
+    bitpacked_sequence(begin_iterator_type begin_it, end_iterator_type end_it)
     //!\cond
         requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
                  std::common_reference_with<std::iter_value_t<begin_iterator_type>, value_type>
@@ -268,8 +268,8 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    bitcompressed_vector(std::initializer_list<value_type> ilist) :
-        bitcompressed_vector(std::begin(ilist), std::end(ilist))
+    bitpacked_sequence(std::initializer_list<value_type> ilist) :
+        bitpacked_sequence(std::begin(ilist), std::end(ilist))
     {}
 
     /*!\brief Assign from `std::initializer_list`.
@@ -285,7 +285,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    bitcompressed_vector & operator=(std::initializer_list<value_type> ilist)
+    bitpacked_sequence & operator=(std::initializer_list<value_type> ilist)
     {
         assign(std::begin(ilist), std::end(ilist));
         return *this;
@@ -312,7 +312,7 @@ public:
         requires std::common_reference_with<std::ranges::range_value_t<other_range_t>, value_type>
     //!\endcond
     {
-        bitcompressed_vector rhs{std::forward<other_range_t>(range)};
+        bitpacked_sequence rhs{std::forward<other_range_t>(range)};
         swap(rhs);
     }
 
@@ -332,7 +332,7 @@ public:
      */
     void assign(size_type const count, value_type const value)
     {
-        bitcompressed_vector rhs{count, value};
+        bitpacked_sequence rhs{count, value};
         swap(rhs);
     }
 
@@ -360,7 +360,7 @@ public:
                  std::common_reference_with<std::iter_value_t<begin_iterator_type>, value_type>
     //!\endcond
     {
-        bitcompressed_vector rhs{begin_it, end_it};
+        bitpacked_sequence rhs{begin_it, end_it};
         swap(rhs);
     }
 
@@ -474,7 +474,7 @@ public:
     {
         if (i >= size()) // [[unlikely]]
         {
-            throw std::out_of_range{"Trying to access element behind the last in bitcompressed_vector."};
+            throw std::out_of_range{"Trying to access element behind the last in bitpacked_sequence."};
         }
         return (*this)[i];
     }
@@ -484,7 +484,7 @@ public:
     {
         if (i >= size()) // [[unlikely]]
         {
-            throw std::out_of_range{"Trying to access element behind the last in bitcompressed_vector."};
+            throw std::out_of_range{"Trying to access element behind the last in bitpacked_sequence."};
         }
         return (*this)[i];
     }
@@ -1034,13 +1034,13 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    constexpr void swap(bitcompressed_vector & rhs) noexcept
+    constexpr void swap(bitpacked_sequence & rhs) noexcept
     {
         std::swap(data, rhs.data);
     }
 
     //!\copydoc swap()
-    constexpr void swap(bitcompressed_vector && rhs) noexcept
+    constexpr void swap(bitpacked_sequence && rhs) noexcept
     {
         std::swap(data, rhs.data);
     }
@@ -1059,13 +1059,13 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    friend constexpr void swap(bitcompressed_vector & lhs, bitcompressed_vector & rhs) noexcept
+    friend constexpr void swap(bitpacked_sequence & lhs, bitpacked_sequence & rhs) noexcept
     {
         std::swap(lhs, rhs);
     }
 
     //!\overload
-    friend constexpr void swap(bitcompressed_vector && lhs, bitcompressed_vector && rhs) noexcept
+    friend constexpr void swap(bitpacked_sequence && lhs, bitpacked_sequence && rhs) noexcept
     {
         std::swap(lhs, rhs);
     }
@@ -1079,7 +1079,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator==(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator==(bitpacked_sequence const & rhs) const noexcept
     {
         return data == rhs.data;
     }
@@ -1088,7 +1088,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator!=(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator!=(bitpacked_sequence const & rhs) const noexcept
     {
         return data != rhs.data;
     }
@@ -1097,7 +1097,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator<(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator<(bitpacked_sequence const & rhs) const noexcept
     {
         return data < rhs.data;
     }
@@ -1106,7 +1106,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator>(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator>(bitpacked_sequence const & rhs) const noexcept
     {
         return data > rhs.data;
     }
@@ -1115,7 +1115,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator<=(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator<=(bitpacked_sequence const & rhs) const noexcept
     {
         return data <= rhs.data;
     }
@@ -1124,7 +1124,7 @@ public:
      * \details
      * \stableapi{Since version 3.1.}
      */
-    constexpr bool operator>=(bitcompressed_vector const & rhs) const noexcept
+    constexpr bool operator>=(bitpacked_sequence const & rhs) const noexcept
     {
         return data >= rhs.data;
     }

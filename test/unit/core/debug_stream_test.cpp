@@ -141,7 +141,7 @@ TEST(debug_stream_test, range_of_alphabet)
     o.flush();
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC");
 
-    seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna5>> const vec2 = {"ACGT"_dna5, "GAGGA"_dna5};
+    seqan3::concatenated_sequences<seqan3::bitpacked_sequence<seqan3::dna5>> const vec2 = {"ACGT"_dna5, "GAGGA"_dna5};
     my_stream << vec2;
     o.flush();
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC[ACGT,GAGGA]");

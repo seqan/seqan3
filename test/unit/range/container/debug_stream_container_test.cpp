@@ -20,7 +20,7 @@ class debug_stream_test : public ::testing::Test
 {};
 
 using container_types = ::testing::Types<std::vector<seqan3::dna4>,
-                                         seqan3::bitcompressed_vector<seqan3::dna4>,
+                                         seqan3::bitpacked_sequence<seqan3::dna4>,
                                          seqan3::small_vector<seqan3::dna4, 1000>>;
 
 TYPED_TEST_SUITE(debug_stream_test, container_types, );

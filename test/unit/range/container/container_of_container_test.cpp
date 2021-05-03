@@ -24,7 +24,7 @@ class container_of_container : public ::testing::Test
 using container_of_container_types =
     ::testing::Types<std::vector<std::vector<seqan3::dna4>>,
                      seqan3::concatenated_sequences<std::vector<seqan3::dna4>>,
-                     seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna4>>>;
+                     seqan3::concatenated_sequences<seqan3::bitpacked_sequence<seqan3::dna4>>>;
 
 TYPED_TEST_SUITE(container_of_container, container_of_container_types, );
 
