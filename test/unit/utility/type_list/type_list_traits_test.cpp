@@ -174,44 +174,6 @@ TEST(list_traits, replace_at)
                      (seqan3::type_list<int, float, double>));
 }
 
-template <typename type_list>
-using remove_int = decltype(seqan3::list_traits::detail::remove<int>(type_list{}));
-
-TEST(list_traits_detail, remove)
-{
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<>>), (seqan3::type_list<>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<float>>), (seqan3::type_list<float>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<float, double, char, short>>),
-                     (seqan3::type_list<float, double, char, short>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<int>>), (seqan3::type_list<>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<int, int, int, int>>), (seqan3::type_list<>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<float, int>>), (seqan3::type_list<float>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<int, float>>), (seqan3::type_list<float>));
-    EXPECT_SAME_TYPE((remove_int<seqan3::type_list<int, float, int, int, double, int, char, short, int>>),
-                     (seqan3::type_list<float, double, char, short>));
-}
-
-TEST(list_traits_detail, unique)
-{
-    auto unique = [] (auto && type_list)
-    {
-        return seqan3::list_traits::detail::unique(type_list);
-    };
-
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<>{})), (seqan3::type_list<>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<float>{})), (seqan3::type_list<float>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<float, double, char, short>{})),
-                     (seqan3::type_list<float, double, char, short>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int>{})), (seqan3::type_list<int>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int, int, int, int>{})), (seqan3::type_list<int>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<float, int>{})), (seqan3::type_list<float, int>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int, float>{})), (seqan3::type_list<int, float>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int, float, int, int, double, int, char, short, int>{})),
-                     (seqan3::type_list<int, float, double, char, short>));
-    EXPECT_SAME_TYPE(decltype(unique(seqan3::type_list<int, int, int, int, float, float, float>{})),
-                     (seqan3::type_list<int, float>));
-}
-
 TEST(list_traits_detail, reverse)
 {
     auto reverse = [] (auto && type_list)

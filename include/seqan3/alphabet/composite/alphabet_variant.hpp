@@ -139,7 +139,7 @@ private:
     //!\brief A seqan3::type_list of the types of each alternative in the composite
     using alternatives = seqan3::type_list<alternative_types...>;
 
-    static_assert(std::same_as<alternatives, decltype(seqan3::list_traits::detail::unique(alternatives{}))>,
+    static_assert(((seqan3::list_traits::count<alternative_types, alternatives> == 1) && ... && true),
                   "All types in a alphabet_variant must be distinct.");
 
     using typename base_t::char_type;
