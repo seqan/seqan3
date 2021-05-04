@@ -20,16 +20,15 @@ namespace seqan3
 /*!\brief Implementation of a masked alphabet to be used for tuple composites.
  * \ingroup mask
  * \implements seqan3::writable_semialphabet
- * \if DEV \implements seqan3::detail::Constexprwritable_semialphabet \endif
- * \implements seqan3::trivially_copyable
- * \implements seqan3::standard_layout
- * \implements std::regular
+ * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *
  * \details
  * This alphabet is not usually used directly, but instead via seqan3::masked.
  * For more information see the \link mask Mask submodule \endlink.
  *
  * \include test/snippet/alphabet/mask/mask.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 class mask : public alphabet_base<mask, 2, void>
 {
@@ -58,11 +57,34 @@ public:
      * \details Similar to an Enum interface.
      */
     //!\{
-    static const mask UNMASKED; //!< Member for UNMASKED.
-    static const mask MASKED;   //!< Member for MASKED.
+    /*!\brief Member for unmasked.
+     * \details
+     * \deprecated Please use seqan3::mask::unmasked
+     */
+    SEQAN3_DEPRECATED_310 static const mask UNMASKED;
+
+    /*!\brief Member for masked.
+     * \details
+     * \deprecated Please use seqan3::mask::masked
+     */
+    SEQAN3_DEPRECATED_310 static const mask MASKED;
+
+    /*!\brief Member for unmasked.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
+    static const mask unmasked;
+
+    /*!\brief Member for masked.
+     * \details
+     * \stableapi{Since version 3.1.}
+     */
+    static const mask masked;
     //!\}
 };
 
 mask constexpr mask::UNMASKED{mask{}.assign_rank(0)};
-mask constexpr mask::MASKED  {mask{}.assign_rank(1)};
+mask constexpr mask::MASKED{mask{}.assign_rank(1)};
+mask constexpr mask::unmasked{mask{}.assign_rank(0)};
+mask constexpr mask::masked{mask{}.assign_rank(1)};
 } // namespace seqan3
