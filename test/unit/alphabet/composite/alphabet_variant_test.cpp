@@ -282,9 +282,9 @@ TEST(alphabet_variant_test, convert_by_index)
     seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap> u;
     u = 'C'_dna5;
 
-    EXPECT_FALSE(u.is_alternative<0>());
-    EXPECT_TRUE(u.is_alternative<1>());
-    EXPECT_FALSE(u.is_alternative<2>());
+    EXPECT_FALSE(u.holds_alternative<0>());
+    EXPECT_TRUE(u.holds_alternative<1>());
+    EXPECT_FALSE(u.holds_alternative<2>());
 
     EXPECT_THROW(u.convert_to<0>(), std::bad_variant_access);
     EXPECT_NO_THROW(u.convert_to<1>());
@@ -304,9 +304,9 @@ TEST(alphabet_variant_test, convert_by_type)
     seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap> u;
     u = 'C'_dna5;
 
-    EXPECT_FALSE(u.is_alternative<seqan3::dna4>());
-    EXPECT_TRUE(u.is_alternative<seqan3::dna5>());
-    EXPECT_FALSE(u.is_alternative<seqan3::gap>());
+    EXPECT_FALSE(u.holds_alternative<seqan3::dna4>());
+    EXPECT_TRUE(u.holds_alternative<seqan3::dna5>());
+    EXPECT_FALSE(u.holds_alternative<seqan3::gap>());
 
     EXPECT_THROW(u.convert_to<seqan3::dna4>(), std::bad_variant_access);
     EXPECT_NO_THROW(u.convert_to<seqan3::dna5>());
