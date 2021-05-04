@@ -29,7 +29,7 @@ struct translation_table
 {
     //!\brief Holds the generic translation table.
     static constexpr std::array<std::array<std::array<aa27, alphabet_size<nucl_type>>, alphabet_size<nucl_type>>,
-                                                      alphabet_size<nucl_type>> VALUE
+                                                      alphabet_size<nucl_type>> value
     {
         [] () constexpr
         {
@@ -46,7 +46,7 @@ struct translation_table
                     for (size_t k = 0; k < alphabet_size<nucl_type>; ++k)
                     {
                         dna15 n3(assign_rank_to(k, nucl_type{}));
-                        table[i][j][k] = translation_table<dna15, gc, void_type>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+                        table[i][j][k] = translation_table<dna15, gc, void_type>::value[to_rank(n1)][to_rank(n2)][to_rank(n3)];
                     }
                 }
             }
