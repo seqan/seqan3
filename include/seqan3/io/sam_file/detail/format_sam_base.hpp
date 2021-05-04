@@ -44,7 +44,6 @@
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/slice.hpp>
-#include <seqan3/utility/views/to.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail

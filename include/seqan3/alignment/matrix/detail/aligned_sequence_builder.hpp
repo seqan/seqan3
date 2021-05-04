@@ -28,7 +28,6 @@
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/slice.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3::detail
 {

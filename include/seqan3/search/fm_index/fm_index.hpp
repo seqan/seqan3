@@ -24,7 +24,6 @@
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 #include <seqan3/utility/views/join_with.hpp>
-#include <seqan3/utility/views/to.hpp>
 
 namespace seqan3::detail
 {
