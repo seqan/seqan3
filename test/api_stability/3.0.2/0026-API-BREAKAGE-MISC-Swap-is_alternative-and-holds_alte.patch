@@ -1,0 +1,59 @@
+From 4c511eaa512621d785d268d625c786a9495b76f0 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Tue, 4 May 2021 15:12:59 +0200
+Subject: [PATCH 26/26] [API] [BREAKAGE] [MISC] Swap is_alternative and
+ holds_alternative (#2596)
+
+---
+ .../composite/alphabet_variant_holds_alternative.cpp |  6 +++---
+ .../alphabet/composite/alphabet_variant_test.cpp     | 12 ++++++------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp b/test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
+index 34aaf1b59..200ad0f89 100644
+--- a/test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
++++ b/test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
+@@ -7,7 +7,7 @@ int main()
+ {
+     using variant_t = seqan3::alphabet_variant<seqan3::dna5, seqan3::gap>;
+ 
+-    static_assert(variant_t::holds_alternative<seqan3::dna5>(), "dna5 is an alternative of variant_t");
+-    static_assert(!variant_t::holds_alternative<seqan3::dna4>(), "dna4 is not an alternative of variant_t");
+-    static_assert(variant_t::holds_alternative<seqan3::gap>(), "gap is an alternative of variant_t");
++    static_assert(variant_t::is_alternative<seqan3::dna5>(), "dna5 is an alternative of variant_t");
++    static_assert(!variant_t::is_alternative<seqan3::dna4>(), "dna4 is not an alternative of variant_t");
++    static_assert(variant_t::is_alternative<seqan3::gap>(), "gap is an alternative of variant_t");
+ }
+diff --git a/test/unit/alphabet/composite/alphabet_variant_test.cpp b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+index acbe102d7..e2ac36e1b 100644
+--- a/test/unit/alphabet/composite/alphabet_variant_test.cpp
++++ b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+@@ -280,9 +280,9 @@ TEST(alphabet_variant_test, convert_by_index)
+     seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap> u;
+     u = 'C'_dna5;
+ 
+-    EXPECT_FALSE(u.is_alternative<0>());
+-    EXPECT_TRUE(u.is_alternative<1>());
+-    EXPECT_FALSE(u.is_alternative<2>());
++    EXPECT_FALSE(u.holds_alternative<0>());
++    EXPECT_TRUE(u.holds_alternative<1>());
++    EXPECT_FALSE(u.holds_alternative<2>());
+ 
+     EXPECT_THROW(u.convert_to<0>(), std::bad_variant_access);
+     EXPECT_NO_THROW(u.convert_to<1>());
+@@ -302,9 +302,9 @@ TEST(alphabet_variant_test, convert_by_type)
+     seqan3::alphabet_variant<seqan3::dna4, seqan3::dna5, seqan3::gap> u;
+     u = 'C'_dna5;
+ 
+-    EXPECT_FALSE(u.is_alternative<seqan3::dna4>());
+-    EXPECT_TRUE(u.is_alternative<seqan3::dna5>());
+-    EXPECT_FALSE(u.is_alternative<seqan3::gap>());
++    EXPECT_FALSE(u.holds_alternative<seqan3::dna4>());
++    EXPECT_TRUE(u.holds_alternative<seqan3::dna5>());
++    EXPECT_FALSE(u.holds_alternative<seqan3::gap>());
+ 
+     EXPECT_THROW(u.convert_to<seqan3::dna4>(), std::bad_variant_access);
+     EXPECT_NO_THROW(u.convert_to<seqan3::dna5>());
+-- 
+2.25.1
+
