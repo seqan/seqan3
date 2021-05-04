@@ -17,7 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>

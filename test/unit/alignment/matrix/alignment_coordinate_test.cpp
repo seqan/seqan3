@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 

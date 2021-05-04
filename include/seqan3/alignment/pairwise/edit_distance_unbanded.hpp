@@ -18,7 +18,7 @@
 #include <seqan3/std/ranges>
 #include <utility>
 
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
 #include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/matrix_concept.hpp>

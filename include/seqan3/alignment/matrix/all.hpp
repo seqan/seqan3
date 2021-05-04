@@ -18,7 +18,7 @@
  * \see alignment
  */
 
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/matrix/debug_matrix.hpp>
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
