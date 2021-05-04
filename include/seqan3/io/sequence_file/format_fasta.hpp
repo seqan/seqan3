@@ -29,6 +29,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
@@ -37,7 +38,6 @@
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
@@ -218,7 +218,7 @@ private:
                                   std::cpp20::back_inserter(id));                               // … ^A is old delimiter
 
                 // consume rest of line
-                detail::consume(stream_view | views::take_line_or_throw);
+                detail::consume(stream_view | detail::take_line_or_throw);
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 
             }
@@ -246,7 +246,7 @@ private:
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
-                std::ranges::copy(stream_view | views::take_line_or_throw                    // read line
+                std::ranges::copy(stream_view | detail::take_line_or_throw                   // read line
                                               | std::views::drop_while(is_id || is_blank)    // skip leading >
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
@@ -255,7 +255,7 @@ private:
         }
         else
         {
-            detail::consume(stream_view | views::take_line_or_throw);
+            detail::consume(stream_view | detail::take_line_or_throw);
         }
     }
 

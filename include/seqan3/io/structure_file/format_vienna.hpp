@@ -30,6 +30,7 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/io/structure_file/detail.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
@@ -37,7 +38,6 @@
 #include <seqan3/io/structure_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take.hpp>
-#include <seqan3/range/views/take_line.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
@@ -143,19 +143,19 @@ protected:
                                                   | views::take_until_or_throw(is_cntrl || is_blank)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::cpp20::back_inserter(id));
-                    detail::consume(stream_view | views::take_line_or_throw);
+                    detail::consume(stream_view | detail::take_line_or_throw);
                 }
                 else
                 {
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
-                                                  | views::take_line_or_throw
+                                                  | detail::take_line_or_throw
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::cpp20::back_inserter(id));
                 }
             }
             else
             {
-                detail::consume(stream_view | views::take_line_or_throw);
+                detail::consume(stream_view | detail::take_line_or_throw);
             }
         }
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
@@ -174,11 +174,11 @@ protected:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto constexpr is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
-            std::ranges::copy(stream_view | views::take_line_or_throw                      // until end of line
+            std::ranges::copy(stream_view | detail::take_line_or_throw                  // until end of line
                                           | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
                                           | std::views::transform([is_legal_seq](char const c)
                                             {
-                                                if (!is_legal_seq(c))                    // enforce legal alphabet
+                                                if (!is_legal_seq(c))                   // enforce legal alphabet
                                                 {
                                                     throw parse_error{std::string{"Encountered an unexpected letter: "} +
                                                                       "char_is_valid_for<" +
@@ -193,7 +193,7 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | views::take_line_or_throw);
+            detail::consume(stream_view | detail::take_line_or_throw);
         }
 
         // READ STRUCTURE (if present)
@@ -242,7 +242,7 @@ protected:
         // READ ENERGY (if present)
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
-            std::string e_str = stream_view | views::take_line
+            std::string e_str = stream_view | detail::take_line
                                             | std::views::filter(!(is_space || is_char<'('> || is_char<')'>))
                                             | views::to<std::string>;
             if (!e_str.empty())
@@ -257,7 +257,7 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | views::take_line);
+            detail::consume(stream_view | detail::take_line);
         }
         detail::consume(stream_view | views::take_until(!is_space));
     }
