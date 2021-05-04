@@ -123,9 +123,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * Old requirements: `alphabet_t::rank_to_char` and `alphabet_t::char_to_rank` must be lookup tables.
   * New requirements: `alphabet_t::rank_to_char` and `alphabet_t::char_to_rank` must be static member functions.
 
-  This allows for more flexible rank <-> char conversion implementations. Lookup tables are still possible within those 
+  This allows for more flexible rank <-> char conversion implementations. Lookup tables are still possible within those
   static member functions. However, alphabets that do not need a lookup table can now use easier and/or more efficient
-  implementations. For example, `seqan3::gap` always returns rank `0` or char `-`, or `seqan3::phred42` where the rank 
+  implementations. For example, `seqan3::gap` always returns rank `0` or char `-`, or `seqan3::phred42` where the rank
   and char representations are offset by a fixed value.
 * We relaxed a requirement of `seqan3::nucleotide_base<alphabet_t>`
   ([\#2584](https://github.com/seqan/seqan3/pull/2584)):
@@ -234,6 +234,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Deprecated `seqan3::views::move`, use the `std::ranges::move` algorithm, `std::[cpp20::]move_iterator` or an explicit
   for loop where you move the value.
   ([\#2563](https://github.com/seqan/seqan3/pull/2563))
+* We deprecated `seqan3::views::take` and it will be removed in 3.1.0. Use `std::views::take` instead
+  [\#2541](https://github.com/seqan/seqan3/pull/2541).
 * We deprecated `seqan3::views::take_line` and it will be removed in 3.1.0
   [\#2525](https://github.com/seqan/seqan3/pull/2525).
 * We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use

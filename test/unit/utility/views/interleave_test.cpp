@@ -12,7 +12,6 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
@@ -46,15 +45,15 @@ TEST(view_interleave, basic)
     auto v3{seqan3::views::interleave(u, s, i)};
     EXPECT_RANGE_EQ(cmp, v3);
 
-    //combinability
+    // combinability
     // explicitly call seqan3::views::type_reduce
     auto v4 = seqan3::views::type_reduce(u)
             | seqan3::views::interleave(s, seqan3::views::type_reduce(i))
             | std::views::reverse
-            | seqan3::views::take(5);
+            | std::views::take(5);
     EXPECT_RANGE_EQ(cmp_rev, v4);
     // don't call seqan3::views::type_reduce
-    auto v5 = u | seqan3::views::interleave(s, i) | std::views::reverse | seqan3::views::take(5);
+    auto v5 = u | seqan3::views::interleave(s, i) | std::views::reverse | std::views::take(5);
     EXPECT_RANGE_EQ(cmp_rev, v5);
 }
 

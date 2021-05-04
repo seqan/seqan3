@@ -6,15 +6,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <deque>
-#include <list>
 #include <forward_list>
+#include <list>
 #include <random>
 #include <string>
 #include <vector>
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/take.hpp>
+#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 

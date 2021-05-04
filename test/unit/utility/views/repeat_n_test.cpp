@@ -13,7 +13,6 @@
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 

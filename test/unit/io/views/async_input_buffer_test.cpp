@@ -16,7 +16,6 @@
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/views/async_input_buffer.hpp>
 #include <seqan3/range/concept.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
@@ -104,7 +103,7 @@ TEST(async_input_buffer, combinability)
     seqan3::dna4_vector vec{"ACGTACGTACGTATCGAGAGCTTTAGC"_dna4};
     seqan3::dna4_vector cmp{"ACGTACGTAC"_dna4};
 
-    auto adapt = seqan3::views::async_input_buffer(5) | seqan3::views::take(10);
+    auto adapt = seqan3::views::async_input_buffer(5) | std::views::take(10);
 
     auto v = vec | adapt;
 
