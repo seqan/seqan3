@@ -1,3 +1,4 @@
+seqan3_test (advanceable_alignment_coordinate_test.cpp)
 seqan3_test (affine_cell_proxy_test.cpp)
 seqan3_test (aligned_sequence_builder_test.cpp)
 seqan3_test (alignment_matrix_column_major_range_base_test.cpp)
