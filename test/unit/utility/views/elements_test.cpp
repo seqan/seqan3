@@ -49,16 +49,16 @@ TEST(view_get, advanced)
 {
     // TODO remove const-ness from input vector once alphabet_proxy inherits it's alphabet
     std::vector<seqan3::qualified<seqan3::masked<seqan3::dna4>,
-                                  seqan3::phred42>> const t{{{'A'_dna4, seqan3::mask::MASKED}, '!'_phred42},
-                                                            {{'C'_dna4, seqan3::mask::UNMASKED}, '"'_phred42},
-                                                            {{'G'_dna4, seqan3::mask::MASKED}, '#'_phred42},
-                                                            {{'T'_dna4, seqan3::mask::UNMASKED}, '$'_phred42}};
+                                  seqan3::phred42>> const t{{{'A'_dna4, seqan3::mask::masked}, '!'_phred42},
+                                                            {{'C'_dna4, seqan3::mask::unmasked}, '"'_phred42},
+                                                            {{'G'_dna4, seqan3::mask::masked}, '#'_phred42},
+                                                            {{'T'_dna4, seqan3::mask::unmasked}, '$'_phred42}};
 
     // functor notation
-    std::vector<seqan3::masked<seqan3::dna4>> expected_sequence{{'A'_dna4, seqan3::mask::MASKED},
-                                                                {'C'_dna4, seqan3::mask::UNMASKED},
-                                                                {'G'_dna4, seqan3::mask::MASKED},
-                                                                {'T'_dna4, seqan3::mask::UNMASKED}};
+    std::vector<seqan3::masked<seqan3::dna4>> expected_sequence{{'A'_dna4, seqan3::mask::masked},
+                                                                {'C'_dna4, seqan3::mask::unmasked},
+                                                                {'G'_dna4, seqan3::mask::masked},
+                                                                {'T'_dna4, seqan3::mask::unmasked}};
 
     EXPECT_RANGE_EQ(expected_sequence, seqan3::views::elements<0>(t));
     EXPECT_RANGE_EQ("!\"#$"_phred42, seqan3::views::elements<1>(t));

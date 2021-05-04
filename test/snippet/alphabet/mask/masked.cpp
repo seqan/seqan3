@@ -7,7 +7,7 @@ int main()
     using namespace seqan3::literals;
 
     seqan3::masked<seqan3::dna4> dna4_masked{};
-    seqan3::masked<seqan3::dna4> dna4_another_masked{'A'_dna4, seqan3::mask::UNMASKED};
+    seqan3::masked<seqan3::dna4> dna4_another_masked{'A'_dna4, seqan3::mask::unmasked};
     // create a dna4 masked alphabet with an unmasked A
 
     dna4_masked.assign_char('a'); // assigns a masked 'A'_dna4
