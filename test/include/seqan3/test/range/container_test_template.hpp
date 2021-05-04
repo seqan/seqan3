@@ -332,3 +332,8 @@ REGISTER_TYPED_TEST_SUITE_P(container_over_dna4_test,
                             push_pop,
                             resize,
                             serialisation);
+
+#ifdef SEQAN3_HEADER_TEST
+// header test will throw an unused warning otherwise
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(container_over_dna4_test);
+#endif // SEQAN3_HEADER_TEST
