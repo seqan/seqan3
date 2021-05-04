@@ -14,8 +14,8 @@
 
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/core/range/type_traits.hpp>
@@ -350,7 +350,7 @@ namespace seqan3::views
  *
  * ```cpp
  * std::vector<std::vector<dna5>> vec {...};
- * auto v = vec | views::translate | views::join;
+ * auto v = vec | views::translate | std::views::join;
  * ```
  *
  * Except that the performance is better and the returned range still models std::ranges::random_access_range and std::ranges::sized_range.

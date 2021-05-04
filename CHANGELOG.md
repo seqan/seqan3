@@ -216,6 +216,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2567](https://github.com/seqan/seqan3/pull/2567)).
 * Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2540))
+* We deprecated `seqan3::views::join`. Please use `std::views::join` or `seqan3::views::join_with` instead
+  [\#2526](https://github.com/seqan/seqan3/pull/2526).
 * Deprecated `seqan3::views::move`, use the `std::ranges::move` algorithm, `std::[cpp20::]move_iterator` or an explicit
   for loop where you move the value.
   ([\#2563](https://github.com/seqan/seqan3/pull/2563))

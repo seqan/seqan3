@@ -20,11 +20,11 @@
 
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
+#include <seqan3/utility/views/join_with.hpp>
 
 namespace seqan3::detail
 {
@@ -340,7 +340,7 @@ private:
                                   return r + 1;
                               })
                           }
-                          | views::join(delimiter),
+                          | views::join_with(delimiter),
                           std::ranges::begin(tmp_text));
 
         if (!reverse)

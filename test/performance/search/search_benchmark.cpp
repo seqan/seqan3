@@ -9,12 +9,12 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/to.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/search.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
+#include <seqan3/utility/views/join_with.hpp>
 
 struct options
 {
@@ -144,7 +144,7 @@ std::vector<alphabet_t> generate_repeating_sequence(size_t const template_length
 
     return generate_reads(seq_template, repeats, len, simulated_errors, 0.15, 0.15)
          | seqan3::detail::persist
-         | seqan3::views::join
+         | std::views::join
          | seqan3::views::to<std::vector>;
 }
 

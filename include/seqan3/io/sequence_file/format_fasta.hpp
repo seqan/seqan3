@@ -35,7 +35,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/join.hpp>
 #include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_line.hpp>
