@@ -32,8 +32,9 @@ namespace seqan3::detail
  *
  * The class seqan3::detail::advanceable_alignment_coordinate can be extended with an incrementable and decrementable
  * policy such that it can be used as a value type inside of a iota_view. This state offers three policies: none, which
- * leaves the functionality of seqan3::detail::alignment_coordinate untouched; column, which adds the respective
- * functionality only for the column index and row, which adds the respective functionality only for the row index.
+ * leaves the functionality of seqan3::detail::advanceable_alignment_coordinate untouched; column, which adds the
+ * respective functionality only for the column index and row, which adds the respective functionality only for the row
+ * index.
  */
 enum struct advanceable_alignment_coordinate_state : uint8_t
 {

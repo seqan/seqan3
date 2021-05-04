@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::alignment_coordinate and associated strong types.
+ * \brief Provides seqan3::detail::matrix_index, seqan3::detail::matrix_coordinate and associated strong types.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
