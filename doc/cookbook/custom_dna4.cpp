@@ -22,6 +22,13 @@ private:
         return char_to_rank_table[static_cast<index_t>(chr)];
     }
 
+    // Returns the complement by rank. This is where complement is handled and with this, my_dna4 models
+    // seqan3::nucleotide_alphabet.
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return rank_complement_table[rank];
+    }
+
 private:
     // === lookup-table implementation detail ===
 
@@ -46,8 +53,14 @@ private:
         }()
     };
 
-    // The forward declaration of the complement table. With this, my_dna4 models seqan3::nucleotide_alphabet.
-    static const std::array<my_dna4, alphabet_size> complement_table;
+    // The rank complement table.
+    static constexpr rank_type rank_complement_table[alphabet_size]
+    {
+        3, // T is complement of 'A'_dna4
+        2, // G is complement of 'C'_dna4
+        1, // C is complement of 'G'_dna4
+        0  // A is complement of 'T'_dna4
+    };
 
     friend nucleotide_base<my_dna4, 4>; // Grant seqan3::nucleotide_base access to private/protected members.
     friend nucleotide_base<my_dna4, 4>::base_t; // Grant seqan3::alphabet_base access to private/protected members.
@@ -59,20 +72,12 @@ constexpr my_dna4 operator""_my_dna4(char const c) noexcept
     return my_dna4{}.assign_char(c);
 }
 
-// The definition of the complement table. With this, my_dna4 models seqan3::nucleotide_alphabet.
-constexpr std::array<my_dna4, my_dna4::alphabet_size> my_dna4::complement_table
-{
-    'T'_my_dna4,    // the complement of 'A'_my_dna4
-    'G'_my_dna4,    // the complement of 'C'_my_dna4
-    'C'_my_dna4,    // the complement of 'G'_my_dna4
-    'A'_my_dna4     // the complement of 'T'_my_dna4
-};
-
 int main()
 {
     my_dna4 my_letter{'C'_my_dna4};
 
     my_letter.assign_char('S'); // Characters other than A,C,G,T are implicitly converted to `A`.
 
-    seqan3::debug_stream << my_letter; // "A";
+    seqan3::debug_stream << my_letter << "\n"; // "A";
+    seqan3::debug_stream << seqan3::complement(my_letter) << "\n"; // "T";
 }

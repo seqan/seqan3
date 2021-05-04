@@ -151,8 +151,23 @@ private:
         }()
     };
 
-    //!\brief The complement table.
-    static const std::array<dna4, alphabet_size> complement_table;
+    //!\brief The rank complement table.
+    static constexpr rank_type rank_complement_table[alphabet_size]
+    {
+        3, // T is complement of 'A'_dna4
+        2, // G is complement of 'C'_dna4
+        1, // C is complement of 'G'_dna4
+        0  // A is complement of 'T'_dna4
+    };
+
+    /*!\brief Returns the complement by rank.
+     * \details
+     * This function is required by seqan3::nucleotide_base.
+     */
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return rank_complement_table[rank];
+    }
 
     /*!\brief Returns the character representation of rank.
      * \details
@@ -233,17 +248,5 @@ inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// dna4 (deferred definition)
-// ------------------------------------------------------------------
-
-constexpr std::array<dna4, dna4::alphabet_size> dna4::complement_table
-{
-    'T'_dna4,    // complement of 'A'_dna4
-    'G'_dna4,    // complement of 'C'_dna4
-    'C'_dna4,    // complement of 'G'_dna4
-    'A'_dna4     // complement of 'T'_dna4
-};
 
 } // namespace seqan3

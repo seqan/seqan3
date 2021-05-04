@@ -106,8 +106,11 @@ private:
         'Y'
     };
 
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<rna15, alphabet_size> complement_table;
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return dna15::rank_complement(rank);
+    }
 
     //!\copydoc seqan3::dna4::rank_to_char
     static constexpr char_type rank_to_char(rank_type const rank)
@@ -179,28 +182,5 @@ inline rna15_vector operator""_rna15(char const * s, std::size_t n)
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// rna15 (deferred definition)
-// ------------------------------------------------------------------
-
-constexpr std::array<rna15, rna15::alphabet_size> rna15::complement_table
-{
-    'U'_rna15,    // complement of 'A'_rna15
-    'V'_rna15,    // complement of 'B'_rna15
-    'G'_rna15,    // complement of 'C'_rna15
-    'H'_rna15,    // complement of 'D'_rna15
-    'C'_rna15,    // complement of 'G'_rna15
-    'D'_rna15,    // complement of 'H'_rna15
-    'M'_rna15,    // complement of 'K'_rna15
-    'K'_rna15,    // complement of 'M'_rna15
-    'N'_rna15,    // complement of 'N'_rna15
-    'Y'_rna15,    // complement of 'R'_rna15
-    'S'_rna15,    // complement of 'S'_rna15
-    'A'_rna15,    // complement of 'U'_rna15
-    'B'_rna15,    // complement of 'V'_rna15
-    'W'_rna15,    // complement of 'W'_rna15
-    'R'_rna15     // complement of 'Y'_rna15
-};
 
 } // namespace seqan3

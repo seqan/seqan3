@@ -94,8 +94,11 @@ private:
         'U'
     };
 
-    //!\copydoc seqan3::dna4::complement_table
-    static const std::array<rna5, alphabet_size> complement_table;
+    //!\copydoc seqan3::dna4::rank_complement
+    static constexpr rank_type rank_complement(rank_type const rank)
+    {
+        return dna5::rank_complement(rank);
+    }
 
     //!\copydoc seqan3::dna4::rank_to_char
     static constexpr char_type rank_to_char(rank_type const rank)
@@ -168,18 +171,5 @@ inline rna5_vector operator""_rna5(char const * s, std::size_t n)
 //!\}
 
 } // inline namespace literals
-
-// ------------------------------------------------------------------
-// rna5 (deferred definition)
-// ------------------------------------------------------------------
-
-constexpr std::array<rna5, rna5::alphabet_size> rna5::complement_table
-{
-    'U'_rna5,    // complement of 'A'_rna5
-    'G'_rna5,    // complement of 'C'_rna5
-    'C'_rna5,    // complement of 'G'_rna5
-    'N'_rna5,    // complement of 'N'_rna5
-    'A'_rna5     // complement of 'U'_rna5
-};
 
 } // namespace seqan3
