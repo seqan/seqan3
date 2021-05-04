@@ -11,14 +11,13 @@
 #include <deque>
 #include <forward_list>
 #include <list>
+#include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <range/v3/view/any_view.hpp>
 
 #include <sdsl/int_vector.hpp>
-
-#include <seqan3/std/ranges>
 
 TEST(range_concepts, Range)
 {

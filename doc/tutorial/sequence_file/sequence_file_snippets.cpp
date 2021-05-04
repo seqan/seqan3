@@ -1,20 +1,20 @@
 #include <fstream>
 #include <numeric> // std::accumulate
-//![include_ranges_chunk]
-#include <range/v3/view/chunk.hpp>
-//![include_ranges_chunk]
-
-#include <seqan3/utility/char_operations/predicate.hpp>
-//![include]
-#include <seqan3/io/sequence_file/all.hpp>
-//![include]
-//![include_debug_stream]
-#include <seqan3/core/debug_stream.hpp>
-//![include_debug_stream]
-#include <seqan3/range/detail/misc.hpp>
 //![include_ranges]
 #include <seqan3/std/ranges>
 //![include_ranges]
+
+//![include_debug_stream]
+#include <seqan3/core/debug_stream.hpp>
+//![include_debug_stream]
+//![include]
+#include <seqan3/io/sequence_file/all.hpp>
+//![include]
+#include <seqan3/range/detail/misc.hpp>
+#include <seqan3/utility/char_operations/predicate.hpp>
+//![include_ranges_chunk]
+#include <seqan3/utility/views/chunk.hpp>
+//![include_ranges_chunk]
 
 struct write_file_dummy_struct
 {

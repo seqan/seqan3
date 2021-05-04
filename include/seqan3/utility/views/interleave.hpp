@@ -16,14 +16,13 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <range/v3/view/chunk.hpp>
-
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/range/detail/random_access_iterator.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 #include <seqan3/utility/type_traits/pre.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/join_with.hpp>
 
 namespace seqan3::detail
@@ -294,7 +293,7 @@ struct interleave_fn
         }
         else
         {
-            return std::forward<urng_t>(urange) | ranges::views::chunk(static_cast<size_t>(size))
+            return std::forward<urng_t>(urange) | seqan3::views::chunk(static_cast<size_t>(size))
                                                 | views::join_with(std::forward<inserted_rng_t>(i));
         }
     }
@@ -327,7 +326,7 @@ namespace seqan3::views
  * \header_file{seqan3/utility/views/interleave.hpp}
  *
  * This view can be used to insert one range into another range at regular intervals. It behaves essentially like
- * `| std::views::chunk(step_size) | std::views::join(inserted_range)` except that for input that models
+ * `| std::views::chunk(step_size) | seqan3::views::join_with(inserted_range)` except that for input that models
  * std::ranges::random_access_range and std::ranges::sized_range a more efficient data structure is returned
  * (otherwise it returns exactly the above combination of views).
  *
@@ -352,7 +351,7 @@ namespace seqan3::views
  *
  *
  * If above requirements are not met, this adaptor forwards to
- * `| seqan3::views::chunk(step_size) | std::views::join(inserted_range)`
+ * `| seqan3::views::chunk(step_size) | seqan3::views::join_with(inserted_range)`
  * which returns a view with the following properties:
  *
  * | Concepts and traits              | `urng_t` (underlying range type)      | `rrng_t` (returned range type)       |
