@@ -287,6 +287,9 @@ TEST(advanceable_alignment_coordinate, iota_row_index)
         EXPECT_EQ(coordinate.second, test++);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 TEST(alignment_coordinate, basic)
 {
     EXPECT_TRUE(std::is_default_constructible<seqan3::alignment_coordinate>::value);
@@ -332,3 +335,5 @@ TEST(alignment_coordinate, matrix_coordainte_conversion)
     EXPECT_EQ(mc.col, 10u);
     EXPECT_EQ(mc.row, 5u);
 }
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310

@@ -321,6 +321,7 @@ public:
 namespace seqan3
 {
 
+#ifdef SEQAN3_DEPRECATED_310
 /*!\brief Represents the begin/end of the pairwise alignment in the respective sequences.
  * \ingroup alignment_matrix
  *
@@ -333,8 +334,10 @@ namespace seqan3
  * keep track of the current position within the alignment matrix. For the user, however, this interface adds no
  * benefit as they are only interested in the front/back coordinates for the respective alignment.
  * \endif
+ *
+ * \deprecated This class will be removed in SeqAn 3.1.
  */
-class alignment_coordinate
+class SEQAN3_DEPRECATED_310 alignment_coordinate
 //!\cond DEV
     : public detail::advanceable_alignment_coordinate<detail::advanceable_alignment_coordinate_state::none>
 //!\endcond
@@ -385,8 +388,9 @@ public:
         return detail::matrix_coordinate{detail::row_index_type{second}, detail::column_index_type{first}};
     }
 };
+#endif // SEQAN3_DEPRECATED_310
 
-/*!\brief A seqan3::alignment_coordinate can be printed to the seqan3::debug_stream.
+/*!\brief A seqan3::detail::advanceable_alignment_coordinate can be printed to the seqan3::debug_stream.
  * \tparam    coordinate_type The alignment coordinate type.
  * \param[in] s               The seqan3::debug_stream.
  * \param[in] c               The alignment coordinate to print.
@@ -398,8 +402,7 @@ public:
  */
 template <typename char_t, typename coordinate_type>
 //!\cond
-    requires std::same_as<std::remove_cvref_t<coordinate_type>, alignment_coordinate> ||
-             detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
+    requires detail::is_value_specialisation_of_v<std::remove_cvref_t<coordinate_type>,
                                                   detail::advanceable_alignment_coordinate>
 //!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)
@@ -407,5 +410,20 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coo
     s << std::tie(c.first, c.second);
     return s;
 }
+
+#ifdef SEQAN3_DEPRECATED_310
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+//!\cond
+template <typename char_t, typename coordinate_type>
+   requires std::same_as<std::remove_cvref_t<coordinate_type>, alignment_coordinate>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, coordinate_type && c)
+{
+   s << std::tie(c.first, c.second);
+   return s;
+}
+//!\endcond
+#pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
 } // namespace seqan3
