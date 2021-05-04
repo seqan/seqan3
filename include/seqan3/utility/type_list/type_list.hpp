@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <meta/meta.hpp>
-
 #include <seqan3/core/detail/template_inspection.hpp>
 
 namespace seqan3
@@ -23,11 +21,20 @@ namespace seqan3
 // type_list class
 // ----------------------------------------------------------------------------
 
-/*!\brief Type that contains multiple types, an alias for
- * [meta::list](https://ericniebler.github.io/range-v3/structmeta_1_1list.html).
+/*!\brief Type that contains multiple types.
  * \ingroup type_list
  */
 template <typename ...types>
-using type_list = meta::list<types...>;
+struct type_list
+{
+    //!\brief The type list itself
+    using type = type_list;
+
+    //!\brief The number of types contained in the type list
+    static constexpr size_t size() noexcept
+    {
+        return sizeof...(types);
+    }
+};
 
 } // namespace seqan3

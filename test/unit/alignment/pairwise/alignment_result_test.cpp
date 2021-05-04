@@ -7,7 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
 #include <tuple>
 #include <type_traits>
 #include <string_view>

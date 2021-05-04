@@ -104,6 +104,16 @@ template <typename replace_t,
           typename ...pack_t>
 pack_traits::replace_at<replace_t, idx, pack_t...> replace_at(type_list<pack_t...>);
 
+//!\brief A replacement for meta::reverse [recursion anchor]
+inline constexpr type_list<> reverse(type_list<>) { return {}; }
+
+//!\brief A replacement for meta::reverse [recursion]
+template <typename head_t, typename ...pack_t>
+auto reverse(type_list<head_t, pack_t...>)
+{
+    return concat(reverse(type_list<pack_t...>{}), type_list<head_t>{});
+}
+
 } // namespace seqan3::list_traits::detail
 
 // ----------------------------------------------------------------------------

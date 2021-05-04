@@ -19,8 +19,6 @@
 #include <tuple>
 #include <type_traits>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>

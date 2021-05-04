@@ -13,8 +13,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>

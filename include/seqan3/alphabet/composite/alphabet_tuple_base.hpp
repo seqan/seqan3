@@ -16,15 +16,15 @@
 #include <seqan3/std/concepts>
 #include <utility>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
+#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
@@ -128,19 +128,16 @@ private:
                                 (1 * ... * alphabet_size<component_types>),
                                 void>; // no char type, because this is only semi_alphabet
 
-    //!\brief A meta::list The types of each component in the composite
-    using component_list = meta::list<component_types...>;
+    //!\brief A seqan3::type_list The types of each component in the composite
+    using component_list = seqan3::type_list<component_types...>;
 
     //!\brief Is set to `true` if the type is contained in the type list.
     template <typename type>
-    static constexpr bool is_component =
-        meta::in<component_list, type>::value;
+    static constexpr bool is_component = seqan3::list_traits::contains<type, component_list>;
 
     //!\brief Is set to `true` if the type is uniquely contained in the type list.
     template <typename type>
-    static constexpr bool is_unique_component =
-        is_component<type> &&
-        (meta::find_index<component_list, type>::value == meta::reverse_find_index<component_list, type>::value);
+    static constexpr bool is_unique_component = (seqan3::list_traits::count<type, component_list> == 1);
 
     // forward declaration: see implementation below
     template <typename alphabet_type, size_t index>
@@ -178,9 +175,9 @@ public:
     //!\brief Export this type's components and possibly the components' components in a visible manner.
     //!\private
     using seqan3_recursive_required_types =
-        meta::concat<component_list,
-                     detail::transformation_trait_or_t<detail::recursive_required_types<component_types>,
-                                                       meta::list<>>...>;
+        list_traits::concat<component_list,
+                            detail::transformation_trait_or_t<detail::recursive_required_types<component_types>,
+                                                              seqan3::type_list<>>...>;
     //!\brief Make specialisations of this template identifiable in metapgrogramming contexts.
     //!\private
     static constexpr bool seqan3_alphabet_tuple_like = true;
@@ -241,9 +238,12 @@ public:
     //!\endcond
     constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
-       using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
-       component_type tmp(alph); // delegate construction
-       get<component_type>(*this) = tmp;
+        using component_predicate = detail::implicitly_convertible_from<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
+        component_type tmp(alph); // delegate construction
+        get<component_type>(*this) = tmp;
     }
 
     //!\cond
@@ -256,9 +256,12 @@ public:
                      detail::tuple_general_guard<derived_type, indirect_component_type, component_types...>> || ...))
     constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
-       using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
-       component_type tmp(alph); // delegate construction
-       get<component_type>(*this) = tmp;
+        using component_predicate = detail::constructible_from<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
+        component_type tmp(alph); // delegate construction
+        get<component_type>(*this) = tmp;
     }
     //!\endcond
 
@@ -302,7 +305,10 @@ public:
     //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::assignable_from<indirect_component_type>>>;
+        using component_predicate = detail::assignable_from<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         get<component_type>(*this) = alph; // delegate assignment
         return static_cast<derived_type &>(*this);
     }
@@ -315,7 +321,10 @@ public:
                   (std::convertible_to<indirect_component_type, component_types> || ...))
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::implicitly_convertible_from<indirect_component_type>>>;
+        using component_predicate = detail::implicitly_convertible_from<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         component_type tmp(alph);
         get<component_type>(*this) = tmp;
         return static_cast<derived_type &>(*this);
@@ -329,7 +338,10 @@ public:
                   (std::constructible_from<component_types, indirect_component_type> || ...))
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::constructible_from<indirect_component_type>>>;
+        using component_predicate = detail::constructible_from<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         component_type tmp(alph); // delegate construction
         get<component_type>(*this) = tmp;
         return static_cast<derived_type &>(*this);
@@ -352,7 +364,7 @@ public:
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
-        using t = meta::at_c<component_list, index>;
+        using t = seqan3::list_traits::at<index, component_list>;
         t val{};
 
         seqan3::assign_rank_to(l.to_component_rank<index>(), val);
@@ -372,7 +384,7 @@ public:
         requires is_unique_component<type>
     //!\endcond
     {
-        return get<meta::find_index<component_list, type>::value>(l);
+        return get<seqan3::list_traits::find<type, component_list>>(l);
     }
 
     /*!\copybrief get
@@ -386,7 +398,7 @@ public:
     {
         static_assert(index < sizeof...(component_types), "Index out of range.");
 
-        using t = meta::at_c<component_list, index>;
+        using t = seqan3::list_traits::at<index, component_list>;
 
         return seqan3::assign_rank_to(l.to_component_rank<index>(), t{});
     }
@@ -403,7 +415,7 @@ public:
         requires is_unique_component<type>
     //!\endcond
     {
-        return get<meta::find_index<component_list, type>::value>(l);
+        return get<seqan3::list_traits::find<type, component_list>>(l);
     }
 
     /*!\brief Implicit cast to a single letter. Works only if the type is unique in the type list.
@@ -442,7 +454,10 @@ public:
         -> std::enable_if_t<detail::tuple_eq_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_equality_comparable_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) == rhs;
     }
 
@@ -461,7 +476,10 @@ public:
         -> std::enable_if_t<detail::tuple_eq_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_equality_comparable_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_equality_comparable_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) != rhs;
     }
 
@@ -480,7 +498,10 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_ordered_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) < rhs;
     }
 
@@ -499,7 +520,10 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_ordered_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) <= rhs;
     }
 
@@ -518,7 +542,10 @@ public:
           -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_ordered_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) > rhs;
     }
 
@@ -537,7 +564,10 @@ public:
         -> std::enable_if_t<detail::tuple_order_guard<derived_type_t, derived_type, indirect_component_type, component_types...>,
                             bool>
     {
-        using component_type = meta::front<meta::find_if<component_list, detail::weakly_ordered_with_<indirect_component_type>>>;
+        using component_predicate = detail::weakly_ordered_with_<indirect_component_type>;
+        constexpr auto component_position = seqan3::list_traits::find_if<component_predicate::template invoke,
+                                                                         component_list>;
+        using component_type = seqan3::list_traits::at<component_position, component_list>;
         return get<component_type>(lhs) >= rhs;
     }
 
@@ -585,9 +615,11 @@ private:
             std::array<rank_type, component_list::size() + 1> ret{};
             ret[0] = 1;
             size_t count = 1;
-            meta::for_each(meta::reverse<component_list>{}, [&] (auto alph) constexpr
+            using reverse_list_t = decltype(seqan3::list_traits::detail::reverse(component_list{}));
+            seqan3::detail::for_each<reverse_list_t>([&] (auto alphabet_type_identity) constexpr
             {
-                ret[count] = static_cast<rank_type>(seqan3::alphabet_size<decltype(alph)> * ret[count - 1]);
+                using alphabet_t = typename decltype(alphabet_type_identity)::type;
+                ret[count] = static_cast<rank_type>(seqan3::alphabet_size<alphabet_t> * ret[count - 1]);
                 ++count;
             });
 
@@ -778,7 +810,7 @@ template <std::size_t i, seqan3::detail::alphabet_tuple_like tuple_t>
 struct tuple_element<i, tuple_t>
 {
     //!\brief Element type.
-    using type = meta::at_c<typename tuple_t::seqan3_required_types, i>;
+    using type = seqan3::list_traits::at<i, typename tuple_t::seqan3_required_types>;
 };
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.

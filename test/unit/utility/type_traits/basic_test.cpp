@@ -9,8 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/utility/type_traits/basic.hpp>
 
 //------------------------------------------------------------------------------

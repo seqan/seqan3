@@ -20,8 +20,6 @@
 #include <utility>
 #include <variant>
 
-#include <meta/meta.hpp>
-
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/utility/tuple_utility.hpp>
@@ -138,10 +136,10 @@ private:
     //!\brief Befriend the base type.
     friend base_t;
 
-    //!\brief A meta::list of the types of each alternative in the composite
-    using alternatives = meta::list<alternative_types...>;
+    //!\brief A seqan3::type_list of the types of each alternative in the composite
+    using alternatives = seqan3::type_list<alternative_types...>;
 
-    static_assert(std::same_as<alternatives, meta::unique<alternatives>>,
+    static_assert(((seqan3::list_traits::count<alternative_types, alternatives> == 1) && ... && true),
                   "All types in a alphabet_variant must be distinct.");
 
     using typename base_t::char_type;
@@ -226,10 +224,11 @@ public:
     //!\endcond
     constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        assign_rank(
-            rank_by_type_(
-                meta::front<meta::find_if<alternatives,
-                                          detail::implicitly_convertible_from<indirect_alternative_t>>>(rhs)));
+        using alternative_predicate = detail::implicitly_convertible_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
+        assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
     /*!\brief Constructor for arguments explicitly (but not implicitly) convertible to an alternative.
@@ -257,8 +256,11 @@ public:
     //!\endcond
     constexpr explicit alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
-        assign_rank(rank_by_type_(meta::front<meta::find_if<alternatives,
-                                                            detail::constructible_from<indirect_alternative_t>>>(rhs)));
+        using alternative_predicate = detail::constructible_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
+        assign_rank(rank_by_type_(alternative_t(rhs)));
     }
 
 
@@ -277,7 +279,10 @@ public:
     //!\endcond
     constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
-        using alternative_t = meta::front<meta::find_if<alternatives, detail::assignable_from<indirect_alternative_t>>>;
+        using alternative_predicate = detail::assignable_from<indirect_alternative_t>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         alternative_t alternative{};
         alternative = rhs;
         assign_rank(rank_by_type_(alternative));
@@ -329,7 +334,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return is_alternative<index>();
     }
 
@@ -343,7 +348,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, true>();
     }
 
@@ -356,7 +361,7 @@ public:
         requires (holds_alternative<alternative_t>())
     //!\endcond
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, false>();
     }
     //!\}
@@ -389,9 +394,10 @@ public:
                                                              alternative_types...>,
                             bool>
     {
-        using alternative_t =
-            meta::front<meta::find_if<alternatives,
-                                      detail::weakly_equality_comparable_with_<indirect_alternative_type>>>;
+        using alternative_predicate = detail::weakly_equality_comparable_with_<indirect_alternative_type>;
+        constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
+                                                                           alternatives>;
+        using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         return lhs.template is_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
     }
 
@@ -447,10 +453,10 @@ protected:
      * \tparam throws Whether to perform checks (and throw) or not.
      */
     template <size_t index, bool throws>
-    constexpr auto convert_impl() const noexcept(!throws) -> meta::at_c<alternatives, index>
+    constexpr auto convert_impl() const noexcept(!throws) -> seqan3::list_traits::at<index, alternatives>
     {
         static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
-        using alternative_t = meta::at_c<alternatives, index>;
+        using alternative_t = seqan3::list_traits::at<index, alternatives>;
 
         if constexpr (throws)
         {
@@ -534,7 +540,7 @@ protected:
     //!\endcond
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
-        constexpr size_t index = meta::find_index<alternatives, alternative_t>::value;
+        constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return rank_by_index_<index>(alternative);
     }
 
