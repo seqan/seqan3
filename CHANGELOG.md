@@ -153,6 +153,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   `using namespace seqan3::literals` to import literal operators. The old way of explicitly importing specific
   operators via `using seqan3::operator""_{dna4, rna4, ...}` is not affected by this change
   ([\#2568](https://github.com/seqan/seqan3/pull/2568)).
+ * **Breaking change**: Swapped the meaning of `seqan3::alphabet_variant::is_alternative` and
+   `seqan3::alphabet_variant::holds_alternative` ([\#2596](https://github.com/seqan/seqan3/pull/2596)).
 
 #### Argument Parser
 
