@@ -271,7 +271,7 @@ protected:
     }
 
     //!\brief Returns an invalid_coordinate for this alignment.
-    alignment_coordinate invalid_coordinate() const noexcept
+    seqan3::detail::advanceable_alignment_coordinate<> invalid_coordinate() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         return {column_index_type{std::ranges::size(self->database)}, row_index_type{std::ranges::size(self->query)}};
@@ -312,7 +312,7 @@ public:
 
     //!\brief Return the end position of the alignment
     //!       Only available if default_edit_distance_trait_type::compute_end_positions is true.
-    alignment_coordinate end_positions() const noexcept
+    seqan3::detail::advanceable_alignment_coordinate<> end_positions() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_end_positions, "end_positions() can only be computed if you specify the "
@@ -580,7 +580,7 @@ public:
 
     //!\brief Return the begin position of the alignment.
     //!       Only available if default_edit_distance_trait_type::compute_begin_positions is true.
-    alignment_coordinate begin_positions() const noexcept
+    seqan3::detail::advanceable_alignment_coordinate<> begin_positions() const noexcept
     {
         derived_t const * self = static_cast<derived_t const *>(this);
         static_assert(edit_traits::compute_begin_positions, "begin_positions() can only be computed if you specify the "
@@ -588,12 +588,13 @@ public:
         if (!self->is_valid())
             return self->invalid_coordinate();
 
-        alignment_coordinate const back = self->end_positions();
-        auto trace_path = self->trace_matrix().trace_path(back);
+        auto [first, second] = self->end_positions();
+        detail::matrix_coordinate const end_positions{detail::row_index_type{second}, detail::column_index_type{first}};
+        auto trace_path = self->trace_matrix().trace_path(end_positions);
         auto trace_path_it = std::ranges::begin(trace_path);
         std::ranges::advance(trace_path_it, std::ranges::end(trace_path));
-        matrix_coordinate coordinate = trace_path_it.coordinate();
-        return {column_index_type{coordinate.col}, row_index_type{coordinate.row}};
+        detail::matrix_coordinate const begin_positions = trace_path_it.coordinate();
+        return {detail::column_index_type{begin_positions.col}, detail::row_index_type{begin_positions.row}};
     }
 
     //!\brief Return the alignment, i.e. the actual base pair matching.
@@ -609,9 +610,10 @@ public:
         if (!self->is_valid())
             return alignment_t{};
 
-        alignment_coordinate const back = self->end_positions();
+        auto [first, second] = self->end_positions();
+        detail::matrix_coordinate const end_positions{detail::row_index_type{second}, detail::column_index_type{first}};
         aligned_sequence_builder builder{self->database, self->query};
-        auto trace_path = self->trace_matrix().trace_path(back);
+        auto trace_path = self->trace_matrix().trace_path(end_positions);
         return builder(trace_path).alignment;
     }
     //!\}
@@ -1087,8 +1089,12 @@ public:
         {
             if (this->is_valid())
             {
+                auto [first, second] = cached_end_positions;
+                detail::matrix_coordinate const end_positions{detail::row_index_type{second},
+                                                              detail::column_index_type{first}};
+
                 aligned_sequence_builder builder{this->database, this->query};
-                auto trace_res = builder(this->trace_matrix().trace_path(cached_end_positions));
+                auto trace_res = builder(this->trace_matrix().trace_path(end_positions));
                 res_vt.alignment = std::move(trace_res.alignment);
                 cached_begin_positions.first = trace_res.first_sequence_slice_positions.first;
                 cached_begin_positions.second = trace_res.second_sequence_slice_positions.first;

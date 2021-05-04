@@ -68,11 +68,11 @@ private:
     using configured_score_type = std::conditional_t<traits_type::compute_score, score_type, disabled_type>;
     //!\brief The configured end position type if selected.
     using configured_end_position_type = std::conditional_t<traits_type::compute_end_positions,
-                                                            alignment_coordinate,
+                                                            seqan3::detail::advanceable_alignment_coordinate<>,
                                                             disabled_type>;
     //!\brief The configured begin position type if selected.
     using configured_begin_position_type = std::conditional_t<traits_type::compute_begin_positions,
-                                                              alignment_coordinate,
+                                                              seqan3::detail::advanceable_alignment_coordinate<>,
                                                               disabled_type>;
     //!\brief The configured alignment type if selected.
     using configured_alignment_type = typename lazy_conditional_t<traits_type::compute_sequence_alignment,
