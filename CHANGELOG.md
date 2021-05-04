@@ -118,6 +118,12 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 
 #### Alignment
 
+* The member constants of `seqan3::aminoacid_similarity_matrix` were changed to lower case
+  ([\#2599](https://github.com/seqan/seqan3/pull/2599)):
+  * `seqan3::aminoacid_similarity_matrix::BLOSUM30` is replaced by `seqan3::aminoacid_similarity_matrix::blosum30`.
+  * `seqan3::aminoacid_similarity_matrix::BLOSUM45` is replaced by `seqan3::aminoacid_similarity_matrix::blosum45`.
+  * `seqan3::aminoacid_similarity_matrix::BLOSUM62` is replaced by `seqan3::aminoacid_similarity_matrix::blosum62`.
+  * `seqan3::aminoacid_similarity_matrix::BLOSUM80` is replaced by `seqan3::aminoacid_similarity_matrix::blosum80`.
 * We deprecated seqan3::alignment_coordinate and it will be removed in 3.1.0
   ([\#2602](https://github.com/seqan/seqan3/pull/2602)).
 
