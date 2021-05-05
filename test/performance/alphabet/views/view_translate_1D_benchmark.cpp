@@ -12,9 +12,9 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/seqan2.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
 #include <seqan/sequence.h>

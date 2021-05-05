@@ -3,8 +3,8 @@
 
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 int main()
 {

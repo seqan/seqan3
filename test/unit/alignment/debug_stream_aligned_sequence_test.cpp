@@ -11,7 +11,7 @@
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna5;

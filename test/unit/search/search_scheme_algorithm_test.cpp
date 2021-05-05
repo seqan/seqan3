@@ -13,7 +13,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/range/views/to.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
@@ -23,6 +22,7 @@
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 #include "helper.hpp"
 #include "helper_search_scheme.hpp"

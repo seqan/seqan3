@@ -9,7 +9,7 @@
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/to.hpp>
+#include <seqan3/utility/views/to.hpp>
 
 using namespace seqan3::literals;
 

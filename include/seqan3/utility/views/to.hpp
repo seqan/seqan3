@@ -7,13 +7,29 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief [DEPRECATED] Provides seqan3::views::to.
- * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/to.hpp instead.
+ * \brief Provides seqan3::views::to.
  */
 
 #pragma once
 
-#include <seqan3/utility/views/to.hpp>
+#include <seqan3/std/ranges>
 
-SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/to.hpp> instead.")
+#include <range/v3/range/conversion.hpp>
+
+#include <seqan3/core/platform.hpp>
+
+namespace seqan3::views
+{
+
+/*!\brief A to view
+ * \ingroup views
+ * \details
+ * \noapi{This is currently range-v3's to implementation.}
+ */
+#if SEQAN3_DOXYGEN_ONLY(1)0
+inline constexpr auto to;
+#else // ^^^ doxygen only / real import vvv
+using ::ranges::to;
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
+} // namespace seqan3::views
