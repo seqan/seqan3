@@ -18,7 +18,7 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 #include "../../alignment/aligned_sequence_test_template.hpp"
 
 using decorator_t = seqan3::gap_decorator<std::vector<seqan3::dna4> const &>;
