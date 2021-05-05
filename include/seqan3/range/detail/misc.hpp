@@ -6,39 +6,14 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various utility functions.
+ * \brief [DEPRECATED] Provides various utility functions.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/core/range/detail/misc.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/std/ranges>
+#include <seqan3/core/range/detail/misc.hpp>
 
-#include <seqan3/core/platform.hpp>
-
-namespace seqan3::detail
-{
-
-/*!\brief Iterate over a range (consumes single-pass input ranges).
- * \ingroup range
- * \tparam rng_t Type of the range; must satisfy std::ranges::input_range.
- * \param rng The range.
- */
-template <std::ranges::input_range rng_t>
-constexpr void consume(rng_t && rng)
-{
-    auto it = begin(rng);
-    auto it_end = end(rng);
-    while (it != it_end)
-        ++it;
-}
-
-/*!\brief Iterate over a range (NO-OP for forward ranges).
- * \ingroup range
- * \tparam rng_t Type of the range; must satisfy std::ranges::forward_range.
- */
-template <std::ranges::forward_range rng_t>
-constexpr void consume(rng_t &&)
-{}
-
-} // namespace seqan3::detail
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0 Please #include <seqan3/core/range/detail/misc.hpp> instead.")

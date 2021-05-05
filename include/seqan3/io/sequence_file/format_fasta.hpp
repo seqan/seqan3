@@ -25,6 +25,7 @@
 #include <seqan3/alphabet/quality/aliases.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
+#include <seqan3/core/range/detail/misc.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
@@ -36,7 +37,6 @@
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/range/detail/misc.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>

@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/detail/inherited_iterator_base.hpp>
+#include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 
 /* This class is extensively tested by the many views that use it, e.g. views::take_line */
 

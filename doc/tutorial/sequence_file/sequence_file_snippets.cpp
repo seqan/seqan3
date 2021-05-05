@@ -10,7 +10,6 @@
 //![include]
 #include <seqan3/io/sequence_file/all.hpp>
 //![include]
-#include <seqan3/range/detail/misc.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 //![include_ranges_chunk]
 #include <seqan3/utility/views/chunk.hpp>
