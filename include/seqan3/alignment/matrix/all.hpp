@@ -18,8 +18,11 @@
  * \see alignment
  */
 
-#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/alignment_optimum.hpp>
 #include <seqan3/alignment/matrix/debug_matrix.hpp>
+#ifdef SEQAN3_DEPRECATED_310
+// for deprecated seqan3::alignment_coordinate
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
+#endif // SEQAN3_DEPRECATED_310
 #include <seqan3/alignment/matrix/matrix_concept.hpp>
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>

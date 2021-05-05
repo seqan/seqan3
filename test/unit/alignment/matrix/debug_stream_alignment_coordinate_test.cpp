@@ -10,7 +10,6 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 
 TEST(debug_stream_test, advanceable_alignment_coordinate)
 {
