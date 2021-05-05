@@ -45,7 +45,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alp
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, mask const l)
 {
-    return s << (l == mask::MASKED ? "MASKED" : "UNMASKED");
+    return s << (l == mask::masked ? "MASKED" : "UNMASKED");
 }
 
 //!\}

@@ -107,11 +107,11 @@ TEST(debug_stream_test, mask_semialphabet)
     std::ostringstream o;
     seqan3::debug_stream_type my_stream{o};
 
-    my_stream << seqan3::mask::MASKED;
+    my_stream << seqan3::mask::masked;
     o.flush();
     EXPECT_EQ(o.str(), "MASKED");
 
-    my_stream << seqan3::mask::UNMASKED;
+    my_stream << seqan3::mask::unmasked;
     o.flush();
     EXPECT_EQ(o.str(), "MASKEDUNMASKED");
 }

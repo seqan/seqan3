@@ -20,8 +20,6 @@
 #include <string_view>
 #include <vector>
 
-#include <range/v3/view/chunk.hpp>
-
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
@@ -30,15 +28,16 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/range/detail/misc.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/interleave.hpp>
 
 namespace seqan3
@@ -233,7 +232,7 @@ protected:
         else
         {
             std::ranges::copy(std::string_view{"ORIGIN\n"}, stream_it);
-            auto seq = sequence | ranges::views::chunk(60);
+            auto seq = sequence | seqan3::views::chunk(60);
             size_t i = 0;
             size_t bp = 1;
 

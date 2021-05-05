@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <seqan3/std/ranges>
+
 #include <range/v3/view/join.hpp>
 
 #include <seqan3/core/platform.hpp>

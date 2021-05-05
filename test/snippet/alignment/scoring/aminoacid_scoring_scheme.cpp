@@ -1,5 +1,3 @@
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>

@@ -12,12 +12,9 @@
 #include <utility>
 #include <vector>
 
-#include <range/v3/algorithm/equal.hpp>
-#include <range/v3/view/filter.hpp>
-
 #include <seqan3/core/detail/debug_stream_tuple.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/take.hpp>
+#include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/utility/views/pairwise_combine.hpp>
 
@@ -412,7 +409,7 @@ TYPED_TEST(pairwise_combine_test, iterate)
     for (auto r : v)
         cmp.push_back(r);
 
-    EXPECT_TRUE(ranges::equal(cmp, this->expect()));
+    EXPECT_RANGE_EQ(cmp, this->expect());
 }
 
 TYPED_TEST(pairwise_combine_test, iterate_reverse)
@@ -426,7 +423,7 @@ TYPED_TEST(pairwise_combine_test, iterate_reverse)
         for (auto r : v | std::views::reverse)
             cmp.push_back(r);
 
-        EXPECT_TRUE(ranges::equal(cmp, this->expect() | std::views::reverse));
+        EXPECT_RANGE_EQ(cmp, this->expect() | std::views::reverse);
     }
 }
 

@@ -14,8 +14,8 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
 // THIS FILE IMPLICITLY TESTS seqan3::views::slice, because that is just drop piped into take

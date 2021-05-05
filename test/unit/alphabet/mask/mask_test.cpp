@@ -19,12 +19,12 @@ TEST(mask, assign_rank)
 {
     // l-value
     seqan3::mask lmask;
-    EXPECT_EQ(lmask.assign_rank(1), seqan3::mask::MASKED);
+    EXPECT_EQ(lmask.assign_rank(1), seqan3::mask::masked);
     EXPECT_TRUE(lmask.to_rank());
-    EXPECT_EQ(lmask.assign_rank(0), seqan3::mask::UNMASKED);
+    EXPECT_EQ(lmask.assign_rank(0), seqan3::mask::unmasked);
     EXPECT_FALSE(lmask.to_rank());
-    EXPECT_EQ(lmask.assign_rank(true), seqan3::mask::MASKED);
-    EXPECT_EQ(lmask.assign_rank(false), seqan3::mask::UNMASKED);
+    EXPECT_EQ(lmask.assign_rank(true), seqan3::mask::masked);
+    EXPECT_EQ(lmask.assign_rank(false), seqan3::mask::unmasked);
 
     // const l-value
     lmask.assign_rank(1);
@@ -35,12 +35,12 @@ TEST(mask, assign_rank)
     seqan3::mask rmask{lmask};
     EXPECT_EQ(std::move(rmask).to_rank(), lmask.to_rank());
     EXPECT_TRUE((std::is_same_v<decltype(std::move(rmask)), seqan3::mask &&>));
-    EXPECT_EQ(std::move(rmask).assign_rank(1), seqan3::mask::MASKED);
+    EXPECT_EQ(std::move(rmask).assign_rank(1), seqan3::mask::masked);
     EXPECT_TRUE(std::move(rmask).to_rank());
-    EXPECT_EQ(std::move(rmask).assign_rank(0), seqan3::mask::UNMASKED);
+    EXPECT_EQ(std::move(rmask).assign_rank(0), seqan3::mask::unmasked);
     EXPECT_FALSE(std::move(rmask).to_rank());
-    EXPECT_EQ(std::move(rmask).assign_rank(true), seqan3::mask::MASKED);
-    EXPECT_EQ(std::move(rmask).assign_rank(false), seqan3::mask::UNMASKED);
+    EXPECT_EQ(std::move(rmask).assign_rank(true), seqan3::mask::masked);
+    EXPECT_EQ(std::move(rmask).assign_rank(false), seqan3::mask::unmasked);
 
     // const r-value
     seqan3::mask const crmask{lmask};

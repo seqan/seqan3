@@ -1,0 +1,33 @@
+From 66c554cd52b622c38e037e734c252f1d227f92a0 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 30 Apr 2021 13:25:39 +0200
+Subject: [PATCH 25/25] [NOAPI] [INCLUDE] seqan3/std/ranges must be included
+ before any ranges-v3 header
+
+---
+ test/unit/range/views/view_slice_test.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/unit/range/views/view_slice_test.cpp b/test/unit/range/views/view_slice_test.cpp
+index 388bf4a9a..7ab8b4aa6 100644
+--- a/test/unit/range/views/view_slice_test.cpp
++++ b/test/unit/range/views/view_slice_test.cpp
+@@ -8,6 +8,7 @@
+ #include <deque>
+ #include <iostream>
+ #include <list>
++#include <seqan3/std/ranges>
+ #include <string>
+ #include <vector>
+ 
+@@ -22,7 +23,6 @@
+ #include <seqan3/range/views/to.hpp>
+ #include <seqan3/std/algorithm>
+ #include <seqan3/std/concepts>
+-#include <seqan3/std/ranges>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+ // ============================================================================
+-- 
+2.31.1
+

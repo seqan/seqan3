@@ -7,8 +7,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/algorithm/equal.hpp>
-
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
@@ -131,25 +129,25 @@ TEST(configuration, get_by_type_template)
     seqan3::configuration cfg = bar{1} | foobar<>{std::vector{0, 1, 2, 3}};
 
     { // l-value
-        EXPECT_TRUE(ranges::equal(seqan3::get<foobar>(cfg).value, std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(seqan3::get<foobar>(cfg).value, (std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(cfg)), foobar<> &>));
     }
 
     { // const l-value
         seqan3::configuration<bar, foobar<>> const cfg_c{cfg};
-        EXPECT_TRUE(ranges::equal(seqan3::get<foobar>(cfg_c).value, std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(seqan3::get<foobar>(cfg_c).value, (std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(cfg_c)), foobar<> const &>));
     }
 
     { // r-value
         seqan3::configuration<bar, foobar<>> cfg_r{cfg};
-        EXPECT_TRUE(ranges::equal(seqan3::get<foobar>(std::move(cfg_r)).value, std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(seqan3::get<foobar>(std::move(cfg_r)).value, (std::vector{0, 1, 2, 3}));
         EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(std::move(cfg_r))), foobar<> &&>));
     }
 
     { // const r-value
         seqan3::configuration<bar, foobar<>> const cfg_cr{cfg};
-        EXPECT_TRUE(ranges::equal(seqan3::get<foobar>(std::move(cfg_cr)).value, std::vector{0, 1, 2, 3}));
+        EXPECT_RANGE_EQ(seqan3::get<foobar>(std::move(cfg_cr)).value, (std::vector{0, 1, 2, 3}));
         // TODO(rrahn): Enable when seqan3::get(const &&) is fixed for gcc7 as well.
         // EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(std::move(cfg_cr))), foobar<> const &&>));
     }

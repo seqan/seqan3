@@ -24,7 +24,6 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #endif // SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/move.hpp>
-#include <seqan3/range/views/take.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/views/convert.hpp>

@@ -63,7 +63,10 @@ public:
      * \details
      * \deprecated This will be removed in 3.1.0. Please use seqan3::phred68solexa::assign_phred() or '!'_phred68solexa.
      */
-    SEQAN3_DEPRECATED_310 constexpr phred68solexa(phred_type const p) : base_t{p} {}
+    SEQAN3_DEPRECATED_310 constexpr phred68solexa(phred_type const p)
+    {
+        assign_phred(p);
+    }
 
     // Inherit converting constructor
     using base_t::base_t;

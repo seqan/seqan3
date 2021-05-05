@@ -57,7 +57,7 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
     if constexpr (std::same_as<nucl_type, dna4> || std::same_as<nucl_type, dna5> || std::same_as<nucl_type, dna15>)
     {
         // table exists for dna15 and is generated for dna4 and dna5 (compile time ok, because small)
-        return seqan3::detail::translation_table<nucl_type, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+        return seqan3::detail::translation_table<nucl_type, gc>::value[to_rank(n1)][to_rank(n2)][to_rank(n3)];
     }
     else if constexpr (std::same_as<nucl_type, rna4> || std::same_as<nucl_type, rna5> || std::same_as<nucl_type, rna15>)
     {
@@ -66,13 +66,13 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
                           std::conditional_t<std::same_as<nucl_type, rna15>, dna15, void>>>;
 
         // we can use dna's tables, because ranks are identical
-        return seqan3::detail::translation_table<rna2dna_t, gc>::VALUE[to_rank(n1)][to_rank(n2)][to_rank(n3)];
+        return seqan3::detail::translation_table<rna2dna_t, gc>::value[to_rank(n1)][to_rank(n2)][to_rank(n3)];
     }
     else // composites or user defined nucleotide
     {
         // we cast to dna15; slightly slower run-time, but lot's of compile time saved for large alphabets.
         // (nucleotide types can be converted to dna15 by definition)
-        return seqan3::detail::translation_table<dna15, gc>::VALUE[to_rank(static_cast<dna15>(n1))]
+        return seqan3::detail::translation_table<dna15, gc>::value[to_rank(static_cast<dna15>(n1))]
                                                                   [to_rank(static_cast<dna15>(n2))]
                                                                   [to_rank(static_cast<dna15>(n3))];
     }

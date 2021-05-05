@@ -1,8 +1,8 @@
+#include <seqan3/std/ranges>
 #include <string>
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/take.hpp>
-#include <seqan3/std/ranges>
+#include <seqan3/io/detail/take_view.hpp>
 
 int main()
 {

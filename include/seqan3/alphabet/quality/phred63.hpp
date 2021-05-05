@@ -70,7 +70,10 @@ public:
      * \details
      * \deprecated This will be removed in 3.1.0. Please use seqan3::phred63::assign_phred() or '!'_phred63.
      */
-    SEQAN3_DEPRECATED_310 constexpr phred63(phred_type const p) : base_t{p} {}
+    SEQAN3_DEPRECATED_310 constexpr phred63(phred_type const p)
+    {
+        assign_phred(p);
+    }
 
     // Inherit converting constructor
     using base_t::base_t;

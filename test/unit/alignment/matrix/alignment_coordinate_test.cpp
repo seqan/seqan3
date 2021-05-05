@@ -9,8 +9,6 @@
 
 #include <type_traits>
 
-#include <range/v3/view/iota.hpp>
-
 #include <seqan3/alignment/matrix/alignment_coordinate.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/test/pretty_printing.hpp>
