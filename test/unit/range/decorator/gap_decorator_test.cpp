@@ -13,9 +13,9 @@
 #include <range/v3/view/filter.hpp>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
 
 #include "../iterator_test_template.hpp"

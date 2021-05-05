@@ -17,4 +17,4 @@
 
 #pragma once
 
-#include <seqan3/range/decorator/gap_decorator.hpp>
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
