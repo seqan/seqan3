@@ -83,7 +83,7 @@ public:
     //!\brief The size type of the allocation.
     using size_type = std::make_unsigned_t<difference_type>;
 
-    //!\brief Are any two allocators of the same aligned_allocator type always compare equal?
+    //!\brief Do any two allocators of the same aligned_allocator type always compare equal?
     using is_always_equal = std::true_type;
 
     /*!\name Constructors, destructor and assignment
