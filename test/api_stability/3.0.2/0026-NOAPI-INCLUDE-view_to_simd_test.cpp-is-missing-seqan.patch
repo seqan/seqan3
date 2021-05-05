@@ -1,0 +1,25 @@
+From 975a1914f9e5171b078cdcb8f6c3b6ee2a9f15c2 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Tue, 4 May 2021 00:23:20 +0200
+Subject: [PATCH 26/26] [NOAPI] [INCLUDE] view_to_simd_test.cpp is missing
+ seqan3/range/concept.hpp
+
+---
+ test/unit/core/simd/view_to_simd_test.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/unit/core/simd/view_to_simd_test.cpp b/test/unit/core/simd/view_to_simd_test.cpp
+index 140f01d97..b47a898ec 100644
+--- a/test/unit/core/simd/view_to_simd_test.cpp
++++ b/test/unit/core/simd/view_to_simd_test.cpp
+@@ -16,6 +16,7 @@
+ #include <seqan3/core/simd/simd_traits.hpp>
+ #include <seqan3/core/simd/simd.hpp>
+ #include <seqan3/core/simd/view_to_simd.hpp>
++#include <seqan3/range/concept.hpp>
+ #include <seqan3/range/container/aligned_allocator.hpp>
+ #include <seqan3/range/views/type_reduce.hpp>
+ #include <seqan3/std/algorithm>
+-- 
+2.31.1
+

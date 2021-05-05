@@ -11,7 +11,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/hash.hpp>
+#include <seqan3/alphabet/range/hash.hpp>
 
 template <typename T>
 using alphabet_hashing = ::testing::Test;
