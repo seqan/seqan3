@@ -18,10 +18,9 @@
 namespace seqan3
 {
 /*!\brief Implementation of a masked alphabet to be used for tuple composites.
+ * \ingroup mask
  * \implements seqan3::writable_semialphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
- *
- * \ingroup mask
  *
  * \details
  *
@@ -29,7 +28,7 @@ namespace seqan3
  *
  * \include test/snippet/alphabet/mask/mask.cpp
  *
- * \see \link mask Mask submodule \endlink, it contains an explanation of hard-masking (UNKNOWN character) and
+ * \see \link mask Mask submodule \endlink, it contains an explanation of hard-masking (unknown character) and
  *      soft-masking (lower/upper case letters).
  *
  * \stableapi{Since version 3.1.}
