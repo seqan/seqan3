@@ -115,6 +115,8 @@ namespace seqan3
  * assign to that type first and then assign to the variant, e.g.
  *
  * \include test/snippet/alphabet/composite/alphabet_variant_char_representation.cpp
+ *
+ * \stableapi{Since version 3.1.}
  */
 template <typename ...alternative_types>
 //!\cond
@@ -150,11 +152,17 @@ public:
     using base_t::to_rank;
     using base_t::assign_rank;
 
-    //!\brief Expose the alternative types to concept checks in metaprogramming.
-    //!\private
+   /*!\brief Expose the alternative types to concept checks in metaprogramming.
+    * \private
+    * \details
+    * \noapi
+    */
     using seqan3_required_types = type_list<alternative_types...>;
-    //!\brief Expose the recursive alternative types to concept checks in metaprogramming.
-    //!\private
+   /*!\brief Expose the recursive alternative types to concept checks in metaprogramming.
+    * \private
+    * \details
+    * \noapi
+    */
     using seqan3_recursive_required_types =
         list_traits::concat<seqan3_required_types,
                             detail::transformation_trait_or_t<detail::recursive_required_types<alternative_types>,
@@ -163,10 +171,12 @@ public:
     /*!\brief Returns true if alternative_t is one of the given alternative types.
      * \tparam alternative_t The type to check.
      *
-     * \include test/snippet/alphabet/composite/alphabet_variant_holds_alternative.cpp
+     * \include test/snippet/alphabet/composite/alphabet_variant_is_alternative.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename alternative_t>
-    static constexpr bool holds_alternative() noexcept
+    static constexpr bool is_alternative() noexcept
     {
         return seqan3::pack_traits::contains<alternative_t, alternative_types...>;
     }
@@ -186,6 +196,8 @@ public:
      * \param  alternative   The value of a alternative that should be assigned.
      *
      * \include test/snippet/alphabet/composite/alphabet_variant_value_construction.cpp
+     *
+     * \stableapi{Since version 3.1.}
      */
     template <typename alternative_t>
     //!\cond
@@ -193,7 +205,7 @@ public:
                  (!std::is_base_of_v<alphabet_variant, alternative_t>) &&
                  (!list_traits::contains<alphabet_variant,
                   detail::transformation_trait_or_t<detail::recursive_required_types<alternative_t>, type_list<>>>) &&
-                 (holds_alternative<alternative_t>())
+                 (is_alternative<alternative_t>())
     //!\endcond
     constexpr alphabet_variant(alternative_t const alternative) noexcept
     {
@@ -215,6 +227,8 @@ public:
      *   * seqan3::dna4 and seqan3::rna4 are implicitly convertible to each other so the variant accepts either.
      *   * Construction via `{}` considers implicit and explicit conversions.
      *   * Construction via `=` considers only implicit conversions (but that is sufficient here).
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
     //!\cond
@@ -270,7 +284,10 @@ public:
      *
      * \details
      *
-     * Most assignments happen through implicit conversion and the default assignment operator. This constructor is for the rest.
+     * Most assignments happen through implicit conversion and the default assignment operator. This assignment operator
+     * is for the rest.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
     //!\cond
@@ -293,18 +310,24 @@ public:
     /*!\name Conversion (by index)
      * \{
      */
-    //!\brief Whether the variant alphabet currently holds a value of the given alternative.
-    //!\tparam index Index of the alternative to check for.
+    /*!\brief Whether the variant alphabet currently holds a value of the given alternative.
+     * \tparam index Index of the alternative to check for.
+     * \sa std::variant::holds_alternative
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     template <size_t index>
-    constexpr bool is_alternative() const noexcept
+    constexpr bool holds_alternative() const noexcept
     {
         static_assert(index < alphabet_size, "The alphabet_variant contains less alternatives than you are checking.");
         return (to_rank() >= partial_sum_sizes[index]) && (to_rank() < partial_sum_sizes[index + 1]);
     }
 
-    /*!\brief Convert to the specified alphabet (throws if is_alternative() would be false).
+    /*!\brief Convert to the specified alphabet (throws if holds_alternative() would be false).
      * \tparam index Index of the alternative to check for.
      * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t index>
     constexpr auto convert_to() const
@@ -312,8 +335,10 @@ public:
         return convert_impl<index, true>();
     }
 
-    /*!\brief Convert to the specified alphabet (**undefined behaviour** if is_alternative() would be false).
+    /*!\brief Convert to the specified alphabet (**undefined behaviour** if holds_alternative() would be false).
      * \tparam index Index of the alternative to check for.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t index>
     constexpr auto convert_unsafely_to() const noexcept
@@ -325,27 +350,31 @@ public:
     /*!\name Conversion (by type)
      * \{
      */
-    /*!\copybrief is_alternative()
+    /*!\copybrief holds_alternative()
      * \tparam alternative_t The type of the alternative that you wish to check for.
+     * \details
+     * \stableapi{Since version 3.1.}
      */
     template <typename alternative_t>
-    constexpr bool is_alternative() const noexcept
+    constexpr bool holds_alternative() const noexcept
     //!\cond
-        requires (holds_alternative<alternative_t>())
+        requires (is_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
-        return is_alternative<index>();
+        return holds_alternative<index>();
     }
 
     /*!\copybrief convert_to()
      * \tparam alternative_t The type of the alternative that you wish to check for.
      * \throws std::bad_variant_access If the variant_alphabet currently holds the value of a different alternative.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename alternative_t>
     constexpr alternative_t convert_to() const
     //!\cond
-        requires (holds_alternative<alternative_t>())
+        requires (is_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
@@ -354,11 +383,13 @@ public:
 
     /*!\copybrief convert_unsafely_to()
      * \tparam alternative_t The type of the alternative that you wish to check for.
+     * \details
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename alternative_t>
     constexpr alternative_t convert_unsafely_to() const noexcept
     //!\cond
-        requires (holds_alternative<alternative_t>())
+        requires (is_alternative<alternative_t>())
     //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
@@ -385,6 +416,8 @@ public:
      * To determine (in-)equality, it is first deduced which alternative the argument is comparable with.
      * It is then checked if the variant currently is in that alternative's state and if yes whether the values compare
      * to `true`; else `false` is returned.
+     * \details
+     * \stableapi{Since version 3.1.}
      */
     template <typename alphabet_variant_t, typename indirect_alternative_type>
     friend constexpr auto operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs) noexcept
@@ -398,7 +431,7 @@ public:
         constexpr auto alternative_position = seqan3::list_traits::find_if<alternative_predicate::template invoke,
                                                                            alternatives>;
         using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
-        return lhs.template is_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
+        return lhs.template holds_alternative<alternative_t>() && (lhs.template convert_unsafely_to<alternative_t>() == rhs);
     }
 
     //!\copydoc operator==(alphabet_variant_t const lhs, indirect_alternative_type const rhs)
@@ -460,7 +493,7 @@ protected:
 
         if constexpr (throws)
         {
-            if (!is_alternative<index>()) // [[unlikely]]
+            if (!holds_alternative<index>()) // [[unlikely]]
             {
                 throw std::bad_variant_access{};
             }
@@ -523,7 +556,7 @@ protected:
     //!\param alternative The value of a alternative.
     template <size_t index, typename alternative_t>
     //!\cond
-        requires (holds_alternative<alternative_t>())
+        requires (is_alternative<alternative_t>())
     //!\endcond
     static constexpr rank_type rank_by_index_(alternative_t const & alternative) noexcept
     {
@@ -536,7 +569,7 @@ protected:
     //!\param alternative The value of a alternative.
     template <typename alternative_t>
     //!\cond
-        requires (holds_alternative<alternative_t>())
+        requires (is_alternative<alternative_t>())
     //!\endcond
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
