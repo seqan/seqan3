@@ -16,9 +16,9 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
+#include <seqan3/alphabet/range/sequence.hpp>
 #include <seqan3/core/detail/debug_stream_type.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/concept.hpp>
 
 namespace seqan3::detail
 {

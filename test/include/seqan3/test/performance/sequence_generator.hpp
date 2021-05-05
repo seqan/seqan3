@@ -14,9 +14,10 @@
 #pragma once
 
 #include <seqan3/std/algorithm>
+#include <seqan3/std/ranges>
 #include <random>
 
-#include <seqan3/range/concept.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/test/seqan2.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2

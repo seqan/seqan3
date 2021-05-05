@@ -21,7 +21,6 @@
 
 #include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/range/views/type_reduce.hpp>

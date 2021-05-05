@@ -18,6 +18,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>

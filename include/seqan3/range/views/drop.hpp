@@ -20,7 +20,6 @@
 
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/range/concept.hpp>
 #include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::detail
