@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  * \brief Create a mask composite which can be applied with another alphabet.
+ * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  */
 
 #pragma once
@@ -23,10 +23,13 @@ namespace seqan3
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *
  * \details
+ *
  * This alphabet is not usually used directly, but instead via seqan3::masked.
- * For more information see the \link mask Mask submodule \endlink.
  *
  * \include test/snippet/alphabet/mask/mask.cpp
+ *
+ * \see \link mask Mask submodule \endlink, it contains an explanation of hard-masking (unknown character) and
+ *      soft-masking (lower/upper case letters).
  *
  * \stableapi{Since version 3.1.}
  */
