@@ -38,7 +38,6 @@
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>

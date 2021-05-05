@@ -31,6 +31,7 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
@@ -38,7 +39,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 
@@ -213,7 +213,7 @@ private:
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
                 std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank)        // skip leading >
-                                              | views::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
+                                              | detail::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));                               // … ^A is old delimiter
 
@@ -301,7 +301,7 @@ private:
             if (std::ranges::begin(stream_view) == std::ranges::end(stream_view))
                 throw unexpected_end_of_input{"No sequence information given!"};
 
-            std::ranges::copy(stream_view | views::take_until(is_id)                   // until next header (or end)
+            std::ranges::copy(stream_view | detail::take_until(is_id)                  // until next header (or end)
                                           | std::views::filter(!(is_space || is_digit))// ignore whitespace and numbers
                                           | std::views::transform([is_legal_alph] (char const c)
                                             {
@@ -321,7 +321,7 @@ private:
         }
         else
         {
-            detail::consume(stream_view | views::take_until(is_id));
+            detail::consume(stream_view | detail::take_until(is_id));
         }
     }
 

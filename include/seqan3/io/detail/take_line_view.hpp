@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
 // ============================================================================
@@ -75,7 +75,7 @@ namespace seqan3::detail
  * On single pass std::ranges::input_range it can be used to tokenise the input stream line-wise:
  * \include test/snippet/io/detail/take_line_view_tokenise.cpp
  */
-inline auto constexpr take_line = views::take_until_and_consume(is_char<'\r'> || is_char<'\n'>);
+inline auto constexpr take_line = detail::take_until_and_consume(is_char<'\r'> || is_char<'\n'>);
 
 // ============================================================================
 //  detail::take_line_or_throw (adaptor instance definition)
@@ -87,7 +87,7 @@ inline auto constexpr take_line = views::take_until_and_consume(is_char<'\r'> ||
  *
  * \copydetails seqan3::detail::take_line
  */
-inline auto constexpr take_line_or_throw = views::take_until_or_throw_and_consume(is_char<'\r'> || is_char<'\n'>);
+inline auto constexpr take_line_or_throw = detail::take_until_or_throw_and_consume(is_char<'\r'> || is_char<'\n'>);
 
 //!\}
 

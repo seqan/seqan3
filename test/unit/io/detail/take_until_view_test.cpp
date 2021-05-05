@@ -11,7 +11,7 @@
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 
-#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
@@ -103,7 +103,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
 TEST(view_take_until, unix_eol)
 {
     auto is_newline = [] (char c) { return c == '\n'; };
-    do_test(seqan3::views::take_until, is_newline, "foo\nbar");
+    do_test(seqan3::detail::take_until, is_newline, "foo\nbar");
 }
 
 TEST(view_take_until, functor_fail)
@@ -112,17 +112,17 @@ TEST(view_take_until, functor_fail)
 
     std::string vec{"foo"};
     auto is_newline = [](char c){return c == '\n'; };
-    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::take_until(is_newline));
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::detail::take_until(is_newline));
 }
 
 TEST(view_take_until, concepts)
 {
     auto is_newline = [] (char c) { return c == '\n'; };
-    auto adapt = seqan3::views::take_until(is_newline);
+    auto adapt = seqan3::detail::take_until(is_newline);
     do_concepts(adapt, true);
 
     // mutable adapters make the view loose const-iterability, but this is not checked by conepts unfortunately
-//     auto adapt2 = seqan3::views::take_until([count = 0] (char c) mutable { ++count; return c == '\n'; });
+//     auto adapt2 = seqan3::detail::take_until([count = 0] (char c) mutable { ++count; return c == '\n'; });
 //     do_concepts(adapt2, false);
 }
 
@@ -133,7 +133,7 @@ TEST(view_take_until, concepts)
 TEST(view_take_until_or_throw, unix_eol)
 {
     auto is_newline = [] (char c) { return c == '\n'; };
-    do_test(seqan3::views::take_until_or_throw, is_newline, "foo\nbar");
+    do_test(seqan3::detail::take_until_or_throw, is_newline, "foo\nbar");
 }
 
 TEST(view_take_until_or_throw, functor_fail)
@@ -141,12 +141,12 @@ TEST(view_take_until_or_throw, functor_fail)
     std::string vec{"foo"};
 
     auto is_newline = [] (char c) { return c == '\n'; };
-    EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::take_until_or_throw(is_newline), [](auto &&){}),
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::detail::take_until_or_throw(is_newline), [](auto &&){}),
                  seqan3::unexpected_end_of_input);
 }
 
 TEST(view_take_until_or_throw, concepts)
 {
     auto is_newline = [](char c){return c == '\n'; };
-    do_concepts(seqan3::views::take_until_or_throw(is_newline), true);
+    do_concepts(seqan3::detail::take_until_or_throw(is_newline), true);
 }

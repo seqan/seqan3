@@ -21,7 +21,7 @@
 #include <seqan3/alignment/detail/pairwise_alignment_concept.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
@@ -146,7 +146,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_
     // -------------------------------------------------------------------------------------------------------------
     while (std::ranges::begin(cigar_view) != std::ranges::end(cigar_view)) // until stream is not empty
     {
-        auto buff_end = (std::ranges::copy(cigar_view | views::take_until_or_throw(!is_digit), buffer.data())).out;
+        auto buff_end = (std::ranges::copy(cigar_view | detail::take_until_or_throw(!is_digit), buffer.data())).out;
         cigar_operation = *std::ranges::begin(cigar_view);
         std::ranges::next(std::ranges::begin(cigar_view));
 

@@ -30,6 +30,7 @@
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/header.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
@@ -38,7 +39,6 @@
 #include <seqan3/io/sam_file/output_options.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>

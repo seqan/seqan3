@@ -31,6 +31,7 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
@@ -38,7 +39,6 @@
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
 #include <seqan3/range/views/take_exactly.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 
@@ -131,7 +131,7 @@ protected:
         {
             if (options.truncate_ids)
             {
-                std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank)
+                std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank)
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
                 detail::consume(stream_view | detail::take_line_or_throw);
@@ -149,7 +149,7 @@ protected:
         }
 
         /* Sequence */
-        auto seq_view = stream_view | views::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
+        auto seq_view = stream_view | detail::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
                                     | std::views::filter(!is_space);           // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
