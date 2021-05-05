@@ -23,6 +23,7 @@
 #include <cstdlib>
 #endif
 
+#include <cassert>
 #include <seqan3/std/filesystem>
 #include <iostream>
 
