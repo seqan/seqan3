@@ -9,10 +9,10 @@
 #include <list>
 #include <type_traits>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/views/take_until.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
@@ -58,8 +58,8 @@ class kmer_hash_gapped_test: public ::testing::Test {};
 
 using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::vector<seqan3::dna4> const,
-                                                seqan3::bitcompressed_vector<seqan3::dna4>,
-                                                seqan3::bitcompressed_vector<seqan3::dna4> const,
+                                                seqan3::bitpacked_sequence<seqan3::dna4>,
+                                                seqan3::bitpacked_sequence<seqan3::dna4> const,
                                                 std::list<seqan3::dna4>,
                                                 std::list<seqan3::dna4> const,
                                                 std::forward_list<seqan3::dna4>,

@@ -1,16 +1,16 @@
 #include <sstream>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sam_file/input.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
 struct my_traits : seqan3::sam_file_input_default_traits<>
 {
-    using sequence_alphabet = seqan3::dna4;                        // instead of dna5
+    using sequence_alphabet = seqan3::dna4; // instead of dna5
 
     template <typename alph>
-    using sequence_container = seqan3::bitcompressed_vector<alph>; // must be defined as a template!
+    using sequence_container = seqan3::bitpacked_sequence<alph>; // must be defined as a template!
 };
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none

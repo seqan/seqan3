@@ -49,7 +49,7 @@ namespace seqan3
  * The derived type needs to provide an `.on_update()` member function that performs the changes in the underlying
  * data structure.
  *
- * See seqan3::bitcompressed_vector or seqan3::alphabet_tuple_base for examples of how this class is used.
+ * See seqan3::bitpacked_sequence or seqan3::alphabet_tuple_base for examples of how this class is used.
  *
  * \noapi{Exposition only}
  */

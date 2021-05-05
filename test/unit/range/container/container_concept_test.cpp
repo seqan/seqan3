@@ -16,10 +16,10 @@
 
 #include <sdsl/int_vector.hpp>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 #include <seqan3/range/container/concept.hpp>
 
@@ -34,9 +34,9 @@ TEST(range_concept, forward_range)
 
     EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::string>>));
     EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::vector<char>>>));
-    EXPECT_TRUE((std::ranges::forward_range<seqan3::bitcompressed_vector<seqan3::dna4>>));
-    EXPECT_TRUE((std::ranges::forward_range<seqan3::bitcompressed_vector<seqan3::qualified<seqan3::dna4,
-                                                                                           seqan3::phred42>>>));
+    EXPECT_TRUE((std::ranges::forward_range<seqan3::bitpacked_sequence<seqan3::dna4>>));
+    EXPECT_TRUE((std::ranges::forward_range<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4,
+                                                                                         seqan3::phred42>>>));
 }
 
 TEST(container, container)
@@ -164,9 +164,9 @@ TEST(container, reservible_container)
     EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<>>));
     EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
     EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
-    EXPECT_TRUE((seqan3::reservible_container<seqan3::bitcompressed_vector<seqan3::dna4>>));
-    EXPECT_TRUE((seqan3::reservible_container<seqan3::bitcompressed_vector<seqan3::qualified<seqan3::dna4,
-                                                                                             seqan3::phred42>>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::dna4>>));
+    EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4,
+                                                                                           seqan3::phred42>>>));
 }
 
 /* Check the SDSL containers */

@@ -11,13 +11,13 @@
 #include <iostream>
 #include <string>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sam_file/sam_flag.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
 
 TEST(debug_stream_test, basic)
@@ -141,7 +141,7 @@ TEST(debug_stream_test, range_of_alphabet)
     o.flush();
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC");
 
-    seqan3::concatenated_sequences<seqan3::bitcompressed_vector<seqan3::dna5>> const vec2 = {"ACGT"_dna5, "GAGGA"_dna5};
+    seqan3::concatenated_sequences<seqan3::bitpacked_sequence<seqan3::dna5>> const vec2 = {"ACGT"_dna5, "GAGGA"_dna5};
     my_stream << vec2;
     o.flush();
     EXPECT_EQ(o.str(), "AGGATACAGGATACAGGATAC[ACGT,GAGGA]");

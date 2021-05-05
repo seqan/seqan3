@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/range/container/bitcompressed_vector.hpp>
 #include <seqan3/range/container/small_vector.hpp>
 
 using seqan3::operator""_dna4;
@@ -20,7 +20,7 @@ class debug_stream_test : public ::testing::Test
 {};
 
 using container_types = ::testing::Types<std::vector<seqan3::dna4>,
-                                         seqan3::bitcompressed_vector<seqan3::dna4>,
+                                         seqan3::bitpacked_sequence<seqan3::dna4>,
                                          seqan3::small_vector<seqan3::dna4, 1000>>;
 
 TYPED_TEST_SUITE(debug_stream_test, container_types, );

@@ -1,9 +1,9 @@
 #include <vector>
 
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>     // include bitpacked sequence
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/argument_parser/all.hpp>                       // include argument parser
 #include <seqan3/core/debug_stream.hpp>                         // for debug_stream
-#include <seqan3/range/container/bitcompressed_vector.hpp>      // include bitcompressed vector
 
 int main(int argc, char ** argv)
 {
@@ -27,9 +27,9 @@ int main(int argc, char ** argv)
 
     if (use_bitvector)
     {
-        seqan3::bitcompressed_vector<seqan3::dna4> vector;
+        seqan3::bitpacked_sequence<seqan3::dna4> vector;
         vector.resize(size, 'A'_dna4);
-        seqan3::debug_stream << "Allocated seqan3::bitcompressed_vector<seqan3::dna4> of size "
+        seqan3::debug_stream << "Allocated seqan3::bitpacked_sequence<seqan3::dna4> of size "
                              << vector.size() << '\n';
     }
     else

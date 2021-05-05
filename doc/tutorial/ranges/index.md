@@ -266,18 +266,18 @@ concepts that encompass more of a containers interface.
 Have a look at the API documentation of seqan3::container and unfold the inheritance diagram.
 What can you learn about the different refinements and their relation to the range concepts?
 
-## The bitcompressed vector
+## The bitpacked sequence
 
 If you followed the alphabet tutorial closely, you will know that seqan3::dna4 needs only two bits to represent its state.
 However, single objects are always at least a byte (eight bits) big in C++.
-To store sequences of small alphabets more space-efficiently, we have developed seqan3::bitcompressed_vector.
+To store sequences of small alphabets more space-efficiently, we have developed seqan3::bitpacked_sequence.
 
-Open the API documentation of seqan3::bitcompressed_vector, display the inheritance diagram and read through the
+Open the API documentation of seqan3::bitpacked_sequence, display the inheritance diagram and read through the
 interface overview and the detailed description.
 
-\assignment{Assignment 4: The bitcompressed vector}
+\assignment{Assignment 4: The bitpacked sequence}
 Create a small program that asks the user for a size and then creates a vector of seqan3::dna4 of that size.
-Add an argument parser flag that allows the user to decide whether std::vector or seqan3::bitcompressed_vector is used.
+Add an argument parser flag that allows the user to decide whether std::vector or seqan3::bitpacked_sequence is used.
 After creating the vector, print its size.
 
 Measure and compare the amount of main memory that your program uses depending on the vector implementation.

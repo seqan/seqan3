@@ -55,7 +55,7 @@
  * A main reason for choosing a smaller alphabet over a bigger one is the possibility of **optimising for
  * space efficiency**. Note, however, that a single letter by itself can never be smaller than a byte for
  * architectural reasons. Actual space improvements are realised via secondary structures, e.g. when
- * using a `seqan3::bitcompressed_vector<seqan3::dna4>` instead of `std::vector<seqan3::dna4>`. Also
+ * using a `seqan3::bitpacked_sequence<seqan3::dna4>` instead of `std::vector<seqan3::dna4>`. Also
  * the single letter quality composite `seqan3::qualified<seqan3::dna4, seqan3::phred42>` fits into one byte, because
  * the product of the alphabet sizes (4 * 42) is smaller than 256; whereas the same composite
  * with seqan3::dna15 requires two bytes per letter (15 * 42 > 256).
