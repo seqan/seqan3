@@ -623,8 +623,9 @@ private:
 
         if constexpr (traits_t::compute_end_positions)
         {
-            res.end_positions = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
-                                                     row_index_type{this->alignment_state.optimum.row_index}};
+            using alignment_coordinate_t = detail::advanceable_alignment_coordinate<>;
+            res.end_positions = alignment_coordinate_t{column_index_type{this->alignment_state.optimum.column_index},
+                                                       row_index_type{this->alignment_state.optimum.row_index}};
             // At some point this needs to be refactored so that it is not necessary to adapt the coordinate.
             if constexpr (traits_t::is_banded)
                 res.end_positions.second += res.end_positions.first - this->trace_matrix.band_col_index;
@@ -634,8 +635,12 @@ private:
         {
             // Get a aligned sequence builder for banded or un-banded case.
             aligned_sequence_builder builder{sequence1, sequence2};
-            auto optimum_coordinate = alignment_coordinate{column_index_type{this->alignment_state.optimum.column_index},
-                                                           row_index_type{this->alignment_state.optimum.row_index}};
+
+            detail::matrix_coordinate const optimum_coordinate
+            {
+                detail::row_index_type{this->alignment_state.optimum.row_index},
+                detail::column_index_type{this->alignment_state.optimum.column_index}
+            };
             auto trace_res = builder(this->trace_matrix.trace_path(optimum_coordinate));
             res.begin_positions.first = trace_res.first_sequence_slice_positions.first;
             res.begin_positions.second = trace_res.second_sequence_slice_positions.first;

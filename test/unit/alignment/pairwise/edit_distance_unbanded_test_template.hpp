@@ -179,8 +179,8 @@ TYPED_TEST_P(edit_distance_unbanded_test, begin_positions)
     auto alignment = edit_distance<TypeParam::template edit_traits_type>(database, query, align_cfg);
     auto begin_positions = alignment.begin_positions();
 
-    EXPECT_EQ(begin_positions.first,   fixture.sequence1_begin_position);
-    EXPECT_EQ(begin_positions.second,  fixture.sequence2_begin_position);
+    EXPECT_EQ(begin_positions.first, fixture.sequence1_begin_position);
+    EXPECT_EQ(begin_positions.second, fixture.sequence2_begin_position);
 }
 
 TYPED_TEST_P(edit_distance_unbanded_test, alignment)

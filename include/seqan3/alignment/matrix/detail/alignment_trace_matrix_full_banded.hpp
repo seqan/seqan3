@@ -27,7 +27,8 @@ namespace seqan3::detail
 
 /*!\brief An alignment traceback matrix storing the entire banded traceback matrix.
  * \tparam trace_t          The type of the trace directions.
- * \tparam coordinate_only  A boolean flag indicating if only a seqan3::alignment_coordinate should be generated.
+ * \tparam coordinate_only  A boolean flag indicating if only a seqan3::detail::advanceable_alignment_coordinate should
+ *                          be generated.
  * \ingroup alignment_matrix
  *
  * \details
@@ -36,7 +37,7 @@ namespace seqan3::detail
  * `m` the number of columns to store. The matrix allows access to the
  * underlying values through a range based interface. An iterator over the traceback matrix iterates in
  * column-major-order over the traceback matrix. Dereferencing an iterator returns a slice over the current matrix
- * column. The value type is a pair over a seqan3::alignment_coordinate and
+ * column. The value type is a pair over a seqan3::detail::advanceable_alignment_coordinate and
  * the seqan3::detail::alignment_trace_matrix_proxy, which gives a unified access to the respective matrix cells
  * as needed by the standard alignment algorithm. The matrix is modelled as std::ranges::input_range since the
  * alignment algorithm iterates only once over the complete matrix to calculate the values.

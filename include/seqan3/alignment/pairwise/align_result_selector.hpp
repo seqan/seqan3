@@ -17,7 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
-#include <seqan3/alignment/matrix/alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
@@ -68,11 +68,11 @@ private:
     using configured_score_type = std::conditional_t<traits_type::compute_score, score_type, disabled_type>;
     //!\brief The configured end position type if selected.
     using configured_end_position_type = std::conditional_t<traits_type::compute_end_positions,
-                                                            alignment_coordinate,
+                                                            seqan3::detail::advanceable_alignment_coordinate<>,
                                                             disabled_type>;
     //!\brief The configured begin position type if selected.
     using configured_begin_position_type = std::conditional_t<traits_type::compute_begin_positions,
-                                                              alignment_coordinate,
+                                                              seqan3::detail::advanceable_alignment_coordinate<>,
                                                               disabled_type>;
     //!\brief The configured alignment type if selected.
     using configured_alignment_type = typename lazy_conditional_t<traits_type::compute_sequence_alignment,
