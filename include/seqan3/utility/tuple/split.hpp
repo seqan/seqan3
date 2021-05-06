@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides utility functions for tuple like interfaces.
+ * \brief Provides seqan3::tuple_split.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,9 +15,7 @@
 #include <utility>
 
 #include <seqan3/utility/tuple/concept.hpp>
-#include <seqan3/utility/tuple/pod_tuple.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
-
 
 namespace seqan3::detail
 {
@@ -63,10 +61,6 @@ constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const
 
 namespace seqan3
 {
-/*!\name Tuple utility functions
- * \brief Helper functions for tuple like objects.
- * \{
- */
 /*!\brief Splits a tuple like data structure at the given position.
  * \ingroup utility
  *
@@ -155,34 +149,5 @@ constexpr auto tuple_split(tuple_t && t)
 
     return tuple_split<pivot_c>(std::forward<tuple_t>(t));
 }
-
-/*!\brief Removes the first element of a tuple.
- * \ingroup utility
- *
- * \param[in] t  The original tuple.
- *
- * \returns A new tuple without the first element of `t`.
- *
- * \details
- *
- * Note, that the tuple must contain at least one element and must support empty tuple types, i.e. std::pair cannot
- * be used.
- *
- * ### Complexity
- *
- * Linear in the number of elements.
- *
- * ### Thread safety
- *
- * Concurrent invocations of this functions are thread safe.
- */
-template <tuple_like tuple_t>
-constexpr auto tuple_pop_front(tuple_t && t)
-{
-    static_assert(std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 0);
-
-    return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
-}
-//!\}
 
 } // namespace seqan3

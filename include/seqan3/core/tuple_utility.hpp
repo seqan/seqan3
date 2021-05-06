@@ -9,12 +9,14 @@
  * \brief [DEPRECATED] Provides utility functions for tuple like interfaces.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \deprecated This header is deprecated and will be removed in SeqAn-3.1.0;
- *             Please \#include <seqan3/utility/tuple_utility.hpp> instead.
+ *             Please \#include <seqan3/utility/tuple/pop_front.hpp> or
+ *             \#include <seqan3/utility/tuple/split.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/utility/tuple_utility.hpp>
-SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/tuple_utility.hpp> instead.")
+#include <seqan3/utility/tuple/pop_front.hpp>
+#include <seqan3/utility/tuple/split.hpp>
 
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/tuple/pop_front.hpp> or #include <seqan3/utility/tuple/split.hpp> instead.")

@@ -18,6 +18,7 @@
 #if SEQAN3_WORKAROUND_ISSUE_286
 #include <seqan3/core/detail/transfer_type_modifier_onto.hpp>
 #endif // SEQAN3_WORKAROUND_ISSUE_286
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3::detail
 {
