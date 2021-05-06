@@ -116,6 +116,11 @@ You can either directly check the reported code or verify with our documentation
 For a complete list of behavioural changes in our public and internal API, you can consult our API stability
 regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stablility/3.0.2/.
 
+#### Alignment
+
+* We deprecated seqan3::alignment_coordinate and it will be removed in 3.1.0
+  ([\#2602](https://github.com/seqan/seqan3/pull/2602)).
+
 #### Alphabet
 
 * We relaxed some requirements of `seqan3::alphabet_base<alphabet_t>`
