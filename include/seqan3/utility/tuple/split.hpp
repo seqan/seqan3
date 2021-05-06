@@ -61,10 +61,6 @@ constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const
 
 namespace seqan3
 {
-/*!\name Tuple utility functions
- * \brief Helper functions for tuple like objects.
- * \{
- */
 /*!\brief Splits a tuple like data structure at the given position.
  * \ingroup utility
  *

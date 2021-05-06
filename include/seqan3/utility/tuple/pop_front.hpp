@@ -45,6 +45,5 @@ constexpr auto tuple_pop_front(tuple_t && t)
 
     return std::get<1>(tuple_split<1>(std::forward<tuple_t>(t)));
 }
-//!\}
 
 } // namespace seqan3
