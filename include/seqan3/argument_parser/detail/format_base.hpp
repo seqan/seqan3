@@ -22,6 +22,7 @@
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
+#include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/version.hpp>

@@ -19,7 +19,7 @@
 
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/container/small_string.hpp>
+#include <seqan3/utility/container/small_string.hpp>
 
 namespace seqan3::detail
 {

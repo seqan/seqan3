@@ -17,8 +17,8 @@
 #include <variant>
 
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/range/container/small_string.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/container/small_string.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 namespace seqan3::detail

@@ -29,8 +29,8 @@
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/io/detail/take_view.hpp>
-#include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/views/drop.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>

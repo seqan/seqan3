@@ -17,7 +17,7 @@
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/range/container/aligned_allocator.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>

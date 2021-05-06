@@ -19,7 +19,7 @@
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/range/sequence.hpp>
-#include <seqan3/range/container/concept.hpp>
+#include <seqan3/utility/container/concept.hpp>
 
 // ---------------------------------------------------------------------------------------------------------------------
 // unaligned_seq transformation trait

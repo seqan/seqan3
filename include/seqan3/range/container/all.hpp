@@ -19,8 +19,8 @@
 #pragma once
 
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
-#include <seqan3/range/container/aligned_allocator.hpp>
 #include <seqan3/range/container/concatenated_sequences.hpp>
-#include <seqan3/range/container/concept.hpp>
-#include <seqan3/range/container/small_string.hpp>
-#include <seqan3/range/container/small_vector.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
+#include <seqan3/utility/container/concept.hpp>
+#include <seqan3/utility/container/small_string.hpp>
+#include <seqan3/utility/container/small_vector.hpp>

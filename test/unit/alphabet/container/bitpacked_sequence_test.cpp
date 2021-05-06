@@ -15,15 +15,15 @@
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
-
-#include "../../range/container/container_test_template.hpp"
+#include <seqan3/test/range/container_test_template.hpp>
 
 INSTANTIATE_TYPED_TEST_SUITE_P(bitpacked_sequence, container_over_dna4_test, seqan3::bitpacked_sequence<seqan3::dna4>, );
 
 using seqan3::operator""_dna4;
 
+// https://github.com/seqan/seqan3/issues/1743
 TEST(bitpacked_sequence_test, issue1743_complement_on_proxy)
-{ // https://github.com/seqan/seqan3/issues/1743
+{
     seqan3::bitpacked_sequence<seqan3::dna4> v{'A'_dna4};
 
     auto proxy = *v.begin();
@@ -33,8 +33,9 @@ TEST(bitpacked_sequence_test, issue1743_complement_on_proxy)
     EXPECT_EQ(complement, 'T'_dna4);
 }
 
+// https://github.com/seqan/seqan3/issues/1743
 TEST(bitpacked_sequence_test, issue1743_view_combinability)
-{ // https://github.com/seqan/seqan3/issues/1743
+{
     seqan3::bitpacked_sequence<seqan3::dna4> v{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4};
     auto complement = v | seqan3::views::complement;
 
