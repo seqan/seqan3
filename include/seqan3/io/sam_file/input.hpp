@@ -335,7 +335,9 @@ template <
     detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                field::id,
                                                                field::offset,
+#ifdef SEQAN3_DEPRECATED_310
                                                                field::ref_seq,
+#endif // SEQAN3_DEPRECATED_310
                                                                field::ref_id,
                                                                field::ref_offset,
                                                                field::alignment,
@@ -345,8 +347,10 @@ template <
                                                                field::flag,
                                                                field::mate,
                                                                field::tags,
+#ifdef SEQAN3_DEPRECATED_310
                                                                field::evalue,
                                                                field::bit_score,
+#endif // SEQAN3_DEPRECATED_310
                                                                field::header_ptr>,
     detail::type_list_of_sam_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
 class sam_file_input
@@ -490,7 +494,9 @@ public:
     using field_ids = fields<field::seq,
                              field::id,
                              field::offset,
+#ifdef SEQAN3_DEPRECATED_310
                              field::ref_seq,
+#endif // SEQAN3_DEPRECATED_310
                              field::ref_id,
                              field::ref_offset,
                              field::alignment,
@@ -500,9 +506,20 @@ public:
                              field::flag,
                              field::mate,
                              field::tags,
+#ifdef SEQAN3_DEPRECATED_310
                              field::evalue,
                              field::bit_score,
+#endif // SEQAN3_DEPRECATED_310
                              field::header_ptr>;
+
+#ifndef SEQAN3_DEPRECATED_310
+static_assert(!field_ids::contains(field::ref_seq),
+              "You selected seqan3::field::ref_seq that is deprecated for SAM/BAM files and won't be available in the record.");
+static_assert(!field_ids::contains(field::evalue),
+              "You selected seqan3::field::evalue that is deprecated for SAM/BAM files and won't be available in the record.");
+static_assert(!field_ids::contains(field::bit_score),
+              "You selected seqan3::field::bit_score that is deprecated for SAM/BAM files and won't be available in the record.");
+#endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
                   {
