@@ -1,12 +1,13 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/kmer_hash.hpp>
+#include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 
-using seqan3::operator""_dna4;
 
 int main()
 {
+    using namespace seqan3::literals;
+
     seqan3::bloom_filter bf{seqan3::bin_size{8192u},
                             seqan3::hash_function_count{2u}};
 
