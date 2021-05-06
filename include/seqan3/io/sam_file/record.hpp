@@ -51,7 +51,9 @@ public:
     using base_t::base_t;
     //!\}
 
-    //!\brief The identifier, usually a string. (SAM Column ID: QNAME)
+    /*!\brief The identifier, usually a string. (SAM Column ID: QNAME)
+     * \returns Typically seqan3::sam_file_input::id_type
+     */
     decltype(auto) id() &&
     {
         return get_impl(field_constant<seqan3::field::id>{}, static_cast<tuple_base_t &&>(*this));
@@ -72,7 +74,9 @@ public:
         return get_impl(field_constant<seqan3::field::id>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The "sequence", usually a range of nucleotides or amino acids. (SAM Column ID: SEQ)
+    /*!\brief The "sequence", usually a range of nucleotides or amino acids. (SAM Column ID: SEQ)
+     * \returns Typically seqan3::sam_file_input::sequence_type
+     */
     decltype(auto) sequence() &&
     {
         return get_impl(field_constant<seqan3::field::seq>{}, static_cast<tuple_base_t &&>(*this));
@@ -93,7 +97,9 @@ public:
         return get_impl(field_constant<seqan3::field::seq>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The qualities, usually in Phred score notation. (SAM Column ID: QUAL)
+    /*!\brief The qualities, usually in Phred score notation. (SAM Column ID: QUAL)
+     * \returns Typically seqan3::sam_file_input::quality_type
+     */
     decltype(auto) base_qualities() &&
     {
         return get_impl(field_constant<seqan3::field::qual>{}, static_cast<tuple_base_t &&>(*this));
@@ -116,6 +122,7 @@ public:
 
     /*!\brief Sequence (seqan3::sam_record::sequence) relative start position (0-based), unsigned value.
      *        (SAM Column ID: POS)
+     * \returns Typically seqan3::sam_file_input::offset_type
      *
      * \details
      *
@@ -142,7 +149,9 @@ public:
         return get_impl(field_constant<seqan3::field::offset>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
+    /*!\brief The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
+     * \returns Typically seqan3::sam_file_input::alignment_type
+     */
     decltype(auto) alignment() &&
     {
         return get_impl(field_constant<seqan3::field::alignment>{}, static_cast<tuple_base_t &&>(*this));
@@ -165,6 +174,7 @@ public:
 
     /*!\brief The identifier of the (reference) sequence that seqan3::sam_record::sequence was aligned to.
      *        (SAM Column ID: RNAME)
+     * \returns Typically seqan3::sam_file_input::ref_id_type
      */
     decltype(auto) reference_id() &&
     {
@@ -193,6 +203,7 @@ public:
 
     /*!\brief (Reference) Sequence (seqan3::sam_record::reference_sequence) relative start position (0-based),
      *        unsigned value. (SAM Column ID: POS)
+     * \returns Typically seqan3::sam_file_input::ref_offset_type
      */
     decltype(auto) reference_position() &&
     {
@@ -214,7 +225,11 @@ public:
         return get_impl(field_constant<seqan3::field::ref_offset>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief A pointer to the seqan3::sam_file_header object storing header information.
+    /*!\brief A pointer to the seqan3::sam_file_header object storing header information.
+     * \returns Typically seqan3::sam_file_input::header_type*
+     * \see Please see the seqan3::sam_file_output::header member function for details on how to access the
+     *      seqan3::sam_file_header of the file
+     */
     decltype(auto) header_ptr() &&
     {
         return get_impl(field_constant<seqan3::field::header_ptr>{}, static_cast<tuple_base_t &&>(*this));
@@ -235,7 +250,9 @@ public:
         return get_impl(field_constant<seqan3::field::header_ptr>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The alignment flag (bit information), `uint16_t` value. (SAM Column ID: FLAG)
+    /*!\brief The alignment flag (bit information), `uint16_t` value. (SAM Column ID: FLAG)
+     * \returns Typically seqan3::sam_file_input::flag_type
+     */
     decltype(auto) flag() &&
     {
         return get_impl(field_constant<seqan3::field::flag>{}, static_cast<tuple_base_t &&>(*this));
@@ -257,6 +274,7 @@ public:
     }
 
     /*!\brief The identifier of the (reference) sequence of the mate. (SAM Column ID: RNEXT)
+     * \returns Typically seqan3::sam_file_input::ref_id_type
      *
      * \details
      *
@@ -282,7 +300,9 @@ public:
         return std::get<0>(get_impl(field_constant<seqan3::field::mate>{}, static_cast<tuple_base_t const &>(*this)));
     }
 
-    //!\brief (Reference) Sequence relative start position (0-based) of the mate. (SAM Column ID: PNEXT)
+    /*!\brief (Reference) Sequence relative start position (0-based) of the mate. (SAM Column ID: PNEXT)
+     * \returns Typically seqan3::sam_file_input::ref_offset_type
+     */
     decltype(auto) mate_position() &&
     {
         return std::get<1>(get_impl(field_constant<seqan3::field::mate>{}, static_cast<tuple_base_t &&>(*this)));
@@ -303,7 +323,9 @@ public:
         return std::get<1>(get_impl(field_constant<seqan3::field::mate>{}, static_cast<tuple_base_t const &>(*this)));
     }
 
-    //!\brief The observed template length. (SAM Column ID: TLEN)
+    /*!\brief The observed template length. (SAM Column ID: TLEN)
+     * \returns Typically int32_t
+     */
     decltype(auto) template_length() &&
     {
         return std::get<2>(get_impl(field_constant<seqan3::field::mate>{}, static_cast<tuple_base_t &&>(*this)));
@@ -324,7 +346,9 @@ public:
         return std::get<2>(get_impl(field_constant<seqan3::field::mate>{}, static_cast<tuple_base_t const &>(*this)));
     }
 
-    //!\brief The mapping quality of the alignment, usually a Phred-scaled score. (SAM Column ID: MAPQ)
+    /*!\brief The mapping quality of the alignment, usually a Phred-scaled score. (SAM Column ID: MAPQ)
+     * \returns Typically seqan3::sam_file_input::mapq_type
+     */
     decltype(auto) mapping_quality() &&
     {
         return get_impl(field_constant<seqan3::field::mapq>{}, static_cast<tuple_base_t &&>(*this));
@@ -345,7 +369,9 @@ public:
         return get_impl(field_constant<seqan3::field::mapq>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The cigar vector (std::vector<seqan3::cigar>) representing the alignment. (SAM Column ID: CIGAR)
+    /*!\brief The cigar vector (std::vector\<seqan3::cigar\>) representing the alignment. (SAM Column ID: CIGAR)
+     * \returns Typically std::vector\<seqan3::cigar\>
+     */
     decltype(auto) cigar_sequence() &&
     {
         return get_impl(field_constant<seqan3::field::cigar>{}, static_cast<tuple_base_t &&>(*this));
@@ -366,7 +392,9 @@ public:
         return get_impl(field_constant<seqan3::field::cigar>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    //!\brief The optional tags in the SAM format, stored in a seqan3::sam_tag_dictionary.
+    /*!\brief The optional tags in the SAM format, stored in a seqan3::sam_tag_dictionary.
+     * \returns Typically seqan3::sam_tag_dictionary
+     */
     decltype(auto) tags() &&
     {
         return get_impl(field_constant<seqan3::field::tags>{}, static_cast<tuple_base_t &&>(*this));

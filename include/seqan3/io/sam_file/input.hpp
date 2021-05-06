@@ -468,27 +468,24 @@ public:
 
     /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.
      *
-     * The Alignment file abstraction supports reading 15 different fields:
+     * The SAM file abstraction supports reading 12 different fields:
      *
      *   1. seqan3::field::seq
      *   2. seqan3::field::id
      *   3. seqan3::field::offset
-     *   4. seqan3::field::ref_seq
-     *   5. seqan3::field::ref_id
-     *   6. seqan3::field::ref_offset
-     *   7. seqan3::field::alignment
-     *   8. seqan3::field::cigar
-     *   9. seqan3::field::mapq
-     *   10. seqan3::field::qual
-     *   11. seqan3::field::flag
-     *   12. seqan3::field::mate
-     *   13. seqan3::field::tags
-     *   14. seqan3::field::evalue
-     *   15. seqan3::field::bit_score
+     *   4. seqan3::field::ref_id
+     *   5. seqan3::field::ref_offset
+     *   6. seqan3::field::alignment
+     *   7. seqan3::field::cigar
+     *   8. seqan3::field::mapq
+     *   9. seqan3::field::qual
+     *   10. seqan3::field::flag
+     *   11. seqan3::field::mate
+     *   12. seqan3::field::tags
      *
      * There exists one more field for SAM files, the seqan3::field::header_ptr, but this field is mostly used
      * internally. Please see the seqan3::sam_file_output::header member function for details on how to access
-     * the seqan3::sam_file_header of the file.)
+     * the seqan3::sam_file_header of the file.
      */
     using field_ids = fields<field::seq,
                              field::id,
@@ -514,7 +511,7 @@ public:
                               return false;
                       return true;
                   }(),
-                  "You selected a field that is not valid for aligment files, please refer to the documentation "
+                  "You selected a field that is not valid for alignment files, please refer to the documentation "
                   "of sam_file_input::field_ids for the accepted values.");
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
