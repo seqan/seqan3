@@ -1,8 +1,8 @@
 #include <vector>
 
+#include <seqan3/alphabet/container/concatenated_sequences.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/container/concatenated_sequences.hpp>
 
 int main()
 {
