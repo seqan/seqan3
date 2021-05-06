@@ -20,7 +20,7 @@
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/tuple_utility.hpp>
+#include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3::detail
 {

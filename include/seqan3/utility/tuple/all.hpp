@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <seqan3/utility/tuple/concept.hpp>
-
 /*!\defgroup tuple Tuple
  * \ingroup utility
  * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not specific to a SeqAn module.
@@ -22,3 +20,7 @@
  *
  * \todo write me.
  */
+
+#include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/tuple/pop_front.hpp>
+#include <seqan3/utility/tuple/split.hpp>
