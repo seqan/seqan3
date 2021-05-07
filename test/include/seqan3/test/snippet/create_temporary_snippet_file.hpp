@@ -11,12 +11,12 @@ struct create_temporary_snippet_file
 {
     std::filesystem::path file_path;
 
-    create_temporary_snippet_file(std::filesystem::path file_name, std::string file_raw)
+    create_temporary_snippet_file(std::filesystem::path const & file_name, std::string const & file_raw)
         : file_path{}
     {
         // create single folder instance (across multiple create_temporary_snippet_file instances) that is valid during
         // the complete program. std::filesystem::current_path will point to that location.
-        static seqan3::test::tmp_directory tmp_folder{[]()
+        static seqan3::test::tmp_directory const tmp_folder{[]()
         {
             seqan3::test::tmp_directory tmp{};
             std::filesystem::current_path(tmp.path());
@@ -30,8 +30,7 @@ struct create_temporary_snippet_file
         if (!file_raw.empty())
         {
             std::ofstream file{file_path};
-            std::string str{file_raw};
-            file << str.substr(1); // skip first newline
+            file << file_raw.substr(1); // skip first newline
         }
     }
 
