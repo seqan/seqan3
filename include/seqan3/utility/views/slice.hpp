@@ -23,7 +23,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/drop.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 namespace seqan3::detail
 {
