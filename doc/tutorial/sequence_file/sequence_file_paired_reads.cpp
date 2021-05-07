@@ -31,7 +31,7 @@ int main()
     for (auto && [rec1, rec2] : seqan3::views::zip(fin1, fin2)) // && is important!
     {                                                           // because seqan3::views::zip returns temporaries
         if (rec1.id() != rec2.id())
-            throw std::runtime_error("Oh oh your pairs don't match.");
+            throw std::runtime_error("Your pairs don't match.");
     }
 }
 //![main]
