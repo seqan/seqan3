@@ -23,11 +23,11 @@
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/detail/is_class_template_declarable.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/concept.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 namespace seqan3::detail
 {
@@ -240,8 +240,8 @@ private:
         }
     }
 
-    type_reduce_view<fst_sequence_t> fst_rng; //!< A view over the first range.
-    type_reduce_view<sec_sequence_t> sec_rng; //!< A view over the second range.
+    type_reduce_t<fst_sequence_t> fst_rng; //!< A view over the first range.
+    type_reduce_t<sec_sequence_t> sec_rng; //!< A view over the second range.
 };
 
 /*!\name Type deduction guides

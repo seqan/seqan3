@@ -269,6 +269,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * `seqan3::translation_frames::FWD` is replaced by `seqan3::translation_frames::forward_frames`.
   * `seqan3::translation_frames::REV` is replaced by `seqan3::translation_frames::reverse_frames`.
   * `seqan3::translation_frames::SIX_FRAME` is replaced by `seqan3::translation_frames::six_frames`.
+* Renamed `seqan3::type_reduce_view` to `seqan3::type_reduce_t` ([\#2587](https://github.com/seqan/seqan3/pull/2587)).
 
 #### Search
 

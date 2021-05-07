@@ -24,7 +24,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 namespace seqan3
 {

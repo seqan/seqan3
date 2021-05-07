@@ -16,13 +16,13 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
 #include <seqan3/utility/simd/views/to_simd.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/pretty_printing.hpp>
@@ -86,7 +86,7 @@ public:
     std::vector<simd_t, allocator_t> transformed_simd_vec{};
     std::vector<simd_t, allocator_t> transformed_simd_vec_padded{};
 
-    using view_to_simd_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<std::vector<container_t> &>,
+    using view_to_simd_type = seqan3::detail::view_to_simd<seqan3::type_reduce_t<std::vector<container_t> &>,
                                                            simd_t>;
 };
 
@@ -113,7 +113,7 @@ TYPED_TEST_SUITE(view_to_simd_test, test_types, );
 TEST(view_to_simd, concept_check)
 {
     using cmp_type = std::vector<seqan3::dna4_vector>;
-    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<cmp_type &>,
+    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_t<cmp_type &>,
                                                    seqan3::simd::simd_type_t<int8_t>>;
 
     using iter_t = decltype(std::ranges::begin(std::declval<test_type &>()));
@@ -137,7 +137,7 @@ TEST(view_to_simd, concept_check)
 TEST(view_to_simd, iter_concept)
 {
     using cmp_type = std::vector<seqan3::dna4_vector>;
-    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_view<cmp_type &>,
+    using test_type = seqan3::detail::view_to_simd<seqan3::type_reduce_t<cmp_type &>,
                                                    seqan3::simd::simd_type_t<int8_t>>;
     using iter_t = std::ranges::iterator_t<test_type>;
     using sent_t = std::ranges::sentinel_t<test_type>;

@@ -20,11 +20,11 @@
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 namespace seqan3::detail
@@ -651,7 +651,7 @@ struct to_simd_fn
         static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
             "The value type of the inner ranges must model seqan3::semialphabet.");
 
-        return view_to_simd<type_reduce_view<urng_t>, simd_t>{std::forward<urng_t>(urange), padding_value};
+        return view_to_simd<type_reduce_t<urng_t>, simd_t>{std::forward<urng_t>(urange), padding_value};
     }
 
     /*!\brief Call the view's constructor with the underlying std::ranges::viewable_range as argument.
@@ -670,7 +670,7 @@ struct to_simd_fn
         static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
             "The value type of the inner ranges must model seqan3::semialphabet.");
 
-        return view_to_simd<type_reduce_view<urng_t>, simd_t>{std::forward<urng_t>(urange)};
+        return view_to_simd<type_reduce_t<urng_t>, simd_t>{std::forward<urng_t>(urange)};
     }
 
     //!\brief Overloaded bit-operator to allow chaining with other ranges.

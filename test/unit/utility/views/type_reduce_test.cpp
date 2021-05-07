@@ -16,9 +16,9 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 // ============================================================================
 //  test templates

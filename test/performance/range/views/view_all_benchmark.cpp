@@ -13,7 +13,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/type_reduce.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
 
 // ============================================================================
 //  sequential_read
