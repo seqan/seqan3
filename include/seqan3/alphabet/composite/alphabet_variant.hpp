@@ -257,6 +257,8 @@ public:
      *   * seqan3::dna4 and seqan3::dna5 are not implicitly convertible to each other, only explicitly.
      *   * Construction via `{}` considers implicit and explicit conversions so this works.
      *   * Construction via `=` considers only implicit conversions so it does not work.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
     //!\cond
@@ -275,7 +277,6 @@ public:
         using alternative_t = seqan3::list_traits::at<alternative_position, alternatives>;
         assign_rank(rank_by_type_(alternative_t(rhs)));
     }
-
 
     /*!\brief Assignment for arguments assignable to an alternative.
      * \tparam indirect_alternative_t A type that one of the alternatives is assignable from.
@@ -470,7 +471,10 @@ public:
     }
     //!\}
 
-    //!\brief Validate whether a character is valid in the combined alphabet.
+    /*!\brief Validate whether a character is valid in the combined alphabet.
+     *
+     * \experimentalapi{Experimental since version 3.1.}
+     */
     static constexpr bool char_is_valid(char_type const chr) noexcept
     {
         using index_t = std::make_unsigned_t<char_type>;
