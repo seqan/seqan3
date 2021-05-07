@@ -243,16 +243,16 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2540))
 * We deprecated `seqan3::views::join`. Please use `std::views::join` or `seqan3::views::join_with` instead
-  [\#2526](https://github.com/seqan/seqan3/pull/2526).
+  ([\#2526](https://github.com/seqan/seqan3/pull/2526)).
 * Deprecated `seqan3::views::move`, use the `std::ranges::move` algorithm, `std::[cpp20::]move_iterator` or an explicit
   for loop where you move the value.
   ([\#2563](https://github.com/seqan/seqan3/pull/2563))
 * We deprecated `seqan3::views::take` and it will be removed in 3.1.0. Use `std::views::take` instead
-  [\#2541](https://github.com/seqan/seqan3/pull/2541).
+  ([\#2541](https://github.com/seqan/seqan3/pull/2541)).
 * We deprecated `seqan3::views::take_line` and it will be removed in 3.1.0
-  [\#2525](https://github.com/seqan/seqan3/pull/2525).
+  ([\#2525](https://github.com/seqan/seqan3/pull/2525)).
 * We deprecated `seqan3::views::take_exactly`. Please use `std::views::take` or `std::views::counted` instead
-  [\#2601](https://github.com/seqan/seqan3/pull/2601).
+  ([\#2601](https://github.com/seqan/seqan3/pull/2601)).
 * We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2538))
