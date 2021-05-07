@@ -46,7 +46,7 @@ compressed files in your programs.
 Before we dive into the details, we will outline the general design of our file objects,
 hoping that it will make the following tutorial easier to understand.
 
-As mentioned above, our file object is a range over records. More specifically over objects of type
+As mentioned above, our file object is a range over records. More specifically, a range over objects of type
 seqan3::sequence_record.
 
 Output files can handle various types that fulfill the requirements of the format (e.g.
@@ -103,7 +103,7 @@ The formerly introduced formats can be identified by the following file name ext
 | EMBL        | seqan3::format_embl  |   `.embl`                                         |
 
 
-You can access the valid file extension via the `file_extensions` member variable in a format
+You can access the valid file extensions via the `file_extensions` member variable in a format
 and you can also customise this list if you want to allow different or additional file extensions:
 
 \snippet doc/tutorial/sequence_file/sequence_file_file_extensions.cpp main
@@ -127,7 +127,7 @@ You can include the SeqAn sequence file functionality with:
 ## Construction
 
 At first, you need to construct a seqan3::sequence_file_input object that handles file access.
-In most cases you construct from a file name, but you can also construct a sequence file object directly from a stream
+In most cases, you construct from a file name, but you can also construct a sequence file object directly from a stream
 (e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
 
 \snippet doc/tutorial/sequence_file/sequence_file_filename_construction.cpp main
@@ -149,7 +149,7 @@ We thereby assume that
 * store the sequence names/id in a std::string and
 * the qualities in a std::vector over the seqan3::phred42 alphabet.
 
-In case you want to read a **protein** sequence instead we also provide the
+In case you want to read a **protein** sequence instead, we also provide the
 seqan3::sequence_file_input_default_traits_aa traits type which sets the seqan3::sequence_record::sequence field to a
 std::vector over the seqan3::aa27 alphabet.
 
@@ -274,8 +274,8 @@ That means your file is still parsed record by record and not at once.
 
 ## Reading paired-end reads {#sequence_file_section_fun_with_ranges}
 
-In modern Next Generation Sequencing experiments you often have paired-end read data which is split into two files.
-The read pairs are identified by their identical name/id and that their position in the two files is the same.
+In modern Next Generation Sequencing experiments, you often encounter paired-end read data which is split into two files.
+The read pairs are identified by their identical id and position in the files.
 
 If you want to handle one pair of reads at a time, you can do so easily with a seqan3::views::zip.
 
@@ -369,5 +369,5 @@ For example you can read in a FASTQ file and output a FASTA file in one line:
 
 \snippet doc/tutorial/sequence_file/sequence_file_file_conversion.cpp main
 
-Yes that's it! Of course this only works because all fields that are required in FASTA are provided in FASTQ.
+Yes, that's it! Of course this only works because all fields that are required in FASTA are provided in FASTQ.
 The other way around would not work as easily because we have no quality information (and would make less sense too).
