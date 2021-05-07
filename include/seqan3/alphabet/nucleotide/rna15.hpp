@@ -40,7 +40,7 @@ namespace seqan3
  * character conversion instead of 'T'. You can assign between values of seqan3::dna15 and seqan3::rna15.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_rna15_char_literal "'A'_rna15" or use the
  * function seqan3::rna15::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/rna15.cpp
@@ -149,6 +149,7 @@ inline namespace literals
  * \relatesalso seqan3::rna15
  * \returns seqan3::rna15
  * \details
+ * \anchor seqan3_rna15_char_literal
  *
  * You can use this char literal to assign a seqan3::rna15 character:
  * \include test/snippet/alphabet/nucleotide/rna15_char_literal.cpp
