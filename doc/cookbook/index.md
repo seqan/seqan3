@@ -51,7 +51,7 @@ You can also read a file in chunks:
 
 # Reading records in chunks
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp read_in_batches
+\snippet doc/tutorial/sequence_file/sequence_file_read_in_batches.cpp main
 
 The example above will iterate over the file by reading 10 records at a time.
 If no 10 records are available anymore, it will just print the remaining records.
@@ -62,7 +62,7 @@ e.g. having a minimum sequence length or a minimum average quality.
 
 This recipe can be used to filter the sequences in your file by a custom criterion.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp quality_filter
+\snippet doc/tutorial/sequence_file/sequence_file_quality_filter.cpp main
 
 # Reading paired-end reads
 In modern Next Generation Sequencing experiments you often have paired-end read data which is split into two files.
@@ -70,7 +70,7 @@ The read pairs are identified by their identical name/id and position in the two
 
 This recipe can be used to handle one pair of reads at a time.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
+\snippet doc/tutorial/sequence_file/sequence_file_paired_reads.cpp main
 
 # Storing records in a std::vector
 This recipe creates a small program that reads in a FASTA file and stores all the records in a std::vector.
@@ -79,7 +79,7 @@ This recipe creates a small program that reads in a FASTA file and stores all th
 
 Note that you can move the record out of the file if you want to store it somewhere without copying.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type2
+\snippet doc/tutorial/sequence_file/sequence_file_move_record.cpp main
 
 # Writing records
 
@@ -87,16 +87,18 @@ The easiest way to write to a sequence file is to use the seqan3::sequence_file_
 or seqan3::sequence_file_output::emplace_back() member functions.
 These work similarly to how they work on a std::vector.
 
-\include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
+\include doc/tutorial/sequence_file//sequence_file_output_record.cpp
 
+\cond DEV
 The class seqan3::sequence_file_output takes an extra parameter allowing to custom select the
 fields and their order.
 
 \include test/snippet/io/sequence_file/sequence_file_output_fields_trait_1.cpp
+\endcond
 
 # File conversion
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp file_conversion
+\snippet doc/tutorial/sequence_file/sequence_file_file_conversion.cpp main
 
 # Define a custom scoring scheme
 

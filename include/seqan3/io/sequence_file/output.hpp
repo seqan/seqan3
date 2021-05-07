@@ -83,7 +83,7 @@ namespace seqan3
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \include test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp
+ * \snippet test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp main
  *
  * Writing to std::cout:
  * \include test/snippet/io/sequence_file/sequence_file_output_cout_write.cpp

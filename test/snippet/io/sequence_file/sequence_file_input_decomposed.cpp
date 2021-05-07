@@ -12,10 +12,10 @@ int main()
 {
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
-    for (auto & [seq, id, qual] : fin)
+    for (auto & [sequence, id, quality] : fin)
     {
         seqan3::debug_stream << "ID: "        << id   << '\n';
-        seqan3::debug_stream << "SEQ: "       << seq  << '\n';
-        seqan3::debug_stream << "EMPTY QUAL." << qual << '\n'; // qual is empty for FastA files
+        seqan3::debug_stream << "SEQ: "       << sequence  << '\n';
+        seqan3::debug_stream << "EMPTY QUAL." << quality << '\n'; // quality is empty for FastA files
     }
 }

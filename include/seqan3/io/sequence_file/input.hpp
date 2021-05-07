@@ -218,7 +218,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * In most cases the template parameters are deduced completely automatically:
  *
- * \include test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp
+ * \snippet test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp main
  * Reading from an std::istringstream:
  * \include test/snippet/io/sequence_file/sequence_file_input_istringstream.cpp
  *
@@ -233,7 +233,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \include test/snippet/io/sequence_file/sequence_file_input_aminoacid.cpp
  *
  * You can define your own traits type to further customise the types used by and returned by this class, see
- * seqan3::sequence_file_default_traits_dna for more details. As mentioned above, specifying at least one
+ * seqan3::sequence_file_input_default_traits_dna for more details. As mentioned above, specifying at least one
  * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
  * want to read from a string stream you need to give all types yourself:
  *
@@ -245,10 +245,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
  *
- * In the above example, rec has the type \ref record_type which is a specialisation of seqan3::record and behaves
- * like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field based interface on
- * the record, you could also use `std::get<0>` or even `std::get<dna4_vector>` to retrieve the sequence, but it is
- * not recommended, because it is more error-prone.
+ * In the above example, `record` has the type \ref record_type which is seqan3::sequence_record.
  *
  * *Note:* It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
  * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
@@ -258,13 +255,13 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * ### Reading record-wise (decomposed records)
  *
- * Instead of using `get` on the record, you can also use
+ * Instead of using member accessor on the record, you can also use
  * [structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
  * to decompose the record into its elements:
  *
  * \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
  *
- * In this case you immediately get the two elements of the tuple: `seq` of \ref sequence_type and `id` of
+ * In this case you immediately get the two elements of the tuple: `sequence` of \ref sequence_type and `id` of
  * \ref id_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
  *
  * ### Reading record-wise (custom fields)
