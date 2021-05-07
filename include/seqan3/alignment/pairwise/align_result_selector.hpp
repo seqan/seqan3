@@ -17,6 +17,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_debug.hpp>
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
@@ -26,7 +27,6 @@
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/range/views/type_reduce.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>

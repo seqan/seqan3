@@ -21,6 +21,7 @@
 #include <variant>
 #include <vector>
 
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/cigar/cigar.hpp>
@@ -38,7 +39,6 @@
 #include <seqan3/io/sam_file/record.hpp>
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/range/decorator/gap_decorator.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
