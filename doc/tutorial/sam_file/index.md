@@ -104,7 +104,7 @@ Or you can pass a stream (e.g. std::cin or std::stringstream), but then you need
 
 \snippet doc/tutorial/sam_file/sam_file_filename_construction.cpp main
 
-## Using the seqan3::sam_record
+## Accessing individual record members
 
 You can access the record member like this
 
