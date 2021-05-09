@@ -1,0 +1,38 @@
+From 93ec1b6fd62a8724eb089246516af71cdd8684d2 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Sun, 9 May 2021 11:34:59 +0200
+Subject: [PATCH 28/28] [NOAPI] [INCLUDE] bitcompressed_vector_test.cpp and
+ dynamic_bitset_test.cpp is missing seqan3/range/container/concept.hpp
+
+---
+ test/unit/range/container/bitcompressed_vector_test.cpp | 1 +
+ test/unit/range/container/dynamic_bitset_test.cpp       | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/test/unit/range/container/bitcompressed_vector_test.cpp b/test/unit/range/container/bitcompressed_vector_test.cpp
+index 2a61be5b3..780008df3 100644
+--- a/test/unit/range/container/bitcompressed_vector_test.cpp
++++ b/test/unit/range/container/bitcompressed_vector_test.cpp
+@@ -9,6 +9,7 @@
+ 
+ #include <seqan3/alphabet/nucleotide/concept.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
++#include <seqan3/range/container/concept.hpp>
+ #include <seqan3/range/views/complement.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+diff --git a/test/unit/range/container/dynamic_bitset_test.cpp b/test/unit/range/container/dynamic_bitset_test.cpp
+index fe12a3036..f93648815 100644
+--- a/test/unit/range/container/dynamic_bitset_test.cpp
++++ b/test/unit/range/container/dynamic_bitset_test.cpp
+@@ -9,6 +9,7 @@
+ 
+ #include <seqan3/core/bit_manipulation.hpp>
+ #include <seqan3/core/debug_stream.hpp>
++#include <seqan3/range/container/concept.hpp>
+ #include <seqan3/range/container/dynamic_bitset.hpp>
+ #include <seqan3/test/cereal.hpp>
+ 
+-- 
+2.31.1
+
