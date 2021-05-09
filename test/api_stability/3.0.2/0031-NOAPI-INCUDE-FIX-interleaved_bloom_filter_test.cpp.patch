@@ -1,0 +1,31 @@
+From 00a5b43c388c12bc4abcbcf47220d76e2ae3e449 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 9 Oct 2020 13:43:51 +0200
+Subject: [PATCH 31/31] [NOAPI] [INCUDE] [FIX]
+ interleaved_bloom_filter_test.cpp
+
+---
+ test/unit/search/dream_index/interleaved_bloom_filter_test.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp b/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
+index 0f2454fb9..c902c051e 100644
+--- a/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
++++ b/test/unit/search/dream_index/interleaved_bloom_filter_test.cpp
+@@ -7,6 +7,8 @@
+ 
+ #include <gtest/gtest.h>
+ 
++#include <seqan3/std/ranges>
++
+ #include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
+ #include <seqan3/test/cereal.hpp>
+ 
+@@ -228,4 +230,3 @@ TYPED_TEST(interleaved_bloom_filter_test, serialisation)
+     TypeParam ibf{TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1024u})};
+     seqan3::test::do_serialisation(ibf);
+ }
+-
+-- 
+2.31.1
+

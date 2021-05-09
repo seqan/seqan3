@@ -1,0 +1,41 @@
+From f1d24cf6611f9ea27ce4d16730e78cb97b2362f2 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Mon, 2 Nov 2020 13:32:30 +0100
+Subject: [PATCH 32/34] [NOAPI] [INFRA] [FIX] #2234: latest googletest
+ (1.10.0.20201025-1) doesn't like the *test_template.hpp
+
+Partially applied from fcc64ac0d5ecf97926679b5b58cad3ceaf76f0cc
+---
+ test/unit/alphabet/cigar/cigar_test.cpp                | 1 -
+ test/unit/alphabet/composite/semialphabet_any_test.cpp | 3 ---
+ 2 files changed, 4 deletions(-)
+
+diff --git a/test/unit/alphabet/cigar/cigar_test.cpp b/test/unit/alphabet/cigar/cigar_test.cpp
+index 9b992473a..c250adf3f 100644
+--- a/test/unit/alphabet/cigar/cigar_test.cpp
++++ b/test/unit/alphabet/cigar/cigar_test.cpp
+@@ -9,7 +9,6 @@
+ 
+ #include <seqan3/alphabet/cigar/cigar.hpp>
+ 
+-#include "../alphabet_test_template.hpp"
+ #include "../semi_alphabet_test_template.hpp"
+ #include "../semi_alphabet_constexpr_test_template.hpp"
+ 
+diff --git a/test/unit/alphabet/composite/semialphabet_any_test.cpp b/test/unit/alphabet/composite/semialphabet_any_test.cpp
+index 52d63fe01..419d9cc59 100644
+--- a/test/unit/alphabet/composite/semialphabet_any_test.cpp
++++ b/test/unit/alphabet/composite/semialphabet_any_test.cpp
+@@ -7,9 +7,6 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include "../alphabet_test_template.hpp"
+-#include "../alphabet_constexpr_test_template.hpp"
+-
+ #include <seqan3/alphabet/aminoacid/all.hpp>
+ #include <seqan3/alphabet/composite/semialphabet_any.hpp>
+ 
+-- 
+2.31.1
+
