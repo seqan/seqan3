@@ -13,7 +13,7 @@ This tutorial is a walk-through with links into the API documentation and also m
 # Introduction
 
 SAM files are used to store pairwise alignments between two (biological) sequences. There are also other output formats,
-like BLAST, that can store Sequence Alignment, but in this tutorial we will focus on SAM/BAM files.
+like BLAST, that can store Sequence Alignments, but in this tutorial we will focus on SAM/BAM files.
 Next to the alignment, those formats store additional information like the start positions or mapping qualities.
 SAM files are a little more complex than sequence files but the basic design is the same.
 If you are new to SeqAn, we strongly recommend to do the tutorial \ref tutorial_sequence_file first.
@@ -51,8 +51,8 @@ If you want to read more about the SAM format, take a look at the
 
 ## BAM format
 
-BAM is the binary format version of SAM. It provides the same data as the SAM format with in most cases negligibly small
-and subtle differences.
+BAM is the binary format version of SAM. It provides the same data as the SAM format with negligible and subtle 
+differences in most cases.
 
 # Sam file fields
 
@@ -219,8 +219,8 @@ Only use
 With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder how to use views on files)
-  * For the resulting alignments, print which read was mapped against with reference id and
-    the number of seqan3::gap's in each sequence (aligned reference and read sequence).
+  * For the resulting alignments, print which read was mapped against which reference id and
+    the number of `seqan3::gap`s in each sequence (aligned reference and read sequence).
 
 \cond DEV
 \todo This isn't used, right? Maybe a left over? seqan3::sam_record::reference_id?! Maybe we should make the example
