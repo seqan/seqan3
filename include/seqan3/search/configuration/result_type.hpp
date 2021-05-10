@@ -42,7 +42,7 @@ template <typename search_result_t>
 //!\cond
     requires seqan3::detail::is_type_specialisation_of_v<search_result_t, search_result>
 //!\endcond
-class result_type : public pipeable_config_element
+class result_type : private pipeable_config_element
 {
 public:
     //!\brief The configured seqan3::search_result type.
