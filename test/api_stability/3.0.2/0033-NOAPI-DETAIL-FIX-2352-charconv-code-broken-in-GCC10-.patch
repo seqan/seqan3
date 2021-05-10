@@ -1,0 +1,49 @@
+From be4bcc01906b95a4fde094ef8169c8d17cb2474f Mon Sep 17 00:00:00 2001
+From: Marcel <marehr@users.noreply.github.com>
+Date: Mon, 19 Apr 2021 13:51:30 +0200
+Subject: [PATCH 33/34] [NOAPI] [DETAIL] [FIX#2352] charconv code broken in
+ GCC10 (#2519)
+
+Partially applied from 3246cd9fbed3694c68eacd3670ea6f0234601f2d
+
+----
+
+* [FIX#2352] charconv code broken in GCC10
+
+* charconv
+
+* fix namespace std::cpp20{} instead of namespace std{namespace cpp20{}  }
+
+* fix gcc 8 and 9?
+---
+ test/unit/std/charconv_float_test.cpp | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/test/unit/std/charconv_float_test.cpp b/test/unit/std/charconv_float_test.cpp
+index 654d2a8c2..f81f5bde8 100644
+--- a/test/unit/std/charconv_float_test.cpp
++++ b/test/unit/std/charconv_float_test.cpp
+@@ -274,12 +274,17 @@ TYPED_TEST(from_char_real_test, non_valid_strings)
+ 
+ TYPED_TEST(from_char_real_test, to_chars)
+ {
+-    TypeParam val{120.3};
++    // We use a power of two (i.e. 2^(-2)) for the fractional part to have a stable floating point number across
++    // different floating point types (e.g. `float`, `double`, `long double`).
++    // Other values, lets say 120.3, could have different string representations like `120.3`, `120.30000...01`, or
++    // `120.2999...9716` depending on the actual implementation.
++    TypeParam val{120.25};
+     std::array<char, 10> buffer{};
+ 
+     auto res = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
++    size_t used_buffer_size = res.ptr - buffer.data();
+ 
+-    EXPECT_EQ(res.ptr, &buffer[5]);
++    EXPECT_EQ(used_buffer_size, 6u);
+     EXPECT_EQ(res.ec, std::errc{});
+-    EXPECT_EQ((std::string_view{buffer.data(), 5}), std::string_view{"120.3"});
++    EXPECT_EQ((std::string_view{buffer.data(), used_buffer_size}), std::string_view{"120.25"});
+ }
+-- 
+2.31.1
+

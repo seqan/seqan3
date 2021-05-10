@@ -1,0 +1,104 @@
+From fa18b5aafb4118e9d7f8e19ebbd44ba35c69e76d Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Thu, 22 Apr 2021 16:56:41 +0200
+Subject: [PATCH 29/29] [API] [FIX] gcc-11: error: invalid use of non-static
+ data member
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Partially cherry-picked from 8761241fad7bd2eac0f461c6a619ea3a72d0f787
+
+----
+
+Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100205
+
+```
+seqan3/include/seqan3/alignment/matrix/detail/coordinate_matrix.hpp:198:84: error: invalid use of non-static data member ‘seqan3::detail::coordinate_matrix<index_t>::iterator::column_id’
+  198 |                               | std::views::transform(convert_to_matrix_coordinate{column_id}));
+      |                                                                                    ^~~~~~~~~
+```
+
+```
+seqan3/test/unit/alignment/matrix/detail/trace_iterator_test.cpp:41:73: error: invalid use of non-static data member ‘trace_iterator_fixture::matrix’
+   41 |     using trace_iterator_type = decltype(seqan3::detail::trace_iterator{matrix.begin()});
+      |                                                                         ^~~~~~
+```
+---
+ .../matrix/detail/trace_iterator_banded_test.cpp       |  6 ++----
+ .../alignment/matrix/detail/trace_iterator_test.cpp    |  4 ++--
+ test/unit/range/views/view_minimiser_test.cpp          | 10 +++++++---
+ 3 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp b/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
+index 31b07910c..78d360e55 100644
+--- a/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
++++ b/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
+@@ -46,8 +46,7 @@ struct trace_iterator_banded_test : public ::testing::Test
+         //4        D  D  D UO
+         //5           D  D  U
+ 
+-    using trace_iterator_type = decltype(seqan3::detail::trace_iterator_banded{matrix.begin(),
+-                                                                               seqan3::detail::column_index_type{0}});
++    using trace_iterator_type = seqan3::detail::trace_iterator_banded<decltype(matrix.begin())>;
+     using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
+ 
+     path_type path(seqan3::detail::matrix_offset const & offset)
+@@ -125,8 +124,7 @@ struct iterator_fixture<trace_iterator_banded_test> : public trace_iterator_band
+     using base_t = trace_iterator_banded_test;
+ 
+     using iterator_type = typename base_t::trace_iterator_type;
+-    using const_iterator_type = decltype(seqan3::detail::trace_iterator_banded{base_t::matrix.cbegin(),
+-                                                                               seqan3::detail::column_index_type{0}});
++    using const_iterator_type = seqan3::detail::trace_iterator_banded<decltype(base_t::matrix.cbegin())>;
+ 
+     // Test forward iterator concept.
+     using iterator_tag = std::forward_iterator_tag;
+diff --git a/test/unit/alignment/matrix/detail/trace_iterator_test.cpp b/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
+index 209c03548..e3065ea7c 100644
+--- a/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
++++ b/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
+@@ -38,7 +38,7 @@ struct trace_iterator_fixture : public ::testing::Test
+         U,       LO | U, D,          L
+     }};
+ 
+-    using trace_iterator_type = decltype(seqan3::detail::trace_iterator{matrix.begin()});
++    using trace_iterator_type = seqan3::detail::trace_iterator<decltype(matrix.begin())>;
+     using path_type = std::ranges::subrange<trace_iterator_type, std::default_sentinel_t>;
+ 
+     path_type path(seqan3::detail::matrix_offset const & offset)
+@@ -216,7 +216,7 @@ struct iterator_fixture<trace_iterator_fixture> : public trace_iterator_fixture
+     using base_t = trace_iterator_fixture;
+ 
+     using iterator_type = typename base_t::trace_iterator_type;
+-    using const_iterator_type = decltype(seqan3::detail::trace_iterator{base_t::matrix.cbegin()});
++    using const_iterator_type = seqan3::detail::trace_iterator<decltype(base_t::matrix.cbegin())>;
+ 
+     // Test forward iterator concept.
+     using iterator_tag = std::forward_iterator_tag;
+diff --git a/test/unit/range/views/view_minimiser_test.cpp b/test/unit/range/views/view_minimiser_test.cpp
+index 88ae8a907..db9be4af1 100644
+--- a/test/unit/range/views/view_minimiser_test.cpp
++++ b/test/unit/range/views/view_minimiser_test.cpp
+@@ -68,11 +68,15 @@ struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
+     static constexpr bool const_iterable = true;
+ 
+     seqan3::dna4_vector text{"ACGGCGACGTTTAG"_dna4};
+-    decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4})) vec = text | kmer_view;
++    using kmer_hash_view_t = decltype(seqan3::views::kmer_hash(text, seqan3::ungapped{4}));
++
++    kmer_hash_view_t vec = kmer_view(text);
+     result_t expected_range{26, 97, 27, 6, 1};
+ 
+-    decltype(seqan3::detail::minimiser_view{seqan3::views::kmer_hash(text, seqan3::ungapped{4}), text | rev_kmer_view, 5})
+-    test_range = seqan3::detail::minimiser_view{vec, text | rev_kmer_view, 5};
++    using reverse_kmer_hash_view_t = decltype(rev_kmer_view(text));
++
++    using test_range_t = decltype(seqan3::detail::minimiser_view{kmer_hash_view_t{}, reverse_kmer_hash_view_t{}, 5});
++    test_range_t test_range = seqan3::detail::minimiser_view{vec, rev_kmer_view(text), 5};
+ };
+ 
+ using test_types = ::testing::Types<iterator_type, two_ranges_iterator_type>;
+-- 
+2.31.1
+

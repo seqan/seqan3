@@ -1,0 +1,60 @@
+From bfff573332b2e637784329ecec8af9a33ab77bbc Mon Sep 17 00:00:00 2001
+From: Marcel <marehr@users.noreply.github.com>
+Date: Mon, 4 Jan 2021 12:37:58 +0100
+Subject: [PATCH 34/34] [NOAPI] [INFRA] [FIX] #2234: support latest googletest
+ (#2301)
+
+Partially applied from e4e34b27549cffa8b608d48b1a96412c4b7e7fc4
+
+-----
+
+* [FIX] #2234: support latest googletest
+
+See https://github.com/seqan/seqan3/issues/2234#issuecomment-720476694
+
+Co-authored-by: Simon Gene Gottlieb <simon@gottliebtfreitag.de>
+---
+ test/unit/test/pretty_printing_test.cpp | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/test/unit/test/pretty_printing_test.cpp b/test/unit/test/pretty_printing_test.cpp
+index 4fdd9b0ed..c1609e5d5 100644
+--- a/test/unit/test/pretty_printing_test.cpp
++++ b/test/unit/test/pretty_printing_test.cpp
+@@ -39,18 +39,27 @@ TEST(pretty_printing, gtest_output)
+ 
+     EXPECT_EQ(gtest_str(std::make_tuple<int, int>(42, -10)), "(42, -10)"s);
+     EXPECT_EQ(debug_str(std::make_tuple<int, int>(42, -10)), "(42,-10)"s);
+-}
+-
+-TEST(pretty_printing, std_output)
+-{
+-    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+-    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+ 
++#if GTEST_INTERNAL_HAS_VARIANT // googletest at head (>=1.10.x)
++    EXPECT_EQ(gtest_str(std::variant<int>{0}), "('int(index = 0)' with value 0)"s);
++#else // googletest <= 1.10.0
+     EXPECT_EQ(gtest_str(std::variant<int>{0}), "0"s);
++#endif
+     EXPECT_EQ(debug_str(std::variant<int>{0}), "0"s);
+ 
++#if GTEST_INTERNAL_HAS_OPTIONAL // googletest at head (>=1.10.x)
++    EXPECT_EQ(gtest_str(std::optional<int>{}), "(nullopt)"s);
++#else // googletest <= 1.10.0
+     EXPECT_EQ(gtest_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
++#endif
+     EXPECT_EQ(debug_str(std::optional<int>{}), "<VALUELESS_OPTIONAL>"s);
++}
++
++TEST(pretty_printing, std_output)
++{
++    // if any of these tests get supported by googletest move them to gtest_output
++    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
++    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+ 
+     EXPECT_EQ(gtest_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
+     EXPECT_EQ(debug_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
+-- 
+2.31.1
+

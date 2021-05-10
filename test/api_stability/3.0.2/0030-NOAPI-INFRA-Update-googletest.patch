@@ -1,0 +1,26 @@
+From 3139e91043c7e6f4f7dafff7d32aa77458d32073 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Wed, 28 Apr 2021 20:10:53 +0200
+Subject: [PATCH 30/30] [NOAPI] [INFRA] Update googletest
+
+Partially cherry-picked from 0c07bd25dc5c0dc5b77a3db7d9ed9c6525f40bb0
+---
+ test/cmake/seqan3_require_test.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/cmake/seqan3_require_test.cmake b/test/cmake/seqan3_require_test.cmake
+index b84d4bf59..a75daa4c6 100644
+--- a/test/cmake/seqan3_require_test.cmake
++++ b/test/cmake/seqan3_require_test.cmake
+@@ -34,7 +34,7 @@ macro (seqan3_require_test)
+         # we currently have warnings that were introduced in
+         # 03867b5389516a0f185af52672cf5472fa0c159c, which are still available
+         # in "release-1.8.1", see https://github.com/google/googletest/issues/1419
+-        GIT_TAG "release-1.10.0"
++        GIT_TAG "252ce9c52d304659eff6be558209c811b7191963" # 26-04-2021
+         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
+         CMAKE_ARGS "${gtest_project_args}"
+         BUILD_BYPRODUCTS "${gtest_main_path}" "${gtest_path}"
+-- 
+2.31.1
+
