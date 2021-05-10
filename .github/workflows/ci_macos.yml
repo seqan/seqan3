@@ -85,15 +85,10 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
       - name: Install ccache
-        run: |
-          brew list --versions ccache || brew install --force-bottle ccache
+        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh ccache
 
       - name: Install compiler ${{ matrix.cxx }}
-        run: |
-          package_name=$(echo "${{ matrix.cxx }}" | sed "s/++-/cc@/g")
-          brew list --versions $package_name || brew install --force-bottle $package_name
-          brew upgrade --force-bottle $package_name
-          brew link $package_name
+        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh gcc $(echo "${{ matrix.cxx }}" | sed "s/g++-//g")
 
       - name: Load ccache
         uses: actions/cache@v2
