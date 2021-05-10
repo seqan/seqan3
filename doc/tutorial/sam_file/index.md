@@ -112,25 +112,6 @@ You can access the record member like this
 
 See seqan3::sam_record for all data accessor.
 
-\cond DEV
-\todo What to do with this section? We want to advertise for seqan3.1 to use records.
-## Structural bindings
-
-In many cases you are not interested in all of the information in a file to be stored.
-For this purpose, we provide the possibility to select specific seqan3::field's for a file.
-The file will read only those fields and fill the record accordingly.
-
-You can select fields by providing a seqan3::fields object as an extra parameter to the constructor:
-
-\snippet doc/tutorial/sam_file/sam_file_read_custom_fields.cpp main
-
-\attention The order in which you specify the selected fields determines the order of elements in the
-           seqan3::sam_record.
-
-In the example above we only select the id, sequence and flag information
-so the seqan3::sam_record object has three tuple elements that are decomposed using structural bindings.
-\endcond
-
 \assignment{Assignment 1: Accumulating mapping qualities}
 
 Let's assume we want to compute the average mapping quality of a SAM file.
