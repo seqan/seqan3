@@ -218,6 +218,7 @@ public:
 template <std::ranges::view urng_t>
 template <bool const_range>
 class kmer_hash_view<urng_t>::basic_iterator
+    : public maybe_iterator_category<maybe_const_iterator_t<const_range, urng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
@@ -240,8 +241,6 @@ public:
     using pointer = void;
     //!\brief Reference to `value_type`.
     using reference = value_type;
-    //!\brief Tag this class as input iterator.
-    using iterator_category = detail::iterator_category_tag_t<it_t>;
     //!\brief Tag this class depending on which concept `it_t` models.
     using iterator_concept = std::conditional_t<std::contiguous_iterator<it_t>,
                                                 typename std::random_access_iterator_tag,

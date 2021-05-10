@@ -279,24 +279,8 @@ public:
     }
     //!\}
 
-    /*!\name Associated types
-     * \brief All are derived from the base_base_t.
-     * \{
-     */
-
-    //!\brief The difference type.
-    using difference_type = std::iter_difference_t<base_base_t>;
-    //!\brief The value type.
-    using value_type = std::iter_value_t<base_base_t>;
-    //!\brief The reference type.
-    using reference = std::iter_reference_t<base_base_t>;
-    //!\brief The pointer type.
-    using pointer = detail::iter_pointer_t<base_base_t>;
-    //!\brief The iterator category tag.
-    using iterator_category = detail::iterator_category_tag_t<base_base_t>;
-    //!\brief The iterator concept tag.
-    using iterator_concept = detail::iterator_concept_tag_t<base_base_t>;
-    //!\}
+    using typename base_t::difference_type;
+    using typename base_t::reference;
 
     /*!\name Arithmetic operators
      * \brief seqan3::detail::inherited_iterator_base operators are used unless specialised here.

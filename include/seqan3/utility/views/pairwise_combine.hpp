@@ -264,6 +264,7 @@ template <std::ranges::view underlying_range_type>
 //!\endcond
 template <typename range_type>
 class pairwise_combine_view<underlying_range_type>::basic_iterator
+    : public maybe_iterator_category<std::ranges::iterator_t<range_type>>
 {
 private:
 
@@ -292,8 +293,6 @@ public:
     using reference = common_tuple<underlying_ref_t, underlying_ref_t>;
     //!\brief The pointer type.
     using pointer = void;
-    //!\brief The iterator category tag.
-    using iterator_category = detail::iterator_category_tag_t<underlying_iterator_type>;
     //!\brief The iterator concept tag.
     using iterator_concept = detail::iterator_concept_tag_t<underlying_iterator_type>;
     //!\}

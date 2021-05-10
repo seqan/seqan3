@@ -153,52 +153,87 @@ struct size_type<it_t>
 
 namespace seqan3::detail
 {
+/*!\brief Defines iterator_category member if underlying_iterator_t has a valid std::iterator_traits::iterator_category
+ *        overload.
+ * \details
+ *
+ * The C++ paper [P2259R1](https://wg21.link/p2259r1) defines the behaviour of iterator_category for a C++-20 input
+ * iterator.
+ *
+ * https://wg21.link/p2259r1#fixing-counted_iterator states:
+ *
+ * > Provide member iterator_concept and iterator_category when the wrapped iterator type provides them, to honor its
+ * > opt-in/opt-outs.
+ *
+ * That means, only define iterator_category if the underlying iterator has it.
+ *
+ * \see https://github.com/seqan/product_backlog/issues/151
+ * \see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=96070
+ */
+template <typename underlying_iterator_t>
+struct maybe_iterator_category
+{
+#if SEQAN3_DOXYGEN_ONLY(1)0
+    /*!\brief The iterator category tag. (not always present!)
+     * \details
+     *
+     * This member is only defined if and only if std::iterator_­traits<underlying_iterator_t>::​iterator_­category is
+     * valid and denotes a type.
+     */
+    using iterator_category = MAYBE_PRESENT(std::iterator_­traits<underlying_iterator_t>::​iterator_­category);
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+};
+
+//!\cond
+template <typename t>
+SEQAN3_CONCEPT has_iterator_category = requires ()
+{
+    typename t::iterator_category;
+};
+//!\endcond
+
 #if SEQAN3_WORKAROUND_GCC_96070
-//!\cond
-template <typename it_t>
-struct iterator_category_tag
-{
-    using type = void;
-};
-
-template <typename it_t>
-    requires requires { typename std::iterator_traits<it_t>::iterator_category; }
-struct iterator_category_tag<it_t>
-{
-    using type = typename std::iterator_traits<it_t>::iterator_category;
-};
-//!\endcond
-/*!\brief Exposes the
- * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.
- * \implements seqan3::transformation_trait
- * \tparam it_t The type to operate on.
- *
- * \attention
- * If [std::iterator_traits<it_t>::iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_traits)
- * is defined for a type `it_t`, this transformation trait acts as an alias for it, if not it is `void`.
+/*!\brief This is a workaround for gcc 10.x, x < 4. That version of the stdlib always expects an iterator_category
+ *        to be defined. There are some view combinations that do not work with this "fix".
  */
-template <typename it_t>
-using iterator_category_tag_t = typename iterator_category_tag<it_t>::type;
-#else // ^^^ workaround / no workaround vvv
-// TODO: Change the description / the definition of iterator_category_tag_t depending on how the standard resolves this
-// https://github.com/seqan/product_backlog/issues/151
-
-/*!\brief Exposes the
- * [iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.
- * \tparam it_t The type to operate on.
- *
- * \attention
- * If [std::iterator_traits<it_t>::iterator_category](https://en.cppreference.com/w/cpp/iterator/iterator_traits)
- * is defined for a type `it_t`, this transformation trait acts as an alias for it.
- *
- * If not, this means that `it_t` is no "legacy" iterator and this transformation trait will give a substitution error.
- */
-template <typename it_t>
-//!\cond
-    requires requires { typename std::iterator_traits<it_t>::iterator_category; }
-//!\endcond
-using iterator_category_tag_t = typename std::iterator_traits<it_t>::iterator_category;
+template <typename underlying_iterator_t>
+    requires (!has_iterator_category<std::iterator_traits<underlying_iterator_t>>)
+struct maybe_iterator_category<underlying_iterator_t>
+{
+    using iterator_category = void;
+};
 #endif // SEQAN3_WORKAROUND_GCC_96070
+
+//!\cond
+template <typename underlying_iterator_t>
+    requires has_iterator_category<std::iterator_traits<underlying_iterator_t>>
+struct maybe_iterator_category<underlying_iterator_t>
+{
+    using iterator_category = typename std::iterator_traits<underlying_iterator_t>::iterator_category;
+};
+//!\endcond
+
+/*!\brief This handles more cases than maybe_iterator_category if you inherit the underling_iterator_t.
+ * \details
+ *
+ * The same as maybe_iterator_category, but this will not define the iterator_category if the underling_iterator_t
+ * already defines an iterator_category to avoid duplicated definitions of iterator_category from two different base
+ * classes.
+ *
+ * This class can be safely inherited from.
+ */
+template <typename underling_iterator_t>
+struct maybe_inherited_iterator_category : public maybe_iterator_category<underling_iterator_t>
+{};
+
+//!\cond
+template <typename underling_iterator_t>
+    requires has_iterator_category<underling_iterator_t>
+struct maybe_inherited_iterator_category<underling_iterator_t>
+{
+    // underling_iterator_t::iterator_category is already defined
+};
+//!\endcond
 
 /*!\brief Exposes the
  * [iterator_concept](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.

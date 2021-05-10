@@ -48,7 +48,8 @@ namespace seqan3::detail
 template <typename derived_t, std::input_or_output_iterator base_t>
 class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::semiregular<base_t>,
                                                           empty_type,
-                                                          base_t>
+                                                          base_t>,
+                                public maybe_inherited_iterator_category<base_t>
 {
 private:
     //!\brief Whether this iterator inherits or wraps.
@@ -67,8 +68,10 @@ public:
     using reference = std::iter_reference_t<base_t>;
     //!\brief The pointer type.
     using pointer = detail::iter_pointer_t<base_t>;
+#if SEQAN3_DOXYGEN_ONLY(1)0
     //!\brief The iterator category tag.
-    using iterator_category = detail::iterator_category_tag_t<base_t>;
+    using iterator_category = maybe_present;
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
     //!\brief The iterator concept tag.
     using iterator_concept = detail::iterator_concept_tag_t<base_t>;
     //!\}
