@@ -50,7 +50,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, make_score_profile)
                                                                 seqan3::aa27,
                                                                 seqan3::align_cfg::method_global>;
 
-    scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+    scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
     TypeParam original = seqan3::simd::iota<TypeParam>(2);
     TypeParam expected = original * seqan3::simd::fill<TypeParam>(seqan3::alphabet_size<seqan3::aa27> + 1);
@@ -63,7 +63,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothro
                                                                 seqan3::aa27,
                                                                 seqan3::align_cfg::method_global>;
 
-    scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+    scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
     TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
@@ -111,7 +111,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
                                                                 seqan3::aa27,
                                                                 seqan3::align_cfg::method_global>;
 
-    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
     TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
@@ -147,7 +147,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
                                                                     seqan3::aa27,
                                                                     seqan3::align_cfg::method_global>;
 
-        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
         TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
         TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(3);
@@ -180,7 +180,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
                                                                 seqan3::aa27,
                                                                 seqan3::align_cfg::method_local>;
 
-    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+    scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
     TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
     TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);
@@ -217,7 +217,7 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
                                                                     seqan3::aa27,
                                                                     seqan3::align_cfg::method_local>;
 
-        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30}};
+        scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
         TypeParam simd_value1 = seqan3::simd::fill<TypeParam>(2);
         TypeParam simd_value2 = seqan3::simd::fill<TypeParam>(2);

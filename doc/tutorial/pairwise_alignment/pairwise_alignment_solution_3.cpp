@@ -14,7 +14,7 @@ int main()
     // Configure the alignment kernel.
     auto config = seqan3::align_cfg::method_global{} |
                   seqan3::align_cfg::scoring_scheme{
-                      seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62}} |
+                      seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum62}} |
                   seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-9},
                                                      seqan3::align_cfg::extension_score{-2}};
 

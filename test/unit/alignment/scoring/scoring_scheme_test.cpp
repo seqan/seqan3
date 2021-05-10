@@ -94,7 +94,7 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
     }
 
     {
-        seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62};
+        seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::blosum62};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), seqan3::aminoacid_scoring_scheme<int8_t>>));
     }
 }
@@ -319,7 +319,7 @@ TYPED_TEST_SUITE(aminoacid, aa_scheme_types, );
 TYPED_TEST(aminoacid, similarity_matrix)
 {
     // Test constructor
-    seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::BLOSUM30};
+    seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::blosum30};
     EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
     EXPECT_EQ(-3,    scheme.score('A'_aa27, 'C'_aa27));
     EXPECT_EQ(-3,    scheme.score('C'_aa27, 'A'_aa27));
@@ -327,7 +327,7 @@ TYPED_TEST(aminoacid, similarity_matrix)
     EXPECT_EQ( 0,    scheme.score('N'_aa27, 'A'_aa27));
 
     // Test set function
-    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM45);
+    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum45);
 
     EXPECT_EQ( 5,    scheme.score('A'_aa27, 'A'_aa27));
     EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));
@@ -335,7 +335,7 @@ TYPED_TEST(aminoacid, similarity_matrix)
     EXPECT_EQ( 7,    scheme.score('D'_aa27, 'D'_aa27));
     EXPECT_EQ(-1,    scheme.score('N'_aa27, 'A'_aa27));
 
-    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM62);
+    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum62);
 
     EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
     EXPECT_EQ( 0,    scheme.score('A'_aa27, 'C'_aa27));
@@ -343,7 +343,7 @@ TYPED_TEST(aminoacid, similarity_matrix)
     EXPECT_EQ( 6,    scheme.score('D'_aa27, 'D'_aa27));
     EXPECT_EQ(-2,    scheme.score('N'_aa27, 'A'_aa27));
 
-    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM80);
+    scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum80);
 
     EXPECT_EQ( 7,    scheme.score('A'_aa27, 'A'_aa27));
     EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));

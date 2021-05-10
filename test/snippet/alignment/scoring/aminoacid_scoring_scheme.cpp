@@ -8,20 +8,20 @@ int main()
 {
 using namespace seqan3::literals;
 
-seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::BLOSUM62};
+seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::blosum62};
 // How to score two letters:
-seqan3::debug_stream << "BLOSUM62 score for T and S: " << (int) scheme.score('T'_aa27, 'S'_aa27) << "\n"; // == 1
+seqan3::debug_stream << "blosum62 score for T and S: " << (int) scheme.score('T'_aa27, 'S'_aa27) << "\n"; // == 1
 
-scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::BLOSUM80);
+scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum80);
 // You can also score aa20 against aa27:
-seqan3::debug_stream << "BLOSUM80 score for 'T'_aa27 and 'S'_aa20: " << (int) scheme.score('T'_aa27, 'S'_aa20) << "\n"; // == 2
+seqan3::debug_stream << "blosum80 score for 'T'_aa27 and 'S'_aa20: " << (int) scheme.score('T'_aa27, 'S'_aa20) << "\n"; // == 2
 scheme.set_hamming_distance();
 seqan3::debug_stream << "Hamming distance between T and S: " << (int) scheme.score('T'_aa27, 'S'_aa20) << "\n"; // == -1
 seqan3::debug_stream << "Hamming distance between T and T: " << (int) scheme.score('T'_aa27, 'T'_aa20) << "\n"; // == 0
 
-seqan3::aminoacid_scoring_scheme scheme2{seqan3::aminoacid_similarity_matrix::BLOSUM80};
+seqan3::aminoacid_scoring_scheme scheme2{seqan3::aminoacid_similarity_matrix::blosum80};
 // You can "edit" a given matrix directly:
-seqan3::debug_stream << "BLOSUM80 score between T and S: " << (int) scheme2.score('T'_aa27, 'S'_aa27) << "\n"; // == 2
+seqan3::debug_stream << "blosum80 score between T and S: " << (int) scheme2.score('T'_aa27, 'S'_aa27) << "\n"; // == 2
 auto & cell = scheme2.score('T'_aa27, 'S'_aa27);
 cell = 3;
 seqan3::debug_stream << "New score after editing entry: " << (int) scheme2.score('T'_aa27, 'S'_aa27) << "\n"; // == 3
@@ -29,7 +29,7 @@ seqan3::debug_stream << "New score after editing entry: " << (int) scheme2.score
 std::vector<seqan3::aa27> one = "ALIGATOR"_aa27;
 std::vector<seqan3::aa27> two = "ANIMATOR"_aa27;
 
-seqan3::aminoacid_scoring_scheme scheme3{seqan3::aminoacid_similarity_matrix::BLOSUM62};
+seqan3::aminoacid_scoring_scheme scheme3{seqan3::aminoacid_similarity_matrix::blosum62};
 // You can also score two sequences:
 int score = 0;
 for (auto pair : seqan3::views::zip(one, two))

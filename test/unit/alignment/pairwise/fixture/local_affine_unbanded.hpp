@@ -372,7 +372,7 @@ static auto rna5_01 = []()
     };
 }();
 
-// Local alignment for proteins (amino acid sequence) with BLOSUM62 score.
+// Local alignment for proteins (amino acid sequence) with blosum62 score.
 static auto aa27_01 = []()
 {
     using seqan3::detail::column_index_type;
@@ -383,7 +383,7 @@ static auto aa27_01 = []()
         "ALIGATOR"_aa27,
         "GALORA"_aa27,
         align_config
-        | seqan3::align_cfg::scoring_scheme{aminoacid_scoring_scheme{aminoacid_similarity_matrix::BLOSUM62}},
+        | seqan3::align_cfg::scoring_scheme{aminoacid_scoring_scheme{aminoacid_similarity_matrix::blosum62}},
         13,
         "GATOR",
         "GALOR",
@@ -427,7 +427,7 @@ static auto aa27_02 = []()
         "ALIGATOR"_aa27,
         ""_aa27,
         align_config
-        | seqan3::align_cfg::scoring_scheme{aminoacid_scoring_scheme{aminoacid_similarity_matrix::BLOSUM62}},
+        | seqan3::align_cfg::scoring_scheme{aminoacid_scoring_scheme{aminoacid_similarity_matrix::blosum62}},
         0,
         "",
         "",
