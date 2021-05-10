@@ -375,19 +375,19 @@ public:
      */
     constexpr iterator begin() noexcept
     {
-        return &data_[0];
+        return data_.data();
     }
 
     //!\copydoc seqan3::small_vector::begin()
     constexpr const_iterator begin() const noexcept
     {
-        return &data_[0];
+        return data_.data();
     }
 
     //!\copydoc seqan3::small_vector::begin()
     constexpr const_iterator cbegin() const noexcept
     {
-        return &data_[0];
+        return data_.data();
     }
 
     /*!\brief Returns iterator past the end of the vector.
@@ -396,19 +396,19 @@ public:
      */
     constexpr iterator end() noexcept
     {
-        return &data_[sz];
+        return data_.data() + sz;
     }
 
     //!\copydoc seqan3::small_vector::end()
     constexpr const_iterator end() const noexcept
     {
-        return &data_[sz];
+        return data_.data() + sz;
     }
 
     //!\copydoc seqan3::small_vector::end()
     constexpr const_iterator cend() const noexcept
     {
-        return &data_[sz];
+        return data_.data() + sz;
     }
     //!\}
 
