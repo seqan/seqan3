@@ -32,7 +32,7 @@ namespace seqan3::search_cfg
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_total : public pipeable_config_element<max_error_total>
+class max_error_total : private pipeable_config_element
 {
 public:
     //!\brief The error count or error rate.
@@ -76,7 +76,7 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_substitution : public pipeable_config_element<max_error_substitution>
+class max_error_substitution : private pipeable_config_element
 {
 public:
     //!\brief The error count or error rate.
@@ -120,7 +120,7 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_insertion : public pipeable_config_element<max_error_insertion>
+class max_error_insertion : private pipeable_config_element
 {
 public:
     //!\brief The error count or error rate.
@@ -165,7 +165,7 @@ public:
  * ### Example
  * \include test/snippet/search/configuration_error.cpp
  */
-class max_error_deletion : public pipeable_config_element<max_error_deletion>
+class max_error_deletion : private pipeable_config_element
 {
 public:
     //!\brief The error count or error rate.

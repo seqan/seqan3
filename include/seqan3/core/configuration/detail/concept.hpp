@@ -23,7 +23,6 @@ namespace seqan3
 {
 //!\cond
 // Forward declarations
-template <typename derived_t, typename value_t = void>
 struct pipeable_config_element;
 //!\endcond
 }
@@ -139,7 +138,7 @@ public:
 template <typename config_t>
 SEQAN3_CONCEPT config_element = requires
 {
-    requires std::is_base_of_v<seqan3::pipeable_config_element<config_t>, config_t>;
+    requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
     requires std::semiregular<config_t>;
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     requires config_id_accessor::has_id<config_t>;

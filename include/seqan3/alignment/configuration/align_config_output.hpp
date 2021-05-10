@@ -39,7 +39,7 @@ namespace seqan3::align_cfg
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-class output_score : public pipeable_config_element<output_score>
+class output_score : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -83,7 +83,7 @@ public:
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-class output_end_position : public pipeable_config_element<output_end_position>
+class output_end_position : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -127,7 +127,7 @@ public:
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-class output_begin_position : public pipeable_config_element<output_begin_position>
+class output_begin_position : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -167,7 +167,7 @@ public:
  * \see seqan3::align_cfg::output_sequence1_id
  * \see seqan3::align_cfg::output_sequence2_id
  */
-class output_alignment : public pipeable_config_element<output_alignment>
+class output_alignment : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -207,7 +207,7 @@ public:
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence2_id
  */
-class output_sequence1_id : public pipeable_config_element<output_sequence1_id>
+class output_sequence1_id : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment
@@ -247,7 +247,7 @@ public:
  * \see seqan3::align_cfg::output_alignment
  * \see seqan3::align_cfg::output_sequence1_id
  */
-class output_sequence2_id : public pipeable_config_element<output_sequence2_id>
+class output_sequence2_id : private pipeable_config_element
 {
 public:
     /*!\name Constructor, destructor and assignment

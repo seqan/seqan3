@@ -70,7 +70,7 @@ struct upper_diagonal : public seqan3::detail::strong_type<int32_t, upper_diagon
  *
  * \include test/snippet/alignment/configuration/align_cfg_band_example.cpp
  */
-class band_fixed_size : public pipeable_config_element<band_fixed_size>
+class band_fixed_size : private pipeable_config_element
 {
 public:
     //!\brief The selected lower diagonal. Defaults to `std::%numeric_limits<int32_t>::%lowest()`.
