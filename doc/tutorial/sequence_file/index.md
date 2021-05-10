@@ -173,21 +173,6 @@ In the above example, `record` has the type seqan3::sequence_file_input::record_
 
 \note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 
-\cond DEV
-\todo What to do with this section? We want to advertise for seqan3.1 to use records.
-## Structural bindings
-
-Since the return type seqan3::sequence_record behaves like a tuple, you can also use
-[structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
-to decompose the record into its elements:
-
-\include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
-
-In this case you immediately get the two elements of the tuple:
-`sequence` of seqan3::sequence_file_input::sequence_type and `id` of seqan3::sequence_file_input::id_type.
-**But beware: with structured bindings you do need to get the order of elements correctly!**
-\endcond
-
 You can read up more on the different ways to stream over the file object in the detailed documentation
 of seqan3::sequence_file_input.
 
