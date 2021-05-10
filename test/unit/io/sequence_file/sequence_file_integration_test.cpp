@@ -91,7 +91,6 @@ TEST(integration, view)
         "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
     };
 
-#if !SEQAN3_WORKAROUND_GCC_93983
     // valid without assignment?
     seqan3::sequence_file_input{std::istringstream{input},
                                 seqan3::format_fasta{}} | seqan3::detail::persist
@@ -107,7 +106,6 @@ TEST(integration, view)
 
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output);
-#endif // !SEQAN3_WORKAROUND_GCC_93983
 }
 
 TEST(integration, convert_fastq_to_fasta)

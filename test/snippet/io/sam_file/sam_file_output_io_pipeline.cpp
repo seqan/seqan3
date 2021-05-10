@@ -1,6 +1,5 @@
 #include <seqan3/core/platform.hpp>
 
-#if !SEQAN3_WORKAROUND_GCC_93983
 //![snippet]
 #include <seqan3/std/ranges>
 #include <sstream>
@@ -22,4 +21,3 @@ int main()
                | seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
 }
 //![snippet]
-#endif // !SEQAN3_WORKAROUND_GCC_93983

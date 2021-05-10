@@ -218,6 +218,15 @@
 //  Workarounds
 // ============================================================================
 
+/*!\brief Warn about gcc 10.0 and gcc 10.1
+ * Known Issues:
+ * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93983
+ */
+#if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
+#   define SEQAN3_WORKAROUND_GCC_93983 0
+#   pragma GCC warning "Be aware that gcc 10.0 and 10.1 is known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.2."
+#endif // defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
+
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
@@ -265,15 +274,6 @@
 #       define SEQAN3_WORKAROUND_GCC_90897 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_90897 0
-#   endif
-#endif
-
-//!\brief https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93983
-#ifndef SEQAN3_WORKAROUND_GCC_93983
-#   if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
-#       define SEQAN3_WORKAROUND_GCC_93983 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_93983 0
 #   endif
 #endif
 

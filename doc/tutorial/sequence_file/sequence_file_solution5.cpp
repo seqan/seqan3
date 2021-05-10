@@ -58,7 +58,6 @@ IIIIIHIIJJIIIII
 
 write_file_dummy_struct go{};
 
-#if !SEQAN3_WORKAROUND_GCC_93983
 //![solution]
 #include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
@@ -83,4 +82,3 @@ int main()
     // fin | length_filter | fout;
 }
 //![solution]
-#endif // !SEQAN3_WORKAROUND_GCC_93983
