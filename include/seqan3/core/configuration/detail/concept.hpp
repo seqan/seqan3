@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <array>
 #include <seqan3/std/concepts>
 #include <functional>
 #include <type_traits>
