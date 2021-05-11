@@ -12,8 +12,6 @@ UUGGAGUACACAACCUGUACACUCUUUC
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_93983
     seqan3::structure_file_input my_in{std::istringstream{input}, seqan3::format_vienna{}};
     my_in | std::views::take(2) | seqan3::structure_file_output{std::ostringstream{}, seqan3::format_vienna{}};
-#endif // !SEQAN3_WORKAROUND_GCC_93983
 }

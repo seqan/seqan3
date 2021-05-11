@@ -326,23 +326,14 @@ TEST_F(sequence_file_input_f, file_view)
 {
     seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
 
-#if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
         return size(rec.sequence()) >= 5;
     });
-#endif
 
     size_t counter = 1; // the first record will be filtered out
-#if SEQAN3_WORKAROUND_GCC_93983
-    for (auto & rec : fin /*| minimum_length_filter*/)
-    {
-        if (!(size(rec.sequence()) >= 5))
-            continue;
-#else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length_filter)
     {
-#endif // SEQAN3_WORKAROUND_GCC_93983
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);

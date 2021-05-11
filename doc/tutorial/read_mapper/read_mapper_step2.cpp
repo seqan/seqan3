@@ -51,11 +51,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                     seqan3::search_cfg::error_count{errors}} |
                                                 seqan3::search_cfg::hit_all_best{};
 
-#if SEQAN3_WORKAROUND_GCC_93983
-    for (auto && record : query_file_in /*| seqan3::views::take(20)*/)
-#else // ^^^ workaround / no workaround vvv
-    for (auto && record : query_file_in | seqan3::views::take(20))
-#endif // SEQAN3_WORKAROUND_GCC_93983
+    for (auto && record : query_file_in | std::views::take(20))
     {
         seqan3::debug_stream << "Hits:" << '\n';
         for (auto && result : search(record.sequence(), index, search_config))

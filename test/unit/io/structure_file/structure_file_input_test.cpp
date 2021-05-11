@@ -378,19 +378,13 @@ TEST_F(structure_file_input_read, record_file_view)
                                                     seqan3::field::structure,
                                                     seqan3::field::energy>{}};
 
-#if !SEQAN3_WORKAROUND_GCC_93983
     auto minimum_length_filter = std::views::filter([] (auto const & rec)
     {
         return size(rec.sequence()) >= 5;
     });
-#endif
 
     size_t counter = 0ul; // the first record will be filtered out
-#if SEQAN3_WORKAROUND_GCC_93983
-    for (auto & rec : fin /*| minimum_length_filter*/)
-#else // ^^^ workaround / no workaround vvv
     for (auto & rec : fin | minimum_length_filter)
-#endif // SEQAN3_WORKAROUND_GCC_93983
     {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

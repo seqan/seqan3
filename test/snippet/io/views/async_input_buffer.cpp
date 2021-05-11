@@ -35,7 +35,6 @@ ACGACTACGACGATCATCGATCGATCGATCGATCGATCGATCGATCGTACTACGATCGATCG
 
 int main()
 {
-#if !SEQAN3_WORKAROUND_GCC_93983
     // initialise random number generator, only needed for demonstration purposes
     std::srand(std::time(nullptr));
 
@@ -64,5 +63,4 @@ int main()
     // launch two threads and pass the lambda function to both
     auto f0 = std::async(std::launch::async, worker);
     auto f1 = std::async(std::launch::async, worker);
-#endif // !SEQAN3_WORKAROUND_GCC_93983
 }
