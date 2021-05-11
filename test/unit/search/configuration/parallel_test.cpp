@@ -10,7 +10,7 @@
 #include <optional>
 #include <seqan3/search/configuration/parallel.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+#include "../../core/configuration/pipeable_config_element_test_template.hpp"
 
 // ---------------------------------------------------------------------------------------------------------------------
 // test template : pipeable_config_element_test

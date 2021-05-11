@@ -12,7 +12,7 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+#include "../../core/configuration/pipeable_config_element_test_template.hpp"
 
 using test_types = ::testing::Types<seqan3::align_cfg::band_fixed_size>;
 

@@ -10,7 +10,7 @@
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/configuration/pipeable_config_element.hpp>
 
-#include "../configuration/configuration_mock.hpp"
+#include "configuration_mock.hpp"
 
 TEST(pipeable_config_element, two_elements)
 {
