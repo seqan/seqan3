@@ -89,91 +89,83 @@ class strong_type;
 /*!\name Requirements for seqan3::detail::derived_from_strong_type
  * \brief You can expect these members on all types that implement seqan3::detail::derived_from_strong_type.
  * \relates seqan3::detail::derived_from_strong_type
- *
- * \details
- *
- * A type that implements derived_from_strong_type must be a derived class of seqan3::detail::strong_type.
  * \{
+ *
+ * \typedef typedef IMPLEMENTATION_DEFINED value_type;
+ * \brief The underlying type represented by this strong type.
+ *
+ * \var static constexpr seqan3::detail::strong_type_skill skills;
+ * \brief The selected skills for this strong type.
+ * \}
  */
 //!\cond
 template <typename strong_type_t>
 SEQAN3_CONCEPT derived_from_strong_type = requires (strong_type_t && obj)
 {
-//!\endcond
-
-    /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
-     * \brief The underlying type represented by this strong type.
-     */
     typename std::remove_reference_t<strong_type_t>::value_type;
 
-    /*!\var static constexpr seqan3::detail::strong_type_skill skills;
-     * \brief The selected skills for this strong type.
-     */
     { std::remove_reference_t<strong_type_t>::skills };
-    //!\cond
-    requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
-    //!\endcond
 
-    //!\cond
+    requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
+
     requires std::derived_from<std::remove_cvref_t<strong_type_t>,
                                strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
                                            std::remove_cvref_t<strong_type_t>,
                                            std::remove_reference_t<strong_type_t>::skills>>;
-    //!\endcond
-//!\cond
 };
 //!\endcond
-//!\}
 
 //------------------------------------------------------------------------------
 // class strong_type
 //------------------------------------------------------------------------------
 
-/*!\brief CRTP base class to declare a strong typedef for a regular type to avoid ambiguous parameter settings in function
- *        calls.
+/*!\brief [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) base class to declare a strong
+ *        typedef for a regular type to avoid ambiguous parameter settings in function calls.
  * \ingroup core
  * \tparam value_t The underlying type to create a strong typedef for.
- * \tparam derived_t The derived class inheriting from this base class. [see CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern).
+ * \tparam derived_t The derived class inheriting from this base class.
  * \tparam skills_ A set of skills to be added to the expressive type.
  *
  * \details
  *
- * There are many cases in which interfaces use ambiguous parameters which can be mixed up very easily.
- * For example, if we consider an interface, that expects a window size and a number of maximal errors to search for
- * possible hits in a region of interest, then both values might be given in form of an unsigned integer.
+ * There are many cases in which interfaces use ambiguous parameters that can be mixed up very easily.
+ * For example, if we consider an interface that expects a window size and a number of maximal errors to search for
+ * possible hits in a region of interest, both values might be given in the form of an unsigned integer.
  * The following snippet shows a typical interface:
  *
  * \include test/snippet/core/detail/strong_type_usage.cpp
  *
- * The first parameter is the window size and the last parameter defines the error threshold.
- * But, what happens if the user accidentally switches the `window_size` with the `error` parameter?
- * In a bigger code base this mistake can be so subtle, that it becomes hard to figure out that the
- * search interface was used in a wrong way. Also the compiler cannot detect this.
- * In order to make this interface safe, we have to use a _strong type_.
+ * The second parameter is the window size and the third parameter represents the error threshold.
+ * But what happens if the user accidentally confuses `%window_size` with `%error`?
+ * In a bigger code base, this mistake can be so subtle that it becomes hard to figure out that the
+ * search interface was used in a wrong way. Also, the compiler cannot detect this.
+ * In order to make this interface safe, we have to use a strong type.
  * A strong type is expressive in what it actually represents as a value.
- * In our toy example we could define two strong types as follows:
+ * In our toy example, we can define two strong types as follows:
  *
  * \include test/snippet/core/detail/strong_type_error_window.cpp
- * Our interface could now be changed to:
+ *
+ * We can now change our interface to:
  *
  * \include test/snippet/core/detail/strong_type_new_usage.cpp
  *
- * Now the user is forced to pass the parameters as their named type. If the parameter order is mixed up by accident
- * the compiler would emit an error message, since the `error` type is not convertible to the `window_size` type and
+ * Now the user is forced to pass the parameters as their named type. If the parameter order is mixed up,
+ * the compiler will emit an error message since the `%error` type is not convertible to the `%window_size` type and
  * vice versa.
  *
  * ### Adding Skills
  *
- * In most cases it is sufficient to protect the user interface from misuse by using strong types. Within the
- * implementation the underlying value can then be extracted using the `getter`-member functions of the
- * seqan3::detail::strong_type class. However, there might be scenarios, where the strong type is exposed to the user
+ * In most cases, it is sufficient to protect the user interface from misuse by using strong types. Within the
+ * implementation, the underlying value can then be extracted using the seqan3::detail::strong_type::get member
+ * functions.
+ * However, there might be scenarios where the strong type is exposed to the user
  * to work with, but with a restricted set of operations that can be applied to the type.
  * A familiar use case are the time typedefs of the [std::chrono](https://en.cppreference.com/w/cpp/header/chrono)
- * library. It is convenient for the user to subtract two time values representing, for example seconds, to get the
+ * library. It is convenient for the user to subtract two time values representing, for example, seconds, to get the
  * duration between two time points. But not all operations like modulo or multiplication are really useful for this.
- * In order to add skills to the seqan3::detail::strong_type the typedef can be further specialized with
+ * In order to add skills to the seqan3::detail::strong_type, the typedef can be further specialized with
  * operations from the seqan3::detail::strong_type_skill enum.
- * For example, we could further specify our error type to support increment and decrement operations.
+ * For example, we can further augment our error type to support increment and decrement operations:
  *
  * \include test/snippet/core/detail/strong_type_adding_skills.cpp
  */
