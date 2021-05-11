@@ -114,7 +114,7 @@ applicable, when it will be removed. We recommend upgrading version-by-version t
 You can either directly check the reported code or verify with our documentation how the new API should be used.
 
 For a complete list of behavioural changes in our public and internal API, you can consult our API stability
-regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stablility/3.0.2/.
+regression test suite and patches at https://github.com/seqan/seqan3/tree/master/test/api_stability/3.0.2.
 
 #### Alignment
 
