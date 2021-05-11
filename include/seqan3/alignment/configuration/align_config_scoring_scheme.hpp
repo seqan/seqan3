@@ -17,7 +17,7 @@
 
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::align_cfg
