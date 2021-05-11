@@ -30,14 +30,14 @@ int main()
         return std::ranges::distance(rec.sequence()) >= 50;
     });
 
-    auto minimum_average_quality_filter = std::views::filter([] (auto const & rec)
+    auto minimum_average_quality_filter = std::views::filter([] (auto const & record)
     {
         double qual_sum{0}; // summation of the qualities
-        for (auto chr : rec.qualities())
-            qual_sum += chr.to_phred();
+        for (auto chr : record.base_qualities())
+            qual_sum += seqan3::to_phred(chr);
 
-                           // check if average quality is greater than 20.
-        return qual_sum / (std::ranges::distance(rec.qualities())) >= 20;
+        // check if average quality is greater than 20.
+        return qual_sum / (std::ranges::distance(record.base_qualities())) >= 20;
     });
 
     auto input_file = seqan3::sequence_file_input{std::istringstream{input}, seqan3::format_fastq{}};
