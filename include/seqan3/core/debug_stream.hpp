@@ -14,13 +14,13 @@
 
 #include <iostream>
 
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_byte.hpp>
-#include <seqan3/core/detail/debug_stream_optional.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
-#include <seqan3/core/detail/debug_stream_variant.hpp>
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/debug_stream/byte.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/optional.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
+#include <seqan3/core/debug_stream/variant.hpp>
 
 // forward declare
 //!\cond

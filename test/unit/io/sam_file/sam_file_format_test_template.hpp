@@ -9,12 +9,12 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_byte.hpp>
-#include <seqan3/core/detail/debug_stream_optional.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
-#include <seqan3/core/detail/debug_stream_variant.hpp>
+#include <seqan3/core/debug_stream/byte.hpp>
+#include <seqan3/core/debug_stream/optional.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
+#include <seqan3/core/debug_stream/variant.hpp>
 #include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
 #include <seqan3/io/sam_file/output.hpp>

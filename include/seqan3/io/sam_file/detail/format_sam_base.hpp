@@ -23,7 +23,7 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/detail/misc.hpp>
 #include <seqan3/core/range/type_traits.hpp>

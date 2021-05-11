@@ -13,6 +13,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
@@ -22,7 +23,6 @@
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "../../range/iterator_test_template.hpp"

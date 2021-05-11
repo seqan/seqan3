@@ -17,8 +17,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 

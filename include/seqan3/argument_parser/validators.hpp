@@ -22,7 +22,7 @@
 
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>

@@ -15,7 +15,7 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/type_traits>
 
-#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
 
 namespace seqan3
 {

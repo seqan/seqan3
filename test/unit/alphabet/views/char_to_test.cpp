@@ -11,9 +11,9 @@
 #include <iostream>
 #include <seqan3/std/ranges>
 
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/range/concept.hpp>
 

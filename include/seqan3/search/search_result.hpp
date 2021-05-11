@@ -17,7 +17,7 @@
 #include <exception>
 
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/search/fm_index/concept.hpp>

@@ -10,7 +10,7 @@
 #include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 
 #include "../semi_alphabet_test_template.hpp"
 #include "alphabet_tuple_base_test_template.hpp"

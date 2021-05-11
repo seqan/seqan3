@@ -10,9 +10,9 @@
 #include <algorithm>
 #include <type_traits>
 
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>

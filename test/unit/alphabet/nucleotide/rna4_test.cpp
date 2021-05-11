@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"

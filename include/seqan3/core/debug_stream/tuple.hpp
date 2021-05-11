@@ -16,7 +16,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/detail/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 
 namespace seqan3

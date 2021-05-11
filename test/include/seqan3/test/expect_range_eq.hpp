@@ -18,7 +18,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 namespace seqan3::test
