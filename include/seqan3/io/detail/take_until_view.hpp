@@ -650,7 +650,7 @@ namespace seqan3::views
 /*!\brief A view adaptor that returns elements from the underlying range until the functor evaluates to
  *        true (or the end of the underlying range is reached).
  * \ingroup io
- * \deprecated Use std::views::take_while with std::not_fn instead.
+ * \deprecated Use `std::views::take_while(std::not_fn(functor))` instead.
  */
 SEQAN3_DEPRECATED_310 inline auto constexpr take_until = detail::take_until;
 
@@ -658,7 +658,7 @@ SEQAN3_DEPRECATED_310 inline auto constexpr take_until = detail::take_until;
  *        (**throws** if the end of the underlying range is reached).
  * \throws seqan3::unexpected_end_of_input If the underlying range contains no element that satisfies the functor.
  * \ingroup io
- * \deprecated Use std::views::take_while with std::not_fn instead.
+ * \deprecated Use `std::views::take_while(std::not_fn(functor))` instead.
  */
 SEQAN3_DEPRECATED_310 inline auto constexpr take_until_or_throw = detail::take_until_or_throw;
 

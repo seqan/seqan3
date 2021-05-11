@@ -253,6 +253,8 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   [\#2525](https://github.com/seqan/seqan3/pull/2525).
 * We deprecated `seqan3::views::take_until` and it will be removed in 3.1.0. Use
   `std::views::take_while(std::not_fn(predicate))` instead ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
+* We deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other 
+  than reimplementing it yourself ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
 * We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2538))
