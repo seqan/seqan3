@@ -51,7 +51,7 @@ If you want to read more about the SAM format, take a look at the
 
 ## BAM format
 
-BAM is the binary format version of SAM. It provides the same data as the SAM format with negligible and subtle 
+BAM is the binary format version of SAM. It provides the same data as the SAM format with negligible and subtle
 differences in most cases.
 
 # Sam file fields
@@ -221,14 +221,6 @@ With that information do the following:
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder how to use views on files)
   * For the resulting alignments, print which read was mapped against which reference id and
     the number of `seqan3::gap`s in each sequence (aligned reference and read sequence).
-
-\cond DEV
-\todo This isn't used, right? Maybe a left over? seqan3::sam_record::reference_id?! Maybe we should make the example
-      better to understand that comment.
-
-\note reference ids (field::ref_id) are given as an index of type `std::optional<int32_t>`
-      that denote the position of the reference id in the `ref_ids` vector passed to the alignment file.
-\endcond
 
 Your program should print the following:
 

@@ -72,7 +72,13 @@ int main()
         // or via std::ranges::count
         size_t sum_read = std::ranges::count(get<1>(record.alignment()), seqan3::gap{});
 
-        seqan3::debug_stream << record.id() << " mapped against " << record.reference_id() << " with "
+        // The reference_id is ZERO based and an optional, where -1 will be represented as
+        // std::nullopt (= reference not known).
+        std::optional reference_id = record.reference_id();
+
+        seqan3::debug_stream << record.id() << " mapped against "
+                             << (reference_id ? std::to_string(reference_id.value()) : "unknown reference")
+                             << " with "
                              << sum_read << " gaps in the read sequence and "
                              << sum_reference  << " gaps in the reference sequence.\n";
     }
