@@ -28,12 +28,12 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
@@ -107,7 +107,7 @@ protected:
         auto stream_it = std::ranges::begin(stream_view);
 
         std::string idbuffer;
-        std::ranges::copy(stream_view | views::take_until_or_throw(is_cntrl || is_blank),
+        std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank),
                           std::cpp20::back_inserter(idbuffer));
         if (idbuffer != "ID")
             throw parse_error{"An entry has to start with the code word ID."};
@@ -119,7 +119,7 @@ protected:
                 std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>, std::cpp20::back_inserter(id));
                 do
                 {
-                    std::ranges::copy(stream_view | views::take_until_or_throw(is_char<'S'>)
+                    std::ranges::copy(stream_view | detail::take_until_or_throw(is_char<'S'>)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::cpp20::back_inserter(id));
                     id.push_back(*stream_it);
@@ -131,18 +131,18 @@ protected:
             else
             {
                 // ID
-                detail::consume(stream_view | views::take_until(!is_blank));
+                detail::consume(stream_view | detail::take_until(!is_blank));
 
                 // read id
                 if (options.truncate_ids)
                 {
-                    std::ranges::copy(stream_view | views::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
+                    std::ranges::copy(stream_view | detail::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::cpp20::back_inserter(id));
                 }
                 else
                 {
-                    std::ranges::copy(stream_view | views::take_until_or_throw(is_char<';'>)
+                    std::ranges::copy(stream_view | detail::take_until_or_throw(is_char<';'>)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                  std::cpp20::back_inserter(id));
                 }
@@ -154,7 +154,7 @@ protected:
         {
             do
             {
-                detail::consume(stream_view | views::take_until_or_throw(is_char<'S'>));
+                detail::consume(stream_view | detail::take_until_or_throw(is_char<'S'>));
                 ++stream_it;
             } while (*stream_it != 'Q');
         }
@@ -165,7 +165,7 @@ protected:
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto seq_view = stream_view | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
-                                        | views::take_until_or_throw(is_end);   // until //
+                                        | detail::take_until_or_throw(is_end);   // until //
 
             auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
@@ -185,7 +185,7 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | views::take_until(is_end));
+            detail::consume(stream_view | detail::take_until(is_end));
         }
         //Jump over // and cntrl
         ++stream_it;

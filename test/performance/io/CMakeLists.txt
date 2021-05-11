@@ -1,3 +1,5 @@
+add_subdirectories ()
+
 seqan3_benchmark(format_fasta_benchmark.cpp)
 seqan3_benchmark(format_fastq_benchmark.cpp)
 seqan3_benchmark(format_sam_benchmark.cpp)

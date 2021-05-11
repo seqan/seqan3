@@ -29,12 +29,12 @@
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/views/chunk.hpp>
@@ -108,7 +108,7 @@ protected:
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
 
-        if (!(std::ranges::equal(stream_view | views::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
+        if (!(std::ranges::equal(stream_view | detail::take_until_or_throw(is_cntrl || is_blank), std::string{"LOCUS"})))
             throw parse_error{"An entry has to start with the code word LOCUS."};
 
         //ID
@@ -128,11 +128,11 @@ protected:
             }
             else
             {
-                detail::consume(stream_view | views::take_until(!is_blank));
+                detail::consume(stream_view | detail::take_until(!is_blank));
 
                 auto read_id_until = [&stream_view, &id] (auto predicate)
                 {
-                    std::ranges::copy(stream_view | views::take_until_or_throw(predicate)
+                    std::ranges::copy(stream_view | detail::take_until_or_throw(predicate)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::cpp20::back_inserter(id));
                 };
@@ -157,7 +157,7 @@ protected:
         {
             auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
             std::ranges::copy(stream_view | std::views::filter(!(is_space || is_digit))
-                                          | views::take_until_or_throw_and_consume(is_end) // consume "//"
+                                          | detail::take_until_or_throw_and_consume(is_end) // consume "//"
                                           | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
                                             {
                                                 if (!is_legal_alph(c))
@@ -175,7 +175,7 @@ protected:
         }
         else
         {
-            detail::consume(stream_view | views::take_until_or_throw_and_consume(is_end)); // consume until "//"
+            detail::consume(stream_view | detail::take_until_or_throw_and_consume(is_end)); // consume until "//"
             ++stream_it; // consume "/n"
         }
     }

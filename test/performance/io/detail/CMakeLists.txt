@@ -1,0 +1,1 @@
+seqan3_benchmark(view_take_until_benchmark.cpp)

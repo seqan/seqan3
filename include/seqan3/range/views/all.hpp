@@ -23,9 +23,9 @@
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/take_exactly_view.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #endif // SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/move.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/elements.hpp>

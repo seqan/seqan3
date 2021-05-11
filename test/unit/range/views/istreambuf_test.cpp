@@ -16,7 +16,7 @@
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
-#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
@@ -69,7 +69,7 @@ TEST(view_istreambuf, basic)
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::views::take_until(seqan3::is_space),
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::detail::take_until(seqan3::is_space),
                     "ACGTATATATAT"sv);
 }
 
@@ -106,7 +106,7 @@ TEST(view_istreambuf, big_file_stram)
     auto v = seqan3::detail::istreambuf(istream);
     while (v.begin() != v.end())
     {
-        EXPECT_RANGE_EQ(v | seqan3::views::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
+        EXPECT_RANGE_EQ(v | seqan3::detail::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
                         "halloballo"sv);
     }
 

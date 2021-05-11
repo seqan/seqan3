@@ -15,7 +15,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/range/views/take_until.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/utility/views/deep.hpp>
 
 namespace seqan3::detail
@@ -55,7 +55,7 @@ struct trim_fn
                       "The threshold must either be a letter of the underlying alphabet or an integral type "
                       "in which case it is compared with the underlying Phred score type.");
 
-        return views::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
+        return detail::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
         {
             if constexpr (std::same_as<std::remove_cvref_t<threshold_t>,
                           std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>>)

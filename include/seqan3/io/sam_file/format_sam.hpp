@@ -27,6 +27,7 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 #include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -39,7 +40,6 @@
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/range/views/take_until.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
@@ -325,7 +325,7 @@ inline void format_sam::read_sequence_record(stream_type & stream,
             throw parse_error{"The id information must not be empty."};
 
     if (options.truncate_ids)
-        id = id | views::take_until_and_consume(is_space) | views::to<id_type>;
+        id = id | detail::take_until_and_consume(is_space) | views::to<id_type>;
 }
 
 //!\copydoc sequence_file_output_format::write_sequence_record
@@ -409,7 +409,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
                   "The ref_offset must be a specialisation of std::optional.");
 
     auto stream_view = detail::istreambuf(stream);
-    auto field_view = stream_view | views::take_until_or_throw_and_consume(is_char<'\t'>);
+    auto field_view = stream_view | detail::take_until_or_throw_and_consume(is_char<'\t'>);
 
     // these variables need to be stored to compute the ALIGNMENT
     int32_t ref_offset_tmp{};
@@ -583,7 +583,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // Field 11:  Quality
     // -------------------------------------------------------------------------------------------------------------
     auto const tab_or_end = is_char<'\t'> || is_char<'\r'> || is_char<'\n'>;
-    read_field(stream_view | views::take_until_or_throw(tab_or_end), qual);
+    read_field(stream_view | detail::take_until_or_throw(tab_or_end), qual);
 
     if constexpr (!detail::decays_to_ignore_v<seq_type> && !detail::decays_to_ignore_v<qual_type>)
     {
@@ -601,10 +601,10 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
     {
         std::ranges::next(std::ranges::begin(stream_view)); // skip tab
-        read_field(stream_view | views::take_until_or_throw(tab_or_end), tag_dict);
+        read_field(stream_view | detail::take_until_or_throw(tab_or_end), tag_dict);
     }
 
-    detail::consume(stream_view | views::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
+    detail::consume(stream_view | detail::take_until(!(is_char<'\r'> || is_char<'\n'>))); // consume new line
 
     // DONE READING - wrap up
     // -------------------------------------------------------------------------------------------------------------
@@ -938,7 +938,7 @@ inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
     std::vector<value_type> tmp_vector;
     while (std::ranges::begin(stream_view) != ranges::end(stream_view)) // not fully consumed yet
     {
-        read_field(stream_view | views::take_until(is_char<','>), value);
+        read_field(stream_view | detail::take_until(is_char<','>), value);
         tmp_vector.push_back(value);
 
         if (is_char<','>(*std::ranges::begin(stream_view)))
