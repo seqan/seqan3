@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Configure APT
+        run: bash .github/workflows/scripts/configure_apt.sh
+
       - name: Install CMake
         run: bash .github/workflows/scripts/install_cmake.sh
 
