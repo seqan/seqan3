@@ -18,8 +18,8 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/search/views/minimiser.hpp>
 #include <seqan3/utility/views/zip.hpp>

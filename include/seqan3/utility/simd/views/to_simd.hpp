@@ -19,6 +19,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>

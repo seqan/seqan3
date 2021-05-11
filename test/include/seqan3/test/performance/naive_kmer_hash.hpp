@@ -17,8 +17,8 @@
 #include <range/v3/view/sliding.hpp>
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/detail.hpp>
 
 namespace seqan3::detail
 {

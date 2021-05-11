@@ -18,7 +18,7 @@
 #include <thread>
 
 #include <seqan3/contrib/parallel/buffer_queue.hpp>
-#include <seqan3/range/views/detail.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 
 //-----------------------------------------------------------------------------
 // This is the path a value takes when using this views::

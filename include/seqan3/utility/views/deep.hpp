@@ -14,7 +14,8 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/range/views/detail.hpp>
+#include <seqan3/core/range/detail/adaptor_base.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 
 namespace seqan3::views
 {
