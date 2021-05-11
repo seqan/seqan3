@@ -971,7 +971,7 @@ inline void format_sam::read_sam_byte_vector(seqan3::detail::sam_tag_variant & v
     {
         try
         {
-            read_field(stream_view | views::take_exactly_or_throw(2), value);
+            read_field(stream_view | detail::take_exactly_or_throw(2), value);
         }
         catch (std::exception const & e)
         {

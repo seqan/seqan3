@@ -236,7 +236,7 @@ TYPED_TEST(integral_from_char_test, hexadicimal_number)
 TYPED_TEST(integral_from_char_test, to_chars)
 {
     uint8_t max_num_digits = static_cast<uint8_t>(std::log10(std::numeric_limits<TypeParam>::max())) + 1;
-    std::array<char, 20> buffer{};
+    std::array<char, 21> buffer{}; // num_digits of uint64_t is 20 and we want to do buffer[num_digits]
 
     TypeParam val{0};
     for (uint8_t num_digits = 1; num_digits <= max_num_digits; ++num_digits)

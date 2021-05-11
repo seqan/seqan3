@@ -13,7 +13,7 @@
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/repeat.hpp>
@@ -163,7 +163,7 @@ TEST(view, factory)
     // combinability
     {
         std::string str{"foobar"};
-        auto v = seqan3::views::repeat(str) | seqan3::views::take_exactly(3);
+        auto v = seqan3::views::repeat(str) | seqan3::detail::take_exactly(3);
         EXPECT_EQ(*v.begin(), str);
         EXPECT_EQ(std::ranges::size(v), 3u);
     }

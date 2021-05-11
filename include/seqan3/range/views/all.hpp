@@ -22,10 +22,10 @@
 #ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/io/detail/istreambuf_view.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
 #endif // SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/move.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/elements.hpp>
@@ -143,9 +143,8 @@
  * **Return range guarantees:** All view adaptors that are not *sink-only* return a range that meets at least
  * `std::ranges::input_range` and also `std::ranges::view` (and conversely also `std::ranges::viewable_range`,
  * because all views are viewable). Most views also preserve stronger
- * properties, e.g. `std::ranges::random_access_range`, but this depends on the view. Some views also add
- * properties not present on the input range, e.g. the range returned by `std::views::take_exactly` meets
- * `std::ranges::sized_range`, independent of whether this was met by the input range.
+ * properties, e.g. `std::ranges::random_access_range`, but this depends on the view. Some views may add
+ * properties not present on the input range.
  *   * *preserved* in this context means that the returned range satisfies this concept if it is also satisfied by the
  * underlying range.
  *   * *lost* means that this concept is never satisfied by the returned range, independent of whether the underlying

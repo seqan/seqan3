@@ -35,7 +35,8 @@ namespace seqan3::detail
 //  view_take
 // ============================================================================
 
-/*!\brief The type returned by seqan3::views::take, seqan3::view::take_exactly and seqan3::views::take_exactly_or_throw.
+/*!\brief The type returned by seqan3::views::take, seqan3::detail::take_exactly and
+ *        seqan3::detail::take_exactly_or_throw.
  * \tparam urng_t    The type of the underlying ranges, must satisfy seqan3::views::concept.
  * \tparam exactly   Whether to expose sized'ness on the view.
  * \tparam or_throw  Whether to throw an exception when the input is exhausted before the end of line is reached.
@@ -103,7 +104,7 @@ public:
                 {
                     throw std::invalid_argument
                     {
-                        "You are trying to construct a views::take_exactly_or_throw from a range that is strictly "
+                        "You are trying to construct a detail::take_exactly_or_throw from a range that is strictly "
                         "smaller."
                     };
                 }
@@ -488,7 +489,7 @@ struct take_fn
             {
                 if (target_size > std::ranges::size(urange))
                 {
-                    throw std::invalid_argument{"You are trying to construct a views::take_exactly_or_throw from a "
+                    throw std::invalid_argument{"You are trying to construct a detail::take_exactly_or_throw from a "
                                                 "range that is strictly smaller."};
                 }
             }
