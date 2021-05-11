@@ -1,11 +1,17 @@
-#include <seqan3/io/sequence_file/output.hpp>
+#include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
+// std::filesystem::current_path() / "my.fasta" will be deleted after the execution
+create_temporary_snippet_file my_fasta{"my.fasta", ""};
+
+//![main]
 #include <seqan3/std/filesystem>
+
+#include <seqan3/io/sequence_file/output.hpp>
 
 int main()
 {
-    auto tmp_file = std::filesystem::temp_directory_path() / "my.fasta";
+    auto fasta_file = std::filesystem::current_path() / "my.fasta";
 
-    seqan3::sequence_file_output fout{tmp_file}; // FastA format detected, std::ofstream opened for file
-
-    std::filesystem::remove(tmp_file);
+    // FastA format detected, std::ofstream opened for file
+    seqan3::sequence_file_output fin{fasta_file};
 }
+//![main]

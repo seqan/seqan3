@@ -4,53 +4,45 @@ create_temporary_snippet_file my_fastq
     "my.fastq",
 R"//![fastq_file](
 @seq1
+AGCTAGCAGCGATCG
++
+IIIIIHIIIIIIIII
+@seq2
 CGATCGATC
 +
 IIIIIIIII
-@seq2
-AGCG
-+
-IIII
 @seq3
-AGCTAGCAGCGATCG
+AGCGATCGAGGAATATAT
 +
-IIIIIHIIJJIIIII
-@seq4
-AGC
-+
-III
-@seq5
-AGCTAGCAGCGATCG
-+
-IIIIIHIIJJIIIII
+IIIIHHGIIIIHHGIIIH
 )//![fastq_file]"
 }; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
 
 // std::filesystem::current_path() / "output.fastq" will be deleted after the execution
-create_temporary_snippet_file output{"output.fastq", ""};
+create_temporary_snippet_file output_fastq{"output.fastq", ""};
 
-//![solution]
+//![main]
 #include <seqan3/std/algorithm>
-#include <seqan3/std/filesystem>
 #include <seqan3/std/ranges>
 
 #include <seqan3/io/sequence_file/all.hpp>
 
 int main()
 {
-    std::filesystem::path current_path = std::filesystem::current_path();
+    auto current_path = std::filesystem::current_path();
 
     seqan3::sequence_file_input fin{current_path / "my.fastq"};
     seqan3::sequence_file_output fout{current_path / "output.fastq"};
 
-    auto length_filter = std::views::filter([] (auto & rec)
-    {
-        return std::ranges::size(rec.sequence()) >= 5;
-    });
+    // the following are equivalent:
+    // 1. copy records of input file into output file
+    std::ranges::move(fin, fout.begin());
 
-    fout = fin | length_filter;
+    // 2. assign all records of input file to output file
+    fout = fin;
 
-    // This would also work: copy an input range into an output range
-    std::ranges::move(fin | length_filter, fout.begin());
+    // 3. same as 2. but as one liner
+    seqan3::sequence_file_output{current_path / "output.fastq"}
+        = seqan3::sequence_file_input{current_path / "my.fastq"};
 }
-//![solution]
+//![main]

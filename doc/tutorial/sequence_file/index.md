@@ -18,10 +18,7 @@ sometimes only in a single line of code.
 The file format is automatically detected by the file name extension and compressed files can be handled
 without any effort. We can even stream over files in a python-like way with range-based for loops:
 
-```cpp
-for (auto & record : file)
-    // do something with my record
-```
+\snippet doc/tutorial/sequence_file/sequence_file_record_range.cpp record_range
 
 We will explain the details about reading and writing files in the [Sequence File](#section_sequence_files) section below.
 Currently, SeqAn supports the following file formats:
@@ -49,18 +46,16 @@ compressed files in your programs.
 Before we dive into the details, we will outline the general design of our file objects,
 hoping that it will make the following tutorial easier to understand.
 
-As mentioned above, our file object is a range over records.
-More specifically over objects of type seqan3::record which is basically just a std::tuple that holds the data.
-To identify or specialise which data is read/written and contained in the records,
-we use seqan3::field tags (e.g. seqan3::field::seq denotes sequence information).
-The seqan3::field tags are shared between file formats and allow for easy file conversion.
+As mentioned above, our file object is a range over records. More specifically, a range over objects of type
+seqan3::sequence_record.
 
 Output files can handle various types that fulfill the requirements of the format (e.g.
 a sequence has to be a range over an alphabet).
-In contrast to this, input files have certain default types for record fields that can be modified via
-a *traits type*. For example, on construction you can specify seqan3::sequence_file_default_traits_dna
-or seqan3::sequence_file_default_traits_aa for reading `dna` and `protein` sequences respectively (section
-[File traits](#section_file_traits) will covers this in more detail).
+In contrast to this, input files have certain default types for record fields that can be modified via a *traits type*.
+
+For example, on construction you can specify seqan3::sequence_file_input_default_traits_dna or
+seqan3::sequence_file_input_default_traits_aa for reading `dna` (\ref nucleotide) and `protein` (\ref aminoacid)
+sequences respectively (section [File traits](#section_file_traits) will covers this in more detail).
 
 Opening and closing files is also handled automatically.
 If a file cannot be opened for reading or writing, a seqan3::file_open_error is thrown.
@@ -74,12 +69,7 @@ Well-known formats include FASTA and FASTQ.
 
 A FASTA record contains the sequence id and the sequence characters. Here is an example of a FASTA file:
 
-```
->seq1
-CCCCCCCCCCCCCCC
->seq2
-CGATCGATC
-```
+\include doc/tutorial/sequence_file/example.fasta
 
 In SeqAn we provide the seqan3::format_fasta to read sequence files in FASTA format.
 
@@ -87,16 +77,7 @@ In SeqAn we provide the seqan3::format_fasta to read sequence files in FASTA for
 
 A FASTQ record contains an additional quality value for each sequence character. Here is an example of a FASTQ file:
 
-```
-@seq1
-CCCCCCCCCCCCCCC
-+
-IIIIIHIIIIIIIII
-@seq2
-CGATCGATC
-+
-IIIIIIIII
-```
+\include doc/tutorial/sequence_file/example.fastq
 
 In SeqAn we provide the seqan3::format_fastq to read sequence files in FASTQ format.
 
@@ -106,15 +87,7 @@ An EMBL record stores sequence and its annotation together. We are only interest
 information for a sequence file. Qualities are not stored in this format.
 Here is an example of an EMBL file:
 
-```
-ID   X56734; SV 1; linear; mRNA; STD; PLN; 1859 BP.
-XX
-AC   X56734; S46826;
-XX
-SQ   Sequence 1859 BP; 609 A; 314 C; 355 G; 581 T; 0 other;
-     aaacaaacca aatatggatt ttattgtagc catatttgct ctgtttgtta ttagctcatt
-     cacaattact tccacaaatg cagttgaagc ttctactctt cttgacatag gtaacctgag
-```
+\include doc/tutorial/sequence_file/example.embl
 
 In SeqAn we provide the seqan3::format_embl to read sequence files in EMBL format.
 
@@ -130,48 +103,39 @@ The formerly introduced formats can be identified by the following file name ext
 | EMBL        | seqan3::format_embl  |   `.embl`                                         |
 
 
-You can access the valid file extension via the `file_extensions` member variable in a format:
+You can access the valid file extensions via the `file_extensions` member variable in a format
+and you can also customise this list if you want to allow different or additional file extensions:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp file_extensions
-
-You can also customise this list if you want to allow different or additional file extensions:
-
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp modify_file_extensions
+\snippet doc/tutorial/sequence_file/sequence_file_file_extensions.cpp main
 
 # Fields {#section_sequence_files}
 
 The Sequence file abstraction supports reading three different fields:
 
-  1. seqan3::field::seq
-  2. seqan3::field::id
-  3. seqan3::field::qual
+  1. seqan3::sequence_record::sequence
+  2. seqan3::sequence_record::id
+  3. seqan3::sequence_record::base_qualities
 
-The three fields are retrieved by default (and in that order!).
-This is more advanced than what we cover here,
-but if you are still interested you can take a look at the tutorial \ref tutorial_sam_file
-which introduces reading a file with custom selected fields.
+The three fields are retrieved by default.
 
 # Reading a sequence file
 
 You can include the SeqAn sequence file functionality with:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include
+\snippet doc/tutorial/sequence_file/sequence_file_record_range.cpp include
 
 ## Construction
 
 At first, you need to construct a seqan3::sequence_file_input object that handles file access.
-In most cases you construct from a file name:
+In most cases, you construct from a file name, but you can also construct a sequence file object directly from a stream
+(e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
 
-\include test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp
+\snippet doc/tutorial/sequence_file/sequence_file_filename_construction.cpp main
 
 All template parameters of the seqan3::sequence_file_input are automatically deduced, even the format!
 We **detect the format by the file name extension**.
 The file extension in the example above is `.fasta` so we choose the seqan3::format_fasta.
 
-You can also construct a sequence file object directly from a stream (e.g. std::cin or std::stringstream),
-but then you need to know your format beforehand:
-
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp construct_from_cin
 
 ### File traits {#section_file_traits}
 
@@ -185,41 +149,29 @@ We thereby assume that
 * store the sequence names/id in a std::string and
 * the qualities in a std::vector over the seqan3::phred42 alphabet.
 
-In case you want to read a **protein** sequence instead we also provide the
-seqan3::sequence_file_input_default_traits_aa traits type which sets the SEQ field to a std::vector over
-the seqan3::aa27 alphabet.
+In case you want to read a **protein** sequence instead, we also provide the
+seqan3::sequence_file_input_default_traits_aa traits type which sets the seqan3::sequence_record::sequence field to a
+std::vector over the seqan3::aa27 alphabet.
 
 You can specify the traits object as the first template argument for the sequence file:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp amino_acid_type_trait
+\snippet doc/tutorial/sequence_file/sequence_file_amino_acid_type_trait.cpp main
 
 You can also customise the types by inheriting from one of the default traits and changing the type manually.
 See the detailed information on seqan3::sequence_file_input_default_traits_dna for an example.
 
 ## Reading records
 
-After construction you can now read the sequence records. As described in the basic file layout,
+After construction you can now read the seqan3::sequence_record's. As described in the basic file layout,
 our file objects behave like ranges so you can use a range based for loop to conveniently iterate over the file:
 
 \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
 
 \attention An input file is a **single input range**, which means you can only iterate over it **once**!
 
-In the above example, `rec` has the type seqan3::sequence_file_input::record_type
-which is a specialisation of seqan3::record and behaves like an std::tuple
-(that's why we can access it via `get`).
+In the above example, `record` has the type seqan3::sequence_file_input::record_type which is seqan3::sequence_record.
 
 \note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
-
-Since the return type seqan3::record behaves like a tuple, you can also use
-[structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
-to decompose the record into its elements:
-
-\include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
-
-In this case you immediately get the two elements of the tuple:
-`seq` of seqan3::sequence_file_input::sequence_type and `id` of seqan3::sequence_file_input::id_type.
-**But beware: with structured bindings you do need to get the order of elements correctly!**
 
 You can read up more on the different ways to stream over the file object in the detailed documentation
 of seqan3::sequence_file_input.
@@ -227,15 +179,15 @@ of seqan3::sequence_file_input.
 \assignment{Assignment 1: Reading a FASTQ file}
 Copy and paste the following FASTQ file to some location, e.g. the tmp directory:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp fastq_file
+\snippet doc/tutorial/sequence_file/sequence_file_solution1.cpp fastq_file
 
 and then create a simple program that reads in all the records from that file and prints the id,
 sequence and quality information to the command line using the seqan3::debug_stream.
-Do not use the structured bindings for now but access the record via `get<>()`!
+Access the record via the member accessor of seqan3::sequence_record!
 
 Note: you include the seqan3::debug_stream with the following header
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_debug_stream
+\snippet doc/tutorial/sequence_file/sequence_file_solution1.cpp include_debug_stream
 
 \endassignment
 \solution
@@ -243,17 +195,7 @@ Note: you include the seqan3::debug_stream with the following header
 \snippet doc/tutorial/sequence_file/sequence_file_solution1.cpp solution
 
 The code will print the following:
-```bash
-ID:  seq1
-SEQ: AGCTAGCAGCGATCG
-QUAL: IIIIIHIIIIIIIII
-ID:  seq2
-SEQ: CGATCGATC
-QUAL: IIIIIIIII
-ID:  seq3
-SEQ: AGCGATCGAGGAATATAT
-QUAL: IIIIHHGIIIIHHGIIIH
-```
+\include doc/tutorial/sequence_file/sequence_file_solution1.out
 \endsolution
 
 ## The record type
@@ -262,11 +204,11 @@ In the examples above, we always use `auto` to deduce the record type automatica
 In case you need the type explicitly, e.g. if you want to store the records in a variable,
 you can access the type member seqan3::sequence_file_input::record_type.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type
+\snippet doc/tutorial/sequence_file/sequence_file_record_type.cpp main
 
 You can move the record out of the file if you want to store it somewhere without copying.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp record_type2
+\snippet doc/tutorial/sequence_file/sequence_file_move_record.cpp main
 
 \assignment{Assignment 2: Storing records in a std::vector}
 
@@ -280,11 +222,8 @@ Test your program with the following file:
 
 It should print the following:
 
-```console
-[(AGCT,seq1,),(CGATCGA,seq2,)]
-```
-Note that the quality (third tuple element) is empty because we are reading a FASTA file.
-
+\include doc/tutorial/sequence_file/sequence_file_solution2.out
+Note that the quality (third element in the triple) is empty because we are reading a FASTA file.
 \endassignment
 \solution
 \snippet doc/tutorial/sequence_file/sequence_file_solution2.cpp solution
@@ -299,9 +238,9 @@ This enables us to create solutions for lot of use cases using only a few lines 
 
 A common use case is to read chunks from a file instead of the whole file at once or line by line.
 
-You can do so easily on a file range by using the ranges::views::chunk.
+You can do so easily on a file range by using the seqan3::views::chunk.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp read_in_batches
+\snippet doc/tutorial/sequence_file/sequence_file_read_in_batches.cpp main
 
 The example above will iterate over the file by reading 10 records at a time.
 If no 10 records are available any more, it will just print the remaining records.
@@ -312,7 +251,7 @@ In some occasions you are only interested in sequence records that fulfill a cer
 e.g. having a minimum sequence length or a minimum average quality.
 Just like in the example with *ranges::view::chunk* you can use *std::ranges::filter* for this purpose:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp quality_filter
+\snippet doc/tutorial/sequence_file/sequence_file_quality_filter.cpp main
 
 To remind you what you have learned in the \ref tutorial_ranges tutorial before,
 a view is not applied immediately but **lazy evaluated**.
@@ -320,14 +259,12 @@ That means your file is still parsed record by record and not at once.
 
 ## Reading paired-end reads {#sequence_file_section_fun_with_ranges}
 
-In modern Next Generation Sequencing experiments you often have paired-end read data
-which is split into two files.
-The read pairs are identified by their identical name/id
-and that their position in the two files is the same.
+In modern Next Generation Sequencing experiments, you often encounter paired-end read data which is split into two files.
+The read pairs are identified by their identical id and position in the files.
 
-If you want to handle one pair of reads at a time, you can do so easily with a views::zip.
+If you want to handle one pair of reads at a time, you can do so easily with a seqan3::views::zip.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp paired_reads
+\snippet doc/tutorial/sequence_file/sequence_file_paired_reads.cpp main
 
 \assignment{Assignment 3: Fun with file ranges}
 
@@ -336,8 +273,8 @@ that have a length of at least 5.
 
 Hints:
 * You can use `std::ranges::size` to retrieve the size of a range.
-* You need the following includes for std::views::filter and std::views::take
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp include_ranges
+* You need the following includes for `std::views::filter` and `std::views::take`
+\snippet doc/tutorial/sequence_file/sequence_file_solution3.cpp include_ranges
 
 
 Test your program on the following FASTQ file:
@@ -358,7 +295,7 @@ It should output `seq1` and `seq3`.
 You construct the seqan3::sequence_file_output just like the seqan3::sequence_file_input
 by giving it a file name or a stream.
 
-\include test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp
+\snippet test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp main
 
 Writing to std::cout:
 
@@ -366,18 +303,10 @@ Writing to std::cout:
 
 ## Writing records
 
-The easiest way to write to a sequence file is to use the seqan3::sequence_file_output::push_back()
-or seqan3::sequence_file_output::emplace_back() member functions.
-These work similarly to how they work on an std::vector.
+The easiest way to write to a sequence file is to use the seqan3::sequence_file_output::push_back() member function.
+It works similarly to how it works on an std::vector.
 
-\include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
-
-If you pass a tuple to `push_back()` or give arguments to `emplace_back()` the order of elements is assumed
-to be the same as the one in the seqan3::sequence_file_output::selected_field_ids.
-For the above example the default FASTA fields are first seqan3::field::seq,
-second seqan3::field::id and the third one seqan3::field::qual.
-You may give less fields than are selected if the actual format you are writing to can cope with less
-(e.g. for FastA it is sufficient to give sequence and name information).
+\include doc/tutorial/sequence_file//sequence_file_output_record.cpp
 
 \assignment{Assignment 4: Writing a FASTQ file}
 
@@ -388,20 +317,7 @@ write out **all** the records that satisfy the filter to a new file called `outp
 Test your code on the same FASTQ file.
 The file `output.fastq` should contain the following records:
 
-```
-@seq1
-CGATCGATC
-+
-IIIIIIIII
-@seq3
-AGCTAGCAGCGATCG
-+
-IIIIIHIIJJIIIII
-@seq5
-AGCTAGCAGCGATCG
-+
-IIIIIHIIJJIIIII
-```
+\snippet doc/tutorial/sequence_file/sequence_file_solution4.cpp fastq_file
 
 \endassignment
 \solution
@@ -410,15 +326,22 @@ IIIIIHIIJJIIIII
 
 ## Files as views
 
-Again we want to point out a convenient advantage of modelling files as ranges.
-In the "reading a file" section you already saw a few examples of how to pipe a view onto
-a seqan3::sequence_file_input object. In the same way you can pipe the output file:
+Again we want to point out the convenient advantage of modelling files as ranges. The seqan3::sequence_file_input models
+std::ranges::input_range and in the "reading a file" section you already saw a few examples of how to pipe a view onto
+such a range. The output files model std::ranges::output_range and with that we can use ranges algorithm like
+std::ranges::move to "move" records from input to output files.
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp piping_in_out
+\cond DEV
+\todo There is no standard way for piping output ranges (e.g. `fin | fout;`), yet. Reevaluate this section later.
+
+In the same way you can pipe the output file:
+\endcond
+
+\snippet doc/tutorial/sequence_file/sequence_file_piping_in_out.cpp main
 
 \assignment{Assignment 5: Fun with file ranges 2}
 
-Working on your solution from the previous assignment, try to remove the for loop in favour of a pipe notation.
+Working on your solution from the previous assignment, try to remove the for loop in favour of a std::ranges algorithm.
 
 The result should be the same.
 
@@ -429,10 +352,10 @@ The result should be the same.
 
 # File conversion
 
-As mentioned before, the seqan3::field tags are shared between formats which allows for easy file conversion.
+As mentioned before, the seqan3::sequence_record is shared between formats which allows for easy file conversion.
 For example you can read in a FASTQ file and output a FASTA file in one line:
 
-\snippet doc/tutorial/sequence_file/sequence_file_snippets.cpp file_conversion
+\snippet doc/tutorial/sequence_file/sequence_file_file_conversion.cpp main
 
-Yes that's it! Of course this only works because all fields that are required in FASTA are provided in FASTQ.
+Yes, that's it! Of course this only works because all fields that are required in FASTA are provided in FASTQ.
 The other way around would not work as easily because we have no quality information (and would make less sense too).
