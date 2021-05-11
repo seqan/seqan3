@@ -287,7 +287,7 @@ struct debug_matrix_test : public ::testing::Test
     };
 
     template <typename score_matrix_t>
-    void test_score_matrix(score_matrix_t matrix)
+    void test_score_matrix(score_matrix_t && matrix)
     {
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
@@ -315,7 +315,7 @@ struct debug_matrix_test : public ::testing::Test
     }
 
     template <typename trace_matrix_t>
-    void test_trace_matrix(trace_matrix_t matrix)
+    void test_trace_matrix(trace_matrix_t && matrix)
     {
         EXPECT_EQ(matrix.cols(), 17u);
         EXPECT_EQ(matrix.rows(), 9u);
