@@ -326,12 +326,15 @@ The file `output.fastq` should contain the following records:
 
 ## Files as views
 
-Again we want to point out a convenient advantage of modelling files as ranges.
+Again we want to point out the convenient advantage of modelling files as ranges. The seqan3::sequence_file_input models
+std::ranges::input_range and in the "reading a file" section you already saw a few examples of how to pipe a view onto
+such a range. The output files model std::ranges::output_range and with that we can use ranges algorithm like
+std::ranges::move to "move" records from input to output files.
+
 \cond DEV
 \todo There is no standard way for piping output ranges (e.g. `fin | fout;`), yet. Reevaluate this section later.
 
-In the "reading a file" section you already saw a few examples of how to pipe a view onto
-a seqan3::sequence_file_input object. In the same way you can pipe the output file:
+In the same way you can pipe the output file:
 \endcond
 
 \snippet doc/tutorial/sequence_file/sequence_file_piping_in_out.cpp main
