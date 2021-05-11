@@ -63,7 +63,7 @@ void map_reads(std::filesystem::path const & query_path,
                                                seqan3::align_cfg::output_score{};
 //! [alignment_config]
 
-    for (auto && record : query_file_in | seqan3::views::take(20))
+    for (auto && record : query_file_in | std::views::take(20))
     {
         auto & query = record.sequence();
         for (auto && result : search(query, index, search_config))

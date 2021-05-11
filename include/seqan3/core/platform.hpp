@@ -225,9 +225,11 @@
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
  */
 #if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
-#   define SEQAN3_WORKAROUND_GCC_93983 0
-#   define SEQAN3_WORKAROUND_GCC_95371 0
-#   define SEQAN3_WORKAROUND_GCC_95578 0
+#   ifdef SEQAN3_DEPRECATED_310
+#       define SEQAN3_WORKAROUND_GCC_93983 0
+#       define SEQAN3_WORKAROUND_GCC_95371 0
+#       define SEQAN3_WORKAROUND_GCC_95578 0
+#   endif // SEQAN3_DEPRECATED_310
 #   pragma GCC warning "Be aware that gcc 10.0 and 10.1 is known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.2."
 #endif // defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
 
