@@ -14,7 +14,7 @@
 
 #include <seqan3/std/concepts>
 
-#include <seqan3/range/views/take_exactly.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/utility/views/repeat.hpp>
 
 namespace seqan3::detail
@@ -23,7 +23,7 @@ namespace seqan3::detail
 /*!\brief The underlying type of seqan3::views::repeat_n.
  * \ingroup views
  *
- * Under the hood this delegates to `views::repeat(value) | views::take_exactly(count)`.
+ * Under the hood this delegates to `views::repeat(value) | detail::take_exactly(count)`.
  */
 struct repeat_n_fn
 {
@@ -38,7 +38,7 @@ struct repeat_n_fn
     {
         static_assert(std::copy_constructible<value_t>, "The value passed to repeat_n must be copy constructible.");
 
-        return views::repeat(std::forward<value_t>(value)) | views::take_exactly(count);
+        return views::repeat(std::forward<value_t>(value)) | detail::take_exactly(count);
     }
 };
 

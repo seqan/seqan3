@@ -15,8 +15,8 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/detail/take_view.hpp>
-#include <seqan3/range/views/take_exactly.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/range/concept.hpp>
@@ -219,12 +219,12 @@ TEST(view_take, type_erasure)
 
 TEST(view_take_exactly, regular)
 {
-    do_test(seqan3::views::take_exactly, "foobar");
+    do_test(seqan3::detail::take_exactly, "foobar");
 }
 
 TEST(view_take_exactly, concepts)
 {
-    do_concepts(seqan3::views::take_exactly(3), true);
+    do_concepts(seqan3::detail::take_exactly(3), true);
 }
 
 TEST(view_take_exactly, underlying_is_shorter)
@@ -232,19 +232,19 @@ TEST(view_take_exactly, underlying_is_shorter)
     using namespace std::literals;
 
     std::string vec{"foo"};
-    EXPECT_NO_THROW(( seqan3::views::take_exactly(vec, 4) )); // no parsing
+    EXPECT_NO_THROW(( seqan3::detail::take_exactly(vec, 4) )); // no parsing
 
     // full parsing on conversion
-    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::views::take_exactly(4));
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(4));
 
-    auto v2 = vec | seqan3::views::single_pass_input | seqan3::views::take_exactly(4);
+    auto v2 = vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(4);
     EXPECT_EQ(std::ranges::size(v2), 4u); // here be dragons
 }
 
 TEST(view_take_exactly, shrink_size_on_input_ranges)
 {
     std::string vec{"foobar"};
-    auto v = vec | seqan3::views::single_pass_input | seqan3::views::take_exactly(3);
+    auto v = vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(3);
 
     EXPECT_EQ(std::ranges::size(v), 3u);
     EXPECT_EQ(*std::ranges::begin(v), 'f');
@@ -267,18 +267,18 @@ TEST(view_take_exactly, shrink_size_on_input_ranges)
 
 TEST(view_take_exactly_or_throw, regular)
 {
-    do_test(seqan3::views::take_exactly_or_throw, "foo\nbar");
+    do_test(seqan3::detail::take_exactly_or_throw, "foo\nbar");
 }
 
 TEST(view_take_exactly_or_throw, concepts)
 {
-    do_concepts(seqan3::views::take_exactly_or_throw(3), true);
+    do_concepts(seqan3::detail::take_exactly_or_throw(3), true);
 }
 
 TEST(view_take_exactly_or_throw, underlying_is_shorter)
 {
     std::string vec{"foo"};
-    EXPECT_THROW(( seqan3::views::take_exactly_or_throw(vec, 4) ),
+    EXPECT_THROW(( seqan3::detail::take_exactly_or_throw(vec, 4) ),
                    std::invalid_argument); // no parsing, but throws in adaptor
 
     std::list l{'f', 'o', 'o'};
@@ -286,6 +286,6 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
                    std::invalid_argument); // no parsing, but throws on construction
 
     EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::single_pass_input
-                                           | seqan3::views::take_exactly_or_throw(4), [](auto &&){}),
+                                           | seqan3::detail::take_exactly_or_throw(4), [](auto &&){}),
                  seqan3::unexpected_end_of_input); // full parsing on conversion, throw on conversion
 }
