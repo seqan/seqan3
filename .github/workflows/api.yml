@@ -40,11 +40,8 @@ jobs:
           ref: develop
           path: seqan3/submodules/seqan
 
-      - name: Add package source
-        run: |
-          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/ppa
-          sudo add-apt-repository --no-update --yes ppa:ubuntu-toolchain-r/test
-          sudo apt-get update
+      - name: Configure APT
+        run: bash ./seqan3/.github/workflows/scripts/configure_apt.sh
 
       - name: Install CMake
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh

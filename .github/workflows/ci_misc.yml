@@ -123,6 +123,9 @@ jobs:
           ref: develop
           path: seqan3/submodules/seqan
 
+      - name: Configure APT
+        run: bash ./seqan3/.github/workflows/scripts/configure_apt.sh
+
       - name: Install CMake
         env:
           BUILD: ${{ matrix.build }}
