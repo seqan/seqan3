@@ -195,3 +195,51 @@ TEST(list_traits_detail, reverse)
     EXPECT_SAME_TYPE(decltype(reverse(seqan3::type_list<int, int, int, int, float, float, float>{})),
                      (seqan3::type_list<float, float, float, int, int, int, int>));
 }
+
+TEST(list_traits_detail, type_list_difference)
+{
+    auto difference = [] (auto && type_list1, auto && type_list2)
+    {
+        return seqan3::list_traits::detail::type_list_difference(type_list1, type_list2);
+    };
+
+    // {} \ {} = {}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<>{},
+                                         seqan3::type_list<>{})),
+                     (seqan3::type_list<>));
+
+    // {float, double, char, short} \ {} = {float, double, char, short}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, char, short>{},
+                                         seqan3::type_list<>{})),
+                     (seqan3::type_list<float, double, char, short>));
+
+    // {float, double, char, short} \ {float} = {double, char, short}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, char, short>{},
+                                         seqan3::type_list<float>{})),
+                     (seqan3::type_list<double, char, short>));
+
+    // {float, double, char, short} \ {short, double} = {float, char}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, char, short>{},
+                                         seqan3::type_list<short, double>{})),
+                     (seqan3::type_list<float, char>));
+
+    // {float, double, float, double, char, short} \ {int} = {float, double, float, double, char, short}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, float, double, char, short>{},
+                                         seqan3::type_list<int>{})),
+                     (seqan3::type_list<float, double, float, double, char, short>));
+
+    // {float, double, float, double, char, short} \ {double, short} = {float, float, char}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, float, double, char, short>{},
+                                         seqan3::type_list<double, short>{})),
+                     (seqan3::type_list<float, float, char>));
+
+    // {float, double, char, short} \ {short, double, char, float} = {}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float, double, char, short>{},
+                                         seqan3::type_list<short, double, char, float>{})),
+                     (seqan3::type_list<>));
+
+    // {float} \ {float, double, char, short} = {}
+    EXPECT_SAME_TYPE(decltype(difference(seqan3::type_list<float>{},
+                                         seqan3::type_list<float, double, char, short>{})),
+                     (seqan3::type_list<>));
+}

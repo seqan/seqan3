@@ -114,6 +114,33 @@ auto reverse(type_list<head_t, pack_t...>)
     return concat(reverse(type_list<pack_t...>{}), type_list<head_t>{});
 }
 
+//!\brief Constructs the multiset difference `list1 \ list2` [recursion anchor]
+template <typename ...current_list_t>
+constexpr seqan3::type_list<current_list_t...> type_list_difference(seqan3::type_list<current_list_t...>, seqan3::type_list<>)
+{ return {}; }
+
+//!\brief Constructs the multiset difference `list1 \ list2` [recursion]
+template <typename ...current_list_t, typename remove_t, typename ...remove_list_t>
+constexpr auto type_list_difference(seqan3::type_list<current_list_t...>, seqan3::type_list<remove_t, remove_list_t...>)
+{
+    constexpr auto pos = seqan3::pack_traits::find<remove_t, current_list_t...>;
+    if constexpr (pos >= 0)
+    {
+        using split_list_t = seqan3::pack_traits::split_after<pos, current_list_t...>;
+
+        using split_list1_t = typename split_list_t::first_type;
+        using split_list2_t = decltype(drop_front(typename split_list_t::second_type{}));
+        using filtered_list_t = decltype(concat(split_list1_t{}, split_list2_t{}));
+        return type_list_difference(filtered_list_t{}, seqan3::type_list<remove_t, remove_list_t...>{});
+    }
+    else
+    {
+        // remove_t not contained in current_list_t
+        using filtered_list_t = seqan3::type_list<current_list_t...>;
+        return type_list_difference(filtered_list_t{}, seqan3::type_list<remove_list_t...>{});
+    }
+}
+
 } // namespace seqan3::list_traits::detail
 
 // ----------------------------------------------------------------------------
