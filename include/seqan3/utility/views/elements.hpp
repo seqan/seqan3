@@ -80,7 +80,7 @@ namespace seqan3::views
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-template <size_t index>
+template <auto index>
 inline constexpr auto elements = std::views::transform([] (auto && in) -> decltype(auto)
 {
     using std::get;
