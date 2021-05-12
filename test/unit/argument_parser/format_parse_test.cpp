@@ -987,7 +987,7 @@ struct argument_parsing<Other::bar>
 {
     static inline std::unordered_map<std::string_view, Other::bar> const enumeration_names
     {
-        {"one", Other::bar::one}, {"two", Other::bar::two}
+        {"one", Other::bar::one}, {"1", Other::bar::one}, {"two", Other::bar::two}, {"2", Other::bar::two}
     };
 };
 } // namespace seqan3::custom
@@ -1075,6 +1075,62 @@ TEST(parse_test, issue2464)
         parser.add_option(option_values, 'e', "enum-option", "this is an enum option.", seqan3::option_spec::advanced,
                           enum_validator);
         EXPECT_THROW(parser.parse(), seqan3::user_input_error);
+    }
+}
+
+TEST(parse_test, enum_error_message)
+{
+    // foo::bar does not contain duplicate values
+    {
+        const char * argv[] = {"./argument_parser_test", "-e", "nine"};
+
+        foo::bar option_value{};
+
+        seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+        std::string expected_message{"You have chosen an invalid input value: nine. "
+                                     "Please use one of: [one,two,three]"};
+
+        try
+        {
+            parser.parse();
+            FAIL();
+        }
+        catch (seqan3::user_input_error const & exception)
+        {
+            EXPECT_EQ(expected_message, exception.what());
+        }
+        catch (...)
+        {
+            FAIL();
+        }
+    }
+    // Other::bar does contain duplicate values
+    {
+        const char * argv[] = {"./argument_parser_test", "-e", "nine"};
+
+        Other::bar option_value{};
+
+        seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+        parser.add_option(option_value, 'e', "enum-option", "this is an enum option.");
+
+        std::string expected_message{"You have chosen an invalid input value: nine. "
+                                     "Please use one of: [1,one,2,two]"};
+
+        try
+        {
+            parser.parse();
+            FAIL();
+        }
+        catch (seqan3::user_input_error const & exception)
+        {
+            EXPECT_EQ(expected_message, exception.what());
+        }
+        catch (...)
+        {
+            FAIL();
+        }
     }
 }
 

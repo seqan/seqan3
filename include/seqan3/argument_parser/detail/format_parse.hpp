@@ -327,9 +327,11 @@ private:
             std::ranges::sort(key_value_pairs, [] (auto pair1, auto pair2)
                 {
                     if constexpr (std::totally_ordered<option_t>)
-                        return pair1.second < pair2.second;
-                    else
-                        return pair1.first < pair2.first;
+                    {
+                        if (pair1.second != pair2.second)
+                            return pair1.second < pair2.second;
+                    }
+                    return pair1.first < pair2.first;
                 });
 
             throw user_input_error{detail::to_string("You have chosen an invalid input value: ", in,
