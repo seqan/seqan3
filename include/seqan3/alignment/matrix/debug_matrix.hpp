@@ -18,9 +18,9 @@
 #include <seqan3/alignment/matrix/row_wise_matrix.hpp>
 #include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/debug_stream/optional.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 
 namespace seqan3::detail
