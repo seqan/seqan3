@@ -74,3 +74,4 @@
  */
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/configuration/detail/all.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>

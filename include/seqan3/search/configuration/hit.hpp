@@ -17,7 +17,7 @@
 
 #include <variant>
 
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>

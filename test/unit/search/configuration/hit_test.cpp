@@ -11,7 +11,7 @@
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+#include "../../core/configuration/pipeable_config_element_test_template.hpp"
 
 // ---------------------------------------------------------------------------------------------------------------------
 // test template : pipeable_config_element_test

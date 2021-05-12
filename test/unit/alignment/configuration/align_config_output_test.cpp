@@ -13,7 +13,7 @@
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
-#include "../../core/algorithm/pipeable_config_element_test_template.hpp"
+#include "../../core/configuration/pipeable_config_element_test_template.hpp"
 
 template <typename test_t>
 struct align_cfg_output_test : public ::testing::Test

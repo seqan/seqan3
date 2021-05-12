@@ -14,7 +14,8 @@
 #pragma once
 
 #include <optional>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
+
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 
 namespace seqan3::detail
 {

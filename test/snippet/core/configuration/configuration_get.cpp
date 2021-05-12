@@ -1,7 +1,7 @@
 #include <seqan3/alignment/configuration/align_config_band.hpp>
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()

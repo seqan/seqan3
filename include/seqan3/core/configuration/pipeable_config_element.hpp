@@ -6,16 +6,27 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief [DEPRECATED] Provides seqan3::pipeable_config_element.
+ * \brief Provides seqan3::pipeable_config_element.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
- * \deprecated This header will be removed in 3.1.0; Please \#include
- *             <seqan3/core/configuration/pipeable_config_element.hpp> instead.
  */
 
 #pragma once
 
-#include <seqan3/core/configuration/pipeable_config_element.hpp>
+#include <seqan3/core/platform.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/core/configuration/pipeable_config_element.hpp> instead.")
+namespace seqan3
+{
+
+/*!\brief Adds pipe interface to configuration elements.
+ * \ingroup algorithm
+ *
+ * \details
+ *
+ * An empty base class which is used by the algorithm configurations to be identified as a configuration element and
+ * to compose an algorithm configuration using the pipe-operator.
+ */
+struct pipeable_config_element
+{};
+
+} // namespace seqan3

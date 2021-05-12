@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/search/configuration/detail.hpp>
 

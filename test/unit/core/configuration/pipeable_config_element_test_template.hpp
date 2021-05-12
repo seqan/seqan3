@@ -11,8 +11,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/algorithm/pipeable_config_element.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
 #include "../configuration/configuration_mock.hpp"
