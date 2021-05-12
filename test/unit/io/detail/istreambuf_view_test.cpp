@@ -21,7 +21,7 @@
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using seqan3::operator""_dna5;
 
