@@ -1,6 +1,5 @@
 seqan3_test(debug_stream_type_tuple_alignment_test.cpp)
 seqan3_test(deferred_crtp_base_test.cpp)
-seqan3_test(integer_traits_test.cpp)
 seqan3_test(iterator_traits_test.cpp)
 seqan3_test(pack_algorithm_test.cpp)
 seqan3_test(persist_view_test.cpp)
