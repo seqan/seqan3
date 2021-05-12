@@ -15,13 +15,11 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/io/detail/take_view.hpp>
+#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
-
-inline auto constexpr seqan3_views_take = seqan3::detail::take_fn<false, false>{};
 
 // ============================================================================
 //  test templates
@@ -109,107 +107,78 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
 }
 
 // ============================================================================
-//  view_take
+//  view_take_exactly
 // ============================================================================
 
-TEST(view_take, regular)
+TEST(view_take_exactly, regular)
 {
-    do_test(seqan3_views_take, "foobar");
+    do_test(seqan3::detail::take_exactly, "foobar");
 }
 
-TEST(view_take, concepts)
+TEST(view_take_exactly, concepts)
 {
-    do_concepts(seqan3_views_take(3), false);
+    do_concepts(seqan3::detail::take_exactly(3), true);
 }
 
-TEST(view_take, underlying_is_shorter)
+TEST(view_take_exactly, underlying_is_shorter)
 {
     using namespace std::literals;
 
     std::string vec{"foo"};
-    EXPECT_NO_THROW(( seqan3_views_take(vec, 4) )); // no parsing
+    EXPECT_NO_THROW(( seqan3::detail::take_exactly(vec, 4) )); // no parsing
 
-    std::string v;
     // full parsing on conversion
-    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3_views_take(4));
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(4));
+
+    auto v2 = vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(4);
+    EXPECT_EQ(std::ranges::size(v2), 4u); // here be dragons
 }
 
-TEST(view_take, type_erasure)
+TEST(view_take_exactly, shrink_size_on_input_ranges)
 {
-    {   // string const overload
-        std::string const urange{"foobar"};
+    std::string vec{"foobar"};
+    auto v = vec | seqan3::views::single_pass_input | seqan3::detail::take_exactly(3);
 
-        auto v = seqan3_views_take(urange, 3);
+    EXPECT_EQ(std::ranges::size(v), 3u);
+    EXPECT_EQ(*std::ranges::begin(v), 'f');
 
-        EXPECT_SAME_TYPE(decltype(v), std::string_view);
-        EXPECT_RANGE_EQ(v, urange.substr(0,3));
-    }
+    auto it = std::ranges::begin(v);
+    ++it;
 
-    {   // stringview overload
-        std::string_view urange{"foobar"};
+    EXPECT_EQ(std::ranges::size(v), 2u);
+    EXPECT_EQ(*std::ranges::begin(v), 'o');
 
-        auto v = seqan3_views_take(urange, 3);
+    ++it;
+    ++it;
 
-        EXPECT_SAME_TYPE(decltype(v), std::string_view);
-        EXPECT_RANGE_EQ(v, urange.substr(0,3));
-    }
+    EXPECT_EQ(std::ranges::size(v), 0u); // view is empty now
+}
 
-    {   // contiguous overload
-        std::vector<int> urange{1, 2, 3, 4, 5, 6};
+// ============================================================================
+//  view_take_exactly_or_throw
+// ============================================================================
 
-        auto v = seqan3_views_take(urange, 3);
+TEST(view_take_exactly_or_throw, regular)
+{
+    do_test(seqan3::detail::take_exactly_or_throw, "foo\nbar");
+}
 
-        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
-        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
-    }
+TEST(view_take_exactly_or_throw, concepts)
+{
+    do_concepts(seqan3::detail::take_exactly_or_throw(3), true);
+}
 
-    {   // contiguous overload
-        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
+TEST(view_take_exactly_or_throw, underlying_is_shorter)
+{
+    std::string vec{"foo"};
+    EXPECT_THROW(( seqan3::detail::take_exactly_or_throw(vec, 4) ),
+                   std::invalid_argument); // no parsing, but throws in adaptor
 
-        auto v = seqan3_views_take(urange, 3);
+    std::list l{'f', 'o', 'o'};
+    EXPECT_THROW(( seqan3::detail::view_take<std::views::all_t<std::list<char> &>, true, true>(l, 4) ),
+                   std::invalid_argument); // no parsing, but throws on construction
 
-        EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
-        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
-    }
-
-    {   // random-access overload
-        std::deque<int> urange{1, 2, 3, 4, 5, 6};
-
-        auto v = seqan3_views_take(urange, 3);
-
-        EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
-                                                                     typename std::deque<int>::iterator>>));
-        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
-    }
-
-    {   // generic overload (bidirectional container)
-        std::list<int> urange{1, 2, 3, 4, 5, 6};
-
-        auto v = seqan3_views_take(urange, 3);
-
-        EXPECT_TRUE((std::same_as<decltype(v), seqan3::detail::view_take<std::views::all_t<std::list<int> &>,
-                                                                         false, false>>));
-        EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
-    }
-
-    {   // generic overload (view)
-        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
-
-        auto v = urange | std::views::filter([] (int) { return true; });
-        auto v2 = seqan3_views_take(v, 3);
-
-        EXPECT_SAME_TYPE(decltype(v2), (seqan3::detail::view_take<decltype(v), false, false>));
-        EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
-    }
-
-    {   // generic overload (random access, non-sized, pointer as iterator)
-        std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
-
-        auto v0 = std::span{urange};
-        auto v1 = v0 | std::views::take_while([] (int i) { return i < 6; });
-        auto v2 = seqan3_views_take(v1, 3);
-
-        EXPECT_SAME_TYPE(decltype(v2), (seqan3::detail::view_take<decltype(v1), false, false>));
-        EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
-    }
+    EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::single_pass_input
+                                           | seqan3::detail::take_exactly_or_throw(4), [](auto &&){}),
+                 seqan3::unexpected_end_of_input); // full parsing on conversion, throw on conversion
 }
