@@ -1,1 +1,2 @@
 seqan3_test(alphabet_proxy_test.cpp)
+seqan3_test(debug_stream_alphabet_test.cpp)
