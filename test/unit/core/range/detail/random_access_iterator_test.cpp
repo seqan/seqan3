@@ -12,7 +12,7 @@
 
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 
-#include "../iterator_test_template.hpp"
+#include "../../../range/iterator_test_template.hpp"
 
 // -----------------------------------------------------------------------------
 // test templates
