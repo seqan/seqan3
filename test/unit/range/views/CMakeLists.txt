@@ -1,7 +1,6 @@
 add_subdirectories()
 
 seqan3_test(as_const_test.cpp)
-seqan3_test(convert_test.cpp)
 seqan3_test(deep_test.cpp)
 seqan3_test(drop_test.cpp)
 seqan3_test(move_test.cpp)
