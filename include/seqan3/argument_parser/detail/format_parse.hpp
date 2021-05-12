@@ -323,8 +323,17 @@ private:
 
         if (auto it = map.find(in); it == map.end())
         {
+            std::vector<std::pair<std::string_view, option_t>> key_value_pairs(map.begin(), map.end());
+            std::ranges::sort(key_value_pairs, [] (auto pair1, auto pair2)
+                {
+                    if constexpr (std::totally_ordered<option_t>)
+                        return pair1.second < pair2.second;
+                    else
+                        return pair1.first < pair2.first;
+                });
+
             throw user_input_error{detail::to_string("You have chosen an invalid input value: ", in,
-                                                     ". Please use one of: ", map | std::views::keys)};
+                                                     ". Please use one of: ", key_value_pairs | std::views::keys)};
         }
         else
         {
