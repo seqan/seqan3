@@ -22,8 +22,8 @@ int main()
 
     seqan3::sam_file_input fin{filename};
 
-    // for (auto && record : fin)  // this will pass the record by reference (no copy)
-    for (seqan3::sam_record record : fin) // this will copy the record
+    // for (seqan3::sam_record record : fin) // this will copy the record
+    for (auto && record : fin)  // this will pass the record by reference (no copy)
     {
         seqan3::debug_stream << record.id() << '\n';
         seqan3::debug_stream << record.sequence() << '\n';

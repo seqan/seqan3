@@ -203,19 +203,19 @@ You can pass reference ids and reference sequences as additional constructor par
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
-Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
+Read the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
 
 \snippet doc/tutorial/sam_file/sam_file_solution2.cpp ref_file
 
 Then read the following SAM file while providing the reference sequence information.
+
+\snippet doc/tutorial/sam_file/sam_file_solution2.cpp sam_file
 
 Only use
 * seqan3::sam_record::id,
 * seqan3::sam_record::reference_id,
 * seqan3::sam_record::mapping_quality, and
 * seqan3::sam_record::alignment.
-
-\snippet doc/tutorial/sam_file/sam_file_solution2.cpp sam_file
 
 With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.

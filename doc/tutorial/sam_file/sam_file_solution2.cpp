@@ -61,11 +61,10 @@ int main()
 
     for (auto & record : mapping_file | mapq_filter)
     {
-        using std::get;
 
         // as loop
         size_t sum_reference{};
-        for (auto const & char_reference : get<0>(record.alignment()))
+        for (auto const & char_reference : std::get<0>(record.alignment()))
             if (char_reference == seqan3::gap{})
                 ++sum_reference;
 
