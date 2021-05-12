@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::pipeable_config_element.
+ * \brief [DEPRECATED] Provides seqan3::pipeable_config_element.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \deprecated This header will be removed in 3.1.0; Please \#include
