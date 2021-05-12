@@ -7,11 +7,11 @@
 
 /*!\file
  * \brief [DEPRECATED] Provides seqan3::common_tuple and seqan3::common_pair.
- * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/core/tuple/common_tuple.hpp> instead.
+ * \deprecated This header will be removed in 3.1.0; Please \#include <seqan3/utility/tuple/common_tuple.hpp> instead.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#include <seqan3/core/tuple/common_tuple.hpp>
+#include <seqan3/utility/tuple/common_tuple.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-"This header is deprecated and will be removed in SeqAn-3.1.0 Please #include <seqan3/core/tuple/common_tuple.hpp> instead.")
+"This header is deprecated and will be removed in SeqAn-3.1.0 Please #include <seqan3/utility/tuple/common_tuple.hpp> instead.")
