@@ -14,6 +14,7 @@
 
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
+#include <seqan3/std/type_traits>
 
 #include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/core/range/detail/adaptor_base.hpp>
