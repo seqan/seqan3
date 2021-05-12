@@ -61,7 +61,6 @@ int main()
 
     for (auto & record : mapping_file | mapq_filter)
     {
-
         // as loop
         size_t sum_reference{};
         for (auto const & char_reference : std::get<0>(record.alignment()))
