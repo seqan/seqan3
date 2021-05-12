@@ -75,7 +75,7 @@ public:
     }
 
     /*!\brief The "sequence", usually a range of nucleotides or amino acids. (SAM Column ID: SEQ)
-     * \returns Typically seqan3::sam_file_input::sequence_type
+     * \returns seqan3::sam_file_input::sequence_type per default
      */
     decltype(auto) sequence() &&
     {
@@ -98,7 +98,7 @@ public:
     }
 
     /*!\brief The qualities, usually in Phred score notation. (SAM Column ID: QUAL)
-     * \returns Typically seqan3::sam_file_input::quality_type
+     * \returns seqan3::sam_file_input::quality_type per default
      */
     decltype(auto) base_qualities() &&
     {
@@ -122,7 +122,7 @@ public:
 
     /*!\brief Sequence (seqan3::sam_record::sequence) relative start position (0-based), unsigned value.
      *        (SAM Column ID: POS)
-     * \returns Typically seqan3::sam_file_input::offset_type
+     * \returns seqan3::sam_file_input::offset_type per default
      *
      * \details
      *
@@ -150,7 +150,7 @@ public:
     }
 
     /*!\brief The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
-     * \returns Typically seqan3::sam_file_input::alignment_type
+     * \returns seqan3::sam_file_input::alignment_type per default
      */
     decltype(auto) alignment() &&
     {
@@ -174,7 +174,7 @@ public:
 
     /*!\brief The identifier of the (reference) sequence that seqan3::sam_record::sequence was aligned to.
      *        (SAM Column ID: RNAME)
-     * \returns Typically seqan3::sam_file_input::ref_id_type
+     * \returns seqan3::sam_file_input::ref_id_type per default
      */
     decltype(auto) reference_id() &&
     {
@@ -203,7 +203,7 @@ public:
 
     /*!\brief (Reference) Sequence (seqan3::sam_record::reference_sequence) relative start position (0-based),
      *        unsigned value. (SAM Column ID: POS)
-     * \returns Typically seqan3::sam_file_input::ref_offset_type
+     * \returns seqan3::sam_file_input::ref_offset_type per default
      */
     decltype(auto) reference_position() &&
     {
@@ -226,7 +226,7 @@ public:
     }
 
     /*!\brief A pointer to the seqan3::sam_file_header object storing header information.
-     * \returns Typically seqan3::sam_file_input::header_type*
+     * \returns seqan3::sam_file_input::header_type* per default
      * \see Please see the seqan3::sam_file_output::header member function for details on how to access the
      *      seqan3::sam_file_header of the file
      */
@@ -251,7 +251,7 @@ public:
     }
 
     /*!\brief The alignment flag (bit information), `uint16_t` value. (SAM Column ID: FLAG)
-     * \returns Typically seqan3::sam_file_input::flag_type
+     * \returns seqan3::sam_file_input::flag_type per default
      */
     decltype(auto) flag() &&
     {
@@ -274,7 +274,7 @@ public:
     }
 
     /*!\brief The identifier of the (reference) sequence of the mate. (SAM Column ID: RNEXT)
-     * \returns Typically seqan3::sam_file_input::ref_id_type
+     * \returns seqan3::sam_file_input::ref_id_type per default
      *
      * \details
      *
@@ -301,7 +301,7 @@ public:
     }
 
     /*!\brief (Reference) Sequence relative start position (0-based) of the mate. (SAM Column ID: PNEXT)
-     * \returns Typically seqan3::sam_file_input::ref_offset_type
+     * \returns seqan3::sam_file_input::ref_offset_type per default
      */
     decltype(auto) mate_position() &&
     {
@@ -324,7 +324,7 @@ public:
     }
 
     /*!\brief The observed template length. (SAM Column ID: TLEN)
-     * \returns Typically int32_t
+     * \returns int32_t per default
      */
     decltype(auto) template_length() &&
     {
@@ -347,7 +347,7 @@ public:
     }
 
     /*!\brief The mapping quality of the alignment, usually a Phred-scaled score. (SAM Column ID: MAPQ)
-     * \returns Typically seqan3::sam_file_input::mapq_type
+     * \returns seqan3::sam_file_input::mapq_type per default
      */
     decltype(auto) mapping_quality() &&
     {
@@ -370,7 +370,7 @@ public:
     }
 
     /*!\brief The cigar vector representing the alignment. (SAM Column ID: CIGAR)
-     * \returns Typically std::vector\<seqan3::cigar\>
+     * \returns std::vector\<seqan3::cigar\> per default
      */
     decltype(auto) cigar_sequence() &&
     {
@@ -393,7 +393,7 @@ public:
     }
 
     /*!\brief The optional tags in the SAM format.
-     * \returns Typically seqan3::sam_tag_dictionary
+     * \returns seqan3::sam_tag_dictionary per default
      */
     decltype(auto) tags() &&
     {
