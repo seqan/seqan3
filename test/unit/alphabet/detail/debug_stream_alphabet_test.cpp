@@ -8,32 +8,32 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/quality/qualified.hpp>
 
-using seqan3::operator""_dna4;
+struct gap_alphabet
+{
+    using rank_t = uint8_t;
+    using char_t = char;
 
-template <typename T>
-using debug_stream_test = ::testing::Test;
+    rank_t to_rank() const noexcept {return 0;}
+    char_t to_char() const noexcept {return '-';}
 
-using alphabet_types = ::testing::Types<seqan3::dna4,
-                                        seqan3::qualified<seqan3::dna4,
-                                        seqan3::phred42>,
-                                        seqan3::gapped<seqan3::dna4>>;
+    constexpr static bool alphabet_size{1};
 
-TYPED_TEST_SUITE(debug_stream_test, alphabet_types, );
+    friend bool operator<(gap_alphabet, gap_alphabet) {return false;}
+    friend bool operator<=(gap_alphabet, gap_alphabet) {return true;}
+    friend bool operator>(gap_alphabet, gap_alphabet) {return false;}
+    friend bool operator>=(gap_alphabet, gap_alphabet) {return true;}
+    friend bool operator==(gap_alphabet, gap_alphabet) {return true;}
+    friend bool operator!=(gap_alphabet, gap_alphabet) {return false;}
+};
 
-TYPED_TEST(debug_stream_test, alphabet)
+TEST(debug_stream_test, alphabet)
 {
     std::ostringstream o;
     seqan3::debug_stream_type my_stream{o};
 
-    TypeParam val{'C'_dna4};
-    my_stream << val;
+    my_stream << gap_alphabet{};
 
     o.flush();
-    EXPECT_EQ(o.str().size(), 1u);
-    EXPECT_EQ(o.str()[0], 'C');
+    EXPECT_EQ(o.str(), "-");
 }

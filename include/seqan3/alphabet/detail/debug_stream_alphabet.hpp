@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/alphabet/mask/mask.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/io/stream/concept.hpp>
 
@@ -36,16 +36,22 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alp
     return s << to_char(l);
 }
 
+// forward declare seqan3::mask
+class mask;
+
 /*!\brief Overload for the seqan3::mask alphabet.
  * \tparam char_t Type char type of the debug_stream.
  * \param s The seqan3::debug_stream.
  * \param l The mask alphabet letter.
  * \relates seqan3::debug_stream_type
  */
-template <typename char_t>
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, mask const l)
+template <typename char_t, seqan3::semialphabet alphabet_t>
+inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
+//!\cond
+    requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
+//!\endcond
 {
-    return s << (l == mask::masked ? "MASKED" : "UNMASKED");
+    return s << (l == alphabet_t{} ? "UNMASKED" : "MASKED");
 }
 
 //!\}
