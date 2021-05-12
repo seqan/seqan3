@@ -68,7 +68,7 @@ int main()
                 ++sum_reference;
 
         // or via std::ranges::count
-        size_t sum_read = std::ranges::count(get<1>(record.alignment()), seqan3::gap{});
+        size_t sum_read = std::ranges::count(std::get<1>(record.alignment()), seqan3::gap{});
 
         // The reference_id is ZERO based and an optional. -1 is represented by std::nullopt (= reference not known).
         std::optional reference_id = record.reference_id();
