@@ -13,13 +13,13 @@ int main()
 {
     using namespace seqan3::literals;
 
-    std::filesystem::path current_path = std::filesystem::current_path();
+    auto filename = std::filesystem::current_path() / "my.sam";
 
     std::vector<std::string> ids{"read1", "read2"};
     std::vector<std::vector<seqan3::dna4>> seqs{"ACGATCGACTAGCTACGATCAGCTAGCAG"_dna4,
                                                 "AGAAAGAGCGAGGCTATTTTAGCGAGTTA"_dna4};
 
-    seqan3::sam_file_output fout{current_path / "my.sam"};
+    seqan3::sam_file_output fout{filename};
 
     using types = seqan3::type_list<std::string &, std::vector<seqan3::dna4> &, seqan3::sam_flag>;
     using fields = seqan3::fields<seqan3::field::id, seqan3::field::seq, seqan3::field::flag>;

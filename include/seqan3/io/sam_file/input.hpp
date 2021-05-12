@@ -514,11 +514,11 @@ public:
 
 #ifndef SEQAN3_DEPRECATED_310
 static_assert(!field_ids::contains(field::ref_seq),
-              "You selected seqan3::field::ref_seq that is deprecated for SAM/BAM files and won't be available in the record.");
+              "You selected the deprecated seqan3::field::ref_seq. It will not be available in the record.");
 static_assert(!field_ids::contains(field::evalue),
-              "You selected seqan3::field::evalue that is deprecated for SAM/BAM files and won't be available in the record.");
+              "You selected the deprecated seqan3::field::evalue. It will not be available in the record.");
 static_assert(!field_ids::contains(field::bit_score),
-              "You selected seqan3::field::bit_score that is deprecated for SAM/BAM files and won't be available in the record.");
+              "You selected the deprecated seqan3::field::bit_score. It will not be available in the record.");
 #endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr

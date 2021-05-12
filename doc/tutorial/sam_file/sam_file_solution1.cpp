@@ -22,14 +22,14 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    std::filesystem::path current_path = std::filesystem::current_path();
+    auto filename = std::filesystem::current_path() / "my.sam";
 
-    seqan3::sam_file_input fin{current_path / "my.sam"};
+    seqan3::sam_file_input fin{filename};
 
     double sum{};
     size_t count{};
 
-    std::ranges::for_each(fin.begin(), fin.end(), [&sum, &count] (auto & record)
+    std::ranges::for_each(fin, [&sum, &count] (auto & record)
     {
         sum += record.mapping_quality();
         ++count;

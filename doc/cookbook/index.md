@@ -139,8 +139,8 @@ To search for either 1 insertion or 1 deletion you can use the seqan3::search_cf
 
 # Reading the CIGAR information into an actual alignment
 
-In SeqAn, the conversion from a CIGAR string to an alignment (two seqan3::aligned_sequence's) is done automatically for you.
-You can access it by accessing seqan3::sam_record::alignment from the record:
+In SeqAn, the conversion from a CIGAR string to an alignment (two `seqan3::aligned_sequence`s) is done automatically for
+you. You can access the resulting alignment via seqan3::sam_record::alignment:
 
 \snippet doc/tutorial/sam_file/sam_file_alignments_without_ref.cpp main
 

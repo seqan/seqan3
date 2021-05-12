@@ -52,7 +52,7 @@ public:
     //!\}
 
     /*!\brief The identifier, usually a string. (SAM Column ID: QNAME)
-     * \returns Typically seqan3::sam_file_input::id_type
+     * \returns seqan3::sam_file_input::id_type per default
      */
     decltype(auto) id() &&
     {
@@ -369,7 +369,7 @@ public:
         return get_impl(field_constant<seqan3::field::mapq>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    /*!\brief The cigar vector (std::vector\<seqan3::cigar\>) representing the alignment. (SAM Column ID: CIGAR)
+    /*!\brief The cigar vector representing the alignment. (SAM Column ID: CIGAR)
      * \returns Typically std::vector\<seqan3::cigar\>
      */
     decltype(auto) cigar_sequence() &&
@@ -392,7 +392,7 @@ public:
         return get_impl(field_constant<seqan3::field::cigar>{}, static_cast<tuple_base_t const &>(*this));
     }
 
-    /*!\brief The optional tags in the SAM format, stored in a seqan3::sam_tag_dictionary.
+    /*!\brief The optional tags in the SAM format.
      * \returns Typically seqan3::sam_tag_dictionary
      */
     decltype(auto) tags() &&

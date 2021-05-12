@@ -21,9 +21,9 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 
 int main()
 {
-    std::filesystem::path current_path = std::filesystem::current_path();
+    auto filename = std::filesystem::current_path() / "my.sam";
 
-    seqan3::sam_file_input fin{current_path / "my.sam"}; // default fields
+    seqan3::sam_file_input fin{filename}; // default fields
 
     for (auto & record : fin)
         seqan3::debug_stream << record.cigar_sequence() << '\n'; // access cigar vector
