@@ -7,10 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include "../alphabet_constexpr_test_template.hpp"
-#include "../alphabet_test_template.hpp"
-#include "../semi_alphabet_constexpr_test_template.hpp"
-#include "../semi_alphabet_test_template.hpp"
+#include "../../alphabet_constexpr_test_template.hpp"
+#include "../../alphabet_test_template.hpp"
+#include "../../semi_alphabet_constexpr_test_template.hpp"
+#include "../../semi_alphabet_test_template.hpp"
 #include <seqan3/alphabet/cigar/exposition_only/cigar_operation.hpp>
 
 INSTANTIATE_TYPED_TEST_SUITE_P(cigar_operation, alphabet, seqan3::exposition_only::cigar_operation, );
