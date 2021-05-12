@@ -1,0 +1,110 @@
+From 2c5b234e88cddd7020ce3621bda7904c49f191d1 Mon Sep 17 00:00:00 2001
+From: Marcel <marehr@users.noreply.github.com>
+Date: Mon, 10 May 2021 17:04:06 +0200
+Subject: [PATCH 35/36] [NOAPI] [DETAIL] [MISC] Remove template argument from
+ pipeable_config_element. (#2612)
+
+cherry-picked 77c5e8a1381ed39ae96a6966c008f56dd15152cb
+
+----
+
+* [MISC] Remove template argument from pipeable_config_element.
+
+Also inherits privately from the base class such that a reference or pointer to it cannot be formed.
+
+* Apply suggestions from code review
+
+Co-authored-by: rrahn <rene.rahn@fu-berlin.de>
+---
+ test/snippet/core/algorithm/configuration_get_or.cpp | 4 ++--
+ test/snippet/core/algorithm/configuration_setup.cpp  | 4 ++--
+ test/unit/core/algorithm/configuration_mock.hpp      | 8 ++++----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/test/snippet/core/algorithm/configuration_get_or.cpp b/test/snippet/core/algorithm/configuration_get_or.cpp
+index 1bee12f50..8efe65df5 100644
+--- a/test/snippet/core/algorithm/configuration_get_or.cpp
++++ b/test/snippet/core/algorithm/configuration_get_or.cpp
+@@ -9,7 +9,7 @@ enum struct my_id : int
+     foo_id
+ };
+ 
+-struct bar : public seqan3::pipeable_config_element<bar>
++struct bar : private seqan3::pipeable_config_element
+ {
+ public:
+     float value{};
+@@ -28,7 +28,7 @@ public:
+ };
+ 
+ template <typename t>
+-class foo : public seqan3::pipeable_config_element<foo<t>>
++class foo : private seqan3::pipeable_config_element
+ {
+ public:
+     t value{};
+diff --git a/test/snippet/core/algorithm/configuration_setup.cpp b/test/snippet/core/algorithm/configuration_setup.cpp
+index b736336e3..ad2953d8a 100644
+--- a/test/snippet/core/algorithm/configuration_setup.cpp
++++ b/test/snippet/core/algorithm/configuration_setup.cpp
+@@ -7,7 +7,7 @@ enum struct my_id : int
+     foo_id
+ };
+ 
+-class bar : public seqan3::pipeable_config_element<bar>
++class bar : private seqan3::pipeable_config_element
+ {
+ public:
+ 
+@@ -22,7 +22,7 @@ public:
+ };
+ 
+ template <typename t>
+-struct foo : public seqan3::pipeable_config_element<foo<t>>
++struct foo : private seqan3::pipeable_config_element
+ {
+ public:
+ 
+diff --git a/test/unit/core/algorithm/configuration_mock.hpp b/test/unit/core/algorithm/configuration_mock.hpp
+index 9c4162a43..bd37c7f17 100644
+--- a/test/unit/core/algorithm/configuration_mock.hpp
++++ b/test/unit/core/algorithm/configuration_mock.hpp
+@@ -36,7 +36,7 @@ inline constexpr std::array<std::array<bool, static_cast<uint8_t>(::test_algo_id
+ 
+ }  // namespace seqan3::detail
+ 
+-class bar : public seqan3::pipeable_config_element<bar>
++class bar : private seqan3::pipeable_config_element
+ {
+ public:
+     int value{};
+@@ -54,7 +54,7 @@ public:
+     static constexpr test_algo_id id{test_algo_id::bar_id};
+ };
+ 
+-class bax : public seqan3::pipeable_config_element<bax>
++class bax : private seqan3::pipeable_config_element
+ {
+ public:
+     float value{};
+@@ -72,7 +72,7 @@ public:
+     static constexpr test_algo_id id{test_algo_id::bax_id};
+ };
+ 
+-class foo : public seqan3::pipeable_config_element<foo>
++class foo : private seqan3::pipeable_config_element
+ {
+ public:
+     std::string value{};
+@@ -91,7 +91,7 @@ public:
+ };
+ 
+ template <typename t = std::vector<int>>
+-class foobar : public seqan3::pipeable_config_element<foobar<t>>
++class foobar : private seqan3::pipeable_config_element
+ {
+ public:
+     t value{};
+-- 
+2.31.1
+

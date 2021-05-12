@@ -1,0 +1,25 @@
+From 16d0222d5e99c8c014c370b6a3cf14e428b7e055 Mon Sep 17 00:00:00 2001
+From: rrahn <rene.rahn@fu-berlin.de>
+Date: Sat, 10 Oct 2020 19:17:34 +0200
+Subject: [PATCH 36/36] [NOAPI] [INCLUDE] [MISC] Cleanup configuration utility.
+
+cherry-pick 381cb525a043044f579c6bd550e0df5c36a7b8b3
+---
+ test/unit/core/algorithm/configuration_mock.hpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test/unit/core/algorithm/configuration_mock.hpp b/test/unit/core/algorithm/configuration_mock.hpp
+index bd37c7f17..5760e369b 100644
+--- a/test/unit/core/algorithm/configuration_mock.hpp
++++ b/test/unit/core/algorithm/configuration_mock.hpp
+@@ -11,6 +11,7 @@
+ 
+ #include <seqan3/core/algorithm/configuration_utility.hpp>
+ #include <seqan3/core/algorithm/pipeable_config_element.hpp>
++#include <seqan3/core/configuration/detail/concept.hpp>
+ 
+ enum class test_algo_id : uint8_t
+ {
+-- 
+2.31.1
+
