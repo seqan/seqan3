@@ -42,11 +42,13 @@
 namespace ranges
 {
 //!\brief std::ranges::views are valid range-v3 views
-template<class T>
-//!\cond
-    requires ::std::derived_from<T, ::std::ranges::view_base>
-//!\endcond
+template<::std::derived_from<::std::ranges::view_base> T>
 inline constexpr bool enable_view<T> = true;
+
+//!\cond
+template<class T>
+inline constexpr bool enable_view<::std::ranges::empty_view<T>> = true;
+//!\endcond
 
 // std::ranges::borrowed_range's are valid range-v3 borrowed_range's
 //!\cond
@@ -61,6 +63,27 @@ inline constexpr bool enable_borrowed_range<::std::ranges::iota_view<W, Bound>> 
 
 template <class T>
 inline constexpr bool enable_borrowed_range<::std::ranges::ref_view<T>> = true;
+
+// note: in gcc-10 enable_borrowed_range wasn't defined for the take_view and the other following views.
+// Explictly defining this here will have the side-effect that we override the definition of
+// std::ranges::enable_borrowed_range for all those views.
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::take_view<T>> = enable_borrowed_range<T>;
+
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::drop_view<T>> = enable_borrowed_range<T>;
+
+template <class T, class Pred>
+inline constexpr bool enable_borrowed_range<::std::ranges::drop_while_view<T, Pred>> = enable_borrowed_range<T>;
+
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::common_view<T>> = enable_borrowed_range<T>;
+
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::reverse_view<T>> = enable_borrowed_range<T>;
+
+template <class T, size_t N>
+inline constexpr bool enable_borrowed_range<::std::ranges::elements_view<T, N>> = enable_borrowed_range<T>;
 //!\endcond
 
 } // namespace ranges
