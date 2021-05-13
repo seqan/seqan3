@@ -625,6 +625,7 @@ inline auto constexpr take_until_or_throw_and_consume = take_until_fn<true, true
 
 } // namespace seqan3::detail
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3::views
 {
 
@@ -660,3 +661,4 @@ SEQAN3_DEPRECATED_310 inline auto constexpr take_until_and_consume = detail::tak
 SEQAN3_DEPRECATED_310 inline auto constexpr take_until_or_throw_and_consume = detail::take_until_fn<true, true>{};
 
 } // namespace seqan3::views
+#endif // SEQAN3_DEPRECATED_310

@@ -23,6 +23,7 @@
 #include <seqan3/io/exception.hpp>
 #include <seqan3/range/views/detail.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3::detail
 {
 
@@ -176,10 +177,9 @@ namespace seqan3::views
  *
  * \deprecated Use std::views::drop or seqan3::views::type_reduce | std::views::drop.
  */
-#ifdef SEQAN3_DEPRECATED_310
 SEQAN3_DEPRECATED_310 inline constexpr auto drop = detail::drop_fn{};
-#endif // SEQAN3_DEPRECATED_310
 
 //!\}
 
 } // namespace seqan3::views
+#endif // SEQAN3_DEPRECATED_310

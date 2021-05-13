@@ -15,17 +15,5 @@
 
 #include <seqan3/utility/views/elements.hpp>
 
-namespace seqan3::views
-{
-
-/*!\brief A view calling `get` on each element in a range.
- * \ingroup views
- * \deprecated Please use `seqan3::views::elements` instead.
- */
-template <auto index>
-SEQAN3_DEPRECATED_310 inline constexpr auto get = views::elements<index>;
-
-} // namespace seqan3::views
-
 SEQAN3_DEPRECATED_HEADER(
     "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/elements.hpp> instead.")
