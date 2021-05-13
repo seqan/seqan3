@@ -423,17 +423,18 @@ private:
 
         // Allocate and initialise first column.
         this->allocate_matrix(sequence1, sequence2, band, this->alignment_state);
-        size_t last_row_index = this->score_matrix.band_row_index;
-        initialise_first_alignment_column(sequence2 | std::views::take(last_row_index));
+        using row_index_t = std::ranges::range_difference_t<sequence2_t>;
+        row_index_t last_row_index = this->score_matrix.band_row_index;
+        initialise_first_alignment_column(std::views::take(sequence2, last_row_index));
 
         // ----------------------------------------------------------------------------
         // 1st recursion phase: iterate as long as the band intersects with the first row.
         // ----------------------------------------------------------------------------
 
-        size_t sequence2_size = std::ranges::distance(sequence2);
-        for (auto const & seq1_value : sequence1 | std::views::take(this->score_matrix.band_col_index))
+        row_index_t sequence2_size = std::ranges::distance(sequence2);
+        for (auto const & seq1_value : std::views::take(sequence1, this->score_matrix.band_col_index))
         {
-            compute_alignment_column<true>(seq1_value, sequence2 | std::views::take(++last_row_index));
+            compute_alignment_column<true>(seq1_value, std::views::take(sequence2, ++last_row_index));
             // Only if band reached last row of matrix the last cell might be tracked.
             finalise_last_cell_in_column(last_row_index >= sequence2_size);
         }
@@ -443,7 +444,7 @@ private:
         // ----------------------------------------------------------------------------
 
         size_t first_row_index = 0;
-        for (auto const & seq1_value : sequence1 | std::views::drop(this->score_matrix.band_col_index))
+        for (auto const & seq1_value : std::views::drop(sequence1, this->score_matrix.band_col_index))
         {
             // In the second phase the band moves in every column one base down on the second sequence.
             compute_alignment_column<false>(seq1_value, sequence2 | views::slice(first_row_index++, ++last_row_index));
