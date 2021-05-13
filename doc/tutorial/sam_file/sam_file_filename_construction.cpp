@@ -1,5 +1,7 @@
 // this macro will rename the `main` function below as `sam_file_filename_construction`.
 // we just want to show that the syntax does compile.
+// We do this to show the usage of std::cin within a copyable snippet while being able to execute this snippet
+// without std::cin.
 #define main sam_file_filename_construction
 
 //![main]
