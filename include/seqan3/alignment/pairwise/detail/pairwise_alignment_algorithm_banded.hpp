@@ -99,7 +99,7 @@ public:
             // Shrink the first sequence if the band ends before its actual end.
             sequence1_size = std::min(sequence1_size, this->upper_diagonal + sequence2_size);
 
-            compute_matrix(get<0>(sequence_pair) | views::take(sequence1_size),
+            compute_matrix(get<0>(sequence_pair) | std::views::take(sequence1_size),
                            get<1>(sequence_pair),
                            alignment_matrix,
                            index_matrix);
@@ -246,7 +246,7 @@ protected:
 
         row_index_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
         column_index_t const column_size = std::max<int32_t>(0, this->upper_diagonal);
-        this->initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2 | views::take(row_size));
+        this->initialise_column(*alignment_matrix_it, *indexed_matrix_it, sequence2 | std::views::take(row_size));
 
         // ---------------------------------------------------------------------
         // 1st recursion phase: band intersects with the first row.
