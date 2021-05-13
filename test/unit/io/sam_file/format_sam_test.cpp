@@ -125,64 +125,207 @@ struct sam_format : public sam_file_data
 // since BAM uses the same read header function from SAM, it only needs to be tested once
 TEST_F(sam_format, header_errors)
 {
+
+    // unsupported @-tag tests
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\tTT:this is not a valid tag\n"
+            "@HA\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag: @HA"
     }
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\tSI:this is not a valid tag starting with S\n"
+            "@SA\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag: @SA"
     }
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\n"
+            "@PA\tthis is not a valid tag\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag: @PA"
+    }
+    {
+        std::string header_str
+        {
+            "@RA\tthis is not a valid tag\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag: @RA"
+    }
+    {
+        std::string header_str
+        {
+            "@CA\tthis is not a valid tag\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag: @CA"
+    }
+    {
+        std::string header_str
+        {
             "@TT\tthis is not a valid tag\n"
         };
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Illegal SAM header tag starting with:T"
     }
+    // unusual ordering of tags
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\n"
-            "@PG\tID:prog\tTT:this is not a valid tag\n"
+            "@HD\tGO:none\tSO:coordinate\tVN:1.6\tSS:coordinate:queryname\n"
+            "@PG\tPN:novoalign\tPP:qc\tID:novoalign\tVN:V3.02.07\tCL:novoalign -d /hs37d5.ndx -f /file.fastq.gz\n"
+            "@SQ\tAS:hs37d5\tSN:ref2\tLN:243199373\n"
+            "@RG\tLB:1\tSM:NA12878\tID:U0a_A2_L1\tPL:illumina\tPU:1\n"
         };
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_NO_THROW(fin.begin());                       // Order of tags should not trigger errors
+    }
+    // user defined tags
+    {
+        std::string header_str
+        {
+            "@HD\tVN:1.6\tSO:coordinate\tSS:coordinate:queryname\tGO:none\tpb:usr_defined_tag\n"
+            "@PG\tID:qc\tPN:quality_control\tCL:qc -f file\tDS:trim reads with low qual\tVN:1.0.0\tpb:usr_defined_tag\n"
+            "@SQ\tSN:ref2\tLN:243199373\tAS:hs37d5\tpb:usr_defined_tag\n"
+            "@RG\tID:U0a_A2_L1\tPL:illumina\tPU:1\tLB:1\tSM:NA12878\tpb:usr_defined_tag\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_NO_THROW(fin.begin());                       // User defined tags should not trigger errors
+    }
+    // @HD tests
+    {
+        std::string header_str
+        {
+            "@HD\n"                 // required VN tag missing
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required VN tag in @HD is missing."
+    }
+    // @SQ tests
+    {
+        std::string header_str
+        {
+            "@SQ\tLN:1\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required SN tag in @SQ is missing."
     }
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\n"
-            "@SQ\tSN:unknown_ref\tLN:0\n"
+            "@SQ\tSN:ref\n"
         };
         std::istringstream istream(header_str);
-        seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required LN tag in @SQ is missing or 0."
     }
     {
         std::string header_str
         {
-            "@HD\tVN:1.0\n"
-            "@SQ\tSN:ref\tLN:0\n" /*wrong length*/
+            "@SQ\tSN:unknown_ref\tLN:1\n"
         };
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
-        EXPECT_THROW(fin.begin(), seqan3::format_error);
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Unknown reference name 'unknown_ref' found in SAM header
+                                                            //  (header.ref_ids(): [ref])."
     }
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:0\n"                           // allowed range of LN: [1,2^31−1]
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required LN tag in @SQ is missing or 0."
+    }
+    /* TODO (irallia):  These should throw, but actually they throw nothing.
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:-1\n"                          // allowed range of LN: [1,2^31−1]
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Provided reference has unequal length as specified in
+                                                            //  the header."
+    }
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:-10\n"                          // allowed range of LN: [1,2^31−1]
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Provided reference has unequal length as specified in
+                                                            //  the header."
+    } */
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:2147483647\n"                  // = 2^31−1, allowed range of LN: [1,2^31−1]
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_NO_THROW(fin.begin());
+    }
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:2147483648\n"                  // = 2^31, allowed range of LN: [1,2^31−1]
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "[CORRUPTED SAM FILE] Casting '2147483648' into type int
+                                                            //  would cause an overflow."
+    }
+    {
+        std::string header_str
+        {
+            "@SQ\tSN:ref\tLN:4\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "Provided reference has unequal length as specified in
+                                                            //  the header."
+    }
+    // @RG tests
+    {
+        std::string header_str
+        {
+            "@RG\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required ID tag in @RG is missing."
+    }
+    // @PG tests
+    {
+        std::string header_str
+        {
+            "@PG\n"
+        };
+        std::istringstream istream(header_str);
+        seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
+        EXPECT_THROW(fin.begin(), seqan3::format_error);    // "The required ID tag in @PG is missing."
+    }
+
 }
 
 TEST_F(sam_format, no_hd_line_in_header)
