@@ -12,6 +12,8 @@
 #include <string>
 #include <string_view>
 
+#include <seqan3/test/expect_same_type.hpp>
+
 #include <range/v3/view/take.hpp>
 
 TEST(ranges_test, string_view)
@@ -88,6 +90,17 @@ TEST(ranges_test, ref_view)
 TEST(ranges_test, take_view)
 {
     std::string s{};
+
+#if !SEQAN3_WORKAROUND_GCC_100139
+    EXPECT_SAME_TYPE(decltype(std::views::take(std::span<int>{}, 0)), std::span<int>);
+    EXPECT_SAME_TYPE(decltype(std::views::take(std::string_view{}, 0)), std::string_view);
+    EXPECT_SAME_TYPE(decltype(std::views::take(std::views::empty<int>, 0)), std::ranges::empty_view<int>);
+    EXPECT_SAME_TYPE(decltype(std::views::take(std::views::iota(0, 1), 0)), decltype(std::views::iota(0, 1)));
+
+    EXPECT_SAME_TYPE(decltype(std::views::take(s, 0)),
+                     (std::ranges::subrange<std::string::iterator, std::string::iterator>));
+#endif // !SEQAN3_WORKAROUND_GCC_100139
+
     EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::take(s, 0))>);
     EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::take(s, 0))>);
     EXPECT_TRUE(std::ranges::view<decltype(std::views::take(s, 0))>);
@@ -100,6 +113,17 @@ TEST(ranges_test, take_view)
 TEST(ranges_test, drop_view)
 {
     std::string s{};
+
+#if !SEQAN3_WORKAROUND_GCC_100139
+    EXPECT_SAME_TYPE(decltype(std::views::drop(std::span<int>{}, 0)), std::span<int>);
+    EXPECT_SAME_TYPE(decltype(std::views::drop(std::string_view{}, 0)), std::string_view);
+    EXPECT_SAME_TYPE(decltype(std::views::drop(std::views::empty<int>, 0)), std::ranges::empty_view<int>);
+    EXPECT_SAME_TYPE(decltype(std::views::drop(std::views::iota(0, 1), 0)), decltype(std::views::iota(0, 1)));
+
+    EXPECT_SAME_TYPE(decltype(std::views::drop(s, 0)),
+                     (std::ranges::subrange<std::string::iterator, std::string::iterator>));
+#endif // !SEQAN3_WORKAROUND_GCC_100139
+
     EXPECT_TRUE(std::ranges::borrowed_range<decltype(std::views::drop(s, 0))>);
     EXPECT_TRUE(std::ranges::viewable_range<decltype(std::views::drop(s, 0))>);
     EXPECT_TRUE(std::ranges::view<decltype(std::views::drop(s, 0))>);
