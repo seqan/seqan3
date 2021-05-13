@@ -22,7 +22,7 @@
 #include <seqan3/alphabet/detail/convert.hpp>
 #include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/debug_stream_optional.hpp>
+#include <seqan3/core/debug_stream/optional.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>

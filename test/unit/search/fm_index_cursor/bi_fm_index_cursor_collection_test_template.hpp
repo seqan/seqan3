@@ -10,8 +10,8 @@
 #include <seqan3/std/algorithm>
 #include <type_traits>
 
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/slice.hpp>

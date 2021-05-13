@@ -7,8 +7,8 @@
 
 #include <seqan3/alphabet/structure/concept.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
-#include <seqan3/core/detail/debug_stream_optional.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/optional.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"

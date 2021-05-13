@@ -12,7 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>

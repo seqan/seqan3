@@ -14,7 +14,7 @@
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 
 TEST(alignment_result_test, debug_streamable)
 {

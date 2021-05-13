@@ -12,7 +12,7 @@
 
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alignment/aligned_sequence/debug_stream_alignment.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 
 // https://github.com/seqan/product_backlog/issues/125
 TEST(debug_stream_type, issue_125)

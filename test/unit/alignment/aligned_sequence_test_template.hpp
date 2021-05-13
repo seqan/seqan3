@@ -11,10 +11,10 @@
 #include <string>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/detail/debug_stream_range.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 

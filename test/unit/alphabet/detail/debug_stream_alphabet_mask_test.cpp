@@ -5,15 +5,24 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-/*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief [DEPRECATED] Provides seqan3::debug_stream and related types.
- * \deprecated This header will be removed in 3.1. Please use seqan3/core/debug_stream/optional.hpp instead.
- */
+#include <gtest/gtest.h>
 
-#pragma once
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+#include <seqan3/alphabet/mask/mask.hpp>
 
-#include <seqan3/core/debug_stream/optional.hpp>
+TEST(debug_stream_test, mask)
+{
+    {
+        std::ostringstream o;
+        seqan3::debug_stream_type my_stream{o};
+        my_stream << seqan3::mask::masked;
+        EXPECT_EQ(o.str(), "MASKED");
+    }
 
-SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/core/debug_stream/optional.hpp> instead.")
+    {
+        std::ostringstream o;
+        seqan3::debug_stream_type my_stream{o};
+        my_stream << seqan3::mask::unmasked;
+        EXPECT_EQ(o.str(), "UNMASKED");
+    }
+}

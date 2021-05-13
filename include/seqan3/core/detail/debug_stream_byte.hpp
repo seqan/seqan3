@@ -7,37 +7,13 @@
 
 /*!\file
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
- * \brief Provides seqan3::debug_stream and related types.
+ * \brief [DEPRECATED] Provides seqan3::debug_stream and related types.
+ * \deprecated This header will be removed in 3.1. Please use seqan3/core/debug_stream/byte.hpp instead.
  */
 
 #pragma once
 
-#include <seqan3/std/concepts>
-#include <seqan3/std/type_traits>
+#include <seqan3/core/debug_stream/byte.hpp>
 
-#include <seqan3/core/detail/debug_stream_type.hpp>
-
-namespace seqan3
-{
-/*!\name Formatted output overloads
- * \{
- */
-/*!\brief A std::byte can be printed by printing its value as integer.
- * \tparam    byte_type     The type of the input; must be equal to `std::byte`.
- * \param[in] s             The seqan3::debug_stream.
- * \param[in] arg           The std::byte.
- * \relates seqan3::debug_stream_type
- */
-template <typename char_t, typename byte_type>
-//!\cond
-    requires std::same_as<std::remove_cvref_t<byte_type>, std::byte>
-//!\endcond
-inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, byte_type && arg)
-{
-    s << std::to_integer<uint8_t>(arg);
-    return s;
-}
-
-//!\}
-
-} // namespace seqan3
+SEQAN3_DEPRECATED_HEADER(
+   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/core/debug_stream/byte.hpp> instead.")

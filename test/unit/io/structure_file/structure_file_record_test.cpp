@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/wuss.hpp>
-#include <seqan3/core/detail/debug_stream_alphabet.hpp>
 #include <seqan3/io/detail/record_like.hpp>
 #include <seqan3/io/structure_file/record.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

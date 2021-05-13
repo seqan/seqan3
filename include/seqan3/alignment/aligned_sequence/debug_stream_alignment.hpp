@@ -17,7 +17,7 @@
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/core/detail/debug_stream_tuple.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>
 #include <seqan3/utility/views/zip.hpp>
