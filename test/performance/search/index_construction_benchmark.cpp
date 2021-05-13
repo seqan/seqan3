@@ -68,11 +68,11 @@ void index_benchmark_seqan3(benchmark::State & state)
     rng_t sequence;
     inner_rng_t inner_sequence;
     if constexpr (std::same_as<alphabet_t, seqan3::dna4>)
-        inner_sequence = store.dna4_rng | seqan3::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.dna4_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
     else if constexpr (std::same_as<alphabet_t, seqan3::aa27>)
-        inner_sequence = store.aa27_rng | seqan3::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.aa27_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
     else
-        inner_sequence = store.char_rng | seqan3::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
+        inner_sequence = store.char_rng | std::views::take(state.range(0)) | seqan3::views::to<inner_rng_t>;
 
     if constexpr (seqan3::range_dimension_v<rng_t> == 1)
     {
