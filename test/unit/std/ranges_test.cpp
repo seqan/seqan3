@@ -8,9 +8,35 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/std/ranges>
+#include <seqan3/std/span>
 #include <string>
+#include <string_view>
 
 #include <range/v3/view/take.hpp>
+
+TEST(ranges_test, string_view)
+{
+    std::string_view s{};
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(s)>);
+    EXPECT_TRUE(std::ranges::viewable_range<decltype(s)>);
+    EXPECT_TRUE(std::ranges::view<decltype(s)>);
+
+    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(s)>);
+    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(s)>);
+    EXPECT_TRUE(ranges::cpp20::view<decltype(s)>);
+}
+
+TEST(ranges_test, span)
+{
+    std::span<int> s{};
+    EXPECT_TRUE(std::ranges::borrowed_range<decltype(s)>);
+    EXPECT_TRUE(std::ranges::viewable_range<decltype(s)>);
+    EXPECT_TRUE(std::ranges::view<decltype(s)>);
+
+    EXPECT_TRUE(ranges::cpp20::borrowed_range<decltype(s)>);
+    EXPECT_TRUE(ranges::cpp20::viewable_range<decltype(s)>);
+    EXPECT_TRUE(ranges::cpp20::view<decltype(s)>);
+}
 
 TEST(ranges_test, subrange)
 {
