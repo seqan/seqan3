@@ -14,6 +14,8 @@
 #include <seqan3/test/tmp_directory.hpp>
 
 //!\cond
+namespace seqan3::test
+{
 struct create_temporary_snippet_file
 {
     std::filesystem::path file_path;
@@ -21,8 +23,8 @@ struct create_temporary_snippet_file
     create_temporary_snippet_file(std::filesystem::path const & file_name, std::string const & file_raw)
         : file_path{}
     {
-        // create single folder instance (across multiple create_temporary_snippet_file instances) that is valid during
-        // the complete program. std::filesystem::current_path will point to that location.
+        // create single folder instance (across multiple seqan3::test::create_temporary_snippet_file instances) that is
+        // valid during the complete program. std::filesystem::current_path will point to that location.
         static seqan3::test::tmp_directory const tmp_folder{[]()
         {
             seqan3::test::tmp_directory tmp{};
@@ -50,4 +52,5 @@ struct create_temporary_snippet_file
             seqan3::debug_stream << "[WARNING] Could not delete " << file_path << ". " << ec.message() << '\n';
     }
 };
+} // namespace seqan3::test
 //!\endcond

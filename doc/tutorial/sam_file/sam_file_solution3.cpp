@@ -1,7 +1,7 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
 
 // std::filesystem::current_path() / "my.sam" will be deleted after the execution
-create_temporary_snippet_file mapping_sam{"my.sam", ""};
+seqan3::test::create_temporary_snippet_file mapping_sam{"my.sam", ""};
 
 //![solution]
 #include <seqan3/std/filesystem>

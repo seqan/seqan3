@@ -1,5 +1,5 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-create_temporary_snippet_file my_fasta
+seqan3::test::create_temporary_snippet_file my_fasta
 {
     "my.fasta",
 R"//![fasta_file](

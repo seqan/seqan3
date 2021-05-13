@@ -1,5 +1,5 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-create_temporary_snippet_file my_fastq
+seqan3::test::create_temporary_snippet_file my_fastq
 {
     "my.fastq",
 R"//![fastq_file](
@@ -19,7 +19,7 @@ IIIIHHGIIIIHHGIIIH
 }; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
 
 // std::filesystem::current_path() / "output.fasta" will be deleted after the execution
-create_temporary_snippet_file output_fasta{"output.fasta", ""};
+seqan3::test::create_temporary_snippet_file output_fasta{"output.fasta", ""};
 
 //![main]
 #include <seqan3/io/sequence_file/all.hpp>

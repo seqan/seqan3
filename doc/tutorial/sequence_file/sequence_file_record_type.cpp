@@ -1,5 +1,5 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-create_temporary_snippet_file my_fastq{"my.fastq", "\n"};
+seqan3::test::create_temporary_snippet_file my_fastq{"my.fastq", "\n"};
 
 //![main]
 #include <seqan3/io/sequence_file/all.hpp>

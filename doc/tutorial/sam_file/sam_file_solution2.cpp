@@ -1,5 +1,5 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
-create_temporary_snippet_file reference_fasta
+seqan3::test::create_temporary_snippet_file reference_fasta
 {
     "reference.fasta",
 R"//![ref_file](
@@ -10,7 +10,7 @@ ACAGCAGGCATCTATCGGCGGATCGATCAGGCAGGCAGCTACTGTAATGGCATCAAAATCGGCATG
 )//![ref_file]"
 }; // std::filesystem::current_path() / "reference.fasta" will be deleted after the execution
 
-create_temporary_snippet_file mapping_sam
+seqan3::test::create_temporary_snippet_file mapping_sam
 {
     "mapping.sam",
 R"//![sam_file](
