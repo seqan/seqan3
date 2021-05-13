@@ -31,3 +31,11 @@ int main()
     }
 }
 //![main]
+
+inline void sam_file_record_copy_for()
+{
+    seqan3::sam_file_input fin{""};
+
+    // if this does not work, please update the comment above
+    for (seqan3::sam_record record : fin);
+}
