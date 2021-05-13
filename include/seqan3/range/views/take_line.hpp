@@ -8,14 +8,14 @@
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief [DEPRECATED] Provides seqan3::views::take_line and seqan3::views::take_line_or_throw.
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once
 
 #include <seqan3/io/detail/take_line_view.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-  "This header is deprecated and will be removed along all its content in SeqAn-3.1.0.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed along all its content in SeqAn-3.1.0.")
 
 namespace seqan3::views
 {

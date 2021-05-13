@@ -8,6 +8,7 @@
 /*!\file
  * \author Tobias Loka <LokaT AT rki.de>
  * \brief [DEPRECATED] Provides seqan3::views::to_upper.
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once

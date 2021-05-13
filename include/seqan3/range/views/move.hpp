@@ -7,7 +7,8 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::move.
+ * \brief [DEPRECATED] Provides seqan3::views::move.
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once

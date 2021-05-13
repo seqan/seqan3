@@ -8,6 +8,7 @@
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief [DEPRECATED] Provides seqan3::views::join.
+ * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/join_with.hpp instead.
  */
 
 #pragma once
@@ -15,4 +16,4 @@
 #include <seqan3/utility/views/join_with.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/join_with.hpp> instead.")
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/join_with.hpp> instead.")

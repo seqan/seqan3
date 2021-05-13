@@ -8,6 +8,7 @@
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \brief [DEPRECATED] Provides seqan3::views::persist.
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once
@@ -15,4 +16,4 @@
 #include <seqan3/core/detail/persist_view.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-  "This header is deprecated and will be removed along all its content in SeqAn-3.1.0.")
+    "This header is deprecated and will be removed along all its content in SeqAn-3.1.0.")

@@ -16,4 +16,4 @@
 #include <seqan3/utility/views/convert.hpp>
 
 SEQAN3_DEPRECATED_HEADER(
-   "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/convert.hpp> instead.")
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/convert.hpp> instead.")

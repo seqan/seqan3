@@ -6,8 +6,9 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various shortcuts for common std::ranges functions.
+ * \brief [DEPRECATED] Provides various shortcuts for common std::ranges functions.
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once

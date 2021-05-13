@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief [DEPRECATED]Provides seqan3::single_pass_input_view
+ * \brief [DEPRECATED] Provides seqan3::views::single_pass_input
  * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/single_pass_input.hpp instead.
  */
 
@@ -15,4 +15,5 @@
 
 #include <seqan3/utility/views/single_pass_input.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/single_pass_input.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/single_pass_input.hpp> instead.")
