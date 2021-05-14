@@ -1,0 +1,300 @@
+{sequence1 id: 0, sequence2 id: 0, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 1, sequence2 id: 1, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 2, sequence2 id: 2, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 3, sequence2 id: 3, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 4, sequence2 id: 4, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 5, sequence2 id: 5, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 6, sequence2 id: 6, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 7, sequence2 id: 7, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 8, sequence2 id: 8, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 9, sequence2 id: 9, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 10, sequence2 id: 10, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 11, sequence2 id: 11, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 12, sequence2 id: 12, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 13, sequence2 id: 13, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 14, sequence2 id: 14, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 15, sequence2 id: 15, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 16, sequence2 id: 16, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 17, sequence2 id: 17, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 18, sequence2 id: 18, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 19, sequence2 id: 19, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 20, sequence2 id: 20, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 21, sequence2 id: 21, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 22, sequence2 id: 22, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 23, sequence2 id: 23, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 24, sequence2 id: 24, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 25, sequence2 id: 25, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 26, sequence2 id: 26, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 27, sequence2 id: 27, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 28, sequence2 id: 28, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 29, sequence2 id: 29, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 30, sequence2 id: 30, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 31, sequence2 id: 31, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 32, sequence2 id: 32, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 33, sequence2 id: 33, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 34, sequence2 id: 34, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 35, sequence2 id: 35, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 36, sequence2 id: 36, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 37, sequence2 id: 37, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 38, sequence2 id: 38, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 39, sequence2 id: 39, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 40, sequence2 id: 40, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 41, sequence2 id: 41, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 42, sequence2 id: 42, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 43, sequence2 id: 43, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 44, sequence2 id: 44, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 45, sequence2 id: 45, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 46, sequence2 id: 46, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 47, sequence2 id: 47, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 48, sequence2 id: 48, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 49, sequence2 id: 49, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 50, sequence2 id: 50, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 51, sequence2 id: 51, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 52, sequence2 id: 52, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 53, sequence2 id: 53, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 54, sequence2 id: 54, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 55, sequence2 id: 55, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 56, sequence2 id: 56, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 57, sequence2 id: 57, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 58, sequence2 id: 58, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 59, sequence2 id: 59, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 60, sequence2 id: 60, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 61, sequence2 id: 61, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 62, sequence2 id: 62, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 63, sequence2 id: 63, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 64, sequence2 id: 64, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 65, sequence2 id: 65, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 66, sequence2 id: 66, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 67, sequence2 id: 67, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 68, sequence2 id: 68, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 69, sequence2 id: 69, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 70, sequence2 id: 70, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 71, sequence2 id: 71, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 72, sequence2 id: 72, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 73, sequence2 id: 73, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 74, sequence2 id: 74, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 75, sequence2 id: 75, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 76, sequence2 id: 76, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 77, sequence2 id: 77, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 78, sequence2 id: 78, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 79, sequence2 id: 79, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 80, sequence2 id: 80, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 81, sequence2 id: 81, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 82, sequence2 id: 82, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 83, sequence2 id: 83, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 84, sequence2 id: 84, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 85, sequence2 id: 85, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 86, sequence2 id: 86, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 87, sequence2 id: 87, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 88, sequence2 id: 88, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 89, sequence2 id: 89, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 90, sequence2 id: 90, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 91, sequence2 id: 91, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 92, sequence2 id: 92, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 93, sequence2 id: 93, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 94, sequence2 id: 94, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 95, sequence2 id: 95, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 96, sequence2 id: 96, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 97, sequence2 id: 97, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 98, sequence2 id: 98, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}
+{sequence1 id: 99, sequence2 id: 99, score: -4, begin: (0,0), end: (9,12), 
+alignment:
+(A-GTGCTAC--G,ACGTGCGACTAG)}

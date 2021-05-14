@@ -1,0 +1,3 @@
+The output file must not exist already and write permissions must be granted.
+The output file must not exist already and write permissions must be granted. Valid file extensions are: [exe, fasta].
+The output file must not exist already and write permissions must be granted. Valid file extensions are: [embl, fasta, fa, fna, ffn, faa, frn, fas, fastq, fq, genbank, gb, gbk, sam].

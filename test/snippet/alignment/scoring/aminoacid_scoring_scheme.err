@@ -1,0 +1,7 @@
+blosum62 score for T and S: 1
+blosum80 score for 'T'_aa27 and 'S'_aa20: 2
+Hamming distance between T and S: -1
+Hamming distance between T and T: 0
+blosum80 score between T and S: 2
+New score after editing entry: 3
+Score: 15
