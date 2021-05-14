@@ -127,11 +127,6 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Deprecated seqan3::alignment_coordinate and it will be removed in 3.1.0
   ([\#2602](https://github.com/seqan/seqan3/pull/2602)).
 
-Header Changes:
-
-```cpp
-#include <seqan3/{alignment/pairwise => core/algorithm}/alignment_range.hpp>
-```
 #### Alphabet
 
 * We relaxed some requirements of `seqan3::alphabet_base<alphabet_t>`
@@ -175,11 +170,12 @@ Header Changes:
 Header Changes:
 
 ```cpp
+#include <seqan3/alphabet/cigar/{cigar_op => cigar}.hpp>
 #include <seqan3/alphabet/cigar/{cigar_op => exposition_only/cigar_operation}.hpp>
 #include <seqan3/alphabet/nucleotide/{sam_dna16 => dna16sam}.hpp}>
 #include <seqan3/alphabet/quality/{phred68legacy => phred68solexa}.hpp>
-#include <seqan3/alphabet/quality/{quality_base => phred_base}.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp> [Added]
+#include <seqan3/alphabet/quality/{quality_base => phred_base}.hpp>
 ```
 
 #### Argument Parser
@@ -202,52 +198,55 @@ Header Changes:
 Header Changes:
 
 ```cpp
-#include <seqan3/{core/concept/core_language => utility/detail/exposition_only_concept}.hpp>
+#include <seqan3/{core => utility}/char_operations/predicate.hpp>
+#include <seqan3/{core => utility}/char_operations/predicate_detail.hpp>
+#include <seqan3/{core => utility}/char_operations/pretty_print.hpp>
+#include <seqan3/{core => utility}/char_operations/transform.hpp>
 
-#include <seqan3/core/{algorithm => configuration/detail}/concept.hpp>
+#include <seqan3/{core => utility/tuple}/common_tuple.hpp>
+
+#include <seqan3/{core/concept/core_language => utility/detail/exposition_only_concept}.hpp>
+#include <seqan3/{core/concept/tuple => utility/tuple/concept}.hpp>
+
 #include <seqan3/core/{algorithm => configuration}/configuration.hpp>
+#include <seqan3/core/{algorithm => configuration/detail}/concept.hpp>
 #include <seqan3/core/{algorithm => configuration/detail}/configuration_element_debug_mode.hpp>
 #include <seqan3/core/{algorithm => configuration/detail}/configuration_element_parallel_mode.hpp>
 #include <seqan3/core/{algorithm => configuration/detail}/configuration_utility.hpp>
 
 #include <seqan3/core/{detail => debug_stream/detail}/to_string.hpp>
 
-#include <seqan3/core/{type_traits => detail}/deferred_crtp_base.hpp>
-
-#include <seqan3/{core => utility}/char_operations/predicate.hpp>
-#include <seqan3/{core => utility}/char_operations/predicate_detail.hpp>
-#include <seqan3/{core => utility}/char_operations/pretty_print.hpp>
-#include <seqan3/{core => utility}/char_operations/transform.hpp>
 #include <seqan3/{core => utility}/math.hpp>
 
-#include <seqan3/{core/concept/tuple => utility/tuple/concept}.hpp>
 #include <seqan3/{core => utility/tuple}/pod_tuple.hpp>
-#include <seqan3/{core => utility/tuple}/common_tuple.hpp>
-#include <seqan3/{core/tuple_utility => utility/tuple/pop_front}.hpp>
-#include <seqan3/{core/tuple_utility => utility/tuple/split}.hpp>
-#include <seqan3/{core => utility}/type_list/type_list.hpp>
-#include <seqan3/{core => utility}/type_list/traits.hpp>
-#include <seqan3/{core => utility}/type_traits/basic.hpp>
-#include <seqan3/{core => utility}/type_traits/concept.hpp>
-#include <seqan3/{core => utility}/type_traits/function_traits.hpp>
-#include <seqan3/{core => utility}/type_traits/pre.hpp>
-#include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
-#include <seqan3/{core => utility}/type_traits/{ => detail/}transformation_trait_or.hpp>
 
-#include <seqan3/core/{type_traits/lazy => detail/is_class_template_declarable}.hpp>
-#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp> 
-#include <seqan3/core/{type_traits/range => range/type_traits}.hpp>
-#include <seqan3/core/{type_traits/iterator => detail/iterator_traits}.hpp>
-#include <seqan3/core/{type_traits => detail}/template_inspection.hpp>
-
-#include <seqan3/{core => utility}/simd/{simd_algorithm => algorithm}.hpp>
+#include <seqan3/{core => utility}/simd/algorithm.hpp>
 #include <seqan3/{core => utility}/simd/concept.hpp>
+#include <seqan3/{core => utility}/simd/{ => detail/}debug_stream_simd.hpp>
+#include <seqan3/{core => utility}/simd/{simd_algorithm => algorithm}.hpp>
 #include <seqan3/{core => utility}/simd/simd.hpp>
 #include <seqan3/{core => utility}/simd/simd_traits.hpp>
-#include <seqan3/{core => utility}/simd/{ => detail/}debug_stream_simd.hpp>
 #include <seqan3/{core => utility}/simd/{view_iota_simd => views/iota_simd}.hpp>
 #include <seqan3/{core => utility}/simd/{view_to_simd => views/to_simd}.hpp>
-#include <seqan3/{core => utility}/simd/algorithm.hpp>
+
+#include <seqan3/{core/tuple_utility => utility/tuple/pop_front}.hpp>
+#include <seqan3/{core/tuple_utility => utility/tuple/split}.hpp>
+
+#include <seqan3/{core => utility}/type_list/traits.hpp>
+#include <seqan3/{core => utility}/type_list/type_list.hpp>
+
+#include <seqan3/{core => utility}/type_traits/basic.hpp>
+#include <seqan3/{core => utility}/type_traits/concept.hpp>
+#include <seqan3/core/{type_traits => detail}/deferred_crtp_base.hpp>
+#include <seqan3/{core => utility}/type_traits/function_traits.hpp>
+#include <seqan3/core/{type_traits/iterator => detail/iterator_traits}.hpp>
+#include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
+#include <seqan3/core/{type_traits/lazy => detail/is_class_template_declarable}.hpp>
+#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp> 
+#include <seqan3/{core => utility}/type_traits/pre.hpp>
+#include <seqan3/core/{type_traits/range => range/type_traits}.hpp>
+#include <seqan3/core/{type_traits => detail}/template_inspection.hpp>
+#include <seqan3/{core => utility}/type_traits/{ => detail/}transformation_trait_or.hpp>
 ```
 
 #### I/O
@@ -301,20 +300,19 @@ Header Changes:
 Header Changes:
 
 ```cpp
-#include <seqan3/io/{alignment_file => sam_file/detail/}format_sam_base.hpp>
-#include <seqan3/io/{alignment_file/misc => sam_file/sam_flag}.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/format_bam.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/format_sam.hpp>
+#include <seqan3/io/{alignment_file => sam_file/detail/}format_sam_base.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/header.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/input.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/input_format_concept.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/input_options.hpp>
+#include <seqan3/io/{alignment_file/misc => sam_file/sam_flag}.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/output.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/output_format_concept.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/output_options.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/record.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/sam_tag_dictionary.hpp>
-#include <seqan3/io/{alignment_file=> sam_file}/record.hpp>
 
 #include <seqan3/io/sequence_file/record.hpp> [Added]
 #include <seqan3/io/structure_file/record.hpp> [Added]
@@ -373,7 +371,12 @@ Header Changes:
 Header Changes:
 
 ```cpp
+#include <seqan3/{range/concept => alphabet/range/sequence}.hpp>
+#include <seqan3/{range/concept => alphabet/range/concept}.hpp>
+
 #include <seqan3/{range => utility}/container/aligned_allocator.hpp>
+#include <seqan3/{range => alphabet}/container/{bitcompressed_vector => bitpacked_sequence}.hpp>
+#include <seqan3/{range => alphabet}/container/concatenated_sequences.hpp>
 #include <seqan3/{range => utility}/container/concept.hpp>
 #include <seqan3/{range => utility}/container/dynamic_bitset.hpp>
 #include <seqan3/{range => utility}/container/small_string.hpp>
@@ -381,41 +384,35 @@ Header Changes:
 
 #include <seqan3/{range => alignment}/decorator/gap_decorator.hpp>
 
+#include <seqan3/{range/ => alphabet/range/}hash.hpp>
+
+#include <seqan3/{range => io}/views/async_input_buffer.hpp>
+#include <seqan3/{range => alphabet}/views/char_to.hpp>
+#include <seqan3/{range => utility}/views/chunk.hpp>
+#include <seqan3/{range => alphabet}/views/complement.hpp>
+#include <seqan3/{range => utility}/views/convert.hpp>
+#include <seqan3/{range => utility}/views/deep.hpp>
+#include <seqan3/{range => utility}/views/enforce_random_access.hpp>
+#include <seqan3/{range => utility}/views/{get => elements}.hpp>
+#include <seqan3/{range => utility}/views/interleave.hpp>
+#include <seqan3/{range => utility}/views/{join => join_with}.hpp>
 #include <seqan3/{range => search}/views/kmer_hash.hpp>
 #include <seqan3/{range => search}/views/minimiser.hpp>
 #include <seqan3/{range => search}/views/minimiser_hash.hpp>
-
-#include <seqan3/{range => io}/views/async_input_buffer.hpp>
-#include <seqan3/{range/views/take_line => io/detail/take_line_view}.hpp>
-#include <seqan3/{range/views/take => io/detail/take_view}.hpp>
-
-#include <seqan3/{range => alphabet}/container/{bitcompressed_vector => bitpacked_sequence}.hpp>
-#include <seqan3/{range => alphabet}/container/concatenated_sequences.hpp>
-#include <seqan3/{range/ => alphabet/range/}hash.hpp>
-#include <seqan3/{range/concept => alphabet/range/sequence}.hpp>
-#include <seqan3/{range/concept => alphabet/range/concept}.hpp>
-#include <seqan3/{range => alphabet}/views/char_to.hpp>
-#include <seqan3/{range => alphabet}/views/complement.hpp>
+#include <seqan3/{range => utility}/views/pairwise_combine.hpp>
 #include <seqan3/{range => alphabet}/views/rank_to.hpp>
+#include <seqan3/{range => utility}/views/repeat.hpp>
+#include <seqan3/{range => utility}/views/repeat_n.hpp>
+#include <seqan3/{range => utility}/views/single_pass_input.hpp>
+#include <seqan3/{range => utility}/views/slice.hpp>
+#include <seqan3/{range/views/take => io/detail/take_view}.hpp>
+#include <seqan3/{range/views/take_line => io/detail/take_line_view}.hpp>
+#include <seqan3/{range => utility}/views/to.hpp>
 #include <seqan3/{range => alphabet}/views/to_char.hpp>
 #include <seqan3/{range => alphabet}/views/to_rank.hpp>
 #include <seqan3/{range => alphabet}/views/translate.hpp>
 #include <seqan3/{range => alphabet}/views/translate_join.hpp>
 #include <seqan3/{range => alphabet}/views/trim_quality.hpp>
-
-#include <seqan3/{range => utility}/views/chunk.hpp>
-#include <seqan3/{range => utility}/views/convert.hpp>
-#include <seqan3/{range => utility}/views/deep.hpp>
-#include <seqan3/{range => utility}/views/{get => elements}.hpp>
-#include <seqan3/{range => utility}/views/enforce_random_access.hpp>
-#include <seqan3/{range => utility}/views/interleave.hpp>
-#include <seqan3/{range => utility}/views/{join => join_with}.hpp>
-#include <seqan3/{range => utility}/views/pairwise_combine.hpp>
-#include <seqan3/{range => utility}/views/repeat.hpp>
-#include <seqan3/{range => utility}/views/repeat_n.hpp>
-#include <seqan3/{range => utility}/views/single_pass_input.hpp>
-#include <seqan3/{range => utility}/views/slice.hpp>
-#include <seqan3/{range => utility}/views/to.hpp>
 #include <seqan3/{range => utility}/views/type_reduce.hpp>
 #include <seqan3/{range => utility}/views/zip.hpp>
 ```
