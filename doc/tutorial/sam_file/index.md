@@ -201,6 +201,9 @@ You can pass reference ids and reference sequences as additional constructor par
 
 \snippet doc/tutorial/sam_file/sam_file_alignments_with_ref.cpp main
 
+The code will print the following:
+\include doc/tutorial/sam_file/sam_file_sam_record.out
+
 \assignment{Assignment 2: Combining sequence and alignment files}
 
 Read the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
