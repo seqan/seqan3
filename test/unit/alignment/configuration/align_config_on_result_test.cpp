@@ -12,28 +12,17 @@
 
 #include <seqan3/alignment/configuration/align_config_on_result.hpp>
 
-#include "../../core/configuration/pipeable_config_element_test_template.hpp"
-
-// -----------------------------------------------------------------------------
-// test template : pipeable_config_element_test
-// -----------------------------------------------------------------------------
-
-using test_types = ::testing::Types<seqan3::align_cfg::on_result<std::function<void(int)>>>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(on_result_element, pipeable_config_element_test, test_types, );
-
 // -----------------------------------------------------------------------------
 // Test capturing various callbacks
 // -----------------------------------------------------------------------------
 
-TEST(align_cfg_on_result, with_capture_less_lambda)
+TEST(align_cfg_on_result, with_captureless_lambda)
 {
     seqan3::align_cfg::on_result on_result_cfg{[] (auto && result) { return result; }};
 
     EXPECT_TRUE((std::invocable<decltype(on_result_cfg.callback), int>));
     EXPECT_EQ((std::invoke(on_result_cfg.callback, 10)), 10);
 }
-
 TEST(align_cfg_on_result, with_capturing_lambda)
 {
     int global_result = 0;

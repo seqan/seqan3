@@ -12,16 +12,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_parallel.hpp>
-
-#include "../../core/configuration/pipeable_config_element_test_template.hpp"
-
-// ---------------------------------------------------------------------------------------------------------------------
-// test template : pipeable_config_element_test
-// ---------------------------------------------------------------------------------------------------------------------
-
-using test_types = ::testing::Types<seqan3::align_cfg::parallel>;
-
-INSTANTIATE_TYPED_TEST_SUITE_P(parallel_elements, pipeable_config_element_test, test_types, );
+#include <seqan3/core/configuration/configuration.hpp>
 
 // ---------------------------------------------------------------------------------------------------------------------
 // individual tests
