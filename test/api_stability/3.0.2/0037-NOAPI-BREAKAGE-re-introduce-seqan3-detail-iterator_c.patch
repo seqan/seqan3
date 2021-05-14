@@ -1,28 +1,34 @@
-From 195ece494ab641b12ded2012fdcb2c634720fed3 Mon Sep 17 00:00:00 2001
+From 97db5e6d26ec8ca55de55ea12830600ee43bb767 Mon Sep 17 00:00:00 2001
 From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
 Date: Fri, 14 May 2021 13:08:22 +0200
 Subject: [PATCH 37/37] [NOAPI] [BREAKAGE] re-introduce
  seqan3::detail::iterator_category_tag_t in tests
 
 ---
- .../type_traits/type_traits_iterator_test.cpp | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../type_traits/type_traits_iterator_test.cpp | 26 +++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/test/unit/core/type_traits/type_traits_iterator_test.cpp b/test/unit/core/type_traits/type_traits_iterator_test.cpp
-index eafdd6d14..60418c837 100644
+index eafdd6d14..4a3ef187b 100644
 --- a/test/unit/core/type_traits/type_traits_iterator_test.cpp
 +++ b/test/unit/core/type_traits/type_traits_iterator_test.cpp
-@@ -22,6 +22,25 @@ SEQAN3_CONCEPT iterator_traits_has_iterator_category = requires()
+@@ -22,6 +22,32 @@ SEQAN3_CONCEPT iterator_traits_has_iterator_category = requires()
      typename std::iterator_traits<iterator_t>::iterator_category;
  };
  
 +namespace seqan3::detail
 +{
 +template <typename it_t>
-+struct iterator_category_tag
++struct iterator_category_tag {};
++
++#if SEQAN3_WORKAROUND_GCC_96070
++template <typename it_t>
++    requires (!iterator_traits_has_iterator_category<it_t>)
++struct iterator_category_tag<it_t>
 +{
 +    using type = void;
 +};
++#endif // SEQAN3_WORKAROUND_GCC_96070
 +
 +template <typename it_t>
 +    requires iterator_traits_has_iterator_category<it_t>
@@ -32,6 +38,7 @@ index eafdd6d14..60418c837 100644
 +};
 +
 +template <typename it_t>
++    requires requires { typename iterator_category_tag<it_t>::type; }
 +using iterator_category_tag_t = typename iterator_category_tag<it_t>::type;
 +} // namespace seqan3::detail
 +
