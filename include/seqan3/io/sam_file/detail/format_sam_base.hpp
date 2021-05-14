@@ -430,10 +430,19 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_field(string_buffer, value);
     };
 
-    auto parse_until_tab_or_newline = [&] (auto & value)
+    // Some tags are not parsed individually. Instead, these are simply copied into a string.
+    // Multiple tags must be separated by a `\t`, hence we prepend a tab to the string, except the first time.
+    // Alternatively, we could always append a `\t`, but this would have the side effect that we might need to trim a
+    // trailing tab after parsing all tags via `pop_back()`.
+    // Unfortunately, we do not know when we are parsing the last tag (and in this case just not append a tab),
+    // because even though we can check if the line ends in a `\n`, it is not guaranteed that the last tag of the
+    // line is passed to this lambda. For example, the line might end with a tag that is properly parsed, such as `ID`.
+    auto parse_until_tab_or_newline = [&] (std::string & value, char const first_letter)
     {
         take_until_predicate(is_char<'\t'> || is_char<'\n'>);
-        string_buffer.push_back('\t');
+        if (!value.empty())
+            value.push_back('\t');
+        value.push_back(first_letter);
         read_field(string_buffer, value);
     };
 
@@ -560,8 +569,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                             }
                             default: // Any other tag
                             {
-                                get<1>(info).push_back(first_letter);
-                                parse_until_tab_or_newline(get<1>(info));
+                                parse_until_tab_or_newline(get<1>(info), first_letter);
                             }
                         }
                     }
@@ -573,8 +581,6 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                         throw format_error{std::string{"The required LN tag in @SQ is missing."}};
                     if (sequence_length.value() <= 0)
                         throw format_error{std::string{"The value of LN in @SQ must be positive."}};
-                    if (is_char<'\t'>(get<1>(info).back())) // See parse_until_tab_or_newline
-                        get<1>(info).pop_back();
 
                     get<0>(info) = sequence_length.value();
                     // If reference information was given, the ids exist and we can fill ref_dict directly.
@@ -639,8 +645,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                             }
                             default: // Any other tag
                             {
-                                get<1>(tmp).push_back(first_letter);
-                                parse_until_tab_or_newline(get<1>(tmp));
+                                parse_until_tab_or_newline(get<1>(tmp), first_letter);
                             }
                         }
                     }
@@ -648,8 +653,6 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 
                     if (get<0>(tmp).empty())
                         throw format_error{std::string{"The required ID tag in @RG is missing."}};
-                    if (is_char<'\t'>(get<1>(tmp).back())) // See parse_until_tab_or_newline
-                        get<1>(tmp).pop_back();
 
                     hdr.read_groups.emplace_back(std::move(tmp));
                 }
