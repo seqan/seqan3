@@ -64,7 +64,7 @@ inline constexpr bool enable_borrowed_range<::std::ranges::iota_view<W, Bound>> 
 template <class T>
 inline constexpr bool enable_borrowed_range<::std::ranges::ref_view<T>> = true;
 
-// Note: in gcc-10 enable_borrowed_range wasn't defined for the take_view and the other following views.
+// Note: in gcc-10 enable_borrowed_range wasn't defined for the take_view and the other following views. (gcc-10.3 fixed this)
 // Explictly defining this here will have the side-effect that we override the definition of
 // std::ranges::enable_borrowed_range for all those views.
 template <class T>
@@ -132,8 +132,9 @@ inline constexpr bool enable_borrowed_range<T> = true;
 #include <seqan3/std/iterator>
 #include <string_view>
 
-// until range <= 0.11.0 release, std::basic_string_view was not recognised as view or borrowed_range
-#if RANGE_V3_VERSION <= 1100
+// After the range release 0.11.0, std::basic_string_view was not recognised as view or borrowed_range any more for
+// gcc <= 9. Remove this if https://github.com/ericniebler/range-v3/pull/1625 was merged before the next release.
+#if RANGE_V3_VERSION >= 1100
 #if defined(__cpp_lib_string_view) && __cpp_lib_string_view == 201603L
 namespace ranges
 {
@@ -146,7 +147,7 @@ template<class CharT, class Traits>
 inline constexpr bool enable_borrowed_range<std::basic_string_view<CharT, Traits>> = true;
 } // namespace ranges
 #endif // defined(__cpp_lib_string_view) && __cpp_lib_string_view >= 201603L
-#endif // RANGE_V3_VERSION <= 1100
+#endif // RANGE_V3_VERSION >= 1100
 
 // ============================================================================
 //  namespace aliasing
