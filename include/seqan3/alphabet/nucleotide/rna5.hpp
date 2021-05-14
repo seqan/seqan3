@@ -38,7 +38,7 @@ namespace seqan3
  * character conversion instead of 'T'. You can assign between values of seqan3::dna5 and seqan3::rna5.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_rna5_char_literal "'A'_rna5" or use the
  * function seqan3::rna5::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/rna5.cpp
@@ -138,6 +138,7 @@ inline namespace literals
  * \relatesalso seqan3::rna5
  * \returns seqan3::rna5
  * \details
+ * \anchor seqan3_rna5_char_literal
  *
  * You can use this char literal to assign a seqan3::rna5 character:
  * \include test/snippet/alphabet/nucleotide/rna5_char_literal.cpp

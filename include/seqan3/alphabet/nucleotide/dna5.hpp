@@ -40,7 +40,7 @@ class rna5;
  * be converted to 'T'.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_dna5_char_literal "'A'_dna5" or use the
  * function seqan3::dna5::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna5.cpp
@@ -176,6 +176,7 @@ inline namespace literals
  * \relatesalso seqan3::dna5
  * \returns seqan3::dna5
  * \details
+ * \anchor seqan3_dna5_char_literal
  *
  * You can use this char literal to assign a seqan3::dna4 character:
  * \include test/snippet/alphabet/nucleotide/dna4_char_literal.cpp

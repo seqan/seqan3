@@ -40,7 +40,7 @@ class rna15;
  * be converted to 'T'.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_dna15_char_literal "'A'_dna15" or use the
  * function seqan3::dna15::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna15.cpp
@@ -195,6 +195,7 @@ inline namespace literals
  * \relatesalso seqan3::dna15
  * \returns seqan3::dna15
  * \details
+ * \anchor seqan3_dna15_char_literal
  *
  * You can use this char literal to assign a seqan3::dna15 character:
  * \include test/snippet/alphabet/nucleotide/dna15_char_literal.cpp

@@ -39,7 +39,7 @@ class rna4;
  * be converted to 'T'.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_dna4_char_literal "'A'_dna4" or use the
  * function seqan3::dna4::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna4.cpp
@@ -215,6 +215,7 @@ inline namespace literals
  * \relatesalso seqan3::dna4
  * \returns seqan3::dna4
  * \details
+ * \anchor seqan3_dna4_char_literal
  *
  * You can use this char literal to assign a seqan3::dna4 character:
  * \include test/snippet/alphabet/nucleotide/dna4_char_literal.cpp
@@ -229,6 +230,7 @@ constexpr dna4 operator""_dna4(char const c) noexcept
 /*!\brief The seqan3::dna4 string literal.
  * \relatesalso seqan3::dna4
  * \returns seqan3::dna4_vector
+ * \anchor seqan3_dna4_string_literal
  *
  * You can use this string literal to easily assign to dna4_vector:
  * \include test/snippet/alphabet/nucleotide/dna4_literal.cpp

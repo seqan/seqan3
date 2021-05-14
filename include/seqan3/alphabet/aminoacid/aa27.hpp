@@ -34,7 +34,7 @@ namespace seqan3
  * Y, Z, *
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_aa27_char_literal "'X'_aa27" or use the
  * function seqan3::aa27::assign_char().
  *
  * \include test/snippet/alphabet/aminoacid/aa27.cpp
@@ -161,6 +161,7 @@ inline namespace literals
  * \param[in] c The character to assign.
  * \relates seqan3::aa27
  * \returns seqan3::aa27
+ * \anchor seqan3_aa27_char_literal
  *
  * You can use this char literal to assign a seqan3::aa27 character:
  * \include test/snippet/alphabet/aminoacid/aa27_char_literal.cpp

@@ -48,7 +48,7 @@ namespace seqan3
  * seqan3::dna3bs, it would be 'TGTATG' which preserves more information from the original sequence.
  *
  * Like most alphabets, this alphabet cannot be initialised directly from its character representation.
- * Instead initialise/assign from the character literal or use the
+ * Instead initialise/assign from the character literal \ref seqan3_dna3bs_char_literal "'A'_dna3bs" or use the
  * function seqan3::dna3bs::assign_char().
  *
  * \include test/snippet/alphabet/nucleotide/dna3bs.cpp
@@ -178,6 +178,7 @@ inline namespace literals
  * \relatesalso seqan3::dna3bs
  * \returns seqan3::dna3bs
  * \details
+ * \anchor seqan3_dna3bs_char_literal
  *
  * You can use this char literal to assign a seqan3::dna3bs character:
  * \include test/snippet/alphabet/nucleotide/dna3bs_char_literal.cpp

@@ -93,8 +93,8 @@
  * ###Literals
  *
  * To avoid writing ``dna4{}.assign_char('C')`` every time, you may instead use the literal ``'C'_dna4``.
- * All nucleotide types defined here have character literals and also string literals which return a vector of the
- * respective type.
+ * All nucleotide types defined here have character literals (e.g \ref seqan3_dna4_char_literal "'A'_dna4") and also
+ * string literals (e.g \ref seqan3_dna4_string_literal "\"ACGT\"_dna4") which return a vector of the respective type.
  *
  * ###Concept
  *

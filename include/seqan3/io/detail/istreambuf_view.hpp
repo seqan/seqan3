@@ -83,7 +83,7 @@ namespace seqan3::views
 {
 /*!\brief                A view factory that returns a view over the stream buffer of an input stream.
  * \tparam istreambuf_t  The type of the stream(buffer); must be std::basic_streambuf or model seqan3::input_stream.
- * \param[in] istreambuf The stream buffer or an input stream of whome the buffer is retrieved.
+ * \param[in] istreambuf The stream buffer or an input stream of whom the buffer is retrieved.
  * \returns
  * \ingroup views
  *
@@ -114,7 +114,7 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * This adaptor is different from std::ranges::istream_range in that it operates directly on the buffer.
+ * This adaptor is different from std::ranges::basic_istream_view in that it operates directly on the buffer.
  * It further uses a custom streambuf_iterator (not std::istreambuf_iterator) that performs less virtual
  * function calls.
  *
