@@ -144,7 +144,7 @@ inline namespace literals
  * \anchor seqan3_rna4_char_literal
  *
  * You can use this char literal to assign a seqan3::rna4 character:
- * \include test/snippet/alphabet/nucleotide/rna4_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/rna4_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

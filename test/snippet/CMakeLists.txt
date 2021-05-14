@@ -59,3 +59,11 @@ foreach (source_snippet IN ITEMS "test/snippet/alphabet/nucleotide/@target_alpha
     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna15 -Dsource_alphabet=rna15)
     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna15 -Dsource_alphabet=dna15)
 endforeach ()
+
+foreach (target_alphabet IN ITEMS dna4 rna4 dna5 rna5 dna15 rna15 dna16sam dna3bs)
+    set (source_snippet "test/snippet/alphabet/nucleotide/@target_alphabet@_char_literal.cpp.in")
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=${target_alphabet})
+
+    set (source_snippet "test/snippet/alphabet/nucleotide/@target_alphabet@_literal.cpp.in")
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=${target_alphabet})
+endforeach ()

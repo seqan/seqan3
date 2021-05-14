@@ -1,0 +1,13 @@
+// generated from ${source_snippet}
+
+//![main]
+#include <seqan3/alphabet/nucleotide/${target_alphabet}.hpp>
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    seqan3::${target_alphabet} letter1{'A'_${target_alphabet}};
+    auto letter2 = 'A'_${target_alphabet};
+}
+//![main]

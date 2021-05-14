@@ -182,7 +182,7 @@ inline namespace literals
  * \anchor seqan3_dna5_char_literal
  *
  * You can use this char literal to assign a seqan3::dna4 character:
- * \include test/snippet/alphabet/nucleotide/dna4_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/dna4_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

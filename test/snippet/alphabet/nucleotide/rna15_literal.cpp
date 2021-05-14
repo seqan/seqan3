@@ -1,3 +1,6 @@
+// generated from test/snippet/alphabet/nucleotide/@target_alphabet@_literal.cpp.in
+
+//![main]
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 
 int main()
@@ -8,3 +11,4 @@ int main()
     seqan3::rna15_vector sequence2 = "ACGTTA"_rna15;
     auto sequence3 = "ACGTTA"_rna15;
 }
+//![main]

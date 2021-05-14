@@ -201,7 +201,7 @@ inline namespace literals
  * \anchor seqan3_dna15_char_literal
  *
  * You can use this char literal to assign a seqan3::dna15 character:
- * \include test/snippet/alphabet/nucleotide/dna15_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/dna15_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */
