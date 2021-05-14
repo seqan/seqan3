@@ -74,8 +74,11 @@ public:
 
     using base_t::base_t;
 
-    /*!\brief Allow implicit construction from dna/rna of the same size.
+    /*!\brief Allow implicit construction from seqan3::rna5 of the same size.
      * \details
+     *
+     * \copydetails seqan3::doxygen::dna5_implicit_conversion_from_rna5
+     *
      * \stableapi{Since version 3.1.}
      */
     template <std::same_as<rna5> t>    // Accept incomplete type

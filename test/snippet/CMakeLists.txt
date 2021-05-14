@@ -46,3 +46,16 @@ seqan3_snippets ("doc/snippet" "${CMAKE_SOURCE_DIR}/../../doc")
 seqan3_snippets ("snippet" "${CMAKE_SOURCE_DIR}")
 
 include (seqan3_generate_snippet)
+
+foreach (source_snippet IN ITEMS "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@.cpp.in"
+                                 "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in"
+                                 "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_vector.cpp.in"
+                                 "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_views.cpp.in"
+                                 "doc/fragments/@target_alphabet@_implicit_conversion_from_@source_alphabet@.hpp.in")
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna4 -Dsource_alphabet=rna4)
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna4 -Dsource_alphabet=dna4)
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna5 -Dsource_alphabet=rna5)
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna5 -Dsource_alphabet=dna5)
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna15 -Dsource_alphabet=rna15)
+    seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna15 -Dsource_alphabet=dna15)
+endforeach ()

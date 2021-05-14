@@ -1,0 +1,22 @@
+// generated from test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in
+
+//![main]
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
+
+struct my_dna5 : public seqan3::dna5
+{
+    // using seqan3::dna5::dna5; // uncomment to import implicit conversion shown by letter1
+};
+
+struct my_rna5 : public seqan3::rna5
+{};
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    // my_dna5 letter1 = 'C'_rna5; // NO automatic implicit conversion!
+    // seqan3::dna5 letter2 = my_rna5{}; // seqan3::dna5 only allows implicit conversion from seqan3::rna5!
+}
+//![main]
