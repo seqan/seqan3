@@ -21,6 +21,10 @@
 namespace seqan3::detail
 {
 
+//!\brief Type alias for seqan3::detail::take_fn but with exactly set to true
+template <bool or_throw>
+using take_exactly_fn = take_fn<true, or_throw>;
+
 /*!\name General purpose views
  * \{
  */
@@ -74,7 +78,7 @@ namespace seqan3::detail
  *
  * \hideinitializer
  */
-inline auto constexpr take_exactly = take_fn<true, false>{};
+inline auto constexpr take_exactly = take_exactly_fn<false>{};
 
 // ============================================================================
 //  detail::take_exactly_or_throw (adaptor instance definition)
@@ -88,7 +92,7 @@ inline auto constexpr take_exactly = take_fn<true, false>{};
  * \copydetails seqan3::detail::take_exactly
  * \hideinitializer
  */
-inline auto constexpr take_exactly_or_throw = take_fn<true, true>{};
+inline auto constexpr take_exactly_or_throw = take_exactly_fn<true>{};
 
 //!\}
 } // namespace seqan3::detail

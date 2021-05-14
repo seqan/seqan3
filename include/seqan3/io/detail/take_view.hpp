@@ -7,7 +7,8 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Provides seqan3::views::take.
+ * \brief [DEPRECATED] Provides seqan3::views::take.
+ * \deprecated This header will be removed in 3.1.
  */
 
 #pragma once
@@ -52,6 +53,9 @@ namespace seqan3::detail
 template <std::ranges::view urng_t, bool exactly, bool or_throw>
 class view_take : public std::ranges::view_interface<view_take<urng_t, exactly, or_throw>>
 {
+#if SEQAN3_VERSION_MAJOR == 3 && SEQAN3_VERSION_MINOR == 1
+    #pragma warning "Move this class to seqan3/io/detail/take_exactly_view.hpp and name it view_take_exactly; substitute exactly with = true."
+#endif
 private:
     //!\brief The underlying range.
     urng_t urange;
@@ -534,6 +538,7 @@ struct take_fn
 
 } // namespace seqan3::detail
 
+#ifdef SEQAN3_DEPRECATED_310
 // ============================================================================
 //  views::take (adaptor instance definition)
 // ============================================================================
@@ -601,8 +606,9 @@ namespace seqan3::views
  *
  * \deprecated Use std::views::take or seqan3::views::type_reduce | std::views::take.
  */
-inline auto constexpr take = detail::take_fn<false, false>{};
+SEQAN3_DEPRECATED_310 inline auto constexpr take = detail::take_fn<false, false>{};
 
 //!\}
 
 } // namespace seqan3::views
+#endif // SEQAN3_DEPRECATED_310

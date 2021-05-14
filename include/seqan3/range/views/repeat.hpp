@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief [DEPRECATED] Provides the views::repeat_view.
+ * \brief [DEPRECATED] Provides the seqan3::views::repeat.
  * \deprecated This header will be removed in 3.1. Please use seqan3/utility/views/repeat.hpp instead.
  */
 
@@ -15,4 +15,5 @@
 
 #include <seqan3/utility/views/repeat.hpp>
 
-SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/repeat.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/utility/views/repeat.hpp> instead.")

@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief Provides seqan3::single_pass_input_view
+ * \brief Provides seqan3::views::single_pass_input
  */
 
 #pragma once

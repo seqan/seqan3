@@ -22,6 +22,8 @@
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
+inline auto constexpr seqan3_views_take = seqan3::detail::take_fn<false, false>{};
+
 // ============================================================================
 //  test templates
 // ============================================================================
@@ -113,12 +115,12 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
 
 TEST(view_take, regular)
 {
-    do_test(seqan3::views::take, "foobar");
+    do_test(seqan3_views_take, "foobar");
 }
 
 TEST(view_take, concepts)
 {
-    do_concepts(seqan3::views::take(3), false);
+    do_concepts(seqan3_views_take(3), false);
 }
 
 TEST(view_take, underlying_is_shorter)
@@ -126,11 +128,11 @@ TEST(view_take, underlying_is_shorter)
     using namespace std::literals;
 
     std::string vec{"foo"};
-    EXPECT_NO_THROW(( seqan3::views::take(vec, 4) )); // no parsing
+    EXPECT_NO_THROW(( seqan3_views_take(vec, 4) )); // no parsing
 
     std::string v;
     // full parsing on conversion
-    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3::views::take(4));
+    EXPECT_RANGE_EQ("foo"sv, vec | seqan3::views::single_pass_input | seqan3_views_take(4));
 }
 
 TEST(view_take, type_erasure)
@@ -138,7 +140,7 @@ TEST(view_take, type_erasure)
     {   // string const overload
         std::string const urange{"foobar"};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(0,3));
@@ -147,7 +149,7 @@ TEST(view_take, type_erasure)
     {   // stringview overload
         std::string_view urange{"foobar"};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_SAME_TYPE(decltype(v), std::string_view);
         EXPECT_RANGE_EQ(v, urange.substr(0,3));
@@ -156,7 +158,7 @@ TEST(view_take, type_erasure)
     {   // contiguous overload
         std::vector<int> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
@@ -165,7 +167,7 @@ TEST(view_take, type_erasure)
     {   // contiguous overload
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_SAME_TYPE(decltype(v), (std::span<int, std::dynamic_extent>));
         EXPECT_RANGE_EQ(v, (std::vector{1, 2, 3}));
@@ -174,7 +176,7 @@ TEST(view_take, type_erasure)
     {   // random-access overload
         std::deque<int> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
                                                                      typename std::deque<int>::iterator>>));
@@ -184,7 +186,7 @@ TEST(view_take, type_erasure)
     {   // generic overload (bidirectional container)
         std::list<int> urange{1, 2, 3, 4, 5, 6};
 
-        auto v = seqan3::views::take(urange, 3);
+        auto v = seqan3_views_take(urange, 3);
 
         EXPECT_TRUE((std::same_as<decltype(v), seqan3::detail::view_take<std::views::all_t<std::list<int> &>,
                                                                          false, false>>));
@@ -195,7 +197,7 @@ TEST(view_take, type_erasure)
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
         auto v = urange | std::views::filter([] (int) { return true; });
-        auto v2 = seqan3::views::take(v, 3);
+        auto v2 = seqan3_views_take(v, 3);
 
         EXPECT_SAME_TYPE(decltype(v2), (seqan3::detail::view_take<decltype(v), false, false>));
         EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
@@ -206,7 +208,7 @@ TEST(view_take, type_erasure)
 
         auto v0 = std::span{urange};
         auto v1 = v0 | std::views::take_while([] (int i) { return i < 6; });
-        auto v2 = seqan3::views::take(v1, 3);
+        auto v2 = seqan3_views_take(v1, 3);
 
         EXPECT_SAME_TYPE(decltype(v2), (seqan3::detail::view_take<decltype(v1), false, false>));
         EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
