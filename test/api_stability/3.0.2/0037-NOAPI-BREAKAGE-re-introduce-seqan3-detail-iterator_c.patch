@@ -1,0 +1,43 @@
+From 195ece494ab641b12ded2012fdcb2c634720fed3 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 14 May 2021 13:08:22 +0200
+Subject: [PATCH 37/37] [NOAPI] [BREAKAGE] re-introduce
+ seqan3::detail::iterator_category_tag_t in tests
+
+---
+ .../type_traits/type_traits_iterator_test.cpp | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/test/unit/core/type_traits/type_traits_iterator_test.cpp b/test/unit/core/type_traits/type_traits_iterator_test.cpp
+index eafdd6d14..60418c837 100644
+--- a/test/unit/core/type_traits/type_traits_iterator_test.cpp
++++ b/test/unit/core/type_traits/type_traits_iterator_test.cpp
+@@ -22,6 +22,25 @@ SEQAN3_CONCEPT iterator_traits_has_iterator_category = requires()
+     typename std::iterator_traits<iterator_t>::iterator_category;
+ };
+ 
++namespace seqan3::detail
++{
++template <typename it_t>
++struct iterator_category_tag
++{
++    using type = void;
++};
++
++template <typename it_t>
++    requires iterator_traits_has_iterator_category<it_t>
++struct iterator_category_tag<it_t>
++{
++    using type = typename std::iterator_traits<it_t>::iterator_category;
++};
++
++template <typename it_t>
++using iterator_category_tag_t = typename iterator_category_tag<it_t>::type;
++} // namespace seqan3::detail
++
+ template <typename iterator_t>
+ SEQAN3_CONCEPT has_iterator_category_tag_t = requires()
+ {
+-- 
+2.31.1
+
