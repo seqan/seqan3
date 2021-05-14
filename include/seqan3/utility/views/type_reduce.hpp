@@ -18,7 +18,7 @@
 #include <string_view>
 
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/range/views/detail.hpp>
+#include <seqan3/core/range/detail/adaptor_base.hpp>
 
 namespace seqan3::detail
 {

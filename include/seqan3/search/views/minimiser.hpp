@@ -16,7 +16,8 @@
 #include <deque>
 
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/range/views/detail.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 

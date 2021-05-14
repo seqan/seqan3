@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/range/views/detail.hpp>
+#include <seqan3/core/range/detail/adaptor_base.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 // The general capabilities of adaptor_base and derivates are tested thoroughly by the different views
@@ -180,16 +180,4 @@ TEST(arg_ownership, const_rval_adaptor)
     EXPECT_EQ(std::get<3>(f).move_count, 0ul);
     EXPECT_EQ(c4.copy_count, 0ul);
     EXPECT_EQ(c4.move_count, 0ul);
-}
-
-template <typename t>
-struct dummy_view
-{};
-
-TEST(adaptor_combination, constexpr_combine)
-{
-    constexpr auto adaptor1 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
-    constexpr auto adaptor2 = seqan3::detail::adaptor_for_view_without_args<dummy_view>{};
-
-    EXPECT_TRUE((SEQAN3_IS_CONSTEXPR(adaptor1 | adaptor2)));
 }

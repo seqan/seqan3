@@ -19,9 +19,9 @@
 #include <stdexcept>
 #include <seqan3/std/type_traits>
 
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/range/views/drop.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
 

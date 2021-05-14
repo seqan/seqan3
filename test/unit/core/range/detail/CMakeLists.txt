@@ -1,0 +1,2 @@
+seqan3_test(adaptor_base_test.cpp)
+seqan3_test(adaptor_for_view_without_args_test.cpp)

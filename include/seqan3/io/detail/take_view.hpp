@@ -22,10 +22,10 @@
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
+#include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/range/views/detail.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 
