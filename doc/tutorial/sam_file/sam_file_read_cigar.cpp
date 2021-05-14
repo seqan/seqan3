@@ -1,13 +1,8 @@
-#include <fstream>
-
-#include <seqan3/std/filesystem>
-
-struct write_file_dummy_struct
+#include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
+seqan3::test::create_temporary_snippet_file example_sam
 {
-    write_file_dummy_struct()
-    {
-
-auto file_raw = R"//![sam_file](
+    "my.sam",
+R"//![sam_file](
 @HD	VN:1.6	SO:coordinate
 @SQ	SN:ref	LN:45
 r001	99	ref	7	30	8M2I4M1D3M	=	37	39	TTAGATAAAGGATACTG	*
@@ -15,17 +10,10 @@ r003	0	ref	9	30	5S6M	*	0	0	GCCTAAGCTAA	*	SA:Z:ref,29,-,6H5M,17,0;
 r004	0	ref	16	30	6M14N5M	*	0	0	ATAGCTTCAGC	*
 r003	2064	ref	29	17	5M	*	0	0	TAGGC	*	SA:Z:ref,9,+,5S6M,30,1;
 r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
-)//![sam_file]";
+)//![sam_file]"
+}; // std::filesystem::current_path() / "my.sam" will be deleted after the execution
 
-        std::ofstream file{std::filesystem::temp_directory_path()/"my.sam"};
-        std::string str{file_raw};
-        file << str.substr(1); // skip first newline
-    }
-};
-
-write_file_dummy_struct go{};
-
-//![code]
+//![main]
 #include <seqan3/std/filesystem>
 
 #include <seqan3/core/debug_stream.hpp>
@@ -33,11 +21,11 @@ write_file_dummy_struct go{};
 
 int main()
 {
-    std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the temp directory
+    auto filename = std::filesystem::current_path() / "my.sam";
 
-    seqan3::sam_file_input fin{tmp_dir/"my.sam"}; // default fields
+    seqan3::sam_file_input fin{filename}; // default fields
 
-    for (auto & rec : fin)
-        seqan3::debug_stream << rec.cigar_sequence() << '\n'; // access cigar vector
+    for (auto & record : fin)
+        seqan3::debug_stream << record.cigar_sequence() << '\n'; // access cigar vector
 }
-//![code]
+//![main]

@@ -1,6 +1,6 @@
 #include <seqan3/test/snippet/create_temporary_snippet_file.hpp>
 // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
-create_temporary_snippet_file my_fastq{"my.fastq", "\n"};
+seqan3::test::create_temporary_snippet_file my_fastq{"my.fastq", "\n"};
 
 //![main]
 #include <seqan3/io/sequence_file/all.hpp>

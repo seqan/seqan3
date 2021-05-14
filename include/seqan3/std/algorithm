@@ -27,6 +27,7 @@
 #include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/copy_n.hpp>
+#include <range/v3/algorithm/count.hpp>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/algorithm/fill.hpp>
 #include <range/v3/algorithm/find_if_not.hpp>
@@ -92,7 +93,7 @@ using ::ranges::cpp20::find_if_not;
 // using ::ranges::cpp20::adjacent_find;
 
 // [alg.count], count
-// using ::ranges::cpp20::count;
+using ::ranges::cpp20::count;
 // using ::ranges::cpp20::count_if;
 
 // [mismatch], mismatch

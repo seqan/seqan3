@@ -3,7 +3,7 @@
 ***Learning Objective:***
 
 <b>Learning Objective:</b> <br/>
-You will get an overview of how to read and write alignment files.
+You will get an overview of how to read and write SAM/BAM files.
 This tutorial is a walk-through with links into the API documentation and also meant as a source for copy-and-paste code.
 
 \tutorial_head{Medium, 60 min, \ref setup\, \ref tutorial_alphabets\, \ref tutorial_sequence_file,}
@@ -12,13 +12,13 @@ This tutorial is a walk-through with links into the API documentation and also m
 
 # Introduction
 
-Alignment files are used to store pairwise alignments between two (biological) sequences.
-Common file formats are the Sequence Alignment/Map format (SAM) and BLAST output format.
-Next to the alignment, those formats store additional information like the start positions or mapping qualities.
-Alignment files are a little more complex than sequence files but the basic design is the same.
+SAM files are used to store pairwise alignments between two (biological) sequences. There are also other output formats,
+like BLAST, that can store sequence alignments, but in this tutorial we will focus on SAM/BAM files.
+In addition to the alignment, these formats store information such as the start positions or mapping qualities.
+SAM files are a little more complex than sequence files but the basic design is the same.
 If you are new to SeqAn, we strongly recommend to do the tutorial \ref tutorial_sequence_file first.
 
-# Alignment file formats
+# SAM/BAM file formats
 
 ## SAM format
 
@@ -51,29 +51,31 @@ If you want to read more about the SAM format, take a look at the
 
 ## BAM format
 
-BAM is the binary format version of SAM. It provides the same data as the SAM format
-with the only difference that **the header is mandatory**.
+BAM is the binary format version of SAM. It provides the same data as the SAM format with negligible and subtle
+differences in most use cases.
 
-# Alignment file fields
+# SAM file fields
 
-\copydetails seqan3::sam_file_input::field_ids
+To make things clearer, here is the table of SAM columns and the corresponding fields of a SAM file record:
 
-Note that some of the fields are specific to the SAM format, while some are specific to BLAST.
-To make things clearer, here is the table of SAM columns connected to the corresponding alignment file field:
+| #  | SAM Column ID |  FIELD name                                                                                          | seqan3::field                                    |
+|:--:|:--------------|:-----------------------------------------------------------------------------------------------------|:-------------------------------------------------|
+| 1  | QNAME         | seqan3::sam_record::id                                                                               | seqan3::field::id                                |
+| 2  | FLAG          | seqan3::sam_record::flag                                                                             | seqan3::field::flag                              |
+| 3  | RNAME         | seqan3::sam_record::reference_id                                                                     | seqan3::field::ref_id                            |
+| 4  | POS           | seqan3::sam_record::reference_position                                                               | seqan3::field::ref_offset                        |
+| 5  | MAPQ          | seqan3::sam_record::mapping_quality                                                                  | seqan3::field::mapq                              |
+| 6  | CIGAR         | implicitly stored in seqan3::sam_record::alignment <br> explicitly stored in seqan3::sam_record::cigar_sequence | seqan3::field::alignment <br> seqan3::field::cigar |
+| 7  | RNEXT         | seqan3::sam_record::mate_reference_id                                                                | seqan3::field::mate                              |
+| 8  | PNEXT         | seqan3::sam_record::mate_position                                                                    | seqan3::field::mate                              |
+| 9  | TLEN          | seqan3::sam_record::template_length                                                                  | seqan3::field::mate                              |
+| 10 | SEQ           | seqan3::sam_record::sequence                                                                         | seqan3::field::seq                               |
+| 11 | QUAL          | seqan3::sam_record::base_qualities                                                                   | seqan3::field::qual                              |
 
-| #  | SAM Column ID |  FIELD name                                                                       |
-|:--:|:--------------|:----------------------------------------------------------------------------------|
-| 1  | QNAME         | seqan3::field::id                                                                 |
-| 2  | FLAG          | seqan3::field::flag                                                               |
-| 3  | RNAME         | seqan3::field::ref_id                                                             |
-| 4  | POS           | seqan3::field::ref_offset                                                         |
-| 5  | MAPQ          | seqan3::field::mapq                                                               |
-| 6  | CIGAR         | implicitly stored in seqan3::field::alignment or directly in seqan3::field::cigar |
-| 7  | RNEXT         | seqan3::field::mate (tuple pos 0)                                                 |
-| 8  | PNEXT         | seqan3::field::mate (tuple pos 1)                                                 |
-| 9  | TLEN          | seqan3::field::mate (tuple pos 2)                                                 |
-| 10 | SEQ           | seqan3::field::seq                                                                |
-| 11 | QUAL          | seqan3::field::qual                                                               |
+SAM files provide following additional fields:
+* seqan3::sam_record::sequence_position (seqan3::field::offset)
+* seqan3::sam_record::tags (seqan3::field::tags)
+* seqan3::sam_record::header_ptr (seqan3::field::header_ptr)
 
 ## File extensions
 
@@ -87,12 +89,12 @@ The formerly introduced formats can be identified by the following file name ext
 
 You can access and modify the valid file extensions via the `file_extension` member variable in a format tag:
 
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp file_extensions
+\snippet doc/tutorial/sam_file/sam_file_file_extensions.cpp main
 
-# Reading alignment files
+# Reading SAM files
 
 Before we start, you should copy and paste this [example file](example.sam) into a file location of your choice
-(we use `/tmp/` in the examples, so make sure you adjust your path).
+(we use the current path in the examples, so make sure you adjust your path).
 
 \attention Make sure the file you copied is tab delimited!
 
@@ -102,35 +104,22 @@ The construction works analogously to sequence files by passing a file name,
 in which case all template parameters are automatically deduced (by the file name extension).
 Or you can pass a stream (e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
 
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp filename_construction
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_filename_construction.cpp main
 
-## Reading custom fields
+## Accessing individual record members
 
-In many cases you are not interested in all of the information in a file.
-For this purpose, we provide the possibility to select specific seqan3::field's for a file.
-The file will read only those fields and fill the record accordingly.
+You can access a record member like this:
 
-You can select fields by providing a seqan3::fields object as an extra parameter to the constructor:
+\snippet doc/tutorial/sam_file/sam_file_sam_record.cpp main
 
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp read_custom_fields
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
-
-\attention The order in which you specify the selected fields determines the order of elements in the seqan3::record.
-
-In the example above we only select the id, sequence and flag information
-so the seqan3::record object has three tuple elements that are decomposed using structural bindings.
-
-Note that this is possible for all SeqAn file objects.
+See seqan3::sam_record for all data accessors.
 
 \assignment{Assignment 1: Accumulating mapping qualities}
 
 Let's assume we want to compute the average mapping quality of a SAM file.
 
 For this purpose, write a small program that
-    * only reads the mapping quality (field::mapq) out of a SAM file and
+    * only reads the mapping quality (seqan3::sam_record::mapping_quality) of a SAM file and
     * computes the average of all qualities.
 
 Use the following file to test your program:
@@ -151,8 +140,7 @@ Average: 27.4
 
 # Alignment representation in the SAM format
 
-In SeqAn we represent an alignment as a tuple of two *aligned_sequences*,
-as you have probably learned by now from the alignment tutorial.
+In SeqAn, we represent an alignment as a tuple of two `seqan3::aligned_sequence`s.
 
 The SAM format is the common output format of read mappers where you align short read sequences
 to one or more large reference sequences.
@@ -190,18 +178,17 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 
 ## Reading the CIGAR string
 
-By default, the `seqan3::sam_file_input` will always read the `seqan3::field::cigar` and store it
-into a `std::vector<seqan3::cigar>`:
+By default, the seqan3::sam_file_input will always read the seqan3::sam_record::cigar_sequence and store it
+into a std::vector\<seqan3::cigar\>:
 
-\snippet doc/tutorial/sam_file/sam_file_read_cigar.cpp code
+\snippet doc/tutorial/sam_file/sam_file_read_cigar.cpp main
 
 ## Reading the CIGAR information into an actual alignment
 
-In SeqAn, the conversion from a CIGAR string to an alignment (two *aligned_sequences*) is done automatically for you. You can access it by querying `seqan3::field::alignment` from the record:
+In SeqAn, the conversion from a CIGAR string to an alignment (two seqan3::aligned_sequence's) is done automatically for you.
+You can access it by accessing seqan3::sam_record::alignment from the record:
 
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp alignments_without_ref
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_alignments_without_ref.cpp main
 
 In the example above, you can only safely access the aligned read.
 
@@ -212,29 +199,32 @@ Although the SAM format does not handle reference sequence information,
 you can provide these information to the seqan3::sam_file_input which automatically fills the alignment object.
 You can pass reference ids and reference sequences as additional constructor parameters:
 
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp alignments_with_ref
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_alignments_with_ref.cpp main
+
+The code will print the following:
+\include doc/tutorial/sam_file/sam_file_sam_record.out
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
-Read in the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
+Read the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
 
 \snippet doc/tutorial/sam_file/sam_file_solution2.cpp ref_file
 
-Then read in the following SAM file while providing the reference sequence information.
-Only read in the id, reference id, mapping quality, and alignment.
+Then read the following SAM file while providing the reference sequence information.
 
 \snippet doc/tutorial/sam_file/sam_file_solution2.cpp sam_file
+
+Only use
+* seqan3::sam_record::id,
+* seqan3::sam_record::reference_id,
+* seqan3::sam_record::mapping_quality, and
+* seqan3::sam_record::alignment.
 
 With that information do the following:
   * Filter the alignment records and only take those with a mapping quality >= 30.
     (Take a look at the tutorial \ref sequence_file_section_fun_with_ranges for a reminder how to use views on files)
-  * For the resulting alignments, print which read was mapped against with reference id and
-    the number of seqan3::gap's in each sequence (aligned reference and read sequence).
-
-\note reference ids (field::ref_id) are given as an index of type `std::optional<int32_t>`
-      that denote the position of the reference id in the `ref_ids` vector passed to the alignment file.
+  * For the resulting alignments, print which read was mapped against which reference id and
+    the number of `seqan3::gap`s in each sequence (aligned reference and read sequence).
 
 Your program should print the following:
 
@@ -259,26 +249,20 @@ r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the refere
 When writing a SAM file without any further specifications, the default file assumes that all fields are provided.
 Since those are quite a lot for alignment files, we usually want to write only a subset of the data stored in the SAM format and default the rest.
 
-For this purpose, you can also select specific fields by giving an additional seqan3::fields object to the constructor.
+For this purpose, you can use the seqan3::sam_record to write out a partial record.
 
-\attention The **order** of the field tags in your seqan3::fields object will determine
-           the order of values stored in the record type!
-
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp writing
-\snippet doc/tutorial/sam_file/sam_file_snippets.cpp main_end
+\snippet doc/tutorial/sam_file/sam_file_writing.cpp main
 
 Note that this only works because in the SAM format **all fields are optional**.
-So if we provide less fields when writing, default values are printed.
+So if we provide less fields when writing, default values are written.
 
 \assignment{Assignment 3: Writing id and sequence information}
 
-Write a small program that writes the following read ids + sequences:
+Create a small program that writes the following unmapped (see seqan3::sam_flag) read ids and sequences:
 
 ```
 read1: ACGATCGACTAGCTACGATCAGCTAGCAG
 read2: AGAAAGAGCGAGGCTATTTTAGCGAGTTA
-
 ```
 
 Your ids can be of type `std::string` and your sequences of type `std::vector<seqan3::dna4>`.
@@ -286,13 +270,13 @@ Your ids can be of type `std::string` and your sequences of type `std::vector<se
 Your resulting SAM file should look like this:
 
 ```
-read1   0       *       0       0       *       *       0       0       ACGATCGACTAGCTACGATCAGCTAGCAG   *
-read2   0       *       0       0       *       *       0       0       AGAAAGAGCGAGGCTATTTTAGCGAGTTA   *
+read1   4       *       0       0       *       *       0       0       ACGATCGACTAGCTACGATCAGCTAGCAG   *
+read2   4       *       0       0       *       *       0       0       AGAAAGAGCGAGGCTATTTTAGCGAGTTA   *
 ```
 
 \endassignment
 \solution
 
-\include doc/tutorial/sam_file/sam_file_solution3.cpp
+\snippet doc/tutorial/sam_file/sam_file_solution3.cpp solution
 
 \endsolution
