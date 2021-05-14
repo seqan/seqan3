@@ -20,3 +20,9 @@ int main()
     // seqan3::dna4 letter2 = my_rna4{}; // seqan3::dna4 only allows implicit conversion from seqan3::rna4!
 }
 //![main]
+
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
+
+static_assert(seqan3::implicitly_convertible_to<seqan3::rna4, seqan3::dna4>);
+static_assert(!seqan3::implicitly_convertible_to<seqan3::rna4, my_dna4>);
+static_assert(!seqan3::implicitly_convertible_to<my_rna4, seqan3::dna4>);
