@@ -528,6 +528,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 
                     ref_info_present_in_header = true;
                     std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
+                    std::optional<int32_t> sequence_length{};
                     std::tuple<int32_t, std::string> info{};
 
                     // All tags can appear in any order, SN and LN are required tags
@@ -552,7 +553,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                             {
                                 if (is_char<'N'>(*it))
                                 {
-                                    parse_tag_value(get<0>(info));
+                                    parse_tag_value(sequence_length);
                                     break;
                                 }
                                 [[fallthrough]];
@@ -568,11 +569,14 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 
                     if (id.empty())
                         throw format_error{std::string{"The required SN tag in @SQ is missing."}};
-                    if (get<0>(info) == int32_t{})
-                        throw format_error{std::string{"The required LN tag in @SQ is missing or 0."}};
+                    if (!sequence_length.has_value())
+                        throw format_error{std::string{"The required LN tag in @SQ is missing."}};
+                    if (sequence_length.value() <= 0)
+                        throw format_error{std::string{"The value of LN in @SQ must be positive."}};
                     if (is_char<'\t'>(get<1>(info).back())) // See parse_until_tab_or_newline
                         get<1>(info).pop_back();
 
+                    get<0>(info) = sequence_length.value();
                     // If reference information was given, the ids exist and we can fill ref_dict directly.
                     // If not, we need to update the ids first and fill the reference dictionary afterwards.
                     if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given

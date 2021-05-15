@@ -256,7 +256,6 @@ TEST_F(sam_format, header_errors)
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
     }
-    /* TODO (irallia):  These should throw, but actually they throw nothing.
     { // LN cannot be 0
         std::string header_str
         {
@@ -274,7 +273,7 @@ TEST_F(sam_format, header_errors)
         std::istringstream istream(header_str);
         seqan3::sam_file_input fin{istream, seqan3::format_sam{}};
         EXPECT_THROW(fin.begin(), seqan3::format_error);
-    } */
+    }
     { // maximum LN value is 2^31-1
         std::string header_str
         {
