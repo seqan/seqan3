@@ -20,7 +20,6 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/range/hash.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
-#include <seqan3/utility/type_traits/pre.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
 
 namespace seqan3

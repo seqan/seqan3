@@ -21,7 +21,6 @@
 #include <seqan3/search/detail/search_common.hpp>
 #include <seqan3/search/detail/search_traits.hpp>
 #include <seqan3/search/fm_index/concept.hpp>
-#include <seqan3/range/views/drop.hpp>
 
 namespace seqan3::detail
 {
