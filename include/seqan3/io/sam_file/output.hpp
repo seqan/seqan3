@@ -40,6 +40,18 @@
 namespace seqan3
 {
 
+#ifdef SEQAN3_DEPRECATED_310
+//!\cond
+template <typename tuple_t>
+static constexpr bool fourth_tuple_element_is_sequence = false;
+
+template <typename tuple_t>
+    requires (seqan3::tuple_like<tuple_t> && std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
+static constexpr bool fourth_tuple_element_is_sequence<tuple_t>
+    = seqan3::sequence<std::remove_cvref_t<std::tuple_element_t<3, tuple_t>>>;
+//!\endcond
+#endif // SEQAN3_DEPRECATED_310
+
 // ----------------------------------------------------------------------------
 // sam_file_output
 // ----------------------------------------------------------------------------
@@ -597,7 +609,7 @@ public:
     void push_back(tuple_t && t)
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
                  && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
-                 && (!seqan3::sequence<std::remove_cvref_t<std::tuple_element_t<3, std::remove_cvref_t<tuple_t>>>>)
+                 && (!fourth_tuple_element_is_sequence<std::remove_cvref_t<tuple_t>>)
     {
         push_back_tuple(std::forward<tuple_t>(t));
     }
@@ -610,7 +622,7 @@ public:
     SEQAN3_DEPRECATED_310 void push_back(tuple_t && t)
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
                  && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
-                 && (seqan3::sequence<std::remove_cvref_t<std::tuple_element_t<3, std::remove_cvref_t<tuple_t>>>>)
+                 && (fourth_tuple_element_is_sequence<std::remove_cvref_t<tuple_t>>)
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
@@ -736,7 +748,7 @@ public:
     //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
     template <typename seq_t, typename id_t, typename offset_t, typename ref_seq_t, typename ...arg_types>
         requires seqan3::sequence<std::remove_cvref_t<ref_seq_t>>
-    SEQAN3_DEPRECATED_310 void emplace_back(seq_t && seq,
+    void emplace_back SEQAN3_DEPRECATED_310(seq_t && seq,
                                             id_t && id,
                                             offset_t && offset,
                                             [[maybe_unused]] ref_seq_t && ref_seq,
