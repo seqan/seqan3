@@ -20,11 +20,6 @@
 
 namespace seqan3::detail
 {
-
-//!\brief Type alias for seqan3::detail::take_fn but with exactly set to true
-template <bool or_throw>
-using take_exactly_fn = take_fn<true, or_throw>;
-
 /*!\name General purpose views
  * \{
  */
