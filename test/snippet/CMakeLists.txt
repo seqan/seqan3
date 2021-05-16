@@ -16,7 +16,7 @@ option (seqan3_generate_snippets "Whether seqan3 snippets should be generated an
 add_library (snippet_main snippet_main.cpp)
 target_link_libraries (snippet_main PUBLIC seqan3::test gtest)
 
-macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
+macro (seqan3_snippet test_name_prefix snippet snippet_base_path undeterministic_snippet_list)
     seqan3_test_component (snippet_target_name "${snippet}" TARGET_NAME)
     seqan3_test_component (snippet_test_name "${snippet}" TEST_NAME)
     seqan3_test_component (snippet_target_path "${snippet}" TARGET_PATH)
@@ -37,14 +37,26 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     set_tests_properties ("${snippet_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
 
     set (snippet_compare_test_target "${test_name_prefix}/${snippet_test_name}_snippet_cmp_output")
-    add_test (NAME "${snippet_compare_test_target}"
-              COMMAND ${CMAKE_COMMAND}
-                      -DTARGET_FILE=$<TARGET_FILE:${target}>
-                      -DSOURCE_FILE=${snippet_base_path}/${snippet}
-                      -P "${CMAKE_SOURCE_DIR}/compare_snippet_output.cmake")
 
-    # disable version checker, as it interferes with comparing the snippet output
-    set_tests_properties ("${snippet_compare_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
+    # before cmake < 3.9 we can't mark tests as skippable and therefore don't execute them at all if they are in the
+    # undeterministic_snippet_list.
+    if (NOT CMAKE_VERSION VERSION_LESS 3.9 # cmake >= 3.9
+        OR NOT snippet_compare_test_target IN_LIST undeterministic_snippet_list)
+        add_test (NAME "${snippet_compare_test_target}"
+                  COMMAND ${CMAKE_COMMAND}
+                          -DTARGET_FILE=$<TARGET_FILE:${target}>
+                          -DSOURCE_FILE=${snippet_base_path}/${snippet}
+                          -P "${CMAKE_SOURCE_DIR}/compare_snippet_output.cmake")
+
+        # disable version checker, as it interferes with comparing the snippet output
+        set_tests_properties ("${snippet_compare_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
+
+        if (snippet_compare_test_target IN_LIST undeterministic_snippet_list)
+            # These are the tests that are known to have non-deterministic output.
+            # Note: Since cmake 3.9 tests that are maked as SKIPPED will not be counted as FAILED.
+            set_tests_properties ("${snippet_compare_test_target}" PROPERTIES SKIP_RETURN_CODE 1)
+        endif ()
+    endif ()
 
     unset (snippet_target_name)
     unset (snippet_test_name)
@@ -53,17 +65,26 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
 endmacro ()
 
 macro (seqan3_snippets test_name_prefix snippet_base_path)
+    set (undeterministic_snippet_list "${ARGV2}")
+
     seqan3_test_files (snippet_files "${snippet_base_path}" "*.cpp")
     foreach (snippet ${snippet_files})
-        seqan3_snippet("${test_name_prefix}" "${snippet}" "${snippet_base_path}")
+        seqan3_snippet("${test_name_prefix}" "${snippet}" "${snippet_base_path}" "${undeterministic_snippet_list}")
     endforeach ()
 endmacro ()
 
 seqan3_require_ccache ()
 seqan3_require_test ()
 
+# some snippets have non-deterministic output, we disable them here:
+set (undeterministic_snippet_list
+     "snippet/alignment/pairwise/parallel_align_pairwise_with_callback_snippet_cmp_output"
+     "snippet/io/views/async_input_buffer_snippet_cmp_output"
+     "snippet/release/3.0.2_user-callback-in-alignment-and-search_snippet_cmp_output"
+     "snippet/utility/container/aligned_allocator_snippet_cmp_output")
+
+seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}" "${undeterministic_snippet_list}")
 seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
-seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}")
 
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}")
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
