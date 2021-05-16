@@ -512,13 +512,16 @@ public:
 #endif // SEQAN3_DEPRECATED_310
                              field::header_ptr>;
 
-#ifndef SEQAN3_DEPRECATED_310
-static_assert(!field_ids::contains(field::ref_seq),
-              "You selected the deprecated seqan3::field::ref_seq. It will not be available in the record.");
-static_assert(!field_ids::contains(field::evalue),
-              "You selected the deprecated seqan3::field::evalue. It will not be available in the record.");
-static_assert(!field_ids::contains(field::bit_score),
-              "You selected the deprecated seqan3::field::bit_score. It will not be available in the record.");
+#ifdef SEQAN3_DEPRECATED_310
+    //!brief Does selected_field_ids contain all fields like in the default case?
+    static constexpr bool is_default_selected_field_ids = selected_field_ids::size == field_ids::size;
+
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::ref_seq),
+                  "You selected the deprecated seqan3::field::ref_seq. It will not be available in the record.");
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::evalue),
+                  "You selected the deprecated seqan3::field::evalue. It will not be available in the record.");
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::bit_score),
+                  "You selected the deprecated seqan3::field::bit_score. It will not be available in the record.");
 #endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
