@@ -115,7 +115,6 @@ TEST(general, default_template_args_and_deduction_guides)
     using comp1 = seqan3::fields<seqan3::field::seq,
                                  seqan3::field::id,
                                  seqan3::field::offset,
-                                 seqan3::field::ref_seq,
                                  seqan3::field::ref_id,
                                  seqan3::field::ref_offset,
                                  seqan3::field::alignment,
@@ -125,8 +124,6 @@ TEST(general, default_template_args_and_deduction_guides)
                                  seqan3::field::flag,
                                  seqan3::field::mate,
                                  seqan3::field::tags,
-                                 seqan3::field::evalue,
-                                 seqan3::field::bit_score,
                                  seqan3::field::header_ptr>;
     using comp2 = seqan3::type_list<seqan3::format_sam, seqan3::format_bam>;
     using comp3 = char;

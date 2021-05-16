@@ -1,0 +1,67 @@
+From 59fcd58ab4bd75891cf9ba99b04fdd716d63993a Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Sun, 16 May 2021 16:01:05 +0200
+Subject: [PATCH 38/38] [MISC] deprecate seqan3::sam_file::output fields
+ (seqan3::field::{ref_seq, evalue, bit_score})
+
+cherry-picked
+
+----
+
+sam_file_output does not need the fields ref_seq, evalue, bit_score.
+
+This commit remove those fields from the default-fields and ensures
+that custom fields don't contain those fields.
+
+This commit also splits ::push_back and ::emplace_back into four
+versions to deprecate the usage of the old default-fields case.
+---
+ ...ile_input_construction_without_automatic_type_deduction.cpp | 3 ---
+ test/unit/io/alignment_file/alignment_file_output_test.cpp     | 3 ---
+ 2 files changed, 6 deletions(-)
+
+diff --git a/test/snippet/io/alignment_file/alignment_file_input_construction_without_automatic_type_deduction.cpp b/test/snippet/io/alignment_file/alignment_file_input_construction_without_automatic_type_deduction.cpp
+index 137ff05d5..80ff04c64 100644
+--- a/test/snippet/io/alignment_file/alignment_file_input_construction_without_automatic_type_deduction.cpp
++++ b/test/snippet/io/alignment_file/alignment_file_input_construction_without_automatic_type_deduction.cpp
+@@ -12,7 +12,6 @@ int main()
+     using default_fields = seqan3::fields<seqan3::field::seq,
+                                           seqan3::field::id,
+                                           seqan3::field::offset,
+-                                          seqan3::field::ref_seq,
+                                           seqan3::field::ref_id,
+                                           seqan3::field::ref_offset,
+                                           seqan3::field::alignment,
+@@ -21,8 +20,6 @@ int main()
+                                           seqan3::field::flag,
+                                           seqan3::field::mate,
+                                           seqan3::field::tags,
+-                                          seqan3::field::evalue,
+-                                          seqan3::field::bit_score,
+                                           seqan3::field::header_ptr>;
+ 
+                                                                 // The expected format:
+diff --git a/test/unit/io/alignment_file/alignment_file_output_test.cpp b/test/unit/io/alignment_file/alignment_file_output_test.cpp
+index 489c78b7f..7ee1f79f5 100644
+--- a/test/unit/io/alignment_file/alignment_file_output_test.cpp
++++ b/test/unit/io/alignment_file/alignment_file_output_test.cpp
+@@ -118,7 +118,6 @@ TEST(general, default_template_args_and_deduction_guides)
+     using comp1 = seqan3::fields<seqan3::field::seq,
+                                  seqan3::field::id,
+                                  seqan3::field::offset,
+-                                 seqan3::field::ref_seq,
+                                  seqan3::field::ref_id,
+                                  seqan3::field::ref_offset,
+                                  seqan3::field::alignment,
+@@ -128,8 +127,6 @@ TEST(general, default_template_args_and_deduction_guides)
+                                  seqan3::field::flag,
+                                  seqan3::field::mate,
+                                  seqan3::field::tags,
+-                                 seqan3::field::evalue,
+-                                 seqan3::field::bit_score,
+                                  seqan3::field::header_ptr>;
+     using comp2 = seqan3::type_list<seqan3::format_sam, seqan3::format_bam>;
+     using comp3 = char;
+-- 
+2.31.1
+

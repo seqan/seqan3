@@ -25,7 +25,6 @@ template <detail::fields_specialisation selected_field_ids_ =
               fields<field::seq,
                      field::id,
                      field::offset,
-                     field::ref_seq,
                      field::ref_id,
                      field::ref_offset,
                      field::alignment,
@@ -35,8 +34,6 @@ template <detail::fields_specialisation selected_field_ids_ =
                      field::flag,
                      field::mate,
                      field::tags,
-                     field::evalue,
-                     field::bit_score,
                      field::header_ptr>,
           detail::type_list_of_sam_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
           typename ref_ids_type = ref_info_not_given>
