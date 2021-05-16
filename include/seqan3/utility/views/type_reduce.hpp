@@ -170,12 +170,4 @@ namespace seqan3
  */
 template <typename t>
 using type_reduce_t = decltype(views::type_reduce(std::declval<t>()));
-
-/*!\brief [DEPRECATED] Deduces the return value of seqan3::views::type_reduce.
- * \deprecated Please use seqan3::views::type_reduce_t.
- */
-#ifdef SEQAN3_DEPRECATED_310
-template <typename t>
-using type_reduce_view SEQAN3_DEPRECATED_310 = type_reduce_t<t>;
-#endif // SEQAN3_DEPRECATED_310
 }

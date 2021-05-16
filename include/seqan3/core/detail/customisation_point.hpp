@@ -38,26 +38,8 @@ struct priority_tag<0>
 } // seqan3::detail
 
 // ============================================================================
-// SEQAN3_CPO_IMPL
+// SEQAN3_CPO_OVERLOAD
 // ============================================================================
-
-//!\brief A macro that helps defining the overload set of a customisation point.
-//!\deprecated Please use #SEQAN3_CPO_OVERLOAD to define seqan3::detail::customisation_point_object instead.
-#ifdef SEQAN3_DEPRECATED_310
-#define SEQAN3_CPO_IMPL(PRIO, TERM)                                                                                  \
-/*!\brief A customisation point overload.*/                                                                          \
-template <typename t, typename ...arg_ts>                                                                            \
-static constexpr decltype(auto) impl(seqan3::detail::priority_tag<PRIO>,                                             \
-                                     [[maybe_unused]] t && v,                                                        \
-                                     [[maybe_unused]] arg_ts && ... args)                                            \
-    noexcept(noexcept(TERM))                                                                                         \
-    requires requires (seqan3::detail::priority_tag<PRIO> const &/*<- need for doxygen*/, t && v, arg_ts && ... args)\
-    { { TERM }; }                                                                                                    \
-{                                                                                                                    \
-    return TERM;                                                                                                     \
-}
-#endif // SEQAN3_DEPRECATED_310
-
 #if SEQAN3_DOXYGEN_ONLY(1)0
 /*!\brief A macro helper for #SEQAN3_CPO_OVERLOAD.
  * \details

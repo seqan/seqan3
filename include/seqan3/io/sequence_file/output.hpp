@@ -180,11 +180,7 @@ public:
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-#ifdef SEQAN3_DEPRECATED_310
-    using field_ids            = fields<field::seq, field::id, field::qual, field::_seq_qual_deprecated>;
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     using field_ids            = fields<field::seq, field::id, field::qual>;
-#endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
                   {
@@ -195,16 +191,6 @@ public:
                   }(),
                   "You selected a field that is not valid for sequence files, please refer to the documentation "
                   "of sequence_file_output::field_ids for the accepted values.");
-
-#ifdef SEQAN3_DEPRECATED_310
-    static_assert([] () constexpr
-                  {
-                      return !(selected_field_ids::contains(field::_seq_qual_deprecated) &&
-                               (selected_field_ids::contains(field::seq) ||
-                               (selected_field_ids::contains(field::qual))));
-                  }(),
-                  "You may not select field::seq_qual and either of field::seq and field::qual at the same time.");
-#endif // SEQAN3_DEPRECATED_310
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -396,16 +382,9 @@ public:
         requires detail::record_like<record_t>
     //!\endcond
     {
-#ifdef SEQAN3_DEPRECATED_310
-        write_record(detail::get_or_ignore<field::seq>(r),
-                     detail::get_or_ignore<field::id>(r),
-                     detail::get_or_ignore<field::qual>(r),
-                     detail::get_or_ignore<field::_seq_qual_deprecated>(r));
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
         write_record(detail::get_or_ignore<field::seq>(r),
                      detail::get_or_ignore<field::id>(r),
                      detail::get_or_ignore<field::qual>(r));
-#endif // SEQAN3_DEPRECATED_310
     }
 
     /*!\brief           Write a record in form of a std::tuple to the file.
@@ -436,16 +415,9 @@ public:
     //!\endcond
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
-#ifdef SEQAN3_DEPRECATED_310
-        write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::id)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::qual)>(t),
-                     detail::get_or_ignore<selected_field_ids::index_of(field::_seq_qual_deprecated)>(t));
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
                      detail::get_or_ignore<selected_field_ids::index_of(field::id)>(t),
                      detail::get_or_ignore<selected_field_ids::index_of(field::qual)>(t));
-#endif // SEQAN3_DEPRECATED_310
     }
 
     /*!\brief            Write a record to the file by passing individual fields.
@@ -603,38 +575,12 @@ protected:
     //!\}
 
     //!\brief Write record to format.
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename seq_t, typename id_t, typename qual_t, typename seq_qual_t>
-    void write_record(seq_t && seq, id_t && id, qual_t && qual, seq_qual_t && seq_qual)
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename seq_t, typename id_t, typename qual_t>
     void write_record(seq_t && seq, id_t && id, qual_t && qual)
-#endif // SEQAN3_DEPRECATED_310
     {
-#ifdef SEQAN3_DEPRECATED_310
-        static_assert(detail::decays_to_ignore_v<seq_qual_t> ||
-                      (detail::decays_to_ignore_v<seq_t> && detail::decays_to_ignore_v<qual_t>),
-                      "You may not select field::seq_qual and either of field::seq and field::qual at the same time.");
-
-        if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
-            static_assert(detail::is_type_specialisation_of_v<std::ranges::range_value_t<seq_qual_t>, qualified>,
-                          "The SEQ_QUAL field must contain a range over the seqan3::qualified alphabet.");
-#endif // SEQAN3_DEPRECATED_310
-
         assert(!format.valueless_by_exception());
         std::visit([&] (auto & f)
         {
-#ifdef SEQAN3_DEPRECATED_310
-            if constexpr (!detail::decays_to_ignore_v<seq_qual_t>)
-            {
-                f.write_sequence_record(*secondary_stream,
-                                        options,
-                                        seq_qual | views::elements<0>,
-                                        id,
-                                        seq_qual | views::elements<1>);
-            }
-            else
-#endif // SEQAN3_DEPRECATED_310
             {
                 f.write_sequence_record(*secondary_stream,
                                         options,

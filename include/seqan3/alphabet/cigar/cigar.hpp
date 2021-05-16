@@ -239,14 +239,6 @@ inline cigar::operation operator""_cigar_operation(char const c) noexcept
 {
     return cigar::operation{}.assign_char(c);
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-//!\deprecated Please use seqan3::""_cigar_operation instead.
-SEQAN3_DEPRECATED_310 inline cigar::operation operator""_cigar_op(char const c) noexcept
-{
-    return cigar::operation{}.assign_char(c);
-}
-#endif // SEQAN3_DEPRECATED_310
 //!\}
 
 } // inline namespace literals

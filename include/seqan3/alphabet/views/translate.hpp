@@ -77,22 +77,7 @@ enum class translation_frames : uint8_t
     forward_reverse2 = forward_frame2 | reverse_frame2, //!< The first third and third reverse frame
     forward_frames = forward_frame0 | forward_frame1 | forward_frame2, //!< All forward frames
     reverse_frames = reverse_frame0 | reverse_frame1 | reverse_frame2, //!< All reverse frames
-    six_frames = forward_frames | reverse_frames, //!< All frames
-
-#ifdef SEQAN3_DEPRECATED_310
-    FWD_FRAME_0 SEQAN3_DEPRECATED_310 = forward_frame0, //!< \deprecated Use forward_frame0 instead.
-    FWD_FRAME_1 SEQAN3_DEPRECATED_310 = forward_frame1, //!< \deprecated Use forward_frame1 instead.
-    FWD_FRAME_2 SEQAN3_DEPRECATED_310 = forward_frame2, //!< \deprecated Use forward_frame2 instead.
-    REV_FRAME_0 SEQAN3_DEPRECATED_310 = reverse_frame0, //!< \deprecated Use reverse_frame0 instead.
-    REV_FRAME_1 SEQAN3_DEPRECATED_310 = reverse_frame1, //!< \deprecated Use reverse_frame1 instead.
-    REV_FRAME_2 SEQAN3_DEPRECATED_310 = reverse_frame2, //!< \deprecated Use reverse_frame2 instead.
-    FWD_REV_0 SEQAN3_DEPRECATED_310 = forward_reverse0, //!< \deprecated Use forward_reverse0 instead.
-    FWD_REV_1 SEQAN3_DEPRECATED_310 = forward_reverse1, //!< \deprecated Use forward_reverse1 instead.
-    FWD_REV_2 SEQAN3_DEPRECATED_310 = forward_reverse2, //!< \deprecated Use forward_reverse2 instead.
-    FWD SEQAN3_DEPRECATED_310 = forward_frames, //!< \deprecated Use forward_frames instead.
-    REV SEQAN3_DEPRECATED_310 = reverse_frames, //!< \deprecated Use reverse_frames instead.
-    SIX_FRAME SEQAN3_DEPRECATED_310 = six_frames //!< \deprecated Use six_frames instead.
-#endif // SEQAN3_DEPRECATED_310
+    six_frames = forward_frames | reverse_frames //!< All frames
 };
 
 //!\cond DEV
@@ -653,19 +638,6 @@ public:
     view_translate(rng_t && _urange, translation_frames const _tf)
      : view_translate{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
-
-    //!\deprecated Please use seqan3::detail::view_translate::view_translate(rng_t &&, translation_frames const)
-    #ifdef SEQAN3_DEPRECATED_310
-    template <typename rng_t>
-    //!\cond
-        requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate>) &&
-                 std::ranges::viewable_range<rng_t> &&
-                 std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    //!\endcond
-    view_translate(rng_t && _urange)
-     : view_translate{std::views::all(std::forward<rng_t>(_urange)), translation_frames::six_frames}
-    {}
-    #endif // SEQAN3_DEPRECATED_310
     //!\}
 
     /*!\name Iterators
@@ -773,19 +745,6 @@ public:
     }
     //!\}
 };
-
-/*!\brief \deprecated This Class template argument deduction for view_translate is deprecated and will be removed in
- *                    SeqAn 3.1.0.
- */
-#ifdef SEQAN3_DEPRECATED_310
-template <typename urng_t>
-//!\cond
-    requires std::ranges::sized_range<urng_t> &&
-             std::ranges::random_access_range<urng_t> &&
-             nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
-view_translate (urng_t &&) -> view_translate<std::views::all_t<urng_t>>;
-#endif // SEQAN3_DEPRECATED_310
 
 //!\brief Class template argument deduction for view_translate.
 template <typename urng_t>

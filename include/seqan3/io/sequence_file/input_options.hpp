@@ -18,14 +18,8 @@ namespace seqan3
 {
 /*!\brief The options type defines various option members that influence the behaviour of all or some formats.
  * \tparam sequence_legal_alphabet_ The sequence legal alphabet exposed as type trait to the format.
- * \tparam seq_qual_combined [DEPRECATED] Trait that exposes to the format whether seq and qual arguments are
- *                           actually the same/combined. Will be removed in SeqAn-3.1.0.
  */
-#ifdef SEQAN3_DEPRECATED_310
-template <typename sequence_legal_alphabet, bool seq_qual_combined>
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
 template <typename sequence_legal_alphabet>
-#endif // SEQAN3_DEPRECATED_310
 struct sequence_file_input_options
 {
     //!\brief Read the ID string only up until the first whitespace character.

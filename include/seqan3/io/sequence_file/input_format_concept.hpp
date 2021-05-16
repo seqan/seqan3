@@ -70,11 +70,7 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
                                                       std::ifstream                                 & f,
-#ifdef SEQAN3_DEPRECATED_310
-                                                      sequence_file_input_options<dna5, false>      & options,
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
                                                       sequence_file_input_options<dna5>             & options,
-#endif // SEQAN3_DEPRECATED_310
                                                       std::vector<dna5>                             & seq,
                                                       std::string                                   & id,
                                                       std::vector<phred42>                          & qual,

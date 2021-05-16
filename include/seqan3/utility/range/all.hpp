@@ -12,9 +12,7 @@
 
 #pragma once
 
-#include <seqan3/range/container/all.hpp>
-#include <seqan3/range/decorator/all.hpp>
-#include <seqan3/range/views/all.hpp>
+#include <seqan3/utility/range/concept.hpp>
 
 /*!\defgroup range Range
  * \brief The range module provides general purpose containers, decorators and views.

@@ -229,16 +229,3 @@ inline auto constexpr persist = persist_fn{};
 //!\}
 
 } // namespace seqan3::detail
-
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3::views
-{
-
-/*!\brief A view adaptor that wraps rvalue references of non-views.
- * \ingroup views
- * \deprecated This view is deprecated and will be removed in SeqAn3.1.
- */
-SEQAN3_DEPRECATED_310 inline auto constexpr persist = detail::persist_fn{};
-
-} // namespace seqan3::views
-#endif // SEQAN3_DEPRECATED_310

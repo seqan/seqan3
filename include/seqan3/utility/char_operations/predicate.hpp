@@ -48,24 +48,6 @@ template <uint8_t interval_first, uint8_t interval_last>
 //!\endcond
 inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_first, interval_last>{};
 
-#ifdef SEQAN3_DEPRECATED_310
-/*!\brief Checks whether a given letter is valid for the specified seqan3::alphabet.
- * \tparam alphabet_t The alphabet to check; must model seqan3::alphabet.
- * \ingroup char_operations
- *
- * \details
- *
- * This function like object returns true for all characters of the alphabet, false otherwise.
- * The actual check being performed is whether assigning and then reading a letter results in the original input
- * (but case is ignored).
- *
- * \hideinitializer
- * \deprecated Use seqan3::char_is_valid_for instead.
- */
-template <alphabet alphabet_t>
-SEQAN3_DEPRECATED_310 inline constexpr auto is_in_alphabet = detail::is_in_alphabet_type<alphabet_t>{};
-#endif // SEQAN3_DEPRECATED_310
-
 /*!\brief Checks whether a given letter is the same as the template non-type argument.
  * \tparam char_v The letter to compare against.
  * \ingroup char_operations

@@ -196,17 +196,6 @@
 #   define SEQAN3_PRAGMA(non_string_literal) _Pragma(#non_string_literal)
 #endif
 
-//!\brief Deprecation message for SeqAn 3.1.0 release.
-#ifndef SEQAN3_REMOVE_DEPRECATED_310
-#    ifndef SEQAN3_DEPRECATED_310
-#       ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
-#           define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
-#       else
-#           define SEQAN3_DEPRECATED_310 /**/
-#       endif
-#    endif
-#endif
-
 //!\brief Deprecation message for deprecated header.
 #ifndef SEQAN3_DEPRECATED_HEADER
 #   ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
@@ -227,11 +216,6 @@
  * * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95578
  */
 #if defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
-#   ifdef SEQAN3_DEPRECATED_310
-#       define SEQAN3_WORKAROUND_GCC_93983 0
-#       define SEQAN3_WORKAROUND_GCC_95371 0
-#       define SEQAN3_WORKAROUND_GCC_95578 0
-#   endif // SEQAN3_DEPRECATED_310
 #   pragma GCC warning "Be aware that gcc 10.0 and 10.1 are known to have several bugs that might make SeqAn3 fail to compile. Please use gcc >= 10.2."
 #endif // defined(__GNUC__) && (__GNUC__ == 10 && __GNUC_MINOR__ <= 1)
 

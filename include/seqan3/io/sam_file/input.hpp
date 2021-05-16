@@ -335,9 +335,6 @@ template <
     detail::fields_specialisation selected_field_ids_ = fields<field::seq,
                                                                field::id,
                                                                field::offset,
-#ifdef SEQAN3_DEPRECATED_310
-                                                               field::ref_seq,
-#endif // SEQAN3_DEPRECATED_310
                                                                field::ref_id,
                                                                field::ref_offset,
                                                                field::alignment,
@@ -347,10 +344,6 @@ template <
                                                                field::flag,
                                                                field::mate,
                                                                field::tags,
-#ifdef SEQAN3_DEPRECATED_310
-                                                               field::evalue,
-                                                               field::bit_score,
-#endif // SEQAN3_DEPRECATED_310
                                                                field::header_ptr>,
     detail::type_list_of_sam_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
 class sam_file_input
@@ -432,12 +425,6 @@ public:
     using cigar_type               = std::vector<cigar>;
     //!\brief The type of field::mate is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
     using mate_type                = std::tuple<ref_id_type, ref_offset_type, int32_t>;
-#ifdef SEQAN3_DEPRECATED_310
-    //!\brief The type of field::evalue is fixed to double.
-    using e_value_type             = double;
-    //!\brief The type of field::bitscore is fixed to double.
-    using bitscore_type            = double;
-#endif // SEQAN3_DEPRECATED_310
     //!\brief The type of field::header_ptr (default: sam_file_header<typename traits_type::ref_ids>).
     using header_type              = sam_file_header<typename traits_type::ref_ids>;
 
@@ -458,9 +445,6 @@ public:
     using field_types = type_list<sequence_type,
                                   id_type,
                                   offset_type,
-#ifdef SEQAN3_DEPRECATED_310
-                                  ref_sequence_type,
-#endif // SEQAN3_DEPRECATED_310
                                   ref_id_type,
                                   ref_offset_type,
                                   alignment_type,
@@ -470,10 +454,6 @@ public:
                                   flag_type,
                                   mate_type,
                                   sam_tag_dictionary,
-#ifdef SEQAN3_DEPRECATED_310
-                                  e_value_type,
-                                  bitscore_type,
-#endif // SEQAN3_DEPRECATED_310
                                   header_type *>;
 
     /*!\brief The subset of seqan3::field tags valid for this file; order corresponds to the types in \ref field_types.
@@ -500,9 +480,6 @@ public:
     using field_ids = fields<field::seq,
                              field::id,
                              field::offset,
-#ifdef SEQAN3_DEPRECATED_310
-                             field::ref_seq,
-#endif // SEQAN3_DEPRECATED_310
                              field::ref_id,
                              field::ref_offset,
                              field::alignment,
@@ -512,23 +489,7 @@ public:
                              field::flag,
                              field::mate,
                              field::tags,
-#ifdef SEQAN3_DEPRECATED_310
-                             field::evalue,
-                             field::bit_score,
-#endif // SEQAN3_DEPRECATED_310
                              field::header_ptr>;
-
-#ifdef SEQAN3_DEPRECATED_310
-    //!brief Does selected_field_ids contain all fields like in the default case?
-    static constexpr bool is_default_selected_field_ids = selected_field_ids::size == field_ids::size;
-
-    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::ref_seq),
-                  "You selected the deprecated seqan3::field::ref_seq. It will not be available in the record.");
-    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::evalue),
-                  "You selected the deprecated seqan3::field::evalue. It will not be available in the record.");
-    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::bit_score),
-                  "You selected the deprecated seqan3::field::bit_score. It will not be available in the record.");
-#endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
                   {

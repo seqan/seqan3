@@ -65,9 +65,6 @@ enum class field
     seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
     id,             //!< The identifier, usually a string.
     qual,           //!< The qualities, usually in Phred score notation.
-#ifdef SEQAN3_DEPRECATED_310
-    _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
-#endif // SEQAN3_DEPRECATED_310
 
     offset,         //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
 
@@ -106,48 +103,7 @@ enum class field
     user_defined_6, //!< Identifier for user defined file formats and specialisations.
     user_defined_7, //!< Identifier for user defined file formats and specialisations.
     user_defined_8, //!< Identifier for user defined file formats and specialisations.
-    user_defined_9, //!< Identifier for user defined file formats and specialisations.
-
-#ifdef SEQAN3_DEPRECATED_310
-    // deprecated lowercase:
-    seq_qual SEQAN3_DEPRECATED_310 = _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
-
-    // deprecated uppercase:
-    SEQ SEQAN3_DEPRECATED_310 = seq, //!< Please use the field name in lower case.
-    ID SEQAN3_DEPRECATED_310 = id, //!< Please use the field name in lower case.
-    QUAL SEQAN3_DEPRECATED_310 = qual, //!< Please use the field name in lower case.
-    SEQ_QUAL SEQAN3_DEPRECATED_310 = _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
-    OFFSET SEQAN3_DEPRECATED_310 = offset, //!< Please use the field name in lower case.
-    BPP SEQAN3_DEPRECATED_310 = bpp, //!< Please use the field name in lower case.
-    STRUCTURE SEQAN3_DEPRECATED_310 = structure, //!< Please use the field name in lower case.
-    STRUCTURED_SEQ SEQAN3_DEPRECATED_310 = structured_seq, //!< Please use the field name in lower case.
-    ENERGY SEQAN3_DEPRECATED_310 = energy, //!< Please use the field name in lower case.
-    REACT SEQAN3_DEPRECATED_310 = react, //!< Please use the field name in lower case.
-    REACT_ERR SEQAN3_DEPRECATED_310 = react_err, //!< Please use the field name in lower case.
-    COMMENT SEQAN3_DEPRECATED_310 = comment, //!< Please use the field name in lower case.
-    ALIGNMENT SEQAN3_DEPRECATED_310 = alignment, //!< Please use the field name in lower case.
-    REF_ID SEQAN3_DEPRECATED_310 = ref_id, //!< Please use the field name in lower case.
-    REF_SEQ SEQAN3_DEPRECATED_310 = ref_seq, //!< Please use the field name in lower case.
-    REF_OFFSET SEQAN3_DEPRECATED_310 = ref_offset, //!< Please use the field name in lower case.
-    HEADER_PTR SEQAN3_DEPRECATED_310 = header_ptr, //!< Please use the field name in lower case.
-    FLAG SEQAN3_DEPRECATED_310 = flag, //!< Please use the field name in lower case.
-    MATE SEQAN3_DEPRECATED_310 = mate, //!< Please use the field name in lower case.
-    MAPQ SEQAN3_DEPRECATED_310 = mapq, //!< Please use the field name in lower case.
-    CIGAR SEQAN3_DEPRECATED_310 = cigar, //!< Please use the field name in lower case.
-    TAGS SEQAN3_DEPRECATED_310 = tags, //!< Please use the field name in lower case.
-    BIT_SCORE SEQAN3_DEPRECATED_310 = bit_score, //!< Please use the field name in lower case.
-    EVALUE SEQAN3_DEPRECATED_310 = evalue, //!< Please use the field name in lower case.
-    USER_DEFINED_0 SEQAN3_DEPRECATED_310 = user_defined_0, //!< Please use the field name in lower case.
-    USER_DEFINED_1 SEQAN3_DEPRECATED_310 = user_defined_1, //!< Please use the field name in lower case.
-    USER_DEFINED_2 SEQAN3_DEPRECATED_310 = user_defined_2, //!< Please use the field name in lower case.
-    USER_DEFINED_3 SEQAN3_DEPRECATED_310 = user_defined_3, //!< Please use the field name in lower case.
-    USER_DEFINED_4 SEQAN3_DEPRECATED_310 = user_defined_4, //!< Please use the field name in lower case.
-    USER_DEFINED_5 SEQAN3_DEPRECATED_310 = user_defined_5, //!< Please use the field name in lower case.
-    USER_DEFINED_6 SEQAN3_DEPRECATED_310 = user_defined_6, //!< Please use the field name in lower case.
-    USER_DEFINED_7 SEQAN3_DEPRECATED_310 = user_defined_7, //!< Please use the field name in lower case.
-    USER_DEFINED_8 SEQAN3_DEPRECATED_310 = user_defined_8, //!< Please use the field name in lower case.
-    USER_DEFINED_9 SEQAN3_DEPRECATED_310 = user_defined_9, //!< Please use the field name in lower case.
-#endif // SEQAN3_DEPRECATED_310
+    user_defined_9  //!< Identifier for user defined file formats and specialisations.
 };
 
 // ----------------------------------------------------------------------------
@@ -338,55 +294,3 @@ struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>
 {};
 
 } // namespace std
-
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3
-{
-
-/*!\name Free function get() interface for seqan3::record based on seqan3::field.
- * \brief This is the tuple interface via seqan3::field, e.g. `seqan3::get<seqan3::field::seq>(record)`.
- * \relates seqan3::record
- * \{
- */
-
-//!\brief Free function get() for seqan3::record based on seqan3::field.
-template <field f, typename field_types, typename field_ids>
-SEQAN3_DEPRECATED_310 auto & get(record<field_types, field_ids> & r)
-{
-    static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-    return std::get<field_ids::index_of(f)>(r);
-}
-
-//!\overload
-template <field f, typename field_types, typename field_ids>
-SEQAN3_DEPRECATED_310 auto const & get(record<field_types, field_ids> const & r)
-{
-    static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-    return std::get<field_ids::index_of(f)>(r);
-}
-
-//!\overload
-template <field f, typename field_types, typename field_ids>
-SEQAN3_DEPRECATED_310 auto && get(record<field_types, field_ids> && r)
-{
-    static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-    return std::get<field_ids::index_of(f)>(std::move(r));
-}
-
-//!\overload
-template <field f, typename field_types, typename field_ids>
-SEQAN3_DEPRECATED_310 auto const && get(record<field_types, field_ids> const && r)
-{
-    static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-#if SEQAN3_WORKAROUND_GCC_94967
-    // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-    using return_t = std::tuple_element_t<field_ids::index_of(f), record<field_types, field_ids>>;
-    return static_cast<return_t const &&>(std::get<field_ids::index_of(f)>(std::move(r)));
-#else // ^^^ workaround / no workaround vvv
-    return std::get<field_ids::index_of(f)>(std::move(r));
-#endif // SEQAN3_WORKAROUND_GCC_94967
-}
-//!\}
-
-} // namespace seqan3
-#endif // SEQAN3_DEPRECATED_310

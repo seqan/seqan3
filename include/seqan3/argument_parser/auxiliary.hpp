@@ -252,18 +252,10 @@ enum option_spec
                    * be displayed in the normal help page (`-h/--help`). Instead, the
                    * advanced options are only displayed when calling `-hh/--advanced-help`
                    */
-    hidden = 4,   /*!< Set an option/flag to hidden, if you want to completely hide it from
+    hidden = 4    /*!< Set an option/flag to hidden, if you want to completely hide it from
                    * the user. It will never appear on the help page nor any export format.
                    * For example, this can be useful for debugging reasons.
-                   * (e.g. "A tool for mapping reads to the genome").
                    */
-
-#ifdef SEQAN3_DEPRECATED_310
-    DEFAULT SEQAN3_DEPRECATED_310  = standard, //!< \deprecated Use seqan3::option_spec::standard instead.
-    REQUIRED SEQAN3_DEPRECATED_310 = required, //!< \deprecated Use seqan3::option_spec::required instead.
-    ADVANCED SEQAN3_DEPRECATED_310 = advanced, //!< \deprecated Use seqan3::option_spec::advanced instead.
-    HIDDEN SEQAN3_DEPRECATED_310   = hidden,   //!< \deprecated Use seqan3::option_spec::hidden instead.
-#endif // SEQAN3_DEPRECATED_310
 };
 
 //!\brief Indicates whether application allows automatic update notifications by the seqan3::argument_parser.

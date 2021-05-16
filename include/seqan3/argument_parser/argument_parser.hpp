@@ -162,25 +162,6 @@ public:
     argument_parser(argument_parser &&) = default;                  //!< Defaulted.
     argument_parser & operator=(argument_parser &&) = default;      //!< Defaulted.
 
-#ifdef SEQAN3_DEPRECATED_310
-    //!\deprecated Please use seqan3::update_notifications::on or seqan3::update_notifications::off for `version_updates`.
-    SEQAN3_DEPRECATED_310
-    argument_parser(std::string const app_name,
-                    int const argc,
-                    char const * const * const  argv,
-                    bool version_updates,
-                    std::vector<std::string> subcommands = {}) :
-        argument_parser
-        {
-            app_name,
-            argc,
-            argv,
-            version_updates ? update_notifications::on : update_notifications::off,
-            subcommands
-        }
-    {}
-#endif // SEQAN3_DEPRECATED_310
-
     /*!\brief Initializes an seqan3::argument_parser object from the command line arguments.
      *
      * \param[in] app_name The name of the app that is displayed on the help page.
