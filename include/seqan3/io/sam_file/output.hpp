@@ -607,7 +607,7 @@ public:
     // * sizeof...(arg_types) + 1 > 3
     //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
     template <typename tuple_t>
-    void push_back(tuple_t && t)
+    SEQAN3_DEPRECATED_310 void push_back(tuple_t && t)
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
                  && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
                  && (seqan3::sequence<std::remove_cvref_t<std::tuple_element_t<3, std::remove_cvref_t<tuple_t>>>>)
@@ -736,14 +736,18 @@ public:
     //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
     template <typename seq_t, typename id_t, typename offset_t, typename ref_seq_t, typename ...arg_types>
         requires seqan3::sequence<std::remove_cvref_t<ref_seq_t>>
-    void emplace_back(seq_t && seq,
-                      id_t && id,
-                      offset_t && offset,
-                      [[maybe_unused]] ref_seq_t && ref_seq,
-                      arg_types && ... args)
+    SEQAN3_DEPRECATED_310 void emplace_back(seq_t && seq,
+                                            id_t && id,
+                                            offset_t && offset,
+                                            [[maybe_unused]] ref_seq_t && ref_seq,
+                                            arg_types && ... args)
         requires is_default_selected_field_ids
     {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        // use deprecated call
         push_back(std::tie(seq, id, offset, ref_seq, args...));
+#pragma GCC diagnostic pop
     }
     //!\endcond
 #endif // SEQAN3_DEPRECATED_310

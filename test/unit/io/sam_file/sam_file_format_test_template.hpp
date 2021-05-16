@@ -623,10 +623,13 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
     this->tag_dicts[0]["AS"_tag] = 2;
     this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
 
+#ifdef SEQAN3_DEPRECATED_310
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
         for (size_t i = 0ul; i < 3ul; ++i)
         {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
                                               this->ids[i],
                                               this->offsets[i],
@@ -642,6 +645,34 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
                                               this->tag_dicts[i],
                                               0/*evalue*/,
                                               0/*bitscore*/,
+                                              &(this->header)));
+#pragma GCC diagnostic pop
+        }
+    }
+
+    this->ostream.flush();
+    // compare to original input because hard clipping is preserved when writing the cigar vector directly
+    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
+
+    this->ostream = std::ostringstream{}; // clear
+#endif // SEQAN3_DEPRECATED_310
+
+    {
+        seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
+        for (size_t i = 0ul; i < 3ul; ++i)
+        {
+            ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
+                                              this->ids[i],
+                                              this->offsets[i],
+                                              0/*ref_id*/,
+                                              this->ref_offsets[i],
+                                              this->alignments[i],
+                                              cigar_v[i],
+                                              this->mapqs[i],
+                                              this->quals[i],
+                                              this->flags[i],
+                                              this->mates[i],
+                                              this->tag_dicts[i],
                                               &(this->header)));
         }
     }
