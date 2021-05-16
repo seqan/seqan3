@@ -13,6 +13,9 @@ include (../cmake/diagnostics/list_unused_snippets.cmake)
 
 option (seqan3_generate_snippets "Whether seqan3 snippets should be generated and overwritten within the source tree." ON)
 
+add_library (snippet_main snippet_main.cpp)
+target_link_libraries (snippet_main PUBLIC seqan3::test gtest)
+
 macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     seqan3_test_component (snippet_target_name "${snippet}" TARGET_NAME)
     seqan3_test_component (snippet_test_name "${snippet}" TEST_NAME)
@@ -20,7 +23,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     set (target "${snippet_target_name}_snippet")
 
     add_executable (${target} "${snippet_base_path}/${snippet}")
-    target_link_libraries (${target} seqan3::test::unit)
+    target_link_libraries (${target} PUBLIC snippet_main)
     set_target_properties(${target}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${snippet_target_path}"
