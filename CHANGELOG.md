@@ -321,7 +321,7 @@ Header Changes:
 #include <seqan3/io/{alignment_file=> sam_file}/output.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/output_format_concept.hpp>
 #include <seqan3/io/{alignment_file=> sam_file}/output_options.hpp>
-#include <seqan3/io/{alignment_file=> sam_file}/record.hpp>
+#include <seqan3/io/sam_file/record.hpp> [Added]
 #include <seqan3/io/{alignment_file=> sam_file}/sam_tag_dictionary.hpp>
 
 #include <seqan3/io/sequence_file/record.hpp> [Added]
