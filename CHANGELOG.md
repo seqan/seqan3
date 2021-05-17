@@ -62,6 +62,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Search
 
+* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
+  ([\#2048](https://github.com/seqan/seqan3/pull/2048)).
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 * The `seqan3::interleaved_bloom_filter` supports counting occurrences of a range of values
   ([\#2373](https://github.com/seqan/seqan3/pull/2373)).
@@ -93,6 +95,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### I/O
 
+* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
+  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
@@ -235,7 +239,7 @@ Header Changes:
 #include <seqan3/{core => utility}/type_traits/concept.hpp>
 #include <seqan3/{core => utility}/type_traits/function{ =>_traits}.hpp>
 #include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
-#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp> 
+#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp>
 #include <seqan3/{core => utility}/type_traits/pre.hpp>  [deleted without replacement]
 #include <seqan3/core/{type_traits/range => range/type_traits}.hpp>
 ```
@@ -424,13 +428,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
   but weren’t yet available at the time of this release.
 
-## Notable Bug-fixes
-
-#### I/O
-
-* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
-  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
-
 ## New features
 
 #### Alignment
@@ -480,8 +477,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
 * Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
   ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
-* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
-  ([\#2048](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
 
