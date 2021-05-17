@@ -248,8 +248,8 @@ Header Changes:
 #include <seqan3/{core => utility}/type_traits/basic.hpp>
 #include <seqan3/{core => utility}/type_traits/concept.hpp>
 #include <seqan3/core/{type_traits => detail}/deferred_crtp_base.hpp>
-#include <seqan3/{core => utility}/type_traits/function_traits.hpp>
-#include <seqan3/{core/type_traits/function_traits => utility/detail/multi_invocable}.hpp>
+#include <seqan3/{core => utility}/type_traits/function{ =>_traits}.hpp>
+#include <seqan3/{core/type_traits/function => utility/detail/multi_invocable}.hpp>
 #include <seqan3/core/{type_traits/iterator => detail/iterator_traits}.hpp>
 #include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
 #include <seqan3/core/{type_traits/lazy => detail/is_class_template_declarable}.hpp>
