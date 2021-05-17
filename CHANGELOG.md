@@ -199,6 +199,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * `seqan3::alignment_file_output` is replaced by `seqan3::sam_file_output`.
   * `seqan3::alignment_file_output_format` is replaced by `seqan3::sam_file_output_format`.
   * `seqan3::alignment_file_output_options` is replaced by `seqan3::sam_file_output_options`.
+* `seqan3::sam_file_input` and `seqan3::sam_file_output` does not accept `seqan3::field::ref_seq`,
+  `seqan3::field::evalue` and `seqan3::field::bit_score` any more.
+  ([\#2658](https://github.com/seqan/seqan3/pull/2658)).
 * The `seqan3::get` accessor for I/O records, e.g. `seqan3::get<seqan3::field::id>(record)`, is deprecated, please use
   the corresponding member accessor ([\#2420](https://github.com/seqan/seqan3/pull/2420)):
   * If you used files as views with `seqan3::views::get<seqan3::field::id>` to project a single field, e.g.
