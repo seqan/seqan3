@@ -26,6 +26,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 # 3.0.3
 
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
+
+* Check out our updated [SeqAn3 Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html). It contains a listing of code
+  examples on how to perform particular tasks using the library.
+
+* SeqAn 3.0.3 is known to compile with GCC 7.5, 8.4, 9.3, 10.3, and 11.1. Future versions (e.g. GCC 11.2 and 12) might
+  work, but were not yet available at the time of this release.
+
 ## New features
 
 #### Alphabet
@@ -426,7 +434,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   examples on how to perform particular tasks using the library.
 
 * SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
-  but weren’t yet available at the time of this release.
+  but were not yet available at the time of this release.
 
 ## New features
 
