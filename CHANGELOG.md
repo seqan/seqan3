@@ -178,7 +178,6 @@ Header Changes:
 
 ```cpp
 #include <seqan3/alphabet/cigar/{cigar_op => cigar}.hpp>
-#include <seqan3/alphabet/cigar/{cigar_op => exposition_only/cigar_operation}.hpp>
 #include <seqan3/alphabet/nucleotide/{sam_dna16 => dna16sam}.hpp}>
 #include <seqan3/alphabet/quality/{phred68legacy => phred68solexa}.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp> [Added]
