@@ -399,7 +399,7 @@ Header Changes:
 
 #include <seqan3/{range => alignment}/decorator/gap_decorator.hpp>
 
-#include <seqan3/{range/ => alphabet/range/}hash.hpp>
+#include <seqan3/{range => alphabet/range}/hash.hpp>
 
 #include <seqan3/{range => io}/views/async_input_buffer.hpp>
 #include <seqan3/{range => alphabet}/views/char_to.hpp>
