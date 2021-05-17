@@ -118,6 +118,10 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * The processed data should experience no negative effects since `gz` and `bgzf` are **fully compatible**.
   * This bug may also cause unexpected parallelisation when reading `gz`-compressed input. This is the case when the
     `gz`-compressed input was also generated with SeqAn.
+* The following requirements of parsing a SAM/BAM header where relaxed as they were in violation of the specification
+  ([\#2605](https://github.com/seqan/seqan3/pull/2605)):
+  * The order of tags within the header may be arbitrary. Before, necessary tags where required to be first.
+  * Unknown tags will emit a warning. Before, a error was raised.
 
 ## API changes
 
