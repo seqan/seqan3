@@ -564,7 +564,7 @@ public:
     }
 
     // The new syntax enforces via static_assert (see above) that field::ref_seq, field::evalue, and field::bit_score
-    // isn't set. That makes sure that someone how explicitly requested for these fields will get a deprecation warning.
+    // isn't set. That makes sure that someone who explicitly requested for these fields will get a deprecation warning.
     // That leaves the case where the user did not provide any fields and just used the default ones. 
     // This causes a problem, because it is complicated to decide whether the new syntax or the old syntax is used.
     // position | old fields         | new fields
