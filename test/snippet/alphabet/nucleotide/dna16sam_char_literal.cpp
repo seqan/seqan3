@@ -1,3 +1,6 @@
+// generated from test/snippet/alphabet/nucleotide/@target_alphabet@_char_literal.cpp.in
+
+//![main]
 #include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 
 int main()
@@ -7,3 +10,4 @@ int main()
     seqan3::dna16sam letter1{'A'_dna16sam};
     auto letter2 = 'A'_dna16sam;
 }
+//![main]

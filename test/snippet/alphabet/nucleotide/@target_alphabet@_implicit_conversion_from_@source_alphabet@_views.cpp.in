@@ -1,0 +1,23 @@
+// generated from ${source_snippet}
+
+//![main]
+#include <vector>
+
+#include <seqan3/alphabet/nucleotide/${target_alphabet}.hpp>
+#include <seqan3/alphabet/nucleotide/${source_alphabet}.hpp>
+#include <seqan3/utility/views/convert.hpp>
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    seqan3::${target_alphabet}_vector vector = "ACG"_${target_alphabet};
+
+    auto ${source_alphabet}_view = vector | seqan3::views::convert<seqan3::${source_alphabet}>;
+
+    for (auto && chr: ${source_alphabet}_view) // converts lazily on-the-fly
+    {
+        static_assert(std::same_as<decltype(chr), seqan3::${source_alphabet} &&>);
+    }
+}
+//![main]

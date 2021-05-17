@@ -76,8 +76,14 @@ public:
 
     using base_t::base_t;
 
-    //!\brief Allow implicit construction from dna/rna of the same size.
-    template <std::same_as<rna4> t>    // Accept incomplete type
+    /*!\brief Allow implicit construction from seqan3::rna4 of the same size.
+     * \details
+     *
+     * \copydetails seqan3::doxygen::dna4_implicit_conversion_from_rna4
+     *
+     * \stableapi{Since version 3.1.}
+     */
+    template <std::same_as<rna4> t> // template parameter t to accept incomplete type
     constexpr dna4(t const & r) noexcept
     {
         assign_rank(r.to_rank());
@@ -218,7 +224,7 @@ inline namespace literals
  * \anchor seqan3_dna4_char_literal
  *
  * You can use this char literal to assign a seqan3::dna4 character:
- * \include test/snippet/alphabet/nucleotide/dna4_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/dna4_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

@@ -72,11 +72,15 @@ public:
 
     using base_t::base_t;
 
-    /*!\brief Allow implicit construction from dna/rna of the same size.
+    /*!\brief Allow implicit construction from seqan3::dna15 of the same size.
      * \details
+     *
+     * \copydetails seqan3::doxygen::rna15_implicit_conversion_from_dna15
+     *
      * \stableapi{Since version 3.1.}
      */
-    constexpr rna15(dna15 const & r) noexcept
+    template <std::same_as<dna15> t>
+    constexpr rna15(t const & r) noexcept
 #if SEQAN3_WORKAROUND_GCC_90897
         requires true
 #endif
@@ -152,7 +156,7 @@ inline namespace literals
  * \anchor seqan3_rna15_char_literal
  *
  * You can use this char literal to assign a seqan3::rna15 character:
- * \include test/snippet/alphabet/nucleotide/rna15_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/rna15_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

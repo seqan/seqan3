@@ -1,3 +1,6 @@
+// generated from test/snippet/alphabet/nucleotide/@target_alphabet@_char_literal.cpp.in
+
+//![main]
 #include <seqan3/alphabet/nucleotide/rna15.hpp>
 
 int main()
@@ -7,3 +10,4 @@ int main()
     seqan3::rna15 letter1{'A'_rna15};
     auto letter2 = 'A'_rna15;
 }
+//![main]

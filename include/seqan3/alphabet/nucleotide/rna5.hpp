@@ -70,11 +70,15 @@ public:
 
     using base_t::base_t;
 
-    /*!\brief Allow implicit construction from dna/rna of the same size.
+    /*!\brief Allow implicit construction from seqan3::dna5 of the same size.
      * \details
+     *
+     * \copydetails seqan3::doxygen::rna5_implicit_conversion_from_dna5
+     *
      * \stableapi{Since version 3.1.}
      */
-    constexpr rna5(dna5 const & r) noexcept
+    template <std::same_as<dna5> t>
+    constexpr rna5(t const & r) noexcept
 #if SEQAN3_WORKAROUND_GCC_90897
         requires true
 #endif
@@ -141,7 +145,7 @@ inline namespace literals
  * \anchor seqan3_rna5_char_literal
  *
  * You can use this char literal to assign a seqan3::rna5 character:
- * \include test/snippet/alphabet/nucleotide/rna5_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/rna5_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

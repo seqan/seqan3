@@ -1,0 +1,28 @@
+// generated from ${source_snippet}
+
+//![main]
+#include <seqan3/alphabet/nucleotide/${target_alphabet}.hpp>
+#include <seqan3/alphabet/nucleotide/${source_alphabet}.hpp>
+
+struct my_${target_alphabet} : public seqan3::${target_alphabet}
+{
+    // using seqan3::${target_alphabet}::${target_alphabet}; // uncomment to import implicit conversion shown by letter1
+};
+
+struct my_${source_alphabet} : public seqan3::${source_alphabet}
+{};
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    // my_${target_alphabet} letter1 = 'C'_${source_alphabet}; // NO automatic implicit conversion!
+    // seqan3::${target_alphabet} letter2 = my_${source_alphabet}{}; // seqan3::${target_alphabet} only allows implicit conversion from seqan3::${source_alphabet}!
+}
+//![main]
+
+#include <seqan3/utility/detail/exposition_only_concept.hpp>
+
+static_assert(seqan3::implicitly_convertible_to<seqan3::${source_alphabet}, seqan3::${target_alphabet}>);
+static_assert(!seqan3::implicitly_convertible_to<seqan3::${source_alphabet}, my_${target_alphabet}>);
+static_assert(!seqan3::implicitly_convertible_to<my_${source_alphabet}, seqan3::${target_alphabet}>);
