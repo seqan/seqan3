@@ -14,7 +14,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
-#include <seqan3/range/views/drop.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/search/views/minimiser.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

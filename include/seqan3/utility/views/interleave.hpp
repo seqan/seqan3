@@ -20,7 +20,6 @@
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/detail/random_access_iterator.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
-#include <seqan3/utility/type_traits/pre.hpp>
 #include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/join_with.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
