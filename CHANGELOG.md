@@ -338,11 +338,11 @@ Header Changes:
   ([\#2601](https://github.com/seqan/seqan3/pull/2601)).
 * Deprecated `seqan3::views::take_until` and it will be removed in 3.1.0. Use
   `std::views::take_while(std::not_fn(predicate))` instead ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
-* Deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other 
+* Deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other
   than reimplementing it yourself ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
 * Deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
-  ([\#2540](https://github.com/seqan/seqan3/pull/2538))
+  ([\#2538](https://github.com/seqan/seqan3/pull/2538))
 * Deprecated `seqan3::views::to_lower` and it will be removed in 3.1.0, use
    `std::views::transform([](auto && chr){return std::tolower(chr)})`.
    ([\#2556](https://github.com/seqan/seqan3/pull/2556))
@@ -779,7 +779,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
   `option_value_type`
   ([\#1394](https://github.com/seqan/seqan3/pull/1394)).
-* Some exception names were altered and some removed ([\#1394](https://github.com/seqan/seqan3/pull/1467)):
+* Some exception names were altered and some removed ([\#1467](https://github.com/seqan/seqan3/pull/1467)):
   * The exception seqan3::parser_invalid_argument was renamed to seqan3::argument_parser_error.
   * The exception seqan3::validation_failed was renamed to seqan3::validation_error.
   * The exception seqan3::parser_design_error was renamed to seqan3::design_error and also inherits from
