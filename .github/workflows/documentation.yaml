@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Configure APT
+        continue-on-error: true
         run: bash .github/workflows/scripts/configure_apt.sh
 
       - name: Install CMake

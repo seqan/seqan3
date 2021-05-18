@@ -92,6 +92,7 @@ jobs:
           path: seqan3/submodules/seqan
 
       - name: Configure APT
+        continue-on-error: true
         run: bash ./seqan3/.github/workflows/scripts/configure_apt.sh
 
       - name: Install CMake
