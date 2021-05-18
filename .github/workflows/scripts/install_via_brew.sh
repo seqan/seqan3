@@ -15,7 +15,6 @@ esac
 set -e
 set -x
 
-brew list --versions $package_name && brew unlink $package_name || true
-brew list --versions $package_name && brew upgrade --force-bottle $brew_package_name || brew install --force-bottle $brew_package_name
+brew list --versions $brew_package_name && brew unlink $package_name || true
+brew list --versions $brew_package_name && brew upgrade --force-bottle $brew_package_name || brew install --force-bottle $brew_package_name
 brew link --overwrite $brew_package_name
-
