@@ -406,6 +406,22 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
     auto end = std::ranges::end(stream_view);
     std::vector<char> string_buffer{};
 
+    auto make_tag = [] (uint8_t char1, uint8_t char2) constexpr
+    {
+        return static_cast<uint16_t>(char1) | (static_cast<uint16_t>(char2) << CHAR_BIT);
+    };
+
+    std::array<char, 2> raw_tag{};
+
+    auto parse_and_make_tag = [&] ()
+    {
+        raw_tag[0] = *it;
+        ++it;
+        raw_tag[1] = *it;
+        ++it;
+        return make_tag(raw_tag[0], raw_tag[1]);
+    };
+
     auto take_until_predicate = [&it, &string_buffer] (auto const & predicate)
     {
         string_buffer.clear();
@@ -430,346 +446,254 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_field(string_buffer, value);
     };
 
-    // Some tags are not parsed individually. Instead, these are simply copied into a string.
+    // Some tags are not parsed individually. Instead, these are simply copied into a std::string.
     // Multiple tags must be separated by a `\t`, hence we prepend a tab to the string, except the first time.
     // Alternatively, we could always append a `\t`, but this would have the side effect that we might need to trim a
     // trailing tab after parsing all tags via `pop_back()`.
     // Unfortunately, we do not know when we are parsing the last tag (and in this case just not append a tab),
     // because even though we can check if the line ends in a `\n`, it is not guaranteed that the last tag of the
     // line is passed to this lambda. For example, the line might end with a tag that is properly parsed, such as `ID`.
-    auto parse_until_tab_or_newline = [&] (std::string & value, char const first_letter)
+    auto parse_and_append_unhandled_tag_to_string = [&] (std::string & value, std::array<char, 2> raw_tag)
     {
         take_until_predicate(is_char<'\t'> || is_char<'\n'>);
         if (!value.empty())
             value.push_back('\t');
-        value.push_back(first_letter);
+        value.push_back(raw_tag[0]);
+        value.push_back(raw_tag[1]);
         read_field(string_buffer, value);
     };
 
-    auto print_cerr_of_unspported_tag = [&it] (char const * const header_tag, char const first_letter)
+    auto print_cerr_of_unspported_tag = [&it] (char const * const header_tag, std::array<char, 2> raw_tag)
     {
-        std::cerr << "Unsupported SAM header tag in @" << header_tag << ": " << first_letter << *it << '\n';
+        std::cerr << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0] << raw_tag[1] << '\n';
     };
 
     while (it != end && is_char<'@'>(*it))
     {
         ++it; // skip @
 
-        switch (*it)
+        switch (parse_and_make_tag())
         {
-            case 'H': // HD (header) tag
+            case make_tag('H', 'D'): // HD (header) tag
             {
-                ++it; // skip H
-                if (is_char<'D'>(*it))
+                // All tags can appear in any order, VN is the only required tag
+                while (is_char<'\t'>(*it))
                 {
-                    ++it; // skip D
-
-                    // All tags can appear in any order, VN is the only required tag
-                    while (is_char<'\t'>(*it))
-                    {
-                        std::string * header_entry{nullptr};
-                        ++it; // skip tab
-                        char const first_letter{*it};
-                        ++it;
-
-                        switch (first_letter)
-                        {
-                            case 'V':
-                            {
-                                if (is_char<'N'>(*it)) // parse required VN (version) tag
-                                {
-                                    header_entry = std::addressof(hdr.format_version);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'S':
-                            {
-                                if (is_char<'O'>(*it)) // SO (sorting) tag
-                                {
-                                    header_entry = std::addressof(hdr.sorting);
-                                    break;
-                                }
-                                if (is_char<'S'>(*it)) // SS (sub-order) tag
-                                {
-                                    header_entry = std::addressof(hdr.subsorting);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'G':
-                            {
-                                if (is_char<'O'>(*it)) // GO (grouping) tag
-                                {
-                                    header_entry = std::addressof(hdr.grouping);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            default: // unsupported header tag
-                            {
-                                print_cerr_of_unspported_tag("HD", first_letter);
-                            }
-                        }
-
-                        if (header_entry != nullptr)
-                            parse_tag_value(*header_entry);
-                        else
-                            skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
-                    }
-                    ++it; // skip newline
-
-                    if (hdr.format_version.empty())
-                        throw format_error{std::string{"The required VN tag in @HD is missing."}};
-                }
-                else
-                    throw format_error{std::string{"Illegal SAM header tag: @H"} + *it};
-
-                break;
-            }
-
-            case 'S': // SQ (sequence dictionary) tag
-            {
-                ++it; // skip S
-                if (is_char<'Q'>(*it))
-                {
-                    ++it; // skip Q
-
-                    ref_info_present_in_header = true;
-                    std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
-                    std::optional<int32_t> sequence_length{};
-                    std::tuple<int32_t, std::string> info{};
-
-                    // All tags can appear in any order, SN and LN are required tags
-                    while (is_char<'\t'>(*it))
-                    {
-                        ++it; // skip tab
-                        char const first_letter{*it};
-                        ++it;
-
-                        switch (first_letter)
-                        {
-                            case 'S': // parse required SN (sequence name) tag
-                            {
-                                if (is_char<'N'>(*it))
-                                {
-                                    parse_tag_value(id);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'L': // parse required LN (length) tag
-                            {
-                                if (is_char<'N'>(*it))
-                                {
-                                    parse_tag_value(sequence_length);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            default: // Any other tag
-                            {
-                                parse_until_tab_or_newline(get<1>(info), first_letter);
-                            }
-                        }
-                    }
-                    ++it; // skip newline
-
-                    if (id.empty())
-                        throw format_error{std::string{"The required SN tag in @SQ is missing."}};
-                    if (!sequence_length.has_value())
-                        throw format_error{std::string{"The required LN tag in @SQ is missing."}};
-                    if (sequence_length.value() <= 0)
-                        throw format_error{std::string{"The value of LN in @SQ must be positive."}};
-
-                    get<0>(info) = sequence_length.value();
-                    // If reference information was given, the ids exist and we can fill ref_dict directly.
-                    // If not, we need to update the ids first and fill the reference dictionary afterwards.
-                    if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
-                    {
-                        auto id_it = hdr.ref_dict.find(id);
-
-                        if (id_it == hdr.ref_dict.end())
-                            throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM ",
-                                                                 "header (header.ref_ids(): ", hdr.ref_ids(), ").")};
-
-                        auto & given_ref_info = hdr.ref_id_info[id_it->second];
-
-                        if (std::get<0>(given_ref_info) != std::get<0>(info))
-                            throw format_error{"Provided and header-based reference length differ."};
-
-                        hdr.ref_id_info[id_it->second] = std::move(info);
-                    }
-                    else
-                    {
-                        static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
-                                      "The range over reference ids must be of type std::deque such that "
-                                      "pointers are not invalidated.");
-
-                        hdr.ref_ids().push_back(id);
-                        hdr.ref_id_info.push_back(info);
-                        hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
-                    }
-                }
-                else
-                    throw format_error{std::string{"Illegal SAM header tag: @S"} + *it};
-
-                break;
-            }
-
-            case 'R': // RG (read group) tag
-            {
-                ++it; // skip R
-                if (is_char<'G'>(*it))
-                {
-                    std::pair<std::string, std::string> tmp{};
-                    ++it; // skip G
-
-                    // All tags can appear in any order, SN and LN are required tags
-                    while (is_char<'\t'>(*it))
-                    {
-                        ++it; // skip tab
-                        char const first_letter{*it};
-                        ++it;
-
-                        switch (first_letter)
-                        {
-                            case 'I': // parse required ID tag
-                            {
-                                if (is_char<'D'>(*it))
-                                {
-                                    parse_tag_value(get<0>(tmp));
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            default: // Any other tag
-                            {
-                                parse_until_tab_or_newline(get<1>(tmp), first_letter);
-                            }
-                        }
-                    }
-                    ++it; // skip newline
-
-                    if (get<0>(tmp).empty())
-                        throw format_error{std::string{"The required ID tag in @RG is missing."}};
-
-                    hdr.read_groups.emplace_back(std::move(tmp));
-                }
-                else
-                    throw format_error{std::string{"Illegal SAM header tag: @R"} + *it};
-
-                break;
-            }
-
-            case 'P': // PG (program) tag
-            {
-                ++it; // skip P
-                if (is_char<'G'>(*it))
-                {
-                    typename sam_file_header<ref_ids_type>::program_info_t tmp{};
-                    ++it; // skip G
-
-                    // All tags can appear in any order, ID is the only required tag
-                    while (is_char<'\t'>(*it))
-                    {
-                        std::string * program_info_entry{nullptr};
-                        ++it; // skip tab
-                        char const first_letter{*it};
-                        ++it;
-
-                        switch (first_letter)
-                        {
-                            case 'I': // read required ID tag
-                            {
-                                if (is_char<'D'>(*it))
-                                {
-                                    program_info_entry = std::addressof(tmp.id);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'P':
-                            {
-                                if (is_char<'N'>(*it)) // PN (program name) tag
-                                {
-                                    program_info_entry = std::addressof(tmp.name);
-                                    break;
-                                }
-                                if (is_char<'P'>(*it)) // PP (previous program) tag
-                                {
-                                    program_info_entry = std::addressof(tmp.previous);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'C': // CL (command line) tag
-                            {
-                                if (is_char<'L'>(*it))
-                                {
-                                    program_info_entry = std::addressof(tmp.command_line_call);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'D': // DS (description) tag
-                            {
-                                if (is_char<'S'>(*it))
-                                {
-                                    program_info_entry = std::addressof(tmp.description);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            case 'V': // VN (version) tag
-                            {
-                                if (is_char<'N'>(*it))
-                                {
-                                    program_info_entry = std::addressof(tmp.version);
-                                    break;
-                                }
-                                [[fallthrough]];
-                            }
-                            default: // unsupported header tag
-                            {
-                                print_cerr_of_unspported_tag("PG", first_letter);
-                            }
-                        }
-
-                        if (program_info_entry != nullptr)
-                            parse_tag_value(*program_info_entry);
-                        else
-                            skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
-                    }
-                    ++it; // skip newline
-
-                    if (tmp.id.empty())
-                        throw format_error{std::string{"The required ID tag in @PG is missing."}};
-
-                    hdr.program_infos.emplace_back(std::move(tmp));
-                }
-                else
-                    throw format_error{std::string{"Illegal SAM header tag: @P"} + *it};
-
-                break;
-            }
-
-            case 'C': /* CO (comment) tag */
-            {
-                ++it; // skip C
-                if (is_char<'O'>(*it))
-                {
-                    std::string tmp;
-                    skip_until_predicate(is_char<'\t'>); // skip CO
                     ++it; // skip tab
-                    take_until_predicate(is_char<'\n'>);
-                    read_field(string_buffer, tmp);
-                    ++it; // skip newline
-                    hdr.comments.emplace_back(std::move(tmp));
+                    std::string * header_entry{nullptr};
+
+                    switch (parse_and_make_tag())
+                    {
+                        case make_tag('V', 'N'): // parse required VN (version) tag
+                        {
+                            header_entry = std::addressof(hdr.format_version);
+                            break;
+                        }
+                        case make_tag('S', 'O'): // SO (sorting) tag
+                        {
+                            header_entry = std::addressof(hdr.sorting);
+                            break;
+                        }
+                        case make_tag('S', 'S'): // SS (sub-order) tag
+                        {
+                            header_entry = std::addressof(hdr.subsorting);
+                            break;
+                        }
+                        case make_tag('G', 'O'): // GO (grouping) tag
+                        {
+                            header_entry = std::addressof(hdr.grouping);
+                            break;
+                        }
+                        default: // unsupported header tag
+                        {
+                            print_cerr_of_unspported_tag("HD", raw_tag);
+                        }
+                    }
+
+                    if (header_entry != nullptr)
+                        parse_tag_value(*header_entry);
+                    else
+                        skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
+                }
+                ++it; // skip newline
+
+                if (hdr.format_version.empty())
+                    throw format_error{std::string{"The required VN tag in @HD is missing."}};
+
+                break;
+            }
+
+            case make_tag('S', 'Q'): // SQ (sequence dictionary) tag
+            {
+                ref_info_present_in_header = true;
+                std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
+                std::optional<int32_t> sequence_length{};
+                std::tuple<int32_t, std::string> info{};
+
+                // All tags can appear in any order, SN and LN are required tags
+                while (is_char<'\t'>(*it))
+                {
+                    ++it; // skip tab
+
+                    switch (parse_and_make_tag())
+                    {
+                        case make_tag('S', 'N'): // parse required SN (sequence name) tag
+                        {
+                            parse_tag_value(id);
+                            break;
+                        }
+                        case make_tag('L', 'N'): // parse required LN (length) tag
+                        {
+                            parse_tag_value(sequence_length);
+                            break;
+                        }
+                        default: // Any other tag
+                        {
+                            parse_and_append_unhandled_tag_to_string(get<1>(info), raw_tag);
+                        }
+                    }
+                }
+                ++it; // skip newline
+
+                if (id.empty())
+                    throw format_error{std::string{"The required SN tag in @SQ is missing."}};
+                if (!sequence_length.has_value())
+                    throw format_error{std::string{"The required LN tag in @SQ is missing."}};
+                if (sequence_length.value() <= 0)
+                    throw format_error{std::string{"The value of LN in @SQ must be positive."}};
+
+                get<0>(info) = sequence_length.value();
+                // If reference information was given, the ids exist and we can fill ref_dict directly.
+                // If not, we need to update the ids first and fill the reference dictionary afterwards.
+                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
+                {
+                    auto id_it = hdr.ref_dict.find(id);
+
+                    if (id_it == hdr.ref_dict.end())
+                        throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM header ",
+                                                             "(header.ref_ids(): ", hdr.ref_ids(), ").")};
+
+                    auto & given_ref_info = hdr.ref_id_info[id_it->second];
+
+                    if (std::get<0>(given_ref_info) != std::get<0>(info))
+                        throw format_error{"Provided and header-based reference length differ."};
+
+                    hdr.ref_id_info[id_it->second] = std::move(info);
                 }
                 else
-                    throw format_error{std::string{"Illegal SAM header tag: @C"} + *it};
+                {
+                    static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
+                                  "The range over reference ids must be of type std::deque such that pointers are not "
+                                  "invalidated.");
 
+                    hdr.ref_ids().push_back(id);
+                    hdr.ref_id_info.push_back(info);
+                    hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
+                }
+                break;
+            }
+
+            case make_tag('R', 'G'): // RG (read group) tag
+            {
+                std::pair<std::string, std::string> tmp{};
+
+                // All tags can appear in any order, SN and LN are required tags
+                while (is_char<'\t'>(*it))
+                {
+                    ++it; // skip tab
+
+                    switch (parse_and_make_tag())
+                    {
+                        case make_tag('I', 'D'): // parse required ID tag
+                        {
+                            parse_tag_value(get<0>(tmp));
+                            break;
+                        }
+                        default: // Any other tag
+                        {
+                            parse_and_append_unhandled_tag_to_string(get<1>(tmp), raw_tag);
+                        }
+                    }
+                }
+                ++it; // skip newline
+
+                if (get<0>(tmp).empty())
+                    throw format_error{std::string{"The required ID tag in @RG is missing."}};
+
+                hdr.read_groups.emplace_back(std::move(tmp));
+                break;
+            }
+
+            case make_tag('P', 'G'): // PG (program) tag
+            {
+                typename sam_file_header<ref_ids_type>::program_info_t tmp{};
+
+                // All tags can appear in any order, ID is the only required tag
+                while (is_char<'\t'>(*it))
+                {
+                    ++it; // skip tab
+                    std::string * program_info_entry{nullptr};
+
+                    switch (parse_and_make_tag())
+                    {
+                        case make_tag('I', 'D'): // read required ID tag
+                        {
+                            program_info_entry = std::addressof(tmp.id);
+                            break;
+                        }
+                        case make_tag('P', 'N'): // PN (program name) tag
+                        {
+                            program_info_entry = std::addressof(tmp.name);
+                            break;
+                        }
+                        case make_tag('P', 'P'): // PP (previous program) tag
+                        {
+                            program_info_entry = std::addressof(tmp.previous);
+                            break;
+                        }
+                        case make_tag('C', 'L'): // CL (command line) tag
+                        {
+                            program_info_entry = std::addressof(tmp.command_line_call);
+                            break;
+                        }
+                        case make_tag('D', 'S'): // DS (description) tag
+                        {
+                            program_info_entry = std::addressof(tmp.description);
+                            break;
+                        }
+                        case make_tag('V', 'N'): // VN (version) tag
+                        {
+                            program_info_entry = std::addressof(tmp.version);
+                            break;
+                        }
+                        default: // unsupported header tag
+                        {
+                            print_cerr_of_unspported_tag("PG", raw_tag);
+                        }
+                    }
+
+                    if (program_info_entry != nullptr)
+                        parse_tag_value(*program_info_entry);
+                    else
+                        skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
+                }
+                ++it; // skip newline
+
+                if (tmp.id.empty())
+                    throw format_error{std::string{"The required ID tag in @PG is missing."}};
+
+                hdr.program_infos.emplace_back(std::move(tmp));
+                break;
+            }
+
+            case make_tag('C', 'O'): // CO (comment) tag
+            {
+                ++it; // skip tab
+                std::string tmp;
+                take_until_predicate(is_char<'\n'>);
+                read_field(string_buffer, tmp);
+                ++it; // skip newline
+                hdr.comments.emplace_back(std::move(tmp));
                 break;
             }
 
