@@ -27,6 +27,20 @@ option (SEQAN3_TEST_BUILD_OFFLINE "Skip the update step of external projects." O
 option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark builds." ON)
 
 # ----------------------------------------------------------------------------
+# Custom Build types
+# ----------------------------------------------------------------------------
+
+# -DCMAKE_BUILD_TYPE=FEDORA; our library did not compile for fedora quite a few times, because of that we created this
+# custom build type to emulate their flag set-up.
+# We omitted:
+#   -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1
+#   -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1
+#   set -mtune=native
+#   and -fcf-protection=check
+# See https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/rawhide/f/buildflags.md for an overview
+set (CMAKE_CXX_FLAGS_FEDORA "-O2 -flto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -mtune=native -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection=check")
+
+# ----------------------------------------------------------------------------
 # Paths to folders.
 # ----------------------------------------------------------------------------
 
