@@ -39,11 +39,11 @@ namespace seqan3::detail
  *
  * You may want to have an iterator that skips those elements in an int-vector that are not divisable by two:
  *
- * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base desired
+ * \snippet test/unit/core/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base desired
  *
  * You could define it like this:
  *
- * \snippet test/unit/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
+ * \snippet test/unit/core/range/detail/inherited_iterator_base_test.cpp inherited_iterator_base def
  */
 template <typename derived_t, std::input_or_output_iterator base_t>
 class inherited_iterator_base : public std::conditional_t<std::is_pointer_v<base_t> || !std::semiregular<base_t>,

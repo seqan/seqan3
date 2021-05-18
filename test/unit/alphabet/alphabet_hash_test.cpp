@@ -11,7 +11,7 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/alphabet/range/hash.hpp>
+#include <seqan3/alphabet/hash.hpp>
 
 template <typename T>
 using alphabet_hashing = ::testing::Test;
@@ -45,16 +45,6 @@ TYPED_TEST(alphabet_hashing, hash)
         }
     }
     {
-        std::vector<TypeParam> text;
-        text.reserve(4);
-        for (size_t i = 0; i < 4; ++i)
-        {
-            text.push_back(seqan3::assign_rank_to(0, TypeParam{}));
-        }
-        std::hash<decltype(text)> h{};
-        ASSERT_EQ(h(text), 0u);
-    }
-    {
         std::hash<TypeParam const> h{};
         if constexpr (std::same_as<TypeParam, char>)
         {
@@ -72,10 +62,5 @@ TYPED_TEST(alphabet_hashing, hash)
                 ASSERT_EQ(h(t0), i);
             }
         }
-    }
-    {
-        std::vector<TypeParam> const text(4, seqan3::assign_rank_to(0, TypeParam{}));
-        std::hash<decltype(text)> h{};
-        ASSERT_EQ(h(text), 0u);
     }
 }

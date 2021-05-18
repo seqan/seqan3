@@ -1,2 +1,0 @@
-seqan3_test(inherited_iterator_base_test.cpp)
-seqan3_test(random_access_iterator_test.cpp)
