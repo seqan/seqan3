@@ -26,6 +26,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 # 3.0.3
 
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
+
+* Check out our updated [SeqAn3 Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html). It contains a listing of code
+  examples on how to perform particular tasks using the library.
+
+* SeqAn 3.0.3 is known to compile with GCC 7.5, 8.4, 9.3, 10.3, and 11.1. Future versions (e.g. GCC 11.2 and 12) might
+  work, but were not yet available at the time of this release.
+
 ## New features
 
 #### Alphabet
@@ -62,6 +70,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Search
 
+* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
+  ([\#2048](https://github.com/seqan/seqan3/pull/2048)).
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 * The `seqan3::interleaved_bloom_filter` supports counting occurrences of a range of values
   ([\#2373](https://github.com/seqan/seqan3/pull/2373)).
@@ -93,6 +103,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### I/O
 
+* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
+  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
@@ -235,7 +247,7 @@ Header Changes:
 #include <seqan3/{core => utility}/type_traits/concept.hpp>
 #include <seqan3/{core => utility}/type_traits/function{ =>_traits}.hpp>
 #include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
-#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp> 
+#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp>
 #include <seqan3/{core => utility}/type_traits/pre.hpp>  [deleted without replacement]
 #include <seqan3/core/{type_traits/range => range/type_traits}.hpp>
 ```
@@ -326,11 +338,11 @@ Header Changes:
   ([\#2601](https://github.com/seqan/seqan3/pull/2601)).
 * Deprecated `seqan3::views::take_until` and it will be removed in 3.1.0. Use
   `std::views::take_while(std::not_fn(predicate))` instead ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
-* Deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other 
+* Deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other
   than reimplementing it yourself ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
 * Deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
-  ([\#2540](https://github.com/seqan/seqan3/pull/2538))
+  ([\#2538](https://github.com/seqan/seqan3/pull/2538))
 * Deprecated `seqan3::views::to_lower` and it will be removed in 3.1.0, use
    `std::views::transform([](auto && chr){return std::tolower(chr)})`.
    ([\#2556](https://github.com/seqan/seqan3/pull/2556))
@@ -422,14 +434,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   examples on how to perform particular tasks using the library.
 
 * SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
-  but weren’t yet available at the time of this release.
-
-## Notable Bug-fixes
-
-#### I/O
-
-* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
-  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
+  but were not yet available at the time of this release.
 
 ## New features
 
@@ -480,8 +485,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
 * Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
   ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
-* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
-  ([\#2048](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
 
@@ -776,7 +779,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
   `option_value_type`
   ([\#1394](https://github.com/seqan/seqan3/pull/1394)).
-* Some exception names were altered and some removed ([\#1394](https://github.com/seqan/seqan3/pull/1467)):
+* Some exception names were altered and some removed ([\#1467](https://github.com/seqan/seqan3/pull/1467)):
   * The exception seqan3::parser_invalid_argument was renamed to seqan3::argument_parser_error.
   * The exception seqan3::validation_failed was renamed to seqan3::validation_error.
   * The exception seqan3::parser_design_error was renamed to seqan3::design_error and also inherits from
