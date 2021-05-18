@@ -71,7 +71,7 @@ a different (updated) on-disk format.
 
 <small>¹ Iff they are API stable.</small>
 
-# Platform stability
+# Platform stability {#platform_stability}
 
 The main requirement for being able to use SeqAn is a supported compiler and in general all operating systems that
 provide a supported compiler should be supported. We currently support the
