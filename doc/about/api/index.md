@@ -71,21 +71,21 @@ a different (updated) on-disk format.
 
 <small>¹ Iff they are API stable.</small>
 
-# Platform stability
+# Platform stability {#platform_stability}
 
 The main requirement for being able to use SeqAn is a supported compiler and in general all operating systems that
 provide a supported compiler should be supported. We currently support the
 following compilers on 64-bit operating systems with little-endian CPU
 architectures only:
-  * GCC7, GCC8, GCC9
+  * GCC7, GCC8, GCC9, GCC10, GCC11
 
 We promise to support all of the above compilers until the last release of SeqAn3, or until all of the following
 operating systems provide a newer supported compiler:
 
 | Operating System             | Supported Releases¹                    |
 |------------------------------|----------------------------------------|
-| RedHat Enterprise Linux      | the latest release                     |
-| CentOS Linux                 | the latest release                     |
+| RedHat Enterprise Linux      | the latest release ²                   |
+| CentOS Linux                 | the latest release ²                   |
 | SUSE Linux Enterprise Server | the latest release                     |
 | Debian GNU/Linux             | "stable" and "old-stable"              |
 | Ubuntu Linux                 | the two latest LTS releases            |
@@ -100,8 +100,8 @@ This implies the availability of a supported compiler in the default package rep
 third party services.
 
 \note
-Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-7.5` is released,
-we may drop support for `gcc-7.4`.
+Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-10.4` is released,
+we may drop support for `gcc-10.3`.
 Since all platforms with an older version receive minor release updates, this should not be a problem.
 
 More platforms and compilers will be added during the SeqAn3 lifecycle, but some will be marked as
@@ -111,7 +111,10 @@ More platforms and compilers will be added during the SeqAn3 lifecycle, but some
 are added by newer versions of a supported compiler.
 
 <small>¹ [This site](https://linuxlifecycle.com) provides a good overview of what the current release and its
-lifecycle is.</small>
+lifecycle is.</small><br>
+<small>² We consider CentOS 7 / RedHat Enterprise Linux (RHEL) 7 as being community-supported. That means issues and 
+patches are welcome, but we do not actively test for those operating systems. See this related
+[issue](https://github.com/seqan/seqan3/issues/2244).</small>
 
 # Dependencies
 

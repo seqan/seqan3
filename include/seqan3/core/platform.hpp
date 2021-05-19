@@ -357,6 +357,17 @@
 #   endif
 #endif
 
+#if SEQAN3_DOXYGEN_ONLY(1)0
+//!\brief This disables the warning you would get if -D_GLIBCXX_USE_CXX11_ABI=0 is set.
+#define SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
+#if defined(_GLIBCXX_USE_CXX11_ABI) &&  _GLIBCXX_USE_CXX11_ABI == 0
+#   ifndef SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
+#       pragma GCC warning "We do not actively support compiler that have -D_GLIBCXX_USE_CXX11_ABI=0 set, and it might be that SeqAn does not compile due to this. It is known that all compiler of CentOS 7 / RHEL 7 set this flag by default (and that it cannot be overridden!). Note that these versions of the OSes are community-supported (see https://docs.seqan.de/seqan/3-master-user/about_api.html#platform_stability for more details). You can disable this warning by setting -DSEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC."
+#   endif // SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
+#endif // _GLIBCXX_USE_CXX11_ABI == 0
+
 /*!\brief https://eel.is/c++draft/range.take#view defines e.g. `constexpr auto size() requires sized_­range<V>` without
  *        any template. This syntax works since gcc-10, before that a dummy `template <typename = ...>` must be used.
  */
