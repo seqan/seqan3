@@ -40,6 +40,18 @@
 namespace seqan3
 {
 
+#ifdef SEQAN3_DEPRECATED_310
+//!\cond
+template <typename tuple_t>
+static constexpr bool fourth_tuple_element_is_sequence = false;
+
+template <typename tuple_t>
+    requires (seqan3::tuple_like<tuple_t> && std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
+static constexpr bool fourth_tuple_element_is_sequence<tuple_t>
+    = seqan3::sequence<std::remove_cvref_t<std::tuple_element_t<3, tuple_t>>>;
+//!\endcond
+#endif // SEQAN3_DEPRECATED_310
+
 // ----------------------------------------------------------------------------
 // sam_file_output
 // ----------------------------------------------------------------------------
@@ -145,7 +157,6 @@ template <detail::fields_specialisation selected_field_ids_ =
               fields<field::seq,
                      field::id,
                      field::offset,
-                     field::ref_seq,
                      field::ref_id,
                      field::ref_offset,
                      field::alignment,
@@ -155,8 +166,6 @@ template <detail::fields_specialisation selected_field_ids_ =
                      field::flag,
                      field::mate,
                      field::tags,
-                     field::evalue,
-                     field::bit_score,
                      field::header_ptr>,
           detail::type_list_of_sam_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
           typename ref_ids_type = ref_info_not_given>
@@ -176,17 +185,15 @@ public:
     //!\deprecated This will be removed in 3.1.0.
     using ref_ids_type_t        = ref_ids_type;
 //!\publicsection
-#endif
+#endif // SEQAN3_DEPRECATED_310
     //!\brief Character type of the stream(s).
     using stream_char_type      = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids             = fields<field::header_ptr,
-                                         field::seq,
+    using field_ids             = fields<field::seq,
                                          field::id,
                                          field::offset,
-                                         field::ref_seq,
                                          field::ref_id,
                                          field::ref_offset,
                                          field::alignment,
@@ -196,8 +203,19 @@ public:
                                          field::qual,
                                          field::mate,
                                          field::tags,
-                                         field::evalue,
-                                         field::bit_score>;
+                                         field::header_ptr>;
+
+#ifdef SEQAN3_DEPRECATED_310
+    //!brief Does selected_field_ids contain all fields like in the default case?
+    static constexpr bool is_default_selected_field_ids = selected_field_ids::size == field_ids::size;
+
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::ref_seq),
+                  "You selected the deprecated seqan3::field::ref_seq. It will not be available in the record.");
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::evalue),
+                  "You selected the deprecated seqan3::field::evalue. It will not be available in the record.");
+    static_assert(is_default_selected_field_ids || !selected_field_ids::contains(field::bit_score),
+                  "You selected the deprecated seqan3::field::bit_score. It will not be available in the record.");
+#endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
                   {
@@ -534,11 +552,116 @@ public:
      *
      * \include test/snippet/io/sam_file/push_back_tuple.cpp
      */
+#ifdef SEQAN3_DEPRECATED_310
+    template <typename tuple_t>
+    void push_back(tuple_t && t)
+    //!\cond
+        // new syntax enforces via static_assert that field::ref_seq, field::evalue, and field::bit_score isn't set
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (!is_default_selected_field_ids)
+    //!\endcond
+    {
+        push_back_tuple(std::forward<tuple_t>(t));
+    }
+
+    // The new syntax enforces via static_assert (see above) that field::ref_seq, field::evalue, and field::bit_score
+    // isn't set. That makes sure that someone who explicitly requested for these fields will get a deprecation warning.
+    // That leaves the case where the user did not provide any fields and just used the default ones. 
+    // This causes a problem, because it is complicated to decide whether the new syntax or the old syntax is used.
+    // position | old fields         | new fields
+    // -------- | ------------------ | -------------
+    //  0       | field::seq         | field::seq
+    //  1       | field::id          | field::id
+    //  2       | field::offset      | field::offset
+    //  3       | field::ref_seq     | field::ref_id
+    //  4       | field::ref_id      | field::ref_offset
+    //  5       | field::ref_offset  | field::alignment
+    //  6       | field::alignment   | field::cigar
+    //  7       | field::cigar       | field::mapq
+    //  8       | field::mapq        | field::flag
+    //  9       | field::flag        | field::qual
+    // 10       | field::qual        | field::mate
+    // 11       | field::mate        | field::tags
+    // 12       | field::tags        | field::header_ptr
+    // 13       | field::evalue      | -
+    // 14       | field::bit_score   | -
+    // 15       | field::header_ptr  | -
+    //
+    // That means we have the following three cases:
+    // * sizeof...(arg_types) + 1 <= 3 are identical.
+    // * sizeof...(arg_types) + 1 > 3
+    //   * 4. arg is not a seqan3::sequence => that field is a field::ref_id (new syntax)
+    //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
+
+    //!\cond
+    // selected_field_ids::size can only be <= 13 or == 16 (static asserts above ensure that)
+    // sizeof...(arg_types) + 1 <= 3 are identical. (old and new syntax)
+    template <typename tuple_t>
+    void push_back(tuple_t && t)
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
+                 && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> <= 3)
+    {
+        push_back_tuple(std::forward<tuple_t>(t));
+    }
+    //!\endcond
+
+    //!\cond
+    // * sizeof...(arg_types) + 1 > 3
+    //   * 4. arg is not a seqan3::sequence => that field is a field::ref_id (new syntax)
+    template <typename tuple_t>
+    void push_back(tuple_t && t)
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
+                 && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
+                 && (!fourth_tuple_element_is_sequence<std::remove_cvref_t<tuple_t>>)
+    {
+        push_back_tuple(std::forward<tuple_t>(t));
+    }
+    //!\endcond
+
+    //!\cond
+    // * sizeof...(arg_types) + 1 > 3
+    //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
+    template <typename tuple_t>
+    SEQAN3_DEPRECATED_310 void push_back(tuple_t && t)
+        requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>) && (is_default_selected_field_ids)
+                 && (std::tuple_size_v<std::remove_cvref_t<tuple_t>> > 3)
+                 && (fourth_tuple_element_is_sequence<std::remove_cvref_t<tuple_t>>)
+    {
+        using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
+        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+
+        // pad it to 16 elements (we know the order of the default field ids)
+        push_back(std::tie(
+            detail::get_or<0>(t, std::string_view{}), // field::seq
+            detail::get_or<1>(t, std::string_view{}), // field::id
+            detail::get_or<2>(t, 0u), // field::offset
+            // detail::get_or<3>(t, std::string_view{}), // field::ref_seq not used
+            detail::get_or<4>(t, std::ignore), // field::ref_id
+            detail::get_or<5>(t, std::optional<int32_t>{}), // field::ref_offset
+            detail::get_or<6>(t, default_align_t{}), // field::alignment
+            detail::get_or<7>(t, std::vector<cigar>{}), // field::cigar
+            detail::get_or<8>(t, 0u), // field::mapq
+            detail::get_or<9>(t, sam_flag::none), // field::flag
+            detail::get_or<10>(t, std::string_view{}), // field::qual
+            detail::get_or<11>(t, default_mate_t{}), // field::mate
+            detail::get_or<12>(t, sam_tag_dictionary{}),  // field::tags
+            // detail::get_or<13>(t, 0u), // field::evalue not used
+            // detail::get_or<14>(t, 0u), // field::bit_score not used
+            detail::get_or<15>(t, nullptr) // field::header_ptr
+        ));
+    }
+    //!\endcond
+
+    //!\brief Push back via tuple interface
+    //!\private
+    template <typename tuple_t>
+    void push_back_tuple(tuple_t && t)
+#else // ^^^ before SeqAn 3.1.0 / after SeqAn 3.1.0 vvv
     template <typename tuple_t>
     void push_back(tuple_t && t)
     //!\cond
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
     //!\endcond
+#endif // SEQAN3_DEPRECATED_310
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
@@ -586,10 +709,62 @@ public:
      * \include test/snippet/io/sam_file/emplace_back.cpp
      */
     template <typename arg_t, typename ...arg_types>
+    //!\cond
+        requires (sizeof...(arg_types) + 1 <= selected_field_ids::size)
+    //!\endcond
     void emplace_back(arg_t && arg, arg_types && ... args)
+#ifdef SEQAN3_DEPRECATED_310
+        // selected_field_ids::size can only be <= 13 or == 16 (static asserts above ensure that)
+        requires (!is_default_selected_field_ids)
+#endif // SEQAN3_DEPRECATED_310
     {
         push_back(std::tie(arg, args...));
     }
+
+#ifdef SEQAN3_DEPRECATED_310
+    //!\cond
+    // sizeof...(arg_types) + 1 <= 3 are identical. (old and new syntax)
+    template <typename arg_t, typename ...arg_types>
+        requires (sizeof...(arg_types) + 1 <= 3)
+    void emplace_back(arg_t && arg, arg_types && ... args)
+        requires is_default_selected_field_ids
+    {
+        push_back(std::tie(arg, args...));
+    }
+    //!\endcond
+
+    //!\cond
+    // * sizeof...(arg_types) + 1 > 3
+    //   * 4. arg is not a seqan3::sequence => that field is a field::ref_id (new syntax)
+    template <typename seq_t, typename id_t, typename offset_t, typename ref_id_t, typename ...arg_types>
+        requires (!seqan3::sequence<std::remove_cvref_t<ref_id_t>>)
+    void emplace_back(seq_t && seq, id_t && id, offset_t && offset, ref_id_t && ref_id, arg_types && ... args)
+        requires is_default_selected_field_ids
+    {
+        push_back(std::tie(seq, id, offset, ref_id, args...));
+    }
+    //!\endcond
+
+    //!\cond
+    // * sizeof...(arg_types) + 1 > 3
+    //   * 4. arg is a seqan3::sequence => that field is a field::ref_seq (old syntax)
+    template <typename seq_t, typename id_t, typename offset_t, typename ref_seq_t, typename ...arg_types>
+        requires seqan3::sequence<std::remove_cvref_t<ref_seq_t>>
+    void emplace_back SEQAN3_DEPRECATED_310(seq_t && seq,
+                                            id_t && id,
+                                            offset_t && offset,
+                                            [[maybe_unused]] ref_seq_t && ref_seq,
+                                            arg_types && ... args)
+        requires is_default_selected_field_ids
+    {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        // use deprecated call
+        push_back(std::tie(seq, id, offset, ref_seq, args...));
+#pragma GCC diagnostic pop
+    }
+    //!\endcond
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\brief            Write a range of records (or tuples) to the file.
      * \tparam rng_t     Type of the range, must satisfy std::ranges::output_range and have a reference type that

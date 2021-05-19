@@ -1,0 +1,23 @@
+// generated from ${source_snippet}
+
+//![main]
+#include <vector>
+
+#include <seqan3/alphabet/nucleotide/${target_alphabet}.hpp>
+#include <seqan3/alphabet/nucleotide/${source_alphabet}.hpp>
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    seqan3::${target_alphabet}_vector vector{'A'_${source_alphabet}, 'C'_${source_alphabet}, 'G'_${source_alphabet}}; // (element-wise) implicit conversion
+
+    // but this won't work:
+    // seqan3::${target_alphabet}_vector ${target_alphabet}_vector{"ACGT"_${source_alphabet}};
+
+    // as a workaround you can use:
+    // side note: this would also work without the implicit conversion.
+    seqan3::${source_alphabet}_vector ${source_alphabet}_vector = "ACGT"_${source_alphabet};
+    seqan3::${target_alphabet}_vector ${target_alphabet}_vector{${source_alphabet}_vector.begin(), ${source_alphabet}_vector.end()};
+}
+//![main]

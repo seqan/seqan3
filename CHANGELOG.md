@@ -26,6 +26,14 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 # 3.0.3
 
+Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
+
+* Check out our updated [SeqAn3 Cookbook](https://docs.seqan.de/seqan/3.0.3/cookbook.html). It contains a listing of code
+  examples on how to perform particular tasks using the library.
+
+* SeqAn 3.0.3 is known to compile with GCC 7.5, 8.4, 9.3, 10.3, and 11.1. Future versions (e.g. GCC 11.2 and 12) might
+  work, but were not yet available at the time of this release.
+
 ## New features
 
 #### Alphabet
@@ -62,6 +70,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Search
 
+* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
+  ([\#2048](https://github.com/seqan/seqan3/pull/2048)).
 * The `seqan3::fm_index_cursor` exposes its suffix array interval ([\#2076](https://github.com/seqan/seqan3/pull/2076)).
 * The `seqan3::interleaved_bloom_filter` supports counting occurrences of a range of values
   ([\#2373](https://github.com/seqan/seqan3/pull/2373)).
@@ -93,6 +103,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### I/O
 
+* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
+  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
 * Requesting the alignment without also requesting the sequence for BAM files containing empty CIGAR strings does now
   not result in erroneous parsing ([\#2418](https://github.com/seqan/seqan3/pull/2418)).
 * BAM files with 64 references are now parsed correctly ([\#2423](https://github.com/seqan/seqan3/pull/2423)).
@@ -124,9 +136,16 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * `seqan3::aminoacid_similarity_matrix::BLOSUM45` is replaced by `seqan3::aminoacid_similarity_matrix::blosum45`.
   * `seqan3::aminoacid_similarity_matrix::BLOSUM62` is replaced by `seqan3::aminoacid_similarity_matrix::blosum62`.
   * `seqan3::aminoacid_similarity_matrix::BLOSUM80` is replaced by `seqan3::aminoacid_similarity_matrix::blosum80`.
-* We deprecated seqan3::alignment_coordinate and it will be removed in 3.1.0
+* Deprecated seqan3::alignment_coordinate and it will be removed in 3.1.0
   ([\#2602](https://github.com/seqan/seqan3/pull/2602)).
 
+Header Changes:
+
+```cpp
+#include <seqan3/alignment/band/static_band.hpp> [deleted without replacement]
+#include <seqan3/alignment/matrix/advanceable_alignment_coordinate.hpp> [deleted without replacement]
+#include <seqan3/alignment/scoring/gap_scheme.hpp> [deleted without replacement]
+```
 #### Alphabet
 
 * We relaxed some requirements of `seqan3::alphabet_base<alphabet_t>`
@@ -152,7 +171,7 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 * Renamed `seqan3::phred68legacy` to `seqan3::phred68solexa` ([\#2522](https://github.com/seqan/seqan3/pull/2522)).
 * Renamed `seqan3::sam_dna16` to `seqan3::dna16sam`
   ([\#2521](https://github.com/seqan/seqan3/pull/2521)).
-* Removed phred constructors instead ([\#2537](https://github.com/seqan/seqan3/pull/2537)):
+* Removed phred constructors ([\#2537](https://github.com/seqan/seqan3/pull/2537)):
   * Use `seqan3::phred42::assign_phred()` or `seqan3::operator""_phred42` instead of `seqan3::phred42(phred_type)`.
   * Use `seqan3::phred63::assign_phred()` or `seqan3::operator""_phred63` instead of `seqan3::phred63(phred_type)`.
   * Use `seqan3::phred94::assign_phred()` or `seqan3::operator""_phred94` instead of `seqan3::phred94(phred_type)`.
@@ -166,6 +185,15 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2568](https://github.com/seqan/seqan3/pull/2568)).
  * **Breaking change**: Swapped the meaning of `seqan3::alphabet_variant::is_alternative` and
    `seqan3::alphabet_variant::holds_alternative` ([\#2596](https://github.com/seqan/seqan3/pull/2596)).
+
+Header Changes:
+
+```cpp
+#include <seqan3/alphabet/cigar/{cigar_op => cigar}.hpp>
+#include <seqan3/alphabet/nucleotide/{sam_dna16 => dna16sam}.hpp}>
+#include <seqan3/alphabet/quality/{phred68legacy => phred68solexa}.hpp>
+#include <seqan3/alphabet/quality/{quality_base => phred_base}.hpp>
+```
 
 #### Argument Parser
 
@@ -181,14 +209,54 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
 
 #### Core
 
-* We deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0
+* Deprecated seqan3::range_compatible_concept and it will be removed in 3.1.0
   ([\#2265](https://github.com/seqan/seqan3/pull/2265)).
+
+Header Changes:
+
+```cpp
+#include <seqan3/core/algorithm/bound.hpp> [Functionality included in alignment/configuration/align_config_band.hpp]
+#include <seqan3/core/{algorithm => configuration}/configuration.hpp>
+#include <seqan3/core/{algorithm => configuration}/pipeable_config_element.hpp>
+
+#include <seqan3/{core => utility}/char_operations/predicate.hpp>
+#include <seqan3/{core => utility}/char_operations/transform.hpp>
+
+#include <seqan3/{core => utility/tuple}/common_tuple.hpp>
+
+#include <seqan3/{core/concept/tuple => utility/tuple/concept}.hpp>
+
+#include <seqan3/{core => utility}/math.hpp>
+
+#include <seqan3/{core => utility/tuple}/pod_tuple.hpp>
+
+#include <seqan3/{core => utility}/simd/concept.hpp>
+#include <seqan3/{core => utility}/simd/{simd_algorithm => algorithm}.hpp>
+#include <seqan3/{core => utility}/simd/simd.hpp>
+#include <seqan3/{core => utility}/simd/simd_traits.hpp>
+#include <seqan3/{core => utility}/simd/{view_iota_simd => views/iota_simd}.hpp>
+#include <seqan3/{core => utility}/simd/{view_to_simd => views/to_simd}.hpp>
+
+#include <seqan3/{core/tuple_utility => utility/tuple/pop_front}.hpp>
+#include <seqan3/{core/tuple_utility => utility/tuple/split}.hpp>
+
+#include <seqan3/{core => utility}/type_list/traits.hpp>
+#include <seqan3/{core => utility}/type_list/type_list.hpp>
+
+#include <seqan3/{core => utility}/type_traits/basic.hpp>
+#include <seqan3/{core => utility}/type_traits/concept.hpp>
+#include <seqan3/{core => utility}/type_traits/function{ =>_traits}.hpp>
+#include <seqan3/{core => utility}/type_traits/{lazy => lazy_conditional.hpp>
+#include <seqan3/{core/type_traits/pack => utility/type_pack/traits}.hpp>
+#include <seqan3/{core => utility}/type_traits/pre.hpp>  [deleted without replacement]
+#include <seqan3/core/{type_traits/range => range/type_traits}.hpp>
+```
 
 #### I/O
 
 * Deprecated `seqan3::field::seq_qual`. Use `seqan3::field::seq` and `seqan3::field::qual` instead.
   ([\#2379](https://github.com/seqan/seqan3/pull/2379)). Check out
-  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html) for usage.
+  [SeqAn3 Cookbook - Write Record](https://docs.seqan.de/seqan/3.0.3/cookbook.html#autotoc_md51) for usage.
 * Renamed seqan3::alignment_file\* to seqan3::sam_file\*
   ([\#2459](https://github.com/seqan/seqan3/pull/2459)):
   * `seqan3::alignment_file_header` is replaced by `seqan3::sam_file_header`.
@@ -199,6 +267,9 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * `seqan3::alignment_file_output` is replaced by `seqan3::sam_file_output`.
   * `seqan3::alignment_file_output_format` is replaced by `seqan3::sam_file_output_format`.
   * `seqan3::alignment_file_output_options` is replaced by `seqan3::sam_file_output_options`.
+* `seqan3::sam_file_input` and `seqan3::sam_file_output` do not accept `seqan3::field::ref_seq`,
+  `seqan3::field::evalue` and `seqan3::field::bit_score` anymore.
+  ([\#2658](https://github.com/seqan/seqan3/pull/2658)).
 * The `seqan3::get` accessor for I/O records, e.g. `seqan3::get<seqan3::field::id>(record)`, is deprecated, please use
   the corresponding member accessor ([\#2420](https://github.com/seqan/seqan3/pull/2420)):
   * If you used files as views with `seqan3::views::get<seqan3::field::id>` to project a single field, e.g.
@@ -232,6 +303,21 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
     * `seqan3::get<seqan3::field::cigar>(record)` => `record.cigar_sequence()`
     * `seqan3::get<seqan3::field::tags>(record)` => `record.tags()`
 
+Header Changes:
+
+```cpp
+#include <seqan3/io/{alignment_file=> sam_file}/format_bam.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/format_sam.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/header.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/input.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/input_format_concept.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/input_options.hpp>
+#include <seqan3/io/{alignment_file/misc => sam_file/sam_flag}.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/output.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/output_format_concept.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/output_options.hpp>
+#include <seqan3/io/{alignment_file=> sam_file}/sam_tag_dictionary.hpp>
+```
 #### Range
 
 * We made `seqan3::views::convert` NOAPI and moved it to `seqan3/utility/views/convert.hpp`. You can still use
@@ -242,25 +328,25 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   ([\#2567](https://github.com/seqan/seqan3/pull/2567)).
 * Deprecated `seqan3::views::drop`, use `std::views::drop` or `seqan3::views::type_reduce | std::views::drop`.
   ([\#2540](https://github.com/seqan/seqan3/pull/2540))
-* We deprecated `seqan3::views::join`. Please use `std::views::join` or `seqan3::views::join_with` instead
+* Deprecated `seqan3::views::join`. Please use `std::views::join` or `seqan3::views::join_with` instead
   ([\#2526](https://github.com/seqan/seqan3/pull/2526)).
 * Deprecated `seqan3::views::move`, use the `std::ranges::move` algorithm, `std::[cpp20::]move_iterator` or an explicit
   for loop where you move the value.
   ([\#2563](https://github.com/seqan/seqan3/pull/2563))
-* We deprecated `seqan3::views::take` and it will be removed in 3.1.0. Use `std::views::take` instead
+* Deprecated `seqan3::views::take` and it will be removed in 3.1.0. Use `std::views::take` instead
   ([\#2541](https://github.com/seqan/seqan3/pull/2541)).
-* We deprecated `seqan3::views::take_line` and it will be removed in 3.1.0
+* Deprecated `seqan3::views::take_line` and it will be removed in 3.1.0
   ([\#2525](https://github.com/seqan/seqan3/pull/2525)).
-* We deprecated `seqan3::views::take_exactly`. Please use `std::views::take` or `std::views::counted` instead
+* Deprecated `seqan3::views::take_exactly`. Please use `std::views::take` or `std::views::counted` instead
   ([\#2601](https://github.com/seqan/seqan3/pull/2601)).
-* We deprecated `seqan3::views::take_until` and it will be removed in 3.1.0. Use
+* Deprecated `seqan3::views::take_until` and it will be removed in 3.1.0. Use
   `std::views::take_while(std::not_fn(predicate))` instead ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
-* We deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other 
+* Deprecated `seqan3::views::take_until_and_consume` and it will be removed in 3.1.0. There is no alternative other
   than reimplementing it yourself ([\#2604](https://github.com/seqan/seqan3/pull/2604)).
-* We deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
+* Deprecated `seqan3::views::to_upper` and it will be removed in 3.1.0, use
   `std::views::transform([](auto && chr){return std::toupper(chr)})`.
-  ([\#2540](https://github.com/seqan/seqan3/pull/2538))
-* We deprecated `seqan3::views::to_lower` and it will be removed in 3.1.0, use
+  ([\#2538](https://github.com/seqan/seqan3/pull/2538))
+* Deprecated `seqan3::views::to_lower` and it will be removed in 3.1.0, use
    `std::views::transform([](auto && chr){return std::tolower(chr)})`.
    ([\#2556](https://github.com/seqan/seqan3/pull/2556))
 * Deprecated `seqan3::views::persist`. There is no replacement, use lvalues instead of rvalues
@@ -283,6 +369,59 @@ regression test suite and patches at https://github.com/seqan/seqan3/tree/master
   * `seqan3::translation_frames::SIX_FRAME` is replaced by `seqan3::translation_frames::six_frames`.
 * Renamed `seqan3::type_reduce_view` to `seqan3::type_reduce_t` ([\#2587](https://github.com/seqan/seqan3/pull/2587)).
 
+Header Changes:
+
+```cpp
+#include <seqan3/{range/concept => alphabet/range/sequence}.hpp>
+#include <seqan3/{range/concept => alphabet/range/concept}.hpp>
+
+#include <seqan3/{range => utility}/container/aligned_allocator.hpp>
+#include <seqan3/{range => alphabet}/container/{bitcompressed_vector => bitpacked_sequence}.hpp>
+#include <seqan3/{range => alphabet}/container/concatenated_sequences.hpp>
+#include <seqan3/{range => utility}/container/concept.hpp>
+#include <seqan3/{range => utility}/container/dynamic_bitset.hpp>
+#include <seqan3/{range => utility}/container/small_string.hpp>
+#include <seqan3/{range => utility}/container/small_vector.hpp>
+
+#include <seqan3/{range => alignment}/decorator/gap_decorator.hpp>
+
+#include <seqan3/{range => alphabet/range}/hash.hpp>
+
+#include <seqan3/{range => io}/views/async_input_buffer.hpp>
+#include <seqan3/{range => alphabet}/views/char_to.hpp>
+#include <seqan3/{range => utility}/views/chunk.hpp>
+#include <seqan3/{range => alphabet}/views/complement.hpp>
+#include <seqan3/{range => utility}/views/convert.hpp>
+#include <seqan3/{range => utility}/views/deep.hpp>
+#include <seqan3/{range => utility}/views/enforce_random_access.hpp>
+#include <seqan3/{range => utility}/views/{get => elements}.hpp>
+#include <seqan3/{range => utility}/views/interleave.hpp>
+#include <seqan3/range/views/istreambuf.hpp> [deleted without replacement]
+#include <seqan3/{range => utility}/views/{join => join_with}.hpp>
+#include <seqan3/{range => search}/views/kmer_hash.hpp>
+#include <seqan3/{range => search}/views/minimiser.hpp>
+#include <seqan3/{range => search}/views/minimiser_hash.hpp>
+#include <seqan3/{range => utility}/views/pairwise_combine.hpp>
+#include <seqan3/range/views/persist> [deleted without replacement]
+#include <seqan3/{range => alphabet}/views/rank_to.hpp>
+#include <seqan3/{range => utility}/views/repeat.hpp>
+#include <seqan3/{range => utility}/views/repeat_n.hpp>
+#include <seqan3/{range => utility}/views/single_pass_input.hpp>
+#include <seqan3/{range => utility}/views/slice.hpp>
+#include <seqan3/range/views/take.hpp> [deleted without replacement]
+#include <seqan3/range/views/take_exactly.hpp> [deleted without replacement]
+#include <seqan3/range/views/take_line.hpp> [deleted without replacement]
+#include <seqan3/range/views/take_until.hpp> [deleted without replacement]
+#include <seqan3/{range => utility}/views/to.hpp>
+#include <seqan3/{range => alphabet}/views/to_char.hpp>
+#include <seqan3/{range => alphabet}/views/to_rank.hpp>
+#include <seqan3/{range => alphabet}/views/translate.hpp>
+#include <seqan3/{range => alphabet}/views/translate_join.hpp>
+#include <seqan3/{range => alphabet}/views/trim_quality.hpp>
+#include <seqan3/{range => utility}/views/type_reduce.hpp>
+#include <seqan3/{range => utility}/views/zip.hpp>
+```
+
 #### Search
 
 * We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this because we currently have only one
@@ -298,14 +437,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   examples on how to perform particular tasks using the library.
 
 * SeqAn 3.0.2 is known to compile with GCC 7.5, 8.4, 9.3 and 10.2. Future versions (e.g. GCC 10.3 and 11) might work,
-  but weren’t yet available at the time of this release.
-
-## Notable Bug-fixes
-
-#### I/O
-
-* The SAM/BAM format reads the quality field (or any other text field) that starts with an asterisk (`*`) but is not
-  empty correctly now ([\#2184](https://github.com/seqan/seqan3/pull/2184)).
+  but were not yet available at the time of this release.
 
 ## New features
 
@@ -356,8 +488,6 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   ([\#1853](https://github.com/seqan/seqan3/pull/1853)).
 * Added `seqan3::search_cfg::on_result`, which allows providing a custom callback for the search algorithm
   ([\#2019](https://github.com/seqan/seqan3/pull/2019)).
-* The `seqan3::fm_index_cursor` and `seqan3::bi_fm_index_cursor` can be serialised
-  ([\#2048](https://github.com/seqan/seqan3/pull/2019)).
 
 ## API changes
 
@@ -652,7 +782,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
 * The member type that denotes which arguments a `validator` can validate has been renamed from `value_type` to
   `option_value_type`
   ([\#1394](https://github.com/seqan/seqan3/pull/1394)).
-* Some exception names were altered and some removed ([\#1394](https://github.com/seqan/seqan3/pull/1467)):
+* Some exception names were altered and some removed ([\#1467](https://github.com/seqan/seqan3/pull/1467)):
   * The exception seqan3::parser_invalid_argument was renamed to seqan3::argument_parser_error.
   * The exception seqan3::validation_failed was renamed to seqan3::validation_error.
   * The exception seqan3::parser_design_error was renamed to seqan3::design_error and also inherits from

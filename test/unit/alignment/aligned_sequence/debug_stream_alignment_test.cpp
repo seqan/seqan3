@@ -16,7 +16,7 @@
 using seqan3::operator""_dna4;
 using seqan3::operator""_rna5;
 
-TEST(debug_stream_test, aligned_sequence_multi_without_gaps)
+TEST(debug_stream_test, multiple_alignment_without_gaps)
 {
     std::string const expected
     {
@@ -60,7 +60,7 @@ TEST(debug_stream_test, aligned_sequence_multi_without_gaps)
     EXPECT_EQ(expected, oss.str());
 }
 
-TEST(debug_stream_test, aligned_sequence_pair_with_gaps)
+TEST(debug_stream_test, pairwise_alignment_with_gaps)
 {
     std::string const expected
     {

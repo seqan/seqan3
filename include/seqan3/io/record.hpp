@@ -173,6 +173,9 @@ struct fields
     //!\brief Special value that indicates that index_of() failed.
     static constexpr size_t npos = std::numeric_limits<size_t>::max();
 
+    //!\brief The size of fields.
+    static constexpr size_t size = sizeof...(fs);
+
     //!\brief Retrieve the position of field in the parameter pack.
     static constexpr size_t index_of(field f)
     {

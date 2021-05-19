@@ -70,8 +70,15 @@ public:
 
     using base_t::base_t;
 
-    //!\brief Allow implicit construction from dna/rna of the same size.
-    constexpr rna4(dna4 const & r) noexcept
+    /*!\brief Allow implicit construction from seqan3::dna4 of the same size.
+     * \details
+     *
+     * \copydetails seqan3::doxygen::rna4_implicit_conversion_from_dna4
+     *
+     * \stableapi{Since version 3.1.}
+     */
+    template <std::same_as<dna4> t>
+    constexpr rna4(t const & r) noexcept
 #if SEQAN3_WORKAROUND_GCC_90897
         requires true
 #endif
@@ -137,7 +144,7 @@ inline namespace literals
  * \anchor seqan3_rna4_char_literal
  *
  * You can use this char literal to assign a seqan3::rna4 character:
- * \include test/snippet/alphabet/nucleotide/rna4_char_literal.cpp
+ * \snippet test/snippet/alphabet/nucleotide/rna4_char_literal.cpp main
  *
  * \stableapi{Since version 3.1.}
  */

@@ -1,0 +1,15 @@
+// generated from ${source_snippet}
+
+//![main]
+#include <seqan3/alphabet/nucleotide/${target_alphabet}.hpp>
+#include <seqan3/alphabet/nucleotide/${source_alphabet}.hpp>
+
+int main()
+{
+    using namespace seqan3::literals;
+
+    seqan3::${target_alphabet} letter1 = 'C'_${source_alphabet}; // implicitly converted
+    seqan3::${target_alphabet} letter2{};
+    letter2 = 'C'_${source_alphabet}; // implicitly converted
+}
+//![main]
