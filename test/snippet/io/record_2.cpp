@@ -18,8 +18,8 @@ int main()
     // the order also depends on selected_ids
 
     record_type my_record{};
-    get<1>(my_record) = "the most important sequence in the database";            // access via index
-    get<std::string>(my_record) = "the least important sequence in the database"; // access via type
+    std::get<1>(my_record) = "the most important sequence in the database";            // access via index
+    std::get<std::string>(my_record) = "the least important sequence in the database"; // access via type
 
 #ifdef SEQAN3_DEPRECATED_310
     using seqan3::get;
