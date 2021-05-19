@@ -12,36 +12,25 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
 #include <iterator>
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
-#include <seqan3/io/sam_file/input_options.hpp>
-#include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/utility/char_operations/predicate.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>
