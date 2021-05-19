@@ -53,7 +53,7 @@ static std::string create_sam_file_string(size_t const n_queries)
                       seqan3::align_cfg::output_score{};
 
         using sam_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::offset,
-                                          seqan3::field::ref_seq, seqan3::field::ref_id, seqan3::field::ref_offset,
+                                          seqan3::field::ref_id, seqan3::field::ref_offset,
                                           seqan3::field::alignment, seqan3::field::mapq, seqan3::field::qual,
                                           seqan3::field::flag>;
         std::ostringstream stream;
@@ -69,7 +69,6 @@ static std::string create_sam_file_string(size_t const n_queries)
             sam_out.emplace_back(query,                                   // field::seq
                                  current_query_id,                        // field::id
                                  align_result.sequence2_begin_position(), // field::offset
-                                 reference,                               // field::ref_seq
                                  reference_id,                            // field::ref_id
                                  align_result.sequence1_begin_position(), // field::ref_offset
                                  align_result.alignment(),                // field::alignment
