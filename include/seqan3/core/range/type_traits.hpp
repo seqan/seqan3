@@ -19,7 +19,9 @@
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
+#ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/utility/type_traits/pre.hpp>
+#endif // SEQAN3_DEPRECATED_310
 
 // TODO(h-2): add innermost_reference instead of or addition to range_innermost_value?
 

@@ -134,6 +134,7 @@ public:
     };
 
 protected:
+#ifdef SEQAN3_DEPRECATED_310
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -144,6 +145,18 @@ protected:
                               seq_type & sequence,
                               id_type & id,
                               qual_type & qualities);
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    template <typename stream_type,     // constraints checked by file
+              typename seq_legal_alph_type,
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type>
+    void read_sequence_record(stream_type & stream,
+                              sequence_file_input_options<seq_legal_alph_type> const & options,
+                              seq_type & sequence,
+                              id_type & id,
+                              qual_type & qualities);
+#endif // SEQAN3_DEPRECATED_310
 
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
@@ -276,6 +289,7 @@ private:
 };
 
 //!\copydoc sequence_file_input_format::read_sequence_record
+#ifdef SEQAN3_DEPRECATED_310
 template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type, bool seq_qual_combined,
           typename seq_type,        // other constraints checked inside function
@@ -286,9 +300,22 @@ inline void format_sam::read_sequence_record(stream_type & stream,
                                              seq_type & sequence,
                                              id_type & id,
                                              qual_type & qualities)
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+template <typename stream_type,     // constraints checked by file
+          typename seq_legal_alph_type,
+          typename seq_type,        // other constraints checked inside function
+          typename id_type,
+          typename qual_type>
+inline void format_sam::read_sequence_record(stream_type & stream,
+                                             sequence_file_input_options<seq_legal_alph_type> const & options,
+                                             seq_type & sequence,
+                                             id_type & id,
+                                             qual_type & qualities)
+#endif // SEQAN3_DEPRECATED_310
 {
     sam_file_input_options<seq_legal_alph_type> align_options;
 
+#ifdef SEQAN3_DEPRECATED_310
     if constexpr (seq_qual_combined)
     {
         tmp_qual.clear();
@@ -300,6 +327,7 @@ inline void format_sam::read_sequence_record(stream_type & stream,
             get<1>(*dit).assign_char(*sit);
     }
     else
+#endif // SEQAN3_DEPRECATED_310
     {
         read_alignment_record(stream, align_options, std::ignore, default_header, sequence, qualities, id,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,

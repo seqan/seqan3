@@ -12,7 +12,9 @@
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
+#ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/range/views/to_lower.hpp>
+#endif // SEQAN3_DEPRECATED_310
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/range/concept.hpp>
 

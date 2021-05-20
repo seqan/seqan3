@@ -66,6 +66,7 @@ public:
     constexpr phred63 & operator=(phred63 &&)       noexcept = default; //!< Defaulted.
     ~phred63()                                      noexcept = default; //!< Defaulted.
 
+#ifdef SEQAN3_DEPRECATED_310
     /*!\brief Allow construction from the Phred score value.
      * \details
      * \deprecated This will be removed in 3.1.0. Please use seqan3::phred63::assign_phred() or '!'_phred63.
@@ -74,6 +75,7 @@ public:
     {
         assign_phred(p);
     }
+#endif // SEQAN3_DEPRECATED_310
 
     // Inherit converting constructor
     using base_t::base_t;

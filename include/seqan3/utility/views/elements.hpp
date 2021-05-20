@@ -102,6 +102,7 @@ inline constexpr auto elements = std::views::transform([] (auto && in) -> declty
 
 } // namespace seqan3::views
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3::views
 {
 
@@ -113,3 +114,4 @@ template <auto index>
 SEQAN3_DEPRECATED_310 inline constexpr auto get = views::elements<index>;
 
 } // namespace seqan3::views
+#endif // SEQAN3_DEPRECATED_310

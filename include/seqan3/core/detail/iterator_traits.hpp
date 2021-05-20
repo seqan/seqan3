@@ -16,7 +16,9 @@
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>
+#ifdef SEQAN3_DEPRECATED_310
 #include <seqan3/utility/type_traits/pre.hpp>
+#endif // SEQAN3_DEPRECATED_310
 
 namespace seqan3
 {

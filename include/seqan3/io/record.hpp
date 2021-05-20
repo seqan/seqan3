@@ -65,7 +65,9 @@ enum class field
     seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
     id,             //!< The identifier, usually a string.
     qual,           //!< The qualities, usually in Phred score notation.
+#ifdef SEQAN3_DEPRECATED_310
     _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
+#endif // SEQAN3_DEPRECATED_310
 
     offset,         //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
 
@@ -106,6 +108,7 @@ enum class field
     user_defined_8, //!< Identifier for user defined file formats and specialisations.
     user_defined_9, //!< Identifier for user defined file formats and specialisations.
 
+#ifdef SEQAN3_DEPRECATED_310
     // deprecated lowercase:
     seq_qual SEQAN3_DEPRECATED_310 = _seq_qual_deprecated, //!< [DEPRECATED] Sequence and qualities combined in one range. Use field::seq and field::qual instead.
 
@@ -144,6 +147,7 @@ enum class field
     USER_DEFINED_7 SEQAN3_DEPRECATED_310 = user_defined_7, //!< Please use the field name in lower case.
     USER_DEFINED_8 SEQAN3_DEPRECATED_310 = user_defined_8, //!< Please use the field name in lower case.
     USER_DEFINED_9 SEQAN3_DEPRECATED_310 = user_defined_9, //!< Please use the field name in lower case.
+#endif // SEQAN3_DEPRECATED_310
 };
 
 // ----------------------------------------------------------------------------
@@ -335,6 +339,7 @@ struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>
 
 } // namespace std
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3
 {
 
@@ -384,3 +389,4 @@ SEQAN3_DEPRECATED_310 auto const && get(record<field_types, field_ids> const && 
 //!\}
 
 } // namespace seqan3
+#endif // SEQAN3_DEPRECATED_310

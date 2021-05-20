@@ -40,6 +40,7 @@ TEST(translate_triplets, dna15)
     EXPECT_EQ(t1, c);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST(translate_triplets, random_access_range)
 {
     seqan3::dna15 n1{'C'_dna15};
@@ -69,3 +70,4 @@ TEST(translate_triplets, tuple)
 
     EXPECT_EQ(t3, c);
 }
+#endif // SEQAN3_DEPRECATED_310

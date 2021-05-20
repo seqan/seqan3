@@ -21,6 +21,7 @@
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
 inline auto constexpr seqan3_views_take = seqan3::detail::take_fn<false, false>{};
 
 // ============================================================================
@@ -213,3 +214,4 @@ TEST(view_take, type_erasure)
         EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
     }
 }
+#endif // SEQAN3_DEPRECATED_310

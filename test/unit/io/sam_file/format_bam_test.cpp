@@ -506,6 +506,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
 
         seqan3::sam_file_input fin{stream, this->ref_ids, this->ref_sequences, seqan3::format_bam{}};
 
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin())),
@@ -514,6 +515,7 @@ TEST_F(bam_format, too_long_cigar_string_read)
                         std::get<1>(this->alignments[0]));
         EXPECT_EQ(seqan3::get<seqan3::field::tags>(*fin.begin()).size(), 0u); // redundant CG tag is removed
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(std::get<0>((*fin.begin()).alignment()),
                         std::get<0>(this->alignments[0]));

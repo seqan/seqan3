@@ -25,7 +25,7 @@ namespace seqan3
 template <typename sequence_legal_alphabet, bool seq_qual_combined>
 #else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
 template <typename sequence_legal_alphabet>
-#endif
+#endif // SEQAN3_DEPRECATED_310
 struct sequence_file_input_options
 {
     //!\brief Read the ID string only up until the first whitespace character.
