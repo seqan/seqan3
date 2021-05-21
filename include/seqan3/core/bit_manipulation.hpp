@@ -21,6 +21,7 @@
 
 SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/std/bit> XOR <seqan3/utility/detail/bits_of.hpp> XOR <seqan3/utility/detail/to_little_endian.hpp> instead.")
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3::detail
 {
 /*!\brief How many bits has a type?
@@ -198,3 +199,4 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t most_significant_bit_set(unsigned_t cons
 }
 
 } // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310
