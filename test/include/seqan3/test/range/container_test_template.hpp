@@ -333,7 +333,7 @@ REGISTER_TYPED_TEST_SUITE_P(container_over_dna4_test,
                             resize,
                             serialisation);
 
-#ifdef SEQAN3_HEADER_TEST
+#if defined(SEQAN3_HEADER_TEST) && defined(GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST)
 // header test will throw an unused warning otherwise
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(container_over_dna4_test);
-#endif // SEQAN3_HEADER_TEST
+#endif // defined(SEQAN3_HEADER_TEST) && defined(GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST)
