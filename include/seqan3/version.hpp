@@ -21,11 +21,13 @@
 #define SEQAN3_VERSION_MINOR 0
 //!\brief The patch version as MACRO.
 #define SEQAN3_VERSION_PATCH 3
+//!\brief The release candidate number. 0 means stable release, >= 1 means release candidate.
+#define SEQAN3_RELEASE_CANDIDATE 2
 
 //!\brief The full version as MACRO (number).
 #define SEQAN3_VERSION (SEQAN3_VERSION_MAJOR * 10000 \
-                     + SEQAN3_VERSION_MINOR * 100 \
-                     + SEQAN3_VERSION_PATCH)
+                      + SEQAN3_VERSION_MINOR * 100 \
+                      + SEQAN3_VERSION_PATCH)
 
 /*!\brief Converts a number to a string. Preprocessor needs this indirection to
  * properly expand the values to strings.
@@ -38,11 +40,21 @@
     SEQAN3_VERSION_CSTRING_HELPER_STR(MINOR) "."\
     SEQAN3_VERSION_CSTRING_HELPER_STR(PATCH)
 
+#if (SEQAN3_RELEASE_CANDIDATE > 0)
+//!\brief A helper function that expands to a suitable release candidate suffix.
+#define SEQAN3_RELEASE_CANDIDATE_HELPER(RC) \
+    "-rc." SEQAN3_VERSION_CSTRING_HELPER_STR(RC)
+#else
+//!\brief A helper function that expands to a suitable release candidate suffix.
+#define SEQAN3_RELEASE_CANDIDATE_HELPER(RC) ""
+#endif
+
 //!\brief The full version as null terminated string.
 #define SEQAN3_VERSION_CSTRING \
     SEQAN3_VERSION_CSTRING_HELPER_FUNC(SEQAN3_VERSION_MAJOR, \
                                        SEQAN3_VERSION_MINOR, \
-                                       SEQAN3_VERSION_PATCH)
+                                       SEQAN3_VERSION_PATCH) \
+                                       SEQAN3_RELEASE_CANDIDATE_HELPER(SEQAN3_RELEASE_CANDIDATE)
 
 namespace seqan3
 {
@@ -64,3 +76,4 @@ constexpr char const* seqan3_version_cstring = SEQAN3_VERSION_CSTRING;
 
 #undef SEQAN3_VERSION_CSTRING_HELPER_STR
 #undef SEQAN3_VERSION_CSTRING_HELPER_FUNC
+#undef SEQAN3_RELEASE_CANDIDATE_HELPER

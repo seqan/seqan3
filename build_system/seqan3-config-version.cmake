@@ -39,6 +39,30 @@ else()
     endif()
 endif()
 
+# extract release candidate
+file(STRINGS "${SEQAN3_INCLUDE_DIR}/seqan3/version.hpp" SEQAN3_RELEASE_CANDIDATE_HPP REGEX "#define SEQAN3_RELEASE_CANDIDATE ")
+string(REGEX REPLACE "#define SEQAN3_RELEASE_CANDIDATE " "" SEQAN3_RELEASE_CANDIDATE_VERSION "${SEQAN3_RELEASE_CANDIDATE_HPP}")
+
+# As of writing this (cmake 3.20):
+# cmake does not allow to set a version containing a suffix via `project(... VERSION 3.0.3-rc.1)`.
+# Version comparisons like VERSION_LESS, VERSION_GREATER do support comparing versions with a suffix (they just drop
+# it), see https://cmake.org/cmake/help/latest/command/if.html#version-comparisons.
+#
+# If https://gitlab.kitware.com/cmake/cmake/-/issues/16716 is ever resolved, we can use SEQAN3_VERSION instead of
+# SEQAN3_PROJECT_VERSION.
+#
+# SEQAN3_PROJECT_VERSION is intended to be used within `project (... VERSION "${SEQAN3_PROJECT_VERSION}")`.
+set (SEQAN3_PROJECT_VERSION "${PACKAGE_VERSION}")
+if (SEQAN3_RELEASE_CANDIDATE_VERSION VERSION_GREATER "0")
+    set (PACKAGE_VERSION "${PACKAGE_VERSION}-rc.${SEQAN3_RELEASE_CANDIDATE_VERSION}")
+endif ()
+
+if (NOT SEQAN3_PROJECT_VERSION VERSION_EQUAL PACKAGE_VERSION)
+    # Note: depending on how https://gitlab.kitware.com/cmake/cmake/-/issues/16716 is resolved (whether they use semver
+    # comparison semantics), (NOT "3.0.3" VERSION_GREATER_EQUAL "3.0.3-rc.1") might be the correct expression.
+    message (AUTHOR_WARNING "SEQAN3_PROJECT_VERSION and SEQAN3_VERSION mismatch, please report this issue and mention your cmake version.")
+endif ()
+
 # if the installed or the using project don't have CMAKE_SIZEOF_VOID_P set, ignore it:
 if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "")
     return()
