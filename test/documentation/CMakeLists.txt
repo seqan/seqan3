@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.7)
 include (../../build_system/seqan3-config-version.cmake)
 set (SEQAN3_VERSION "${PACKAGE_VERSION}")
 
-project (seqan3 LANGUAGES NONE VERSION "${SEQAN3_VERSION}")
+project (seqan3 LANGUAGES NONE VERSION "${SEQAN3_PROJECT_VERSION}")
 
 if (NOT EXISTS "${SEQAN3_INCLUDE_DIR}/seqan3/version.hpp")
     message (FATAL_ERROR "Could not find SeqAn3. Not building documentation.")

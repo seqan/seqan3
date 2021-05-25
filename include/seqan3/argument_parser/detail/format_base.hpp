@@ -428,9 +428,7 @@ protected:
     //!\brief Prints the version information.
     void print_version()
     {
-        std::string const version_str = std::to_string(SEQAN3_VERSION_MAJOR) + "." +
-                                        std::to_string(SEQAN3_VERSION_MINOR) + "." +
-                                        std::to_string(SEQAN3_VERSION_PATCH);
+        std::string const version_str{seqan3_version_cstring};
 
         // Print version, date and url.
         derived_t().print_section("Version");
