@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -354,6 +354,7 @@ TEST(row, different_fields_in_record_and_file)
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), expected_out);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST(row, writing_seq_qual)
 {
     seqan3::sequence_file_output fout{std::ostringstream{},
@@ -373,6 +374,7 @@ TEST(row, writing_seq_qual)
 
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // rows
@@ -432,6 +434,7 @@ TEST(columns, writing_id_seq_qual)
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST(columns, writing_seq_qual)
 {
     seqan3::sequence_file_output fout{std::ostringstream{},
@@ -452,6 +455,7 @@ TEST(columns, writing_seq_qual)
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // compression

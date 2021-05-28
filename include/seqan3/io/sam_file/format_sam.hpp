@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -12,36 +12,25 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
 #include <iterator>
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/core/debug_stream/detail/to_string.hpp>
-#include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/misc.hpp>
+#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
 #include <seqan3/io/sam_file/input_format_concept.hpp>
-#include <seqan3/io/sam_file/input_options.hpp>
-#include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
-#include <seqan3/utility/char_operations/predicate.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>
@@ -145,6 +134,7 @@ public:
     };
 
 protected:
+#ifdef SEQAN3_DEPRECATED_310
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type, bool seq_qual_combined,
               typename seq_type,        // other constraints checked inside function
@@ -155,6 +145,18 @@ protected:
                               seq_type & sequence,
                               id_type & id,
                               qual_type & qualities);
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    template <typename stream_type,     // constraints checked by file
+              typename seq_legal_alph_type,
+              typename seq_type,        // other constraints checked inside function
+              typename id_type,
+              typename qual_type>
+    void read_sequence_record(stream_type & stream,
+                              sequence_file_input_options<seq_legal_alph_type> const & options,
+                              seq_type & sequence,
+                              id_type & id,
+                              qual_type & qualities);
+#endif // SEQAN3_DEPRECATED_310
 
     template <typename stream_type,     // constraints checked by file
               typename seq_type,        // other constraints checked inside function
@@ -287,6 +289,7 @@ private:
 };
 
 //!\copydoc sequence_file_input_format::read_sequence_record
+#ifdef SEQAN3_DEPRECATED_310
 template <typename stream_type,     // constraints checked by file
           typename seq_legal_alph_type, bool seq_qual_combined,
           typename seq_type,        // other constraints checked inside function
@@ -297,9 +300,22 @@ inline void format_sam::read_sequence_record(stream_type & stream,
                                              seq_type & sequence,
                                              id_type & id,
                                              qual_type & qualities)
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+template <typename stream_type,     // constraints checked by file
+          typename seq_legal_alph_type,
+          typename seq_type,        // other constraints checked inside function
+          typename id_type,
+          typename qual_type>
+inline void format_sam::read_sequence_record(stream_type & stream,
+                                             sequence_file_input_options<seq_legal_alph_type> const & options,
+                                             seq_type & sequence,
+                                             id_type & id,
+                                             qual_type & qualities)
+#endif // SEQAN3_DEPRECATED_310
 {
     sam_file_input_options<seq_legal_alph_type> align_options;
 
+#ifdef SEQAN3_DEPRECATED_310
     if constexpr (seq_qual_combined)
     {
         tmp_qual.clear();
@@ -311,6 +327,7 @@ inline void format_sam::read_sequence_record(stream_type & stream,
             get<1>(*dit).assign_char(*sit);
     }
     else
+#endif // SEQAN3_DEPRECATED_310
     {
         read_alignment_record(stream, align_options, std::ignore, default_header, sequence, qualities, id,
                               std::ignore, std::ignore, std::ignore, std::ignore, std::ignore, std::ignore,

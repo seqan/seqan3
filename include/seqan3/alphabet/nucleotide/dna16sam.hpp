@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -172,11 +172,13 @@ private:
  */
 using dna16sam_vector = std::vector<dna16sam>;
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\deprecated Please use seqan3::dna16sam instead.
 using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
 
 //!\deprecated Please use seqan3::dna16sam_vector instead.
 using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
+#endif // SEQAN3_DEPRECATED_310
 
 // ------------------------------------------------------------------
 // literals
@@ -225,6 +227,7 @@ inline dna16sam_vector operator""_dna16sam(char const * s, size_t n)
     return r;
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 //!\deprecated Please use seqan3::operator""_dna16sam instead.
 SEQAN3_DEPRECATED_310 constexpr dna16sam operator""_sam_dna16(char const c) noexcept
 {
@@ -236,6 +239,7 @@ SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s
 {
     return seqan3::operator""_dna16sam(s, n);
 }
+#endif // SEQAN3_DEPRECATED_310
 //!\}
 
 } // inline namespace literals

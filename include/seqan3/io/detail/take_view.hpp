@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace seqan3::detail
 template <std::ranges::view urng_t, bool exactly, bool or_throw>
 class view_take : public std::ranges::view_interface<view_take<urng_t, exactly, or_throw>>
 {
-#if SEQAN3_VERSION_MAJOR == 3 && SEQAN3_VERSION_MINOR == 1
+#if !defined(SEQAN3_DEPRECATED_310) && SEQAN3_VERSION_MAJOR == 3 && SEQAN3_VERSION_MINOR == 1
     #pragma warning "Move this class to seqan3/io/detail/take_exactly_view.hpp and name it view_take_exactly; substitute exactly with = true."
 #endif
 private:

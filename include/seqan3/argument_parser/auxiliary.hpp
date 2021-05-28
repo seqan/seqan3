@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -258,10 +258,12 @@ enum option_spec
                    * (e.g. "A tool for mapping reads to the genome").
                    */
 
+#ifdef SEQAN3_DEPRECATED_310
     DEFAULT SEQAN3_DEPRECATED_310  = standard, //!< \deprecated Use seqan3::option_spec::standard instead.
     REQUIRED SEQAN3_DEPRECATED_310 = required, //!< \deprecated Use seqan3::option_spec::required instead.
     ADVANCED SEQAN3_DEPRECATED_310 = advanced, //!< \deprecated Use seqan3::option_spec::advanced instead.
     HIDDEN SEQAN3_DEPRECATED_310   = hidden,   //!< \deprecated Use seqan3::option_spec::hidden instead.
+#endif // SEQAN3_DEPRECATED_310
 };
 
 //!\brief Indicates whether application allows automatic update notifications by the seqan3::argument_parser.

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -81,6 +81,7 @@ TEST_F(structure_record, get_by_type)
     EXPECT_DOUBLE_EQ(std::get<double>(r), 1.5);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(structure_record, get_by_field)
 {
     record_type r{"MY ID", "ACGU"_rna5, "(())"_wuss51, 1.5};
@@ -93,6 +94,7 @@ TEST_F(structure_record, get_by_field)
     EXPECT_DOUBLE_EQ(seqan3::get<seqan3::field::energy>(r), 1.5);
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(structure_record, get_by_member)
 {
@@ -104,6 +106,7 @@ TEST_F(structure_record, get_by_member)
     EXPECT_DOUBLE_EQ(r.energy(), 1.5);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(structure_record, get_types)
 {
     record_type r{"MY ID", "ACGU"_rna5, "(())"_wuss51, 1.5};
@@ -134,6 +137,7 @@ TEST_F(structure_record, get_types)
     EXPECT_SAME_TYPE(double const &&, decltype(seqan3::get<seqan3::field::energy>(std::move(std::as_const(r)))));
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(structure_record, member_types)
 {

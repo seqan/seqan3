@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -14,6 +14,8 @@
 
 #include <seqan3/core/platform.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
+
 namespace seqan3
 {
 
@@ -25,7 +27,6 @@ namespace seqan3
 // value_type
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::value_type and will be removed before SeqAn 3.1.
@@ -36,7 +37,6 @@ struct value_type;
 template <typename t>
 using value_type_t = typename value_type<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `value_type` of another type.
  * \implements seqan3::transformation_trait
@@ -73,7 +73,6 @@ using value_type_t SEQAN3_DEPRECATED_310 = typename detail::value_type_t<t>;
 // reference
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::reference and will be removed before SeqAn 3.1.
@@ -84,7 +83,6 @@ struct reference;
 template <typename t>
 using reference_t = typename reference<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `reference` of another type.
  * \implements seqan3::transformation_trait
@@ -121,7 +119,6 @@ using reference_t SEQAN3_DEPRECATED_310 = typename detail::reference_t<t>;
 // rvalue_reference
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::rvalue_reference and will be removed before SeqAn 3.1.
@@ -132,7 +129,6 @@ struct rvalue_reference;
 template <typename t>
 using rvalue_reference_t = typename rvalue_reference<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `rvalue_reference` of another type.
  * \implements seqan3::transformation_trait
@@ -169,7 +165,6 @@ using rvalue_reference_t SEQAN3_DEPRECATED_310 = typename detail::rvalue_referen
 // const_reference
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::const_reference and will be removed before SeqAn 3.1.
@@ -180,7 +175,6 @@ struct const_reference;
 template <typename t>
 using const_reference_t = typename const_reference<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `const_reference` of another type.
  * \implements seqan3::transformation_trait
@@ -221,7 +215,6 @@ using const_reference_t SEQAN3_DEPRECATED_310 = typename detail::const_reference
 // difference_type
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::difference_type and will be removed before SeqAn 3.1.
@@ -232,7 +225,6 @@ struct difference_type;
 template <typename t>
 using difference_type_t = typename difference_type<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `difference_type` of another type.
  * \implements seqan3::transformation_trait
@@ -271,7 +263,6 @@ using difference_type_t SEQAN3_DEPRECATED_310 = typename detail::difference_type
 // size_type
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_DEPRECATED_310
 namespace detail
 {
 //!\brief This is helper structure to deprecate seqan3::size_type and will be removed before SeqAn 3.1.
@@ -282,7 +273,6 @@ struct size_type;
 template <typename t>
 using size_type_t = typename size_type<t>::type;
 } // namespace seqan3::detail
-#endif
 
 /*!\brief Exposes the `size_type` of another type.
  * \implements seqan3::transformation_trait
@@ -321,3 +311,5 @@ using size_type_t SEQAN3_DEPRECATED_310 = typename detail::size_type_t<t>;
 //!\}
 
 } // namespace seqan3
+
+#endif // SEQAN3_DEPRECATED_310

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -21,6 +21,7 @@
 
 SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.1.0; Please #include <seqan3/std/bit> XOR <seqan3/utility/detail/bits_of.hpp> XOR <seqan3/utility/detail/to_little_endian.hpp> instead.")
 
+#ifdef SEQAN3_DEPRECATED_310
 namespace seqan3::detail
 {
 /*!\brief How many bits has a type?
@@ -198,3 +199,4 @@ SEQAN3_DEPRECATED_310 constexpr uint8_t most_significant_bit_set(unsigned_t cons
 }
 
 } // namespace seqan3::detail
+#endif // SEQAN3_DEPRECATED_310

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -232,12 +232,14 @@ TEST_F(sequence_file_input_f, record_reading)
     size_t counter = 0;
     for (auto & rec : fin)
     {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
@@ -267,6 +269,7 @@ TEST_F(sequence_file_input_f, record_reading_struct_bind)
     EXPECT_EQ(counter, 3u);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(sequence_file_input_f, record_reading_custom_fields)
 {
     /* record based reading */
@@ -285,6 +288,7 @@ TEST_F(sequence_file_input_f, record_reading_custom_fields)
 
     EXPECT_EQ(counter, 3u);
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sequence_file_input_f, record_reading_custom_options)
 {
@@ -303,22 +307,28 @@ TEST_F(sequence_file_input_f, record_reading_custom_options)
     fin.options.truncate_ids = true;
 
     auto it = fin.begin();
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID1");
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
     EXPECT_EQ((*it).id(), "ID1");
     ++it;
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID2");
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
     EXPECT_EQ((*it).id(), "ID2");
     ++it;
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), "ID3");
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
     EXPECT_EQ((*it).id(), "ID3");
 }
 
@@ -334,12 +344,14 @@ TEST_F(sequence_file_input_f, file_view)
     size_t counter = 1; // the first record will be filtered out
     for (auto & rec : fin | minimum_length_filter)
     {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(rec.id(),  id_comp[counter]);
         EXPECT_RANGE_EQ(rec.sequence(), seq_comp[counter]);
@@ -361,12 +373,14 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     size_t counter = 0;
     for (auto & rec : fin)
     {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(rec), fix.seq_comp[counter]);
         EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(rec),  fix.id_comp[counter]);
         EXPECT_TRUE(empty(seqan3::get<seqan3::field::qual>(rec)));
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_RANGE_EQ(rec.sequence(), fix.seq_comp[counter]);
         EXPECT_RANGE_EQ(rec.id(),  fix.id_comp[counter]);

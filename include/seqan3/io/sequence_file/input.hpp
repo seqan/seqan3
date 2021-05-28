@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -325,7 +325,11 @@ public:
    /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
      * \ref field_types.
      */
+#ifdef SEQAN3_DEPRECATED_310
     using field_ids            = fields<field::seq, field::id, field::qual, field::_seq_qual_deprecated>;
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    using field_ids            = fields<field::seq, field::id, field::qual>;
+#endif // SEQAN3_DEPRECATED_310
 
     static_assert([] () constexpr
                   {
@@ -337,6 +341,7 @@ public:
                   "You selected a field that is not valid for sequence files, please refer to the documentation "
                   "of sequence_file_input::field_ids for the accepted values.");
 
+#ifdef SEQAN3_DEPRECATED_310
     static_assert([] () constexpr
                   {
                       return !(selected_field_ids::contains(field::_seq_qual_deprecated) &&
@@ -344,6 +349,7 @@ public:
                                (selected_field_ids::contains(field::qual))));
                   }(),
                   "You may not select field::seq_qual and either of field::seq and field::qual at the same time.");
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -366,10 +372,13 @@ public:
     using sequence_quality_type = typename traits_type::
                                     template sequence_container<qualified<typename traits_type::sequence_alphabet,
                                                                           typename traits_type::quality_alphabet>>;
-#endif // SEQAN3_DEPRECATED_310
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
     using field_types           = type_list<sequence_type, id_type, quality_type, sequence_quality_type>;
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    //!\brief The previously defined types aggregated in a seqan3::type_list.
+    using field_types           = type_list<sequence_type, id_type, quality_type>;
+#endif // SEQAN3_DEPRECATED_310
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
     using record_type           = sequence_record<detail::select_types_with_ids_t<field_types,
@@ -595,9 +604,13 @@ public:
     //!\}
 
     //!\brief The input file options type.
+#ifdef SEQAN3_DEPRECATED_310
     using sequence_file_input_options_type
         = sequence_file_input_options<typename traits_type::sequence_legal_alphabet,
                                       selected_field_ids::contains(field::_seq_qual_deprecated)>;
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    using sequence_file_input_options_type = sequence_file_input_options<typename traits_type::sequence_legal_alphabet>;
+#endif // SEQAN3_DEPRECATED_310
     //!\brief The options are public and its members can be set directly.
     sequence_file_input_options_type options;
 
@@ -721,6 +734,7 @@ private:
                                   sequence_file_input_options_type const & options) override
         {
             // read new record
+#ifdef SEQAN3_DEPRECATED_310
             if constexpr (selected_field_ids::contains(field::_seq_qual_deprecated))
             {
                 _format.read_sequence_record(instream,
@@ -730,6 +744,7 @@ private:
                                              detail::get_or_ignore<field::_seq_qual_deprecated>(record_buffer));
             }
             else
+#endif // SEQAN3_DEPRECATED_310
             {
                 _format.read_sequence_record(instream,
                                              options,
