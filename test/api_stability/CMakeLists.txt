@@ -7,9 +7,9 @@ find_package(Git)
 include (../seqan3-test.cmake)
 
 include (ExternalProject)
-set (SEQAN3_LAST_STABLE_VERSION "3.0.2")
+set (SEQAN3_LAST_STABLE_VERSION "3.0.3")
 set (SEQAN3_LAST_STABLE_SOURCE_URL "https://github.com/seqan/seqan3/releases/download/${SEQAN3_LAST_STABLE_VERSION}/seqan3-${SEQAN3_LAST_STABLE_VERSION}-Source.tar.xz")
-set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "bab1a9cd0c01fd486842e0fa7a5b41c1bf6d2c43fdadf4c543956923deb62ee9")
+set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "42fca82e7e03ba2ed2026be739cd5e0be785152f872fdd0bac13b6f836035fc0")
 
 ExternalProject_Add(api_stability_unit
   URL               ${SEQAN3_LAST_STABLE_SOURCE_URL}
