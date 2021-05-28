@@ -9,15 +9,15 @@
 #include <cmath>
 #include <cstring>
 #include <random>
+#include <seqan3/std/ranges>
 #include <utility>
 
 #include <benchmark/benchmark.h>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/exception.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/range/decorator/all.hpp>
-#include <seqan3/std/ranges>
 
 #include "gap_decorator_helper.hpp"
 

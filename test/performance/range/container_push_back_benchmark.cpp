@@ -11,8 +11,12 @@
 
 #include <benchmark/benchmark.h>
 
+#include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/all.hpp>
-#include <seqan3/range/container/all.hpp>
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+#include <seqan3/utility/container/small_vector.hpp>
+
+#include <sdsl/int_vector.hpp>
 
 template <typename t>
 using sdsl_int_vec = sdsl::int_vector<sizeof(t) * 8>;

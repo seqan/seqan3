@@ -14,7 +14,6 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/range/views/drop.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
 // THIS FILE IMPLICITLY TESTS seqan3::views::slice, because that is just drop piped into take
@@ -58,11 +57,6 @@ void sequential_read(benchmark::State & state)
 
     [[maybe_unused]] volatile uint8_t dummy2 = dummy;
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-//!brief Instance for usage until removed.
-inline constexpr auto seqan3_views_drop = seqan3::detail::drop_fn{};
-#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::string,         void,                              void);
 BENCHMARK_TEMPLATE(sequential_read, std::string,         decltype(std::views::drop), decltype(std::views::take));
