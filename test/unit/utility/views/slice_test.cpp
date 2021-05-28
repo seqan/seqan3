@@ -16,6 +16,7 @@
 
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 #include <seqan3/utility/views/slice.hpp>
 
