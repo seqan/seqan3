@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ REGISTER_TYPED_TEST_SUITE_P(container_over_dna4_test,
                             resize,
                             serialisation);
 
-#ifdef SEQAN3_HEADER_TEST
+#if defined(SEQAN3_HEADER_TEST) && defined(GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST)
 // header test will throw an unused warning otherwise
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(container_over_dna4_test);
-#endif // SEQAN3_HEADER_TEST
+#endif // defined(SEQAN3_HEADER_TEST) && defined(GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST)

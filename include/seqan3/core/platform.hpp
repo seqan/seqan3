@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -197,12 +197,14 @@
 #endif
 
 //!\brief Deprecation message for SeqAn 3.1.0 release.
-#ifndef SEQAN3_DEPRECATED_310
-#   ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
-#       define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
-#   else
-#       define SEQAN3_DEPRECATED_310 /**/
-#   endif
+#ifndef SEQAN3_REMOVE_DEPRECATED_310
+#    ifndef SEQAN3_DEPRECATED_310
+#       ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#           define SEQAN3_DEPRECATED_310 [[deprecated("This will be removed in SeqAn-3.1.0; please see the documentation.")]]
+#       else
+#           define SEQAN3_DEPRECATED_310 /**/
+#       endif
+#    endif
 #endif
 
 //!\brief Deprecation message for deprecated header.

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -63,6 +63,7 @@ public:
     constexpr phred94 & operator=(phred94 &&)       noexcept = default; //!< Defaulted.
     ~phred94()                                      noexcept = default; //!< Defaulted.
 
+#ifdef SEQAN3_DEPRECATED_310
     /*!\brief Allow construction from the Phred score value.
      * \details
      * \deprecated This will be removed in 3.1.0. Please use seqan3::phred94::assign_phred() or '!'_phred94.
@@ -71,6 +72,7 @@ public:
     {
         assign_phred(p);
     }
+#endif // SEQAN3_DEPRECATED_310
 
     // Inherit converting constructor
     using base_t::base_t;

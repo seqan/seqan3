@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -104,7 +104,11 @@ struct read : public sequence_file_data
         "!!!!!!!\n"
     };
 
+#ifdef SEQAN3_DEPRECATED_310
     seqan3::sequence_file_input_options<seqan3::dna15, false> options{};
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+    seqan3::sequence_file_input_options<seqan3::dna15> options{};
+#endif // SEQAN3_DEPRECATED_310
 
     void do_read_test(std::string const & input)
     {
@@ -115,12 +119,14 @@ struct read : public sequence_file_data
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, ++it)
         {
+#ifdef SEQAN3_DEPRECATED_310
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
             EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
 #pragma GCC diagnostic pop
+#endif // SEQAN3_DEPRECATED_310
 
             EXPECT_RANGE_EQ((*it).id(), ids[i]);
             EXPECT_RANGE_EQ((*it).sequence(), seqs[i]);

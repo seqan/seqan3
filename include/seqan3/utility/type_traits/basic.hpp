@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ namespace seqan3
 /*!\addtogroup type_traits
  * \{
  */
-
+#ifdef SEQAN3_DEPRECATED_310
 // ----------------------------------------------------------------------------
 // remove_cvref_t
 // ----------------------------------------------------------------------------
@@ -43,6 +43,7 @@ namespace seqan3
  */
 template <typename t>
 using remove_cvref_t SEQAN3_DEPRECATED_310 = std::remove_cv_t<std::remove_reference_t<t>>;
+#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // remove_rvalue_reference

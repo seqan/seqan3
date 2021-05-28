@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -70,7 +70,11 @@ namespace seqan3
 template <typename t>
 SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
                                                       std::ifstream                                 & f,
+#ifdef SEQAN3_DEPRECATED_310
                                                       sequence_file_input_options<dna5, false>      & options,
+#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
+                                                      sequence_file_input_options<dna5>             & options,
+#endif // SEQAN3_DEPRECATED_310
                                                       std::vector<dna5>                             & seq,
                                                       std::string                                   & id,
                                                       std::vector<phred42>                          & qual,

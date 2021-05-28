@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -136,8 +136,10 @@ public:
      */
     using unaligned_sequence_type = inner_type;
 
+#ifdef SEQAN3_DEPRECATED_310
     //!\deprecated Please use seqan3::gap_decorator::unaligned_sequence_type instead.
     using unaligned_seq_type SEQAN3_DEPRECATED_310 = unaligned_sequence_type;
+#endif // SEQAN3_DEPRECATED_310
 
     /*!\name Constructors, destructor and assignment
      * \{

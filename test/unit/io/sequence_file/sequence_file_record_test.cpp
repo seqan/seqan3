@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -67,6 +67,7 @@ TEST_F(sequence_record, get_by_type)
     EXPECT_RANGE_EQ(std::get<seqan3::dna4_vector>(r), "ACGT"_dna4);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(sequence_record, get_by_field)
 {
     record_type r{"MY ID", "ACGT"_dna4};
@@ -77,6 +78,7 @@ TEST_F(sequence_record, get_by_field)
     EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna4);
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sequence_record, get_by_member)
 {
@@ -86,6 +88,7 @@ TEST_F(sequence_record, get_by_member)
     EXPECT_RANGE_EQ(r.sequence(), "ACGT"_dna4);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST_F(sequence_record, get_types)
 {
     record_type r{"MY ID", "ACGT"_dna4};
@@ -106,6 +109,7 @@ TEST_F(sequence_record, get_types)
                      decltype(seqan3::get<seqan3::field::seq>(std::move(std::as_const(r)))));
 #pragma GCC diagnostic pop
 }
+#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sequence_record, member_types)
 {

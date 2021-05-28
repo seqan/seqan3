@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -21,6 +21,7 @@
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
+#ifdef SEQAN3_DEPRECATED_310
 inline auto constexpr seqan3_views_take = seqan3::detail::take_fn<false, false>{};
 
 // ============================================================================
@@ -213,3 +214,4 @@ TEST(view_take, type_erasure)
         EXPECT_RANGE_EQ(v2, (std::vector{1, 2, 3}));
     }
 }
+#endif // SEQAN3_DEPRECATED_310

@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------------------------------
-# Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-# Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+# Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+# Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 # This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
@@ -569,6 +569,6 @@ if (SEQAN3_FIND_DEBUG)
   message ("")
   message ("  SEQAN3_VERSION              ${SEQAN3_VERSION}")
   message ("  SEQAN3_VERSION_MAJOR        ${SEQAN3_VERSION_MAJOR}")
-  message ("  SEQAN3_VERSION_MINORG       ${SEQAN3_VERSION_MINOR}")
+  message ("  SEQAN3_VERSION_MINOR        ${SEQAN3_VERSION_MINOR}")
   message ("  SEQAN3_VERSION_PATCH        ${SEQAN3_VERSION_PATCH}")
 endif ()

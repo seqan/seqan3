@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ TEST(translate_triplets, dna15)
     EXPECT_EQ(t1, c);
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 TEST(translate_triplets, random_access_range)
 {
     seqan3::dna15 n1{'C'_dna15};
@@ -69,3 +70,4 @@ TEST(translate_triplets, tuple)
 
     EXPECT_EQ(t3, c);
 }
+#endif // SEQAN3_DEPRECATED_310

@@ -1,0 +1,44 @@
+From 1ab5f7b5e9abfea99dab77bd524ea5b8c948b799 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Tue, 18 May 2021 22:08:36 +0200
+Subject: [PATCH 39/39] [API] [FIX] SAM header parsing; relax that unknown tags
+ throw
+
+---
+ test/unit/io/alignment_file/format_sam_test.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/test/unit/io/alignment_file/format_sam_test.cpp b/test/unit/io/alignment_file/format_sam_test.cpp
+index ad4e0ae39..71ac90429 100644
+--- a/test/unit/io/alignment_file/format_sam_test.cpp
++++ b/test/unit/io/alignment_file/format_sam_test.cpp
+@@ -119,7 +119,7 @@ TEST_F(sam_format, header_errors)
+         };
+         std::istringstream istream(header_str);
+         seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+-        EXPECT_THROW(fin.begin(), seqan3::format_error);
++        EXPECT_NO_THROW(fin.begin());
+     }
+     {
+         std::string header_str
+@@ -128,7 +128,7 @@ TEST_F(sam_format, header_errors)
+         };
+         std::istringstream istream(header_str);
+         seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+-        EXPECT_THROW(fin.begin(), seqan3::format_error);
++        EXPECT_NO_THROW(fin.begin());
+     }
+     {
+         std::string header_str
+@@ -148,7 +148,7 @@ TEST_F(sam_format, header_errors)
+         };
+         std::istringstream istream(header_str);
+         seqan3::alignment_file_input fin{istream, seqan3::format_sam{}};
+-        EXPECT_THROW(fin.begin(), seqan3::format_error);
++        EXPECT_NO_THROW(fin.begin());
+     }
+     {
+         std::string header_str
+-- 
+2.31.1
+

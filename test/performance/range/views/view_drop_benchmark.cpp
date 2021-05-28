@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -60,36 +60,52 @@ void sequential_read(benchmark::State & state)
     [[maybe_unused]] volatile uint8_t dummy2 = dummy;
 }
 
+#ifdef SEQAN3_DEPRECATED_310
 //!brief Instance for usage until removed.
 inline constexpr auto seqan3_views_drop = seqan3::detail::drop_fn{};
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::string, void);
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(sequential_read, std::string, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, void);
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(sequential_read, std::deque<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, void);
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(sequential_read, std::list<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void,                              true);
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, void, true);
 BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(std::views::drop), true);
-BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3_views_drop),      true);
+#ifdef SEQAN3_DEPRECATED_310
+BENCHMARK_TEMPLATE(sequential_read, std::vector<uint8_t>, decltype(seqan3_views_drop), true);
+#endif // SEQAN3_DEPRECATED_310
 
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void,                              true);
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, void, true);
 BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(std::views::drop), true);
-BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3_views_drop),      true);
+#ifdef SEQAN3_DEPRECATED_310
+BENCHMARK_TEMPLATE(sequential_read, std::forward_list<uint8_t>, decltype(seqan3_views_drop), true);
+#endif // SEQAN3_DEPRECATED_310
 
 // ============================================================================
 //  random access
@@ -139,15 +155,21 @@ void random_access(benchmark::State & state)
 
 BENCHMARK_TEMPLATE(random_access, std::string, void);
 BENCHMARK_TEMPLATE(random_access, std::string, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(random_access, std::string, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, void);
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(random_access, std::vector<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, void);
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(std::views::drop));
+#ifdef SEQAN3_DEPRECATED_310
 BENCHMARK_TEMPLATE(random_access, std::deque<uint8_t>, decltype(seqan3_views_drop));
+#endif // SEQAN3_DEPRECATED_310
 
 // ============================================================================
 //  run

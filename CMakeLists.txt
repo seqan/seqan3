@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------------------------------
-# Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-# Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+# Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+# Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 # This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
@@ -17,10 +17,10 @@ list (APPEND CMAKE_MODULE_PATH "${SEQAN3_MODULE_PATH}")
 include (seqan3-config-version)
 
 if (CMAKE_VERSION VERSION_LESS 3.12)
-    project (seqan3 LANGUAGES CXX VERSION "${PACKAGE_VERSION}")
+    project (seqan3 LANGUAGES CXX VERSION "${SEQAN3_PROJECT_VERSION}")
 else ()
     project (
-        seqan3 LANGUAGES CXX VERSION "${PACKAGE_VERSION}"
+        seqan3 LANGUAGES CXX VERSION "${SEQAN3_PROJECT_VERSION}"
         DESCRIPTION "SeqAn3 -- the modern C++ library for sequence analysis" # since cmake 3.9
         HOMEPAGE_URL "https://github.com/seqan/seqan3" # since cmake 3.12
     )

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -21,11 +21,13 @@
 namespace seqan3::views
 {
 
+#ifdef SEQAN3_DEPRECATED_310
 /*!\brief A join view.
  * \ingroup views
  * \deprecated Please use std::views::join or seqan3::views::join_with (if a separator is needed)
  */
 SEQAN3_DEPRECATED_310 inline constexpr auto join = ::ranges::views::join;
+#endif // SEQAN3_DEPRECATED_310
 
 /*!\brief A join view, please use std::views::join if you don't need a separator.
  * \ingroup views

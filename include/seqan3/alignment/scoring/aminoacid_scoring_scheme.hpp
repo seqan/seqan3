@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -56,11 +56,13 @@ enum class aminoacid_similarity_matrix
      */
     blosum80,
 
+#ifdef SEQAN3_DEPRECATED_310
     // deprecated uppercase:
     BLOSUM30 SEQAN3_DEPRECATED_310 = blosum30, //!< Please use the field name in lower case.
     BLOSUM45 SEQAN3_DEPRECATED_310 = blosum45, //!< Please use the field name in lower case.
     BLOSUM62 SEQAN3_DEPRECATED_310 = blosum62, //!< Please use the field name in lower case.
     BLOSUM80 SEQAN3_DEPRECATED_310 = blosum80 //!< Please use the field name in lower case.
+#endif // SEQAN3_DEPRECATED_310
 };
 
 /*!\brief A data structure for managing and computing the score of two amino acids.

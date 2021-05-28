@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -22,6 +22,7 @@ struct format_man_test : public ::testing::Test
     std::vector<std::string> list_pos_opt_value{};
     std::string my_stdout{};
     const char * argv[4] = {"./format_man_test --version-check false", "--export-help", "man"};
+    std::string const version_str{seqan3::seqan3_version_cstring};
     std::string expected =
     R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
     R"(.SH NAME)" "\n"
@@ -85,7 +86,7 @@ struct format_man_test : public ::testing::Test
     R"(.br)" "\n"
     R"(\fBdefault version: \fR01.01.01)" "\n"
     R"(.br)" "\n"
-    R"(\fBSeqAn version: \fR3.0.3)" "\n";
+    R"(\fBSeqAn version: \fR)" + version_str + "\n";
 
     // Full info parser initialisation
     void dummy_init(seqan3::argument_parser & parser)
@@ -121,6 +122,7 @@ TEST_F(format_man_test, empty_information)
     parser.info.man_page_title = "default_man_page_title";
     parser.info.short_description = "A short description here.";
 
+    std::string const version_str{seqan3::seqan3_version_cstring};
     std::string expected_short =
     R"(.TH DEFAULT 1 "December 01, 1994" "default 01.01.01" "default_man_page_title")" "\n"
     R"(.SH NAME)" "\n"
@@ -150,7 +152,7 @@ TEST_F(format_man_test, empty_information)
     R"(.br)" "\n"
     R"(\fBdefault version: \fR01.01.01)" "\n"
     R"(.br)" "\n"
-    R"(\fBSeqAn version: \fR3.0.3)" "\n";
+    R"(\fBSeqAn version: \fR)" + version_str + "\n";
 
     // Test the dummy parser with minimal information.
     testing::internal::CaptureStdout();

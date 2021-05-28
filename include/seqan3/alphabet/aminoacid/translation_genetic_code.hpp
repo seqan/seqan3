@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------------------------------
-// Copyright (c) 2006-2020, Knut Reinert & Freie Universität Berlin
-// Copyright (c) 2016-2020, Knut Reinert & MPI für molekulare Genetik
+// Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+// Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 // This file may be used, modified and/or redistributed under the terms of the 3-clause BSD-License
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
@@ -27,7 +27,9 @@ namespace seqan3
 enum struct genetic_code : uint8_t
 {
     canonical = 1, //!< [The Standard Code](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1).
+#ifdef SEQAN3_DEPRECATED_310
     CANONICAL SEQAN3_DEPRECATED_310 = canonical, //!< \deprecated Use seqan3::genetic_code::canonical instead.
+#endif // SEQAN3_DEPRECATED_310
 //     vert_mitochondrial,
 //     yeast_mitochondrial,
 //     mold_mitochondrial,
