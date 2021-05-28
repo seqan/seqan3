@@ -12,6 +12,7 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
+#include <seqan3/test/file_access.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 struct dummy_file
@@ -502,35 +503,6 @@ TEST(validator_test, output_directory)
     }
 }
 
-// In case this test is built as `root`, we want to exclude tests that check if certain missing permissions cause
-// specific exceptions. For this, we check if read/write permissions are still available after the permissions were
-// revoked. Note that `root` can always read/write even if user/group/all permissions are not set.
-
-inline bool read_access(std::filesystem::path const & file)
-{
-    std::fstream stream;
-    stream.open(file, std::ios::in);
-    return !stream.fail();
-}
-
-inline bool write_access(std::filesystem::path const & file)
-{
-    if (std::filesystem::is_directory(file))
-    {
-        std::fstream stream;
-        std::filesystem::path test_file{file};
-        test_file /= "test";
-        stream.open(test_file, std::ios::out);
-        return !stream.fail();
-    }
-    else
-    {
-        std::fstream stream;
-        stream.open(file, std::ios::out);
-        return !stream.fail();
-    }
-}
-
 TEST(validator_test, inputfile_not_readable)
 {
     seqan3::test::tmp_filename tmp_name{"my_file.test"};
@@ -544,7 +516,7 @@ TEST(validator_test, inputfile_not_readable)
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::remove);
 
-    if (!read_access(tmp_file))
+    if (!seqan3::test::read_access(tmp_file)) // Do not execute with root permissions.
     {
         EXPECT_THROW(seqan3::input_file_validator{}(tmp_file), seqan3::validation_error);
     }
@@ -569,7 +541,7 @@ TEST(validator_test, inputdir_not_readable)
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::remove);
 
-    if (!read_access(tmp_dir))
+    if (!seqan3::test::read_access(tmp_dir)) // Do not execute with root permissions.
     {
         EXPECT_THROW(seqan3::input_directory_validator{}(tmp_dir), seqan3::validation_error);
     }
@@ -593,7 +565,7 @@ TEST(validator_test, outputfile_not_writable)
                                  std::filesystem::perms::others_write,
                                  std::filesystem::perm_options::remove);
 
-    if (!write_access(tmp_file))
+    if (!seqan3::test::write_access(tmp_file)) // Do not execute with root permissions.
     {
         EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_file),
                      seqan3::validation_error);
@@ -620,7 +592,7 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::remove);
 
-        if (!write_access(tmp_dir))
+        if (!seqan3::test::write_access(tmp_dir)) // Do not execute with root permissions.
         {
             EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir),
                          seqan3::validation_error);
@@ -646,7 +618,7 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::remove);
 
-        if (!write_access(tmp_dir))
+        if (!seqan3::test::write_access(tmp_dir)) // Do not execute with root permissions.
         {
             EXPECT_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir),
                          seqan3::validation_error);

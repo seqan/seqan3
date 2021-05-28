@@ -5,10 +5,11 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <fstream>
 #include <gtest/gtest.h>
+
 #include <regex>
 
+#include <seqan3/test/file_access.hpp>
 #include <seqan3/test/tmp_directory.hpp>
 
 // check unique creation of paths
@@ -170,7 +171,10 @@ TEST(tmp_directory_throw, directory_not_writeable)
                                  std::filesystem::perm_options::remove);
 
     // The actual test
-    EXPECT_THROW(seqan3::test::tmp_directory{}, std::filesystem::filesystem_error);
+    if (!seqan3::test::write_access(temporary_tmp_folder.path())) // Do not execute with root permissions.
+    {
+        EXPECT_THROW(seqan3::test::tmp_directory{}, std::filesystem::filesystem_error);
+    }
 
     // give temporary_tmp_folder write permissions back
     std::filesystem::permissions(temporary_tmp_folder.path(),
