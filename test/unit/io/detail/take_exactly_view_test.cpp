@@ -175,7 +175,7 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
                    std::invalid_argument); // no parsing, but throws in adaptor
 
     std::list l{'f', 'o', 'o'};
-    EXPECT_THROW(( seqan3::detail::view_take<std::views::all_t<std::list<char> &>, true, true>(l, 4) ),
+    EXPECT_THROW(( seqan3::detail::view_take_exactly<std::views::all_t<std::list<char> &>, true>(l, 4) ),
                    std::invalid_argument); // no parsing, but throws on construction
 
     EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::single_pass_input

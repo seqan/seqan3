@@ -33,7 +33,6 @@
 #include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
-#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
