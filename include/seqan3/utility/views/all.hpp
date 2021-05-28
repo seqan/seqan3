@@ -12,28 +12,20 @@
 
 #pragma once
 
-#include <seqan3/alphabet/views/char_to.hpp>
-#include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/alphabet/views/rank_to.hpp>
-#include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/alphabet/views/to_rank.hpp>
-#include <seqan3/alphabet/views/translate.hpp>
-#include <seqan3/alphabet/views/trim_quality.hpp>
-#ifdef SEQAN3_DEPRECATED_310
-#include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/io/detail/istreambuf_view.hpp>
-#include <seqan3/io/detail/take_exactly_view.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
-#endif // SEQAN3_DEPRECATED_310
-#include <seqan3/range/views/move.hpp>
+#include <seqan3/utility/views/chunk.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/views/elements.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
 #include <seqan3/utility/views/interleave.hpp>
+#include <seqan3/utility/views/join_with.hpp>
 #include <seqan3/utility/views/pairwise_combine.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
+#include <seqan3/utility/views/repeat.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 #include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 /*!\defgroup views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
