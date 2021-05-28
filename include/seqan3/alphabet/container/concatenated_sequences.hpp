@@ -56,7 +56,7 @@ struct as_const_fn
  *
  * \details
  *
- * \header_file{seqan3/range/views/as_const.hpp}
+ * \header_file{seqan3/alphabet/container/concatenated_sequences.hpp}
  *
  * ### View properties
  *
@@ -81,9 +81,6 @@ struct as_const_fn
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * ### Example
- *
- * \include test/snippet/range/views/as_const.cpp
  * \hideinitializer
  */
 inline constexpr auto as_const = std::views::transform(seqan3::detail::as_const_fn{});
