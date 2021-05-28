@@ -354,28 +354,6 @@ TEST(row, different_fields_in_record_and_file)
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), expected_out);
 }
 
-#ifdef SEQAN3_DEPRECATED_310
-TEST(row, writing_seq_qual)
-{
-    seqan3::sequence_file_output fout{std::ostringstream{},
-                                      seqan3::format_fasta{},
-                                      seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>()};
-    fout.options.fasta_letters_per_line = 0;
-
-    for (size_t i = 0; i < 3; ++i)
-    {
-        std::vector<seqan3::qualified<seqan3::dna5, seqan3::phred42>> seq_qual;
-        seq_qual.resize(quals[i].size());
-        std::copy(seqs[i].begin(), seqs[i].end(), seq_qual.begin());
-        std::copy(quals[i].begin(), quals[i].end(), seq_qual.begin());
-
-        fout.emplace_back(ids[i], seq_qual);
-    }
-
-    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
-}
-#endif // SEQAN3_DEPRECATED_310
-
 // ----------------------------------------------------------------------------
 // rows
 // ----------------------------------------------------------------------------
@@ -433,29 +411,6 @@ TEST(columns, writing_id_seq_qual)
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-TEST(columns, writing_seq_qual)
-{
-    seqan3::sequence_file_output fout{std::ostringstream{},
-                                      seqan3::format_fasta{},
-                                      seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>()};
-    fout.options.fasta_letters_per_line = 0;
-
-    std::vector<std::vector<seqan3::qualified<seqan3::dna5, seqan3::phred42>>> seq_quals{3};
-    for (size_t i = 0; i < 3; ++i)
-    {
-        seq_quals[i].resize(quals[i].size());
-        std::copy(seqs[i].begin(), seqs[i].end(), seq_quals[i].begin());
-        std::copy(quals[i].begin(), quals[i].end(), seq_quals[i].begin());
-    }
-
-    fout = seqan3::views::zip(ids, seq_quals);
-
-    fout.get_stream().flush();
-    EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
-}
-#endif // SEQAN3_DEPRECATED_310
 
 // ----------------------------------------------------------------------------
 // compression

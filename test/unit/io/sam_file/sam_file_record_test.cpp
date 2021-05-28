@@ -184,33 +184,6 @@ TEST_F(sam_record, get_by_type)
     EXPECT_EQ(std::get<seqan3::sam_tag_dictionary>(r), seqan3::sam_tag_dictionary{});
 }
 
-#ifdef SEQAN3_DEPRECATED_310
-TEST_F(sam_record, get_by_field)
-{
-    record_type r{construct()};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    EXPECT_EQ(seqan3::get<seqan3::field::id>(r), "MY ID");
-    EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(r), "ACGT"_dna5);
-    EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(r), "!##$"_phred42);
-    EXPECT_DOUBLE_EQ(seqan3::get<seqan3::field::offset>(r), 1);
-    EXPECT_EQ(seqan3::get<seqan3::field::alignment>(r), alignment_t{});
-    EXPECT_EQ(seqan3::get<seqan3::field::ref_id>(r), "ref");
-    EXPECT_EQ(seqan3::get<seqan3::field::ref_offset>(r), 0);
-    EXPECT_EQ(seqan3::get<seqan3::field::header_ptr>(r), nullptr);
-    EXPECT_EQ(seqan3::get<seqan3::field::flag>(r), seqan3::sam_flag{41u});
-    EXPECT_EQ(seqan3::get<seqan3::field::mate>(r), (mate_t{0, 9, 300}));
-    EXPECT_EQ(seqan3::get<seqan3::field::mapq>(r), 61u);
-    EXPECT_RANGE_EQ(seqan3::get<seqan3::field::cigar>(r),
-                    (std::vector<seqan3::cigar>{{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'I'_cigar_operation}}));
-    EXPECT_EQ(seqan3::get<seqan3::field::tags>(r), seqan3::sam_tag_dictionary{});
-#pragma GCC diagnostic pop
-}
-#endif // SEQAN3_DEPRECATED_310
-
 TEST_F(sam_record, get_by_member)
 {
     record_type r{construct()};
@@ -234,85 +207,6 @@ TEST_F(sam_record, get_by_member)
                                                 {1, 'I'_cigar_operation}}));
     EXPECT_EQ(r.tags(), seqan3::sam_tag_dictionary{});
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-TEST_F(sam_record, get_types)
-{
-    record_type r{construct()};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::id>(r)));
-    EXPECT_SAME_TYPE(seqan3::dna5_vector &, decltype(seqan3::get<seqan3::field::seq>(r)));
-    EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &, decltype(seqan3::get<seqan3::field::qual>(r)));
-    EXPECT_SAME_TYPE(int32_t &, decltype(seqan3::get<seqan3::field::offset>(r)));
-    EXPECT_SAME_TYPE(alignment_t &, decltype(seqan3::get<seqan3::field::alignment>(r)));
-    EXPECT_SAME_TYPE(std::string &, decltype(seqan3::get<seqan3::field::ref_id>(r)));
-    EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(seqan3::get<seqan3::field::ref_offset>(r)));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &,
-                     decltype(seqan3::get<seqan3::field::header_ptr>(r)));
-    EXPECT_SAME_TYPE(seqan3::sam_flag &, decltype(seqan3::get<seqan3::field::flag>(r)));
-    EXPECT_SAME_TYPE(mate_t &, decltype(seqan3::get<seqan3::field::mate>(r)));
-    EXPECT_SAME_TYPE(uint8_t &, decltype(seqan3::get<seqan3::field::mapq>(r)));
-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar> &, decltype(seqan3::get<seqan3::field::cigar>(r)));
-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary &, decltype(seqan3::get<seqan3::field::tags>(r)));
-
-    EXPECT_SAME_TYPE(std::string const &, decltype(seqan3::get<seqan3::field::id>(std::as_const(r))));
-    EXPECT_SAME_TYPE(seqan3::dna5_vector const &, decltype(seqan3::get<seqan3::field::seq>(std::as_const(r))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &,
-                     decltype(seqan3::get<seqan3::field::qual>(std::as_const(r))));
-    EXPECT_SAME_TYPE(int32_t const &, decltype(seqan3::get<seqan3::field::offset>(std::as_const(r))));
-    EXPECT_SAME_TYPE(alignment_t const &, decltype(seqan3::get<seqan3::field::alignment>(std::as_const(r))));
-    EXPECT_SAME_TYPE(std::string const &, decltype(seqan3::get<seqan3::field::ref_id>(std::as_const(r))));
-    EXPECT_SAME_TYPE(std::optional<int32_t> const &,
-                     decltype(seqan3::get<seqan3::field::ref_offset>(std::as_const(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &,
-                     decltype(seqan3::get<seqan3::field::header_ptr>(std::as_const(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_flag const &, decltype(seqan3::get<seqan3::field::flag>(std::as_const(r))));
-    EXPECT_SAME_TYPE(mate_t const &, decltype(seqan3::get<seqan3::field::mate>(std::as_const(r))));
-    EXPECT_SAME_TYPE(uint8_t const &, decltype(seqan3::get<seqan3::field::mapq>(std::as_const(r))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar> const &, decltype(seqan3::get<seqan3::field::cigar>(std::as_const(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary const &, decltype(seqan3::get<seqan3::field::tags>(std::as_const(r))));
-
-    EXPECT_SAME_TYPE(std::string &&, decltype(seqan3::get<seqan3::field::id>(std::move(r))));
-    EXPECT_SAME_TYPE(seqan3::dna5_vector &&, decltype(seqan3::get<seqan3::field::seq>(std::move(r))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::phred42> &&, decltype(seqan3::get<seqan3::field::qual>(std::move(r))));
-    EXPECT_SAME_TYPE(int32_t &&, decltype(seqan3::get<seqan3::field::offset>(std::move(r))));
-    EXPECT_SAME_TYPE(alignment_t &&, decltype(seqan3::get<seqan3::field::alignment>(std::move(r))));
-    EXPECT_SAME_TYPE(std::string &&, decltype(seqan3::get<seqan3::field::ref_id>(std::move(r))));
-    EXPECT_SAME_TYPE(std::optional<int32_t> &&, decltype(seqan3::get<seqan3::field::ref_offset>(std::move(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &&,
-                     decltype(seqan3::get<seqan3::field::header_ptr>(std::move(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_flag &&, decltype(seqan3::get<seqan3::field::flag>(std::move(r))));
-    EXPECT_SAME_TYPE(mate_t &&, decltype(seqan3::get<seqan3::field::mate>(std::move(r))));
-    EXPECT_SAME_TYPE(uint8_t &&, decltype(seqan3::get<seqan3::field::mapq>(std::move(r))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar> &&, decltype(seqan3::get<seqan3::field::cigar>(std::move(r))));
-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary &&, decltype(seqan3::get<seqan3::field::tags>(std::move(r))));
-
-    EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::id>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(seqan3::dna5_vector const &&,
-                     decltype(seqan3::get<seqan3::field::seq>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::phred42> const &&,
-                     decltype(seqan3::get<seqan3::field::qual>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(int32_t const &&, decltype(seqan3::get<seqan3::field::offset>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(alignment_t const &&,
-                     decltype(seqan3::get<seqan3::field::alignment>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(std::string const &&, decltype(seqan3::get<seqan3::field::ref_id>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(std::optional<int32_t> const &&,
-                     decltype(seqan3::get<seqan3::field::ref_offset>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * const &&,
-                     decltype(seqan3::get<seqan3::field::header_ptr>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(seqan3::sam_flag const &&,
-                     decltype(seqan3::get<seqan3::field::flag>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(mate_t const &&, decltype(seqan3::get<seqan3::field::mate>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(uint8_t const &&, decltype(seqan3::get<seqan3::field::mapq>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(std::vector<seqan3::cigar> const &&,
-                     decltype(seqan3::get<seqan3::field::cigar>(std::move(std::as_const(r)))));
-    EXPECT_SAME_TYPE(seqan3::sam_tag_dictionary const &&,
-                     decltype(seqan3::get<seqan3::field::tags>(std::move(std::as_const(r)))));
-#pragma GCC diagnostic pop
-}
-#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(sam_record, member_types)
 {

@@ -62,11 +62,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(sam, sequence_file_write, seqan3::format_sam, );
 // ----------------------------------------------------------------------------
 struct read_sam : sequence_file_read<seqan3::format_sam>
 {
-#ifdef SEQAN3_DEPRECATED_310
-    seqan3::sequence_file_input_options<seqan3::dna5, false> options{};
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     seqan3::sequence_file_input_options<seqan3::dna5> options{};
-#endif // SEQAN3_DEPRECATED_310
 
     void do_read_test(std::string const & input)
     {
@@ -76,15 +72,6 @@ struct read_sam : sequence_file_read<seqan3::format_sam>
         auto it = fin.begin();
         for (unsigned i = 0; i < 3; ++i, it++)
         {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            EXPECT_EQ(seqan3::get<seqan3::field::seq>(*it), seqs[i]);
-            EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), ids[i]);
-            EXPECT_EQ(seqan3::get<seqan3::field::qual>(*it), quals[i]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
-
             EXPECT_EQ((*it).id(), ids[i]);
             EXPECT_EQ((*it).sequence(), seqs[i]);
             EXPECT_EQ((*it).base_qualities(), quals[i]);

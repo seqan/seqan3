@@ -1,4 +1,3 @@
-seqan3_test(alignment_coordinate_test.cpp)
 seqan3_test(alignment_optimum_test.cpp)
 seqan3_test(debug_matrix_test.cpp)
 seqan3_test(debug_stream_alignment_coordinate_test.cpp)
