@@ -23,7 +23,7 @@ ExternalProject_Add(api_stability_unit
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/include"
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/submodules"
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/build_system"
-  COMMAND           sh -c "${GIT_EXECUTABLE} apply -v ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
+  COMMAND           sh -c "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
   TEST_BEFORE_INSTALL TRUE
   INSTALL_COMMAND   ""
 )
