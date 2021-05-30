@@ -1,6 +1,6 @@
 seqan3_test(expect_range_eq_test.cpp)
 seqan3_test(expect_same_type_test.cpp)
-seqan3_test(permissions.cpp)
+seqan3_test(file_access_test.cpp)
 seqan3_test(pretty_printing_test.cpp)
 seqan3_test(sandboxed_path_test.cpp)
 seqan3_test(seqan2_test.cpp)
