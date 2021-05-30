@@ -72,7 +72,7 @@ macro (seqan3_require_benchmark)
     else ()
         message (STATUS "Use google benchmark as external project:")
 
-        seqan3_require_benchmark_old ("${gtest_git_tag}")
+        seqan3_require_benchmark_old ("${gbenchmark_git_tag}")
     endif ()
 
     add_custom_target (gbenchmark_build DEPENDS gbenchmark)
