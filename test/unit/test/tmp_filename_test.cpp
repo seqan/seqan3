@@ -6,8 +6,8 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
-#include <fstream>
 
+#include <seqan3/test/file_access.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 
 namespace fs = std::filesystem;
@@ -144,7 +144,10 @@ TEST(tmp_filename_throw, directory_not_writeable)
         // Set TMPDIR. This is the first env var that is looked up for `temp_directory_path` inside the `tmp_filename`.
         setenv("TMPDIR", test_path.c_str(), 1); // name, value, overwrite
 
-        EXPECT_THROW(seqan3::test::tmp_filename t1{"throw"}, std::filesystem::filesystem_error);
+        if (!seqan3::test::write_access(test_path)) // Do not execute with root permissions.
+        {
+            EXPECT_THROW(seqan3::test::tmp_filename t1{"throw"}, std::filesystem::filesystem_error);
+        }
 
         // Remove directory.
         test_directory.release();
