@@ -1,0 +1,65 @@
+From 974baa3c07773e0e3fef2093f3f72230d1dabf9b Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 28 May 2021 14:25:15 +0200
+Subject: [PATCH 2/2] [NOAPI] [INCLUDE] [MISC] remove seqan3::detail::take_fn
+
+cherry-picked from c64cfe3fc4524fd3ef0d57aa5a2aff63d535265d
+---
+ test/snippet/io/detail/take_view.cpp           | 1 -
+ test/unit/io/detail/take_exactly_view_test.cpp | 2 +-
+ test/unit/io/detail/take_view_test.cpp         | 1 -
+ test/unit/utility/views/slice_test.cpp         | 1 +
+ 4 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/test/snippet/io/detail/take_view.cpp b/test/snippet/io/detail/take_view.cpp
+index 2c3d4f8d7..c0f0102e0 100644
+--- a/test/snippet/io/detail/take_view.cpp
++++ b/test/snippet/io/detail/take_view.cpp
+@@ -2,7 +2,6 @@
+ #include <string>
+ 
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/io/detail/take_view.hpp>
+ 
+ #ifdef SEQAN3_DEPRECATED_310
+ #pragma GCC diagnostic push
+diff --git a/test/unit/io/detail/take_exactly_view_test.cpp b/test/unit/io/detail/take_exactly_view_test.cpp
+index 9bc67562e..703cf7770 100644
+--- a/test/unit/io/detail/take_exactly_view_test.cpp
++++ b/test/unit/io/detail/take_exactly_view_test.cpp
+@@ -175,7 +175,7 @@ TEST(view_take_exactly_or_throw, underlying_is_shorter)
+                    std::invalid_argument); // no parsing, but throws in adaptor
+ 
+     std::list l{'f', 'o', 'o'};
+-    EXPECT_THROW(( seqan3::detail::view_take<std::views::all_t<std::list<char> &>, true, true>(l, 4) ),
++    EXPECT_THROW(( seqan3::detail::view_take_exactly<std::views::all_t<std::list<char> &>, true>(l, 4) ),
+                    std::invalid_argument); // no parsing, but throws on construction
+ 
+     EXPECT_THROW(std::ranges::for_each(vec | seqan3::views::single_pass_input
+diff --git a/test/unit/io/detail/take_view_test.cpp b/test/unit/io/detail/take_view_test.cpp
+index c22b612c7..09bdd3af8 100644
+--- a/test/unit/io/detail/take_view_test.cpp
++++ b/test/unit/io/detail/take_view_test.cpp
+@@ -15,7 +15,6 @@
+ #include <string>
+ #include <vector>
+ 
+-#include <seqan3/io/detail/take_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ #include <seqan3/utility/range/concept.hpp>
+diff --git a/test/unit/utility/views/slice_test.cpp b/test/unit/utility/views/slice_test.cpp
+index 4b0375ef7..3b910d36f 100644
+--- a/test/unit/utility/views/slice_test.cpp
++++ b/test/unit/utility/views/slice_test.cpp
+@@ -16,6 +16,7 @@
+ 
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
++#include <seqan3/utility/range/concept.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ #include <seqan3/utility/views/slice.hpp>
+ 
+-- 
+2.31.1
+
