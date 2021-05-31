@@ -1,0 +1,46 @@
+From b350334148858055974e1d495856d7869be1981b Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 28 May 2021 17:51:14 +0200
+Subject: [PATCH 3/3] [NOAPI] [INCLUDE] [MISC] fix snippets
+
+cherry-picked
+---
+ doc/tutorial/alphabet/alphabet_gc_content.cpp | 3 ++-
+ doc/tutorial/ranges/range_solution3.cpp       | 6 +++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/doc/tutorial/alphabet/alphabet_gc_content.cpp b/doc/tutorial/alphabet/alphabet_gc_content.cpp
+index fd683ed5e..bd1732b57 100644
+--- a/doc/tutorial/alphabet/alphabet_gc_content.cpp
++++ b/doc/tutorial/alphabet/alphabet_gc_content.cpp
+@@ -4,9 +4,10 @@
+ #include <vector>    // std::vector
+ 
+ #include <seqan3/alphabet/all.hpp>
++#include <seqan3/alphabet/views/all.hpp> // optional: use views to convert the input string to a dna5 sequence
+ #include <seqan3/argument_parser/all.hpp>
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/range/views/all.hpp>       // optional: use views to convert the input string to a dna5 sequence
++#include <seqan3/utility/views/all.hpp> // optional: use views to convert the input string to a dna5 sequence
+ 
+ 
+ int main (int argc, char * argv[])
+diff --git a/doc/tutorial/ranges/range_solution3.cpp b/doc/tutorial/ranges/range_solution3.cpp
+index 5ab8aa203..189abaaef 100644
+--- a/doc/tutorial/ranges/range_solution3.cpp
++++ b/doc/tutorial/ranges/range_solution3.cpp
+@@ -1,8 +1,8 @@
+-#include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
+-#include <seqan3/range/views/all.hpp>           // include all of SeqAn's views
+ #include <seqan3/std/ranges>                    // include all of the standard library's views
+ 
++#include <seqan3/alphabet/views/all.hpp>        // include all of SeqAn's views
++#include <seqan3/core/debug_stream.hpp>
++#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
+ 
+ int main(int argc, char** argv)
+ {
+-- 
+2.31.1
+
