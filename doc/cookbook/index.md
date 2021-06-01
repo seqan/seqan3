@@ -167,6 +167,41 @@ For a full recipe on creating your own readmapper, see the very end of the tutor
 
 \include doc/howto/subcommand_argument_parser/subcommand_arg_parse.cpp
 
+# Constructing an own validator for enum parameter (argument parser)
+
+If you want to have more specific input parameters, you can construct this with an enum. For this you can also develop
+your own validator, so that the parameters are first evaluated as desired and secondly your help page looks reasonable.
+
+In this example, we want to pass one or more methods to our tool to use. We would like to offer the possibility of a
+short input (method number) or a detailed input (method name). For this we have created an enum `my_methods`.
+
+With this parameter we can call our tool like this: `./myTool -m 1 -m 2` or `./myTool -m method_a -m method_b`.
+
+\include doc/cookbook/enum_validator_for_arg_parse.cpp
+
+The help page options would then look like this:
+
+```bash
+OPTIONS
+
+  Basic options:
+    -h, --help
+          Prints the help page.
+    -hh, --advanced-help
+          Prints the help page including advanced options.
+    --version
+          Prints the version information.
+    --copyright
+          Prints the copyright/license information.
+    --export-help (std::string)
+          Export the help page information. Value must be one of [html, man].
+    --version-check (bool)
+          Whether to check for the newest app version. Default: true.
+    -m, --method (List of my_methods)
+          Choose the method(s) to be used. Default: [method_a,method_c]. Value must be one of (method name or number)
+          [0,method_a,1,method_b,2,method_c].
+```
+
 # Serialise data structures with cereal
 
 \include doc/howto/use_cereal/load.hpp
