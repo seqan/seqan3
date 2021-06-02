@@ -34,7 +34,7 @@ return std::unordered_map<std::string, my_methods>{{"0", my_methods::method_a}, 
 };
 
 template <typename option_value_t>
-class EnumValidator
+class EnumValidator : public seqan3::value_list_validator<option_value_t>
 {
 public:
     //!\brief Type of values that are tested by validator
@@ -43,12 +43,6 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    EnumValidator() = default;                                  //!< Defaulted.
-    EnumValidator(EnumValidator const &) = default;             //!< Defaulted.
-    EnumValidator(EnumValidator &&) = default;                  //!< Defaulted.
-    EnumValidator & operator=(EnumValidator const &) = default; //!< Defaulted.
-    EnumValidator & operator=(EnumValidator &&) = default;      //!< Defaulted.
-    ~EnumValidator() = default;                                 //!< Defaulted.
 
     /*!\brief Constructing from a range.
      * \tparam range_type - the type of range; must model std::ranges::forward_range and
@@ -69,30 +63,13 @@ public:
     }
     //!\}
 
-    /*!\brief Tests whether cmp lies inside values.
-     * \param cmp The input value to check.
-     * \throws seqan3::validation_error
-     */
-    void operator()(option_value_type const & cmp) const
-    {
-        if (!(std::find(values.begin(), values.end(), cmp) != values.end()))
-            throw seqan3::validation_error{seqan3::detail::to_string("Value ", cmp, " is not one of ",
-                                                                     std::views::all(values), ".")};
-    }
+    void operator()(option_value_type const & cmp) const {};
 
-    /*!\brief Tests whether every element in \p range lies inside values.
-     * \tparam range_type The type of range to check; must model std::ranges::forward_range.
-     * \param  range      The input range to iterate over and check every element.
-     * \throws seqan3::validation_error
-     */
     template <std::ranges::forward_range range_type>
     //!\cond
         requires std::convertible_to<std::ranges::range_value_t<range_type>, option_value_type>
     //!\endcond
-    void operator()(range_type const & range) const
-    {
-        std::for_each(std::ranges::begin(range), std::ranges::end(range), [&] (auto cmp) { (*this)(cmp); });
-    }
+    void operator()(range_type const & range) const {};
 
     //!\brief Returns a message that can be appended to the (positional) options help page info.
     std::string get_help_page_message() const
@@ -126,7 +103,7 @@ void initialize_argument_parser(seqan3::argument_parser & parser, cmd_arguments 
     EnumValidator<my_methods> method_validator{seqan3::enumeration_names<my_methods> | std::views::values};
 
     // Options:
-    parser.add_option(args.methods, 'm', "method", "Choose the method(s) to be used.",
+    parser.add_option(args.methods, 'm', "method", "Choose the method(s) to be used. ",
                       seqan3::option_spec::standard, method_validator);
 }
 
