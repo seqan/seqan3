@@ -7,16 +7,17 @@
 
 /*!\file
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
- * \brief Meta-header for the cigar submodule; includes all headers from alphabet/cigar/.
+ * \brief Meta-header for the \link alphabet_cigar Alphabet / CIGAR submodule \endlink.
  */
 
  #pragma once
 
  #include <seqan3/alphabet/cigar/cigar.hpp>
 
- /*!\defgroup cigar CIGAR
+ /*!\defgroup alphabet_cigar CIGAR
   * \brief Provides (semi-)alphabets for representing elements in CIGAR strings.
   * \ingroup alphabet
+  * \see alphabet
   *
   * \details
   *
