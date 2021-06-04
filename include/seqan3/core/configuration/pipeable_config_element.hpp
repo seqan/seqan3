@@ -19,7 +19,7 @@ namespace seqan3
 {
 
 /*!\brief Adds pipe interface to configuration elements.
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  *
  * \details
  *

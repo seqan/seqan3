@@ -6,8 +6,20 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-Header for components of the configuration submodule.
+ * \brief Meta-header for the \link core_configuration Core / Configuration submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
+ */
+
+#pragma once
+
+#include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/core/configuration/detail/all.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>
+
+/*!\defgroup core_configuration Configuration
+ * \ingroup core
+ * \see core
+ * \brief Provides core functionality used to configure configurations.
  *
  * \details
  *
@@ -65,13 +77,3 @@
  *
  * \include test/snippet/core/configuration/configuration_get_or.cpp
  */
-
-#pragma once
-
-/*!\defgroup configuration Configuration
- * \ingroup core
- * \brief Provides core functionality used to configure configurations.
- */
-#include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/configuration/detail/all.hpp>
-#include <seqan3/core/configuration/pipeable_config_element.hpp>

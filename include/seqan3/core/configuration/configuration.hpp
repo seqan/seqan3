@@ -29,7 +29,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Collection of elements to configure an algorithm.
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  *
  * \tparam configs_t Template parameter pack containing all configuration elements; Must model
  *                   seqan3::detail::config_element
@@ -389,7 +389,7 @@ constexpr auto operator|(lhs_config_t && lhs, rhs_config_t && rhs)
  */
 
 /*!\brief Returns the stored element.
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  * \relates seqan3::configuration
  *
  * \tparam    query_t A template template.
@@ -466,7 +466,7 @@ namespace std
 /*!\brief Returns the number of elements stored in seqan3::configuration.
  * \implements seqan3::unary_type_trait
  * \see std::tuple_size_v
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  */
 template <seqan3::detail::config_element ... configs_t>
 struct tuple_size<seqan3::configuration<configs_t...>>
@@ -478,7 +478,7 @@ struct tuple_size<seqan3::configuration<configs_t...>>
 /*!\brief Returns the type of the element at the specified position within seqan3::configuration.
  * \implements seqan3::transformation_trait
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  */
 template <size_t pos, seqan3::detail::config_element ... configs_t>
 struct tuple_element<pos, seqan3::configuration<configs_t...>>

@@ -20,7 +20,7 @@
 namespace seqan3::detail
 {
 /*!\brief A global configuration type used to enable parallel execution of algorithms.
- * \ingroup core_algorithm
+ * \ingroup core_configuration
  * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
  *
  * \details
