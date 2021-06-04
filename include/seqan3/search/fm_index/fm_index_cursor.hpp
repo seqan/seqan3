@@ -27,12 +27,8 @@
 
 namespace seqan3
 {
-
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 //!\brief The underlying suffix array interval.
+//!\ingroup search_fm_index
 struct suffix_array_interval
 {
     //!\brief The begin position of the interval ("left boundary").
@@ -66,6 +62,7 @@ struct suffix_array_interval
 };
 
 /*!\brief The SeqAn FM Index Cursor.
+ * \ingroup search_fm_index
  * \tparam index_t The type of the underlying index. This is normally seqan3::fm_index.
  * \implements seqan3::cerealisable
  * \details
@@ -697,7 +694,5 @@ public:
     }
     //!\endcond
 };
-
-//!\}
 
 } // namespace seqan3

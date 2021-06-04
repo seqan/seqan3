@@ -22,15 +22,12 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
- // ============================================================================
- //  sdsl_index
- // ============================================================================
+// ============================================================================
+//  sdsl_index
+// ============================================================================
 
 /*!\interface seqan3::detail::sdsl_index <>
+ * \ingroup search_fm_index
  * \brief Concept for SDSL FM indices (which are called compressed suffix arrays in the SDSL).
  */
 //!\cond
@@ -65,18 +62,12 @@ SEQAN3_CONCEPT sdsl_index = requires (t sdsl_index)
  * \}
  */
 
-//!\}
-
 } // namespace seqan3::detail
 
 namespace seqan3
 {
-
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 //!\brief The possible text layouts (single, collection) the seqan3::fm_index and seqan3::bi_fm_index can support.
+//!\ingroup search_fm_index
 enum text_layout : bool
 {
     //!\brief The text is a single range.
@@ -84,7 +75,5 @@ enum text_layout : bool
     //!\brief The text is a range of ranges.
     collection
 };
-
-//!\}
 
 } // namespace seqan3

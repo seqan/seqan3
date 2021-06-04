@@ -28,7 +28,7 @@
 namespace seqan3::detail
 {
 /*!\brief Class used to validate the requirements on the input text of the fm_index.
- * \ingroup search
+ * \ingroup search_fm_index
  */
 struct fm_index_validator
 {
@@ -97,11 +97,8 @@ class reverse_fm_index;
 }
 //!\endcond
 
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 /*!\brief The FM Index Configuration using a Wavelet Tree.
+ * \ingroup search_fm_index
  *
  * \details
  *
@@ -144,12 +141,14 @@ using sdsl_wt_index_type =
                  sdsl::plain_byte_alphabet>; // How to represent the alphabet
 
 /*!\brief The default FM Index Configuration.
+ * \ingroup search_fm_index
  * \attention The default might be changed in a future release. If you rely on a stable API and on-disk-format,
  *            please hard-code your sdsl_index_type to a concrete type.
  */
 using default_sdsl_index_type = sdsl_wt_index_type;
 
 /*!\brief The SeqAn FM Index.
+ * \ingroup search_fm_index
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
@@ -573,11 +572,9 @@ public:
 /*!\name Template argument type deduction guides
  * \{
  */
-//! \brief Deduces the alphabet and dimensions of the text.
+//!\brief Deduces the alphabet and dimensions of the text.
 template <std::ranges::range text_t>
 fm_index(text_t &&) -> fm_index<range_innermost_value_t<text_t>, text_layout{range_dimension_v<text_t> != 1}>;
-//!\}
-
 //!\}
 } // namespace seqan3
 
@@ -585,6 +582,7 @@ namespace seqan3::detail
 {
 
 /*!\brief An FM Index specialisation that handles reversing the given text.
+ * \ingroup search_fm_index
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode  Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.

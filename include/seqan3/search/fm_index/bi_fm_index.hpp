@@ -23,11 +23,8 @@
 namespace seqan3
 {
 
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 /*!\brief The SeqAn Bidirectional FM Index
+ * \ingroup search_fm_index
  * \tparam alphabet_t        The alphabet type; must model seqan3::semialphabet.
  * \tparam text_layout_mode_ Indicates whether this index works on a text collection or a single text.
  *                           See seqan3::text_layout.
@@ -296,11 +293,9 @@ public:
 /*!\name Template argument type deduction guides
  * \{
  */
-//! \brief Deduces the dimensions of the text.
+//!\brief Deduces the dimensions of the text.
 template <std::ranges::range text_t>
 bi_fm_index(text_t &&) -> bi_fm_index<range_innermost_value_t<text_t>, text_layout{range_dimension_v<text_t> != 1}>;
-//!\}
-
 //!\}
 
 } // namespace seqan3
