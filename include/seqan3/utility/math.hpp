@@ -24,7 +24,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Computes the floor of the logarithm to the base of two for unsigned integers.
- * \ingroup core
+ * \ingroup utility
  * \param[in] n An unsigned integer.
  * \attention *n = 0* is a special case and is undefined.
  * \returns \f$ \lfloor log_2(n) \rfloor \f$.
@@ -58,7 +58,7 @@ constexpr unsigned_t floor_log2(unsigned_t const n) noexcept
 }
 
 /*!\brief Computes the ceil of the logarithm to the base of two for unsigned integers.
- * \ingroup core
+ * \ingroup utility
  * \param[in] n An unsigned integer.
  * \attention *n = 0* is a special case and is undefined.
  * \returns \f$ \lceil log_2(n) \rceil \f$.
@@ -96,7 +96,7 @@ constexpr unsigned_t ceil_log2(unsigned_t const n) noexcept
 namespace seqan3
 {
 /*!\brief Computes the value of `base` raised to the power `exp`.
- * \ingroup core
+ * \ingroup utility
  * \param[in] base The base to compute the power for.
  * \param[in] exp The power to raise `base` to.
  * \returns \f$ base^{exp} \f$.

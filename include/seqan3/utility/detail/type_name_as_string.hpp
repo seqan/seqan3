@@ -28,7 +28,7 @@ namespace seqan3::detail
 
 /*!\brief Defines the human-readable name of the given type using the
           [typeid](https://en.cppreference.com/w/cpp/language/typeid) operator.
- * \ingroup core
+ * \ingroup utility
  *
  * \tparam type The type to get the human-readable name for.
  *
