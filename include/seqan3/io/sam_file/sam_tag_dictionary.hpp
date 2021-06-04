@@ -23,19 +23,21 @@
 
 namespace seqan3::detail
 {
-    //!\brief std::variant of allowed types for optional tag fields of the SAM format.
-    //!\ingroup io_sam_file
-    using sam_tag_variant = std::variant<char, int32_t, float, std::string,
-                                         std::vector<std::byte>,
-                                         std::vector<int8_t>, std::vector<uint8_t>,
-                                         std::vector<int16_t>, std::vector<uint16_t>,
-                                         std::vector<int32_t>, std::vector<uint32_t>,
-                                         std::vector<float>>;
+//!\brief std::variant of allowed types for optional tag fields of the SAM format.
+//!\ingroup io_sam_file
+using sam_tag_variant = std::variant<char, int32_t, float, std::string,
+                                     std::vector<std::byte>,
+                                     std::vector<int8_t>, std::vector<uint8_t>,
+                                     std::vector<int16_t>, std::vector<uint16_t>,
+                                     std::vector<int32_t>, std::vector<uint32_t>,
+                                     std::vector<float>>;
 
-    //!\brief Each SAM tag type char identifier. Index corresponds to the seqan3::detail::sam_tag_variant types.
-    char constexpr sam_tag_type_char[12]       = {'A',  'i',  'f',  'Z', 'H', 'B', 'B', 'B', 'B', 'B', 'B', 'B'};
-    //!\brief Each types SAM tag type extra char id. Index corresponds to the seqan3::detail::sam_tag_variant types.
-    char constexpr sam_tag_type_char_extra[12] = {'\0', '\0', '\0', '\0', '\0', 'c', 'C', 's', 'S', 'i', 'I', 'f'};
+//!\brief Each SAM tag type char identifier. Index corresponds to the seqan3::detail::sam_tag_variant types.
+//!\ingroup io_sam_file
+char constexpr sam_tag_type_char[12]       = {'A',  'i',  'f',  'Z', 'H', 'B', 'B', 'B', 'B', 'B', 'B', 'B'};
+//!\brief Each types SAM tag type extra char id. Index corresponds to the seqan3::detail::sam_tag_variant types.
+//!\ingroup io_sam_file
+char constexpr sam_tag_type_char_extra[12] = {'\0', '\0', '\0', '\0', '\0', 'c', 'C', 's', 'S', 'i', 'I', 'f'};
 }
 
 namespace seqan3
@@ -177,7 +179,7 @@ struct sam_tag_type
 };
 
 //!\brief Short cut helper for seqan3::sam_tag_type::type.
-//!\ingroup io_sam_file
+//!\relates seqan3::sam_tag_type
 template <uint16_t tag_value>
 using sam_tag_type_t = typename sam_tag_type<tag_value>::type;
 
