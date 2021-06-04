@@ -49,8 +49,8 @@
  * ### Storage behaviour
  *
  * **Containers** are the ranges most well known, they own their elements. SeqAn makes use of standard STL containers
- * like `std::vector`, but also implements some custom containers. See the \link container container submodule \endlink
- * for more details.
+ * like `std::vector`, but also implements some custom containers. See the \link utility_container container submodule
+ * \endlink for more details.
  *
  * **Decorators** are ranges that are always defined on another range and decorate/annotate the underlying range
  * with additional information. They do not own the underlying range, but can contain member data of their own.
