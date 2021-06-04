@@ -21,7 +21,7 @@
 namespace seqan3
 {
 /*!\interface seqan3::output_stream_over <>
- * \ingroup stream
+ * \ingroup io_stream
  * \brief Concept for output streams.
  *
  * An object is an output stream if it inherits from the [std::ios_base](https://en.cppreference.com/w/cpp/io/ios_base)
@@ -90,7 +90,7 @@ SEQAN3_CONCEPT output_stream = requires { typename std::remove_reference_t<strea
 //!\}
 
 /*!\interface seqan3::input_stream_over <>
- * \ingroup stream
+ * \ingroup io_stream
  * \brief Concept for input streams.
  *
  * An object is an input stream if it inherits from the [std::ios_base](https://en.cppreference.com/w/cpp/io/ios_base)
