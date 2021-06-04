@@ -29,7 +29,7 @@
 
 /*!\defgroup views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
- * \ingroup range
+ * \ingroup utility_range
  *
  * \details
  *
@@ -42,7 +42,7 @@
  * can be lazy, only doing work when the answer is requested, and purely functional, without mutating the original
  * data. This makes it easier to reason about your code, especially when writing concurrent programs."</i>
  *
- * See the \link range range module \endlink for how views relate to containers and decorators.
+ * See the \link utility_range range module \endlink for how views relate to containers and decorators.
  *
  * Most views provided by SeqAn are specific to biological operations, like seqan3::views::trim_quality which trims
  * sequences based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.

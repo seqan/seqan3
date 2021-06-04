@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link range range module \endlink.
+ * \brief Meta-header for the \link utility_range Utility / Range submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -14,7 +14,8 @@
 
 #include <seqan3/utility/range/concept.hpp>
 
-/*!\defgroup range Range
+/*!\defgroup utility_range Range
+ * \ingroup utility
  * \brief The range module provides general purpose containers, decorators and views.
  *
  * ### Introduction
@@ -77,6 +78,5 @@
  * \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
  * containers, decorators nor views.
  *
- * \sa range.hpp
  * \sa https://ericniebler.github.io/range-v3/index.html
  */
