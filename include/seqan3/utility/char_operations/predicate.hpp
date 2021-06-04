@@ -24,14 +24,14 @@ namespace seqan3
 
 /*!\name Char predicates
  * \brief A set of function objects to check if a character from an input source fulfills certain characteristics.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  * \{
  */
 
 /*!\brief Checks whether a given letter is in the specified interval.
  * \tparam interval_first The first character for which to return true.
  * \tparam interval_last  The last character (inclusive) for which to return true.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -50,7 +50,7 @@ inline constexpr auto is_in_interval = detail::is_in_interval_type<interval_firs
 
 /*!\brief Checks whether a given letter is the same as the template non-type argument.
  * \tparam char_v The letter to compare against.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -77,7 +77,7 @@ inline constexpr auto is_char = detail::is_char_type<char_v>{};
 inline auto constexpr is_eof = is_char<EOF>;
 
 /*!\brief Checks whether `c` is a control character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -93,7 +93,7 @@ inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
                                  is_char<static_cast<char>(127)>;
 
 /*!\brief Checks whether `c` is a printable character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -107,7 +107,7 @@ inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
 inline auto constexpr is_print = is_in_interval<' ', '~'> ;
 
 /*!\brief Checks whether `c` is a space character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -128,7 +128,7 @@ inline auto constexpr is_print = is_in_interval<' ', '~'> ;
 inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a blank character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -145,7 +145,7 @@ inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
 inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a graphic character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -165,7 +165,7 @@ inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
 inline auto constexpr is_graph = is_in_interval<'!', '~'>;
 
 /*!\brief Checks whether `c` is a punctuation character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -184,7 +184,7 @@ inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
                                  is_in_interval<'{', '~'>;
 
 /*!\brief Checks whether `c` is a alphanumeric character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -204,7 +204,7 @@ inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
                                  is_in_interval<'a','z'>;
 
 /*!\brief Checks whether `c` is a alphabetical character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -221,7 +221,7 @@ inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
 inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a upper case character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -237,7 +237,7 @@ inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a',
 inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
 
 /*!\brief Checks whether `c` is a lower case character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -253,7 +253,7 @@ inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
 inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a digital character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -269,7 +269,7 @@ inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
 inline auto constexpr is_digit = is_in_interval<'0', '9'>;
 
 /*!\brief Checks whether `c` is a hexadecimal character.
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -290,7 +290,7 @@ inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
 //!\}
 
 /*!\name Char predicates
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  * \details
  *
  * Char predicates are function like objects that can be used to check if a character `c` fulfills certain
