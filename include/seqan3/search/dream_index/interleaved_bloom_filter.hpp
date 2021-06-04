@@ -22,11 +22,8 @@
 
 namespace seqan3
 {
-
-/*!\addtogroup submodule_dream_index
- * \{
- */
 //!\brief Determines if the Interleaved Bloom Filter is compressed.
+//!\ingroup search_dream_index
 enum data_layout : bool
 {
     uncompressed, //!< The Interleaved Bloom Filter is uncompressed.
@@ -34,30 +31,35 @@ enum data_layout : bool
 };
 
 //!\brief A strong type that represents the number of bins for the seqan3::interleaved_bloom_filter.
+//!\ingroup search_dream_index
 struct bin_count : public detail::strong_type<size_t, bin_count, detail::strong_type_skill::convert>
 {
     using detail::strong_type<size_t, bin_count, detail::strong_type_skill::convert>::strong_type;
 };
 
 //!\brief A strong type that represents the number of bits for each bin in the seqan3::interleaved_bloom_filter.
+//!\ingroup search_dream_index
 struct bin_size : public detail::strong_type<size_t, bin_size, detail::strong_type_skill::convert>
 {
     using detail::strong_type<size_t, bin_size, detail::strong_type_skill::convert>::strong_type;
 };
 
 //!\brief A strong type that represents the number of hash functions for the seqan3::interleaved_bloom_filter.
+//!\ingroup search_dream_index
 struct hash_function_count : public detail::strong_type<size_t, hash_function_count, detail::strong_type_skill::convert>
 {
     using detail::strong_type<size_t, hash_function_count, detail::strong_type_skill::convert>::strong_type;
 };
 
 //!\brief A strong type that represents the bin index for the seqan3::interleaved_bloom_filter.
+//!\ingroup search_dream_index
 struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_type_skill::convert>
 {
     using detail::strong_type<size_t, bin_index, detail::strong_type_skill::convert>::strong_type;
 };
 
 /*!\brief The IBF binning directory. A data structure that efficiently answers set-membership queries for multiple bins.
+ * \ingroup search_dream_index
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
  * \implements seqan3::cerealisable
  *
@@ -775,6 +777,7 @@ public:
 
 /*!\brief A data structure that behaves like a std::vector and can be used to consolidate the results of multiple calls
  *        to seqan3::interleaved_bloom_filter::membership_agent::bulk_contains.
+ * \ingroup search_dream_index
  * \tparam value_t The type of the count. Must model std::integral.
  *
  * \details
@@ -975,7 +978,5 @@ public:
     //!\}
 
 };
-
-//!\}
 
 } // namespace seqan3
