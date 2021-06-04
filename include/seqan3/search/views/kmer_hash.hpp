@@ -29,7 +29,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
- * \ingroup views
+ * \ingroup search_views
  *
  * \details
  *
@@ -702,6 +702,7 @@ kmer_hash_view(rng_t &&, shape const & shape_) -> kmer_hash_view<std::views::all
 
 //![adaptor_def]
 //!\brief views::kmer_hash's range adaptor object type (non-closure).
+//!\ingroup search_views
 struct kmer_hash_fn
 {
     //!\brief Store the shape and return a range adaptor closure object.
@@ -736,11 +737,6 @@ struct kmer_hash_fn
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               Computes hash values for each position of a range via a given shape.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
@@ -748,7 +744,7 @@ namespace seqan3::views
  * \param[in] shape     The seqan3::shape that determines how to compute the hash value.
  * \returns             A range of std::size_t where each value is the hash of the resp. k-mer.
  *                      See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup search_views
  *
  * \details
  *
@@ -787,7 +783,5 @@ namespace seqan3::views
  * \stableapi{Since version 3.1.}
  */
 inline constexpr auto kmer_hash = detail::kmer_hash_fn{};
-
-//!\}
 
 } // namespace seqan3::views
