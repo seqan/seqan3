@@ -21,7 +21,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Helper function for seqan3::tuple_split.
- * \ingroup utility
+ * \ingroup utility_tuple
  *
  * \tparam    beg     A template value containing the start position from where to extract the values.
  * \tparam    tuple_t A template alias for a tuple like object.
@@ -62,7 +62,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const
 namespace seqan3
 {
 /*!\brief Splits a tuple like data structure at the given position.
- * \ingroup utility
+ * \ingroup utility_tuple
  *
  * \tparam    pivot_c A template value specifying the split position.
  * \tparam    tuple_t A template alias for a tuple like object.
@@ -115,7 +115,7 @@ constexpr auto tuple_split(tuple_t<ts...> && t)
 }
 
 /*!\brief Splits a tuple like data structure at the first position of the given type.
- * \ingroup utility
+ * \ingroup utility_tuple
  *
  * \tparam    pivot_t A template type specifying the split position.
  * \param[in] t       The original tuple to split.

@@ -6,15 +6,17 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief  Meta-include for tuple utilities: concept.
+ * \brief Meta-header for the \link utility_tuple Utility / Tuple submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup tuple Tuple
+/*!\defgroup utility_tuple Tuple
+ * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not
+ *        specific to a SeqAn module.
  * \ingroup utility
- * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not specific to a SeqAn module.
+ * \see utility
  *
  * \details
  *
