@@ -1,6 +1,6 @@
 # SeqAn3 -- the modern C++ library for sequence analysis
 
-[![build status](https://github.com/seqan/seqan3/workflows/SeqAn3%20CI/badge.svg?branch=master)](https://github.com/seqan/seqan3/actions)
+[![build status](https://img.shields.io/github/workflow/status/seqan/seqan3/SeqAn3%20CI%20on%20Linux/master?style=flat&logo=github&label=SeqAn3%20CI)](https://github.com/seqan/seqan3/actions?query=branch%3Amaster)
 [![codecov](https://codecov.io/gh/seqan/seqan3/branch/master/graph/badge.svg?logo=codecov)](https://codecov.io/gh/seqan/seqan3)
 [![license](https://img.shields.io/badge/license-BSD-green.svg)](https://docs.seqan.de/seqan/3-master-user/about_copyright.html)
 [![latest release](https://img.shields.io/github/release/seqan/seqan3.svg)](https://github.com/seqan/seqan3/releases/latest)
