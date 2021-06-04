@@ -34,7 +34,7 @@
 namespace seqan3::detail
 {
 /*!\brief Helper metafunction to select the alignment result type based on the configuration.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam first_range_t   The type of the first sequence.
  * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration

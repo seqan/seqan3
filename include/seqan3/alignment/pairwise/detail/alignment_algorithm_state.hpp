@@ -20,7 +20,7 @@ namespace seqan3::detail
 {
 /*!\brief Local state for the standard alignment algorithm.
  * \tparam score_type The type of the score; must model seqan3::arithmetic or seqan3::simd::simd_concept.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \details
  *

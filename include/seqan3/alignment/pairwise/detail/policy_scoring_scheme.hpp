@@ -20,7 +20,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Stores the configured scoring scheme used for this algorithm.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam alignment_configuration_t The type of the alignment configuration; must be a type specialisation of
  *                                   seqan3::configuration.

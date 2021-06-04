@@ -27,7 +27,7 @@ namespace seqan3::detail
 
 /*!\brief The alignment algorithm type to compute standard pairwise alignment using dynamic programming.
  * \implements std::invocable
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam alignment_configuration_t The configuration type; must be of type seqan3::configuration.
  * \tparam policies_t Variadic template argument for the different policies of this alignment algorithm.

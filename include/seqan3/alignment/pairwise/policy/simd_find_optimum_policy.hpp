@@ -25,7 +25,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A state that is only used for global alignments.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam simd_t The simd vector score type; must model seqan3::simd::simd_concept.
  *
  * \details

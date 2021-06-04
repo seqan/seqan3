@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link pairwise_alignment pairwise submodule \endlink.
+ * \brief Meta-header for the \link alignment_pairwise Alignment / Pairwise submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -20,7 +20,7 @@
 #include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
 #include <seqan3/alignment/pairwise/policy/all.hpp>
 
-/*!\defgroup pairwise_alignment Pairwise
+/*!\defgroup alignment_pairwise Pairwise
  * \ingroup alignment
  * \brief Provides the algorithmic components for the computation of pairwise alignments.
  * \see alignment

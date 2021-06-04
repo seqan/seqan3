@@ -24,7 +24,7 @@
 
 //!\cond DEV
 /*!\defgroup alignment_policy Alignment policies
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \brief Provides policies for the alignment algorithm.
  *
  * # Introduction
