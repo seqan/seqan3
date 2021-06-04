@@ -41,7 +41,7 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
 
 /*!\interface seqan3::detail::debug_streamable_tuple <>
  * \brief A helper concept to avoid ambiguous overloads with the debug stream operator for alignments.
- * \ingroup core
+ * \ingroup core_debug_stream
  * \tparam tuple_t The tuple type to print to the seqan3::detail::debug_stream_type.
  *
  * \details
