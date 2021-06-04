@@ -46,7 +46,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief A class for writing structured sequence files, e.g. Stockholm, Connect, Vienna, ViennaRNA bpp matrix ...
- * \ingroup structure_file
+ * \ingroup io_structure_file
  * \tparam selected_field_ids A seqan3::fields type with the list and order of fields IDs; only relevant if these
  *                            can't be deduced.
  * \tparam valid_formats      A seqan3::type_list of the selectable formats (each must meet
