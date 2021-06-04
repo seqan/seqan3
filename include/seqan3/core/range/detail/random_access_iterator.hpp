@@ -25,7 +25,7 @@ namespace seqan3::detail
  * \tparam range_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
  * \tparam derived_t_template The derived type template, see below.
  * \implements std::random_access_iterator
- * \ingroup range
+ * \ingroup core_range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
  * it to satisfy the std::ranges::random_access_range, because the iterator itself may be
@@ -298,7 +298,7 @@ private:
 
 /*!\brief A generic random access iterator that delegates most operations to the range.
  * \tparam range_type The data structure on which the iterator operates, e.g. `std::vector<int>`.
- * \ingroup range
+ * \ingroup core_range
  *
  * The iterator makes certain assumptions on the `range_type`, but does not formally require
  * it to satisfy the std::ranges::random_access_range, because the iterator itself may be

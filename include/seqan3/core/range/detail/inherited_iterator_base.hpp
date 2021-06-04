@@ -26,7 +26,7 @@ namespace seqan3::detail
  * \tparam derived_t The CRTP specialisation.
  * \tparam base_t    The type to inherit from; must satisfy std::input_or_output_iterator.
  * \implements std::input_or_output_iterator
- * \ingroup range
+ * \ingroup core_range
  *
  * \details
  *

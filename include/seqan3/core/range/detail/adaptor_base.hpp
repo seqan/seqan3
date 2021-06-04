@@ -6,7 +6,6 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \ingroup views
  * \brief Provides seqan3::detail::adaptor_base and seqan3::detail::combined_adaptor
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -35,7 +34,7 @@ class combined_adaptor;
 /*!\brief CRTP-base to simplify the definition of range adaptor closure objects and similar types.
  * \tparam derived_type CRTP specialisation parameter.
  * \tparam stored_args_ts Some closure objects store values, these are their types.
- * \ingroup views
+ * \ingroup core_range
  *
  * \details
  *
@@ -205,7 +204,7 @@ public:
 /*!\brief Template for range adaptor closure objects that consist of two other range adaptor closure objects.
  * \tparam left_adaptor_t  Type of the first stored adaptor.
  * \tparam right_adaptor_t Type of the second stored adaptor.
- * \ingroup views
+ * \ingroup core_range
  *
  * \details
  *
