@@ -33,7 +33,7 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \ingroup structure
+ * \ingroup alphabet_structure
  *
  * \details
  * The DSSP annotation links structure elements to protein sequences.

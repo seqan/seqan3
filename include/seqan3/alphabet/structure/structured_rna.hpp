@@ -20,7 +20,7 @@ namespace seqan3
 {
 
 /*!\brief A seqan3::alphabet_tuple_base that joins a nucleotide alphabet with an RNA structure alphabet.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \implements seqan3::rna_structure_alphabet
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet

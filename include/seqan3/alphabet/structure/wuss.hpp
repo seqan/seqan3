@@ -36,7 +36,7 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \ingroup structure
+ * \ingroup alphabet_structure
  *
  * \details
  * The symbols `.:,-_~;` denote unpaired characters, brackets `<>()[]{}` represent base pair interactions and

@@ -21,7 +21,7 @@ namespace seqan3
 {
 
 /*!\brief A seqan3::alphabet_tuple_base that joins an aminoacid alphabet with a protein structure alphabet.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  * \implements seqan3::trivially_copyable

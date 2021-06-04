@@ -31,7 +31,7 @@ template <typename ...args_t>
 void is_pair_open(args_t ...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_pair_open.
- * \ingroup structure
+ * \ingroup alphabet_structure
  */
 struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open_cpo, 2>
 {
@@ -75,16 +75,11 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
 
 namespace seqan3
 {
-
-/*!\name Function objects (Structure)
- * \{
- */
-
 /*!\brief Check whether the given character represents a rightward interaction in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
  * \returns True if the character represents a rightward interaction, False otherwise.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -112,7 +107,6 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_pair_open = detail::adl_only::is_pair_open_cpo{};
-//!\}
 
 } // namespace seqan3
 
@@ -128,7 +122,7 @@ template <typename ...args_t>
 void is_pair_close(args_t ...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_pair_close.
- * \ingroup structure
+ * \ingroup alphabet_structure
  */
 struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_close_cpo, 2>
 {
@@ -172,16 +166,11 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
 
 namespace seqan3
 {
-
-/*!\name Function objects (Structure)
- * \{
- */
-
 /*!\brief Check whether the given character represents a leftward interaction in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
  * \returns True if the character represents a leftward interaction, False otherwise.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -209,7 +198,6 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_pair_close = detail::adl_only::is_pair_close_cpo{};
-//!\}
 
 } // namespace seqan3
 
@@ -225,7 +213,7 @@ template <typename ...args_t>
 void is_unpaired(args_t ...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_unpaired.
- * \ingroup structure
+ * \ingroup alphabet_structure
  */
 struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_cpo, 2>
 {
@@ -269,16 +257,11 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
 
 namespace seqan3
 {
-
-/*!\name Function objects (Structure)
- * \{
- */
-
 /*!\brief Check whether the given character represents an unpaired nucleotide in an RNA structure.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
  * \returns True if the character represents an unpaired site, False otherwise.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -306,7 +289,6 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto is_unpaired = detail::adl_only::is_unpaired_cpo{};
-//!\}
 
 } // namespace seqan3
 
@@ -323,7 +305,7 @@ void max_pseudoknot_depth(args_t ...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::max_pseudoknot_depth.
  * \tparam alphabet_t The alphabet type being queried.
- * \ingroup structure
+ * \ingroup alphabet_structure
  */
 template <typename alphabet_t>
 struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_pseudoknot_depth_cpo<alphabet_t>, 2>
@@ -387,17 +369,12 @@ inline constexpr auto max_pseudoknot_depth_obj = max_pseudoknot_depth_cpo<alph_t
 
 namespace seqan3
 {
-
-/*!\name Function objects (Structure)
- * \{
- */
-
 /*!\brief A type trait that holds the ability of the structure alphabet to represent pseudoknots,
  *        i.e. crossing interactions, up to a certain depth.
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
  * \returns The maximum supported nestedness, or 1 if the alphabet cannot support pseudoknots.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \details
  *
  * The value is the maximum allowed depth of pseudoknots.
@@ -461,7 +438,7 @@ template <typename ...args_t>
 void pseudoknot_id(args_t ...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::pseudoknot_id_cpo.
-//!\ingroup structure
+//!\ingroup alphabet_structure
 struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_id_cpo, 2>
 {
     //!\brief CRTP base class seqan3::detail::customisation_point_object.
@@ -504,18 +481,13 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
 
 namespace seqan3
 {
-
-/*!\name Function objects (Structure)
- * \{
- */
-
 /*!\brief Retrieve an id for the level of a pseudoknotted interaction (also known as 'page number').
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
  * \returns An std::optional containing the pseudoknot identifier if `alph` represents an interaction.
  * The returned value is std::nullopt for unpaired sites. For non-nested interactions the identifier is always 0.
  * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -543,7 +515,6 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto pseudoknot_id = detail::adl_only::pseudoknot_id_cpo{};
-//!\}
 
 } // namespace seqan3
 
@@ -556,7 +527,7 @@ namespace seqan3
 /*!\interface seqan3::rna_structure_alphabet <>
  * \brief A concept that indicates whether an alphabet represents RNA structure.
  * \extends seqan3::alphabet
- * \ingroup structure
+ * \ingroup alphabet_structure
  *
  * \details
  *
