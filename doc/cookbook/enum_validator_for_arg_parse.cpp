@@ -33,78 +33,14 @@ return std::unordered_map<std::string, my_methods>{{"0", my_methods::method_a}, 
                                                    {"2", my_methods::method_c}, {"method_c", my_methods::method_c}};
 };
 
-template <typename option_value_t>
-class EnumValidator : public seqan3::value_list_validator<option_value_t>
-{
-public:
-    //!\brief Type of values that are tested by validator
-    using option_value_type = option_value_t;
-
-    /*!\name Constructors, destructor and assignment
-     * \{
-     */
-
-    /*!\brief Constructing from a range.
-     * \tparam range_type - the type of range; must model std::ranges::forward_range and
-     *                      EnumValidator::option_value_type must be constructible from the rvalue reference type of the
-     *                      given range
-     * \param[in] rng - the range of valid values to test
-     */
-    template <std::ranges::forward_range range_type>
-    //!\cond
-        requires std::constructible_from<option_value_type, std::ranges::range_rvalue_reference_t<range_type>>
-    //!\endcond
-    EnumValidator(range_type rng)
-    {
-        values.clear();
-        std::ranges::move(std::move(rng), std::cpp20::back_inserter(values));
-        std::ranges::sort(values);
-        values.erase(std::unique(values.begin(), values.end()), values.end());
-    }
-    //!\}
-
-    void operator()(option_value_type const & cmp) const {};
-
-    template <std::ranges::forward_range range_type>
-    //!\cond
-        requires std::convertible_to<std::ranges::range_value_t<range_type>, option_value_type>
-    //!\endcond
-    void operator()(range_type const & range) const {};
-
-    //!\brief Returns a message that can be appended to the (positional) options help page info.
-    std::string get_help_page_message() const
-    {
-        auto map = seqan3::enumeration_names<option_value_t>;
-        std::vector<std::pair<std::string_view, option_value_t>> key_value_pairs(map.begin(), map.end());
-        std::ranges::sort(key_value_pairs, [] (auto pair1, auto pair2)
-            {
-                if constexpr (std::totally_ordered<option_value_t>)
-                {
-                    if (pair1.second != pair2.second)
-                        return pair1.second < pair2.second;
-                }
-                return pair1.first < pair2.first;
-            });
-
-        return seqan3::detail::to_string("Value must be one of (method name or number) ",
-                                         key_value_pairs | std::views::keys,
-                                         ".");
-    }
-
-private:
-
-    //!\brief Minimum of the range to test.
-    std::vector<option_value_type> values{};
-};
-
 void initialize_argument_parser(seqan3::argument_parser & parser, cmd_arguments & args)
 {
-    // Validatiors:
-    EnumValidator<my_methods> method_validator{seqan3::enumeration_names<my_methods> | std::views::values};
-
     // Options:
+    parser.add_option(args.methods, 'n', "nethod", "Choose the method(s) to be used. ",
+                      seqan3::option_spec::standard);   // uses the default_validator
     parser.add_option(args.methods, 'm', "method", "Choose the method(s) to be used. ",
-                      seqan3::option_spec::standard, method_validator);
+                      seqan3::option_spec::standard, seqan3::enum_validator{(seqan3::enumeration_names<my_methods>
+                                                                             | std::views::values)});
 }
 
 int main(int argc, char ** argv)

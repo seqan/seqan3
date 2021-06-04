@@ -19,7 +19,9 @@
 #include <seqan3/std/ranges>
 #include <regex>
 #include <sstream>
+#include <unordered_map>
 
+#include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/debug_stream/range.hpp>
@@ -301,6 +303,73 @@ template <typename range_type>
 //!\endcond
 value_list_validator(range_type && rng) -> value_list_validator<std::ranges::range_value_t<range_type>>;
 //!\}
+
+/*!\brief A validator that checks ...
+ * \ingroup argument_parser
+ * \implements seqan3::validator
+ * \tparam option_value_t \copybrief seqan3::value_list_validator::option_value_type
+ *
+ * \details
+ *
+ * ...
+ *
+ * \note ...
+ *
+ * \include ...
+ */
+template <named_enumeration option_value_t>
+// //!\cond
+//     requires named_enumeration<std::remove_cvref_t<option_value_t>>
+// //!\endcond
+class enum_validator //: public value_list_validator<option_value_t>
+{
+private:
+    std::string const help_page_message = []()
+    {
+        auto map = seqan3::enumeration_names<option_value_t>;
+        std::vector<std::pair<std::string_view, option_value_t>> key_value_pairs(map.begin(), map.end());
+        std::ranges::sort(key_value_pairs, [] (auto pair1, auto pair2)
+            {
+                if constexpr (std::totally_ordered<option_value_t>)
+                {
+                    if (pair1.second != pair2.second)
+                        return pair1.second < pair2.second;
+                }
+                return pair1.first < pair2.first;
+            });
+
+        return seqan3::detail::to_string("Value must be one of (method name or number) ",
+                                         key_value_pairs | std::views::keys,
+                                         ".");
+    }();
+
+public:
+    //!\brief Type of values that are tested by validator
+    using option_value_type = option_value_t;
+
+    /*!\name Constructors, destructor and assignment
+     * \{
+     */
+    enum_validator() = default;                                     //!< Defaulted.
+    enum_validator(enum_validator const &) = default;               //!< Defaulted.
+    enum_validator(enum_validator &&) = default;                    //!< Defaulted.
+    enum_validator & operator=(enum_validator const &) = default;   //!< Defaulted.
+    enum_validator & operator=(enum_validator &&) = default;        //!< Defaulted.
+    ~enum_validator() = default;                                    //!< Defaulted.
+
+    //!\}
+
+    //!\brief Validation already done.
+    template <typename t>
+    void operator()(t const & cmp) const
+    {}
+
+    //!\brief Returns a message that can be appended to the (positional) options help page info.
+    std::string get_help_page_message() const
+    {
+        return help_page_message;
+    }
+};
 
 /*!\brief An abstract base class for the file and directory validators.
  * \ingroup argument_parser

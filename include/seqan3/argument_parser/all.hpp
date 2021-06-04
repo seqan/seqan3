@@ -38,6 +38,7 @@
  *
  * - seqan3::regex_validator
  * - seqan3::value_list_validator
+ * - seqan3::enum_validator
  * - seqan3::arithmetic_range_validator
  * - seqan3::input_file_validator
  * - seqan3::output_file_validator
