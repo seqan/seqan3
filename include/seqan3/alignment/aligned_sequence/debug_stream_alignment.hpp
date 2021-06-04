@@ -84,7 +84,7 @@ void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & al
 namespace seqan3
 {
 /*!\brief Stream operator for alignments, which are represented as tuples of aligned sequences.
- * \ingroup aligned_sequence
+ * \ingroup alignment_aligned_sequence
  *
  * \tparam alignment_t The alignment type, must satisfy tuple_like and its size must be at least 2.
  *

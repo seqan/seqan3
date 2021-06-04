@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the aligned sequence in the \link alignment alignment module \endlink.
+ * \brief Meta-header for the \link alignment_aligned_sequence Alignment / Aligned Sequence submodule \endlink.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -15,7 +15,8 @@
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/aligned_sequence/debug_stream_alignment.hpp>
 
-/*!\defgroup aligned_sequence Aligned Sequence
+/*!\defgroup alignment_aligned_sequence Aligned Sequence
  * \ingroup alignment
  * \brief Provides seqan3::aligned_sequence, as well as various ranges that model it.
+ * \see alignment
  */
