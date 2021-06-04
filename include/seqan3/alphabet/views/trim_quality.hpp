@@ -22,7 +22,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The underlying type of seqan3::views::trim_quality.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * Under the hood, this delegates to std::views::take_while.
  */
@@ -75,11 +75,6 @@ struct trim_fn
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               A view that does quality-threshold trimming on a range of seqan3::quality_alphabet.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \tparam threshold_t  Either std::ranges::range_value_t<urng_t> or
@@ -87,7 +82,7 @@ namespace seqan3::views
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \param[in] threshold The minimum quality.
  * \returns             A trimmed range. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -130,7 +125,5 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto trim_quality = deep{seqan3::detail::trim_fn{}};
-
-//!\}
 
 } // namespace seqan3::views
