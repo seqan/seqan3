@@ -18,6 +18,7 @@ namespace seqan3
 {
 
 //!\brief The options type defines various option members that influence the behaviour of all or some formats.
+//!\ingroup io_sequence_file
 struct sequence_file_output_options
 {
     //!\brief Begin the ID line with ";" instead of ">" (not recommended).

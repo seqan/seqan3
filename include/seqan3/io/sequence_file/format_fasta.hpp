@@ -47,7 +47,7 @@ namespace seqan3
 /*!\brief The FastA format.
  * \implements sequence_file_input_format
  * \implements sequence_file_output_format
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \details
  *

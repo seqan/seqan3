@@ -6,16 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-include for the sequence IO submodule.
+ * \brief Meta-header for the \link io_sequence_file IO / Sequence File submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup sequence_file Sequence File
- * \ingroup io
+/*!\defgroup io_sequence_file Sequence File
  * \brief Provides files and formats for handling sequence data.
- * \see \ref io
+ * \ingroup io
+ * \see io
  * \see \ref tutorial_sequence_file
  */
 

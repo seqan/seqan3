@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Internal class used to expose the actual format interface to write sequence records into the file.
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \tparam format_type The type of the format to be exposed.
  *
@@ -57,7 +57,7 @@ namespace seqan3
 
 /*!\interface seqan3::sequence_file_output_format <>
  * \brief The generic concept for sequence file out formats.
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \details
  *
@@ -127,17 +127,17 @@ namespace seqan3::detail
 {
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_output_format [default is false].
- * \ingroup core
+ *        seqan3::sequence_file_output_format [default is false].
+ * \ingroup io_sequence_file
  * \see seqan3::type_list_specialisationOfsequence_file_output_formats
  */
 template <typename t>
 constexpr bool is_type_list_of_sequence_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
- * seqan3::sequence_file_output_format [overload].
- * \ingroup core
-  * \see seqan3::type_list_specialisationOfsequence_file_output_formats
+ *        seqan3::sequence_file_output_format [overload].
+ * \ingroup io_sequence_file
+ * \see seqan3::type_list_specialisationOfsequence_file_output_formats
  */
 template <typename ...ts>
 constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> =
@@ -145,7 +145,7 @@ constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> 
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
  *        seqan3::sequence_file_output_format.
- * \ingroup core
+ * \ingroup io_sequence_file
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>

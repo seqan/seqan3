@@ -17,7 +17,7 @@
 namespace seqan3
 {
 /*!\brief The record type of seqan3::sequence_file_input.
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  * \implements seqan3::detail::record_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids A seqan3::fields type with seqan3::field IDs corresponding to field_types.
