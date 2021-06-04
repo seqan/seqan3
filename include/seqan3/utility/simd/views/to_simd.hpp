@@ -35,7 +35,7 @@ namespace seqan3::detail
  * \implements std::ranges::input_range
  * \tparam urng_t The underlying range type; must model std::ranges::forward_range.
  * \tparam simd_t The simd type to convert to.
- * \ingroup simd
+ * \ingroup utility_simd_views
  *
  * \details
  *
@@ -608,8 +608,8 @@ private:
 // ============================================================================
 
 /*!\brief views::to_simd's range adaptor closure object type.
+ * \ingroup utility_simd_views
  * \tparam simd_t The target simd type.
- * \ingroup simd
  *
  * \details
  *
@@ -688,12 +688,12 @@ namespace seqan3::views
 {
 
 /*!\brief A view that transforms a range of ranges into chunks of seqan3::simd vectors.
+ * \ingroup utility_simd_views
  * \tparam urng_t The type of the range being processed.
  * \tparam simd_t The target simd vector type.
  * \param[in] urange The range being processed.
  * \param[in] padding An optional padding value.
  * \returns A range of ranges with the original sequences transformed into simd vectors.
- * \ingroup simd
  *
  * \details
  *

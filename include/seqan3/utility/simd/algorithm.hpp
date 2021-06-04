@@ -28,7 +28,7 @@ namespace seqan3::detail
 {
 
 //!\brief Helper function for seqan3::simd::fill.
-//!\ingroup simd
+//!\ingroup utility_simd
 template <simd::simd_concept simd_t, size_t... I>
 constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scalar, std::index_sequence<I...>) noexcept
 {
@@ -36,7 +36,7 @@ constexpr simd_t fill_impl(typename simd_traits<simd_t>::scalar_type const scala
 }
 
 //!\brief Helper function for seqan3::simd::iota.
-//!\ingroup simd
+//!\ingroup utility_simd
 template <simd::simd_concept simd_t, typename scalar_t, scalar_t... I>
 constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t, I...>)
 {
@@ -44,7 +44,7 @@ constexpr simd_t iota_impl(scalar_t const offset, std::integer_sequence<scalar_t
 }
 
 /*!\brief Helper function to extract a part of the given simd vector.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam divisor The divisor to select the chunk size.
  * \tparam simd_t  The simd type; must model seqan3::simd::simd_concept.
  *
@@ -70,12 +70,12 @@ constexpr simd_t extract_impl(simd_t const & src, uint8_t const mask)
 }
 
 /*!\brief Upcasts the given vector into the target vector using signed extension of packed values.
+ * \ingroup utility_simd
  * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
  *                       type.
  * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
  *                       type.
  * \param[in] src The source to upcast into `target_simd_t`.
- * \ingroup simd
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_signed(source_simd_t const & src)
@@ -94,12 +94,12 @@ constexpr target_simd_t upcast_signed(source_simd_t const & src)
 }
 
 /*!\brief Upcasts the given vector into the target vector using unsigned extension of packed values.
+ * \ingroup utility_simd
  * \tparam target_simd_t The target simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
  *                       type.
  * \tparam source_simd_t The source simd type; must model seqan3::simd::simd_concept and must be a native builtin simd
  *                       type.
  * \param[in] src The source to upcast into `target_simd_t`.
- * \ingroup simd
  */
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
@@ -118,7 +118,7 @@ constexpr target_simd_t upcast_unsigned(source_simd_t const & src)
 }
 
 /*!\brief Extracts one half of the given simd vector and stores the result in the lower half of the target vector.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam index An index value in the range of [0, 1].
  * \tparam simd_t The simd type.
  * \param src The source to extract the half from.
@@ -167,7 +167,7 @@ constexpr simd_t extract_half(simd_t const & src)
 //!\endcond
 
 /*!\brief Extracts one quarter of the given simd vector and stores it in the lower quarter of the target vector.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam index An index value in the range of [0, 1, 2, 3].
  * \tparam simd_t The simd type.
  * \param src The source to extract the quarter from.
@@ -216,7 +216,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
 //!\endcond
 
 /*!\brief Extracts one eighth of the given simd vector and stores it in the lower eighth of the target vector.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam index An index value in the range of [0, 1, 2, 3, 4, 5, 6, 7].
  * \tparam simd_t The simd type.
  * \param src The source to extract the eighth from.
@@ -271,9 +271,9 @@ inline namespace simd
 {
 
 /*!\brief Fills a seqan3::simd::simd_type vector with a scalar value.
+ * \ingroup utility_simd
  * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
  * \param[in] scalar The scalar value to fill the seqan3::simd::simd_type vector.
- * \ingroup simd
  *
  * \details
  *
@@ -287,9 +287,9 @@ constexpr simd_t fill(typename simd_traits<simd_t>::scalar_type const scalar) no
 }
 
 /*!\brief Fills a seqan3::simd::simd_type vector with the scalar values offset, offset+1, offset+2, ...
+ * \ingroup utility_simd
  * \tparam    simd_t The simd type which satisfies seqan3::simd::simd_concept.
- * \param[in] offset The scalar offset to fill the seqan3::simd::simd_type vector.
- * \ingroup simd
+ * \param[in] offset The scalar offset to fill the seqan3::simd::simd_type vector
  *
  * \details
  *
@@ -304,7 +304,7 @@ constexpr simd_t iota(typename simd_traits<simd_t>::scalar_type const offset)
 }
 
 /*!\brief Load simd_t size bits of integral data from memory.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam    simd_t   The simd type; must model seqan3::simd::simd_concept.
  * \param[in] mem_addr The memory address to load from. Does not need to be aligned on any particular boundary.
  *
@@ -345,7 +345,7 @@ constexpr simd_t load(void const * mem_addr)
 //!\endcond
 
 /*!\brief Store simd_t size bits of integral data into memory.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam    simd_t   The simd type; must model seqan3::simd::simd_concept.
  * \param[in] mem_addr The memory address to write to. Does not need to be aligned on any particular boundary.
  * \param[in] simd_vec The simd vector to read the data from.
@@ -385,7 +385,7 @@ constexpr void store(void * mem_addr, simd_t const & simd_vec)
 //!\endcond
 
 /*!\brief Transposes the given simd vector matrix.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam simd_t The simd vector type; must model seqan3::simd::simd_concept and must be a simd built-in type.
  * \param[in,out] matrix The matrix that is transposed in place.
  *
@@ -431,7 +431,7 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 //!\endcond
 
 /*!\brief Upcasts the given vector into the target vector using sign extension of packed values.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam simd_t The simd type; must model seqan3::simd::simd_concept and must be a builtin simd type.
  *
  * \details

@@ -6,23 +6,21 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides seqan3::detail::default_simd_backend
+ * \brief Meta-header for the \cond DEV \link utility_simd_views Utility / SIMD / Views submodule \endlink \endcond.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/utility/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/views/iota_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
 
-namespace seqan3::detail
-{
+//!\cond DEV
 
-/*!\brief seqan3::detail::default_simd_backend is the default used implementation of
- * seqan3::simd::simd_type.
+/*!\defgroup utility_simd_views Views
+ * \brief SIMD related views.
  * \ingroup utility_simd
- * \tparam scalar_t The underlying type of a simd vector
- * \tparam length The number of packed values in a simd vector
+ * \see utility_simd
  */
-template <typename scalar_t, size_t length>
-using default_simd_backend = builtin_simd<scalar_t, length>;
-} // namespace seqan3::detail
+
+//!\endcond

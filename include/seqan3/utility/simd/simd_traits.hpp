@@ -21,8 +21,8 @@ inline namespace simd
 {
 
 /*!\brief seqan3::simd::simd_traits is the trait class that provides uniform interface
- * to the properties of simd_t types.
- * \ingroup simd
+ *        to the properties of simd_t types.
+ * \ingroup utility_simd
  * \tparam simd_t The simd type that satisfies seqan3::simd::simd_concept.
  *
  * The class defines the following member variables and types:
