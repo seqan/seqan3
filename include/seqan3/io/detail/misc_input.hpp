@@ -37,6 +37,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Check whether the query range is a prefix of the reference range.
+ * \ingroup io
  * \param[in] reference The range that is expected to be the longer one.
  * \param[in] query     The range that is expected to be the shorter one.
  */
@@ -70,6 +71,7 @@ inline bool starts_with(ref_t && reference, query_t && query)
 }
 
 /*!\brief Depending on the magic bytes of the given stream, return a decompression stream or forward the primary stream.
+ * \ingroup io
  * \param[in] primary_stream The primary (device) stream for reading.
  * \param[in,out] filename  The associated filename; compression extensions will be stripped. [optional]
  * \returns A pointer to the secondary stream with a default deleter or a nop-deleter.

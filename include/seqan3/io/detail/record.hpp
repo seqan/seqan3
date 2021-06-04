@@ -30,7 +30,6 @@ namespace seqan3::detail
 
 /*!\brief Auxiliary concept that checks whether a type is a specialisation of seqan3::fields.
  * \ingroup io
- * \relates seqan3::fields
  */
 template <typename t>
 SEQAN3_CONCEPT fields_specialisation = is_value_specialisation_of_v<t, fields>;
@@ -71,7 +70,6 @@ struct select_types_with_ids                               // unconstrained temp
 };
 
 /*!\brief Shortcut for seqan3::select_types_with_ids (transformation_trait shortcut).
- * \ingroup io
  * \relates select_types_with_ids
  */
 template <typename field_types,
@@ -113,10 +111,8 @@ struct select_types_with_ids<field_types, field_types_as_ids, selected_field_ids
 // get_or_ignore
 // ----------------------------------------------------------------------------
 
-/*!\addtogroup io
- *!\{
- */
 //!\brief Access an element in a std::tuple or seqan3::record; return reference to std::ignore if not contained.
+//!\ingroup io
 template <field f, typename field_types, typename field_ids>
 auto & get_or_ignore(record<field_types, field_ids> & r)
 {
@@ -155,17 +151,13 @@ auto const & get_or_ignore(tuple_t const & t)
     else
         return std::ignore;
 }
-//!\}
-
 
 // ----------------------------------------------------------------------------
 // get_or
 // ----------------------------------------------------------------------------
 
-/*!\addtogroup io
- *!\{
- */
 //!\brief Access an element in a std::tuple or seqan3::record; return or_value if not contained.
+//!\ingroup io
 template <field f, typename field_types, typename field_ids, typename or_type>
 decltype(auto) get_or(record<field_types, field_ids> & r, or_type && or_value)
 {
@@ -204,13 +196,13 @@ decltype(auto) get_or(std::tuple<types...> const & t, or_type && or_value)
     else
         return std::forward<or_type>(or_value);
 }
-//!\}
 
 // ----------------------------------------------------------------------------
 // range_wrap_ignore
 // ----------------------------------------------------------------------------
 
 //!\brief Pass through the reference to the argument in case the argument satisfies std::ranges::input_range.
+//!\ingroup io
 template <std::ranges::input_range rng_t>
 inline auto & range_wrap_ignore(rng_t & range)
 {
@@ -218,6 +210,7 @@ inline auto & range_wrap_ignore(rng_t & range)
 }
 
 /*!\brief If the argument is std::ignore, return an infinite range of std::ignore values.
+ * \ingroup io
  * \details
  *
  * This function can be used in combination with seqan3::detail::get_or_ignore to ensure same dimensionality of

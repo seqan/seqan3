@@ -95,6 +95,7 @@ void set_format(format_variant_type & format,
 }
 
 /*!\brief Helper function to determine if all types in a format type list have a static member `file_extensions`.
+ * \ingroup io
  * \tparam list_t The type of the template parameter list.
  * \returns `true` if `type::file_extensions` for all expanded types of `list_t` is valid, otherwise `false`.
  */
@@ -108,6 +109,7 @@ inline constexpr bool has_member_file_extensions<list_t<ts...>> = true;
 //!\endcond
 
 /*!\brief Helper function to determine if a type has a static member `valid_formats`.
+ * \ingroup io
  * \tparam query_t The type to query.
  * \returns `true` if `query_t::valid_formats` is valid, otherwise `false`.
  */

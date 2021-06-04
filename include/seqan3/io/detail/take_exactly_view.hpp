@@ -42,7 +42,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
- * \ingroup views
+ * \ingroup io
  *
  * \details
  *

@@ -19,6 +19,7 @@ namespace seqan3::detail
 {
 
 //!\brief Helper struct to implement seqan3::detail::record_like
+//!\ingroup io
 template <typename record_t>
 struct is_derived_from_record
 {
