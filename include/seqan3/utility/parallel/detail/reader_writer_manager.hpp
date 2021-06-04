@@ -25,7 +25,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A strong type to set the writer count of a seqan3::detail::reader_writer_manager.
- * \ingroup parallel
+ * \ingroup utility_parallel
  */
 struct writer_count : public detail::strong_type<size_t, writer_count>
 {
@@ -37,7 +37,7 @@ struct writer_count : public detail::strong_type<size_t, writer_count>
 };
 
 /*!\brief A strong type to set the reader count of a seqan3::detail::reader_writer_manager.
- * \ingroup parallel
+ * \ingroup utility_parallel
  */
 struct reader_count : public detail::strong_type<size_t, reader_count>
 {
@@ -49,8 +49,7 @@ struct reader_count : public detail::strong_type<size_t, reader_count>
 };
 
 /*!\brief A single-use synchronisation point for closable concurrent data structures.
- * \ingroup parallel
- *
+ * \ingroup utility_parallel
  *
  * \details
  *
