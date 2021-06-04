@@ -41,7 +41,7 @@ namespace seqan3::detail
  * \tparam or_throw  Whether to throw an exception when the input is exhausted before the end of line is reached.
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
- * \ingroup io
+ * \ingroup io_views
  *
  * \details
  *
@@ -515,11 +515,6 @@ struct take_until_fn
 
 namespace seqan3::detail
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that returns elements from the underlying range until the functor evaluates to
  *                      true (or the end of the underlying range is reached).
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
@@ -530,7 +525,7 @@ namespace seqan3::detail
  * \param[in] fun       The functor.
  * \returns             All elements of the underlying range up until (but excluding) the element that evaluates the
  *                      functor to true.
- * \ingroup io
+ * \ingroup io_views
  *
  * \details
  *
@@ -586,7 +581,7 @@ inline auto constexpr take_until = take_until_fn<false, false>{};
 /*!\brief A view adaptor that returns elements from the underlying range until the functor evaluates to true
  *        (**throws** if the end of the underlying range is reached).
  * \throws seqan3::unexpected_end_of_input If the underlying range contains no element that satisfies the functor.
- * \ingroup io
+ * \ingroup io_views
  *
  * \copydetails seqan3::detail::take_until
  * \hideinitializer
@@ -600,7 +595,7 @@ inline auto constexpr take_until_or_throw = take_until_fn<true, false>{};
 /*!\brief A view adaptor that returns elements from the underlying range until the functor evaluates to true
  *        (or the end of the underlying range is reached and consumes the end in single-pass ranges).
  * \throws seqan3::unexpected_end_of_input If the underlying range contains no element that satisfies the functor.
- * \ingroup io
+ * \ingroup io_views
  *
  * \copydetails seqan3::detail::take_until
  * \hideinitializer
@@ -614,13 +609,11 @@ inline auto constexpr take_until_and_consume = take_until_fn<false, true>{};
 /*!\brief A view adaptor that returns elements from the underlying range until the functor evaluates to true
  *        (**throws** if the end of the underlying range is reached and consumes the end in single-pass ranges).
  * \throws seqan3::unexpected_end_of_input If the underlying range contains no element that satisfies the functor.
- * \ingroup io
+ * \ingroup io_views
  *
  * \copydetails seqan3::detail::take_until_and_consume
  * \hideinitializer
  */
 inline auto constexpr take_until_or_throw_and_consume = take_until_fn<true, true>{};
-
-//!\}
 
 } // namespace seqan3::detail
