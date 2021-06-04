@@ -31,7 +31,7 @@
 namespace seqan3::detail
 {
 //!\brief Whether a type is `char`, `char16_t`, `char32_t` or `wchar_t` (type trait).
-//!\ingroup adaptation
+//!\ingroup alphabet_adaptation
 //!\hideinitializer
 template <typename type>
 constexpr bool is_char_adaptation_v = std::same_as<type, char>     ||
@@ -45,7 +45,7 @@ namespace seqan3::custom
 
 /*!\brief Alphabet specific customisations for builtin char types.
  * \tparam char_type One of `char`, `char16_t`, `char32_t` or `wchar_t`.
- * \ingroup adaptation
+ * \ingroup alphabet_adaptation
  *
  * \stableapi{Since version 3.1.}
  */
