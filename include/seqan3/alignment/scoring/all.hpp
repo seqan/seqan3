@@ -6,13 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link scoring Scoring sub-module \endlink.
+ * \brief Meta-header for the \link alignment_scoring Alignment / Scoring submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup scoring Scoring
+/*!\defgroup alignment_scoring Scoring
  * \brief Provides the data structures used for scoring alphabets and sequences.
  * \ingroup alignment
  * \see alignment

@@ -33,7 +33,7 @@ namespace seqan3
 
 /*!\brief A strong type of underlying type `score_type` that represents the score of two matching characters.
  * \tparam score_type The underlying type.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
 template <arithmetic score_type>
@@ -58,7 +58,7 @@ match_score(score_type) -> match_score<score_type>;
 
 /*!\brief A strong type of underlying type `score_type` that represents the score two different characters.
  * \tparam score_type The underlying type.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  * \see scoring_scheme_base::set_simple_scheme
  */
 template <arithmetic score_type>
@@ -86,7 +86,7 @@ mismatch_score(score_type) -> mismatch_score<score_type>;
  * \tparam alphabet_t Type of the largest target alphabet.
  * \tparam score_type Type of the score values in the internal matrix.
  * \implements seqan3::cerealisable
- * \ingroup scoring
+ * \ingroup alignment_scoring
  *
  * \details
  *
