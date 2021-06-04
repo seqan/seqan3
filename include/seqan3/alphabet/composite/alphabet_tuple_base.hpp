@@ -73,7 +73,7 @@ decltype(auto) get();
 //!\endcond
 
 /*!\brief The CRTP base for a combined alphabet that contains multiple values of different alphabets at the same time.
- * \ingroup composite
+ * \ingroup alphabet_composite
  * \implements seqan3::writable_semialphabet
  * \if DEV
  * \implements seqan3::detail::writable_constexpr_semialphabet
@@ -801,7 +801,7 @@ namespace std
 
 /*!\brief Obtains the type of the specified element.
  * \implements seqan3::transformation_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  *
  * \stableapi{Since version 3.1.}
@@ -815,7 +815,7 @@ struct tuple_element<i, tuple_t>
 
 /*!\brief Provides access to the number of elements in a tuple as a compile-time constant expression.
  * \implements seqan3::unary_type_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  * \see std::tuple_size_v
  *
  * \stableapi{Since version 3.1.}

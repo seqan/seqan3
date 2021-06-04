@@ -26,7 +26,7 @@ namespace seqan3::detail
 
 /*!\interface seqan3::detail::alphabet_tuple_like <>
  * \brief seqan3::alphabet_tuple_base and its derivates model this concept.
- * \ingroup composite
+ * \ingroup alphabet_composite
  *
  * \details
  *
@@ -47,7 +47,7 @@ SEQAN3_CONCEPT alphabet_tuple_like = requires
 
 /*!\brief A seqan3::type_list with types that the given type depends on.
  * \implements seqan3::transformation_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  *
  * \details
  *
@@ -64,7 +64,7 @@ struct required_types
 /*!\brief A seqan3::type_list with types that the given type depends on.
  *        [specialisation for seqan3::alphabet_variant and derivates of seqan3::alphabet_tuple_base].
  * \implements seqan3::transformation_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  *
  * \details
  *
@@ -94,7 +94,7 @@ using required_types_t = typename required_types<t>::type;
 
 /*!\brief Like seqan3::detail::required_types, but recursive.
  * \implements seqan3::transformation_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  */
 template <typename t>
 struct recursive_required_types
@@ -105,7 +105,7 @@ struct recursive_required_types
 
 /*!\brief Like seqan3::detail::required_types, but recursive.
  * \implements seqan3::transformation_trait
- * \ingroup composite
+ * \ingroup alphabet_composite
  */
 template <typename t>
 //!\cond
