@@ -185,8 +185,8 @@
  *
  * ### Scoring gaps
  *
- * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref gap) and a gap interval to refer
- * to a stretch of consecutive gaps.
+ * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref alphabet_gap) and a gap interval to
+ * refer to a stretch of consecutive gaps.
  * When aligning two sequences a gap is introduced to mark an insertion or deletion with respect to the other sequence.
  * However, because it is widely recognised that the likelihood of `n` consecutive gaps is much higher than that
  * of `n` individual gaps the scoring of an individual gap or a stretch of gaps is not handled by the scoring scheme.
