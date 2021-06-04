@@ -54,7 +54,7 @@ a sequence has to be a range over an alphabet).
 In contrast to this, input files have certain default types for record fields that can be modified via a *traits type*.
 
 For example, on construction you can specify seqan3::sequence_file_input_default_traits_dna or
-seqan3::sequence_file_input_default_traits_aa for reading `dna` (\ref nucleotide) and `protein` (\ref alphabet_aminoacid)
+seqan3::sequence_file_input_default_traits_aa for reading `dna` (\ref alphabet_nucleotide) and `protein` (\ref alphabet_aminoacid)
 sequences respectively (section [File traits](#section_file_traits) will covers this in more detail).
 
 Opening and closing files is also handled automatically.

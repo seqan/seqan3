@@ -25,7 +25,7 @@ namespace seqan3
 {
 
 /*!\brief The four letter RNA alphabet of A,C,G,U.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif

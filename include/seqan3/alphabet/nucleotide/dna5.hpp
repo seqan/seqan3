@@ -27,7 +27,7 @@ namespace seqan3
 class rna5;
 
 /*!\brief The five letter DNA alphabet of A,C,G,T and the unknown character N.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif

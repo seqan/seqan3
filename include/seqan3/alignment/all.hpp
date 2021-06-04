@@ -231,7 +231,7 @@
  * special combinations of parameters a notably faster algorithm is available.
  * It is automatically selected if all of the following requirements are satisfied:
  *  * Edit distance gaps, i.e. default initialised seqan3::align_cfg::gap_cost_affine gap scheme.
- *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
+ *  * Edit distance scoring for \ref alphabet_nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
  *   initialised with default initialised seqan3::nucleotide_scoring_scheme.
  *  * Global alignment, i.e. seqan3::align_cfg::method_global.
  *

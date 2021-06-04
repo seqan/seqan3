@@ -155,7 +155,7 @@ public:
 
     /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
      * \details
-     * See \ref nucleotide for the actual values.
+     * See \ref alphabet_nucleotide for the actual values.
      * Satisfies the seqan3::nucleotide_alphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
      * ### Complexity

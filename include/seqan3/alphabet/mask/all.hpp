@@ -26,8 +26,8 @@
  * ### Introduction
  *
  * Masks are useful in cases where an alphabet needs to be augmented with additional information.
- * A common use case is the introduction of don't-care positions (*masking*) in \link nucleotide nucleotide \endlink or
- * \link alphabet_aminoacid aminoacid \endlink sequences without using ``'N'`` or ``'X'``, respectively.
+ * A common use case is the introduction of don't-care positions (*masking*) in \link alphabet_nucleotide nucleotide
+ * \endlink or \link alphabet_aminoacid aminoacid \endlink sequences without using ``'N'`` or ``'X'``, respectively.
  * Instead, the original alphabet is combined with seqan3::mask to create a seqan3::masked composite.
  * When printed via the seqan3::debug_stream, masked characters are displayed in lowercase.
  *
