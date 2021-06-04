@@ -26,6 +26,7 @@ namespace seqan3::detail
 {
 
 //!\brief An enumerator for the different error types used during the backtracking.
+//!\ingroup search
 enum class error_type : uint8_t
 {
     deletion,  //!< A deletion was enumerated in previous backtracking step.
@@ -34,11 +35,8 @@ enum class error_type : uint8_t
     none       //!< No error or match was enumerated yet.
 };
 
-/*!\addtogroup search
- * \{
- */
-
 /*!\brief The algorithm that performs a unidirectional search on an FM index using trivial backtracking.
+ * \ingroup search
  * \tparam configuration_t The search configuration type.
  * \tparam index_t The type of index.
  */
@@ -191,6 +189,7 @@ private:
 };
 
 /*!\brief Searches a query sequence in an index using trivial backtracking.
+ * \ingroup search
  * \tparam abort_on_hit  If the flag is set, the search algorithm aborts on the first hit.
  * \tparam query_t       Must model std::ranges::input_range over the index's alphabet.
  * \param[in] cur        Cursor of a string index built on the text that will be searched.
@@ -344,6 +343,5 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
 
     return false;
 }
-//!\}
 
 } // namespace seqan3::detail

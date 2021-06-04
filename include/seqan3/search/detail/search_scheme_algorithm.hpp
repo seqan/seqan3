@@ -25,11 +25,8 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup search
- * \{
- */
-
 /*!\brief The algorithm that performs a bidirectional search on a bidirectional FM index using (optimal) search schemes.
+ * \ingroup search
  * \tparam configuration_t The search configuration type.
  * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
  *                 a seqan3::bi_fm_index_cursor.
@@ -181,6 +178,7 @@ private:
 };
 
 /*!\brief Computes a (non-optimal) search scheme. Currently the generated search scheme represents trivial backtracking.
+ * \ingroup search
  * \param[in] min_error Minimum number of errors allowed.
  * \param[in] max_error Maximum number of errors allowed.
  *
@@ -205,6 +203,7 @@ inline std::vector<search_dyn> compute_ss(uint8_t const min_error, uint8_t const
 
 /*!\brief Returns for each search the cumulative length of blocks in the order of blocks in each search and the
  *        starting position of the first block in the query sequence.
+ * \ingroup search
  * \tparam search_scheme_t  Is of type `seqan3::detail::search_scheme_type` or `seqan3::detail::search_scheme_dyn_type`.
  * \param[in] search_scheme Search scheme that will be used for searching.
  * \param[in] query_length  Length of the query that will be searched in an index.
@@ -286,6 +285,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
  *        Sub-function for searching the remaining part of the current block without any errors.
+ * \ingroup search
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
  * \tparam cursor_t         Must model seqan3::detail::template_specialisation_of a seqan3::bi_fm_index_cursor.
  * \tparam query_t          Must model std::ranges::random_access_range over the index's alphabet.
@@ -360,6 +360,7 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for deletions at the end of a block.
+ * \ingroup search
  *
  * \copydetails search_ss_exact
  */
@@ -412,6 +413,7 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
  *        Sub-function for approximate search step (iterating over all children in a conceptual suffix tree).
+ * \ingroup search
  *
  * \copydetails search_ss_exact
  *
@@ -508,6 +510,7 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search schemes.
+ * \ingroup search
  *
  * \copydetails search_ss_exact
  */
@@ -586,6 +589,7 @@ inline bool search_ss(cursor_t cur, query_t & query,
 }
 
 /*!\brief Searches a query sequence in a bidirectional index using search schemes.
+ * \ingroup search
  * \tparam abort_on_hit     If the flag is set, the search aborts on the first hit.
  * \tparam index_t          index_t::cursor_type must model seqan3::detail::template_specialisation_of
  *                          a seqan3::bi_fm_index_cursor.
@@ -638,6 +642,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
 }
 
 /*!\brief Searches a query sequence in a bidirectional index.
+ * \ingroup search
  * \tparam abort_on_hit    If the flag is set, the search aborts on the first hit.
  * \tparam query_t         Must model std::ranges::random_access_range over the index's alphabet.
  * \tparam delegate_t      Takes `typename index_t::cursor_type` as argument.
@@ -681,6 +686,5 @@ inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::se
             break;
     }
 }
-//!\}
 
 } // namespace seqan3::detail

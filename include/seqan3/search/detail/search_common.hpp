@@ -20,6 +20,7 @@ namespace seqan3::detail
 {
 
 //!\brief Object grouping numbers of errors for different kind of error types.
+//!\ingroup search
 struct search_param
 {
     //!\brief Total number of errors (upper bound over all error types).

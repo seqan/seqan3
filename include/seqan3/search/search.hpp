@@ -64,12 +64,8 @@ struct search_configuration_validator
 
 namespace seqan3
 {
-
-/*!\addtogroup search
- * \{
- */
-
 /*!\brief Search a query or a range of queries in an index.
+ * \ingroup search
  * \tparam index_t    Type of the index.
  * \tparam queries_t  Must model std::ranges::random_access_range over the index's alphabet and std::ranges::sized_range.
  *                    A range of queries must additionally model std::ranges::forward_range and std::ranges::sized_range.
@@ -221,7 +217,5 @@ inline auto search(std::initializer_list<char const * const> const & queries,
     return search(std::move(query) | detail::persist, index, cfg);
 }
 //!\endcond
-
-//!\}
 
 } // namespace seqan3
