@@ -22,7 +22,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The CRTP-policy to determine the optimum of the dynamic programming matrix.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  *
