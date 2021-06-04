@@ -27,7 +27,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Handles the parallel execution of algorithms.
- * \ingroup algorithm
+ * \ingroup core_algorithm
  *
  * \details
  *

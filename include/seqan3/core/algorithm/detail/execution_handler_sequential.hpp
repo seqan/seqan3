@@ -21,7 +21,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Handles the sequential execution of algorithms.
- * \ingroup algorithm
+ * \ingroup core_algorithm
  *
  * \details
  *

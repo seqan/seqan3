@@ -24,7 +24,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A blocking algorithm executor for algorithms.
- * \ingroup algorithm
+ * \ingroup core_algorithm
  * \tparam resource_t The underlying range of sequence pairs to be computed; must model std::ranges::viewable_range
  *                    and std::ranges::forward_range.
  * \tparam algorithm_t The algorithm to be invoked on the elements of the given resource; must model std::semiregular.
