@@ -150,7 +150,7 @@ an overview of the other existing alphabets.
 Proteins consist of one or more long chains of amino acids. The so-called primary structure of a protein is
 expressed as sequences over an amino acid alphabet. The seqan3::aa27 alphabet contains the standard one-letter code
 of the 20 canonical amino acids as well as the two proteinogenic amino acids, a termination symbol and
-some wildcard characters. For details read the \ref aminoacid page.
+some wildcard characters. For details read the \ref alphabet_aminoacid page.
 
 ## Structure and quality alphabets
 

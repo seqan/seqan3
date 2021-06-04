@@ -21,7 +21,7 @@
 namespace seqan3
 {
 /*!\brief The reduced Li amino acid alphabet.
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  * \implements seqan3::aminoacid_alphabet
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
