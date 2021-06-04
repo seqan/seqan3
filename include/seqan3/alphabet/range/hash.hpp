@@ -20,7 +20,7 @@
 namespace std
 {
 /*!\brief Struct for hashing a range of characters.
- * \ingroup alphabet
+ * \ingroup alphabet_range
  * \tparam urng_t The type of the range; Must model std::ranges::input_range and the reference type of the range of the
  *                range must model seqan3::semialphabet.
  * \details
