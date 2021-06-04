@@ -159,7 +159,7 @@ properties of the respective sequence.
 We distinguish between three types:
 1. **Quality alphabet for nucleotides**. The values are produced by sequencing machines and represent the probability
    that a nucleobase was recorded incorrectly. The characters are most commonly found in FASTQ files.
-   See \ref quality for details.
+   See \ref alphabet_quality for details.
 2. **RNA structure alphabets**. They describe RNA nucleobases as unpaired or up-/downstream paired and can be found
    in annotated RNA sequence and alignment files (e.g. Stockholm format). Currently we provide the
    [Dot Bracket](\ref seqan3::dot_bracket3) and [WUSS](\ref seqan3::wuss) formats.

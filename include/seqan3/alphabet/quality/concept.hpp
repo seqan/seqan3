@@ -27,7 +27,7 @@ template <typename ...args_t>
 void to_phred(args_t ...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_phred.
-//!\ingroup quality
+//!\ingroup alphabet_quality
 struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
 {
     //!\brief CRTP base class seqan3::detail::customisation_point_object.
@@ -79,7 +79,7 @@ namespace seqan3
  * \tparam your_type The type of alphabet. Must model the seqan3::quality_alphabet.
  * \param  chr       The quality value to convert into the Phred score.
  * \returns the Phred representation of a quality score.
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \details
  *
@@ -110,7 +110,7 @@ inline constexpr auto to_phred = detail::adl_only::to_phred_cpo{};
 //!\}
 
 /*!\brief The `phred_type` of the alphabet; defined as the return type of seqan3::to_phred.
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \stableapi{Since version 3.1.}
  */
@@ -134,7 +134,7 @@ template <typename ...args_t>
 void assign_phred_to(args_t ...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::assign_phred_to.
-//!\ingroup quality
+//!\ingroup alphabet_quality
 struct assign_phred_to_cpo : public detail::customisation_point_object<assign_phred_to_cpo, 2>
 {
     //!\brief CRTP base class seqan3::detail::customisation_point_object.
@@ -217,7 +217,7 @@ namespace seqan3
  * \tparam your_type The type of the target object. Must model the seqan3::quality_alphabet.
  * \param  chr       The Phred score being assigned; must be of the seqan3::alphabet_phred_t of the target object.
  * \returns Reference to `alph` if `alph` was given as lvalue, otherwise a copy.
- * \ingroup quality
+ * \ingroup alphabet_quality
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -261,7 +261,7 @@ namespace seqan3
 /*!\interface seqan3::quality_alphabet <>
  * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents quality scores.
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \details
  *
@@ -302,7 +302,7 @@ SEQAN3_CONCEPT quality_alphabet = alphabet<t> && requires(t qual)
 /*!\interface seqan3::writable_quality_alphabet <>
  * \extends seqan3::alphabet
  * \brief A concept that indicates whether a writable alphabet represents quality scores.
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \details
  *

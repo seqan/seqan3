@@ -64,7 +64,7 @@ namespace seqan3
  *
  * All documented encodings for the quality string are supported (see the article above), but they are **not detected**
  * from the file. Instead, when reading the file, you have to set the respective alphabet via a traits type (see
- * seqan3::sequence_file_input_traits and the \ref quality submodule).
+ * seqan3::sequence_file_input_traits and the \ref alphabet_quality submodule).
  *
  * ### Implementation notes
  *

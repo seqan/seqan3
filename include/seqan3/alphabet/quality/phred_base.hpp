@@ -20,7 +20,7 @@ namespace seqan3
 {
 
 /*!\brief A CRTP-base that refines seqan3::alphabet_base and is used by the quality alphabets.
- * \ingroup quality
+ * \ingroup alphabet_quality
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  * \details

@@ -20,7 +20,7 @@ namespace seqan3
 {
 
 /*!\brief Joins an arbitrary alphabet with a quality alphabet.
- * \ingroup quality
+ * \ingroup alphabet_quality
  * \tparam sequence_alphabet_t Type of the alphabet; must satisfy seqan3::writable_alphabet.
  * \tparam quality_alphabet_t  Type of the quality; must satisfy seqan3::writable_quality_alphabet.
  * \implements seqan3::writable_quality_alphabet
