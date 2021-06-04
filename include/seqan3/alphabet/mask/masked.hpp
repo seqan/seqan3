@@ -20,7 +20,7 @@
 namespace seqan3
 {
 /*!\brief Implementation of a masked composite, which extends a given alphabet with a mask.
- * \ingroup mask
+ * \ingroup alphabet_mask
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *

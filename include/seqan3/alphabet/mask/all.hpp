@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the mask submodule; includes all headers from alphabet/mask/.
+ * \brief Meta-header for the \link alphabet_mask Alphabet / Mask submodule \endlink.
  * \author Joshua Kim <joshua.kim AT fu-berlin.de>
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
@@ -16,9 +16,10 @@
 #include <seqan3/alphabet/mask/mask.hpp>
 #include <seqan3/alphabet/mask/masked.hpp>
 
-/*!\defgroup mask Mask
+/*!\defgroup alphabet_mask Mask
  * \brief Provides the mask alphabet and functionality for creating masked composites.
  * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *
