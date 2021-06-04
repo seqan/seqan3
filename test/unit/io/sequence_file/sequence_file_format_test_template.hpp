@@ -80,18 +80,6 @@ TYPED_TEST_P(sequence_file_read, standard)
     auto it = fin.begin();
     for (unsigned i = 0; i < 3; ++i, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), this->seqs[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
-        if constexpr (std::same_as<TypeParam, seqan3::format_fastq> || std::same_as<TypeParam, seqan3::format_sam>)
-        {
-            EXPECT_RANGE_EQ(seqan3::get<seqan3::field::qual>(*it), this->quals[i]);
-        }
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
-
         EXPECT_RANGE_EQ((*it).sequence(), this->seqs[i]);
         EXPECT_EQ((*it).id(), this->ids[i]);
         if constexpr (std::same_as<TypeParam, seqan3::format_fastq> || std::same_as<TypeParam, seqan3::format_sam>)
@@ -120,27 +108,6 @@ TYPED_TEST_P(sequence_file_read, only_id)
     for (unsigned i = 0; i < 3; ++i, ++it)
         EXPECT_EQ(std::get<0>(*it), this->ids[i]);
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-TYPED_TEST_P(sequence_file_read, seq_qual)
-{
-    std::stringstream istream{this->standard_input};
-    seqan3::sequence_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::id, seqan3::field::_seq_qual_deprecated>{}};
-
-    auto it = fin.begin();
-    for (unsigned i = 0; i < 3; ++i, ++it)
-    {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), this->ids[i]);
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::_seq_qual_deprecated>(*it) | seqan3::views::convert<seqan3::dna5>,
-                        this->seqs[i]);
-#pragma GCC diagnostic pop
-
-        EXPECT_RANGE_EQ((*it).id(), this->ids[i]);
-    }
-}
-#endif // SEQAN3_DEPRECATED_310
 
 TYPED_TEST_P(sequence_file_read, options_truncate_ids)
 {
@@ -194,29 +161,6 @@ TYPED_TEST_P(sequence_file_write, standard)
     EXPECT_EQ(this->ostream.str(), this->standard_output);
 }
 
-#ifdef SEQAN3_DEPRECATED_310
-TYPED_TEST_P(sequence_file_write, seq_qual)
-{
-    auto convert_to_qualified = std::views::transform([] (auto const in)
-    {
-        return seqan3::qualified<seqan3::dna5, seqan3::phred42>{std::get<0>(in), std::get<1>(in)};
-    });
-
-    seqan3::sequence_file_output fout{this->ostream, TypeParam{}, seqan3::fields<seqan3::field::id,
-                                                                                 seqan3::field::_seq_qual_deprecated>{}};
-
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        EXPECT_NO_THROW((fout.emplace_back(this->ids[i],
-                                           seqan3::views::zip(this->seqs[i], this->quals[i]) | convert_to_qualified)));
-    }
-
-    this->ostream.flush();
-
-    EXPECT_EQ(this->ostream.str(), this->standard_output);
-}
-#endif // SEQAN3_DEPRECATED_310
-
 TYPED_TEST_P(sequence_file_write, arg_handling_id_missing)
 {
     if constexpr (!std::same_as<TypeParam, seqan3::format_sam>)
@@ -255,17 +199,6 @@ TYPED_TEST_P(sequence_file_write, arg_handling_seq_empty)
     }
 }
 
-#ifdef SEQAN3_DEPRECATED_310
-REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
-                            concept_check,
-                            standard,
-                            only_seq,
-                            only_id,
-                            seq_qual,
-                            illegal_alphabet_character,
-                            options_truncate_ids,
-                            no_or_ill_formatted_id);
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
 REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
                             concept_check,
                             standard,
@@ -274,18 +207,7 @@ REGISTER_TYPED_TEST_SUITE_P(sequence_file_read,
                             illegal_alphabet_character,
                             options_truncate_ids,
                             no_or_ill_formatted_id);
-#endif // SEQAN3_DEPRECATED_310
 
-#ifdef SEQAN3_DEPRECATED_310
-REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
-                            concept_check,
-                            standard,
-                            seq_qual,
-                            arg_handling_id_missing,
-                            arg_handling_id_empty,
-                            arg_handling_seq_missing,
-                            arg_handling_seq_empty);
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
 REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
                             concept_check,
                             standard,
@@ -293,4 +215,3 @@ REGISTER_TYPED_TEST_SUITE_P(sequence_file_write,
                             arg_handling_id_empty,
                             arg_handling_seq_missing,
                             arg_handling_seq_empty);
-#endif // SEQAN3_DEPRECATED_310

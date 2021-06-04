@@ -1,13 +1,13 @@
 //! [exercise]
-#include <array>     // std::array
-#include <string>    // std::string
-#include <vector>    // std::vector
+#include <array> // std::array
+#include <string> // std::string
+#include <vector> // std::vector
 
 #include <seqan3/alphabet/all.hpp>
+#include <seqan3/alphabet/views/all.hpp> // optional: use views to convert the input string to a dna5 sequence
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/range/views/all.hpp>       // optional: use views to convert the input string to a dna5 sequence
-
+#include <seqan3/utility/views/all.hpp> // optional: use views to convert the input string to a dna5 sequence
 
 int main (int argc, char * argv[])
 {
@@ -51,3 +51,10 @@ int main (int argc, char * argv[])
     return 0;
 }
 //! [exercise]
+
+void alternatively()
+{
+    std::string input{};
+    // if something changes in here, please update above:
+    std::vector<seqan3::dna5> sequence = input | seqan3::views::char_to<seqan3::dna5> | seqan3::views::to<std::vector>;
+}

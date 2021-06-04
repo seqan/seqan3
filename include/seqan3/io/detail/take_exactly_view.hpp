@@ -604,24 +604,3 @@ inline auto constexpr take_exactly_or_throw = take_exactly_fn<true>{};
 
 //!\}
 } // namespace seqan3::detail
-
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3::views
-{
-
-/*!\brief A view adaptor that returns the first `size` elements from the underlying range (or less if the
- *        underlying range is shorter); also provides size information.
- * \ingroup io
- * \deprecated Use std::views::take or std::views::counted instead.
- */
-SEQAN3_DEPRECATED_310 inline auto constexpr take_exactly = detail::take_exactly;
-
-/*!\brief A view adaptor that returns the first `size` elements from the underlying range and also exposes size
- *        information; throws if the underlying range is smaller than `size`.
- * \ingroup io
- * \deprecated Use std::views::take or std::views::counted instead.
- */
-SEQAN3_DEPRECATED_310 inline auto constexpr take_exactly_or_throw = detail::take_exactly_or_throw;
-
-} // namespace seqan3::views
-#endif // SEQAN3_DEPRECATED_310

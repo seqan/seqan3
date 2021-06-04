@@ -5,16 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <seqan3/std/bit>
 #include <cstdlib>
 
 #include <benchmark/benchmark.h>
-
-#include <seqan3/core/platform.hpp> // pre-define SEQAN3_DEPRECATED_HEADER
-#pragma push_macro("SEQAN3_DEPRECATED_HEADER")
-#undef SEQAN3_DEPRECATED_HEADER
-#define SEQAN3_DEPRECATED_HEADER(...)
-#include <seqan3/core/bit_manipulation.hpp> // include header without warning
-#pragma pop_macro("SEQAN3_DEPRECATED_HEADER")
 
 template <typename size_type>
 static void is_power_of_two_popcount(benchmark::State & state) {
@@ -48,22 +42,6 @@ static void is_power_of_two_arithmetic(benchmark::State & state) {
 }
 BENCHMARK(is_power_of_two_arithmetic);
 
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-static void is_power_of_two_seqan3(benchmark::State & state) {
-    std::srand(0);
-    size_t n = 0;
-    for (auto _ : state)
-    {
-        n = std::rand();
-        benchmark::DoNotOptimize(seqan3::detail::is_power_of_two(n));
-    }
-}
-BENCHMARK(is_power_of_two_seqan3);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
-
 static void is_power_of_two_std(benchmark::State & state) {
     std::srand(0);
     size_t n = 0;
@@ -74,22 +52,6 @@ static void is_power_of_two_std(benchmark::State & state) {
     }
 }
 BENCHMARK(is_power_of_two_std);
-
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-static void next_power_of_two_seqan3(benchmark::State & state) {
-    std::srand(0);
-    size_t n = 0;
-    for (auto _ : state)
-    {
-        n = std::rand();
-        benchmark::DoNotOptimize(seqan3::detail::next_power_of_two(n));
-    }
-}
-BENCHMARK(next_power_of_two_seqan3);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
 
 static void next_power_of_two_std(benchmark::State & state) {
     std::srand(0);

@@ -17,20 +17,6 @@
 #include <seqan3/alphabet/nucleotide/concept.hpp>
 #include <seqan3/utility/char_operations/transform.hpp>
 
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3::detail
-{
-//!\cond
-// helper concept to deprecate old char_to_rank lookup tables
-template <typename alphabet_t>
-SEQAN3_CONCEPT has_complement_table = requires()
-{
-    { alphabet_t::complement_table[0] };
-};
-//!\endcond
-} // namespace seqan3::detail
-#endif // SEQAN3_DEPRECATED_310
-
 namespace seqan3
 {
 
@@ -128,30 +114,8 @@ public:
      */
     constexpr derived_type complement() const noexcept
     {
-#ifdef SEQAN3_DEPRECATED_310
-        if constexpr (detail::has_complement_table<derived_type>)
-            return complement_table_deprecated(to_rank());
-        else
-            return derived_type{}.assign_rank(derived_type{}.rank_complement(to_rank()));
-#else // ^^^ before 3.1.0 release / after 3.1.0 release vvv
         return derived_type{}.assign_rank(derived_type{}.rank_complement(to_rank()));
-#endif // SEQAN3_DEPRECATED_310
     }
-
-#ifdef SEQAN3_DEPRECATED_310
-private:
-
-    /*!\brief Before SeqAn 3.0.3, we defined derived_type::complement_table as a lookup table. We relaxed this to be a
-     *        function to give the implementer more freedom.
-     * \deprecated Define derived_type::complement_table as a function named derived_type::rank_complement.
-     */
-    SEQAN3_DEPRECATED_310 static constexpr derived_type complement_table_deprecated(rank_type const rank) noexcept
-    {
-        return derived_type::complement_table[rank];
-    }
-
-public:
-#endif // SEQAN3_DEPRECATED_310
     //!\}
 
     /*!\brief Validate whether a character value has a one-to-one mapping to an alphabet value.
@@ -192,15 +156,7 @@ private:
             // the original valid chars and their lower cases
             for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
             {
-                uint8_t c{};
-#ifdef SEQAN3_DEPRECATED_310
-                if constexpr (detail::has_rank_to_char_table<derived_type>)
-                    c = derived_type::rank_to_char[rank];
-                else
-                    c = derived_type::rank_to_char(rank);
-#else // ^^^ before 3.1.0 release / after 3.1.0 release vvv
-                c = derived_type::rank_to_char(rank);
-#endif // SEQAN3_DEPRECATED_310
+                uint8_t c = derived_type::rank_to_char(rank);
                 ret[c] = true;
                 ret[to_lower(c)] = true;
             }

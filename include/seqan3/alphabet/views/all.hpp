@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/views/char_to.hpp>
+#include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/alphabet/views/rank_to.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/to_rank.hpp>

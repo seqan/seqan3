@@ -108,7 +108,6 @@ using ::ranges::cpp20::sentinel_for;
 
 // [iterator.concept.sizedsentinel], concept sized_sentinel_for
 // using ::ranges::cpp20::disable_sized_sentinel_for;
-using ::ranges::cpp20::disable_sized_sentinel; // deprecated
 using ::ranges::cpp20::sized_sentinel_for;
 
 // [iterator.concept.input], concept input_iterator

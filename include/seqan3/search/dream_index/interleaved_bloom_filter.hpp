@@ -734,36 +734,6 @@ public:
     {
         return !(lhs == rhs);
     }
-
-#ifdef SEQAN3_DEPRECATED_310
-    //!\brief Test for equality.
-    //!\deprecated Use binning_bitvector.raw_data() == rhs
-    SEQAN3_DEPRECATED_310 friend bool operator==(binning_bitvector const & lhs, sdsl::bit_vector const & rhs) noexcept
-    {
-        return lhs.data == rhs;
-    }
-
-    //!\brief Test for equality.
-    //!\deprecated Use lhs == binning_bitvector.raw_data()
-    SEQAN3_DEPRECATED_310 friend bool operator==(sdsl::bit_vector const & lhs, binning_bitvector const & rhs) noexcept
-    {
-        return lhs == rhs.data;
-    }
-
-    //!\brief Test for inequality.
-    //!\deprecated Use binning_bitvector.raw_data() != rhs
-    SEQAN3_DEPRECATED_310 friend bool operator!=(binning_bitvector const & lhs, sdsl::bit_vector const & rhs) noexcept
-    {
-        return !(lhs.data == rhs);
-    }
-
-    //!\brief Test for inequality.
-    //!\deprecated Use lhs != binning_bitvector.raw_data()
-    SEQAN3_DEPRECATED_310 friend bool operator!=(sdsl::bit_vector const & lhs, binning_bitvector const & rhs) noexcept
-    {
-        return !(lhs == rhs.data);
-    }
-#endif // SEQAN3_DEPRECATED_310
     //!\}
 
     /*!\name Access

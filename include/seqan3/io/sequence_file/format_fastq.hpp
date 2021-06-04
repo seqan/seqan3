@@ -98,18 +98,6 @@ public:
 
 protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void read_sequence_record(stream_type                                                               & stream,
-                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-                              seq_type                                                                  & sequence,
-                              id_type                                                                   & id,
-                              qual_type                                                                 & qualities)
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               typename seq_type,        // other constraints checked inside function
@@ -120,7 +108,6 @@ protected:
                               seq_type                                                                  & sequence,
                               id_type                                                                   & id,
                               qual_type                                                                 & qualities)
-#endif // SEQAN3_DEPRECATED_310
     {
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = begin(stream_view);
@@ -198,18 +185,7 @@ protected:
         /* Qualities */
         auto qview = stream_view | std::views::filter(!is_space)                  // this consumes trailing newline
                                  | detail::take_exactly_or_throw(sequence_size_after - sequence_size_before);
-#ifdef SEQAN3_DEPRECATED_310
-        if constexpr (seq_qual_combined)
-        {
-            // seq_qual field implies that they are the same variable
-            assert(std::addressof(sequence) == std::addressof(qualities));
-            std::ranges::copy(qview | views::char_to<typename std::ranges::range_value_t<qual_type>::quality_alphabet_type>,
-                              begin(qualities) + sequence_size_before);
-        }
-        else if constexpr (!detail::decays_to_ignore_v<qual_type>)
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
         if constexpr (!detail::decays_to_ignore_v<qual_type>)
-#endif // SEQAN3_DEPRECATED_310
         {
             std::ranges::copy(qview | views::char_to<std::ranges::range_value_t<qual_type>>,
                               std::cpp20::back_inserter(qualities));
