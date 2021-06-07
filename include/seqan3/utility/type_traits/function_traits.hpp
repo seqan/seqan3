@@ -25,7 +25,7 @@ struct function_traits;
 //!\endcond
 
 /*!\brief A traits class to provide a uniform interface to the properties of a function type.
- * \ingroup type_traits
+ * \ingroup utility_type_traits
  * \tparam return_t The return type of the function.
  * \tparam args_t A template parameter pack over the argument types of the function.
  *
