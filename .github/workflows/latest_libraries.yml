@@ -50,7 +50,7 @@ jobs:
       - name: Update googlebenchmark
         run: |
           grep 'gbenchmark_git_tag ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
-          sed -i 's/gbenchmark_git_tag ".*"/gbenchmark_git_tag "master"/' seqan3/test/cmake/seqan3_require_benchmark.cmake
+          sed -i 's/gbenchmark_git_tag ".*"/gbenchmark_git_tag "main"/' seqan3/test/cmake/seqan3_require_benchmark.cmake
           grep 'gbenchmark_git_tag ".*"' seqan3/test/cmake/seqan3_require_benchmark.cmake
 
       - name: Checkout SeqAn2

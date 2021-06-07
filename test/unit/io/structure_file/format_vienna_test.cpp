@@ -123,61 +123,25 @@ struct read : public ::testing::Test
         auto it = fin.begin();
         for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
         {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            EXPECT_EQ(check_energy, seqan3::get<seqan3::field::energy>(*it).has_value());
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
             EXPECT_EQ(check_energy, (*it).energy().has_value());
             if (check_seq)
             {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
                 EXPECT_RANGE_EQ((*it).sequence(), expected_seq[idx]);
             }
             if (check_id)
             {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
                 EXPECT_RANGE_EQ((*it).id(), expected_id[idx]);
             }
             if (check_structure)
             {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
                 bpp_test((*it).base_pair_probability_matrix(), expected_interactions[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
             }
             if (check_energy)
             {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
                 EXPECT_DOUBLE_EQ(*(*it).energy(), expected_energy[idx]);
             }
             if (check_structure)
             {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-                EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
                 EXPECT_RANGE_EQ((*it).sequence_structure(), expected_structure[idx]);
             }
         }
@@ -286,12 +250,6 @@ TEST_F(read_fields, only_seq)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::seq>(*it), expected_seq[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         EXPECT_RANGE_EQ((*it).sequence(), expected_seq[idx]);
     }
 }
@@ -303,12 +261,6 @@ TEST_F(read_fields, only_id)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::id>(*it), expected_id[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         EXPECT_RANGE_EQ((*it).id(), expected_id[idx]);
     }
 }
@@ -320,12 +272,6 @@ TEST_F(read_fields, only_structure)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structure>(*it), expected_structure[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         EXPECT_RANGE_EQ((*it).sequence_structure(), expected_structure[idx]);
     }
 }
@@ -337,41 +283,10 @@ TEST_F(read_fields, only_energy)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_TRUE(seqan3::get<seqan3::field::energy>(*it));
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         EXPECT_TRUE((*it).energy());
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_DOUBLE_EQ(*seqan3::get<seqan3::field::energy>(*it), expected_energy[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         EXPECT_DOUBLE_EQ(*(*it).energy(), expected_energy[idx]);
     }
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-TEST_F(read_fields, structured_seq)
-{
-    std::stringstream istream{input};
-    seqan3::structure_file_input fin{istream, seqan3::format_vienna{}, seqan3::fields<seqan3::field::structured_seq>{}};
-    auto it = fin.begin();
-    for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
-    {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::rna5>,
-                        expected_seq[idx]);
-        EXPECT_RANGE_EQ(seqan3::get<seqan3::field::structured_seq>(*it) | seqan3::views::convert<seqan3::wuss<51>>,
-                        expected_structure[idx]);
-#pragma GCC diagnostic pop
-    }
-}
-#endif // SEQAN3_DEPRECATED_310
 
 TEST_F(read_fields, only_bpp)
 {
@@ -380,12 +295,6 @@ TEST_F(read_fields, only_bpp)
     auto it = fin.begin();
     for (size_t idx = 0ul; idx < expected_seq.size(); ++idx, ++it)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        bpp_test(seqan3::get<seqan3::field::bpp>(*it), expected_interactions[idx]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
         bpp_test((*it).base_pair_probability_matrix(), expected_interactions[idx]);
     }
 }

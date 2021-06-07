@@ -33,7 +33,6 @@
 #include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/detail/take_line_view.hpp>
 #include <seqan3/io/detail/take_until_view.hpp>
-#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
@@ -106,18 +105,6 @@ public:
 
 protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename stream_type,     // constraints checked by file
-              typename legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void read_sequence_record(stream_type & stream,
-                              sequence_file_input_options<legal_alph_type, seq_qual_combined> const & options,
-                              seq_type & sequence,
-                              id_type & id,
-                              qual_type & SEQAN3_DOXYGEN_ONLY(qualities))
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename stream_type,     // constraints checked by file
               typename legal_alph_type,
               typename seq_type,        // other constraints checked inside function
@@ -128,7 +115,6 @@ protected:
                               seq_type & sequence,
                               id_type & id,
                               qual_type & SEQAN3_DOXYGEN_ONLY(qualities))
-#endif // SEQAN3_DEPRECATED_310
     {
         auto stream_view = detail::istreambuf(stream);
 
@@ -182,21 +168,12 @@ protected:
 private:
     //!\privatesection
     //!\brief Implementation of reading the ID.
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename stream_view_t,
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename id_type>
-    void read_id(stream_view_t & stream_view,
-                  sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-                  id_type & id)
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename stream_view_t,
               typename seq_legal_alph_type,
               typename id_type>
     void read_id(stream_view_t & stream_view,
                   sequence_file_input_options<seq_legal_alph_type> const & options,
                   id_type & id)
-#endif // SEQAN3_DEPRECATED_310
     {
         auto const is_id = is_char<'>'> || is_char<';'>;
 
@@ -282,21 +259,12 @@ private:
     }
 
     //!\brief Implementation of reading the sequence.
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename stream_view_t,
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type>
-    void read_seq(stream_view_t & stream_view,
-                   sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const &,
-                   seq_type & seq)
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename stream_view_t,
               typename seq_legal_alph_type,
               typename seq_type>
     void read_seq(stream_view_t & stream_view,
                    sequence_file_input_options<seq_legal_alph_type> const &,
                    seq_type & seq)
-#endif // SEQAN3_DEPRECATED_310
     {
         auto constexpr is_id = is_char<'>'> || is_char<';'>;
 

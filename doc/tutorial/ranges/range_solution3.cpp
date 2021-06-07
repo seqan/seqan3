@@ -1,12 +1,12 @@
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
-#include <seqan3/range/views/all.hpp>           // include all of SeqAn's views
 #include <seqan3/std/ranges>                    // include all of the standard library's views
 
+#include <seqan3/alphabet/views/all.hpp>        // include all of SeqAn's views
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/argument_parser/all.hpp>       // optional: include the argument_parser
 
 int main(int argc, char** argv)
 {
-    // We use the seqan3::argument_parser which was introduced in the second chapter 
+    // We use the seqan3::argument_parser which was introduced in the second chapter
     // of the tutorial: "Parsing command line arguments with SeqAn".
     seqan3::argument_parser myparser{"Assignment-3", argc, argv}; // initialize
     std::string s{};

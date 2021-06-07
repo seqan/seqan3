@@ -92,18 +92,6 @@ public:
 
 protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
-#ifdef SEQAN3_DEPRECATED_310
-    template <typename stream_type,     // constraints checked by file
-              typename seq_legal_alph_type, bool seq_qual_combined,
-              typename seq_type,        // other constraints checked inside function
-              typename id_type,
-              typename qual_type>
-    void read_sequence_record(stream_type & stream,
-                              sequence_file_input_options<seq_legal_alph_type, seq_qual_combined> const & options,
-                              seq_type    & sequence,
-                              id_type     & id,
-                              qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
-#else // ^^^ before seqan 3.1 / after seqan 3.1 vvv
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
               typename seq_type,        // other constraints checked inside function
@@ -114,7 +102,6 @@ protected:
                               seq_type    & sequence,
                               id_type     & id,
                               qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
-#endif // SEQAN3_DEPRECATED_310
     {
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);

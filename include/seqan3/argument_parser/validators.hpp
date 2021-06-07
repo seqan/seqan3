@@ -653,13 +653,6 @@ public:
     output_file_validator & operator=(output_file_validator &&) = default; //!< Defaulted.
     virtual ~output_file_validator() = default; //!< Virtual Destructor.
 
-#ifdef SEQAN3_DEPRECATED_310
-    //!\deprecated use seqan3::output_file_validator::output_file_validator(mode, extensions)
-    SEQAN3_DEPRECATED_310 explicit output_file_validator(std::vector<std::string> extensions)
-        : output_file_validator{output_file_open_options::create_new, extensions}
-    {}
-#endif // SEQAN3_DEPRECATED_310
-
     /*!\brief Constructs from a given overwrite mode and a list of valid extensions.
      * \param[in] mode A seqan3::output_file_open_options indicating whether the validator throws if a file already
                        exists.

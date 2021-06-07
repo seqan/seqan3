@@ -42,23 +42,3 @@ TEST(debug_stream_test, advanceable_alignment_coordinate)
     EXPECT_EQ(co_col, co_col);
     EXPECT_EQ(co_row, co_row);
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-TEST(debug_stream_test, alignment_coordinate)
-{
-    seqan3::alignment_coordinate co_align{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
-
-    EXPECT_FALSE((seqan3::detail::is_value_specialisation_of_v<decltype(co_align),
-                                                               seqan3::detail::advanceable_alignment_coordinate>));
-
-    std::stringstream sstream{};
-    seqan3::debug_stream_type dstream{sstream};
-    dstream << co_align;
-    EXPECT_EQ(sstream.str(), "(10,5)");
-
-    EXPECT_EQ(co_align, co_align);
-}
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310

@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+  # Enables a manual trigger.
+  workflow_dispatch:
 
 env:
   CMAKE_VERSION: 3.8.2

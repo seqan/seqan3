@@ -28,7 +28,6 @@
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
-#include <seqan3/io/detail/take_view.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd.hpp>

@@ -39,35 +39,3 @@ TEST(translate_triplets, dna15)
 
     EXPECT_EQ(t1, c);
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-TEST(translate_triplets, random_access_range)
-{
-    seqan3::dna15 n1{'C'_dna15};
-    seqan3::dna15 n2{'T'_dna15};
-    seqan3::dna15 n3{'A'_dna15};
-    seqan3::aa27 c{'L'_aa27};
-
-    std::vector range_triplet{n1, n2, n3};
-
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    seqan3::aa27 t2{seqan3::translate_triplet(range_triplet)};
-
-    EXPECT_TRUE(std::ranges::random_access_range<decltype(range_triplet)>);
-    EXPECT_EQ(t2, c);
-}
-
-TEST(translate_triplets, tuple)
-{
-    seqan3::dna15 n1{'C'_dna15};
-    seqan3::dna15 n2{'T'_dna15};
-    seqan3::dna15 n3{'A'_dna15};
-    seqan3::aa27 c{'L'_aa27};
-
-    std::tuple tuple_triplet{n1, n2, n3};
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    seqan3::aa27 t3{seqan3::translate_triplet(tuple_triplet)};
-
-    EXPECT_EQ(t3, c);
-}
-#endif // SEQAN3_DEPRECATED_310

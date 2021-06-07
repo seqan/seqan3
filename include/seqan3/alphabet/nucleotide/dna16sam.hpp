@@ -172,14 +172,6 @@ private:
  */
 using dna16sam_vector = std::vector<dna16sam>;
 
-#ifdef SEQAN3_DEPRECATED_310
-//!\deprecated Please use seqan3::dna16sam instead.
-using sam_dna16 SEQAN3_DEPRECATED_310 = seqan3::dna16sam;
-
-//!\deprecated Please use seqan3::dna16sam_vector instead.
-using sam_dna16_vector SEQAN3_DEPRECATED_310 = dna16sam_vector;
-#endif // SEQAN3_DEPRECATED_310
-
 // ------------------------------------------------------------------
 // literals
 // ------------------------------------------------------------------
@@ -226,20 +218,6 @@ inline dna16sam_vector operator""_dna16sam(char const * s, size_t n)
 
     return r;
 }
-
-#ifdef SEQAN3_DEPRECATED_310
-//!\deprecated Please use seqan3::operator""_dna16sam instead.
-SEQAN3_DEPRECATED_310 constexpr dna16sam operator""_sam_dna16(char const c) noexcept
-{
-    return seqan3::operator""_dna16sam(c);
-}
-
-//!\deprecated Please use seqan3::operator""_dna16sam instead.
-SEQAN3_DEPRECATED_310 inline dna16sam_vector operator""_sam_dna16(char const * s, size_t n)
-{
-    return seqan3::operator""_dna16sam(s, n);
-}
-#endif // SEQAN3_DEPRECATED_310
 //!\}
 
 } // inline namespace literals

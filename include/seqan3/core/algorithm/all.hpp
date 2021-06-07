@@ -17,11 +17,3 @@
  * \brief Provides core functionality used to configure algorithms.
  */
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
-#include <seqan3/core/algorithm/bound.hpp>
-#if !defined(SEQAN3_DEPRECATED_310) && SEQAN3_VERSION_MAJOR == 3 && SEQAN3_VERSION_MINOR == 1
-  #pragma warning "Remove #include <seqan3/core/algorithm/bound.hpp> from this header."
-#endif
-#include <seqan3/core/configuration/all.hpp>
-#if !defined(SEQAN3_DEPRECATED_310) && SEQAN3_VERSION_MAJOR == 3 && SEQAN3_VERSION_MINOR == 1
-  #pragma warning "Remove #include <seqan3/core/configuration/all.hpp> from this header."
-#endif

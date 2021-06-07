@@ -212,24 +212,6 @@ TYPED_TEST_P(sam_file_read, read_in_all_data)
     size_t i{0};
     for (auto & rec : fin)
     {
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_EQ(seqan3::get<seqan3::field::seq>(rec), this->seqs[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::id>(rec), this->ids[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::qual>(rec), this->quals[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::offset>(rec), this->offsets[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::ref_id>(rec), 0);
-        EXPECT_EQ(*seqan3::get<seqan3::field::ref_offset>(rec), this->ref_offsets[i]);
-        EXPECT_RANGE_EQ(std::get<0>(seqan3::get<seqan3::field::alignment>(rec)), std::get<0>(this->alignments[i]));
-        EXPECT_RANGE_EQ(std::get<1>(seqan3::get<seqan3::field::alignment>(rec)), std::get<1>(this->alignments[i]));
-        EXPECT_EQ(seqan3::get<seqan3::field::flag>(rec), this->flags[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::mapq>(rec), this->mapqs[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::mate>(rec), this->mates[i]);
-        EXPECT_EQ(seqan3::get<seqan3::field::tags>(rec), this->tag_dicts[i]);
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
-
         EXPECT_EQ(rec.sequence(), this->seqs[i]);
         EXPECT_EQ(rec.id(), this->ids[i]);
         EXPECT_EQ(rec.base_qualities(), this->quals[i]);
@@ -252,26 +234,6 @@ TYPED_TEST_P(sam_file_read, read_in_all_but_empty_data)
 {
     typename TestFixture::stream_type istream{this->empty_input};
     seqan3::sam_file_input fin{istream, this->ref_ids, this->ref_sequences, TypeParam{}};
-
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    EXPECT_TRUE(seqan3::get<seqan3::field::seq>(*fin.begin()).empty());
-    EXPECT_TRUE(seqan3::get<seqan3::field::id>(*fin.begin()).empty());
-    EXPECT_TRUE(seqan3::get<seqan3::field::qual>(*fin.begin()).empty());
-    EXPECT_EQ(seqan3::get<seqan3::field::offset>(*fin.begin()), 0);
-    EXPECT_TRUE(!seqan3::get<seqan3::field::ref_id>(*fin.begin()).has_value());
-    EXPECT_TRUE(!seqan3::get<seqan3::field::ref_offset>(*fin.begin()).has_value());
-    EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-    EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-    EXPECT_EQ(seqan3::get<seqan3::field::flag>(*fin.begin()), seqan3::sam_flag{0u});
-    EXPECT_EQ(seqan3::get<seqan3::field::mapq>(*fin.begin()), 0u);
-    EXPECT_TRUE(!std::get<0>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
-    EXPECT_TRUE(!std::get<1>(seqan3::get<seqan3::field::mate>(*fin.begin())).has_value());
-    EXPECT_EQ(std::get<2>(seqan3::get<seqan3::field::mate>(*fin.begin())), int32_t{});
-    EXPECT_TRUE(seqan3::get<seqan3::field::tags>(*fin.begin()).empty());
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
 
     EXPECT_TRUE((*fin.begin()).sequence().empty());
     EXPECT_TRUE((*fin.begin()).id().empty());
@@ -326,14 +288,6 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_with_ref)
                                    TypeParam{},
                                    seqan3::fields<seqan3::field::alignment>{}};
 
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
-
         EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
         EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
     }
@@ -357,14 +311,6 @@ TYPED_TEST_P(sam_file_read, read_in_alignment_only_without_ref)
     {   // empty cigar
         typename TestFixture::stream_type istream{this->empty_cigar};
         seqan3::sam_file_input fin{istream, TypeParam{}, seqan3::fields<seqan3::field::alignment>{}};
-
-#ifdef SEQAN3_DEPRECATED_310
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        EXPECT_TRUE(std::ranges::empty(std::get<0>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-        EXPECT_TRUE(std::ranges::empty(std::get<1>(seqan3::get<seqan3::field::alignment>(*fin.begin()))));
-#pragma GCC diagnostic pop
-#endif // SEQAN3_DEPRECATED_310
 
         EXPECT_TRUE(std::ranges::empty(std::get<0>((*fin.begin()).alignment())));
         EXPECT_TRUE(std::ranges::empty(std::get<1>((*fin.begin()).alignment())));
@@ -630,40 +576,6 @@ TYPED_TEST_P(sam_file_write, cigar_vector)
     this->tag_dicts[0]["NM"_tag] = 7;
     this->tag_dicts[0]["AS"_tag] = 2;
     this->tag_dicts[1]["xy"_tag] = std::vector<uint16_t>{3,4,5};
-
-#ifdef SEQAN3_DEPRECATED_310
-    {
-        seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment
-        for (size_t i = 0ul; i < 3ul; ++i)
-        {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            ASSERT_NO_THROW(fout.emplace_back(this->seqs[i],
-                                              this->ids[i],
-                                              this->offsets[i],
-                                              this->ref_seq,
-                                              0/*ref_id*/,
-                                              this->ref_offsets[i],
-                                              this->alignments[i],
-                                              cigar_v[i],
-                                              this->mapqs[i],
-                                              this->quals[i],
-                                              this->flags[i],
-                                              this->mates[i],
-                                              this->tag_dicts[i],
-                                              0/*evalue*/,
-                                              0/*bitscore*/,
-                                              &(this->header)));
-#pragma GCC diagnostic pop
-        }
-    }
-
-    this->ostream.flush();
-    // compare to original input because hard clipping is preserved when writing the cigar vector directly
-    EXPECT_EQ(this->ostream.str(), this->simple_three_reads_input);
-
-    this->ostream = std::ostringstream{}; // clear
-#endif // SEQAN3_DEPRECATED_310
 
     {
         seqan3::sam_file_output fout{this->ostream, TypeParam{}}; // default fields contain CIGAR and alignment

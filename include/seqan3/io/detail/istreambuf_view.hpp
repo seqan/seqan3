@@ -72,15 +72,6 @@ namespace seqan3::detail
  * \{
  */
 
-//!\copydoc seqan3::views::istreambuf
-inline constexpr auto istreambuf = detail::istreambuf_fn{};
-//!\}
-
-} // namespace seqan3::detail
-
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3::views
-{
 /*!\brief                A view factory that returns a view over the stream buffer of an input stream.
  * \tparam istreambuf_t  The type of the stream(buffer); must be std::basic_streambuf or model seqan3::input_stream.
  * \param[in] istreambuf The stream buffer or an input stream of whom the buffer is retrieved.
@@ -119,10 +110,8 @@ namespace seqan3::views
  * function calls.
  *
  * \hideinitializer
- *
- * \deprecated Use std::ranges::istream_view(std::basic_istream) instead (you need to pass a stream instead of a
- *             std::basic_streambuf)
  */
-SEQAN3_DEPRECATED_310 inline constexpr auto istreambuf = detail::istreambuf;
-} // namespace seqan3::views
-#endif // SEQAN3_DEPRECATED_310
+inline constexpr auto istreambuf = detail::istreambuf_fn{};
+//!\}
+
+} // namespace seqan3::detail

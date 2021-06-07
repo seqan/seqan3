@@ -16,14 +16,14 @@ ExternalProject_Add(api_stability_unit
   URL_HASH          SHA256=${SEQAN3_LAST_STABLE_SOURCE_SHA256}
   SOURCE_SUBDIR     "test/unit"
   CMAKE_ARGS        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-                    -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                    -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -DSEQAN3_REMOVE_DEPRECATED_310=1"
                     -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
                     -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_LIST_DIR}/../../build_system # use current build_system
   PATCH_COMMAND     ${CMAKE_COMMAND} -E echo "<SOURCE_DIR>"
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/include"
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/submodules"
   COMMAND           ${CMAKE_COMMAND} -E remove_directory "<SOURCE_DIR>/build_system"
-  COMMAND           sh -c "${GIT_EXECUTABLE} apply -v ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
+  COMMAND           sh -c "${GIT_EXECUTABLE} apply --verbose ${CMAKE_CURRENT_LIST_DIR}/${SEQAN3_LAST_STABLE_VERSION}/*.patch"
   TEST_BEFORE_INSTALL TRUE
   INSTALL_COMMAND   ""
 )
@@ -34,7 +34,7 @@ ExternalProject_Add(api_stability_snippet
   URL_HASH          SHA256=${SEQAN3_LAST_STABLE_SOURCE_SHA256}
   SOURCE_SUBDIR     "test/snippet"
   CMAKE_ARGS        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-                    -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+                    -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -DSEQAN3_REMOVE_DEPRECATED_310=1"
                     -DCMAKE_CXX_COMPILER_LAUNCHER=${CMAKE_CXX_COMPILER_LAUNCHER}
                     -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_LIST_DIR}/../../build_system # use current build_system
   PATCH_COMMAND     ${CMAKE_COMMAND} -E echo "<SOURCE_DIR>"

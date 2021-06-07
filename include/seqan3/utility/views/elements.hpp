@@ -101,17 +101,3 @@ inline constexpr auto elements = std::views::transform([] (auto && in) -> declty
 //!\}
 
 } // namespace seqan3::views
-
-#ifdef SEQAN3_DEPRECATED_310
-namespace seqan3::views
-{
-
-/*!\brief A view calling `get` on each element in a range.
- * \ingroup views
- * \deprecated Please use `seqan3::views::elements` instead.
- */
-template <auto index>
-SEQAN3_DEPRECATED_310 inline constexpr auto get = views::elements<index>;
-
-} // namespace seqan3::views
-#endif // SEQAN3_DEPRECATED_310
