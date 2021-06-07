@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link views views submodule \endlink.
+ * \brief Meta-header for the \link utility_views Utility / Views submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -27,9 +27,9 @@
 #include <seqan3/utility/views/type_reduce.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
-/*!\defgroup views Views
+/*!\defgroup utility_views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
- * \ingroup utility_range
+ * \ingroup utility
  *
  * \details
  *

@@ -24,7 +24,7 @@
 namespace seqan3::detail
 {
 /*!\brief Generates all pairwise combinations of the elements in the underlying range.
- * \ingroup views
+ * \ingroup utility_views
  * \tparam underlying_range_type The type of the underlying range; must model std::ranges::view,
  *                               std::ranges::forward_range and std::ranges::common_range.
  *
@@ -645,16 +645,12 @@ private:
 
 namespace seqan3::views
 {
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief             A view adaptor that generates all pairwise combinations of the elements of the underlying range.
  * \tparam urng_t     The type of the range being processed. See below for requirements.
  * \param[in] urange  The range being processed.
  * \returns           A view over all pairwise combinations of the elements of the underlying range.
  *                    See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -713,5 +709,4 @@ namespace seqan3::views
  */
 inline constexpr auto pairwise_combine = detail::adaptor_for_view_without_args<detail::pairwise_combine_view>{};
 
-//!\}
 } // namespace seqan3::views

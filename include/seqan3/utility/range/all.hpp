@@ -61,7 +61,7 @@
  * via some algorithm or operation, however, some views are stand-alone, i.e. they are just an algorithm that
  * produces elements. Views do not own any data beyond their algorithm and possible parameters to it and they
  * can always be copied in constant time. The algorithm is required to be lazy-evaluated so it is feasible to
- * combine multiple views. See the \link views views submodule \endlink for more details.
+ * combine multiple views. See the \link utility_views views submodule \endlink for more details.
  *
  * If you are confused about *decorators* vs *views*, think of decorators as "underlying range + data" and
  * views as "underlying range + algorithm".
