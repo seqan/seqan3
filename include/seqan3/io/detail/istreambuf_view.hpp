@@ -28,6 +28,7 @@ namespace seqan3::detail
 // ============================================================================
 
 //!\brief View adaptor/factory definition for views::istream.
+//!\ingroup io_views
 struct istreambuf_fn
 {
     /*!\brief Return the view object.
@@ -67,16 +68,11 @@ struct istreambuf_fn
 
 namespace seqan3::detail
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief                A view factory that returns a view over the stream buffer of an input stream.
  * \tparam istreambuf_t  The type of the stream(buffer); must be std::basic_streambuf or model seqan3::input_stream.
  * \param[in] istreambuf The stream buffer or an input stream of whom the buffer is retrieved.
  * \returns
- * \ingroup views
+ * \ingroup io_views
  *
  * \details
  *
@@ -112,6 +108,5 @@ namespace seqan3::detail
  * \hideinitializer
  */
 inline constexpr auto istreambuf = detail::istreambuf_fn{};
-//!\}
 
 } // namespace seqan3::detail

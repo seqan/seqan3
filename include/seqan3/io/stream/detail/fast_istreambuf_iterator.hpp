@@ -21,7 +21,7 @@
 namespace seqan3::detail
 {
 /*!\brief Functionally the same as std::istreambuf_iterator, but faster.
- * \ingroup stream
+ * \ingroup io_stream
  * \tparam char_t       The stream's character type.
  * \tparam traits_t     The stream's traits type.
  *

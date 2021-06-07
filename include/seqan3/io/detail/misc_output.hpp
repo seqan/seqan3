@@ -31,6 +31,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Depending on the given filename/extension, create a compression stream or just forward the primary stream.
+ * \ingroup io
  * \param[in] primary_stream The primary (uncompressed) stream for writing.
  * \param[in,out] filename  The associated filename; compression extensions will be stripped.
  * \returns A pointer to the secondary stream with a default deleter or a nop-deleter.

@@ -191,7 +191,7 @@ namespace seqan3::detail
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::sam_file_output_format [default is false].
- * \ingroup core
+ * \ingroup io_sam_file
  * \see seqan3::type_list_of_sam_file_output_formats
  */
 template <typename t>
@@ -199,7 +199,7 @@ constexpr bool is_type_list_of_sam_file_output_formats_v = false;
 
 /*!\brief Auxiliary value metafuncton that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::sam_file_output_format [overload].
- * \ingroup core
+ * \ingroup io_sam_file
  * \see seqan3::type_list_of_sam_file_output_formats
  */
 template <typename ...ts>
@@ -207,7 +207,7 @@ constexpr bool is_type_list_of_sam_file_output_formats_v<type_list<ts...>> = (sa
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet
  * seqan3::sam_file_output_format.
- * \ingroup core
+ * \ingroup io_sam_file
  * \see seqan3::is_type_list_of_sam_file_output_formats_v
  */
 template <typename t>

@@ -43,7 +43,7 @@ namespace seqan3
 /*!\brief The EMBL format.
  * \implements seqan3::sequence_file_input_format
  * \implements seqan3::sequence_file_output_format
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \details
  *

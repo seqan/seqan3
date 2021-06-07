@@ -6,21 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-include for the structure IO submodule.
- * \author Jörg Winkler <j.winkler AT fu-berlin.de>
+ * \brief Meta-header for the \link io_views IO / Views submodule \endlink.
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup io_structure_file Structure File
- * \ingroup io
- * \brief Provides files and formats for handling structure data.
- */
+#include <seqan3/io/views/async_input_buffer.hpp>
 
-#include <seqan3/io/structure_file/format_vienna.hpp>
-#include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/io/structure_file/input_format_concept.hpp>
-#include <seqan3/io/structure_file/input_options.hpp>
-#include <seqan3/io/structure_file/output.hpp>
-#include <seqan3/io/structure_file/output_format_concept.hpp>
-#include <seqan3/io/structure_file/output_options.hpp>
+/*!\defgroup io_views Views
+ * \brief IO related views.
+ * \ingroup io
+ * \see io
+ */

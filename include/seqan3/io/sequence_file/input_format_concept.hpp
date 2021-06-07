@@ -27,7 +27,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Internal class used to expose the actual format interface to read sequence records from the file.
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \tparam format_type The type of the format to be exposed.
  *
@@ -58,7 +58,7 @@ namespace seqan3
 
 /*!\interface seqan3::sequence_file_input_format <>
  * \brief The generic concept for sequence file in formats.
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \details
  *

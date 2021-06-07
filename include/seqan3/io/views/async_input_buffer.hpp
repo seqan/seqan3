@@ -34,7 +34,7 @@ namespace seqan3::detail
 /*!\brief The type returned by seqan3::views::async_input_buffer.
  * \tparam urng_t The underlying range type.
  * \implements std::ranges::input_range
- * \ingroup views
+ * \ingroup io_views
  */
 template <std::ranges::range urng_t>
 class async_input_buffer_view : public std::ranges::view_interface<async_input_buffer_view<urng_t>>
@@ -341,17 +341,13 @@ struct async_input_buffer_fn
 
 namespace seqan3::views
 {
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief A view adapter that returns a concurrent-queue-like view over the underlying range.
  * \tparam urng_t         The type of the range being processed. See below for requirements.
  * \param[in,out] urange  The range being processed.
  * \param[in] buffer_size Size of the buffer. Choose the size (> 0) depending on the expected work per element.
  * \returns A view that pre-fetches elements from the underlying range and provides a thread-safe interface.
  *          See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup io_views
  *
  * \details
  *
@@ -481,6 +477,4 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto async_input_buffer = detail::async_input_buffer_fn{};
-
-//!\}
 } // namespace seqan3::views

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-include for the SAM IO submodule.
+ * \brief Meta-header for the \link io_sam_file IO / SAM File submodule \endlink.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -14,21 +14,19 @@
 
 /*!\defgroup io_sam_file SAM File
  * \ingroup io
- * \brief Provides files and formats for handling alignment data.
+ * \brief Provides files and formats for handling read mapping data.
  *
  * ### Introduction
  *
- * Alignment files are primarily used to store pairwise alignments of two biological sequences and often come with
- * many additional information. Well-known formats include the SAM/BAM format used to store read mapping data or the
- * BLAST format that stores the results of a query search against a data base.
+ * SAM/BAM files are primarily used to store pairwise alignments of read mapping data.
  *
  * \note For a step-by-step guide take a look at our tutorial: \ref tutorial_sam_file.
  *
  * \copydetails seqan3::sam_file_input::field_ids
  *
  * All of these fields are retrieved by default (and in that order).
- * Note that some of the fields are specific to the SAM format (e.g. seqan3::field::flag) while others are specific to
- * BLAST format (e.g. seqan3::field::bit_score). Please see the corresponding formats for more details.
+ *
+ * Please see the corresponding formats for more details.
  */
 
 #include <seqan3/io/sam_file/format_bam.hpp>
