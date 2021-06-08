@@ -531,7 +531,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout.get_stream()).str(), comp);
 }
 
-#if SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 TEST(rows, write_bam_file)
 {
     seqan3::test::tmp_filename const filename{"in_out.bam"};
@@ -564,7 +564,7 @@ read3	43	ref	3	63	1S1M1D1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./
 
     EXPECT_EQ(reinterpret_cast<std::ostringstream &>(fout2.get_stream()).str(), comp);
 }
-#endif // SEQAN3_HAS_ZLIB
+#endif // defined(SEQAN3_HAS_ZLIB)
 
 TEST(rows, convert_sam_to_blast)
 {
@@ -618,7 +618,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
     }
 }
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string expected_gz
 {
     '\x1F', '\x8B', '\x08', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x2B', '\x4A', '\x4D',
@@ -686,7 +686,7 @@ TEST(compression, by_stream_bgzf)
 }
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string expected_bz2
 {
     '\x42', '\x5A', '\x68', '\x39', '\x31', '\x41', '\x59', '\x26', '\x53', '\x59', '\xEA', '\x2B', '\x97',

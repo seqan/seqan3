@@ -21,10 +21,10 @@
 #include <string>
 #include <tuple>
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
     #include <seqan3/contrib/stream/bz2_istream.hpp>
 #endif
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
     #include <seqan3/contrib/stream/bgzf_istream.hpp>
     #include <seqan3/contrib/stream/bgzf_stream_util.hpp>
     #include <seqan3/contrib/stream/gz_istream.hpp>
@@ -117,7 +117,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     // set return value appropriately
     if (read_chars == magic_number.size() && bgzf_compression::validate_header(std::span{magic_number})) // BGZF
     {
-    #ifdef SEQAN3_HAS_ZLIB
+    #if defined(SEQAN3_HAS_ZLIB)
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
@@ -129,7 +129,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     }
     else if (starts_with(magic_number, gz_compression::magic_header)) // GZIP
     {
-    #ifdef SEQAN3_HAS_ZLIB
+    #if defined(SEQAN3_HAS_ZLIB)
         if (contains_extension(gz_compression{}, extension) || contains_extension(bgzf_compression{}, extension))
             filename.replace_extension();
 
@@ -140,7 +140,7 @@ inline auto make_secondary_istream(std::basic_istream<char_t> & primary_stream, 
     }
     else if (starts_with(magic_number, bz2_compression::magic_header)) // BZip2
     {
-    #ifdef SEQAN3_HAS_BZIP2
+    #if defined(SEQAN3_HAS_BZIP2)
         if (contains_extension(bz2_compression{}, extension))
             filename.replace_extension();
 

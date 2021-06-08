@@ -1,4 +1,4 @@
-#if SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 //![example]
 #include <seqan3/io/all.hpp>
 
@@ -15,4 +15,4 @@ int main()
     return 0;
 }
 //![example]
-#endif // SEQAN3_HAS_ZLIB
+#endif // defined(SEQAN3_HAS_ZLIB)

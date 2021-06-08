@@ -328,7 +328,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     EXPECT_EQ(counter, 3u);
 }
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 
 std::string input_gz
 {
@@ -441,7 +441,7 @@ TEST_F(sam_file_input_f, read_empty_bgzf_file)
 
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string input_bz2
 {
     '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\x7B','\xE2','\xE1','\x92','\x00','\x00',
@@ -617,7 +617,7 @@ struct sam_file_input_bam_format_f : public sam_file_input_sam_format_f
     };
 };
 
-#if SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 TEST_F(sam_file_input_bam_format_f, construct_by_filename)
 {
     seqan3::test::tmp_filename filename{"sam_file_input_constructor.bam"};
@@ -681,4 +681,4 @@ TEST_F(sam_file_input_bam_format_f, construct_by_stream)
 
     EXPECT_EQ(counter, 3u);
 }
-#endif // SEQAN3_HAS_ZLIB
+#endif // defined(SEQAN3_HAS_ZLIB)

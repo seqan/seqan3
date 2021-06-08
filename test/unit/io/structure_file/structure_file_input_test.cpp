@@ -387,7 +387,7 @@ TEST_F(structure_file_input_read, record_file_view)
 // decompression
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string input_gz
 {
     '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
@@ -495,7 +495,7 @@ TEST_F(structure_file_input_read, read_empty_bgzf_file)
 
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string input_bz2
 {
     '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\xC7','\x0B','\xB5','\x7F','\x00','\x00',

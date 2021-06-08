@@ -21,13 +21,15 @@
 
 #pragma once
 
-#ifndef SEQAN3_HAS_ZLIB
-#error "This file cannot be used when building without ZLIB-support."
-#endif
-
 #include <iostream>
 #include <cstring>
 #include <vector>
+
+#if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+#error "This file cannot be used when building without ZLIB-support."
+#endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+
+#if defined(SEQAN3_HAS_ZLIB)
 
 #include <zlib.h>
 
@@ -450,3 +452,5 @@ typedef basic_gz_ostream<char>     gz_ostream;
 typedef basic_gz_ostream<wchar_t>  gz_wostream;
 
 } // namespace seqan3::contrib
+
+#endif // defined(SEQAN3_HAS_ZLIB)
