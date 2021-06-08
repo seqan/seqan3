@@ -578,7 +578,7 @@ namespace seqan3::detail
  *
  * ### Example
  *
- * \include test/snippet/io/detail/take_exactly.cpp
+ * \include test/snippet/io/views/detail/take_exactly.cpp
  *
  * \hideinitializer
  */
