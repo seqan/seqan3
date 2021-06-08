@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief  Meta-include for custom concepts.
+ * \brief Meta-header for the \link core_concept Core / Concept submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -15,3 +15,9 @@
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+
+/*!\defgroup core_concept Concept
+ * \ingroup core
+ * \see core
+ * \brief Provides core concepts.
+ */

@@ -27,6 +27,7 @@ struct type_list_expander;
 //!\endcond
 
 /*!\brief Helper class to invoke a meta algorithm on the types contained in a seqan3::type_list.
+ * \ingroup core
  * \tparam type_list_t The type list given as a template template parameter.
  * \tparam args_t The template arguments contained in `type_list_t` to apply the target function on.
  *

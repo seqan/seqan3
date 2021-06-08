@@ -199,8 +199,7 @@ struct is_value_specialisation_of<source_t, target_template> :
 template <typename source_t, template <auto ...> typename target_template>
 inline constexpr bool is_value_specialisation_of_v = is_value_specialisation_of<source_t, target_template>::value;
 
-/*!
- * \brief Exposes `templ_t<spec_t...>` if that is valid, otherwise `fallback_t`.
+/*!\brief Exposes `templ_t<spec_t...>` if that is valid, otherwise `fallback_t`.
  * \implements seqan3::transformation_trait
  * \see seqan3::detail::valid_template_spec_or_t
  * \ingroup core
@@ -243,8 +242,7 @@ using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, tem
 /*!\interface seqan3::detail::template_specialisation_of <>
  * \brief Provides concept `seqan3::template_specialisation_of<mytype, [...]>` for checking the type specialisation of
  *        some type with a given template, for example a specialized `type_list<float>` with the `type_list` template.
- *
- * \ingroup type_traits
+ * \ingroup core
  *
  * \tparam mytype           The query type.
  * \tparam type_template    The type template you wish to compare against mytype.
@@ -266,6 +264,7 @@ SEQAN3_CONCEPT template_specialisation_of = is_type_specialisation_of_v<mytype, 
 // ----------------------------------------------------------------------------
 
 /*!\brief A transformation trait shortcut that returns the type inside a std::type_identity or the type itself.
+ * \ingroup core
  * \tparam t The type to operate on.
  */
 template <typename t>

@@ -24,7 +24,7 @@ namespace seqan3
 // ------------------------------------------------------------------
 
 //!\brief Flags that change the behaviour of the seqan3::debug_stream.
-//!\ingroup stream
+//!\ingroup core_debug_stream
 //!\implements seqan3::enum_bitwise_operators
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 enum fmtflags2
@@ -48,7 +48,7 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
 // ------------------------------------------------------------------
 
 /*!\brief A "pretty printer" for most SeqAn data structures and related types.
- * \ingroup core
+ * \ingroup core_debug_stream
  * \details
  *
  * A global instance of this type exists as seqan3::debug_stream. You can stream to it as you would to std::cout or

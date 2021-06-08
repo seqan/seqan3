@@ -6,7 +6,6 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \ingroup views
  * \brief Provides seqan3::detail::adaptor_for_view_without_args
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -25,7 +24,7 @@ namespace seqan3::detail
 /*!\brief Template for range adaptor closure objects that store no arguments and always delegate to the
  *        view constructor.
  * \tparam view_type The view type template.
- * \ingroup views
+ * \ingroup core_range
  *
  * \details
  *

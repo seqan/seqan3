@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the detail functionality of core algorithm.
+ * \brief Meta-header for the detail functionality of the \link core_algorithm Core / Algorithm submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 

@@ -19,12 +19,9 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup core
- * \{
- */
-
 /*!\brief An unary type trait that tests whether a template class can be declared with the given template type
  *        parameters.
+ * \ingroup core
  * \implements seqan3::unary_type_trait
  * \tparam query_t The type of the template class to test.
  * \tparam args_t  The template parameter pack to instantiate the template class with.
@@ -63,7 +60,5 @@ struct is_class_template_declarable_with<query_t, args_t...> : public std::true_
 template <template <typename ...> typename query_t, typename ...args_t>
 inline constexpr bool is_class_template_declarable_with_v =
     is_class_template_declarable_with<query_t, args_t...>::value;
-
-//!\}
 
 } // namespace seqan3::detail

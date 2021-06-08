@@ -6,22 +6,21 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Forward declares seqan3::detail::test_accessor.
+ * \brief Meta-header for the \link core_debug_stream Core / Debug Stream submodule \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/debug_stream/byte.hpp>
+#include <seqan3/core/debug_stream/debug_stream_type.hpp>
+#include <seqan3/core/debug_stream/optional.hpp>
+#include <seqan3/core/debug_stream/range.hpp>
+#include <seqan3/core/debug_stream/tuple.hpp>
+#include <seqan3/core/debug_stream/variant.hpp>
 
-namespace seqan3::detail
-{
-
-/*!\brief Attorney-Client pattern for accessing private / protected class members in test cases.
- * \attention You can currently only have one definition of test_accessor in one translation unit.
- * \see https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Friendship_and_the_Attorney-Client
+/*!\defgroup core_debug_stream Debug Stream
  * \ingroup core
+ * \see core
+ * \brief Provides core functionality used to print seqan3 and std types.
  */
-struct test_accessor;
-
-} // seqan3::detail

@@ -15,12 +15,7 @@
 #include <iostream>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
-#include <seqan3/core/debug_stream/byte.hpp>
-#include <seqan3/core/debug_stream/debug_stream_type.hpp>
-#include <seqan3/core/debug_stream/optional.hpp>
-#include <seqan3/core/debug_stream/range.hpp>
-#include <seqan3/core/debug_stream/tuple.hpp>
-#include <seqan3/core/debug_stream/variant.hpp>
+#include <seqan3/core/debug_stream/all.hpp>
 
 // forward declare
 //!\cond
@@ -38,7 +33,7 @@ namespace seqan3
 // ------------------------------------------------------------------
 
 //!\brief A global instance of seqan3::debug_stream_type.
-//!\ingroup stream
+//!\ingroup core_debug_stream
 inline debug_stream_type debug_stream{std::cerr};
 
 } // namespace seqan3

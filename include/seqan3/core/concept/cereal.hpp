@@ -27,7 +27,7 @@ namespace seqan3
 /*!\interface seqan3::cereal_output_archive <>
  * \brief All output archives of the Cereal library satisfy this.
  * \extends seqan3::cereal_archive
- * \ingroup core
+ * \ingroup core_concept
  *
  * This includes cereal::BinaryOutputArchive, cereal::PortableBinaryOutputArchive, cereal::JSONOutputArchive,
  * and cereal::XMLOutputArchive.
@@ -48,7 +48,7 @@ SEQAN3_CONCEPT cereal_output_archive = false;
 /*!\interface seqan3::cereal_input_archive <>
  * \brief All input archives of the Cereal library satisfy this.
  * \extends seqan3::cereal_archive
- * \ingroup core
+ * \ingroup core_concept
  *
  * This includes cereal::BinaryInputArchive, cereal::PortableBinaryInputArchive, cereal::JSONInputArchive,
  * and cereal::XMLInputArchive.
@@ -68,7 +68,7 @@ SEQAN3_CONCEPT cereal_input_archive = false;
 
 /*!\interface seqan3::cereal_archive <>
  * \brief All archives of the Cereal library satisfy this.
- * \ingroup core
+ * \ingroup core_concept
  *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
@@ -86,7 +86,7 @@ SEQAN3_CONCEPT cereal_archive = false;
 /*!\interface seqan3::cereal_text_archive <>
  * \brief All text archives of the Cereal library satisfy this.
  * \extends seqan3::cereal_archive
- * \ingroup core
+ * \ingroup core_concept
  *
  * This includes cereal::JSONOutputArchive, cereal::XMLOutputArchive, cereal::JSONInputArchive,
  * and cereal::XMLInputArchive.
@@ -105,7 +105,7 @@ SEQAN3_CONCEPT cereal_text_archive = false;
 //!\endcond
 
 /*!\interface seqan3::cerealisable <>
- * \ingroup core
+ * \ingroup core_concept
  * \brief Specifies the requirements for types that are serialisable via Cereal.
  *
  * The `value_t` type satisfy the cerealisable, if `value_t` can be
@@ -159,7 +159,7 @@ namespace seqan3::detail
 
 /*!\brief Removes type-mangling that Cereal does with certain types on loading.
  * \details Helpful when defining templatised save/load/serialize functions.
- * \ingroup core
+ * \ingroup core_concept
  */
 #if SEQAN3_WITH_CEREAL
 template <typename type>

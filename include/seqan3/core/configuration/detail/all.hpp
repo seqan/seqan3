@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the detail functionality of configuration.
+ * \brief Meta-header for the detail functionality of the \link core_configuration Core / Configuration submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 

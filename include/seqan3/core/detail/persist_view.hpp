@@ -35,7 +35,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
- * \ingroup views
+ * \ingroup core
  *
  * \details
  *
@@ -137,6 +137,7 @@ view_persist(urng_t &&) -> view_persist<std::remove_reference_t<urng_t>>;
 
 //![adaptor_def]
 /*!\brief View adaptor definition for detail::persist.
+ *!\ingroup core
  */
 class persist_fn : public adaptor_base<persist_fn>
 {
@@ -177,16 +178,12 @@ private:
 //  detail::persist (adaptor instance definition)
 // ============================================================================
 
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that wraps rvalue references of non-views.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range wrapped in a view (even if it doesn't model std::ranges::viewable_range).
- * \ingroup views
+ * \ingroup core
  *
  * \details
  *
@@ -225,7 +222,5 @@ private:
  * \hideinitializer
  */
 inline auto constexpr persist = persist_fn{};
-
-//!\}
 
 } // namespace seqan3::detail

@@ -24,7 +24,7 @@ namespace seqan3::detail
 {
 /*!\brief A helper concept definition for ranges that can be streamed to the seqan3::debug_stream.
  * \tparam rng_t The range type to check.
- * \ingroup core
+ * \ingroup core_debug_stream
  *
  * \details
  *
@@ -47,7 +47,7 @@ SEQAN3_CONCEPT debug_stream_range_guard =
  *        seqan3::debug_stream_type .
  * \tparam rng_t The range type to check.
  * \tparam char_t The char type of the stream.
- * \ingroup core
+ * \ingroup core_debug_stream
  *
  * \details
  *

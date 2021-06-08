@@ -6,22 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Forward declares seqan3::detail::test_accessor.
+ * \brief Meta-header for the \link core_range Core / Range submodule \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-#include <seqan3/core/platform.hpp>
+#include <seqan3/core/range/type_traits.hpp>
 
-namespace seqan3::detail
-{
-
-/*!\brief Attorney-Client pattern for accessing private / protected class members in test cases.
- * \attention You can currently only have one definition of test_accessor in one translation unit.
- * \see https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Friendship_and_the_Attorney-Client
+/*!\defgroup core_range Range
  * \ingroup core
+ * \see core
+ * \brief Provides seqan3 general purpose range functionality.
  */
-struct test_accessor;
-
-} // seqan3::detail
