@@ -114,13 +114,13 @@ struct bgzf_compression
  * \ingroup io
  */
 using compression_formats = pack_traits::drop_front<void
-                                                    #if SEQAN3_HAS_ZLIB
+                                                    #if defined(SEQAN3_HAS_ZLIB)
                                                     , gz_compression
                                                     , bgzf_compression
-                                                    #endif // SEQAN3_HAS_ZLIB
-                                                    #if SEQAN3_HAS_BZIP2
+                                                    #endif // defined(SEQAN3_HAS_ZLIB)
+                                                    #if defined(SEQAN3_HAS_BZIP2)
                                                     , bz2_compression
-                                                    #endif // SEQAN3_HAS_BZIP2
+                                                    #endif // defined(SEQAN3_HAS_BZIP2)
                                                     #if SEQAN3_HAS_ZSTD
                                                     , zstd_compression
                                                     #endif // SEQAN3_HAS_ZSTD

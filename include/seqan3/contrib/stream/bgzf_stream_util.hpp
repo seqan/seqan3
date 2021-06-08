@@ -19,17 +19,18 @@
 #include <seqan3/std/span>
 #include <thread>
 
-#if SEQAN3_HAS_ZLIB
-// Zlib headers
-#include <zlib.h>
-#else
-#error "This file cannot be used when building without GZip-support."
-#endif  // SEQAN3_HAS_ZLIB
-
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/detail/to_little_endian.hpp>
+
+#if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+#   error "This file cannot be used when building without GZip-support."
+#endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+
+#if defined(SEQAN3_HAS_ZLIB)
+// Zlib headers
+#include <zlib.h>
 
 namespace seqan3::contrib
 {
@@ -320,3 +321,5 @@ _decompressBlock(TDestValue *dstBegin,   TDestCapacity dstCapacity,
 }
 
 }  // namespace seqan3::contrib
+
+#endif // defined(SEQAN3_HAS_ZLIB)

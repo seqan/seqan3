@@ -435,7 +435,7 @@ struct structure_file_output_compression : public structure_file_output_write
 };
 #endif
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string expected_gz
 {
     '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x55','\x8E','\xC1','\x0A','\xC2','\x40',
@@ -511,7 +511,7 @@ TEST_F(structure_file_output_compression, by_stream_bgzf)
 }
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string expected_bz2
 {
     '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\xC7','\x0B','\xB5','\x7F','\x00','\x00',

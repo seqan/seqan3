@@ -19,14 +19,16 @@
 
 #pragma once
 
-#ifndef SEQAN3_HAS_BZIP2
-#error "This file cannot be used when building without BZIP2-support."
-#endif
-
 #include <algorithm>
 #include <cstring>
 #include <iostream>
 #include <vector>
+
+#if !defined(SEQAN3_HAS_BZIP2) && !defined(SEQAN3_HEADER_TEST)
+#error "This file cannot be used when building without BZIP2-support."
+#endif // !defined(SEQAN3_HAS_BZIP2) && !defined(SEQAN3_HEADER_TEST)
+
+#if defined(SEQAN3_HAS_BZIP2)
 
 #define BZ_NO_STDIO
 #include <bzlib.h>
@@ -361,3 +363,5 @@ typedef basic_bz2_istream<char> bz2_istream;
 typedef basic_bz2_istream<wchar_t> bz2_wistream;
 
 } // namespace seqan3::contrib
+
+#endif // defined(SEQAN3_HAS_BZIP2)
