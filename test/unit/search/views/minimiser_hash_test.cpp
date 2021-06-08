@@ -10,7 +10,6 @@
 
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/search/views/minimiser_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
@@ -97,7 +96,7 @@ TEST_F(minimiser_hash_test, ungapped)
     EXPECT_RANGE_EQ(result2, text2 | ungapped_view);
     EXPECT_RANGE_EQ(ungapped3, text3 | ungapped_view);
 
-    auto stop_at_t = seqan3::detail::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
+    auto stop_at_t = std::views::take_while([] (seqan3::dna4 const x) { return x != 'T'_dna4; });
     EXPECT_RANGE_EQ(ungapped_stop_at_t3, text3 | stop_at_t | ungapped_view);
 }
 
@@ -107,7 +106,7 @@ TEST_F(minimiser_hash_test, gapped)
     EXPECT_RANGE_EQ(result2, text2 | gapped_view);
     EXPECT_RANGE_EQ(gapped3, text3 | gapped_view);
 
-    auto stop_at_t = seqan3::detail::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
+    auto stop_at_t = std::views::take_while([] (seqan3::dna4 const x) { return x != 'T'_dna4; });
     EXPECT_RANGE_EQ(gapped_stop_at_t3, text3 | stop_at_t | gapped_view);
 }
 

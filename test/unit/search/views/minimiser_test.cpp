@@ -210,7 +210,7 @@ TEST_F(minimiser_test, window_too_big)
 
 TEST_F(minimiser_test, combinability)
 {
-    auto stop_at_t = seqan3::detail::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
+    auto stop_at_t = std::views::take_while([] (seqan3::dna4 const x) { return x != 'T'_dna4; });
     EXPECT_RANGE_EQ(result3_ungapped_stop, text3 | stop_at_t | kmer_view | minimiser_no_rev_view);
     EXPECT_RANGE_EQ(result3_gapped_stop, text3 | stop_at_t | gapped_kmer_view | minimiser_no_rev_view);
 
