@@ -16,7 +16,7 @@
     #include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
     #include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif
 
@@ -28,7 +28,7 @@
         #define SEQAN_HAS_ZLIB 1
     #endif
 
-    #ifdef SEQAN3_HAS_BZIP2
+    #if defined(SEQAN3_HAS_BZIP2)
         #define SEQAN_HAS_BZIP2 1
     #endif
 
@@ -73,7 +73,7 @@ void compressed(benchmark::State & state)
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::gz_ostream);
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bgzf_ostream);
 #endif
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 BENCHMARK_TEMPLATE(compressed, seqan3::contrib::bz2_ostream);
 #endif
 
@@ -99,7 +99,7 @@ void compressed_type_erased(benchmark::State & state)
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::gz_ostream);
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bgzf_ostream);
 #endif
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 BENCHMARK_TEMPLATE(compressed_type_erased, seqan3::contrib::bz2_ostream);
 #endif
 
@@ -125,7 +125,7 @@ void compressed_type_erased2(benchmark::State & state)
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::gz_ostream);
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bgzf_ostream);
 #endif
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 BENCHMARK_TEMPLATE(compressed_type_erased2, seqan3::contrib::bz2_ostream);
 #endif
 

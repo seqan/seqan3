@@ -18,7 +18,7 @@
 #include <string>
 #include <tuple>
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
     #include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif
 #if defined(SEQAN3_HAS_ZLIB)
@@ -70,7 +70,7 @@ inline auto make_secondary_ostream(std::basic_ostream<char_t> & primary_stream, 
     }
     else if (extension == ".bz2")
     {
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
         filename.replace_extension("");
         return {new contrib::basic_bz2_ostream<char_t>{primary_stream}, stream_deleter_default};
 #else

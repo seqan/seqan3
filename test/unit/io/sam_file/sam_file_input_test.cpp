@@ -441,7 +441,7 @@ TEST_F(sam_file_input_f, read_empty_bgzf_file)
 
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string input_bz2
 {
     '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\x7B','\xE2','\xE1','\x92','\x00','\x00',

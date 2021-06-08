@@ -21,7 +21,7 @@
 #include <string>
 #include <tuple>
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
     #include <seqan3/contrib/stream/bz2_istream.hpp>
 #endif
 #if defined(SEQAN3_HAS_ZLIB)

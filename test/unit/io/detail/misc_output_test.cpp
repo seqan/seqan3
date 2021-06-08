@@ -57,7 +57,7 @@ TEST(misc_output, issue2455_bgzf)
 }
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 TEST(misc_output, issue2455_bz)
 {
     seqan3::test::tmp_filename const compressed_file = tmp_compressed_file("bz2");

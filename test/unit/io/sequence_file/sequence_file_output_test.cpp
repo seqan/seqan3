@@ -527,7 +527,7 @@ TEST(compression, by_stream_bgzf)
 
 #endif
 
-#ifdef SEQAN3_HAS_BZIP2
+#if defined(SEQAN3_HAS_BZIP2)
 std::string expected_bz2
 {
     '\x42','\x5A','\x68','\x39','\x31','\x41','\x59','\x26','\x53','\x59','\xB4','\x68','\xEA','\xE3','\x00','\x00',
