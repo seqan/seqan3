@@ -11,9 +11,9 @@
 #include <type_traits>
 #include <vector>
 
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
 #include "../../../range/iterator_test_template.hpp"

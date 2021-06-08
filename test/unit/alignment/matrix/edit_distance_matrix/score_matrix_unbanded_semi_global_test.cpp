@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
-#include <seqan3/alignment/matrix/matrix_concept.hpp>
+#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
 #include "edit_distance_score_matrix.hpp"

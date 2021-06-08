@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
 int main()

@@ -12,9 +12,9 @@
 
 #pragma once
 
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_base.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 

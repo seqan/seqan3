@@ -5,8 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
-#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/row_wise_matrix.hpp>
 
 #include "../../pairwise/fixture/alignment_fixture.hpp"
 

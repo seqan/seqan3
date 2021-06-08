@@ -14,7 +14,7 @@
 
 #include <bitset>
 
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/utility/detail/bits_of.hpp>
 
