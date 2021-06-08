@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cassert>
+#include <seqan3/std/filesystem>
 #include <fstream>
 #include <limits>
 #include <optional>
@@ -30,7 +31,6 @@
 #include <seqan3/alphabet/structure/structured_aa.hpp>
 #include <seqan3/io/stream/concept.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/std/filesystem>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
@@ -38,6 +38,7 @@
 #include <seqan3/io/structure_file/input_options.hpp>
 #include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/record.hpp>
+#include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 namespace seqan3
