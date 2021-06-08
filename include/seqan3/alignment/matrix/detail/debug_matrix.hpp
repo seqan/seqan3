@@ -45,17 +45,17 @@ namespace seqan3::detail
  *
  * # Score matrix example
  *
- * \include test/snippet/alignment/matrix/debug_matrix_score.cpp
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_score.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/debug_matrix_score.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_score.out
  *
  * # Trace matrix example
  *
- * \include test/snippet/alignment/matrix/debug_matrix_trace.cpp
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/debug_matrix_trace.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.out
  */
 template <matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
 class debug_matrix
