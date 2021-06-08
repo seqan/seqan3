@@ -10,7 +10,7 @@
 
 #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/search/views/minimiser_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 

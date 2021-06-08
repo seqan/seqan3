@@ -15,8 +15,8 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/io/detail/istreambuf_view.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
+#include <seqan3/io/views/detail/istreambuf_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/tmp_filename.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/io/detail/take_until_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 
 // ============================================================================
@@ -32,7 +32,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * \header_file{seqan3/io/detail/take_line_view.hpp}
+ * \header_file{seqan3/io/views/detail/take_line_view.hpp}
  *
  * This adaptor returns a single line **excluding** the end-line character(s), *but moving the cursor behind them
  * for single-pass ranges.* I.e. for all ranges that satisfy std::ranges::forward_range this is the same as calling

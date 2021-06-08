@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#include <seqan3/io/detail/take_exactly_view.hpp>
+#include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/range/concept.hpp>
