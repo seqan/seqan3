@@ -1,0 +1,398 @@
+From 55b8a5bafb16c00080f6b6165db27d8df2835dc3 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Tue, 8 Jun 2021 22:47:17 +0200
+Subject: [PATCH 4/4] [NOAPI] [INCLUDE] [MISC] fixup includes to
+ alignment/matrix/detail/*
+
+cherry-picked
+---
+ test/snippet/alignment/matrix/debug_matrix_score.cpp        | 2 +-
+ test/snippet/alignment/matrix/debug_matrix_trace.cpp        | 2 +-
+ test/unit/alignment/matrix/alignment_optimum_test.cpp       | 2 +-
+ test/unit/alignment/matrix/debug_matrix_test.cpp            | 4 ++--
+ .../alignment/matrix/debug_stream_debug_matrix_test.cpp     | 2 +-
+ .../alignment/matrix/debug_stream_trace_directions_test.cpp | 2 +-
+ .../matrix/detail/aligned_sequence_builder_test.cpp         | 2 +-
+ .../detail/alignment_trace_matrix_full_banded_test.cpp      | 2 +-
+ .../matrix/detail/alignment_trace_matrix_full_test.cpp      | 2 +-
+ .../alignment/matrix/detail/trace_iterator_banded_test.cpp  | 2 +-
+ test/unit/alignment/matrix/detail/trace_iterator_test.cpp   | 2 +-
+ .../alignment/matrix/detail/two_dimensional_matrix_test.cpp | 2 +-
+ .../edit_distance_matrix/edit_distance_score_matrix.hpp     | 4 ++--
+ .../edit_distance_matrix/edit_distance_trace_matrix.hpp     | 4 ++--
+ .../score_matrix_unbanded_global_max_errors_test.cpp        | 6 +++---
+ .../score_matrix_unbanded_global_test.cpp                   | 6 +++---
+ .../score_matrix_unbanded_semi_global_max_errors_test.cpp   | 6 +++---
+ .../score_matrix_unbanded_semi_global_test.cpp              | 6 +++---
+ .../score_matrix_vertical_score_mask_test.cpp               | 6 +++---
+ .../trace_matrix_path_iterator_test.cpp                     | 2 +-
+ .../trace_matrix_unbanded_global_max_errors_test.cpp        | 2 +-
+ .../trace_matrix_unbanded_global_test.cpp                   | 2 +-
+ .../trace_matrix_unbanded_semi_global_max_errors_test.cpp   | 2 +-
+ .../trace_matrix_unbanded_semi_global_test.cpp              | 2 +-
+ test/unit/alignment/pairwise/fixture/alignment_fixture.hpp  | 4 ++--
+ 25 files changed, 39 insertions(+), 39 deletions(-)
+
+diff --git a/test/snippet/alignment/matrix/debug_matrix_score.cpp b/test/snippet/alignment/matrix/debug_matrix_score.cpp
+index c628c7c94..b2b1ad86f 100644
+--- a/test/snippet/alignment/matrix/debug_matrix_score.cpp
++++ b/test/snippet/alignment/matrix/debug_matrix_score.cpp
+@@ -1,7 +1,7 @@
+ #include <iostream>
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+ #include <seqan3/core/debug_stream.hpp>
+ 
+ int main()
+diff --git a/test/snippet/alignment/matrix/debug_matrix_trace.cpp b/test/snippet/alignment/matrix/debug_matrix_trace.cpp
+index 3026f9e3a..09d3609a5 100644
+--- a/test/snippet/alignment/matrix/debug_matrix_trace.cpp
++++ b/test/snippet/alignment/matrix/debug_matrix_trace.cpp
+@@ -1,7 +1,7 @@
+ #include <iostream>
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+ #include <seqan3/core/debug_stream.hpp>
+ 
+diff --git a/test/unit/alignment/matrix/alignment_optimum_test.cpp b/test/unit/alignment/matrix/alignment_optimum_test.cpp
+index f3c378135..e8f98a1bd 100644
+--- a/test/unit/alignment/matrix/alignment_optimum_test.cpp
++++ b/test/unit/alignment/matrix/alignment_optimum_test.cpp
+@@ -9,7 +9,7 @@
+ 
+ #include <type_traits>
+ 
+-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
++#include <seqan3/alignment/matrix/detail/alignment_optimum.hpp>
+ #include <seqan3/utility/simd/simd.hpp>
+ #include <seqan3/utility/simd/concept.hpp>
+ 
+diff --git a/test/unit/alignment/matrix/debug_matrix_test.cpp b/test/unit/alignment/matrix/debug_matrix_test.cpp
+index b5c9e8179..15e699478 100644
+--- a/test/unit/alignment/matrix/debug_matrix_test.cpp
++++ b/test/unit/alignment/matrix/debug_matrix_test.cpp
+@@ -7,8 +7,8 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ 
+diff --git a/test/unit/alignment/matrix/debug_stream_debug_matrix_test.cpp b/test/unit/alignment/matrix/debug_stream_debug_matrix_test.cpp
+index 0fca7920a..8d12c3ee3 100644
+--- a/test/unit/alignment/matrix/debug_stream_debug_matrix_test.cpp
++++ b/test/unit/alignment/matrix/debug_stream_debug_matrix_test.cpp
+@@ -7,7 +7,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ 
+ using seqan3::operator""_dna4;
+diff --git a/test/unit/alignment/matrix/debug_stream_trace_directions_test.cpp b/test/unit/alignment/matrix/debug_stream_trace_directions_test.cpp
+index 3ad5fd23d..b3639bcca 100644
+--- a/test/unit/alignment/matrix/debug_stream_trace_directions_test.cpp
++++ b/test/unit/alignment/matrix/debug_stream_trace_directions_test.cpp
+@@ -9,7 +9,7 @@
+ 
+ #include <sstream>
+ 
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ #include <seqan3/core/debug_stream/debug_stream_type.hpp>
+ 
+ using seqan3::operator|;
+diff --git a/test/unit/alignment/matrix/detail/aligned_sequence_builder_test.cpp b/test/unit/alignment/matrix/detail/aligned_sequence_builder_test.cpp
+index 93bb2711a..7dae3fb19 100644
+--- a/test/unit/alignment/matrix/detail/aligned_sequence_builder_test.cpp
++++ b/test/unit/alignment/matrix/detail/aligned_sequence_builder_test.cpp
+@@ -14,7 +14,7 @@
+ #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
+ #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ #include <seqan3/alphabet/nucleotide/dna15.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+diff --git a/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_banded_test.cpp b/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_banded_test.cpp
+index db234abef..4a7d52fb6 100644
+--- a/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_banded_test.cpp
++++ b/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_banded_test.cpp
+@@ -11,7 +11,7 @@
+ #include <utility>
+ 
+ #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ 
+ #include "alignment_matrix_base_test_template.hpp"
+ #include "../../../range/iterator_test_template.hpp"
+diff --git a/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_test.cpp b/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_test.cpp
+index 7a25fc145..32ecb2669 100644
+--- a/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_test.cpp
++++ b/test/unit/alignment/matrix/detail/alignment_trace_matrix_full_test.cpp
+@@ -11,7 +11,7 @@
+ #include <utility>
+ 
+ #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ 
+ #include "alignment_matrix_base_test_template.hpp"
+ #include "../../../range/iterator_test_template.hpp"
+diff --git a/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp b/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
+index 668b6471b..b11735f02 100644
+--- a/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
++++ b/test/unit/alignment/matrix/detail/trace_iterator_banded_test.cpp
+@@ -11,9 +11,9 @@
+ #include <type_traits>
+ #include <vector>
+ 
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ #include <seqan3/alignment/matrix/detail/trace_iterator_banded.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+ #include "../../../range/iterator_test_template.hpp"
+diff --git a/test/unit/alignment/matrix/detail/trace_iterator_test.cpp b/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
+index 2d372dc5c..8c83019ad 100644
+--- a/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
++++ b/test/unit/alignment/matrix/detail/trace_iterator_test.cpp
+@@ -11,9 +11,9 @@
+ #include <type_traits>
+ #include <vector>
+ 
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+ #include "../../../range/iterator_test_template.hpp"
+diff --git a/test/unit/alignment/matrix/detail/two_dimensional_matrix_test.cpp b/test/unit/alignment/matrix/detail/two_dimensional_matrix_test.cpp
+index d3d9e3f6e..55fe0a511 100644
+--- a/test/unit/alignment/matrix/detail/two_dimensional_matrix_test.cpp
++++ b/test/unit/alignment/matrix/detail/two_dimensional_matrix_test.cpp
+@@ -11,9 +11,9 @@
+ #include <numeric>
+ #include <vector>
+ 
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
+ #include <seqan3/utility/simd/algorithm.hpp>
+ #include <seqan3/utility/simd/concept.hpp>
+ #include <seqan3/utility/simd/simd.hpp>
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_score_matrix.hpp b/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_score_matrix.hpp
+index 9f2f84fbe..fea9875e8 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_score_matrix.hpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_score_matrix.hpp
+@@ -5,8 +5,8 @@
+ // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+ // -----------------------------------------------------------------------------------------------------
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/row_wise_matrix.hpp>
+ 
+ using score_type = int;
+ using word_type = uint8_t;
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_trace_matrix.hpp b/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_trace_matrix.hpp
+index df5e7bd92..5bb9ea883 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_trace_matrix.hpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/edit_distance_trace_matrix.hpp
+@@ -5,8 +5,8 @@
+ // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
+ // -----------------------------------------------------------------------------------------------------
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/row_wise_matrix.hpp>
+ 
+ #include "../../pairwise/fixture/alignment_fixture.hpp"
+ 
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_max_errors_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_max_errors_test.cpp
+index 78d5ea8bd..2b9cfc595 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_max_errors_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_max_errors_test.cpp
+@@ -7,9 +7,9 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_score_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_test.cpp
+index d383ee750..85f2f7404 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_global_test.cpp
+@@ -7,9 +7,9 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_score_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_max_errors_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_max_errors_test.cpp
+index 97da514f2..4eeea1dd8 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_max_errors_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_max_errors_test.cpp
+@@ -7,9 +7,9 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_score_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_test.cpp
+index 72daa15c8..34bee59c2 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_unbanded_semi_global_test.cpp
+@@ -7,9 +7,9 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_score_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_vertical_score_mask_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_vertical_score_mask_test.cpp
+index 5b3b83d8f..e0943128b 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_vertical_score_mask_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/score_matrix_vertical_score_mask_test.cpp
+@@ -7,9 +7,9 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
+-#include <seqan3/alignment/matrix/matrix_concept.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_score_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_path_iterator_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_path_iterator_test.cpp
+index e877f3d36..8bcd945c6 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_path_iterator_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_path_iterator_test.cpp
+@@ -9,8 +9,8 @@
+ 
+ #include <seqan3/core/debug_stream.hpp>
+ 
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/alphabet/views/to_char.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_max_errors_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_max_errors_test.cpp
+index 9219e0ffa..ad11273d8 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_max_errors_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_max_errors_test.cpp
+@@ -7,7 +7,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_trace_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_test.cpp
+index aceb989e8..544d035fe 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_global_test.cpp
+@@ -7,7 +7,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_trace_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_max_errors_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_max_errors_test.cpp
+index ff0d46b9a..d127c814c 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_max_errors_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_max_errors_test.cpp
+@@ -7,7 +7,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_trace_matrix.hpp"
+diff --git a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_test.cpp b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_test.cpp
+index 6f50df21d..00b7acdfa 100644
+--- a/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_test.cpp
++++ b/test/unit/alignment/matrix/edit_distance_matrix/trace_matrix_unbanded_semi_global_test.cpp
+@@ -7,7 +7,7 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
++#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+ 
+ #include "edit_distance_trace_matrix.hpp"
+diff --git a/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp b/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
+index 6794a567a..22c5baf58 100644
+--- a/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
++++ b/test/unit/alignment/pairwise/fixture/alignment_fixture.hpp
+@@ -7,8 +7,8 @@
+ 
+ #pragma once
+ 
+-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+-#include <seqan3/alignment/matrix/trace_directions.hpp>
++#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
++#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
+ 
+ namespace seqan3::test::alignment::fixture
+ {
+-- 
+2.31.1
+
