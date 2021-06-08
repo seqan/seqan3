@@ -20,12 +20,9 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup search
- * \{
- */
-
 //!\brief Object storing information for a search (of a search scheme).
 //!\attention Number of blocks have to be known at compile time.
+//!\ingroup search
 template <uint8_t nbr_blocks>
 struct search
 {
@@ -48,6 +45,7 @@ struct search
 
 //!\brief Object storing information for a search (of a search scheme).
 //!\attention Number of blocks do not have to be known at compile time.
+//!\ingroup search
 struct search_dyn
 {
     //!\brief Type for storing the length of blocks
@@ -68,13 +66,16 @@ struct search_dyn
 };
 
 //!\brief Type for storing search schemes. Number of blocks have to be known at compile time.
+//!\ingroup search
 template <uint8_t nbr_searches, uint8_t nbr_blocks>
 using search_scheme_type = std::array<search<nbr_blocks>, nbr_searches>;
 
 //!\brief Type for storing search schemes. Number of blocks do not have to be known at compile time.
+//!\ingroup search
 using search_scheme_dyn_type = std::vector<search_dyn>;
 
 /*!\brief Search scheme that is optimal in the running time for the specified lower and upper error bound.
+ * \ingroup search
  * \tparam min_error Lower bound of errors.
  * \tparam max_error Upper bound of errors.
  * \details Please note that the searches within each search scheme are sorted by their asymptotical run time
@@ -172,7 +173,5 @@ inline search_scheme_type<4, 5> constexpr optimum_search_scheme<3, 3>
 // optimum_search_scheme<i, 4>, 0 < i <= 4
 
 //!\endcond
-
-//!\}
 
 } // namespace seqan3::detail

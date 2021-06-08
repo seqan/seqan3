@@ -7,9 +7,16 @@
 
 /*!\file
  * \author Christopher Pockrandt <christopher.pockrandt AT fu-berlin.de>
- * \brief Meta-header for the search module.
- *
- * \defgroup search Search
+ * \brief Meta-header for the \link search Search module \endlink.
+ */
+
+#pragma once
+
+#include <seqan3/search/configuration/all.hpp>
+#include <seqan3/search/fm_index/all.hpp>
+#include <seqan3/search/search.hpp>
+
+/*!\defgroup search Search
  * \brief Data structures and algorithms for the search of query sequences in a large collection of text.
  *
  * \details
@@ -89,9 +96,3 @@
  * \sa seqan3::views::kmer_hash
  * \sa seqan3::views::minimiser
  */
-
-#pragma once
-
-#include <seqan3/search/configuration/all.hpp>
-#include <seqan3/search/fm_index/all.hpp>
-#include <seqan3/search/search.hpp>

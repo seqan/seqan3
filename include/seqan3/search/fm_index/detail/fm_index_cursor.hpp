@@ -20,12 +20,8 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 /*!\brief Internal representation of the node of an FM index cursor.
- * \ingroup fm_index
+ * \ingroup search_fm_index
  * \tparam index_t The type of the underlying index.
  * \implements seqan3::cerealisable
  */
@@ -80,6 +76,5 @@ struct fm_index_cursor_node
     }
     //!\endcond
 };
-//!\}
 
 }

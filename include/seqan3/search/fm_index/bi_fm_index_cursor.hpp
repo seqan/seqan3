@@ -28,11 +28,8 @@
 namespace seqan3
 {
 
-/*!\addtogroup submodule_fm_index
- * \{
- */
-
 /*!\brief The SeqAn Bidirectional FM Index Cursor.
+ * \ingroup search_fm_index
  * \tparam index_t The type of the underlying index; This is normally seqan3::bi_fm_index.
  * \implements seqan3::cerealisable
  * \details
@@ -1043,7 +1040,5 @@ public:
     }
     //!\endcond
 };
-
-//!\}
 
 } // namespace seqan3

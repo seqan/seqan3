@@ -19,7 +19,7 @@ namespace seqan3
 {
 
 /*!\brief A strong type of underlying type `uint8_t` that represents the ungapped shape size.
- * \ingroup submodule_kmer_index
+ * \ingroup search_kmer_index
  */
 struct ungapped
 {
@@ -28,7 +28,7 @@ struct ungapped
 };
 
 /*!\brief A strong type of underlying type `uint64_t` that represents the shape in binary representation.
- * \ingroup submodule_kmer_index
+ * \ingroup search_kmer_index
  */
 struct bin_literal
 {
@@ -37,7 +37,7 @@ struct bin_literal
 };
 
 /*!\brief A class that defines which positions of a pattern to hash.
- * \ingroup submodule_kmer_index
+ * \ingroup search_kmer_index
  *
  * \details
  *
