@@ -13,6 +13,7 @@
 #pragma once
 
 #include <seqan3/std/filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <tuple>
