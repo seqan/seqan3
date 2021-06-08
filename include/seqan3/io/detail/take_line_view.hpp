@@ -21,11 +21,6 @@
 
 namespace seqan3::detail
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that returns a single line from the underlying range or the full range if there
  *                      is no newline.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
@@ -33,7 +28,7 @@ namespace seqan3::detail
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             All characters of the underlying range up until, but excluding a unix or windows end-line
  *                      (`\n` or `\r\n`). See below for the properties of the returned range.
- * \ingroup io
+ * \ingroup io_views
  *
  * \details
  *
@@ -83,12 +78,10 @@ inline auto constexpr take_line = detail::take_until_and_consume(is_char<'\r'> |
 
 /*!\brief A view adaptor that returns a single line from the underlying range (throws if there is no end-of-line).
  * \throws seqan3::unexpected_end_of_input If the underlying range contains no end-of-line marker.
- * \ingroup io
+ * \ingroup io_views
  *
  * \copydetails seqan3::detail::take_line
  */
 inline auto constexpr take_line_or_throw = detail::take_until_or_throw_and_consume(is_char<'\r'> || is_char<'\n'>);
-
-//!\}
 
 } // namespace seqan3::detail

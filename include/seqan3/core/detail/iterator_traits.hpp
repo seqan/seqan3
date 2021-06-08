@@ -21,6 +21,7 @@ namespace seqan3::detail
 {
 /*!\brief Defines iterator_category member if underlying_iterator_t has a valid std::iterator_traits::iterator_category
  *        overload.
+ * \ingroup core
  * \details
  *
  * The C++ paper [P2259R1](https://wg21.link/p2259r1) defines the behaviour of iterator_category for a C++-20 input
@@ -80,6 +81,7 @@ struct maybe_iterator_category<underlying_iterator_t>
 //!\endcond
 
 /*!\brief This handles more cases than maybe_iterator_category if you inherit the underling_iterator_t.
+ * \ingroup core
  * \details
  *
  * The same as maybe_iterator_category, but this will not define the iterator_category if the underling_iterator_t
@@ -103,6 +105,7 @@ struct maybe_inherited_iterator_category<underling_iterator_t>
 
 /*!\brief Exposes the
  * [iterator_concept](https://en.cppreference.com/w/cpp/iterator/iterator_tags) from the modelled concept.
+ * \ingroup core
  * \implements seqan3::transformation_trait
  * \tparam it_t The type to operate on.
  */
@@ -137,6 +140,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief This is like std::iter_value_t, but for the pointer type.
+ * \ingroup core
  * \implements seqan3::transformation_trait
  * \tparam it_t The type to operate on.
  * \see seqan3::detail::iter_pointer_t
@@ -164,6 +168,7 @@ struct iter_pointer<it_t>
 //!\endcond
 
 /*!\brief Return the `pointer` type of the input type (transformation_trait shortcut).
+ * \ingroup core
  * \tparam it_t The type to operate on.
  * \see seqan3::detail::iter_pointer
  */

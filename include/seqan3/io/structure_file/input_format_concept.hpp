@@ -28,7 +28,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Internal class used to expose the actual format interface to read structure records from the file.
- * \ingroup structure_file
+ * \ingroup io_structure_file
  *
  * \tparam format_type The type of the format to be exposed.
  *
@@ -58,7 +58,7 @@ namespace seqan3
 
 /*!\interface seqan3::structure_file_input_format <>
  * \brief The generic concept for structure file in formats.
- * \ingroup structure_file
+ * \ingroup io_structure_file
  *
  * \details
  *

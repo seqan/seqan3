@@ -42,7 +42,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
- * \ingroup views
+ * \ingroup io_views
  *
  * \details
  *
@@ -533,10 +533,6 @@ struct take_exactly_fn
 
 namespace seqan3::detail
 {
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that returns the first `size` elements from the underlying range (or less if the
  *                      underlying range is shorter); also provides size information.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
@@ -544,7 +540,7 @@ namespace seqan3::detail
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \param[in] size      The target size of the view.
  * \returns             Up to `size` elements of the underlying range.
- * \ingroup io
+ * \ingroup io_views
  *
  * \details
  *
@@ -595,12 +591,10 @@ inline auto constexpr take_exactly = take_exactly_fn<false>{};
 /*!\brief A view adaptor that returns the first `size` elements from the underlying range and also exposes size
  *        information; throws if the underlying range is smaller than `size`.
  * \throws seqan3::unexpected_end_of_input If the underlying range is smaller than `size`.
- * \ingroup io
+ * \ingroup io_views
  *
  * \copydetails seqan3::detail::take_exactly
  * \hideinitializer
  */
 inline auto constexpr take_exactly_or_throw = take_exactly_fn<true>{};
-
-//!\}
 } // namespace seqan3::detail

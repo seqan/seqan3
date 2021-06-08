@@ -35,7 +35,7 @@ namespace seqan3::detail
  *                 must model std::totally_ordered. If only one range is provided this defaults to
  *                 std::ranges::empty_view.
  * \implements std::ranges::view
- * \ingroup views
+ * \ingroup search_views
  *
  * \details
  *
@@ -485,7 +485,8 @@ minimiser_view(rng1_t &&, rng2_t &&, size_t const window_size) -> minimiser_view
 // ---------------------------------------------------------------------------------------------------------------------
 
 //![adaptor_def]
-//!\brief views::minimiser's range adaptor object type (non-closure).
+//!\brief seqan3::views::minimiser's range adaptor object type (non-closure).
+//!\ingroup search_views
 struct minimiser_fn
 {
     //!\brief Store the number of values in one window and return a range adaptor closure object.
@@ -523,11 +524,6 @@ struct minimiser_fn
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief Computes minimisers for a range of comparable values. A minimiser is the smallest value in a window.
  * \tparam urng_t The type of the first range being processed. See below for requirements. [template
  *                 parameter is omitted in pipe notation]
@@ -535,7 +531,7 @@ namespace seqan3::views
  * \param[in] window_size The number of values in one window.
  * \returns A range of std::totally_ordered where each value is the minimal value for one window. See below for the
  *          properties of the returned range.
- * \ingroup views
+ * \ingroup search_views
  *
  * \details
  *
@@ -587,7 +583,5 @@ namespace seqan3::views
  * \stableapi{Since version 3.1.}
  */
 inline constexpr auto minimiser = detail::minimiser_fn{};
-
-//!\}
 
 } // namespace seqan3::views

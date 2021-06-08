@@ -20,14 +20,12 @@
 namespace seqan3
 {
 
-/*!\addtogroup io
- * \{
- */
 // ----------------------------------------------------------------------------
 // file open exceptions
 // ----------------------------------------------------------------------------
 
 //!\brief Thrown if there is no format that accepts a given file extension.
+//!\ingroup io
 struct unhandled_extension_error : std::invalid_argument
 {
     //!\brief Constructor that forwards the exception string.
@@ -36,6 +34,7 @@ struct unhandled_extension_error : std::invalid_argument
 };
 
 //!\brief Thrown if there is an unspecified filesystem or stream error while opening, e.g. permission problem.
+//!\ingroup io
 struct file_open_error : std::runtime_error
 {
     //!\brief Constructor that forwards the exception string.
@@ -44,6 +43,7 @@ struct file_open_error : std::runtime_error
 };
 
 //!\brief Thrown if there is a parse error, such as reading an unexpected character from an input stream.
+//!\ingroup io
 struct parse_error : std::runtime_error
 {
     //!\brief Constructor that forwards the exception string.
@@ -52,6 +52,7 @@ struct parse_error : std::runtime_error
 };
 
 //!\brief Thrown if there is an io error in low level io operations such as in std::basic_streambuf operations.
+//!\ingroup io
 struct io_error : std::ios_base::failure
 {
 #if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
@@ -72,6 +73,7 @@ struct io_error : std::ios_base::failure
 // ----------------------------------------------------------------------------
 
 //!\brief Thrown if I/O was expecting more input (e.g. a delimiter or a new line), but the end of input was reached.
+//!\ingroup io
 struct unexpected_end_of_input : std::runtime_error
 {
     //!\brief Constructor that forwards the exception string.
@@ -84,13 +86,12 @@ struct unexpected_end_of_input : std::runtime_error
 // ----------------------------------------------------------------------------
 
 //!\brief Thrown if information given to output format didn't match expectations.
+//!\ingroup io
 struct format_error : std::invalid_argument
 {
     //!\brief Constructor that forwards the exception string.
     format_error(std::string const & s) : std::invalid_argument{s}
     {}
 };
-
-//!\}
 
 } // namespace seqan3

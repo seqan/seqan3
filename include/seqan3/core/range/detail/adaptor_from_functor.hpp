@@ -6,7 +6,6 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \ingroup views
  * \brief Provides seqan3::detail::adaptor_from_functor
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -25,7 +24,7 @@ namespace seqan3::detail
 /*!\brief Template for range adaptor closure objects that store arguments and wrap a proto-adaptor.
  * \tparam functor_type Type of the proto-adaptor functor.
  * \tparam stored_args_ts Types of the stored arguments.
- * \ingroup views
+ * \ingroup core_range
  *
  * \details
  *

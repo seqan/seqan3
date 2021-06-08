@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+include (seqan3_path_longest_stem)
+
 # Get a specific component of a test file which follows the seqan3 naming scheme.
 # e.g. target_source_file = "range/views/take.cpp"
 # component:
@@ -16,7 +18,7 @@ macro (seqan3_test_component VAR target_source_file component_name_)
     string (TOUPPER "${component_name_}" component_name)
 
     get_filename_component (target_relative_path "${target_source_file}" DIRECTORY)
-    get_filename_component (target_name "${target_source_file}" NAME_WE)
+    seqan3_path_longest_stem (target_name "${target_source_file}")
 
     if (component_name STREQUAL "TARGET_NAME")
         set (${VAR} "${target_name}")

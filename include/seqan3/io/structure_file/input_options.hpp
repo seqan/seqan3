@@ -18,7 +18,7 @@ namespace seqan3
 {
 
 /*!\brief The options type defines various option members that influence the behaviour of all or some formats.
- * \ingroup structure_file
+ * \ingroup io_structure_file
  * \tparam seq_legal_alphabet The sequence legal alphabet exposed as type trait to the format.
  * \tparam structured_seq_combined Trait that exposes to the format whether seq and structure arguments are actually the
  * same/combined.

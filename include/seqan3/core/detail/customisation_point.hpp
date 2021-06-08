@@ -22,6 +22,7 @@ namespace seqan3::detail
 // ============================================================================
 
 //!\brief A tag that allows controlled overload resolution via implicit base conversion rules.
+//!\ingroup core
 template <size_t I>
 struct priority_tag
 //!\cond
@@ -42,6 +43,9 @@ struct priority_tag<0>
 // ============================================================================
 #if SEQAN3_DOXYGEN_ONLY(1)0
 /*!\brief A macro helper for #SEQAN3_CPO_OVERLOAD.
+ * \cond DEV
+ * \ingroup core
+ * \endcond DEV
  * \details
  * Please note that in order to allow a semicolon at the end when using this macro, i.e.
  *
@@ -65,6 +69,9 @@ struct priority_tag<0>
 #endif
 
 /*!\brief A macro that helps to define a seqan3::detail::customisation_point_object.
+ * \cond DEV
+ * \ingroup core
+ * \endcond DEV
  * \details
  * Expands to a function definition with the name `cpo_overload`.
  *
@@ -99,6 +106,7 @@ struct priority_tag<0>
 namespace seqan3::detail
 {
 /*!\brief A CRTP base-class that defines a customisation_point_object (CPO).
+ * \ingroup core
  * \tparam derived_t CRTP derived type.
  * \tparam max_priority The (highest) start priority the CPO overloads will be checked from.
  *

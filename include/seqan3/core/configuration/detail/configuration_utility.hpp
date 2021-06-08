@@ -22,7 +22,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief Helper meta function to check if a template type is contained in a seqan3::configuration.
- * \ingroup algorithm
+ * \ingroup core_configuration
  *
  * \details
  *

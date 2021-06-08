@@ -35,7 +35,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief Declaration of algorithm specific compatibility table.
- * \ingroup algorithm
+ * \ingroup core_configuration
  * \tparam algorithm_id_type The type of the algorithm specific id. Algorithm configurations must maintain
  *                           this table to allow validation checks.
  */
@@ -48,7 +48,7 @@ inline constexpr std::array<std::array<void *, 0>, 0> compatibility_table{};
 
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 /*!\brief A helper class to check if a type has a static member called `id`.
- * \ingroup algorithm
+ * \ingroup core_configuration
  *
  * \details
  *
@@ -119,7 +119,7 @@ public:
 
 /*!\interface seqan3::detail::config_element <>
  * \brief Concept for an algorithm configuration element.
- * \ingroup algorithm
+ * \ingroup core_configuration
  *
  * \extends std::semiregular
  * \implements seqan3::pipeable_config_element
@@ -150,7 +150,7 @@ SEQAN3_CONCEPT config_element = requires
 
 /*!\interface seqan3::detail::config_element_pipeable_with <>
  * \brief Concept to check if one configuration element can be combined with another configuration element.
- * \ingroup algorithm
+ * \ingroup core_configuration
  *
  * \tparam config1_t The type of the first configuration element.
  * \tparam config2_t The type of the second configuration element.
@@ -190,7 +190,7 @@ class configuration;
 
 /*!\brief Helper variable template to test if a configuration element is combineable with another configuration element
  *        or configuration.
- * \ingroup algorithm
+ * \ingroup core_configuration
  *
  * \tparam config1_t Either the type of a configuration element or a configuration.
  * \tparam config2_t Either the type of a configuration element or a configuration.

@@ -19,6 +19,7 @@ namespace seqan3
 {
 
 //!\brief Type tag which indicates that no reference information has been passed to the alignment file on construction.
+//!\ingroup io_sam_file
 struct ref_info_not_given
 {};
 
@@ -88,6 +89,7 @@ enum class sam_flag : uint16_t
 
 //!\cond DEV
 //!\brief Enables bitwise operations for seqan3::sam_flags.
+//!\ingroup io_sam_file
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 template <>
 constexpr bool add_enum_bitwise_operators<sam_flag> = true;

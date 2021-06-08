@@ -34,17 +34,17 @@ SEQAN3_CONCEPT has_range_value_type = requires { typename std::ranges::range_val
 //!\endcond
 
 //!\brief Makes range_t const if const_range is true; otherwise keeps range_t as is.
-//!\ingroup core
+//!\ingroup core_range
 template <bool const_range, typename range_t>
 using maybe_const_range_t = std::conditional_t<const_range, range_t const, range_t>;
 
 //!\brief Returns the const iterator of range_t if const_range is true; otherwise the non-const iterator.
-//!\ingroup core
+//!\ingroup core_range
 template <bool const_range, typename range_t>
 using maybe_const_iterator_t = std::ranges::iterator_t<maybe_const_range_t<const_range, range_t>>;
 
 //!\brief Returns the const sentinel of range_t if const_range is true; otherwise the non-const sentinel.
-//!\ingroup core
+//!\ingroup core_range
 template <bool const_v, typename range_t>
 using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const_v, range_t>>;
 } // namespace seqan3::detail
@@ -52,14 +52,12 @@ using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const
 namespace seqan3
 {
 
-/*!\addtogroup core
- * \{
- */
 // ----------------------------------------------------------------------------
 // range_innermost_value
 // ----------------------------------------------------------------------------
 
 /*!\brief Recursively determines the `value_type` on containers and/or iterators.
+ * \ingroup core_range
  * \implements seqan3::transformation_trait
  * \tparam t The type to recurse on; must have `std::ranges::value_type_t<rng_t>`.
  *
@@ -87,6 +85,7 @@ struct range_innermost_value<t>
 //!\endcond
 
 //!\brief Shortcut for seqan3::range_innermost_value (transformation_trait shortcut).
+//!\ingroup core_range
 //!\see seqan3::range_innermost_value
 template <typename t>
 using range_innermost_value_t = typename range_innermost_value<t>::type;
@@ -96,6 +95,7 @@ using range_innermost_value_t = typename range_innermost_value<t>::type;
 // ----------------------------------------------------------------------------
 
 /*!\brief Returns the number of times you can call `seqan3::value_type_t` recursively on t (type trait).
+ * \ingroup core_range
  * \tparam t The type to be queried; must resolve `seqan3::value_type_t` at least once.
  *
  * \details
@@ -114,7 +114,5 @@ template <typename t>
     requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
 constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<std::remove_cvref_t<t>>> + 1;
 //!\endcond
-
-//!\}
 
 } // namespace seqan3

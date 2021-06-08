@@ -20,7 +20,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Iterate over a range (consumes single-pass input ranges).
- * \ingroup range
+ * \ingroup core_range
  * \tparam rng_t Type of the range; must satisfy std::ranges::input_range.
  * \param rng The range.
  */
@@ -34,7 +34,7 @@ constexpr void consume(rng_t && rng)
 }
 
 /*!\brief Iterate over a range (NO-OP for forward ranges).
- * \ingroup range
+ * \ingroup core_range
  * \tparam rng_t Type of the range; must satisfy std::ranges::forward_range.
  */
 template <std::ranges::forward_range rng_t>

@@ -46,7 +46,7 @@ namespace seqan3
 
 /*!\brief The FastQ format.
  * \implements SequenceFileFormat
- * \ingroup sequence_file
+ * \ingroup io_sequence_file
  *
  * \details
  *

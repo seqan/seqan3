@@ -17,7 +17,7 @@
 namespace seqan3::detail
 {
 /*!\brief A global configuration type used to enabled debugging of algorithms.
- * \ingroup algorithm
+ * \ingroup core_configuration
  * \tparam wrapped_config_id_t The algorithm specific configuration id wrapped in a std::integral_constant.
  *
  * \details

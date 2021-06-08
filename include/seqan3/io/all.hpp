@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for all IO related functionality.
+ * \brief Meta-header for the \link io IO module \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  * \author René Rahn <rene.rahn AT fu-berlin.de>
  */

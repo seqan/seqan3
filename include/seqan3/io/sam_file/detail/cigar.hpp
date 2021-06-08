@@ -30,6 +30,7 @@
 namespace seqan3::detail
 {
 //!\brief Comparator that is able two compare two views
+//!\ingroup io_sam_file
 struct view_equality_fn
 {
     //!\brief Compares to ranges by delegating to std::ranges::equal.
@@ -97,6 +98,7 @@ template <typename reference_char_type, typename query_char_type>
 }
 
 /*!\brief Updates the sequence lengths by `cigar_count` depending on the cigar operation `op`.
+ * \ingroup io_sam_file
  * \param[in, out]  ref_length      The reference sequence's length.
  * \param[in, out]  seq_length      The query sequence's length.
  * \param[in]       cigar_operation The cigar operation.
@@ -118,6 +120,7 @@ inline void update_alignment_lengths(int32_t & ref_length,
 }
 
 /*!\brief Parses a cigar string into a vector of operation-count pairs (e.g. (M, 3)).
+ * \ingroup io_sam_file
  * \tparam cigar_input_type The type of a single pass input view over the cigar string; must model
  *                          std::ranges::input_range.
  * \param[in]  cigar_input  The single pass input view over the cigar string to parse.
@@ -426,6 +429,7 @@ inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> 
 }
 
 //!\brief A functor that always throws when calling `operator()` (needed for the alignment "dummy" sequence).
+//!\ingroup io_sam_file
 struct access_restrictor_fn
 {
     //!\brief Always throws a std::logic_error when called.

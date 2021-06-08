@@ -20,12 +20,14 @@
 namespace seqan3
 {
 //!\brief strong_type for seed.
+//!\ingroup search_views
 struct seed : seqan3::detail::strong_type<uint64_t, seed>
 {
     using seqan3::detail::strong_type<uint64_t, seed>::strong_type;
 };
 
 //!\brief strong_type for the window_size.
+//!\ingroup search_views
 struct window_size : seqan3::detail::strong_type<uint32_t, window_size>
 {
     using seqan3::detail::strong_type<uint32_t, window_size>::strong_type;
@@ -35,6 +37,7 @@ struct window_size : seqan3::detail::strong_type<uint32_t, window_size>
 namespace seqan3::detail
 {
 //!\brief seqan3::views::minimiser_hash's range adaptor object type (non-closure).
+//!\ingroup search_views
 struct minimiser_hash_fn
 {
     /*!\brief Store the shape and the window size and return a range adaptor closure object.

@@ -12,7 +12,7 @@
 
 #pragma once
 
-/*!\defgroup structure_file Structure File
+/*!\defgroup io_structure_file Structure File
  * \ingroup io
  * \brief Provides files and formats for handling structure data.
  */

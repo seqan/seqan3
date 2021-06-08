@@ -6,14 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-Header for components of the algorithm submodule.
+ * \brief Meta-header for the \link core_algorithm Core / Algorithm submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup algorithm Algorithm
- * \ingroup core
- * \brief Provides core functionality used to configure algorithms.
- */
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
+
+/*!\defgroup core_algorithm Algorithm
+ * \ingroup core
+ * \see core
+ * \brief Provides core functionality used for algorithms.
+ */

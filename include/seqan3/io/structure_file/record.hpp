@@ -17,7 +17,7 @@
 namespace seqan3
 {
 /*!\brief The record type of seqan3::structure_file_input.
- * \ingroup structure_file
+ * \ingroup io_structure_file
  * \implements seqan3::detail::record_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids A seqan3::fields type with seqan3::field IDs corresponding to field_types.
