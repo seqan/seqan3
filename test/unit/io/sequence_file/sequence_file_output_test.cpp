@@ -457,7 +457,7 @@ void compression_by_stream_impl(comp_stream_t & stream)
     }
 }
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string expected_gz
 {
     '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\xB3','\x53','\x08','\x71','\x0D','\x0E',

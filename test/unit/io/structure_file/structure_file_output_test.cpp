@@ -435,7 +435,7 @@ struct structure_file_output_compression : public structure_file_output_write
 };
 #endif
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string expected_gz
 {
     '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x55','\x8E','\xC1','\x0A','\xC2','\x40',

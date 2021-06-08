@@ -387,7 +387,7 @@ TEST_F(structure_file_input_read, record_file_view)
 // decompression
 // ----------------------------------------------------------------------------
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string input_gz
 {
     '\x1F','\x8B','\x08','\x00','\x00','\x00','\x00','\x00','\x00','\x03','\x55','\x8E','\xC1','\x0A','\xC2','\x40',

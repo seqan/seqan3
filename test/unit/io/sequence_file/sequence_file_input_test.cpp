@@ -326,7 +326,7 @@ void decompression_impl(fixture_t & fix, input_file_t & fin)
     EXPECT_EQ(counter, 3u);
 }
 
-#ifdef SEQAN3_HAS_ZLIB
+#if defined(SEQAN3_HAS_ZLIB)
 std::string input_gz
 {
     '\x1F','\x8B','\x08','\x00','\x33','\xBF','\x13','\x5C','\x00','\x03','\xB3','\x53','\x08','\x71','\x0D','\x0E',

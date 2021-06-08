@@ -28,6 +28,11 @@
 #include <seqan3/contrib/stream/bgzf_stream_util.hpp>
 #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
 
+#if !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+#   error "This file cannot be used when building without GZip-support."
+#endif // !defined(SEQAN3_HAS_ZLIB) && !defined(SEQAN3_HEADER_TEST)
+
+#if defined(SEQAN3_HAS_ZLIB)
 namespace seqan3::contrib
 {
 
@@ -619,3 +624,5 @@ typedef basic_bgzf_istream<char> bgzf_istream;
 typedef basic_bgzf_istream<wchar_t> bgzf_wistream;
 
 } // namespace seqan3::conrib
+
+#endif // defined(SEQAN3_HAS_ZLIB)
