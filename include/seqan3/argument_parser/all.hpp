@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- * \brief Meta-Header for the argument parser module.
+ * \brief Meta-header for the \link argument_parser Argument Parser module \endlink.
  */
 
 #pragma once
