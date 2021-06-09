@@ -1,0 +1,209 @@
+From ea200952fc61ee50b98372b839b28858a079baee Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Tue, 8 Jun 2021 23:38:43 +0200
+Subject: [PATCH 5/5] [NOAPI] [INCLUDE] [MISC] fixup includes to
+ io/views/detail/*
+
+cherry-picked
+---
+ test/performance/io/detail/view_take_until_benchmark.cpp | 2 +-
+ test/snippet/io/detail/take_exactly.cpp                  | 2 +-
+ test/snippet/io/detail/take_line_view_behaviour.cpp      | 2 +-
+ test/snippet/io/detail/take_line_view_tokenise.cpp       | 2 +-
+ test/snippet/io/detail/take_until_view.cpp               | 2 +-
+ test/unit/core/range/range_iterator_test.cpp             | 2 +-
+ test/unit/io/detail/istreambuf_view_test.cpp             | 4 ++--
+ test/unit/io/detail/take_exactly_view_test.cpp           | 2 +-
+ test/unit/io/detail/take_line_view_test.cpp              | 2 +-
+ test/unit/io/detail/take_until_view_test.cpp             | 2 +-
+ test/unit/search/views/kmer_hash_test.cpp                | 2 +-
+ test/unit/search/views/minimiser_hash_test.cpp           | 2 +-
+ test/unit/search/views/minimiser_test.cpp                | 2 +-
+ test/unit/utility/views/repeat_test.cpp                  | 2 +-
+ 14 files changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/test/performance/io/detail/view_take_until_benchmark.cpp b/test/performance/io/detail/view_take_until_benchmark.cpp
+index 44eccc8f3..0785d6e72 100644
+--- a/test/performance/io/detail/view_take_until_benchmark.cpp
++++ b/test/performance/io/detail/view_take_until_benchmark.cpp
+@@ -13,7 +13,7 @@
+ 
+ #include <benchmark/benchmark.h>
+ 
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/utility/char_operations/predicate.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ 
+diff --git a/test/snippet/io/detail/take_exactly.cpp b/test/snippet/io/detail/take_exactly.cpp
+index a804968a5..5f95190aa 100644
+--- a/test/snippet/io/detail/take_exactly.cpp
++++ b/test/snippet/io/detail/take_exactly.cpp
+@@ -1,7 +1,7 @@
+ #include <string>
+ 
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/io/detail/take_exactly_view.hpp>
++#include <seqan3/io/views/detail/take_exactly_view.hpp>
+ 
+ int main()
+ {
+diff --git a/test/snippet/io/detail/take_line_view_behaviour.cpp b/test/snippet/io/detail/take_line_view_behaviour.cpp
+index 3749ec178..3bc4a86b6 100644
+--- a/test/snippet/io/detail/take_line_view_behaviour.cpp
++++ b/test/snippet/io/detail/take_line_view_behaviour.cpp
+@@ -1,7 +1,7 @@
+ #include <string>
+ 
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/io/detail/take_line_view.hpp>
++#include <seqan3/io/views/detail/take_line_view.hpp>
+ 
+ int main()
+ {
+diff --git a/test/snippet/io/detail/take_line_view_tokenise.cpp b/test/snippet/io/detail/take_line_view_tokenise.cpp
+index 4126c0a7c..f6fe0e3fd 100644
+--- a/test/snippet/io/detail/take_line_view_tokenise.cpp
++++ b/test/snippet/io/detail/take_line_view_tokenise.cpp
+@@ -1,5 +1,5 @@
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/io/detail/take_line_view.hpp>
++#include <seqan3/io/views/detail/take_line_view.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ 
+ int main()
+diff --git a/test/snippet/io/detail/take_until_view.cpp b/test/snippet/io/detail/take_until_view.cpp
+index 95173452b..3df90f460 100644
+--- a/test/snippet/io/detail/take_until_view.cpp
++++ b/test/snippet/io/detail/take_until_view.cpp
+@@ -2,7 +2,7 @@
+ #include <string>
+ 
+ #include <seqan3/core/debug_stream.hpp>                 // for debug_stream
+-#include <seqan3/io/detail/take_until_view.hpp>         // for detail::take_until*
++#include <seqan3/io/views/detail/take_until_view.hpp>   // for detail::take_until*
+ #include <seqan3/utility/char_operations/predicate.hpp> // for is_char
+ #include <seqan3/utility/views/single_pass_input.hpp>   // for views::single_pass_input
+ 
+diff --git a/test/unit/core/range/range_iterator_test.cpp b/test/unit/core/range/range_iterator_test.cpp
+index b07f84ac3..3bb5a8d49 100644
+--- a/test/unit/core/range/range_iterator_test.cpp
++++ b/test/unit/core/range/range_iterator_test.cpp
+@@ -13,7 +13,7 @@
+ 
+ #include <seqan3/core/range/detail/random_access_iterator.hpp>
+ #include <seqan3/core/range/type_traits.hpp>
+-#include <seqan3/io/detail/take_exactly_view.hpp>
++#include <seqan3/io/views/detail/take_exactly_view.hpp>
+ #include <seqan3/utility/detail/type_name_as_string.hpp>
+ #include <seqan3/utility/type_list/traits.hpp>
+ 
+diff --git a/test/unit/io/detail/istreambuf_view_test.cpp b/test/unit/io/detail/istreambuf_view_test.cpp
+index 1c607e9a3..7dfd8898c 100644
+--- a/test/unit/io/detail/istreambuf_view_test.cpp
++++ b/test/unit/io/detail/istreambuf_view_test.cpp
+@@ -15,8 +15,8 @@
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+ #include <seqan3/alphabet/views/char_to.hpp>
+ #include <seqan3/alphabet/views/complement.hpp>
+-#include <seqan3/io/detail/istreambuf_view.hpp>
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/istreambuf_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/tmp_filename.hpp>
+ #include <seqan3/utility/char_operations/predicate.hpp>
+diff --git a/test/unit/io/detail/take_exactly_view_test.cpp b/test/unit/io/detail/take_exactly_view_test.cpp
+index 703cf7770..0b016a607 100644
+--- a/test/unit/io/detail/take_exactly_view_test.cpp
++++ b/test/unit/io/detail/take_exactly_view_test.cpp
+@@ -15,7 +15,7 @@
+ #include <string>
+ #include <vector>
+ 
+-#include <seqan3/io/detail/take_exactly_view.hpp>
++#include <seqan3/io/views/detail/take_exactly_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ #include <seqan3/utility/range/concept.hpp>
+diff --git a/test/unit/io/detail/take_line_view_test.cpp b/test/unit/io/detail/take_line_view_test.cpp
+index 6ceae0fd0..c97a2a6c0 100644
+--- a/test/unit/io/detail/take_line_view_test.cpp
++++ b/test/unit/io/detail/take_line_view_test.cpp
+@@ -9,7 +9,7 @@
+ 
+ #include <seqan3/std/ranges>
+ 
+-#include <seqan3/io/detail/take_line_view.hpp>
++#include <seqan3/io/views/detail/take_line_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ 
+diff --git a/test/unit/io/detail/take_until_view_test.cpp b/test/unit/io/detail/take_until_view_test.cpp
+index 86d60abab..a0e87d546 100644
+--- a/test/unit/io/detail/take_until_view_test.cpp
++++ b/test/unit/io/detail/take_until_view_test.cpp
+@@ -11,7 +11,7 @@
+ #include <seqan3/std/ranges>
+ #include <seqan3/std/span>
+ 
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/utility/views/single_pass_input.hpp>
+ 
+diff --git a/test/unit/search/views/kmer_hash_test.cpp b/test/unit/search/views/kmer_hash_test.cpp
+index c50961291..0c2beef96 100644
+--- a/test/unit/search/views/kmer_hash_test.cpp
++++ b/test/unit/search/views/kmer_hash_test.cpp
+@@ -13,7 +13,7 @@
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+ #include <seqan3/alphabet/views/complement.hpp>
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/search/views/kmer_hash.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/utility/views/repeat_n.hpp>
+diff --git a/test/unit/search/views/minimiser_hash_test.cpp b/test/unit/search/views/minimiser_hash_test.cpp
+index 01653118a..3af19bf36 100644
+--- a/test/unit/search/views/minimiser_hash_test.cpp
++++ b/test/unit/search/views/minimiser_hash_test.cpp
+@@ -10,7 +10,7 @@
+ 
+ #include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/search/views/minimiser_hash.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ 
+diff --git a/test/unit/search/views/minimiser_test.cpp b/test/unit/search/views/minimiser_test.cpp
+index 2e752b4e5..38ee23d9d 100644
+--- a/test/unit/search/views/minimiser_test.cpp
++++ b/test/unit/search/views/minimiser_test.cpp
+@@ -13,7 +13,7 @@
+ #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+ #include <seqan3/alphabet/views/complement.hpp>
+-#include <seqan3/io/detail/take_until_view.hpp>
++#include <seqan3/io/views/detail/take_until_view.hpp>
+ #include <seqan3/search/views/kmer_hash.hpp>
+ #include <seqan3/search/views/minimiser.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+diff --git a/test/unit/utility/views/repeat_test.cpp b/test/unit/utility/views/repeat_test.cpp
+index 80c3bc76e..b4d1e8abf 100644
+--- a/test/unit/utility/views/repeat_test.cpp
++++ b/test/unit/utility/views/repeat_test.cpp
+@@ -13,7 +13,7 @@
+ #include <seqan3/core/detail/iterator_traits.hpp>
+ #include <seqan3/core/detail/persist_view.hpp>
+ #include <seqan3/core/range/type_traits.hpp>
+-#include <seqan3/io/detail/take_exactly_view.hpp>
++#include <seqan3/io/views/detail/take_exactly_view.hpp>
+ #include <seqan3/test/expect_range_eq.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ #include <seqan3/utility/views/repeat.hpp>
+-- 
+2.31.1
+
