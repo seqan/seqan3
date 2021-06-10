@@ -27,7 +27,7 @@ namespace seqan3
 class rna15;
 
 /*!\brief The 15 letter DNA alphabet, containing all IUPAC smybols minus the gap.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif

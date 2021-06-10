@@ -6,17 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the \link alphabet_adaptation Alphabet / Adaptation submodule \endlink.
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Meta-header for the \link alphabet_range Alphabet / Range submodule \endlink.
  */
-
 #pragma once
 
-#include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/adaptation/uint.hpp>
+#include <seqan3/alphabet/range/hash.hpp>
+#include <seqan3/alphabet/range/sequence.hpp>
 
-/*!\defgroup alphabet_adaptation Adaptation
- * \brief Provides alphabet adaptions of some standard char and uint types.
+/*!\defgroup alphabet_range Range
+ * \brief Alphabet related ranges.
  * \ingroup alphabet
  * \see alphabet
  */

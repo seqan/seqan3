@@ -31,7 +31,7 @@ class rna5;
 class rna15;
 
 /*!\brief Translate one nucleotide triplet into single amino acid (single nucleotide interface).
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  * \tparam nucl_type The type of input nucleotides; must model seqan3::nucleotide_alphabet.
  * \param[in] n1 First nucleotide in triplet.
  * \param[in] n2 Second nucleotide in triplet.

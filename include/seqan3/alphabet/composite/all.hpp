@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Meta-header for the composite submodule; includes all headers from alphabet/composite/.
+ * \brief Meta-header for the \link alphabet_composite Alphabet / Composite submodule \endlink.
  */
 #pragma once
 
@@ -15,9 +15,10 @@
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
 #include <seqan3/alphabet/composite/semialphabet_any.hpp>
 
-/*!\defgroup composite Composite
+/*!\defgroup alphabet_composite Composite
  * \brief Provides templates for combining existing alphabets into new alphabet types.
  * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *

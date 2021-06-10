@@ -26,7 +26,7 @@ namespace seqan3
 {
 
 /*!\brief This is an empty base class that can be inherited by types that shall model seqan3::aminoacid_alphabet.
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  * \see seqan3::enable_aminoacid
  *
  * \stableapi{Since version 3.1.}
@@ -48,7 +48,7 @@ template <typename ...args_t>
 void enable_aminoacid(args_t ...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enable_aminoacid.
-//!\ingroup aminoacid
+//!\ingroup alphabet_aminoacid
 template <typename alphabet_t>
 struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_aminoacid_cpo<alphabet_t>, 2>
 {
@@ -108,7 +108,7 @@ namespace seqan3
 
 /*!\brief A trait that indicates whether a type shall model seqan3::aminoacid_alphabet.
  * \tparam t Type of the argument.
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  * \details
  *
  * This is an auxiliary trait that is checked by seqan3::aminoacid_alphabet to verify that a type is an amino acid.
@@ -162,7 +162,7 @@ inline constexpr bool enable_aminoacid =
 /*!\interface seqan3::aminoacid_alphabet <>
  * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents amino acids.
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  *
  * Since an amino acid alphabet has no specific characteristics (like the complement
  * function for nucleotide alphabets), we distinguish an amino acid alphabet by

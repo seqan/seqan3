@@ -156,8 +156,9 @@ seqan3::aminoacid_scoring_scheme. You can import them with the following include
 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp include_scoring_scheme
 
-As the names suggests, you need to use the former when scoring \ref nucleotide "nucleotides" and the latter when working
-with \ref aminoacid "aminoacids". You have already used the seqan3::nucleotide_scoring_scheme in the assignments before.
+As the names suggests, you need to use the former when scoring \ref alphabet_nucleotide "nucleotides" and the latter
+when working with \ref alphabet_aminoacid "aminoacids". You have already used the seqan3::nucleotide_scoring_scheme in
+the assignments before.
 The scoring scheme was default initialised using the
 [Hamming Distance](https://en.wikipedia.org/wiki/Hamming_distance). The scoring schemes can also be configured by either
 setting a \ref seqan3::scoring_scheme_base::set_simple_scheme "simple scheme" consisting of seqan3::match_score and

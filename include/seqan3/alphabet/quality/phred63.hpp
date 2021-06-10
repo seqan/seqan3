@@ -24,14 +24,14 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \details
  *
- * The phred63 \ref quality alphabet represents the zero-based Phred score range [0..62] mapped to the consecutive ASCII
- * range ['!' .. '_']. It represents the Sanger and Illumina 1.8+ standard beyond the typical range of raw reads
- * (0 to 41), namely seqan3::phred42. If you intend to use Phred scores exceeding 62, use the larger score type, namely
- * seqan3::phred94.
+ * The phred63 \ref alphabet_quality alphabet represents the zero-based Phred score range [0..62] mapped to the
+ * consecutive ASCII range ['!' .. '_']. It represents the Sanger and Illumina 1.8+ standard beyond the typical range of
+ * raw reads (0 to 41), namely seqan3::phred42. If you intend to use Phred scores exceeding 62, use the larger score
+ * type, namely seqan3::phred94.
  * Via seqan3::qualified, you can combine a nucleotide alphabet with the Phred score to save space.
  * All seqan3::dna4 and seqan3::rna4 combinations with seqan3::phred63 still fit into a single byte,
  * e.g. `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (4 * 63 = 252 values can be stored in a single byte which can

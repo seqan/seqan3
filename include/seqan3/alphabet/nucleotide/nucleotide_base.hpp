@@ -21,7 +21,7 @@ namespace seqan3
 {
 
 /*!\brief A CRTP-base that refines seqan3::alphabet_base and is used by the nucleotides.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  *
@@ -98,7 +98,7 @@ public:
      *
      * \details
      *
-     * See \ref nucleotide for the actual values.
+     * See \ref alphabet_nucleotide for the actual values.
      *
      * Provides an implementation for seqan3::complement, required to model seqan3::nucleotide_alphabet.
      *

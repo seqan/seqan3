@@ -29,7 +29,8 @@
 namespace seqan3::detail
 {
 
-//!\brief Function object for seqan3::views::as_const.
+//!\brief Function object for seqan3::detail::as_const.
+//!\ingroup alphabet_container
 struct as_const_fn
 {
     //!\brief Operator that returns rvalues as rvalues.
@@ -52,7 +53,7 @@ struct as_const_fn
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of `const`-protected elements.
- * \ingroup views
+ * \ingroup alphabet_container
  *
  * \details
  *
@@ -86,6 +87,7 @@ struct as_const_fn
 inline constexpr auto as_const = std::views::transform(seqan3::detail::as_const_fn{});
 
 /*!\brief The reference type of seqan3::concatenated_sequences.
+ * \ingroup alphabet_container
  * \tparam value_type The value_type of the seqan3::concatenated_sequences.
  * \tparam is_const_ref Reference type or const reference type.
  *
@@ -136,7 +138,7 @@ namespace seqan3
  * seqan3::reservible_container and have inner_type's size_type as value_type.
  * \implements seqan3::cerealisable
  * \implements seqan3::reservible_container
- * \ingroup container
+ * \ingroup alphabet_container
  *
  * This class may be used whenever you would usually use `std::vector<std::vector<some_alphabet>>` or
  * `std::vector<std::string>`, i.e. whenever you have a collection of sequences. It is the spiritual successor of

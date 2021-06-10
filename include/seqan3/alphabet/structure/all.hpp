@@ -7,11 +7,22 @@
 
 /*!\file
  * \author Joerg Winkler <j.winkler AT fu-berlin.de>
- * \brief Meta-header for the structure module. It includes all headers from alphabet/structure/.
- *
- * \defgroup structure Structure
- * \ingroup alphabet
+ * \brief Meta-header for the \link alphabet_structure Alphabet / Structure submodule \endlink.
+ */
+
+#pragma once
+
+#include <seqan3/alphabet/structure/concept.hpp>
+#include <seqan3/alphabet/structure/dot_bracket3.hpp>
+#include <seqan3/alphabet/structure/dssp9.hpp>
+#include <seqan3/alphabet/structure/structured_aa.hpp>
+#include <seqan3/alphabet/structure/structured_rna.hpp>
+#include <seqan3/alphabet/structure/wuss.hpp>
+
+/*!\defgroup alphabet_structure Structure
  * \brief Provides types to represent single elements of RNA and protein structures.
+ * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *
@@ -23,12 +34,3 @@
  * [WUSS](@ref seqan3::wuss)                | `.<>:,-_~;()[]{}AaBb...` | Annotation that provides further markups and pseudoknots.
  * [DSSP](@ref seqan3::dssp9)               | `HBEGITSCX`              | Structure encoding for proteins.
  */
-
-#pragma once
-
-#include <seqan3/alphabet/structure/concept.hpp>
-#include <seqan3/alphabet/structure/dot_bracket3.hpp>
-#include <seqan3/alphabet/structure/dssp9.hpp>
-#include <seqan3/alphabet/structure/structured_aa.hpp>
-#include <seqan3/alphabet/structure/structured_rna.hpp>
-#include <seqan3/alphabet/structure/wuss.hpp>

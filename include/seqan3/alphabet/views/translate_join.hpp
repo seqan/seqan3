@@ -34,7 +34,7 @@ namespace seqan3::detail
  * \implements std::ranges::random_access_range
  * \tparam urng_t The type of the range being translated.
  * \param[in] tf Translation frames to be used.
- * \ingroup views
+ * \ingroup alphabet_views
  */
 template <std::ranges::view urng_t>
 class view_translate_join : public std::ranges::view_base
@@ -320,17 +320,12 @@ struct translate_join_fn
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief A view that translates nucleotide into aminoacid alphabet with 1, 2, 3 or 6 frames. Input and output range are always two-dimensional.
  * \tparam urng_t The type of the range being processed.
  * \param[in] urange The range being processed. Needs to be a range of ranges (two-dimensional).
  * \param[in] tf A value of seqan3::tanslation_frames that indicates the desired frames.
  * \returns A range of ranges containing frames with aminoacid sequence. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -386,6 +381,5 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto translate_join = detail::translate_join_fn{};
-//!\}
 
 } // namespace seqan3::views

@@ -20,7 +20,7 @@ namespace seqan3
 {
 /*!\interface seqan3::sequence <>
  * \brief The generic concept for a (biological) sequence.
- * \ingroup range
+ * \ingroup alphabet_range
  * \extends std::ranges::input_range
  *
  * A (biological) sequence is (at least) an std::ranges::input_range whose reference type models seqan3::alphabet.

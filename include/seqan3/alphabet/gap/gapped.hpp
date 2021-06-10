@@ -21,7 +21,7 @@ namespace seqan3
 
 
 /*!\brief Extends a given alphabet with a gap character.
- * \ingroup gap
+ * \ingroup alphabet_gap
  * \tparam alphabet_t Type of the letter, e.g. dna4; must satisfy seqan3::writable_alphabet.
  *
  * The gapped alphabet represents the variant of a given alphabet and the
@@ -52,12 +52,12 @@ namespace seqan3::detail
 // ---------------------------------------------------------------------------------------------------------------------
 
 //!\brief Helper variable to determine if an alphabet is gapped [default: false].
-//!\ingroup gap
+//!\ingroup alphabet_gap
 template <typename t>
 constexpr bool is_gapped_alphabet = false;
 
 //!\brief Helper variable to determine if an alphabet is gapped, true for specilisations of seqan3::gapped.
-//!\ingroup gap
+//!\ingroup alphabet_gap
 template <typename t>
 constexpr bool is_gapped_alphabet<gapped<t>> = true;
 

@@ -19,17 +19,12 @@
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               A view that converts a range of nucleotides to their complement.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -76,7 +71,5 @@ inline auto const complement = deep{std::views::transform([] (auto const in)
     // call element-wise complement from the nucleotide_alphabet
     return seqan3::complement(in);
 })};
-
-//!\}
 
 } // namespace seqan3::views

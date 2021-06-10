@@ -19,17 +19,12 @@
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               A view that calls seqan3::to_char() on each element in the input range.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -70,7 +65,5 @@ inline auto const to_char = deep{std::views::transform([] (auto const in) noexce
     static_assert(alphabet<std::remove_cvref_t<decltype(in)>>, "The value type of seqan3::views::to_char must model the seqan3::alphabet.");
     return seqan3::to_char(in);
 })};
-
-//!\}
 
 } // namespace seqan3::views

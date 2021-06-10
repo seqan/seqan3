@@ -164,7 +164,8 @@
  * because it is not safe (and not useful) to call certain members like `.c_str()` if our alphabets are used as
  * value type.
  *
- * We provide specialised containers with certain properties in the \ref range module.
+ * We provide specialised containers with certain properties in the \link alphabet_container Alphabet Container module
+ * \endlink.
  *
  * A container over an seqan3::alphabet automatically models the seqan3::sequence concept.
  */

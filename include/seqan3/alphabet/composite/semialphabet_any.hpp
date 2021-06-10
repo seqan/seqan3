@@ -18,7 +18,7 @@ namespace seqan3
 {
 
 /*!\brief A semi-alphabet that type erases all other semi-alphabets of the same size.
- * \ingroup composite
+ * \ingroup alphabet_composite
  * \implements seqan3::semialphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout

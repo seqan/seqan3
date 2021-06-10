@@ -28,7 +28,7 @@ namespace seqan3
 {
 
 /*!\brief The seqan3::cigar semialphabet pairs a counter with a seqan3::cigar::operation letter.
- * \ingroup cigar
+ * \ingroup alphabet_cigar
  * \implements seqan3::writable_semialphabet
  * \implements seqan3::trivially_copyable
  * \implements seqan3::standard_layout

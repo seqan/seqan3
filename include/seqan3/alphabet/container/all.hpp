@@ -6,17 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the \link alphabet_adaptation Alphabet / Adaptation submodule \endlink.
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
+ * \brief Meta-header for the \link alphabet_container Alphabet / Container submodule \endlink.
  */
-
 #pragma once
 
-#include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/adaptation/uint.hpp>
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+#include <seqan3/alphabet/container/concatenated_sequences.hpp>
 
-/*!\defgroup alphabet_adaptation Adaptation
- * \brief Provides alphabet adaptions of some standard char and uint types.
+/*!\defgroup alphabet_container Container
+ * \brief Alphabet related container.
  * \ingroup alphabet
  * \see alphabet
  */

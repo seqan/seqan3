@@ -59,7 +59,7 @@ namespace seqan3
 {
 
 /*!\brief A combined alphabet that can hold values of either of its alternatives.
- * \ingroup composite
+ * \ingroup alphabet_composite
  * \if DEV
  * \tparam ...alternative_types Types of possible values (at least 2); all must model
  *                              seqan3::detail::writable_constexpr_alphabet, std::regular and be unique.

@@ -21,7 +21,7 @@ namespace seqan3
 {
 
 /*!\brief A CRTP-base that refines seqan3::alphabet_base and is used by the amino acids.
- * \ingroup aminoacid
+ * \ingroup alphabet_aminoacid
  * \tparam derived_type The CRTP parameter type.
  * \tparam size         The size of the alphabet.
  *
