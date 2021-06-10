@@ -33,7 +33,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief The CRTP-policy that computes a batch of cells in the alignment matrix using simd instructions.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam score_t The score type of the dynamic programming matrix; must model seqan3::simd::simd_concept.

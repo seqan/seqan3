@@ -32,7 +32,7 @@ template <typename configuration_t>
 class policy_alignment_result_builder;
 
 /*!\brief A struct that contains the actual alignment result data.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam sequence1_id_t        The type of the alignment identifier for the first sequence.
  * \tparam sequence2_id_t        The type of the alignment identifier for the second sequence.
@@ -125,7 +125,7 @@ namespace seqan3
 {
 
 /*!\brief Stores the alignment results and gives access to score, alignment and the front and end positionss.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam alignment_result_value_t The underlying value type containing the information from the alignment computation.
  *
  * \details
@@ -365,7 +365,7 @@ namespace seqan3::detail
 {
 /*!\brief Transformation trait to access the hidden result value type of the seqan3::alignment_result class.
  * \implements transformation_trait
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam result_t The type of the alignment result.
  *

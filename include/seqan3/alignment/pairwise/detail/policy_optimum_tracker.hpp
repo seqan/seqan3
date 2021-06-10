@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A function object that compares and possibly updates the alignment optimum with the current cell.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \details
  *
@@ -69,7 +69,7 @@ struct max_score_updater
 };
 
 /*!\brief A function object that compares and possibly updates the alignment optimum with the current cell.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \details
  *
@@ -163,7 +163,7 @@ public:
 };
 
 /*!\brief Implements the tracker to store the global optimum for a particular alignment computation.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam alignment_configuration_t The type of the alignment configuration; must be a type specialisation of
  *                                   seqan3::configuration.

@@ -25,7 +25,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A vectorised scoring scheme to handle scoring matrices using gather strategy.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  * \tparam simd_score_t The type of the simd vector; must model seqan3::simd::simd_concept.
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet.
  * \tparam alignment_t The type of the alignment to compute; must be either seqan3::align_cfg::method_global or

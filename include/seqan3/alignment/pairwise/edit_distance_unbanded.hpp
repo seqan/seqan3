@@ -674,7 +674,7 @@ private:
 };
 
 /*!\brief This calculates an alignment using the edit distance and without a band.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam database_t     \copydoc default_edit_distance_trait_type::database_type
  * \tparam query_t        \copydoc default_edit_distance_trait_type::query_type
  * \tparam align_config_t The configuration type; must be of type seqan3::configuration.

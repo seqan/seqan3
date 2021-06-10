@@ -27,7 +27,7 @@ namespace seqan3::align_cfg
 
 /*!\brief A strong type of underlying type `int32_t` that represents a score (usually negative) that
  *        is incurred once per stretch of consecutive gaps.
- * \ingroup scoring
+ * \ingroup alignment_configuration
  * \see seqan3::align_cfg::gap_cost_affine
  */
 struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::detail::strong_type_skill::convert>
@@ -43,7 +43,7 @@ struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::det
 
  /*!\brief A strong type of underlying type `int32_t` that represents the score (usually negative) of any character
   *        against a gap character.
-  * \ingroup scoring
+  * \ingroup alignment_configuration
   * \see seqan3::align_cfg::gap_cost_affine
   */
  struct extension_score : seqan3::detail::strong_type<int32_t,

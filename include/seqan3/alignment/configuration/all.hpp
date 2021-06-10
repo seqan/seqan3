@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link configuration alignment configuration module \endlink.
+ * \brief Meta-header for the \link alignment_configuration Alignment / Configuration submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 

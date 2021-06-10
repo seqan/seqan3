@@ -34,7 +34,7 @@ namespace seqan3
 {
 
 /*!\brief Computes the pairwise alignment for a pair of sequences or a range over sequence pairs.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam sequence_t         The type of sequence pairs (see details for more information on the type constraints).
  * \tparam alignment_config_t The type of the alignment configuration; must be a seqan3::configuration.
  * \param[in] seq             A tuple with two sequences or a range over such tuples.

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment_matrix matrix sub-module \endlink.
+ * \brief Meta-header for the \link alignment_matrix Alignment / Matrix submodule \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 

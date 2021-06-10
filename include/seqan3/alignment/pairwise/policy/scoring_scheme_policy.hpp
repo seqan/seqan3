@@ -20,7 +20,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The CRTP-policy that stores the scoring scheme used for this alignment algorithm.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam scoring_scheme_t The type of the scoring scheme.

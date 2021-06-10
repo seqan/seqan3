@@ -6,15 +6,16 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link decorator decorator submodule \endlink.
+ * \brief Meta-header for the \link alignment_decorator Alignment / Decorator submodule \endlink.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
- *
- * \defgroup decorator Decorator
- * \brief The decorator submodule contains special SeqAn decorators and generic decorator concepts.
- * \ingroup range
- * \sa seqan3/range/decorator/all.hpp
  */
 
 #pragma once
 
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
+
+/*!\defgroup alignment_decorator Decorator
+ * \brief The decorator submodule contains special SeqAn decorators.
+ * \ingroup alignment
+ * \see alignment
+ */

@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the detail block of the \link alignment_matrix matrix sub-module \endlink.
+ * \brief Meta-header for the detail block of the \link alignment_matrix Alignment / Matrix submodule \endlink.
  * \author René Rahn <rene.rahn AT fu-berlin.de>
  */
 

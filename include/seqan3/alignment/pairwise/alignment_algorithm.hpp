@@ -41,7 +41,7 @@ namespace seqan3::detail
 
 /*!\brief The alignment algorithm type to compute standard pairwise alignment using dynamic programming.
  * \implements std::invocable
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam config_t             The configuration type; must be of type seqan3::configuration.
  * \tparam algorithm_policies_t Template parameter pack with the policies to determine the execution of the algorithm;
  *                              must be wrapped as seqan3::detail::deferred_crtp_base.
@@ -63,7 +63,7 @@ namespace seqan3::detail
  * are inherited using so-called `alignment policies`. An alignment policy is a type that implements a specific
  * functionality through a common interface that is used by the alignment algorithm. These policies are also
  * the customisation points of the algorithm which will be used to implement a specific behaviour. You can read more
- * about the policies in \ref alignment_policy.
+ * about the policies in \ref alignment_pairwise_policy.
  *
  * Since some of the policies are augmented with traits to further refine the policy execution during the configuration,
  * it is necessary to defer the template instantiation of the policies, which are modelled as CRTP-base classes.

@@ -23,7 +23,7 @@ namespace seqan3
  * \tparam alphabet_t   The type of the first letter that you wish to score; must model seqan3::alphabet.
  * \tparam alphabet2_t  The type of the second letter that you wish to score; must model seqan3::alphabet;
  *                      defaults to `alphabet_t`.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  *
  * \details
  *

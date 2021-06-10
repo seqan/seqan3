@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Function object that compares and updates the alignment optimum for the vectorised global alignment algorithm.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \details
  *
@@ -81,7 +81,7 @@ struct max_score_updater_simd_global
 };
 
 /*!\brief Implements the tracker to store the global optimum for a particular alignment computation.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \copydetails seqan3::detail::policy_optimum_tracker
  */
 template <typename alignment_configuration_t, std::semiregular optimum_updater_t>

@@ -22,7 +22,7 @@ namespace seqan3
 {
 
 /*!\brief Identifiers for amino acid similarity matrixes.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  *
  * \details
  *
@@ -58,7 +58,7 @@ enum class aminoacid_similarity_matrix
 };
 
 /*!\brief A data structure for managing and computing the score of two amino acids.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  * \implements seqan3::scoring_scheme
  *
  * \details

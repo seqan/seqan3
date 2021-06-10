@@ -25,7 +25,7 @@ namespace seqan3::detail
 
 /*!\interface seqan3::detail::pairwise_alignment < >
  * \extends seqan3::pair_like
- * \ingroup alignment
+ * \ingroup alignment_pairwise
  * \brief A concept that models a pairwise alignment type.
  *
  * \details
@@ -60,7 +60,7 @@ SEQAN3_CONCEPT pairwise_alignment =
 
 /*!\interface seqan3::detail::writable_pairwise_alignment < >
  * \extends seqan3::detail::pairwise_alignment
- * \ingroup alignment
+ * \ingroup alignment_pairwise
  * \brief A concept that models a writable pairwise alignment type.
  *
  * \details
