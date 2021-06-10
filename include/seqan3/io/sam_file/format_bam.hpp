@@ -20,8 +20,6 @@
 
 #include <seqan3/alphabet/nucleotide/dna16sam.hpp>
 #include <seqan3/core/debug_stream/optional.hpp>
-#include <seqan3/io/detail/istreambuf_view.hpp>
-#include <seqan3/io/detail/take_exactly_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -29,6 +27,8 @@
 #include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/io/views/detail/istreambuf_view.hpp>
+#include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/utility/views/slice.hpp>
 
 namespace seqan3

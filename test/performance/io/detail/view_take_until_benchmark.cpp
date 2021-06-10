@@ -13,7 +13,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <seqan3/io/detail/take_until_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 

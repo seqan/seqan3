@@ -529,7 +529,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * \header_file{seqan3/io/detail/take_until_view.hpp}
+ * \header_file{seqan3/io/views/detail/take_until_view.hpp}
  *
  * ### View properties
  *
@@ -568,7 +568,7 @@ namespace seqan3::detail
  *
  * ### Example
  *
- * \include test/snippet/io/detail/take_until_view.cpp
+ * \include test/snippet/io/views/detail/take_until_view.cpp
  *
  * \hideinitializer
  */

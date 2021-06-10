@@ -14,7 +14,7 @@
 
 #include <seqan3/std/concepts>
 
-#include <seqan3/io/detail/take_exactly_view.hpp>
+#include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/utility/views/repeat.hpp>
 
 namespace seqan3::detail
