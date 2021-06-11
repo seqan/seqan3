@@ -15,8 +15,8 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 

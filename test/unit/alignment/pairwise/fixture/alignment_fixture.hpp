@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 
 namespace seqan3::test::alignment::fixture
 {

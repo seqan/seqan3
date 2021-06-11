@@ -9,7 +9,7 @@
 
 #include <sstream>
 
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 
 using seqan3::operator|;

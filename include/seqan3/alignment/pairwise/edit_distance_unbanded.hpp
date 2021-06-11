@@ -19,9 +19,9 @@
 #include <utility>
 
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
-#include <seqan3/alignment/matrix/edit_distance_score_matrix_full.hpp>
-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
-#include <seqan3/alignment/matrix/matrix_concept.hpp>
+#include <seqan3/alignment/matrix/detail/edit_distance_score_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
 #include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/core/configuration/configuration.hpp>

@@ -20,8 +20,8 @@
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/configuration/configuration.hpp>

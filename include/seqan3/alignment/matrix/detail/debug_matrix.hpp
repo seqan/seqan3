@@ -14,9 +14,9 @@
 
 #include <iomanip>
 
-#include <seqan3/alignment/matrix/matrix_concept.hpp>
-#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
+#include <seqan3/alignment/matrix/detail/row_wise_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/debug_stream/optional.hpp>
@@ -45,17 +45,17 @@ namespace seqan3::detail
  *
  * # Score matrix example
  *
- * \include test/snippet/alignment/matrix/debug_matrix_score.cpp
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_score.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/debug_matrix_score.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_score.out
  *
  * # Trace matrix example
  *
- * \include test/snippet/alignment/matrix/debug_matrix_trace.cpp
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/debug_matrix_trace.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.out
  */
 template <matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
 class debug_matrix

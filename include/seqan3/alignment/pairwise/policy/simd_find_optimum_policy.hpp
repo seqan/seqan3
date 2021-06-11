@@ -14,7 +14,7 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_optimum.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/core/detail/empty_type.hpp>

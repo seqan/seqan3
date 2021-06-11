@@ -15,7 +15,7 @@
 #include <tuple>
 
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
