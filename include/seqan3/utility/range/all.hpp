@@ -54,7 +54,7 @@
  *
  * **Decorators** are ranges that are always defined on another range and decorate/annotate the underlying range
  * with additional information. They do not own the underlying range, but can contain member data of their own.
- * See the \link decorator decorator submodule \endlink for more details.
+ * See the \link alignment_decorator decorator submodule \endlink for more details.
  *
  * **Views** are ranges that are usually defined on another range and transform the underlying range
  * via some algorithm or operation, however, some views are stand-alone, i.e. they are just an algorithm that

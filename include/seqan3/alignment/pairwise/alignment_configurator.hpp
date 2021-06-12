@@ -66,7 +66,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Provides several contracts to test when configuring the alignment algorithm.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam range_type            The type of the range containing sequences to be aligned.
  * \tparam alignment_config_type The type of the alignment configuration.
  *
@@ -128,7 +128,7 @@ public:
 
 /*!\brief Configures the alignment algorithm given the sequences and the configuration object.
  * \implements seqan3::transformation_trait
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  */
 struct alignment_configurator
 {

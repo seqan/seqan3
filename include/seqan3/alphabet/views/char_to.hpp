@@ -20,18 +20,13 @@
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               A view over an alphabet, given a range of characters.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::alphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -76,7 +71,5 @@ inline auto const char_to = deep{std::views::transform([] (auto && in)
     // call element-wise assign_char from the alphabet
     return assign_char_to(in, alphabet_type{});
 })};
-
-//!\}
 
 } // namespace seqan3::views

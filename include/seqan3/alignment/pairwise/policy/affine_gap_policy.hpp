@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 
@@ -25,7 +25,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief The CRTP-policy that computes a single cell in the alignment matrix.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam score_t The score type of the dynamic programming matrix; must model seqan3::arithmetic.

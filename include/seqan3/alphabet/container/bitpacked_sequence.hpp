@@ -34,7 +34,7 @@ namespace seqan3
  * \tparam alphabet_type The value type of the container, must satisfy seqan3::writable_semialphabet and std::regular.
  * \implements seqan3::reservible_container
  * \implements seqan3::cerealisable
- * \ingroup container
+ * \ingroup alphabet_container
  *
  * This class template behaves just like std::vector<alphabet_type> but has an internal representation where
  * multiple values are packed into a single byte/word to save space, e.g. seqan3::bitpacked_sequence<seqan3::dna4>

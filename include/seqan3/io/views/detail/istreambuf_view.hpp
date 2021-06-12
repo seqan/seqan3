@@ -76,7 +76,7 @@ namespace seqan3::detail
  *
  * \details
  *
- * \header_file{seqan3/io/detail/istreambuf_view.hpp}
+ * \header_file{seqan3/io/views/detail/istreambuf_view.hpp}
  *
  * ### View properties
  *

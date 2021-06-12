@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment alignment module \endlink.
+ * \brief Meta-header for the \link alignment Alignment module \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -185,8 +185,8 @@
  *
  * ### Scoring gaps
  *
- * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref gap) and a gap interval to refer
- * to a stretch of consecutive gaps.
+ * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref alphabet_gap) and a gap interval to
+ * refer to a stretch of consecutive gaps.
  * When aligning two sequences a gap is introduced to mark an insertion or deletion with respect to the other sequence.
  * However, because it is widely recognised that the likelihood of `n` consecutive gaps is much higher than that
  * of `n` individual gaps the scoring of an individual gap or a stretch of gaps is not handled by the scoring scheme.
@@ -231,7 +231,7 @@
  * special combinations of parameters a notably faster algorithm is available.
  * It is automatically selected if all of the following requirements are satisfied:
  *  * Edit distance gaps, i.e. default initialised seqan3::align_cfg::gap_cost_affine gap scheme.
- *  * Edit distance scoring for \ref nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
+ *  * Edit distance scoring for \ref alphabet_nucleotide "nucleotide alphabets", i.e. seqan3::align_cfg::scoring_scheme is
  *   initialised with default initialised seqan3::nucleotide_scoring_scheme.
  *  * Global alignment, i.e. seqan3::align_cfg::method_global.
  *

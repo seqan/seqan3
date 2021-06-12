@@ -34,7 +34,7 @@ namespace seqan3
  * \tparam inner_type The type of range that will be decorated with gaps; must model std::ranges::random_access_range
  *                    and std::ranges::sized_range.
  * \implements seqan3::writable_aligned_sequence
- * \ingroup decorator
+ * \ingroup alignment_decorator
  *
  * \details
  *

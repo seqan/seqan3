@@ -31,7 +31,7 @@
 namespace seqan3::detail
 {
 //!\brief Whether a type is `uint8_t`, `uint16_t` or `uint32_t`.
-//!\ingroup adaptation
+//!\ingroup alphabet_adaptation
 //!\hideinitializer
 template <typename type>
 constexpr bool is_uint_adaptation_v = std::same_as<type, uint8_t>  ||
@@ -44,7 +44,7 @@ namespace seqan3::custom
 
 /*!\brief Alphabet specific customisations for unsigned integral types.
  * \tparam uint_type Any of `uint8_t`, `uint16_t` and `uint32_t`.
- * \ingroup adaptation
+ * \ingroup alphabet_adaptation
  *
  * \stableapi{Since version 3.1.}
  */

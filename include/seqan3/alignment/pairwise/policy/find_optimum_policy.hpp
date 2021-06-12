@@ -15,14 +15,14 @@
 #include <type_traits>
 
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_optimum.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
 {
 
 /*!\brief The CRTP-policy to determine the optimum of the dynamic programming matrix.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  *

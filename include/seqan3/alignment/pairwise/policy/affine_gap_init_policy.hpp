@@ -15,14 +15,14 @@
 #include <tuple>
 
 #include <seqan3/alignment/configuration/align_config_method.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 
 namespace seqan3::detail
 {
 
 /*!\brief The CRTP-policy that implements the initialisation of the dynamic programming matrix with affine gaps.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam traits_type The traits type to determine the initialisation rules of the dynamic programming matrix.

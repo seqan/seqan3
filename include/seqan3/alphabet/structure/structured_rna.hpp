@@ -20,7 +20,7 @@ namespace seqan3
 {
 
 /*!\brief A seqan3::alphabet_tuple_base that joins a nucleotide alphabet with an RNA structure alphabet.
- * \ingroup structure
+ * \ingroup alphabet_structure
  * \implements seqan3::rna_structure_alphabet
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
@@ -155,7 +155,7 @@ public:
 
     /*!\brief Return a structured_rna where the sequence letter is converted to its complement.
      * \details
-     * See \ref nucleotide for the actual values.
+     * See \ref alphabet_nucleotide for the actual values.
      * Satisfies the seqan3::nucleotide_alphabet::complement() requirement via the seqan3::complement() wrapper.
      * The structure letter is not modified.
      * ### Complexity

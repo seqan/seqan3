@@ -23,7 +23,7 @@ namespace seqan3::detail
 
 /*!\interface seqan3::detail::sequence_pair <>
  * \brief A helper concept to check if a type is a sequence pair.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam t The type to check.
  *
@@ -48,7 +48,7 @@ SEQAN3_CONCEPT sequence_pair = requires ()
 
 /*!\interface seqan3::detail::sequence_pair_range <>
  * \brief A helper concept to check if a type is a range over seqan3::detail::sequence_pair.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam t The type to check.
  *
@@ -64,7 +64,7 @@ SEQAN3_CONCEPT sequence_pair_range = std::ranges::forward_range<t> && sequence_p
 
 /*!\interface seqan3::detail::indexed_sequence_pair_range <>
  * \brief A helper concept to check the input of the range based alignment algorithm interface.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam t The type to check.
  *
@@ -93,7 +93,7 @@ SEQAN3_CONCEPT indexed_sequence_pair_range = std::ranges::forward_range<t> &&
 
 /*!\interface seqan3::detail::align_pairwise_single_input <>
  * \brief A helper concept to test for correct single value input in seqan3::align_pairwise.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam t The type to check.
  *
@@ -115,7 +115,7 @@ SEQAN3_CONCEPT align_pairwise_single_input =
 
 /*!\interface seqan3::detail::align_pairwise_range_input <>
  * \brief A helper concept to test for correct range input in seqan3::align_pairwise.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam t The type to check.
  *

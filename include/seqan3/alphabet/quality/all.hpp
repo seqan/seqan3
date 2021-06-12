@@ -8,7 +8,7 @@
 /*!\file
  * \author Marie Hoffmann <marie.hoffmann AT fu-berlin.de>
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
- * \brief Meta-header that includes all headers from alphabet/quality/
+ * \brief Meta-header for the \link alphabet_quality Alphabet / Quality submodule \endlink.
  */
 
 #pragma once
@@ -21,9 +21,10 @@
 #include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp>
 
-/*!\defgroup quality Quality
+/*!\defgroup alphabet_quality Quality
  * \brief Provides the various quality score types.
  * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *

@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A vectorised scoring scheme handling matches and mismatches only.
- * \ingroup scoring
+ * \ingroup alignment_scoring
  * \tparam simd_score_t The type of the simd vector; must model seqan3::detail::simd_concept.
  * \tparam alphabet_t The type of the alphabet over which to define the scoring scheme; must model seqan3::semialphabet
  *                    and must have an alphabet size of at least 2.

@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 

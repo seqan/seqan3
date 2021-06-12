@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for alphabet-related views.
+ * \brief Meta-header for the \link alphabet_views Alphabet / Views submodule \endlink.
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
@@ -19,3 +19,9 @@
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
+
+/*!\defgroup alphabet_views Views
+ * \brief Alphabet related views.
+ * \ingroup alphabet
+ * \see alphabet
+ */

@@ -9,8 +9,8 @@
 
 #include <seqan3/core/debug_stream.hpp>
 
+#include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
-#include <seqan3/alignment/matrix/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>

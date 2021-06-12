@@ -24,7 +24,7 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \ingroup quality
+ * \ingroup alphabet_quality
  *
  * \details
  *

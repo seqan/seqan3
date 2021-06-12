@@ -14,7 +14,7 @@
 
 #include <bitset>
 
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
 #include <seqan3/utility/detail/bits_of.hpp>
 
@@ -23,7 +23,7 @@ namespace seqan3::detail
 
 /*!\brief The underlying data structure of seqan3::detail::edit_distance_unbanded that represents the
  *        trace matrix.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_matrix
  * \tparam word_t         \copydoc word_type
  * \tparam is_semi_global \copydoc default_edit_distance_trait_type::is_semi_global
  * \tparam use_max_errors \copydoc default_edit_distance_trait_type::use_max_errors

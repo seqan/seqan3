@@ -16,7 +16,7 @@
 #include <tuple>
 #include <type_traits>
 
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>

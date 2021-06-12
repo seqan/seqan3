@@ -20,17 +20,12 @@
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief               A view that calls seqan3::to_rank() on each element in the input range.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -74,7 +69,5 @@ inline auto const to_rank = deep{std::views::transform([] (auto const in) noexce
                   "The value type of seqan3::views::to_rank must model the seqan3::alphabet.");
     return seqan3::to_rank(in);
 })};
-
-//!\}
 
 } // namespace seqan3::views

@@ -11,7 +11,7 @@
 #include <utility>
 
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 
 #include "alignment_matrix_base_test_template.hpp"
 #include "../../../range/iterator_test_template.hpp"

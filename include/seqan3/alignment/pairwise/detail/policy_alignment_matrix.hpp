@@ -24,7 +24,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A policy that provides a common interface to acquire the correct alignment matrices.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam traits_t The alignment configuration traits type; must be an instance of
  *                  seqan3::detail::alignment_configuration_traits.

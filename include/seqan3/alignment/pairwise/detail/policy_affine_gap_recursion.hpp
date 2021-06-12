@@ -26,7 +26,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Implements the alignment recursion function for the alignment algorithm using affine gap costs.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam alignment_configuration_t The type of the alignment configuration.
  *

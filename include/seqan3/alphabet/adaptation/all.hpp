@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
- * \brief Meta-header for the adaptation submodule; includes all headers from alphabet/adaptation/.
+ * \brief Meta-header for the \link alphabet_adaptation Alphabet / Adaptation submodule \endlink.
  */
 
 #pragma once
@@ -15,7 +15,8 @@
 #include <seqan3/alphabet/adaptation/char.hpp>
 #include <seqan3/alphabet/adaptation/uint.hpp>
 
-/*!\defgroup adaptation Adaptation
+/*!\defgroup alphabet_adaptation Adaptation
  * \brief Provides alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
+ * \see alphabet
  */

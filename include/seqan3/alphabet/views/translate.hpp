@@ -152,7 +152,7 @@ struct translate_fn
  * \implements std::ranges::view
  * \implements std::ranges::sized_range
  * \implements std::ranges::random_access_range
- * \ingroup views
+ * \ingroup alphabet_views
  */
 template <std::ranges::view urng_t>
 //!\cond
@@ -482,7 +482,7 @@ namespace seqan3::views
  * \param[in] urange The range being processed.
  * \param[in] tf A value of seqan3::translation_frames that indicates the desired frames.
  * \returns A range containing frames with aminoacid sequence. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -538,7 +538,7 @@ namespace seqan3::detail
  * \implements std::ranges::random_access_range
  * \tparam urng_t The type of the range being translated.
  * \param[in] tf Translation frames to be used.
- * \ingroup views
+ * \ingroup alphabet_views
  */
 template <std::ranges::view urng_t>
 //!\cond
@@ -762,17 +762,12 @@ view_translate(urng_t &&, translation_frames const) -> view_translate<std::views
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief A view that translates nucleotide into aminoacid alphabet with 1, 2, 3 or 6 frames.
  * \tparam urng_t The type of the range being processed.
  * \param[in] urange The range being processed.
  * \param[in] tf A value of seqan3::tanslation_frames that indicates the desired frames.
  * \returns A range of ranges containing frames with aminoacid sequence. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -816,6 +811,5 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto translate = deep{detail::translate_fn<false>{}};
-//!\}
 
 } // namespace seqan3::views

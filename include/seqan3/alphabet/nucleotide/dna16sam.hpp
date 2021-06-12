@@ -18,7 +18,7 @@ namespace seqan3
 {
 
 /*!\brief A 16 letter DNA alphabet, containing all IUPAC symbols minus the gap and plus an equality sign ('=').
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \implements seqan3::writable_alphabet
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::trivially_copyable

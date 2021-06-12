@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
- * \brief Meta-header for the aminoacid submodule; includes all headers from alphabet/aminoacid/.
+ * \brief Meta-header for the \link alphabet_aminoacid Alphabet / Aminoacid submodule \endlink.
  */
 #pragma once
 
@@ -20,9 +20,10 @@
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
 #include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 
-/*!\defgroup aminoacid Aminoacid
+/*!\defgroup alphabet_aminoacid Aminoacid
  * \brief Provides the amino acid alphabets and functionality for translation from nucleotide.
  * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *

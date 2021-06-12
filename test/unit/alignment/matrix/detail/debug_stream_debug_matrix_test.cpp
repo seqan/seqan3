@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/debug_matrix.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 using seqan3::operator""_dna4;

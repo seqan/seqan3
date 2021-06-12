@@ -28,7 +28,7 @@ template <typename ...args_t>
 void complement(args_t ...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::complement.
-//!\ingroup nucleotide
+//!\ingroup alphabet_nucleotide
 struct complement_cpo : public detail::customisation_point_object<complement_cpo, 2>
 {
     //!\brief CRTP base class seqan3::detail::customisation_point_object.
@@ -80,7 +80,7 @@ namespace seqan3
  * \tparam your_type Type of the argument.
  * \param  nucl      The nucleotide object for which you want to receive the complement.
  * \returns The complement character of `nucl`, e.g. 'C' for 'G'.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \details
  *
  * This is a function object. Invoke it with the parameter(s) specified above.
@@ -120,7 +120,7 @@ inline constexpr auto complement = detail::adl_only::complement_cpo{};
 /*!\interface seqan3::nucleotide_alphabet <>
  * \extends seqan3::alphabet
  * \brief A concept that indicates whether an alphabet represents nucleotides.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  *
  * \details
  *

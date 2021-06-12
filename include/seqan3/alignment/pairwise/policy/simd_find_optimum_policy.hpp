@@ -14,7 +14,7 @@
 
 #include <type_traits>
 
-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_optimum.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -25,7 +25,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A state that is only used for global alignments.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam simd_t The simd vector score type; must model seqan3::simd::simd_concept.
  *
  * \details
@@ -49,7 +49,7 @@ struct simd_global_alignment_state
 };
 
 /*!\brief The CRTP-policy to determine the optimum of the dynamic programming matrix.
- * \ingroup alignment_policy
+ * \ingroup alignment_pairwise_policy
  * \tparam alignment_algorithm_t The derived type (seqan3::detail::alignment_algorithm) to be augmented with this
  *                               CRTP-policy.
  * \tparam simd_t The simd vector type used for computing the scores; must model seqan3::simd::simd_concept.

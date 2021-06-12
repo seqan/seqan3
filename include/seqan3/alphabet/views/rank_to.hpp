@@ -19,18 +19,13 @@
 
 namespace seqan3::views
 {
-
-/*!\name Alphabet related views
- * \{
- */
-
 /*!\brief                A view over an alphabet, given a range of ranks.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \tparam alphabet_t   The alphabet to convert to; must satisfy seqan3::writable_semialphabet.
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup alphabet_views
  *
  * \details
  *
@@ -74,7 +69,5 @@ inline auto const rank_to = deep{std::views::transform([] (alphabet_rank_t<alpha
 {
     return assign_rank_to(in, alphabet_type{});
 })};
-
-//!\}
 
 } // namespace seqan3::views

@@ -28,16 +28,15 @@
 #include <seqan3/core/range/detail/misc.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
-#include <seqan3/io/detail/istreambuf_view.hpp>
 #include <seqan3/io/detail/misc.hpp>
-#include <seqan3/io/detail/take_exactly_view.hpp>
-#include <seqan3/io/detail/take_line_view.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/io/views/detail/istreambuf_view.hpp>
+#include <seqan3/io/views/detail/take_line_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 

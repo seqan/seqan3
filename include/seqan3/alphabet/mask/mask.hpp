@@ -18,7 +18,7 @@
 namespace seqan3
 {
 /*!\brief Implementation of a masked alphabet to be used for tuple composites.
- * \ingroup mask
+ * \ingroup alphabet_mask
  * \implements seqan3::writable_semialphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
  *

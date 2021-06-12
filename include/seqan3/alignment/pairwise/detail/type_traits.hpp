@@ -26,7 +26,7 @@
 #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
 #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
@@ -47,7 +47,7 @@ namespace seqan3::detail
 //------------------------------------------------------------------------------
 
 /*!\brief A transformation trait to retrieve the chunked range over indexed sequence pairs.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \implements seqan3::transformation_trait
  *
  * \tparam sequence_pairs_t The type of the sequences to be transformed; must model seqan3::detail::sequence_pair_range.
@@ -74,7 +74,7 @@ struct chunked_indexed_sequence_pairs
 
 /*!\brief A traits type for the alignment algorithm that exposes static information stored within the alignment
  *        configuration object.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam configuration_t The type of the alignment configuration object; must be a specialisation of
  *         seqan3::configuration.
@@ -195,7 +195,7 @@ public:
 //------------------------------------------------------------------------------
 
 /*!\brief A traits class to provide a uniform access to the properties of the wrapped alignment algorithm.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  *
  * \tparam function_t The type of the std::function object that stores the alignment algorithm as the target.
  */

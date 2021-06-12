@@ -1,5 +1,5 @@
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/io/detail/take_line_view.hpp>
+#include <seqan3/io/views/detail/take_line_view.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
 
 int main()

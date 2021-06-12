@@ -7,7 +7,7 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Meta-header for the gap submodule; includes all headers from alphabet/gap/.
+ * \brief Meta-header for the \link alphabet_gap Alphabet / Gap submodule \endlink.
  */
 
 #pragma once
@@ -15,9 +15,10 @@
 #include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 
-/*!\defgroup gap Gap
+/*!\defgroup alphabet_gap Gap
  * \brief Provides the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
+ * \see alphabet
  *
  * \details
  *

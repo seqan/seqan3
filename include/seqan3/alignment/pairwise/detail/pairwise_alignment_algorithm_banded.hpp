@@ -23,7 +23,7 @@ namespace seqan3::detail
 
 /*!\brief The alignment algorithm type to compute the banded standard pairwise alignment using dynamic programming.
  * \implements std::invocable
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \copydetails seqan3::detail::pairwise_alignment_algorithm
  */
 template <typename alignment_configuration_t, typename ...policies_t>

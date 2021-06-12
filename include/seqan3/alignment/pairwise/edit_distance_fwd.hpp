@@ -53,7 +53,7 @@ struct selector
 };
 
 /*!\brief The default traits type for the edit distance algorithm.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  */
 template <std::ranges::viewable_range database_t,
           std::ranges::viewable_range query_t,

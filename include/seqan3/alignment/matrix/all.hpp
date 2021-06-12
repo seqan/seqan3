@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment_matrix matrix sub-module \endlink.
+ * \brief Meta-header for the \link alignment_matrix Alignment / Matrix submodule \endlink.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
@@ -18,7 +18,4 @@
  * \see alignment
  */
 
-#include <seqan3/alignment/matrix/alignment_optimum.hpp>
-#include <seqan3/alignment/matrix/debug_matrix.hpp>
-#include <seqan3/alignment/matrix/matrix_concept.hpp>
-#include <seqan3/alignment/matrix/row_wise_matrix.hpp>
+#include <seqan3/core/platform.hpp> // make header test happy

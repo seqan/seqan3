@@ -19,8 +19,6 @@
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
-#include <seqan3/io/detail/istreambuf_view.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/io/sam_file/detail/format_sam_base.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -31,6 +29,8 @@
 #include <seqan3/io/sequence_file/input_format_concept.hpp>
 #include <seqan3/io/sequence_file/output_options.hpp>
 #include <seqan3/io/stream/detail/fast_ostreambuf_iterator.hpp>
+#include <seqan3/io/views/detail/istreambuf_view.hpp>
+#include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/views/slice.hpp>

@@ -13,7 +13,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
-#include <seqan3/io/detail/take_until_view.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
@@ -29,8 +28,8 @@ using result_t = std::vector<size_t>;
 
 static constexpr auto ungapped_view = seqan3::views::kmer_hash(seqan3::ungapped{3});
 static constexpr auto gapped_view = seqan3::views::kmer_hash(0b101_shape);
-static constexpr auto prefix_until_first_thymine = seqan3::detail::take_until([] (seqan3::dna4 x)
-                                                   { return x == 'T'_dna4; });
+static constexpr auto prefix_until_first_thymine = std::views::take_while([] (seqan3::dna4 const x)
+                                                   { return x != 'T'_dna4; });
 
 using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector&>() | gapped_view)>;
 
@@ -213,10 +212,9 @@ TYPED_TEST(kmer_hash_ungapped_test, issue1754)
 {
     TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
 
-    auto stop_at_t = seqan3::detail::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
-        EXPECT_RANGE_EQ(result_t{36}, text1 | stop_at_t | std::views::reverse | ungapped_view);
+        EXPECT_RANGE_EQ(result_t{36}, text1 | prefix_until_first_thymine | std::views::reverse | ungapped_view);
     }
 }
 
@@ -225,10 +223,9 @@ TYPED_TEST(kmer_hash_gapped_test, issue1754)
 {
     TypeParam text1{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4, 'C'_dna4}; // ACGTAGC
 
-    auto stop_at_t = seqan3::detail::take_until([] (seqan3::dna4 const x) { return x == 'T'_dna4; });
     if constexpr (std::ranges::bidirectional_range<TypeParam>) // excludes forward_list
     {
-        EXPECT_RANGE_EQ(result_t{8}, text1 | stop_at_t | std::views::reverse | gapped_view);
+        EXPECT_RANGE_EQ(result_t{8}, text1 | prefix_until_first_thymine | std::views::reverse | gapped_view);
     }
 }
 

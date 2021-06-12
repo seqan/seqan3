@@ -7,7 +7,7 @@
 
 //!\cond DEV
 /*!\file
- * \brief Meta-header for the \link alignment_policy alignment policy submodule \endlink.
+ * \brief Meta-header for the \link alignment_pairwise_policy Alignment / Policy submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 //!\endcond
@@ -23,9 +23,10 @@
 #include <seqan3/alignment/pairwise/policy/simd_find_optimum_policy.hpp>
 
 //!\cond DEV
-/*!\defgroup alignment_policy Alignment policies
- * \ingroup pairwise_alignment
+/*!\defgroup alignment_pairwise_policy Alignment policies
+ * \ingroup alignment_pairwise
  * \brief Provides policies for the alignment algorithm.
+ * \see alignment_pairwise
  *
  * # Introduction
  *

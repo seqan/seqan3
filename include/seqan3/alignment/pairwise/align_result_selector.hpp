@@ -20,8 +20,8 @@
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alignment/matrix/detail/advanceable_alignment_coordinate.hpp>
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
-#include <seqan3/alignment/matrix/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
@@ -34,7 +34,7 @@
 namespace seqan3::detail
 {
 /*!\brief Helper metafunction to select the alignment result type based on the configuration.
- * \ingroup pairwise_alignment
+ * \ingroup alignment_pairwise
  * \tparam first_range_t   The type of the first sequence.
  * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration

@@ -48,7 +48,7 @@ enum struct align_config_id : uint8_t
 // ----------------------------------------------------------------------------
 
 /*!\brief Declaration of algorithm specific compatibility table.
- * \ingroup algorithm
+ * \ingroup alignment_configuration
  * \tparam algorithm_id_type The type of the algorithm specific id. Algorithm configurations must maintain
  *                           this table to allow validation checks.
  */

@@ -33,7 +33,7 @@ namespace seqan3
  * \implements seqan3::standard_layout
  * \implements std::regular
  *
- * \ingroup structure
+ * \ingroup alphabet_structure
  *
  * \details
  * The brackets denote RNA base pair interactions. Every left bracket must have a corresponding right bracket.

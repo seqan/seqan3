@@ -26,7 +26,7 @@ namespace seqan3
 class rna4;
 
 /*!\brief The four letter DNA alphabet of A,C,G,T.
- * \ingroup nucleotide
+ * \ingroup alphabet_nucleotide
  * \implements seqan3::nucleotide_alphabet
  * \implements seqan3::writable_alphabet
  * \if DEV \implements seqan3::detail::writable_constexpr_alphabet \endif
