@@ -11,6 +11,7 @@ env:
   CMAKE_VERSION: 3.8.2
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
+  ISSUE: 2746 # Issue number to use for reporting failures
 
 defaults:
   run:
@@ -73,16 +74,40 @@ jobs:
       - name: Process Log
         if: ${{ failure() }}
         run: |
-          echo "API_LOG<<EOF" >> $GITHUB_ENV # API_LOG is the env variable. EOF is set as delimiter for multiline vars.
-          echo "$(python3 seqan3/.github/workflows/scripts/process_compiler_error_log.py seqan3-build/build.log)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          FILE="seqan3/.github/ISSUE_TEMPLATE/cron_comment_template.md"
+          python3 seqan3/.github/workflows/scripts/process_compiler_error_log.py seqan3-build/build.log >> $FILE
 
-      - name: Create issue
+      - name: Create comment body
         if: ${{ failure() }}
-        uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          COMPILER: ${{ matrix.compiler }}
+        id: comment-body
+        run: |
+          FILE="seqan3/.github/ISSUE_TEMPLATE/cron_comment_template.md"
+          URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          sed -i "s@{{ build }}@${{ matrix.build }}@" $FILE
+          sed -i "s@{{ compiler }}@${{ matrix.compiler }}@" $FILE
+          sed -i "s@{{ url }}@$URL@" $FILE
+          body=$(cat $FILE)
+          body="${body//'%'/'%25'}"
+          body="${body//$'\n'/'%0A'}"
+          body="${body//$'\r'/'%0D'}"
+          echo ::set-output name=body::$body
+
+      - name: Reopen issue
+        if: ${{ failure() }}
+        uses: octokit/request-action@v2.x
         with:
-          filename: seqan3/.github/ISSUE_TEMPLATE/api_cron_template.md
-          update_existing: true
+          route: PATCH /repos/{owner}/{repo}/issues/{issue_number}
+          owner: ${{ github.repository_owner }}
+          repo: seqan3
+          issue_number: ${{ env.ISSUE }}
+          state: "open"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create comment
+        if: ${{ failure() }}
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ env.ISSUE }}
+          body: ${{ steps.comment-body.outputs.body }}
+
