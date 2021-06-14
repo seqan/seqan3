@@ -37,7 +37,7 @@ namespace seqan3::contrib
 
 /*!\brief A static variable indicating the number of threads to use for the bgzf-streams. Defaults to 4.
  */
-[[maybe_unused]] inline static uint64_t bgzf_thread_count = 4;
+[[maybe_unused]] inline uint64_t bgzf_thread_count = 4;
 
 // ============================================================================
 // Forwards

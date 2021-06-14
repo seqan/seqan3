@@ -51,6 +51,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 #### I/O
  * Changed default of `output_options::fasta_blank_before_id` to `false`
    ([\#2769](https://github.com/seqan/seqan3/pull/2769)).
+ * Changed default of `bgzf_thread_count` to `4` instead of determining the numbers of cores of the
+   machine it is running on ([\#2911](https://github.com/seqan/seqan3/pull/2911)).
+ * `bgzf_thread_count` is now a single global variable instead of having an instance per translation unit
+   ([\#2752](https://github.com/seqan/seqan3/pull/2752)).
 
 # 3.1.0
 
