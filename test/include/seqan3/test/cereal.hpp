@@ -18,7 +18,7 @@
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/platform.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 #if SEQAN3_WITH_CEREAL
@@ -47,17 +47,18 @@ template <cereal_input_archive in_archive_t, cereal_output_archive out_archive_t
 //!\endcond
 void do_cerealisation(value_t && value)
 {
-    tmp_filename filename{"cereal_test"};
+    tmp_directory tmp{};
+    auto filename = tmp.path() / "cereal_test";
 
     {
-        std::ofstream os{filename.get_path(), std::ios::binary};
+        std::ofstream os{filename, std::ios::binary};
         out_archive_t oarchive{os};
         oarchive(value);
     }
 
     {
         std::remove_cvref_t<value_t> value_from_archive{};
-        std::ifstream is{filename.get_path(), std::ios::binary};
+        std::ifstream is{filename, std::ios::binary};
         in_archive_t iarchive{is};
         iarchive(value_from_archive);
         EXPECT_TRUE(value == value_from_archive);

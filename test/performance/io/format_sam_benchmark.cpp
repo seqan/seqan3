@@ -11,7 +11,7 @@
 #include <seqan3/io/sam_file/input.hpp>
 #include <seqan3/io/sam_file/output.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 #if SEQAN3_HAS_SEQAN2
 #include <seqan/bam_io.h>
@@ -118,8 +118,9 @@ void sam_file_read_from_stream(benchmark::State &state)
 void sam_file_read_from_disk(benchmark::State &state)
 {
     size_t const n_queries = state.range(0);
-    seqan3::test::tmp_filename file_name{"tmp.sam"};
-    auto tmp_path = file_name.get_path();
+
+    seqan3::test::tmp_directory tmp{};
+    auto tmp_path = tmp.path() / "tmp.sam";
 
     write_file(tmp_path, n_queries);
 
@@ -132,6 +133,7 @@ void sam_file_read_from_disk(benchmark::State &state)
         while (it != fin.end())
             ++it;
     }
+    tmp.clean();
 }
 
 #if SEQAN3_HAS_SEQAN2
@@ -142,13 +144,15 @@ void sam_file_read_from_disk(benchmark::State &state)
 void seqan2_sam_file_read_from_stream(benchmark::State &state)
 {
     size_t const n_queries = state.range(0);
-    seqan3::test::tmp_filename file_name{"tmp.sam"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "tmp.sam";
+
     std::string sam_file = create_sam_file_string(n_queries);
 
     // create temporary BamFileIn and read from disk to get the context...
-    write_file(file_name.get_path(), n_queries);
+    write_file(filename, n_queries);
     seqan::BamHeader tmp_header;
-    seqan::BamFileIn tmp_bam_file_in(file_name.get_path().c_str());
+    seqan::BamFileIn tmp_bam_file_in(filename.c_str());
     seqan::readHeader(tmp_header, tmp_bam_file_in);
     auto cxt = seqan::context(tmp_bam_file_in);
 
@@ -174,13 +178,15 @@ void seqan2_sam_file_read_from_stream(benchmark::State &state)
 
         clear(header);
     }
+    tmp.clean();
 }
 
 void seqan2_sam_file_read_from_disk(benchmark::State &state)
 {
     size_t const n_queries = state.range(0);
-    seqan3::test::tmp_filename file_name{"tmp.sam"};
-    auto tmp_path = file_name.get_path();
+
+    seqan3::test::tmp_directory tmp{};
+    auto tmp_path = tmp.path() / "tmp.sam";
 
     write_file(tmp_path, n_queries);
 
@@ -199,6 +205,7 @@ void seqan2_sam_file_read_from_disk(benchmark::State &state)
         seqan::clear(header);
         seqan::clear(record);
     }
+    tmp.clean();
 }
 
 #endif // SEQAN3_HAS_SEQAN2

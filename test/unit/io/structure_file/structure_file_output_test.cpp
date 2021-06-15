@@ -15,7 +15,7 @@
 
 #include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 using seqan3::operator""_rna5;
 using seqan3::operator""_wuss51;
@@ -43,20 +43,25 @@ TEST(structure_file_output_class, construct_by_filename)
 {
     /* just the filename */
     {
-        seqan3::test::tmp_filename filename{"structure_file_output_constructor.dbn"};
-        EXPECT_NO_THROW(seqan3::structure_file_output<>{filename.get_path()});
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "structure_file_output_constructor.dbn";
+        EXPECT_NO_THROW(seqan3::structure_file_output<>{filename});
+        tmp.clean();
     }
 
     /* wrong extension */
     {
-        seqan3::test::tmp_filename filename{"structure_file_output_constructor.xyz"};
-        EXPECT_THROW(seqan3::structure_file_output<>{filename.get_path()}, seqan3::unhandled_extension_error);
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "structure_file_output_constructor.xyz";
+        EXPECT_THROW(seqan3::structure_file_output<>{filename}, seqan3::unhandled_extension_error);
+        tmp.clean();
     }
 
     /* unknown file */
     {
-        seqan3::test::tmp_filename filename{"I/do/not/exist.dbn"};
-        EXPECT_THROW(seqan3::structure_file_output<>{filename.get_path()}, seqan3::file_open_error);
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "I/do/not/exist.dbn";
+        EXPECT_THROW(seqan3::structure_file_output<>{filename}, seqan3::file_open_error);
     }
 
     /* non-existent file*/
@@ -66,10 +71,12 @@ TEST(structure_file_output_class, construct_by_filename)
 
     /* filename + fields */
     {
-        seqan3::test::tmp_filename filename{"structure_file_output_constructor.dbn"};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "structure_file_output_constructor.dbn";
         EXPECT_NO_THROW((seqan3::structure_file_output<seqan3::fields<seqan3::field::seq>,
                                                        seqan3::type_list<seqan3::format_vienna>>
-                         {filename.get_path(), seqan3::fields<seqan3::field::seq>{}}));
+                         {filename, seqan3::fields<seqan3::field::seq>{}}));
+        tmp.clean();
     }
 }
 
@@ -102,24 +109,28 @@ TEST(structure_file_output_class, default_template_args_and_deduction_guides)
 
     /* guided filename constructor */
     {
-        seqan3::test::tmp_filename filename{"structure_file_output_constructor.dbn"};
-        seqan3::structure_file_output fout{filename.get_path()};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "structure_file_output_constructor.dbn";
+        seqan3::structure_file_output fout{filename};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, comp1>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        tmp.clean();
     }
 
     /* guided filename constructor + custom fields */
     {
-        seqan3::test::tmp_filename filename{"structure_file_output_constructor.dbn"};
-        seqan3::structure_file_output fout{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
+        seqan3::test::tmp_directory tmp;
+        auto filename = tmp.path() / "structure_file_output_constructor.dbn";
+        seqan3::structure_file_output fout{filename, seqan3::fields<seqan3::field::seq>{}};
 
         using t = decltype(fout);
         EXPECT_TRUE((std::is_same_v<typename t::selected_field_ids, seqan3::fields<seqan3::field::seq>>));
         EXPECT_TRUE((std::is_same_v<typename t::valid_formats,      comp2>));
         EXPECT_TRUE((std::is_same_v<typename t::stream_char_type,   comp3>));
+        tmp.clean();
     }
 
     /* guided stream constructor */
@@ -397,10 +408,10 @@ TEST_F(structure_file_output_columns, assign_columns)
 #if defined(SEQAN3_HAS_ZLIB) || defined(SEQAN3_HAS_BZIP2)
 struct structure_file_output_compression : public structure_file_output_write
 {
-    std::string compression_by_filename_impl(seqan3::test::tmp_filename & filename)
+    std::string compression_by_filename_impl(seqan3::test::sandboxed_path const & filename)
     {
         {
-            seqan3::structure_file_output fout{filename.get_path()};
+            seqan3::structure_file_output fout{filename};
 
             for (size_t idx = 0ul; idx < num_records; ++idx)
             {
@@ -413,7 +424,7 @@ struct structure_file_output_compression : public structure_file_output_write
         }
         std::string buffer{};
         {
-            std::ifstream fi{filename.get_path(), std::ios::binary};
+            std::ifstream fi{filename, std::ios::binary};
             buffer = std::string{std::istreambuf_iterator<char>{fi}, std::istreambuf_iterator<char>{}};
         }
         return buffer;
@@ -472,10 +483,13 @@ std::string expected_bgzf
 
 TEST_F(structure_file_output_compression, by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"structure_file_output_test.dbn.gz"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "structure_file_output_test.dbn.gz";
+
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
     EXPECT_EQ(buffer, expected_gz);
+    tmp.clean();
 }
 
 TEST_F(structure_file_output_compression, by_stream_gz)
@@ -492,10 +506,12 @@ TEST_F(structure_file_output_compression, by_stream_gz)
 
 TEST_F(structure_file_output_compression, by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"structure_file_output_test.dbn.bgzf"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "structure_file_output_test.dbn.bgzf";
     std::string buffer = compression_by_filename_impl(filename);
     buffer[9] = '\x00'; // zero out OS byte
     EXPECT_EQ(buffer, expected_bgzf);
+    tmp.clean();
 }
 
 TEST_F(structure_file_output_compression, by_stream_bgzf)
@@ -531,9 +547,11 @@ std::string expected_bz2
 
 TEST_F(structure_file_output_compression, by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"structure_file_output_test.dbn.bz2"};
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "structure_file_output_test.dbn.bz2";
     std::string buffer = compression_by_filename_impl(filename);
     EXPECT_EQ(buffer, expected_bz2);
+    tmp.clean();
 }
 
 TEST_F(structure_file_output_compression, by_stream_bz2)

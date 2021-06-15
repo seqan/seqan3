@@ -6,29 +6,30 @@
 #include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
 
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 // Written for std::vector, other types also work.
-void load(std::vector<int16_t> & data, seqan3::test::tmp_filename & tmp_file)
+void load(std::vector<int16_t> & data, std::filesystem::path const & tmp_file)
 {
-    std::ifstream is(tmp_file.get_path(), std::ios::binary); // Where input can be found.
-    cereal::BinaryInputArchive archive(is);                  // Create an input archive from the input stream.
-    archive(data);                                           // Load data.
+    std::ifstream is(tmp_file, std::ios::binary); // Where input can be found.
+    cereal::BinaryInputArchive archive(is);       // Create an input archive from the input stream.
+    archive(data);                                // Load data.
 }
 
 // Written for std::vector, other types also work.
-void store(std::vector<int16_t> const & data, seqan3::test::tmp_filename & tmp_file)
+void store(std::vector<int16_t> const & data, std::filesystem::path const & tmp_file)
 {
-    std::ofstream os(tmp_file.get_path(), std::ios::binary); // Where output should be stored.
-    cereal::BinaryOutputArchive archive(os);                 // Create an ouput archive from the output stream.
-    archive(data);                                           // Store data.
+    std::ofstream os(tmp_file, std::ios::binary); // Where output should be stored.
+    cereal::BinaryOutputArchive archive(os);      // Create an output archive from the output stream.
+    archive(data);                                // Store data.
 }
 
 int main()
 {
     // The following example is for a std::vector but any seqan3 data structure that is documented as serialisable
     // could be used, e.g. fm_index.
-    seqan3::test::tmp_filename tmp_file{"data.out"}; // This is a temporary file, use any other filename.
+    seqan3::test::tmp_directory tmp{};
+    auto tmp_file = tmp.path() / "data.out"; // this is a temporary file path, use any other filename.
 
     std::vector<int16_t> vec{1,2,3,4};
     store(vec, tmp_file);                            // Calls store on a std::vector.

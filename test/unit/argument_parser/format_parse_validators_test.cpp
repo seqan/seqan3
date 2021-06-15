@@ -13,7 +13,7 @@
 
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/test/file_access.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 struct dummy_file
 {
@@ -90,27 +90,28 @@ TEST(validator_test, fullfill_concept)
 
 TEST(validator_test, input_file)
 {
-    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
-    seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
-    seqan3::test::tmp_filename tmp_name_hidden{".testbox.fasta"};
-    seqan3::test::tmp_filename tmp_name_multiple{"testbox.fasta.txt"};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_name = tmp.path() / "testbox.fasta";
+    auto tmp_name_2 = tmp.path() / "testbox_2.fasta";
+    auto tmp_name_hidden = tmp.path() / ".testbox.fasta";
+    auto tmp_name_multiple = tmp.path() / "testbox.fasta.txt";
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}, std::string{"fasta.txt"}};
 
-    std::ofstream tmp_file(tmp_name.get_path());
-    std::ofstream tmp_file_2(tmp_name_2.get_path());
-    std::ofstream tmp_file_hidden(tmp_name_hidden.get_path());
-    std::ofstream tmp_file_multiple(tmp_name_multiple.get_path());
+    std::ofstream tmp_file(tmp_name);
+    std::ofstream tmp_file_2(tmp_name_2);
+    std::ofstream tmp_file_hidden(tmp_name_hidden);
+    std::ofstream tmp_file_multiple(tmp_name_multiple);
 
     { // single file
 
         { // empty list of file.
             seqan3::input_file_validator my_validator{};
-            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+            EXPECT_NO_THROW(my_validator(tmp_name));
         }
 
         { // file already exists.
-            std::filesystem::path does_not_exist{tmp_name.get_path()};
+            std::filesystem::path does_not_exist{tmp_name};
             does_not_exist.replace_extension(".bam");
             seqan3::input_file_validator my_validator{formats};
             EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
@@ -118,11 +119,11 @@ TEST(validator_test, input_file)
 
         { // file has wrong format.
             seqan3::input_file_validator my_validator{std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
+            EXPECT_THROW(my_validator(tmp_name), seqan3::validation_error);
         }
 
         { // file has no extension.
-            std::filesystem::path does_not_exist{tmp_name.get_path()};
+            std::filesystem::path does_not_exist{tmp_name};
             does_not_exist.replace_extension();
             seqan3::input_file_validator my_validator{formats};
             EXPECT_THROW(my_validator(does_not_exist), seqan3::validation_error);
@@ -130,23 +131,23 @@ TEST(validator_test, input_file)
 
         { // filename starts with dot.
             seqan3::input_file_validator my_validator{formats};
-            EXPECT_NO_THROW(my_validator(tmp_name_hidden.get_path()));
+            EXPECT_NO_THROW(my_validator(tmp_name_hidden));
         }
 
         { // file has multiple extensions.
             seqan3::input_file_validator my_validator{formats};
-            EXPECT_NO_THROW(my_validator(tmp_name_multiple.get_path()));
+            EXPECT_NO_THROW(my_validator(tmp_name_multiple));
         }
 
         {  // read from file
             seqan3::input_file_validator<dummy_file> my_validator{};
-            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+            EXPECT_NO_THROW(my_validator(tmp_name));
         }
 
         std::filesystem::path file_in_path;
 
         // option
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-i", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -161,8 +162,8 @@ TEST(validator_test, input_file)
         std::vector<std::filesystem::path> input_files;
 
         // option
-        std::string const & path = tmp_name.get_path().string();
-        std::string const & path_2 = tmp_name_2.get_path().string();
+        std::string const & path = tmp_name.string();
+        std::string const & path_2 = tmp_name_2.string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_2.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
@@ -198,6 +199,7 @@ TEST(validator_test, input_file)
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
     }
+    tmp.clean();
 }
 
 TEST(validator_test, input_file_ext_from_file)
@@ -213,13 +215,14 @@ TEST(validator_test, input_file_ext_from_file)
 
 TEST(validator_test, output_file)
 {
-    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
-    std::filesystem::path not_existing_path{tmp_name.get_path()};
-    seqan3::test::tmp_filename tmp_name_2{"testbox_2.fasta"};
-    std::ofstream tmp_file_2(tmp_name_2.get_path());    // create file
-    std::filesystem::path existing_path{tmp_name_2.get_path()};
-    seqan3::test::tmp_filename tmp_name_3{"testbox_3.fa"};
-    seqan3::test::tmp_filename hidden_name{".testbox.fasta"};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_name = tmp.path() / "testbox.fasta";
+    auto not_existing_path = tmp_name;
+    auto tmp_name_2 = tmp.path() / "testbox_2.fasta";
+    std::ofstream tmp_file_2(tmp_name_2);    // create file
+    auto existing_path = tmp_name_2;
+    auto tmp_name_3 = tmp.path() / "testbox_3.fasta";
+    auto hidden_name = tmp.path() / ".testbox.fasta";
 
     std::vector formats{std::string{"fa"}, std::string{"sam"}, std::string{"fasta"}, std::string{"fasta.txt"}};
 
@@ -247,11 +250,11 @@ TEST(validator_test, output_file)
         { // file has wrong format.
             seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new,
                                                        std::vector{std::string{"sam"}}};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
+            EXPECT_THROW(my_validator(tmp_name), seqan3::validation_error);
         }
 
         { // file has no extension.
-            std::filesystem::path no_extension{tmp_name.get_path()};
+            std::filesystem::path no_extension{tmp_name};
             no_extension.replace_extension();
             seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
             EXPECT_THROW(my_validator(no_extension), seqan3::validation_error);
@@ -259,11 +262,11 @@ TEST(validator_test, output_file)
 
         { // filename starts with dot.
             seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
-            EXPECT_NO_THROW(my_validator(hidden_name.get_path()));
+            EXPECT_NO_THROW(my_validator(hidden_name));
         }
 
         { // file has multiple extensions.
-            std::filesystem::path multiple_extension{tmp_name.get_path()};
+            std::filesystem::path multiple_extension{tmp_name};
             multiple_extension.replace_extension("fasta.txt");
             seqan3::output_file_validator my_validator{seqan3::output_file_open_options::create_new, formats};
             EXPECT_NO_THROW(my_validator(multiple_extension));
@@ -271,13 +274,13 @@ TEST(validator_test, output_file)
 
         {  // read from file
             seqan3::output_file_validator<dummy_file> my_validator{};
-            EXPECT_NO_THROW(my_validator(tmp_name.get_path()));
+            EXPECT_NO_THROW(my_validator(tmp_name));
         }
 
         std::filesystem::path file_out_path;
 
         // option
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-o", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -293,8 +296,8 @@ TEST(validator_test, output_file)
         std::vector<std::filesystem::path> output_files;
 
         // option
-        std::string const & path = tmp_name.get_path().string();
-        std::string const & path_3 = tmp_name_3.get_path().string();
+        std::string const & path = tmp_name.string();
+        std::string const & path_3 = tmp_name_3.string();
 
         const char * argv[] = {"./argument_parser_test", path.c_str(), path_3.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
@@ -361,6 +364,7 @@ TEST(validator_test, output_file)
                                basic_version_str;
         EXPECT_EQ(my_stdout, expected);
     }
+    tmp.clean();
 }
 
 TEST(validator_test, output_file_ext_from_file)
@@ -392,18 +396,19 @@ TEST(validator_test, output_file_ext_from_file)
 
 TEST(validator_test, input_directory)
 {
-    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_directory tmp{};
+    auto tmp_name = tmp.path() / "testbox.fasta";
 
     { // directory
 
         { // has filename
-            std::ofstream tmp_dir(tmp_name.get_path());
+            std::ofstream tmp_dir(tmp_name);
             seqan3::input_directory_validator my_validator{};
-            EXPECT_THROW(my_validator(tmp_name.get_path()), seqan3::validation_error);
+            EXPECT_THROW(my_validator(tmp_name), seqan3::validation_error);
         }
 
         { // read directory
-            std::filesystem::path p = tmp_name.get_path();
+            std::filesystem::path p = tmp_name;
             p.remove_filename();
             std::ofstream tmp_dir(p);
             seqan3::input_directory_validator my_validator{};
@@ -449,14 +454,15 @@ TEST(validator_test, input_directory)
 
         EXPECT_EQ(my_stdout, expected);
     }
+    tmp.clean();
 }
 
 TEST(validator_test, output_directory)
 {
-    seqan3::test::tmp_filename tmp_name{"testbox.fasta"};
+    seqan3::test::tmp_directory tmp{};
 
     { // read directory
-        std::filesystem::path p = tmp_name.get_path();
+        std::filesystem::path p = tmp.path() / "testbox.fasta";
         p.remove_filename();
         seqan3::output_directory_validator my_validator{};
         my_validator(p);
@@ -478,8 +484,8 @@ TEST(validator_test, output_directory)
     }
 
     { // Parent path exists and is writable.
-        seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
-        std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
+        std::filesystem::path tmp_child_name = tmp.path() / "dir/child_dir";
+        std::filesystem::path tmp_child_dir{tmp_child_name};
         std::filesystem::path tmp_parent_path{tmp_child_dir.parent_path()};
 
         std::filesystem::create_directory(tmp_parent_path);
@@ -516,9 +522,10 @@ TEST(validator_test, output_directory)
 
 TEST(validator_test, inputfile_not_readable)
 {
-    seqan3::test::tmp_filename tmp_name{"my_file.test"};
-    std::filesystem::path tmp_file{tmp_name.get_path()};
-    std::ofstream str{tmp_name.get_path()};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_name = tmp.path() / "my_file.test";
+    std::filesystem::path tmp_file{tmp_name};
+    std::ofstream str{tmp_name};
 
     EXPECT_NO_THROW(seqan3::input_file_validator{}(tmp_file));
 
@@ -536,12 +543,13 @@ TEST(validator_test, inputfile_not_readable)
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::add);
+    tmp.clean();
 }
 
 TEST(validator_test, inputfile_not_regular)
 {
-    seqan3::test::tmp_filename tmp{"my_file.test"};
-    std::filesystem::path filename = tmp.get_path();
+    seqan3::test::tmp_directory tmp;
+    std::filesystem::path filename = tmp.path() / "my_file.test";
     mkfifo(filename.c_str(), 0644);
 
     EXPECT_THROW(seqan3::input_file_validator{}(filename), seqan3::validation_error);
@@ -549,16 +557,18 @@ TEST(validator_test, inputfile_not_regular)
 
 TEST(validator_test, inputdir_not_existing)
 {
-    seqan3::test::tmp_filename tmp_name{"dir"};
-    std::filesystem::path not_existing_dir{tmp_name.get_path()};
+    seqan3::test::tmp_directory tmp;
+    std::filesystem::path tmp_name = tmp.path() / "dir";
+
+    std::filesystem::path not_existing_dir{tmp_name};
 
     EXPECT_THROW(seqan3::input_directory_validator{}(not_existing_dir), seqan3::validation_error);
 }
 
 TEST(validator_test, inputdir_not_readable)
 {
-    seqan3::test::tmp_filename tmp_name{"dir"};
-    std::filesystem::path tmp_dir{tmp_name.get_path()};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_dir = tmp.path() / "dir";
 
     std::filesystem::create_directory(tmp_dir);
 
@@ -578,12 +588,13 @@ TEST(validator_test, inputdir_not_readable)
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::add);
+    tmp.clean();
 }
 
 TEST(validator_test, outputfile_not_writable)
 {
-    seqan3::test::tmp_filename tmp_name{"my_file.test"};
-    std::filesystem::path tmp_file{tmp_name.get_path()};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_file = tmp.path() / "my_file.test";
 
     EXPECT_NO_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_file));
 
@@ -604,20 +615,20 @@ TEST(validator_test, outputfile_not_writable)
                                  std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                  std::filesystem::perms::others_write,
                                  std::filesystem::perm_options::add);
+    tmp.clean();
 }
 
 TEST(validator_test, outputdir_not_writable)
 {
     { // parent dir is not writable.
-        seqan3::test::tmp_filename tmp_name{"dir"};
-        std::filesystem::path tmp_dir{tmp_name.get_path()};
+        seqan3::test::tmp_directory tmp;
+        auto tmp_dir = tmp.path() / "dir";
 
         EXPECT_NO_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir));
         EXPECT_FALSE(std::filesystem::exists(tmp_dir));
 
         // parent dir does not exist
-        seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
-        std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
+        std::filesystem::path tmp_child_dir{tmp.path() / "dir/child_dir"};
         std::filesystem::path tmp_parent_dir{tmp_child_dir.parent_path()};
 
         EXPECT_THROW(seqan3::output_directory_validator{}(tmp_child_dir), seqan3::validation_error);
@@ -656,11 +667,12 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::add);
+        tmp.clean();
     }
 
     {  // this dir is not writable
-        seqan3::test::tmp_filename tmp_name{"dir"};
-        std::filesystem::path tmp_dir{tmp_name.get_path()};
+        seqan3::test::tmp_directory tmp;
+        auto tmp_dir = tmp.path() / "dir";
 
         std::filesystem::create_directory(tmp_dir);
         EXPECT_NO_THROW(seqan3::output_directory_validator{}(tmp_dir));
@@ -682,6 +694,7 @@ TEST(validator_test, outputdir_not_writable)
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                      std::filesystem::perms::others_write,
                                      std::filesystem::perm_options::add);
+        tmp.clean();
     }
 }
 
@@ -1272,13 +1285,15 @@ TEST(validator_test, chaining_validators)
     seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
     seqan3::output_file_validator my_file_ext_validator{seqan3::output_file_open_options::create_new, {"sa", "so"}};
 
-    seqan3::test::tmp_filename tmp_name{"file.sa"};
-    std::filesystem::path invalid_extension{tmp_name.get_path()};
+    seqan3::test::tmp_directory tmp;
+    auto tmp_name = tmp.path() / "file.sa";
+
+    std::filesystem::path invalid_extension{tmp_name};
     invalid_extension.replace_extension(".invalid");
 
     // option
     {
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -1292,7 +1307,7 @@ TEST(validator_test, chaining_validators)
     }
 
     {
-        auto rel_path = tmp_name.get_path().relative_path().string();
+        auto rel_path = tmp_name.relative_path().string();
         const char * argv[] = {"./argument_parser_test", "-s", rel_path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -1315,7 +1330,7 @@ TEST(validator_test, chaining_validators)
 
     // with temporary validators
     {
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -1332,7 +1347,7 @@ TEST(validator_test, chaining_validators)
 
     // three validators
     {
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);
@@ -1408,7 +1423,7 @@ TEST(validator_test, chaining_validators)
     // chaining with a container option value type
     {
         std::vector<std::string> option_list_value{};
-        std::string const & path = tmp_name.get_path().string();
+        std::string const & path = tmp_name.string();
         const char * argv[] = {"./argument_parser_test", "-s", path.c_str()};
         seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
         test_accessor::set_terminal_width(parser, 80);

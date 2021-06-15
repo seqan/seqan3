@@ -11,23 +11,16 @@
 #include <vector>
 
 #include <seqan3/core/debug_stream.hpp>
-
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
-inline seqan3::test::tmp_filename tmp_compressed_file(std::string const & file_extension)
+// We need a copy of the path because `make_secondary_ostream` will strip the compression extension.
+inline void tmp_compressed_file(std::filesystem::path filename)
 {
-    std::string const tmp_file_name = "io_misc_output_test.txt." + file_extension;
-    seqan3::test::tmp_filename tmp_file{tmp_file_name.c_str()};
-
-    // We need a copy of the path because `make_secondary_ostream` will strip the compression extension.
-    auto file_path = tmp_file.get_path();
-    std::ofstream filestream{file_path};
-    auto stream_ptr = seqan3::detail::make_secondary_ostream(filestream, file_path);
+    std::ofstream filestream{filename};
+    auto stream_ptr = seqan3::detail::make_secondary_ostream(filestream, filename);
     *stream_ptr << std::string(8, 'a') << '\n';
-
-    return tmp_file;
 }
 
 inline std::vector<char> read_file_content(std::filesystem::path const & path)
@@ -40,29 +33,38 @@ inline std::vector<char> read_file_content(std::filesystem::path const & path)
 #if defined(SEQAN3_HAS_ZLIB)
 TEST(misc_output, issue2455_gz)
 {
-    seqan3::test::tmp_filename const compressed_file = tmp_compressed_file("gz");
-    std::vector<char> const file_content = read_file_content(compressed_file.get_path());
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "io_misc_output_test.txt.gz";
+    tmp_compressed_file(filename);
+    std::vector<char> const file_content = read_file_content(filename);
 
     EXPECT_TRUE(seqan3::detail::starts_with(file_content, seqan3::detail::gz_compression::magic_header));
     // gz should not have a valid bgzf header (the gz header is a prefix of the bgzf header)
     EXPECT_FALSE(seqan3::detail::bgzf_compression::validate_header(std::span{file_content}));
+    tmp.clean();
 }
 
 TEST(misc_output, issue2455_bgzf)
 {
-    seqan3::test::tmp_filename const compressed_file = tmp_compressed_file("bgzf");
-    std::vector<char> const file_content = read_file_content(compressed_file.get_path());
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "io_misc_output_test.txt.bgzf";
+    tmp_compressed_file(filename);
+    std::vector<char> const file_content = read_file_content(filename);
 
     EXPECT_TRUE(seqan3::detail::bgzf_compression::validate_header(std::span{file_content}));
+    tmp.clean();
 }
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
 TEST(misc_output, issue2455_bz)
 {
-    seqan3::test::tmp_filename const compressed_file = tmp_compressed_file("bz2");
-    std::vector<char> const file_content = read_file_content(compressed_file.get_path());
+    seqan3::test::tmp_directory tmp;
+    auto filename = tmp.path() / "io_misc_output_test.txt.bz2";
+    tmp_compressed_file(filename);
+    std::vector<char> const file_content = read_file_content(filename);
 
     EXPECT_TRUE(seqan3::detail::starts_with(file_content, seqan3::detail::bz2_compression::magic_header));
+    tmp.clean();
 }
 #endif

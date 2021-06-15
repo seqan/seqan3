@@ -12,8 +12,7 @@
 #include <string>
 
 #include <seqan3/io/stream/concept.hpp>
-
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 template <typename T>
 class istream : public ::testing::Test
@@ -30,36 +29,40 @@ TYPED_TEST_P(istream, concept_check)
 
 TYPED_TEST_P(istream, input)
 {
-    seqan3::test::tmp_filename filename{"istream_test"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "istream_test";
 
     {
-        std::ofstream fi{filename.get_path()};
+        std::ofstream fi{filename};
 
         fi << TestFixture::compressed;
     }
 
-    std::ifstream fi{filename.get_path(), std::ios::binary};
+    std::ifstream fi{filename, std::ios::binary};
     TypeParam comp{fi};
     std::string buffer{std::istreambuf_iterator<char>{comp}, std::istreambuf_iterator<char>{}};
 
     EXPECT_EQ(buffer, uncompressed);
+    tmp.clean();
 }
 
 TYPED_TEST_P(istream, input_type_erased)
 {
-    seqan3::test::tmp_filename filename{"istream_test"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "istream_test";
 
     {
-        std::ofstream fi{filename.get_path()};
+        std::ofstream fi{filename};
 
         fi << TestFixture::compressed;
     }
 
-    std::ifstream fi{filename.get_path(), std::ios::binary};
+    std::ifstream fi{filename, std::ios::binary};
     std::unique_ptr<std::istream> comp{new TypeParam{fi}};
     std::string buffer{std::istreambuf_iterator<char>{*comp}, std::istreambuf_iterator<char>{}};
 
     EXPECT_EQ(buffer, uncompressed);
+    tmp.clean();
 }
 
 REGISTER_TYPED_TEST_SUITE_P(istream, concept_check, input, input_type_erased);

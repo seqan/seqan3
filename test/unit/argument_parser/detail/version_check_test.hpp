@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 #include <seqan3/argument_parser/argument_parser.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 
 //------------------------------------------------------------------------------
 // test fixtures
@@ -47,13 +47,18 @@ struct version_check : public ::testing::Test
 
     std::string const app_name = std::string{"test_version_check"};
 
-    // This tmp_filename will create the file "version_checker.tmpfile" in a unique folder.
-    seqan3::test::tmp_filename tmp_file{"version_checker.tmpfile"};
+    // This will generate a filename "version_checker.tmpfile" in a unique folder.
+    seqan3::test::tmp_directory tmp;
+    seqan3::test::sandboxed_path tmp_file = tmp.path() / "version_checker.tmpfile";
+
+    ~version_check() {
+        tmp.clean();
+    }
 
     void randomise_home_folder()
     {
         using namespace std::string_literals;
-        auto tmp_directory = tmp_file.get_path().parent_path();
+        auto tmp_directory = tmp_file.parent_path();
 
         int result = setenv(seqan3::detail::version_checker::home_env_name, tmp_directory.c_str(), 1);
         if (result != 0)

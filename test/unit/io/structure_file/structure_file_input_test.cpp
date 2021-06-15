@@ -17,7 +17,7 @@
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/test/tmp_filename.hpp>
+#include <seqan3/test/tmp_directory.hpp>
 #include <seqan3/utility/views/convert.hpp>
 
 using seqan3::operator""_rna5;
@@ -39,14 +39,16 @@ struct structure_file_input_class : public ::testing::Test
     using comp2 = seqan3::type_list<seqan3::format_vienna>;
     using comp3 = char;
 
-    seqan3::test::tmp_filename create_file(char const * contents)
-    {
-        seqan3::test::tmp_filename filename{"structure_file_input_constructor.dbn"};
+    seqan3::test::tmp_directory directory_tmp{};
 
-        {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-            filecreator << contents; // must contain at least one record
-        }
+    ~structure_file_input_class() {
+        directory_tmp.clean();
+    }
+    seqan3::test::sandboxed_path create_file(char const * contents)
+    {
+        auto filename = directory_tmp.path() / "structure_file_input_constructor.dbn";
+        std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
+        filecreator << contents; // must contain at least one record
         return filename;
     }
 };
@@ -65,22 +67,27 @@ TEST_F(structure_file_input_class, construct_by_filename)
 {
     /* just the filename */
     {
-        seqan3::test::tmp_filename filename{"structure_file_input_constructor.dbn"};
+        seqan3::test::tmp_directory tmp{};
+        auto filename = tmp.path() / "structure_file_input_constructor.dbn";
 
         {
-            std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+            std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
         }
 
-        EXPECT_NO_THROW(seqan3::structure_file_input<>{filename.get_path()});
+        EXPECT_NO_THROW(seqan3::structure_file_input<>{filename});
+        tmp.clean();
     }
 
     // correct format check is done by tests of that format
 
     /* wrong extension */
     {
-        seqan3::test::tmp_filename filename{"structure_file_input_constructor.xyz"};
-        std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
-        EXPECT_THROW(seqan3::structure_file_input<>{filename.get_path()}, seqan3::unhandled_extension_error);
+        seqan3::test::tmp_directory tmp{};
+        auto filename = tmp.path() / "structure_file_input_constructor.xyz";
+
+        std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
+        EXPECT_THROW(seqan3::structure_file_input<>{filename}, seqan3::unhandled_extension_error);
+        tmp.clean();
     }
 
     /* non-existent file*/
@@ -92,10 +99,10 @@ TEST_F(structure_file_input_class, construct_by_filename)
     {
         using fields_seq = seqan3::fields<seqan3::field::seq>;
 
-        seqan3::test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
+        auto filename = create_file("> ID\nACGU\n....\n");
         EXPECT_NO_THROW((seqan3::structure_file_input<seqan3::structure_file_input_default_traits_rna,
                                                       fields_seq,
-                                                      seqan3::type_list<seqan3::format_vienna>>{filename.get_path(),
+                                                      seqan3::type_list<seqan3::format_vienna>>{filename,
                                                                                                 fields_seq{}}));
     }
 }
@@ -132,8 +139,8 @@ TEST_F(structure_file_input_class, default_template_args)
 TEST_F(structure_file_input_class, guided_filename_constructor)
 {
     /* guided filename constructor */
-    seqan3::test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
-    seqan3::structure_file_input fin{filename.get_path()};
+    auto filename = create_file("> ID\nACGU\n....\n");
+    seqan3::structure_file_input fin{filename};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -145,8 +152,8 @@ TEST_F(structure_file_input_class, guided_filename_constructor)
 TEST_F(structure_file_input_class, guided_filename_constructor_and_custom_fields)
 {
     /* guided filename constructor + custom fields */
-    seqan3::test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
-    seqan3::structure_file_input fin{filename.get_path(), seqan3::fields<seqan3::field::seq>{}};
+    auto filename = create_file("> ID\nACGU\n....\n");
+    seqan3::structure_file_input fin{filename, seqan3::fields<seqan3::field::seq>{}};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        comp0>));
@@ -169,8 +176,8 @@ TEST_F(structure_file_input_class, guided_stream_constructor)
 
 TEST_F(structure_file_input_class, amino_acids_traits)
 {
-    seqan3::test::tmp_filename filename = create_file("> ID\nACEW\nHHHH\n");
-    seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa> fin{filename.get_path()};
+    auto filename = create_file("> ID\nACEW\nHHHH\n");
+    seqan3::structure_file_input<seqan3::structure_file_input_default_traits_aa> fin{filename};
 
     using t = decltype(fin);
     EXPECT_TRUE((std::is_same_v<typename t::traits_type,        seqan3::structure_file_input_default_traits_aa>));
@@ -181,14 +188,14 @@ TEST_F(structure_file_input_class, amino_acids_traits)
 
 TEST_F(structure_file_input_class, modified_traits)
 {
-    seqan3::test::tmp_filename filename = create_file("> ID\nACGU\n....\n");
+    auto filename = create_file("> ID\nACGU\n....\n");
     //! [structure_file_input_class mod_traits]
     struct my_traits : seqan3::structure_file_input_default_traits_rna
     {
         using seq_alphabet = seqan3::rna4; // instead of rna5
     };
 
-    seqan3::structure_file_input<my_traits> fin{filename.get_path()};
+    seqan3::structure_file_input<my_traits> fin{filename};
     //! [structure_file_input_class mod_traits]
 
     using t = decltype(fin);
@@ -280,12 +287,14 @@ struct structure_file_input_read : public ::testing::Test
 
 TEST_F(structure_file_input_read, empty_file)
 {
-    seqan3::test::tmp_filename filename{"empty.dbn"};
-    std::ofstream filecreator{filename.get_path(), std::ios::out | std::ios::binary};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "empty.dbn";
+    std::ofstream filecreator{filename, std::ios::out | std::ios::binary};
 
-    seqan3::structure_file_input fin{filename.get_path()};
+    seqan3::structure_file_input fin{filename};
 
     EXPECT_EQ(fin.begin(), fin.end());
+    tmp.clean();
 }
 
 TEST_F(structure_file_input_read, empty_stream)
@@ -405,17 +414,19 @@ std::string input_gz
 
 TEST_F(structure_file_input_read, decompression_by_filename_gz)
 {
-    seqan3::test::tmp_filename filename{"structure_file_input_test.dbn.gz"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "structure_file_input_test.dbn.gz";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::structure_file_input fin{filename.get_path()};
+    seqan3::structure_file_input fin{filename};
 
     decompression_impl(fin);
+    tmp.clean();
 }
 
 TEST_F(structure_file_input_read, decompression_by_stream_gz)
@@ -460,17 +471,19 @@ std::string input_bgzf
 
 TEST_F(structure_file_input_read, decompression_by_filename_bgzf)
 {
-    seqan3::test::tmp_filename filename{"structure_file_input_test.dbn.bgzf"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "structure_file_input_test.dbn.bgzf";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(input_gz.begin(), input_gz.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::structure_file_input fin{filename.get_path()};
+    seqan3::structure_file_input fin{filename};
 
     decompression_impl(fin);
+    tmp.clean();
 }
 
 TEST_F(structure_file_input_read, decompression_by_stream_bgzf)
@@ -515,17 +528,19 @@ std::string input_bz2
 
 TEST_F(structure_file_input_read, decompression_by_filename_bz2)
 {
-    seqan3::test::tmp_filename filename{"structure_file_input_test.dbn.bz2"};
+    seqan3::test::tmp_directory tmp{};
+    auto filename = tmp.path() / "structure_file_input_test.dbn.bz2";
 
     {
-        std::ofstream of{filename.get_path(), std::ios::binary};
+        std::ofstream of{filename, std::ios::binary};
 
         std::copy(input_bz2.begin(), input_bz2.end(), std::ostreambuf_iterator<char>{of});
     }
 
-    seqan3::structure_file_input fin{filename.get_path()};
+    seqan3::structure_file_input fin{filename};
 
     decompression_impl(fin);
+    tmp.clean();
 }
 
 TEST_F(structure_file_input_read, decompression_by_stream_bz2)
