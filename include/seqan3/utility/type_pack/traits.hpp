@@ -28,7 +28,7 @@ namespace seqan3::pack_traits::detail
  * \tparam query_t  The type you are searching for.
  * \tparam pack_t   The type pack.
  * \returns The position of the first occurrence of `query_t` in `pack_t` or `-1` if it is not contained.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <typename query_t, typename ...pack_t>
 constexpr ptrdiff_t find()
@@ -41,7 +41,7 @@ constexpr ptrdiff_t find()
  * \tparam pred_t   The predicate that is being evaluated.
  * \tparam pack_t   The type pack.
  * \returns The position of the first type `t` in `pack_t` for whom ``pred_t<t>::%value`` is true.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <template <typename> typename pred_t, typename ...pack_t>
 constexpr ptrdiff_t find_if()
@@ -54,7 +54,7 @@ constexpr ptrdiff_t find_if()
  * \tparam idx      The index.
  * \tparam head_t   Currently viewed pack_t element.
  * \tparam tail_t   Rest of the type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <ptrdiff_t idx, typename head_t, typename ...tail_t>
 auto at()
@@ -74,7 +74,7 @@ auto at()
 /*!\brief Implementation for seqan3::pack_traits::front.
  * \tparam head_t   Currently viewed pack_t element.
  * \tparam tail_t   Rest of the type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <typename head_t, typename ...tail_t>
 std::type_identity<head_t> front();
@@ -82,7 +82,7 @@ std::type_identity<head_t> front();
 /*!\brief Implementation for seqan3::pack_traits::drop_front.
  * \tparam head_t   Currently viewed pack_t element.
  * \tparam tail_t   Rest of the type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <typename head_t, typename ...tail_t>
 type_list<tail_t...> drop_front();
@@ -92,7 +92,7 @@ type_list<tail_t...> drop_front();
  * \tparam pack1_t The type pack before the split index.
  * \tparam head_t  The next type that is moved before split index.
  * \tparam pack2_t The type pack after the split index.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <ptrdiff_t idx,
           typename head_t, typename ...pack2_t,
@@ -112,7 +112,7 @@ auto split_after(type_list<pack1_t...>)
  * \tparam idx The index of the type to replace.
  * \tparam pack_t The type pack to be modified.
  * \tparam i The indicies of the index sequence associated with the type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */
 template <typename replace_t,
           ptrdiff_t idx,
@@ -136,7 +136,7 @@ namespace seqan3::pack_traits
 /*!\brief The size of a type pack.
  * \tparam pack_t The type pack.
  * \returns `sizeof...(pack_t)`
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -154,7 +154,7 @@ inline constexpr size_t size = sizeof...(pack_t);
  * \tparam query_t  The type you are searching for.
  * \tparam pack_t   The type pack.
  * \returns The number of occurrences of the `query_t` in `pack_t`.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -172,7 +172,7 @@ inline constexpr ptrdiff_t count =  (std::is_same_v<query_t, pack_t> + ... + 0);
  * \tparam query_t  The type you are searching for.
  * \tparam pack_t   The type pack.
  * \returns The position of the first occurrence of `query_t` in `pack_t` or `-1` if it is not contained.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -190,7 +190,7 @@ inline constexpr ptrdiff_t find = seqan3::pack_traits::detail::find<query_t, pac
  * \tparam pred_t   The predicate that is being evaluated (a class template).
  * \tparam pack_t   The type pack.
  * \returns The index or `-1` if no types match.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -213,7 +213,7 @@ inline constexpr ptrdiff_t find_if = seqan3::pack_traits::detail::find_if<pred_t
  * \tparam query_t  The type you are searching for.
  * \tparam pack_t   The type pack.
  * \returns `true` or `false`.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -235,7 +235,7 @@ inline constexpr bool contains = (find<query_t, pack_t...> != -1);
 /*!\brief Return the type at given index from the type pack.
  * \tparam idx    The index; must be smaller than the size of the pack.
  * \tparam pack_t The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -257,7 +257,7 @@ using at = typename decltype(detail::at<idx, pack_t...>())::type;
 
 /*!\brief Return the first type from the type pack.
  * \tparam pack_t The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -276,7 +276,7 @@ using front = typename decltype(detail::front<pack_t...>())::type;
 
 /*!\brief Return the last type from the type pack.
  * \tparam pack_t The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -304,7 +304,7 @@ using back = typename decltype((std::type_identity<pack_t>{}, ...))::type; // us
 
 /*!\brief Return a seqan3::type_list of all the types in the type pack, except the first.
  * \tparam pack_t The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -324,7 +324,7 @@ using drop_front = typename decltype(detail::drop_front<pack_t...>())::type;
 /*!\brief Apply a transformation trait to every type in the pack and return a seqan3::type_list of the results.
  * \tparam trait_t The transformation trait, **can be an alias template**, e.g. a transformation trait shortcut.
  * \tparam pack_t  The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -350,7 +350,7 @@ using transform = seqan3::type_list<trait_t<pack_t>...>;
 /*!\brief Return a seqan3::type_list of the first `n` types in the type pack.
  * \tparam i        The target size; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -370,7 +370,7 @@ using take = typename decltype(detail::split_after<i, pack_t...>(type_list<>{}))
 /*!\brief Return a seqan3::type_list of the types in the type pack, except the first `n`.
  * \tparam i        The amount to drop; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -390,7 +390,7 @@ using drop = typename decltype(detail::split_after<i, pack_t...>(type_list<>{}))
 /*!\brief Return a seqan3::type_list of the last `n` types in the type pack.
  * \tparam i        The target size; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -410,7 +410,7 @@ using take_last = drop<size<pack_t...> - i, pack_t...>;
 /*!\brief Return a seqan3::type_list of the types the type pack, except the last `n`.
  * \tparam i        The amount to drop; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -430,7 +430,7 @@ using drop_last = take<size<pack_t...> - i, pack_t...>;
 /*!\brief Split a type pack into two parts returned as a pair of seqan3::type_list.
  * \tparam i        The number of elements after which to split; must be >= 0 and <= the size of the type pack.
  * \tparam pack_t   The type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *
@@ -452,7 +452,7 @@ using split_after = decltype(detail::split_after<i, pack_t...>(type_list<>{}));
  * \tparam replace_t The type to replace the old type with.
  * \tparam i         The index of the type to be replaced.
  * \tparam pack_t    The (input) type pack.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  *
  * \details
  *

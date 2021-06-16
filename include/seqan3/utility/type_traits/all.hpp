@@ -6,13 +6,14 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides various type traits.
+ * \brief Meta-header for the \link utility_type_traits Utility / Type Traits submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-/*!\defgroup type_traits Type Traits
+/*!\defgroup utility_type_traits Type Traits
  * \brief Provides various type traits and their shortcuts.
  * \ingroup utility
+ * \see utility
  */
 
 #pragma once

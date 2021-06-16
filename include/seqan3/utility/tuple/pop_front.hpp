@@ -19,7 +19,7 @@
 namespace seqan3
 {
 /*!\brief Removes the first element of a tuple.
- * \ingroup utility
+ * \ingroup utility_tuple
  *
  * \param[in] t  The original tuple.
  *

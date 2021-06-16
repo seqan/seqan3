@@ -21,7 +21,7 @@ namespace seqan3::detail
 
 /*!\brief This gives a fallback type if *type_t::type* is not defined.
  * \implements seqan3::transformation_trait
- * \ingroup type_traits
+ * \ingroup utility_type_traits
  * \tparam type_t    The type to use if *type_t::type* is defined.
  * \tparam default_t The type to use otherwise.
  * \see seqan3::detail::transformation_trait_or_t
@@ -44,8 +44,8 @@ using transformation_trait_or = std::conditional_t<transformation_trait<type_t>,
                                                    std::type_identity<default_t>>;  // else return default_t as trait
 
 /*!\brief Helper type of seqan3::detail::transformation_trait_or (transformation_trait shortcut).
- * \ingroup type_traits
  * \see seqan3::detail::transformation_trait_or
+ * \ingroup utility_type_traits
  */
 template <typename type_t, typename default_t>
 using transformation_trait_or_t = typename transformation_trait_or<type_t, default_t>::type;

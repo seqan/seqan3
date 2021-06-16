@@ -239,8 +239,8 @@ Most views provided by SeqAn3 are specific to biological operations, like seqan3
 based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
 But SeqAn3 also provides some general purpose views.
 
-Have a look at the \link views views-submodule \endlink to get an overview of SeqAn's views and also read through the
-detailed description on that page now that you had a more gentle introduction.
+Have a look at the \link utility_views views-submodule \endlink to get an overview of SeqAn's views and also read
+through the detailed description on that page now that you had a more gentle introduction.
 
 \assignment{Assignment 3: Fun with views III}
 Create a small program that

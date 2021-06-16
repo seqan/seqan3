@@ -98,17 +98,12 @@ private:
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that behaves like std::views::all, but type erases certain ranges.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             The range turned into a view.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -156,8 +151,6 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto type_reduce = detail::type_reduce_fn{};
-
-//!\}
 
 } // namespace seqan3::views
 

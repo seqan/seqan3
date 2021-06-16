@@ -20,7 +20,7 @@ namespace seqan3
 {
 
 /*!\interface seqan3::transformation_trait
- * \ingroup type_traits
+ * \ingroup utility_type_traits
  * \brief Concept for a transformation trait.
  *
  * An object is a transformation trait if it exposes a member type called `type`.
@@ -31,7 +31,7 @@ SEQAN3_CONCEPT transformation_trait = requires { typename t::type; };
 //!\endcond
 
 /*!\interface seqan3::unary_type_trait
- * \ingroup type_traits
+ * \ingroup utility_type_traits
  * \brief Concept for a unary traits type.
  *
  * An object is a unary traits type if it is derived from std::integral_constant.

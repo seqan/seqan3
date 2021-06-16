@@ -6,23 +6,17 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link utility_tuple Utility / Tuple submodule \endlink.
+ * \brief Meta-header for the \link utility_concept Utility / Concept submodule \endlink.
+ * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup utility_tuple Tuple
- * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not
- *        specific to a SeqAn module.
+#include <seqan3/core/platform.hpp>
+
+/*!\defgroup utility_concept Concept
+ * \brief Provides various general purpose concepts.
  * \ingroup utility
  * \see utility
- *
- * \details
- *
- * \todo write me.
  */
-
-#include <seqan3/utility/tuple/concept.hpp>
-#include <seqan3/utility/tuple/pop_front.hpp>
-#include <seqan3/utility/tuple/split.hpp>

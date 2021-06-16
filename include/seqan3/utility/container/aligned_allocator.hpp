@@ -24,7 +24,7 @@ namespace seqan3
 /*!\brief Allocates uninitialized storage whose memory-alignment is specified by *alignment*.
  * \tparam value_t     The value type of the allocation.
  * \tparam alignment_v The memory-alignment of the allocation; defaults to `__STDCPP_DEFAULT_NEW_ALIGNMENT__`.
- * \ingroup container
+ * \ingroup utility_container
  *
  * \details
  *

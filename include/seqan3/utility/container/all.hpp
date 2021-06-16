@@ -6,23 +6,20 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link utility_tuple Utility / Tuple submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the \link utility_container Utility / Container submodule \endlink.
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup utility_tuple Tuple
- * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not
- *        specific to a SeqAn module.
+#include <seqan3/utility/container/aligned_allocator.hpp>
+#include <seqan3/utility/container/concept.hpp>
+#include <seqan3/utility/container/dynamic_bitset.hpp>
+#include <seqan3/utility/container/small_string.hpp>
+#include <seqan3/utility/container/small_vector.hpp>
+
+/*!\defgroup utility_container Container
+ * \brief Provides various general purpose container.
  * \ingroup utility
  * \see utility
- *
- * \details
- *
- * \todo write me.
  */
-
-#include <seqan3/utility/tuple/concept.hpp>
-#include <seqan3/utility/tuple/pop_front.hpp>
-#include <seqan3/utility/tuple/split.hpp>

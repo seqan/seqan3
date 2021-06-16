@@ -18,7 +18,7 @@ namespace seqan3::detail
 {
 
 /*!\brief seqan3 auto-detects the maximum number of packable `[u]int8_t` types.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam simd_backend_t The name of the simd backend.
  *
  * \include test/snippet/utility/simd/detail/default_simd_max_length.cpp
@@ -32,8 +32,8 @@ template <template <typename, size_t> typename simd_backend_t>
 constexpr auto default_simd_max_length = 0u;
 
 /*!\brief seqan3::detail::default_simd_length returns the default *length* depending
- * on the given *scalar_t* type, which is used in seqan3::simd::simd_type.
- * \ingroup simd
+ *        on the given *scalar_t* type, which is used in seqan3::simd::simd_type.
+ * \ingroup utility_simd
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam simd_backend_t The name of the simd backend.
  */

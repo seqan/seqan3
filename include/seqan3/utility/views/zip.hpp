@@ -22,7 +22,7 @@ namespace seqan3::views
 {
 
 /*!\brief A zip view
- * \ingroup views
+ * \ingroup utility_views
  * \details
  * \noapi{This is currently range-v3's zip implementation.}
  */

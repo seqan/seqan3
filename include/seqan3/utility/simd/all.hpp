@@ -7,17 +7,26 @@
 
 /*!\file
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
- * \brief Meta-header for the simd module.
+ * \brief Meta-header for the \cond DEV \link utility_simd Utility / SIMD submodule \endlink \endcond.
  */
 
 #pragma once
 
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/concept.hpp>
+#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/views/iota_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
+
 //!\cond DEV
 
-/*!\defgroup simd Simd
+/*!\defgroup utility_simd SIMD
  * \brief The simd module contains a unified interface to provide simd types and functions used in seqan3.
- * \see https://en.wikipedia.org/wiki/SIMD
  * \ingroup utility
+ * \see utility
+ * \see https://en.wikipedia.org/wiki/SIMD
  *
  * \todo Make this public again. We made this documentation internal-documentation only for the 3.0.0 release, because
  * the API was not in shape yet. Remove the `cond DEV` and `todo` commands and remove `seqan3::simd` from
@@ -30,14 +39,6 @@
  *
  * \todo Describe more what SIMD is and how to use it.
  */
-
-#include <seqan3/utility/simd/algorithm.hpp>
-#include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/utility/simd/views/iota_simd.hpp>
-#include <seqan3/utility/simd/views/to_simd.hpp>
 
 /*!\namespace seqan3::simd
  * \brief The SeqAn namespace for simd data types, algorithms and meta functions.

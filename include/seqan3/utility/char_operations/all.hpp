@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides Char predicates for tokenization.
+ * \brief Meta-header for the \link utility_char_operations Utility / Builtin Character Operations submodule \endlink.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
@@ -17,7 +17,8 @@
 #include <seqan3/utility/char_operations/pretty_print.hpp>
 #include <seqan3/utility/char_operations/transform.hpp>
 
-/*!\defgroup char_operations Builtin Character Operations
+/*!\defgroup utility_char_operations Builtin Character Operations
  * \brief Provides various operations on character types.
  * \ingroup utility
+ * \see utility
  */

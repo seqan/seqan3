@@ -82,7 +82,7 @@ inline namespace simd
 
 /*!\interface seqan3::simd::simd_concept <>
  * \brief The generic simd concept.
- * \ingroup simd
+ * \ingroup utility_simd
  *
  * \details
  *
@@ -100,7 +100,7 @@ SEQAN3_CONCEPT simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail
 
 /*!\interface seqan3::simd::simd_index <>
  * \brief Refines the seqan3::simd::simd_concept requiring the underlying scalar type to model std::integral.
- * \ingroup alignment_matrix
+ * \ingroup utility_simd
  *
  * \details
  *

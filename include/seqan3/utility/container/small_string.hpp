@@ -18,7 +18,7 @@ namespace seqan3
 {
 
 /*!\brief Implements a small string that can be used for compile time computations.
- * \ingroup container
+ * \ingroup utility_container
  * \implements seqan3::reservible_container
  * \tparam capacity_ The capacity of the small string.
  *

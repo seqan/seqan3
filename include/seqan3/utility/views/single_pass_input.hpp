@@ -34,7 +34,7 @@ class basic_iterator;
 /*!\brief Adds single_pass_input behavior to the underlying range.
  * \tparam urng_t The underlying range type.
  * \implements std::ranges::input_range
- * \ingroup views
+ * \ingroup utility_views
  */
 //![view_def]
 template <std::ranges::view urng_t>
@@ -155,7 +155,7 @@ namespace seqan3::detail
 {
 /*!\brief An input_iterator over the associated range.
  * \implements std::input_iterator
- * \ingroup views
+ * \ingroup utility_views
  * \tparam view_type The type of the associated type.
  *
  * This iterator reduces every iterator type of the associated view to an single pass input iterator.
@@ -311,15 +311,11 @@ protected:
 //![adaptor_def]
 namespace seqan3::views
 {
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adapter that decays most of the range properties and adds single pass behavior.
  * \tparam urng_t       The type of the range being processed. See below for requirements.
  * \param[in] urange    The range being processed.
  * \returns             A range with single pass input behavior. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -364,6 +360,5 @@ namespace seqan3::views
  */
 inline constexpr auto single_pass_input = detail::adaptor_for_view_without_args<detail::single_pass_input_view>{};
 
-//!\}
 } // namespace seqan3::views
 //![adaptor_def]

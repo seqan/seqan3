@@ -6,23 +6,21 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link utility_tuple Utility / Tuple submodule \endlink.
- * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ * \brief Meta-header for the \cond DEV \link utility_simd_views Utility / SIMD / Views submodule \endlink \endcond.
+ * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
 
-/*!\defgroup utility_tuple Tuple
- * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not
- *        specific to a SeqAn module.
- * \ingroup utility
- * \see utility
- *
- * \details
- *
- * \todo write me.
+#include <seqan3/utility/simd/views/iota_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>
+
+//!\cond DEV
+
+/*!\defgroup utility_simd_views Views
+ * \brief SIMD related views.
+ * \ingroup utility_simd
+ * \see utility_simd
  */
 
-#include <seqan3/utility/tuple/concept.hpp>
-#include <seqan3/utility/tuple/pop_front.hpp>
-#include <seqan3/utility/tuple/split.hpp>
+//!\endcond

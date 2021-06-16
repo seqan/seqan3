@@ -23,7 +23,7 @@
 namespace seqan3::detail
 {
 /*!\brief A delay for threads waiting for a shared resource.
- * \ingroup parallel
+ * \ingroup utility_parallel
  *
  * \details
  *

@@ -27,7 +27,7 @@ struct type_list_expander;
 //!\endcond
 
 /*!\brief Helper class to invoke a meta algorithm on the types contained in a seqan3::type_list.
- * \ingroup core
+ * \ingroup utility_type_list
  * \tparam type_list_t The type list given as a template template parameter.
  * \tparam args_t The template arguments contained in `type_list_t` to apply the target function on.
  *
@@ -74,7 +74,7 @@ struct type_list_expander<type_list_t<args_t...>>
 //-----------------------------------------------------------------------------
 
 /*!\brief Tests whether a given predicate evaluates to `true` for each element in the function parameter pack.
- * \ingroup core
+ * \ingroup utility_type_pack
  *
  * \tparam unary_predicate_t The function type, like function pointers, functors and lambdas;
  *                           must model std::predicate expanded on each argument type.
@@ -113,7 +113,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
 }
 
 /*!\brief Tests whether a given predicate evaluates to `true` for each type in a seqan3::type_list.
- * \ingroup core
+ * \ingroup utility_type_list
  *
  * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of a seqan3::type_list
  * \tparam unary_predicate_t The function type, like function pointers, functors and lambdas;
@@ -163,7 +163,7 @@ template <typename type_list_t, typename unary_predicate_t>
 //-----------------------------------------------------------------------------
 
 /*!\brief Applies a function to each element of the given function parameter pack.
- * \ingroup core
+ * \ingroup utility_type_pack
  *
  * \tparam unary_function_t The function type, like function pointers, functors and lambdas.
  * \tparam pack_t The parameter pack of the arguments (each argument type can be different).
@@ -199,7 +199,7 @@ constexpr void for_each(unary_function_t && fn, pack_t && ...args)
 }
 
 /*!\brief Applies a function element wise to all types of a type list.
- * \ingroup core
+ * \ingroup utility_type_list
  *
  * \tparam list_t A type list; must model seqan3::detail::template_specialisation_of a seqan3::type_list.
  * \tparam unary_function_t The function type, like function pointers, functors and lambdas; must model

@@ -31,7 +31,7 @@ struct pod_tuple
 //!\endcond
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](https://en.cppreference.com/w/cpp/named_req/PODType).
- * \ingroup utility
+ * \ingroup utility_tuple
  * \implements seqan3::tuple_like
  * \tparam type0    The first type (the first type).
  * \tparam ...types 0-n types (the remaining types of the values to be stored).
@@ -104,7 +104,7 @@ struct pod_tuple<type0, types...>
 };
 
 /*!\brief Recursion anchor for pod_tuple.
- * \ingroup core
+ * \ingroup utility_tuple
  * \tparam type0 The value's type (every tuple must contain at least one type).
  */
 template <typename type0>

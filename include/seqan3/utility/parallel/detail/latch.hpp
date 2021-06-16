@@ -22,7 +22,7 @@ namespace seqan3::detail
 {
 
 /*!\brief A single-use synchronisation point to coordinate concurrent threads.
- * \ingroup parallel
+ * \ingroup utility_parallel
  *
  * \details
  *

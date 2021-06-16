@@ -22,7 +22,7 @@ namespace seqan3::views
 {
 
 /*!\brief A join view, please use std::views::join if you don't need a separator.
- * \ingroup views
+ * \ingroup utility_views
  * \details
  * \noapi{This is currently range-v3's join implementation.}
  */

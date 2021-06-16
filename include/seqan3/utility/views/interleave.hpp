@@ -36,7 +36,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::sized_range
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -306,11 +306,6 @@ struct interleave_fn
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief A view that interleaves a given range into another range at regular intervals.
  * \tparam urng_t The type of the range being processed.
  * \tparam inserted_rng_t The type of the range being inserted.
@@ -318,7 +313,7 @@ namespace seqan3::views
  * \param[in] inserted_range The range being inserted.
  * \param[in] step_size A value of size_type which indicates the interval to insert the inserted_range.
  * \returns A range with the second range inserted at regular intervals. See below for properties of said range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -382,7 +377,5 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto interleave = detail::interleave_fn{};
-
-//!\}
 
 } // namespace seqan3::views
