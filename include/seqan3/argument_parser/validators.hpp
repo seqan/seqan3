@@ -576,10 +576,12 @@ public:
             // Check extension.
             validate_filename(file);
         }
+        // LCOV_EXCL_START
         catch (std::filesystem::filesystem_error & ex)
         {
             std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
+        // LCOV_EXCL_STOP
         catch (...)
         {
             std::rethrow_exception(std::current_exception());
@@ -705,10 +707,12 @@ public:
 
             validate_filename(file);
         }
+        // LCOV_EXCL_START
         catch (std::filesystem::filesystem_error & ex)
         {
             std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
+        // LCOV_EXCL_STOP
         catch (...)
         {
             std::rethrow_exception(std::current_exception());
@@ -785,10 +789,12 @@ public:
             // Check if directory has any read permissions.
             validate_readability(dir);
         }
+        // LCOV_EXCL_START
         catch (std::filesystem::filesystem_error & ex)
         {
             std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
+        // LCOV_EXCL_STOP
         catch (...)
         {
             std::rethrow_exception(std::current_exception());
@@ -867,10 +873,12 @@ public:
                 validate_writeability(dir / "dummy.txt");
             }
         }
+        // LCOV_EXCL_START
         catch (std::filesystem::filesystem_error & ex)
         {
             std::throw_with_nested(validation_error{"Unhandled filesystem error!"});
         }
+        // LCOV_EXCL_STOP
         catch (...)
         {
             std::rethrow_exception(std::current_exception());

@@ -477,6 +477,18 @@ TEST(validator_test, output_directory)
         EXPECT_EQ(path, dir_out_path.string());
     }
 
+    { // create output directory in next level, when parent directory exists.
+        // Parent path exists and is writable
+        seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
+        std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
+        std::filesystem::path tmp_parent_path{tmp_child_dir.parent_path()};
+        
+        std::filesystem::create_directory(tmp_parent_path);
+
+        EXPECT_TRUE(std::filesystem::exists(tmp_parent_path));
+        EXPECT_NO_THROW(seqan3::output_directory_validator{}(tmp_child_dir));
+    }
+
     {
         // get help page message
         std::filesystem::path path;
@@ -525,6 +537,24 @@ TEST(validator_test, inputfile_not_readable)
                                  std::filesystem::perms::owner_read | std::filesystem::perms::group_read |
                                  std::filesystem::perms::others_read,
                                  std::filesystem::perm_options::add);
+}
+
+TEST(validator_test, inputfile_not_regular)
+{
+    seqan3::test::tmp_filename tmp{"my_file.test"};
+    // std::string filename     = "my_file.test";
+    std::filesystem::path filename = tmp.get_path();
+    mkfifo(filename.c_str(), 0644); 
+
+    EXPECT_THROW(seqan3::input_file_validator{}(filename), seqan3::validation_error);
+}
+
+TEST(validator_test, inputdir_not_existing)
+{
+    seqan3::test::tmp_filename tmp_name{"dir"};
+    std::filesystem::path not_existing_dir{tmp_name.get_path()};
+
+    EXPECT_THROW(seqan3::input_directory_validator{}(not_existing_dir), seqan3::validation_error);
 }
 
 TEST(validator_test, inputdir_not_readable)
@@ -586,6 +616,27 @@ TEST(validator_test, outputdir_not_writable)
 
         EXPECT_NO_THROW(seqan3::output_file_validator{seqan3::output_file_open_options::create_new}(tmp_dir));
         EXPECT_FALSE(std::filesystem::exists(tmp_dir));
+
+        // parent dir does not exist
+        seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
+        std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
+        std::filesystem::path tmp_parent_dir{tmp_child_dir.parent_path()};
+
+        EXPECT_THROW(seqan3::output_directory_validator{}(tmp_child_dir), seqan3::validation_error);
+
+        // Directory exists but is not writable.
+        std::filesystem::create_directory(tmp_dir);
+        std::filesystem::permissions(tmp_dir,
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::remove);
+
+        EXPECT_TRUE(std::filesystem::exists(tmp_dir));
+        if (!seqan3::test::write_access(tmp_dir)) // Do not execute with root permissions.
+        {
+            EXPECT_THROW(seqan3::output_directory_validator{}(tmp_dir), seqan3::validation_error);
+        }
+
         // Parent path is not writable.
         std::filesystem::permissions(tmp_dir.parent_path(),
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
@@ -598,7 +649,11 @@ TEST(validator_test, outputdir_not_writable)
                          seqan3::validation_error);
         }
 
-        // make sure we can remove the directory.
+        // make sure we can remove the directories.
+        std::filesystem::permissions(tmp_dir,
+                                     std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
+                                     std::filesystem::perms::others_write,
+                                     std::filesystem::perm_options::add);
         std::filesystem::permissions(tmp_dir.parent_path(),
                                      std::filesystem::perms::owner_write | std::filesystem::perms::group_write |
                                      std::filesystem::perms::others_write,
