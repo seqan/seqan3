@@ -24,6 +24,15 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.1.0
+
+## Notable Bug-fixes
+
+#### Search
+
+* Resolved an issue that prevented the FM-Index from being constructed correctly for inputs larger than 4 GiB
+  ([\#2756](https://github.com/seqan/seqan3/pull/2756)).
+
 # 3.0.3
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.

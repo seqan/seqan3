@@ -293,7 +293,7 @@ private:
         size_t const number_of_texts{text_sizes.size()};
 
         // text size including delimiters
-        size_t const text_size = std::accumulate(text_sizes.begin(), text_sizes.end(), 0) + number_of_texts;
+        size_t const text_size = std::accumulate(text_sizes.begin(), text_sizes.end(), number_of_texts);
 
         if (number_of_texts == text_size)
             throw std::invalid_argument("A text collection that only contains empty texts cannot be indexed.");
