@@ -23,12 +23,13 @@
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/test/literal/cigar_literal.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
 using seqan3::operator""_dna5;
 using seqan3::operator""_phred42;
-using seqan3::operator""_cigar_operation;
+using seqan3::test::operator""_cigar;
 
 // ----------------------------------------------------------------------------
 // record
@@ -87,9 +88,7 @@ struct sam_record : public ::testing::Test
             /*.flag =*/ seqan3::sam_flag{41u},
             {/*.mate_reference_id =*/ 0,/*.mate_position =*/ 9,/*.template_length =*/ 300},
             /*.mapping_quality =*/ 61u,
-            /*.cigar_sequence =*/
-            {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-             {1, 'I'_cigar_operation}},
+            /*.cigar_sequence =*/ "1S1M1D1M1I"_cigar,
             /*.tags =*/ seqan3::sam_tag_dictionary{}
         };
     }
@@ -156,10 +155,7 @@ TEST_F(sam_record, get_by_index)
     EXPECT_EQ(std::get<8>(r), seqan3::sam_flag{41u});
     EXPECT_EQ(std::get<9>(r), (mate_t{0, 9, 300}));
     EXPECT_EQ(std::get<10>(r), 61u);
-    EXPECT_RANGE_EQ(std::get<11>(r),
-                    (std::vector<seqan3::cigar>{{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'I'_cigar_operation}}));
+    EXPECT_RANGE_EQ(std::get<11>(r), "1S1M1D1M1I"_cigar);
     EXPECT_EQ(std::get<12>(r), seqan3::sam_tag_dictionary{});
 }
 
@@ -178,10 +174,7 @@ TEST_F(sam_record, get_by_type)
     EXPECT_EQ(std::get<seqan3::sam_flag>(r), seqan3::sam_flag{41u});
     EXPECT_EQ(std::get<mate_t>(r), (mate_t{0, 9, 300}));
     EXPECT_EQ(std::get<uint8_t>(r), 61u);
-    EXPECT_RANGE_EQ(std::get<std::vector<seqan3::cigar>>(r),
-                    (std::vector<seqan3::cigar>{{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'I'_cigar_operation}}));
+    EXPECT_RANGE_EQ(std::get<std::vector<seqan3::cigar>>(r), "1S1M1D1M1I"_cigar);
     EXPECT_EQ(std::get<seqan3::sam_tag_dictionary>(r), seqan3::sam_tag_dictionary{});
 }
 
@@ -202,10 +195,7 @@ TEST_F(sam_record, get_by_member)
     EXPECT_EQ(r.mate_position(), 9);
     EXPECT_EQ(r.template_length(), 300);
     EXPECT_EQ(r.mapping_quality(), 61u);
-    EXPECT_RANGE_EQ(r.cigar_sequence(),
-                    (std::vector<seqan3::cigar>{{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
-                                                {1, 'I'_cigar_operation}}));
+    EXPECT_RANGE_EQ(r.cigar_sequence(), "1S1M1D1M1I"_cigar);
     EXPECT_EQ(r.tags(), seqan3::sam_tag_dictionary{});
 }
 
