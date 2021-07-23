@@ -76,20 +76,21 @@ struct sam_record : public ::testing::Test
     {
         return
         {
-            "MY ID",
-            "ACGT"_dna5,
-            "!##$"_phred42,
-            1,
-            alignment_t{},
-            "ref",
-            0,
-            nullptr,
-            seqan3::sam_flag{41u},
-            {0, 9, 300},
-            61u,
+            /*.id =*/ "MY ID",
+            /*.sequence =*/ "ACGT"_dna5,
+            /*.base_qualities =*/ "!##$"_phred42,
+            /*.sequence_position =*/ 1,
+            /*.alignment =*/ alignment_t{},
+            /*.reference_id =*/ "ref",
+            /*.reference_position =*/ 0,
+            /*.header_ptr =*/ nullptr,
+            /*.flag =*/ seqan3::sam_flag{41u},
+            {/*.mate_reference_id =*/ 0,/*.mate_position =*/ 9,/*.template_length =*/ 300},
+            /*.mapping_quality =*/ 61u,
+            /*.cigar_sequence =*/
             {{1, 'S'_cigar_operation}, {1, 'M'_cigar_operation}, {1, 'D'_cigar_operation}, {1, 'M'_cigar_operation},
              {1, 'I'_cigar_operation}},
-            seqan3::sam_tag_dictionary{}
+            /*.tags =*/ seqan3::sam_tag_dictionary{}
         };
     }
 };
