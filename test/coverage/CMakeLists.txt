@@ -41,7 +41,7 @@ add_custom_command (
     COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --initial --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.baseline
 
     # Run tests
-    COMMAND ${CMAKE_CTEST_COMMAND}
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
 
     # Capturing lcov counters and generating report
     COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.captured
