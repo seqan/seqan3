@@ -186,7 +186,7 @@ positive value and the score for mismatch and gaps must be negative in order to 
 \snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_cost_affine
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
-seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap configurations. The
+seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap_cost_affine configurations. The
 seqan3::align_cfg::scoring_scheme is mandatory - similarly to the alignment method configuration. It would be
 wrong to assume what the default scoring scheme should be. If you do not provide these configurations, the compilation
 will fail with a corresponding error message. Not providing the gap scheme is ok. In this case the default initialised
