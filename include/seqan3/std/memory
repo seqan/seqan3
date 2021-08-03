@@ -22,7 +22,7 @@
 #ifndef SEQAN3_CPP_LIB_TO_ADDRESS
 #   if defined(__cpp_lib_to_address)
 #       define SEQAN3_CPP_LIB_TO_ADDRESS 1
-#   elif defined(__GNUC__) && (__GNUC__ == 8 || __GNUC__ == 9) && __cplusplus > 201703L
+#   elif defined(__GNUC__) && (_GLIBCXX_RELEASE == 8 || _GLIBCXX_RELEASE == 9) && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_TO_ADDRESS 1
 #   endif
 #endif
