@@ -83,7 +83,7 @@ private:
     //!\}
 
     //!\brief Befriend the following class s.t. iterator and const_iterator can be defined for this type.
-    template <typename parent_type, typename crtp_base>
+    template <typename range_type, template <typename ...> typename derived_t_template>
     friend class detail::random_access_iterator_base;
 
 public:
