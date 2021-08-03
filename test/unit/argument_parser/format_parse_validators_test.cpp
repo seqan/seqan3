@@ -477,8 +477,7 @@ TEST(validator_test, output_directory)
         EXPECT_EQ(path, dir_out_path.string());
     }
 
-    { // create output directory in next level, when parent directory exists.
-        // Parent path exists and is writable
+    { // Parent path exists and is writable.
         seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
         std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
         std::filesystem::path tmp_parent_path{tmp_child_dir.parent_path()};
@@ -542,7 +541,6 @@ TEST(validator_test, inputfile_not_readable)
 TEST(validator_test, inputfile_not_regular)
 {
     seqan3::test::tmp_filename tmp{"my_file.test"};
-    // std::string filename     = "my_file.test";
     std::filesystem::path filename = tmp.get_path();
     mkfifo(filename.c_str(), 0644); 
 
