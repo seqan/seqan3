@@ -84,7 +84,7 @@ using search_scheme_dyn_type = std::vector<search_dyn>;
  *          seems to be a good greedy approach.
  */
 template <uint8_t min_error, uint8_t max_error>
-inline int constexpr optimum_search_scheme;
+inline int constexpr optimum_search_scheme{0};
 
 //!\cond
 
