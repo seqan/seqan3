@@ -83,10 +83,11 @@ class gap_decorator
 {
 private:
     // Declaration of class's iterator types; for the definition see below.
-    class gap_decorator_iterator;
+    template <bool = true>
+    class basic_iterator;
 
     //!\brief The iterator type of this container (a bidirectional iterator).
-    using iterator = gap_decorator_iterator;
+    using iterator = basic_iterator<true>;
     //!\brief The const_iterator equals the iterator type. Since no references are ever returned and thus the underlying
     //!        sequence cannot be modified through the iterator there is no need for const.
     using const_iterator = iterator;
@@ -667,7 +668,8 @@ template <std::ranges::viewable_range inner_type>
     requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
              (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
 //!\endcond
-class gap_decorator<inner_type>::gap_decorator_iterator
+template <bool>
+class gap_decorator<inner_type>::basic_iterator
 {
 protected:
     //!\brief Pointer to the underlying container structure.
@@ -732,15 +734,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    gap_decorator_iterator() = default; //!< Defaulted.
-    gap_decorator_iterator(gap_decorator_iterator const &) = default; //!< Defaulted.
-    gap_decorator_iterator & operator=(gap_decorator_iterator const &) = default; //!< Defaulted.
-    gap_decorator_iterator(gap_decorator_iterator &&) = default; //!< Defaulted.
-    gap_decorator_iterator & operator=(gap_decorator_iterator &&) = default; //!< Defaulted.
-    ~gap_decorator_iterator() = default; //!< Defaulted.
+    basic_iterator() = default; //!< Defaulted.
+    basic_iterator(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator(basic_iterator &&) = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
+    ~basic_iterator() = default; //!< Defaulted.
 
     //!\brief Construct from seqan3::gap_decorator and initialising to first position.
-    explicit gap_decorator_iterator(gap_decorator const & host_) :
+    explicit basic_iterator(gap_decorator const & host_) :
         host(&host_), anchor_set_it{host_.anchors.begin()}
     {
         if (host_.anchors.size() && (*host_.anchors.begin()).first == 0) // there are gaps at the very front
@@ -756,7 +758,7 @@ public:
     }
 
     //!\brief Construct from seqan3::gap_decorator and explicit position.
-    gap_decorator_iterator(gap_decorator const & host_, typename gap_decorator::size_type const pos_) : host(&host_)
+    basic_iterator(gap_decorator const & host_, typename gap_decorator::size_type const pos_) : host(&host_)
     {
         jump(pos_); // random access to pos
     }
@@ -766,7 +768,7 @@ public:
      * \{
      */
     //!\brief Increments iterator.
-    gap_decorator_iterator & operator++()
+    basic_iterator & operator++()
     {
         assert(host); // host is set
         ++pos;
@@ -795,34 +797,34 @@ public:
     }
 
     //!\brief Returns an incremented iterator copy.
-    gap_decorator_iterator operator++(int)
+    basic_iterator operator++(int)
     {
-        gap_decorator_iterator cpy{*this};
+        basic_iterator cpy{*this};
         ++(*this);
         return cpy;
     }
 
     //!\brief Advances iterator by `skip` many positions.
-    gap_decorator_iterator & operator+=(difference_type const skip)
+    basic_iterator & operator+=(difference_type const skip)
     {
         this->jump(this->pos + skip);
         return *this;
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    gap_decorator_iterator operator+(difference_type const skip) const
+    basic_iterator operator+(difference_type const skip) const
     {
-        return gap_decorator_iterator{*(this->host), this->pos + skip};
+        return basic_iterator{*(this->host), this->pos + skip};
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    friend gap_decorator_iterator operator+(difference_type const skip, gap_decorator_iterator const & it)
+    friend basic_iterator operator+(difference_type const skip, basic_iterator const & it)
     {
         return it + skip;
     }
 
     //!\brief Decrements iterator.
-    gap_decorator_iterator & operator--()
+    basic_iterator & operator--()
     {
         assert(host); // host is set
         --pos;
@@ -854,34 +856,34 @@ public:
     }
 
     //!\brief Returns a decremented iterator copy.
-    gap_decorator_iterator operator--(int)
+    basic_iterator operator--(int)
     {
-        gap_decorator_iterator cpy{*this};
+        basic_iterator cpy{*this};
         --(*this);
         return cpy;
     }
 
     //!\brief Advances iterator by `skip` many positions.
-    gap_decorator_iterator & operator-=(difference_type const skip)
+    basic_iterator & operator-=(difference_type const skip)
     {
         this->jump(this->pos - skip);
         return *this;
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    gap_decorator_iterator operator-(difference_type const skip) const
+    basic_iterator operator-(difference_type const skip) const
     {
-        return gap_decorator_iterator{*(this->host), this->pos - skip};
+        return basic_iterator{*(this->host), this->pos - skip};
     }
 
     //!\brief Returns an iterator copy advanced by `skip` many positions.
-    friend gap_decorator_iterator operator-(difference_type const skip, gap_decorator_iterator const & it)
+    friend basic_iterator operator-(difference_type const skip, basic_iterator const & it)
     {
         return it - skip;
     }
 
     //!\brief Returns the distance between two iterators.
-    difference_type operator-(gap_decorator_iterator const lhs) const noexcept
+    difference_type operator-(basic_iterator const lhs) const noexcept
     {
         return static_cast<difference_type>(this->pos - lhs.pos);
     }
@@ -909,37 +911,37 @@ public:
      */
 
     //!\brief Checks whether `*this` is equal to `rhs`.
-    friend bool operator==(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator==(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos == rhs.pos;
     }
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
-    friend bool operator!=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator!=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos != rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than `rhs`.
-    friend bool operator<(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator<(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos < rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than `rhs`.
-    friend bool operator>(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator>(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos > rhs.pos;
     }
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
-    friend bool operator<=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator<=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos <= rhs.pos;
     }
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
-    friend bool operator>=(gap_decorator_iterator const & lhs, gap_decorator_iterator const & rhs) noexcept
+    friend bool operator>=(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     {
         return lhs.pos >= rhs.pos;
     }
