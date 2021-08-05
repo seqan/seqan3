@@ -155,7 +155,9 @@ public:
         // https://stackoverflow.com/questions/26831382/capturing-perfectly-forwarded-variable-in-lambda/
 
         // Asynchronously pushes the algorithm job as a task to the queue.
-        task_type task = [=, input_tpl = std::tuple<algorithm_input_t>{std::forward<algorithm_input_t>(input)}] ()
+        // Note: that lambda is mutable, s.t. we can move out the content of input_tpl
+        task_type task = [=,
+                          input_tpl = std::tuple<algorithm_input_t>{std::forward<algorithm_input_t>(input)}] () mutable
         {
             using forward_input_t = std::tuple_element_t<0, decltype(input_tpl)>;
             algorithm(std::forward<forward_input_t>(std::get<0>(input_tpl)), std::move(callback));
