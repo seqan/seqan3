@@ -17,12 +17,10 @@
 namespace seqan3
 {
 
-/*!\addtogroup submodule_bloom_filter
- * \{
- */
 /*!\brief The Bloom Filter. A data structure that efficiently answers set-membership queries.
  * \tparam data_layout_mode_ Indicates whether the underlying data type is compressed. See seqan3::data_layout.
  * \implements seqan3::cerealisable
+ * \ingroup utility_bloom_filter
  *
  * \details
  *
@@ -39,6 +37,7 @@ namespace seqan3
  * will always return `true` if the query was inserted, i.e. there may be false positives, but no false negatives.
  * 
  * ### Querying
+ * 
  * To query the Bloom Filter for a value, call `seqan3::bloom_filter::contains` which returns
  * true if the k-mer hash is present in the index, and false if the hash is not present.
  * The value is a hash value of the k-mer to check membership for.
@@ -318,10 +317,10 @@ public:
         return hash_funs;
     }
 
-    /*!\brief Returns the size that the Bloom Filter manages.
-     * \returns The size in bits.
+    /*!\brief Returns the size of the underlying bitvector.
+     * \returns The size in bits of the underlying bitvector.
      */
-    size_t size() const noexcept
+    size_t bit_size() const noexcept
     {
         return size_in_bits;
     }
@@ -391,7 +390,5 @@ public:
     }
     //!\endcond
 };
-
-//!\}
 
 } // namespace seqan3

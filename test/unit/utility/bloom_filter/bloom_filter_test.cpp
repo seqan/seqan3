@@ -45,7 +45,7 @@ TYPED_TEST(bloom_filter_test, construction)
                                        seqan3::hash_function_count{2u})};
     EXPECT_TRUE(bf1 == bf2);
 
-     // bin_size parameter is too small
+    // bin_size parameter is too small
     EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{0u})), std::logic_error);
     // not enough hash functions
     EXPECT_THROW((TestFixture::make_bf(seqan3::bin_size{32u},
@@ -60,12 +60,12 @@ TYPED_TEST(bloom_filter_test, construction)
 TYPED_TEST(bloom_filter_test, member_getter)
 {
     TypeParam t1{TestFixture::make_bf(seqan3::bin_size{1024u})};
-    EXPECT_EQ(t1.size(), 1024u);
+    EXPECT_EQ(t1.bit_size(), 1024u);
     EXPECT_EQ(t1.hash_function_count(), 2u);
 
     TypeParam t2{TestFixture::make_bf(seqan3::bin_size{1019u},
                                        seqan3::hash_function_count{3u})};
-    EXPECT_EQ(t2.size(), 1019u);
+    EXPECT_EQ(t2.bit_size(), 1019u);
     EXPECT_EQ(t2.hash_function_count(), 3u);
 }
 

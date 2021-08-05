@@ -13,22 +13,22 @@ int main()
     auto const sequence1 = "ACTGACTGACTGATC"_dna4;
     auto const sequence2 = "GTGACTGACTGACTCG"_dna4;
     auto const sequence3 = "AAAAAAACGATCGACA"_dna4;
-    auto hash_adaptor = seqan3::views::kmer_hash(seqan3::ungapped{5u});
+    auto kmers = seqan3::views::kmer_hash(seqan3::ungapped{5u});
 
     // Insert all 5-mers of sequence1
-    for (auto && value : sequence1 | hash_adaptor)
+    for (auto && value : sequence1 | kmers)
         bf.emplace(value);
 
     // Insert all 5-mers of sequence3
-    for (auto && value : sequence3 | hash_adaptor)
+    for (auto && value : sequence3 | kmers)
         bf.emplace(value);
 
     // Count all 5-mers of sequence2
-    seqan3::debug_stream << bf.count(sequence2 | hash_adaptor) << '\n'; // 9
+    seqan3::debug_stream << bf.count(sequence2 | kmers) << '\n'; // 9
 
     // Reset the Bloom Filter
     bf.reset();
 
     // After reset, no 5-mers are found
-    seqan3::debug_stream << bf.count(sequence2 | hash_adaptor) << '\n'; // 0
+    seqan3::debug_stream << bf.count(sequence2 | kmers) << '\n'; // 0
 }

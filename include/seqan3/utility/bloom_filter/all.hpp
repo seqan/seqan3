@@ -9,7 +9,7 @@
  * \author Tobias Loka <tobias.loka AT hpi.de>
  * \brief Meta-header for the Bloom Filter.
  *
- * \defgroup submodule_bloom_filter Bloom Filter
+ * \defgroup utility_bloom_filter Bloom Filter
  * \brief Provides seqan3:bloom_filter.
  * \ingroup utility
  */
@@ -17,3 +17,4 @@
  #pragma once
 
  #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
+ 
