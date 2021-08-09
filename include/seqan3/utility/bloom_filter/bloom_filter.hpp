@@ -35,27 +35,27 @@ namespace seqan3
  * Since the Bloom Filter has variable length, the hashing is not bijective, i.e. it may return true for a set
  * membership query even though the query was never inserted into the Bloom Filter. Note that the Bloom Filter
  * will always return `true` if the query was inserted, i.e. there may be false positives, but no false negatives.
- * 
+ *
  * ### Querying
- * 
+ *
  * To query the Bloom Filter for a value, call `seqan3::bloom_filter::contains` which returns
  * true if the k-mer hash is present in the index, and false if the hash is not present.
  * The value is a hash value of the k-mer to check membership for.
- * 
+ *
  * To query the Bloom Filter for a range of values, call `seqan3::bloom_filter::count` which returns the
  * number of k-mer hits in the Bloom Filter for the given range of values.
- * 
- * Please note the results are based on a heuristic data structure and with a certain probability (depending on 
+ *
+ * Please note the results are based on a heuristic data structure and with a certain probability (depending on
  * the selected size of the bit vector) you may receive a false positive result.
  *
  * ### Differences to the Interleaved Bloom Filter (IBF)
- * 
+ *
  * While the Bloom Filter provides a single linear bit vector to represent the underlying data, the Interleaved Bloom
  * Filter provides a data structure that combines a set of Bloom Filters to enable efficient queries to multiple
- * fractions of the data. In doing so, the Interleaved Bloom Filter can not only answer the question whether a hash
+ * fractions of the data. In doing so, the Interleaved Bloom Filter can not only answer whether a hash
  * value is present in the data, but also provides information in which fraction of the data it occurs.
- * The design of the Interleaved Bloom Filter is particulary useful when the underlying data is systematically 
- * structured; for example, if each fraction of the data represents a specific set of organisms. Important 
+ * The design of the Interleaved Bloom Filter is particularly useful when the underlying data is systematically
+ * structured; for example, if each fraction of the data represents a specific set of organisms. Important
  * applications of the Interleaved Bloom Filter include taxonomic classification of sequencing data, or prefiltering
  * of specific fractions of an input data set to enable more efficient in-depth analysis.
  * The Bloom Filter, on the other hand, is useful if the database does not contain any underlying structure, or it is
@@ -78,7 +78,7 @@ namespace seqan3
  * a non-`const` member function at the same time).
  *
  * \sa seqan3::interleaved_bloom_filter
- * 
+ *
  */
 template <data_layout data_layout_mode_ = data_layout::uncompressed>
 class bloom_filter
@@ -231,7 +231,7 @@ public:
      * \details
      *
      * While all values are removed from the vector, the size of the Bloom Filter is not changed.
-     * 
+     *
      * ### Example
      *
      * \include test/snippet/utility/bloom_filter/bloom_filter_reset.cpp
@@ -244,7 +244,7 @@ public:
         sdsl::util::_set_zero_bits(data);
     }
     //!\}
-    
+
     /*!\name Lookup
      * \{
      */

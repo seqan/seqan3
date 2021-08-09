@@ -76,7 +76,7 @@ TYPED_TEST(bloom_filter_test, contains)
     for (size_t hash : std::views::iota(0u, 64u)) // test some hashes
     {
         // Expect false for all queries since we did not insert anything
-        EXPECT_FALSE(bf.contains(hash)); 
+        EXPECT_FALSE(bf.contains(hash));
     }
 }
 
@@ -106,7 +106,7 @@ TYPED_TEST(bloom_filter_test, counting)
 
     // 2. Construct either the uncompressed or compressed Bloom Filter and test set with bulk_contains
     TypeParam bf2{bf};
-    
+
     // Test counting with all elements
     EXPECT_EQ(bf2.count(std::views::iota(0u, 128u)), 128u);
 

@@ -3,7 +3,6 @@
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
 
-
 int main()
 {
     using namespace seqan3::literals;
