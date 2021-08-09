@@ -15,11 +15,15 @@
 #include <string>
 #include <vector>
 
+#include <seqan3/io/stream/detail/fast_istreambuf_iterator.hpp>
 #include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
+
+#include "../../../range/iterator_test_template.hpp"
+#include "../../../range/range_test_template.hpp"
 
 // ============================================================================
 //  test templates
@@ -158,6 +162,91 @@ TEST(view_take_exactly, shrink_size_on_input_ranges)
 
     EXPECT_EQ(std::ranges::size(v), 0u); // view is empty now
 }
+
+struct view_take_exactly1_test_fixture : public range_test_fixture
+{
+    using range_value_t = char;
+    using range_reference_t = char const &;
+
+    using range_const_value_t = char;
+    using range_const_reference_t = char const &;
+
+    static constexpr bool input_range = true;
+    static constexpr bool forward_range = true;
+    static constexpr bool bidirectional_range = true;
+    static constexpr bool random_access_range = true;
+    static constexpr bool contiguous_range = true;
+    static constexpr bool output_range = false;
+
+    static constexpr bool common_range = true;
+    static constexpr bool viewable_range = true;
+    static constexpr bool view = true;
+    static constexpr bool sized_range = true;
+    static constexpr bool const_iterable_range = true;
+    static constexpr bool size_member = true;
+    static constexpr bool const_size_member = true;
+    static constexpr bool subscript_member = true;
+
+    std::string_view expected_range()
+    {
+        return {"01234"};
+    }
+
+    auto range()
+    {
+        return std::string_view{"0123456789"} | seqan3::detail::take_exactly(5);
+    }
+};
+
+INSTANTIATE_TYPED_TEST_SUITE_P(view_take_exactly1_test, range_test, view_take_exactly1_test_fixture, );
+INSTANTIATE_TYPED_TEST_SUITE_P(view_take_exactly1_test, iterator_fixture, view_take_exactly1_test_fixture, );
+
+// This tests a use cases from format_bam_test where std::ranges::subrange assumed const_iterable even though
+// seqan3::detail::take_exactly SHOULD lose this property on input_iterator (in this case it manages the data within the
+// view and needs mutable access).
+struct view_take_exactly2_test_fixture : public range_test_fixture
+{
+    using range_value_t = char;
+    using range_reference_t = char;
+
+    static constexpr bool input_range = true;
+    static constexpr bool forward_range = false;
+    static constexpr bool bidirectional_range = false;
+    static constexpr bool random_access_range = false;
+    static constexpr bool contiguous_range = false;
+    static constexpr bool output_range = false;
+
+    static constexpr bool common_range = false;
+    static constexpr bool viewable_range = true;
+    static constexpr bool view = true;
+    static constexpr bool sized_range = true; // seqan3::detail::take_exactly adds this property
+    static constexpr bool const_iterable_range = false; // seqan3::detail::take_exactly loses this property
+    static constexpr bool size_member = true; // seqan3::detail::take_exactly adds this property
+    static constexpr bool const_size_member = true; // seqan3::detail::take_exactly adds this property
+    static constexpr bool subscript_member = false;
+
+    std::string_view expected_range()
+    {
+        return "01234";
+    }
+
+    std::string _range{"0123456789"};
+
+    auto range()
+    {
+        static std::istringstream istream{};
+        istream.str(_range); // reset underlying stream on each invocation
+
+        using iterator_t = seqan3::detail::fast_istreambuf_iterator<char>;
+        using sentinel_t = std::default_sentinel_t;
+        using subrange_t = std::ranges::subrange<iterator_t, sentinel_t>;
+
+        return subrange_t{iterator_t{*istream.rdbuf()}, sentinel_t{}} | seqan3::detail::take_exactly(5);
+    }
+};
+
+INSTANTIATE_TYPED_TEST_SUITE_P(view_take_exactly2_test, range_test, view_take_exactly2_test_fixture, );
+INSTANTIATE_TYPED_TEST_SUITE_P(view_take_exactly2_test, iterator_fixture, view_take_exactly2_test_fixture, );
 
 // ============================================================================
 //  view_take_exactly_or_throw
