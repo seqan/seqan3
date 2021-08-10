@@ -199,22 +199,22 @@ class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_itera
 {
 private:
     //!\brief The iterator type of the underlying range.
-    using base_base_t = seqan3::detail::maybe_const_iterator_t<const_range, urng_t>;
+    using underlying_iterator_t = seqan3::detail::maybe_const_iterator_t<const_range, urng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t = inherited_iterator_base<basic_consume_iterator, base_base_t>;
+    using base_t = inherited_iterator_base<basic_consume_iterator, underlying_iterator_t>;
 
     //!\brief Auxiliary type.
-    using fun_ref_t = std::conditional_t<const_range,
-                                         std::remove_reference_t<fun_t> const &,
-                                         std::remove_reference_t<fun_t> &>;
+    using predicate_ref_t = std::conditional_t<const_range,
+                                               std::remove_reference_t<fun_t> const &,
+                                               std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
-    seqan3::semiregular_box_t<fun_ref_t> fun;
+    seqan3::semiregular_box_t<predicate_ref_t> fun;
 
     //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
+    using underlying_sentinel_t = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
 
     //!\brief Whether this iterator has reached the end (cache is only used on pure input ranges).
-    sentinel_type stored_end;
+    underlying_sentinel_t underlying_sentinel;
 
     //!\brief Whether the end was reached by evaluating the functor.
     bool at_end_gracefully = false;
@@ -232,12 +232,12 @@ public:
     ~basic_consume_iterator() = default; //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    basic_consume_iterator(base_base_t it,
-                           fun_ref_t _fun,
-                           sentinel_type sen) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}, fun{_fun}, stored_end{std::move(sen)}
+    basic_consume_iterator(underlying_iterator_t it,
+                           predicate_ref_t _fun,
+                           underlying_sentinel_t sen) noexcept(noexcept(base_t{it})) :
+        base_t{std::move(it)}, fun{_fun}, underlying_sentinel{std::move(sen)}
     {
-        if ((this->base() != stored_end) && fun(**this))
+        if ((this->base() != underlying_sentinel) && fun(**this))
         {
             at_end_gracefully = true;
             ++(*this);
@@ -246,13 +246,13 @@ public:
     //!\}
 
     /*!\name Associated types
-     * \brief All are derived from the base_base_t.
+     * \brief All are derived from the underlying_iterator_t.
      * \{
      */
-    using difference_type = std::iter_difference_t<base_base_t>; //!< From base.
-    using value_type = std::iter_value_t<base_base_t>; //!< From base.
-    using reference = std::iter_reference_t<base_base_t>; //!< From base.
-    using pointer = detail::iter_pointer_t<base_base_t>; //!< From base.
+    using difference_type = std::iter_difference_t<underlying_iterator_t>; //!< From base.
+    using value_type = std::iter_value_t<underlying_iterator_t>; //!< From base.
+    using reference = std::iter_reference_t<underlying_iterator_t>; //!< From base.
+    using pointer = detail::iter_pointer_t<underlying_iterator_t>; //!< From base.
     using iterator_category = std::input_iterator_tag; //!< Always input.
     //!\}
 
@@ -263,12 +263,12 @@ public:
     //!\brief Override pre-increment to implement consuming behaviour.
     basic_consume_iterator & operator++()
         noexcept(noexcept(++std::declval<base_t &>()) &&
-                 noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                 noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
                  noexcept(fun(std::declval<reference>())))
     {
         base_t::operator++();
 
-        while ((this->base() != stored_end) && fun(**this))
+        while ((this->base() != underlying_sentinel) && fun(**this))
         {
             at_end_gracefully = true;
             base_t::operator++();
@@ -292,9 +292,9 @@ public:
      * \{
      */
     //!\brief Return the saved at_end state.
-    bool operator==(sentinel_type const & rhs) const
+    bool operator==(underlying_sentinel_t const & rhs) const
         noexcept(!or_throw &&
-                 noexcept(std::declval<base_base_t &>() != std::declval<sentinel_type &>()) &&
+                 noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
                  noexcept(fun(std::declval<reference>())))
     {
         if (at_end_gracefully)
@@ -312,21 +312,21 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator==(sentinel_type const & lhs, basic_consume_iterator const & rhs)
+    friend bool operator==(underlying_sentinel_t const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
 
     //!\brief Return the saved at_end state.
-    bool operator!=(sentinel_type const & rhs) const
+    bool operator!=(underlying_sentinel_t const & rhs) const
         noexcept(noexcept(std::declval<basic_consume_iterator &>() == rhs))
     {
         return !(*this == rhs);
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator!=(sentinel_type const & lhs, basic_consume_iterator const & rhs)
+    friend bool operator!=(underlying_sentinel_t const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
