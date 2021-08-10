@@ -78,7 +78,7 @@ private:
     class basic_consume_iterator;
 
     template <bool const_range>
-    using basic_consume_sentinel = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
+    using basic_consume_sentinel = std::default_sentinel_t;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -167,7 +167,7 @@ public:
     auto end() noexcept
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
-            return basic_consume_sentinel<false>{std::ranges::end(urange)};
+            return basic_consume_sentinel<false>{};
         else
             return basic_sentinel<false>{std::ranges::end(urange), fun};
     }
@@ -177,7 +177,7 @@ public:
         requires const_iterable
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
-            return basic_consume_sentinel<true>{std::ranges::cend(urange)};
+            return basic_consume_sentinel<true>{};
         else
             return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
     }
