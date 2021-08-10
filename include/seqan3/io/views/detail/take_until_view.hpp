@@ -77,18 +77,8 @@ private:
     template <typename rng_t>
     class basic_consume_iterator;
 
-private:
-    /*!\name Associated types
-     * \{
-     */
-    //!\brief The iterator type of this view (a random access iterator).
-    using iterator = std::conditional_t<and_consume && !std::ranges::forward_range<urng_t>,
-                                        basic_consume_iterator<urng_t>,
-                                        basic_iterator<urng_t>>;
-
-    //!\brief The const_iterator type is equal to the iterator type if the underlying range is const-iterable.
-    using const_iterator = basic_iterator<urng_t const>;
-    //!\}
+    template <bool const_range>
+    using basic_consume_sentinel = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -139,16 +129,22 @@ public:
      *
      * No-throw guarantee.
      */
-    iterator begin() noexcept
+    auto begin() noexcept
     {
-        return {std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
+        if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
+            return basic_consume_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
+        else
+            return basic_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
     }
 
     //!\copydoc begin()
-    const_iterator begin() const noexcept
+    auto begin() const noexcept
         requires const_iterable
     {
-        return {std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
+        if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
+            return basic_consume_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
+        else
+            return basic_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -167,7 +163,7 @@ public:
     auto end() noexcept
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
-            return std::ranges::end(urange);
+            return basic_consume_sentinel<false>{std::ranges::end(urange)};
         else
             return basic_sentinel<false>{std::ranges::end(urange), fun};
     }
@@ -176,8 +172,8 @@ public:
     auto end() const noexcept
         requires const_iterable
     {
-        if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
-            return std::ranges::cend(urange);
+        if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
+            return basic_consume_sentinel<true>{std::ranges::cend(urange)};
         else
             return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
     }
