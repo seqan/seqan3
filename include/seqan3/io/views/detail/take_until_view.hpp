@@ -74,7 +74,7 @@ private:
     template <bool const_range>
     class basic_sentinel;
 
-    template <typename rng_t>
+    template <bool const_range>
     class basic_consume_iterator;
 
     template <bool const_range>
@@ -132,7 +132,9 @@ public:
     auto begin() noexcept
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
-            return basic_consume_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
+            return basic_consume_iterator<false>{std::ranges::begin(urange),
+                                                 static_cast<fun_t &>(fun),
+                                                 std::ranges::end(urange)};
         else
             return basic_iterator<false>{std::ranges::begin(urange)};
     }
@@ -142,7 +144,9 @@ public:
         requires const_iterable
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
-            return basic_consume_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
+            return basic_consume_iterator<true>{std::ranges::cbegin(urange),
+                                                static_cast<fun_t const &>(fun),
+                                                std::ranges::cend(urange)};
         else
             return basic_iterator<true>{std::ranges::cbegin(urange)};
     }
@@ -188,25 +192,26 @@ view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, 
 //!\brief Special iterator type used when consuming behaviour is selected.
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
-template <typename rng_t>
+template <bool const_range>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_iterator :
-    public inherited_iterator_base<basic_consume_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
+    public inherited_iterator_base<basic_consume_iterator<const_range>,
+                                   seqan3::detail::maybe_const_iterator_t<const_range, urng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
-    using base_base_t = std::ranges::iterator_t<rng_t>;
+    using base_base_t = seqan3::detail::maybe_const_iterator_t<const_range, urng_t>;
     //!\brief The CRTP wrapper type.
-    using base_t = inherited_iterator_base<basic_consume_iterator, std::ranges::iterator_t<rng_t>>;
+    using base_t = inherited_iterator_base<basic_consume_iterator, base_base_t>;
 
     //!\brief Auxiliary type.
-    using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
+    using fun_ref_t = std::conditional_t<const_range,
                                          std::remove_reference_t<fun_t> const &,
                                          std::remove_reference_t<fun_t> &>;
     //!\brief Reference to the functor stored in the view.
     seqan3::semiregular_box_t<fun_ref_t> fun;
 
     //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = std::ranges::sentinel_t<rng_t>;
+    using sentinel_type = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
 
     //!\brief Whether this iterator has reached the end (cache is only used on pure input ranges).
     sentinel_type stored_end;
