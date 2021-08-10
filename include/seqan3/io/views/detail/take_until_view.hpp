@@ -292,7 +292,7 @@ public:
      * \{
      */
     //!\brief Return the saved at_end state.
-    bool operator==(underlying_sentinel_t const & rhs) const
+    bool operator==(basic_consume_sentinel<const_range> const &) const
         noexcept(!or_throw &&
                  noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
                  noexcept(fun(std::declval<reference>())))
@@ -300,7 +300,7 @@ public:
         if (at_end_gracefully)
             return true;
 
-        if (this->base() == rhs)
+        if (this->base() == underlying_sentinel)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -312,21 +312,21 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator==(underlying_sentinel_t const & lhs, basic_consume_iterator const & rhs)
+    friend bool operator==(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
 
     //!\brief Return the saved at_end state.
-    bool operator!=(underlying_sentinel_t const & rhs) const
+    bool operator!=(basic_consume_sentinel<const_range> const & rhs) const
         noexcept(noexcept(std::declval<basic_consume_iterator &>() == rhs))
     {
         return !(*this == rhs);
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator!=(underlying_sentinel_t const & lhs, basic_consume_iterator const & rhs)
+    friend bool operator!=(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
         noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
