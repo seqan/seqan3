@@ -340,17 +340,15 @@ template <bool const_range>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
 {
 private:
-    //!\brief The base type of the underlying range.
-    using urng_base_type = std::conditional_t<const_range, std::add_const_t<urng_t>, urng_t>;
     //!\brief The sentinel type of the underlying range.
-    using urng_sentinel_type = std::ranges::sentinel_t<urng_base_type>;
+    using underlying_sentinel_t = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
     //!\brief Auxiliary type.
     using predicate_ref_t = std::conditional_t<const_range,
                                                std::remove_reference_t<fun_t> const &,
                                                std::remove_reference_t<fun_t> &>;
 
     //!\brief The actual end of the underlying range.
-    urng_sentinel_type urng_sentinel{};
+    underlying_sentinel_t underlying_sentinel{};
 
     //!\brief Reference to the predicate stored in the view.
     seqan3::semiregular_box_t<predicate_ref_t> predicate{};
@@ -367,18 +365,18 @@ public:
     ~basic_sentinel() = default; //!< Defaulted.
 
     /*!\brief Construct from a sentinel and a predicate.
-     * \param[in] urng_sentinel  The actual end of the underlying range.
+     * \param[in] underlying_sentinel  The actual end of the underlying range.
      * \param[in] predicate      Reference to the predicate stored in the view.
      */
-    explicit basic_sentinel(urng_sentinel_type urng_sentinel, predicate_ref_t predicate) :
-        urng_sentinel{std::move(urng_sentinel)},
+    explicit basic_sentinel(underlying_sentinel_t underlying_sentinel, predicate_ref_t predicate) :
+        underlying_sentinel{std::move(underlying_sentinel)},
         predicate{predicate}
     {}
 
     //!\brief Construct from a not const range a const range.
     basic_sentinel(basic_sentinel<!const_range> other)
-        requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, urng_sentinel_type>
-        : urng_sentinel{std::move(other.urng_sentinel)},
+        requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, underlying_sentinel_t>
+        : underlying_sentinel{std::move(other.underlying_sentinel)},
           predicate{other.predicate}
     {}
     //!\}
@@ -391,7 +389,7 @@ public:
     friend bool operator==(basic_iterator<const_range> const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
-        if (lhs == rhs.urng_sentinel)
+        if (lhs == rhs.underlying_sentinel)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -422,11 +420,11 @@ public:
 
     //!\brief Compares `lhs` with `rhs` for equality.
     template <bool other_const_range = !const_range>
-        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
-    friend bool operator==(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
+        requires (std::sentinel_for<underlying_sentinel_t, basic_iterator<other_const_range>>)
+    friend bool operator==(basic_iterator<other_const_range> const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
-        if (lhs == rhs.urng_sentinel)
+        if (lhs == rhs.underlying_sentinel)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -439,24 +437,24 @@ public:
 
     //!\brief Compares `lhs` with `rhs` for equality.
     template <bool other_const_range = !const_range>
-        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
-    friend bool operator==(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
+        requires (std::sentinel_for<underlying_sentinel_t, basic_iterator<other_const_range>>)
+    friend bool operator==(basic_sentinel const & lhs, basic_iterator<other_const_range> const & rhs)
     {
         return rhs == lhs;
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
     template <bool other_const_range = !const_range>
-        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
-    friend bool operator!=(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
+        requires (std::sentinel_for<underlying_sentinel_t, basic_iterator<other_const_range>>)
+    friend bool operator!=(basic_iterator<other_const_range> const & lhs, basic_sentinel const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
     template <bool other_const_range = !const_range>
-        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
-    friend bool operator!=(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
+        requires (std::sentinel_for<underlying_sentinel_t, basic_iterator<other_const_range>>)
+    friend bool operator!=(basic_sentinel const & lhs, basic_iterator<other_const_range> const & rhs)
     {
         return rhs != lhs;
     }
