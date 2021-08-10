@@ -134,7 +134,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
             return basic_consume_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
         else
-            return basic_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
+            return basic_iterator<urng_t>{std::ranges::begin(urange)};
     }
 
     //!\copydoc begin()
@@ -144,7 +144,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
         else
-            return basic_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
+            return basic_iterator<urng_t const>{std::ranges::cbegin(urange)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -197,14 +197,6 @@ private:
     using base_base_t = std::ranges::iterator_t<rng_t>;
     //!\brief The CRTP wrapper type.
     using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
-    //!\brief The sentinel type is identical to that of the underlying range.
-    using sentinel_type = std::ranges::sentinel_t<rng_t>;
-    //!\brief Auxiliary type.
-    using fun_ref_t = std::conditional_t<std::is_const_v<rng_t>,
-                                         std::remove_reference_t<fun_t> const &,
-                                         std::remove_reference_t<fun_t> &>;
-    //!\brief Reference to the functor stored in the view.
-    seqan3::semiregular_box_t<fun_ref_t> fun;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -221,13 +213,6 @@ public:
     //!\brief Constructor that delegates to the CRTP layer.
     basic_iterator(base_base_t it) noexcept(noexcept(base_t{it})) :
         base_t{std::move(it)}
-    {}
-
-    //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
-    basic_iterator(base_base_t it,
-                   fun_ref_t _fun,
-                   sentinel_type /*only used by the consuming iterator*/) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}, fun{_fun}
     {}
     //!\}
 };
