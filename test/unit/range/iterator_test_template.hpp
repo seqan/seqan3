@@ -685,21 +685,25 @@ inline void address_difference_test(it_begin_t it_begin, it_sentinel_t it_end)
 
 TYPED_TEST_P(iterator_fixture, address_of_end)
 {
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
+    // sentinel must not be the same as the iterator
+    if constexpr (std::ranges::common_range<decltype(this->test_range)>)
     {
-        using difference_t = std::iter_difference_t<decltype(std::ranges::begin(this->test_range))>;
-        auto it_begin = std::ranges::begin(this->test_range);
-        auto it_end = std::ranges::end(this->test_range);
-        EXPECT_EQ(std::to_address(it_end), std::to_address(it_begin) + static_cast<difference_t>(it_end - it_begin));
-    }
+        if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
+        {
+            using difference_t = std::iter_difference_t<decltype(std::ranges::begin(this->test_range))>;
+            auto it_begin = std::ranges::begin(this->test_range);
+            auto it_end = std::ranges::end(this->test_range);
+            EXPECT_EQ(std::to_address(it_end), std::to_address(it_begin) + static_cast<difference_t>(it_end - it_begin));
+        }
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
-                  TestFixture::const_iterable)
-    {
-        using difference_t = std::iter_difference_t<decltype(std::ranges::cbegin(this->test_range))>;
-        auto it_cbegin = std::ranges::cbegin(this->test_range);
-        auto it_cend = std::ranges::cend(this->test_range);
-        EXPECT_EQ(std::to_address(it_cend), std::to_address(it_cbegin) + static_cast<difference_t>(it_cend - it_cbegin));
+        if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
+                      TestFixture::const_iterable)
+        {
+            using difference_t = std::iter_difference_t<decltype(std::ranges::cbegin(this->test_range))>;
+            auto it_cbegin = std::ranges::cbegin(this->test_range);
+            auto it_cend = std::ranges::cend(this->test_range);
+            EXPECT_EQ(std::to_address(it_cend), std::to_address(it_cbegin) + static_cast<difference_t>(it_cend - it_cbegin));
+        }
     }
 }
 
@@ -707,13 +711,17 @@ TYPED_TEST_P(iterator_fixture, address_difference)
 {
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag>)
     {
-        address_difference_test(std::ranges::begin(this->test_range), std::ranges::end(this->test_range));
+        auto it = std::ranges::begin(this->test_range);
+        auto sentinel_it = std::ranges::next(it, std::ranges::end(this->test_range));
+        address_difference_test(it, sentinel_it);
     }
 
     if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::contiguous_iterator_tag> &&
                   TestFixture::const_iterable)
     {
-        address_difference_test(std::ranges::cbegin(this->test_range), std::ranges::cend(this->test_range));
+        auto it = std::ranges::cbegin(this->test_range);
+        auto sentinel_it = std::ranges::next(it, std::ranges::cend(this->test_range));
+        address_difference_test(it, sentinel_it);
     }
 }
 
