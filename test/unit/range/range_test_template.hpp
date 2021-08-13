@@ -18,10 +18,14 @@
 
 struct range_test_fixture
 {
-    // The value type the std::ranges::range_value_t accepts.
+    // The value type the std::ranges::range_value_t<range> accepts.
     using range_value_t = void;
-    // The value type the std::ranges::range_reference_t accepts.
+    // The value type the std::ranges::range_reference_t<range> accepts.
     using range_reference_t = void;
+    // The value type the std::ranges::range_value_t<range const> accepts.
+    using range_const_value_t = void;
+    // The value type the std::ranges::range_reference_t<range const> accepts.
+    using range_const_reference_t = void;
 
     // Whether the range is a std::ranges::input_range
     static constexpr bool input_range = false;
@@ -50,8 +54,10 @@ struct range_test_fixture
     // Whether the range is a seqan3::const_iterable_range
     static constexpr bool const_iterable_range = false;
 
-    // Whether the range has a size() member (const version will be checked if range is const_iterable_range).
+    // Whether the range has a size() member.
     static constexpr bool size_member = false;
+    // Whether the const range has a size() member.
+    static constexpr bool const_size_member = false;
     // Whether the range has a operator[]() member (const version will be checked if range is const_iterable_range).
     static constexpr bool subscript_member = false;
 
@@ -187,7 +193,7 @@ TYPED_TEST_P(range_test, concept_check)
 
     // member properties
     EXPECT_EQ(TestFixture::size_member, has_size_member<range_t>);
-    EXPECT_EQ(TestFixture::size_member && TestFixture::const_iterable_range, has_size_member<range_t const>);
+    EXPECT_EQ(TestFixture::const_size_member, has_size_member<range_t const>);
 
     EXPECT_EQ(TestFixture::subscript_member, has_subscript_member<range_t>);
     EXPECT_EQ(TestFixture::subscript_member && TestFixture::const_iterable_range, has_subscript_member<range_t const>);
@@ -197,8 +203,8 @@ TYPED_TEST_P(range_test, concept_check)
 
     if constexpr(TestFixture::const_iterable_range)
     {
-        EXPECT_SAME_TYPE(std::ranges::range_value_t<range_t const>, typename TestFixture::range_value_t);
-        EXPECT_SAME_TYPE(std::ranges::range_reference_t<range_t const>, typename TestFixture::range_reference_t);
+        EXPECT_SAME_TYPE(std::ranges::range_value_t<range_t const>, typename TestFixture::range_const_value_t);
+        EXPECT_SAME_TYPE(std::ranges::range_reference_t<range_t const>, typename TestFixture::range_const_reference_t);
     }
 }
 
