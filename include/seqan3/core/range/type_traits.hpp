@@ -47,6 +47,13 @@ using maybe_const_iterator_t = std::ranges::iterator_t<maybe_const_range_t<const
 //!\ingroup core_range
 template <bool const_v, typename range_t>
 using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const_v, range_t>>;
+
+//!\cond
+//!\brief The same as std::indirect_unary_predicate but on a range type instead of an iterator type.
+template <typename unary_predicate_fn_t, typename urng_t>
+SEQAN3_CONCEPT indirect_unary_predicate_on_range = std::ranges::range<urng_t> &&
+    std::indirect_unary_predicate<unary_predicate_fn_t, std::ranges::iterator_t<urng_t>>;
+//!\endcond
 } // namespace seqan3::detail
 
 namespace seqan3
