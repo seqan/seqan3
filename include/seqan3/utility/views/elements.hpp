@@ -19,10 +19,6 @@
 
 namespace seqan3::views
 {
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view calling `get` on each element in a range.
  * \tparam size_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
@@ -31,7 +27,7 @@ namespace seqan3::views
  * \returns             A range of elements where every element is the result of calling `get<index>` on the underlying
  *                      element.
                         See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup utility_views
  * \sa https://en.cppreference.com/w/cpp/ranges/elements_view
  *
  * \details
@@ -97,7 +93,5 @@ inline constexpr auto elements = std::views::transform([] (auto && in) -> declty
     using ret_type = remove_rvalue_reference_t<decltype(get<index>(std::forward<element_t>(in)))>;
     return static_cast<ret_type>(get<index>(std::forward<element_t>(in)));
 });
-
-//!\}
 
 } // namespace seqan3::views

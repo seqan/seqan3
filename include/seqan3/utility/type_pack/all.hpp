@@ -7,14 +7,15 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief Provides metaprogramming utilities for template parameter packs.
+ * \brief Meta-header for the \link utility_type_pack Utility / Type Pack submodule \endlink.
  */
 
 #include <seqan3/utility/type_pack/traits.hpp>
 
-/*!\defgroup type_pack Type Pack
+/*!\defgroup utility_type_pack Type Pack
  * \brief Provides metaprogramming utilities for working on template parameter packs.
  * \ingroup utility
+ * \see utility
  *
  * \details
  *
@@ -25,5 +26,5 @@
 
 /*!\namespace seqan3::pack_traits
  * \brief Namespace containing traits for working on type packs.
- * \ingroup type_pack
+ * \ingroup utility_type_pack
  */

@@ -21,7 +21,7 @@ namespace seqan3::detail
 {
 
 /*!\brief The underlying type of seqan3::views::repeat_n.
- * \ingroup views
+ * \ingroup utility_views
  *
  * Under the hood this delegates to `views::repeat(value) | detail::take_exactly(count)`.
  */
@@ -46,16 +46,12 @@ struct repeat_n_fn
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
 /*!\brief A view factory that repeats a given value `n` times.
  * \tparam    value_t The type of value to repeat; must be std::copy_constructible.
  * \param[in] value   The value to repeat.
  * \param[in] count   The number of times to repeat `value`.
  * \returns A range of size `count`, where each element equals `value`.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -93,6 +89,5 @@ namespace seqan3::views
  * \hideinitializer
  */
 constexpr inline auto repeat_n = detail::repeat_n_fn{};
-//!\}
 
 } // namespace seqan3::views

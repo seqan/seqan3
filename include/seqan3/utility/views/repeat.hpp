@@ -31,7 +31,7 @@ namespace seqan3::detail
  * \implements std::ranges::view
  * \implements std::ranges::random_access_range
  * \implements std::ranges::output_range
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -303,19 +303,11 @@ struct repeat_fn
 
 namespace seqan3::views
 {
-
-// ---------------------------------------------------------------------------------------------------------------------
-// views::repeat (factory instance)
-// ---------------------------------------------------------------------------------------------------------------------
-
-/*!\name General purpose views
- * \{
- */
 /*!\brief A view factory that repeats a given value infinitely.
  * \tparam    value_t  The type of value to repeat wrapped in a std::views::single; must model std::copy_constructible.
  * \param[in] value    The value to repeat.
  * \returns An infinite range over value.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -353,6 +345,5 @@ namespace seqan3::views
  * \hideinitializer
  */
 constexpr inline detail::repeat_fn repeat{};
-//!\}
 
 } // namespace seqan3::views

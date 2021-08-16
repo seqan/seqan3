@@ -19,12 +19,8 @@
 
 namespace seqan3::detail
 {
-
-/*!\addtogroup utility_concept
- * \{
- */
-
 /*!\interface   seqan3::detail::weakly_equality_comparable_with <>
+ * \ingroup utility_concept
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `==` and `!=` in both directions.
@@ -43,12 +39,14 @@ SEQAN3_CONCEPT weakly_equality_comparable_with =
 //!\endcond
 
 //!\brief Binary type trait that behaves like the seqan3::detail::weakly_equality_comparable_with concept.
+//!\ingroup utility_concept
 template <typename lhs_t, typename rhs_t>
 struct weakly_equality_comparable_with_trait :
     std::integral_constant<bool, weakly_equality_comparable_with<lhs_t, rhs_t>>
 {};
 
 /*!\interface   seqan3::detail::weakly_ordered_with <>
+ * \ingroup utility_concept
  * \tparam t1   The first type to compare.
  * \tparam t2   The second type to compare.
  * \brief       Requires the two operands to be comparable with `<`, `<=`, `>` and `>=` in both directions.
@@ -71,22 +69,17 @@ SEQAN3_CONCEPT weakly_ordered_with = requires (std::remove_reference_t<t1> const
 //!\endcond
 
 //!\brief Binary type trait that behaves like the seqan3::detail::weakly_ordered_with concept.
+//!\ingroup utility_concept
 template <typename lhs_t, typename rhs_t>
 struct weakly_ordered_with_trait : std::integral_constant<bool, weakly_ordered_with<lhs_t, rhs_t>>
 {};
-
-//!\}
 
 } // seqan3::detail
 
 namespace seqan3
 {
-
-/*!\addtogroup utility_concept
- * \{
- */
-
 /*!\interface   seqan3::implicitly_convertible_to <>
+ * \ingroup utility_concept
  * \brief       Resolves to `std::ranges::implicitly_convertible_to<type1, type2>()`.
  * \noapi
  */
@@ -96,6 +89,7 @@ SEQAN3_CONCEPT implicitly_convertible_to = std::is_convertible_v<t, u>;
 //!\endcond
 
 /*!\interface   seqan3::explicitly_convertible_to <>
+ * \ingroup utility_concept
  * \brief       Resolves to `std::ranges::explicitly_convertible_to<type1, type2>()`.
  * \noapi
  */
@@ -105,6 +99,7 @@ SEQAN3_CONCEPT explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt
 //!\endcond
 
 /*!\interface   seqan3::arithmetic <>
+ * \ingroup utility_concept
  * \brief       A type that satisfies std::is_arithmetic_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_arithmetic
  * \noapi
@@ -115,6 +110,7 @@ SEQAN3_CONCEPT arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::floating_point <>
+ * \ingroup utility_concept
  * \extends     seqan3::arithmetic
  * \brief       An arithmetic type that also satisfies std::is_floating_point_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_floating_point
@@ -126,6 +122,7 @@ SEQAN3_CONCEPT floating_point = arithmetic<t> && std::is_floating_point_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::builtin_character <>
+ * \ingroup utility_concept
  * \extends     std::integral
  * \brief       This concept encompasses exactly the types `char`, `signed char`, `unsigned char`, `wchar_t`,
  *              `char16_t` and `char32_t`.
@@ -143,6 +140,7 @@ SEQAN3_CONCEPT builtin_character = std::integral<t> &&
 //!\endcond
 
 /*!\interface   seqan3::trivially_destructible <>
+ * \ingroup utility_concept
  * \extends     std::destructible
  * \brief       A type that satisfies std::is_trivially_destructible_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_destructible
@@ -154,6 +152,7 @@ SEQAN3_CONCEPT trivially_destructible = std::destructible<t> && std::is_triviall
 //!\endcond
 
 /*!\interface   seqan3::trivially_copyable
+ * \ingroup utility_concept
  * \brief       A type that satisfies std::is_trivially_copyable_v<t>.
  * \extends     std::copyable
  * \sa          https://en.cppreference.com/w/cpp/types/is_trivially_copyable
@@ -165,6 +164,7 @@ SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyab
 //!\endcond
 
 /*!\interface   seqan3::trivial
+ * \ingroup utility_concept
  * \brief       A type that satisfies seqan3::trivially_copyable and seqan3::trivially_destructible.
  * \extends     seqan3::trivially_copyable
  * \extends     seqan3::trivially_destructible
@@ -177,6 +177,7 @@ SEQAN3_CONCEPT trivial = trivially_copyable<t> && trivially_destructible<t> && s
 //!\endcond
 
 /*!\interface   seqan3::standard_layout
+ * \ingroup utility_concept
  * \brief       Resolves to std::is_standard_layout_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_standard_layout
  * \noapi
@@ -187,6 +188,7 @@ SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
 //!\endcond
 
 /*!\interface   seqan3::weakly_assignable_from
+ * \ingroup utility_concept
  * \brief       Resolves to std::is_assignable_v<t>.
  * \sa          https://en.cppreference.com/w/cpp/types/is_assignable
  * \noapi
@@ -200,6 +202,4 @@ SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
 template <typename t, typename u>
 SEQAN3_CONCEPT weakly_assignable_from = std::is_assignable_v<t, u>;
 //!\endcond
-//!\}
-
 }  // namespace seqan3

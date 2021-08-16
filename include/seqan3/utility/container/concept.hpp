@@ -26,18 +26,21 @@ namespace seqan3::detail
 {
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
+//!\ingroup utility_container
 //!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 struct is_basic_string : std::false_type
 {};
 
 //!\brief Returns whether `basic_string_t` is of type `std::basic_string<value_t, traits_t, allocator_t>`.
+//!\ingroup utility_container
 //!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename value_t, typename traits_t, typename allocator_t>
 struct is_basic_string<std::basic_string<value_t, traits_t, allocator_t>> : std::true_type
 {};
 
 //!\brief Shorthand of seqan3::detail::is_basic_string
+//!\ingroup utility_container
 //!\attention Will be deleted once seqan3::detail::sequence_container_modified_by_const_iterator_bug is fixed.
 template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
@@ -48,10 +51,8 @@ constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 namespace seqan3
 {
 
-/*!\addtogroup container
- * \{
- */
 /*!\interface seqan3::container <>
+ * \ingroup utility_container
  * \extends std::ranges::forward_range
  * \extends std::ranges::sized_range
  * \extends std::ranges::common_range
@@ -121,6 +122,7 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
 //!\endcond
 
 /*!\interface seqan3::sequence_container <>
+ * \ingroup utility_container
  * \extends seqan3::container
  * \brief A more refined container concept than seqan3::container.
  *
@@ -209,6 +211,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
 //!\endcond
 
 /*!\interface seqan3::random_access_container <>
+ * \ingroup utility_container
  * \extends seqan3::sequence_container
  * \extends std::ranges::random_access_range
  * \brief A more refined container concept than seqan3::sequence_container.
@@ -239,6 +242,7 @@ SEQAN3_CONCEPT random_access_container = requires (type val)
 //!\endcond
 
 /*!\interface seqan3::reservible_container <>
+ * \ingroup utility_container
  * \extends seqan3::random_access_container
  * \brief A more refined container concept than seqan3::random_access_container.
  *
@@ -261,7 +265,5 @@ SEQAN3_CONCEPT reservible_container = requires (type val)
     SEQAN3_RETURN_TYPE_CONSTRAINT(val.shrink_to_fit(), std::same_as, void);
 };
 //!\endcond
-
-//!\}
 
 } // namespace seqan3

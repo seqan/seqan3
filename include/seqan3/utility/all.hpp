@@ -32,7 +32,3 @@
  * The utility module has no dependency to any other module except the \ref core
  * module.
  */
-
-/*!\defgroup utility_concept Concept
- * \ingroup utility
- */

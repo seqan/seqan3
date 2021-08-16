@@ -25,9 +25,9 @@ namespace seqan3::detail
 {
 
 /*!\interface seqan3::detail::tuple_size <>
- * \ingroup   utility
- * \brief     Subconcept definition for seqan3::tuple_like to test for std::tuple_size-interface.
- * \see       seqan3::tuple_like
+ * \ingroup utility_tuple
+ * \brief Subconcept definition for seqan3::tuple_like to test for std::tuple_size-interface.
+ * \see seqan3::tuple_like
  */
 //!\cond
 template <typename tuple_t>
@@ -38,9 +38,9 @@ SEQAN3_CONCEPT tuple_size = requires (tuple_t v)
 //!\endcond
 
 /*!\interface seqan3::detail::tuple_get <>
- * \ingroup   utility
- * \brief     Subconcept definition for seqan3::tuple_like to test for std::get-interface.
- * \see       seqan3::tuple_like
+ * \ingroup utility_tuple
+ * \brief Subconcept definition for seqan3::tuple_like to test for std::get-interface.
+ * \see seqan3::tuple_like
  */
 //!\cond
 template <typename tuple_t>
@@ -65,9 +65,9 @@ SEQAN3_CONCEPT tuple_get = requires (tuple_t & v, tuple_t const & v_c)
 };
 //!\endcond
 
-/*!\brief   Transformation trait to expose the tuple element types as seqan3::type_list
- * \ingroup utility
- * \tparam  tuple_t The tuple to extract the element types from.
+/*!\brief Transformation trait to expose the tuple element types as seqan3::type_list
+ * \ingroup utility_tuple
+ * \tparam tuple_t The tuple to extract the element types from.
  *
  * \returns A seqan3::type_list over the element types of the given tuple.
  * \see seqan3::detail::tuple_type_list_t
@@ -89,8 +89,8 @@ public:
     using type = decltype(invoke_to_type_list(std::make_index_sequence<std::tuple_size<tuple_t>::value>{}));
 };
 
-/*!\brief   Helper type for seqan3::detail::tuple_type_list
- * \ingroup utility
+/*!\brief Helper type for seqan3::detail::tuple_type_list
+ * \ingroup utility_tuple
  *
  * \see seqan3::detail::tuple_type_list
  */
@@ -98,15 +98,15 @@ template <detail::tuple_size tuple_t>
 using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
 
 /*!\brief Helper type function to check for std::totally_ordered on all elements of the given tuple type.
- * \ingroup utility
+ * \ingroup utility_tuple
  */
 template <typename ...elements_t>
 inline constexpr auto all_elements_model_totally_ordered(seqan3::type_list<elements_t...>)
     -> std::bool_constant<(std::totally_ordered<elements_t> && ... && true)>;
 
 /*!\brief Helper type trait function to check for std::totally_ordered on all elements of the given tuple type.
- * \tparam  tuple_t The tuple to check if all elements model std::totally_ordered.
- * \ingroup utility
+ * \tparam tuple_t The tuple to check if all elements model std::totally_ordered.
+ * \ingroup utility_tuple
  */
 template <typename tuple_t>
 //!\cond
@@ -126,10 +126,10 @@ namespace seqan3
 // tuple_like
 // ----------------------------------------------------------------------------
 
-/*!\interface   seqan3::tuple_like
- * \extends     std::totally_ordered
- * \ingroup     utility
- * \brief       Whether a type behaves like a tuple.
+/*!\interface seqan3::tuple_like
+ * \extends std::totally_ordered
+ * \ingroup utility_tuple
+ * \brief Whether a type behaves like a tuple.
  *
  * \details
  *
@@ -193,7 +193,7 @@ SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && re
 
 /*!\interface seqan3::pair_like
  * \extends seqan3::tuple_like
- * \ingroup utility
+ * \ingroup utility_tuple
  * \brief Whether a type behaves like a tuple with exactly two elements.
  *
  * \details

@@ -21,7 +21,7 @@ namespace seqan3::detail
 {
 
 //!\brief Auxiliary table for seqan3::to_lower.
-//!\ingroup char_operations
+//!\ingroup utility_char_operations
 template <typename char_type>
 inline std::array<char_type, detail::size_in_values_v<char_type>> constexpr to_lower_table
 {
@@ -40,7 +40,7 @@ inline std::array<char_type, detail::size_in_values_v<char_type>> constexpr to_l
 };
 
 //!\brief Auxiliary table for seqan3::to_upper.
-//!\ingroup char_operations
+//!\ingroup utility_char_operations
 template <typename char_type>
 inline std::array<char_type, detail::size_in_values_v<char_type>> constexpr to_upper_table
 {
@@ -64,7 +64,7 @@ namespace seqan3
 {
 
 /*!\name Operations on characters
- * \ingroup char_operations
+ * \ingroup utility_char_operations
  * \{
  */
 

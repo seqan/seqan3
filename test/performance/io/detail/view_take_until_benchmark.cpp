@@ -46,7 +46,8 @@ void sequential_read(benchmark::State & state)
         {
             single_pass_or_ref_t single_pass_or_ref{container};
             for (auto elem : single_pass_or_ref)
-                sum += elem;
+                if(sum += elem; elem >= 101)
+                    break;
         }
     }
     else // {seqan3,std}::views::take* adaptor

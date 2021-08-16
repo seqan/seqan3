@@ -30,7 +30,7 @@ namespace seqan3
 /*!\brief A constexpr vector implementation with dynamic size at compile time.
  * \implements seqan3::reservible_container
  * \implements seqan3::cerealisable
- * \ingroup container
+ * \ingroup utility_container
  * \tparam value_type_ The underlying value type stored in the vector.
  * \tparam capacity_   The capacity of the constexpr vector.
  *

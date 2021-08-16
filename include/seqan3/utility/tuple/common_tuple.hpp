@@ -21,6 +21,7 @@ namespace seqan3
 
 /*!\brief A common tuple type that behaves like a regular std::tuple, but can be used as a reference type proxy for
  *        output iterators.
+ * \ingroup utility_tuple
  *
  * \details
  *
@@ -30,6 +31,7 @@ using SEQAN3_DOXYGEN_ONLY(common_tuple =) ::ranges::common_tuple;
 
 /*!\brief A common pair type that behaves like a regular std::pair, but can be used as a reference type proxy for
  *        output iterators.
+ * \ingroup utility_tuple
  *
  * \details
  *

@@ -117,11 +117,6 @@ struct slice_fn
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view adaptor that returns a half-open interval on the underlying range.
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
@@ -130,7 +125,7 @@ namespace seqan3::views
  * \param[in] end_pos   The end of the interval (index **behind** the last element returned).
  * \returns             Up to `end_pos - begin_pos` elements of the underlying range.
  * \throws std::invalid_argument If `end_pos < begin_pos`.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -186,7 +181,5 @@ namespace seqan3::views
  * \hideinitializer
  */
 inline constexpr auto slice = detail::slice_fn{};
-
-//!\}
 
 } // namespace seqan3::views
