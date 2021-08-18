@@ -80,8 +80,22 @@ private:
 
     //!\brief The alignment configuration traits type with auxiliary information extracted from the configuration type.
     using traits_t = alignment_configuration_traits<config_t>;
+
+    /*!\brief Helper function to access ((some_policy *)this)->current_alignment_column().
+     *
+     * This works around an issue of accessing inherited members during declaration time by defering the access by using
+     * two-phase lookup.
+     *
+     * During the declaration time this class is still an incomplete type and we are technically not allowed to access
+     * its inherited members. gcc will allow that anyway, but clang rightfully doesn't.
+     *
+     * \see http://blog.llvm.org/2009/12/dreaded-two-phase-name-lookup.html
+     */
+    template <typename alignment_algorithm_t = alignment_algorithm>
+    static auto _alignment_column_t() -> decltype(std::declval<alignment_algorithm_t>().current_alignment_column());
+
     //!\brief The type of an alignment column as defined by the respective matrix policy.
-    using alignment_column_t = decltype(std::declval<alignment_algorithm>().current_alignment_column());
+    using alignment_column_t = decltype(_alignment_column_t());
     //!\brief The iterator type over the alignment column.
     using alignment_column_iterator_t = std::ranges::iterator_t<alignment_column_t>;
     //!\brief The alignment result type.
