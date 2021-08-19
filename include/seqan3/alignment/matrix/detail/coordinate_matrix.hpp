@@ -259,7 +259,12 @@ public:
     //!\brief Increments the iterator to the next column.
     iterator & operator++()
     {
-        ++column_id;
+        // clang: pre-increment of a SIMD vector does not work
+        if constexpr (simd_index<index_t>)
+            column_id = column_id + simd::fill<index_t>(1);
+        else
+            ++column_id;
+
         return *this;
     }
 
