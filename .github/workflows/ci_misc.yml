@@ -101,7 +101,7 @@ jobs:
             build_threads: 2
             test_threads: 2
             cmake: 3.8.2
-            doxygen: 1.9.1
+            doxygen: 1.9.2
             requires_toolchain: false
             requires_ccache: false
             skip_build_tests: true
