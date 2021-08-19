@@ -195,8 +195,6 @@ private:
         return 0;
     }
 
-    using format_sam_base::read_field; // inherit read_field functions from format_base explicitly
-
     /*!\brief Reads a arithmetic field from binary stream by directly reinterpreting the bits.
      * \tparam stream_view_type  The type of the stream as a view.
      * \tparam number_type       The type of number to parse; must model std::integral.
@@ -204,7 +202,7 @@ private:
      * \param[out]     target       An integral value to store the parsed value in.
      */
     template <typename stream_view_type, std::integral number_type>
-    void read_field(stream_view_type && stream_view, number_type & target)
+    void read_integral_byte_field(stream_view_type && stream_view, number_type & target)
     {
         std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(target), reinterpret_cast<char *>(&target));
     }
@@ -215,27 +213,9 @@ private:
      * \param[out]     target       An float value to store the parsed value in.
      */
     template <typename stream_view_type>
-    void read_field(stream_view_type && stream_view, float & target)
+    void read_float_byte_field(stream_view_type && stream_view, float & target)
     {
         std::ranges::copy_n(std::ranges::begin(stream_view), sizeof(int32_t), reinterpret_cast<char *>(&target));
-    }
-
-    /*!\brief Delegate parsing of std::optional types to parsing of the inner value type.
-     * \tparam stream_view_type     The type of the stream as a view.
-     * \tparam optional_value_type  The inner type of a the std::optional type of \p target.
-     *
-     * \param[in, out] stream_view  The stream view to iterate over.
-     * \param[out]     target       The std::optional object to store the parsed value.
-     *
-     * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
-     *         of type target_type.
-     */
-    template <typename stream_view_type, typename optional_value_type>
-    void read_field(stream_view_type && stream_view, std::optional<optional_value_type> & target)
-    {
-        optional_value_type tmp;
-        read_field(std::forward<stream_view_type>(stream_view), tmp);
-        target = tmp;
     }
 
     template <typename stream_view_type, typename value_type>
@@ -244,7 +224,7 @@ private:
                               value_type const & SEQAN3_DOXYGEN_ONLY(value));
 
     template <typename stream_view_type>
-    void read_field(stream_view_type && stream_view, sam_tag_dictionary & target);
+    void read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target);
 
     template <typename cigar_input_type>
     auto parse_binary_cigar(cigar_input_type && cigar_input, uint16_t n_cigar_op) const;
@@ -323,22 +303,22 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         int32_t l_name{}; // 1 + length of reference name including \0 character
         int32_t l_ref{}; // length of reference sequence
 
-        read_field(stream_view, l_text);
+        read_integral_byte_field(stream_view, l_text);
 
         if (l_text > 0) // header text is present
             read_header(stream_view | detail::take_exactly_or_throw(l_text), header, ref_seqs);
 
-        read_field(stream_view, n_ref);
+        read_integral_byte_field(stream_view, n_ref);
 
         for (int32_t ref_idx = 0; ref_idx < n_ref; ++ref_idx)
         {
-            read_field(stream_view, l_name);
+            read_integral_byte_field(stream_view, l_name);
 
             string_buffer.resize(l_name - 1);
             std::ranges::copy_n(std::ranges::begin(stream_view), l_name - 1, string_buffer.data()); // copy without \0 character
             std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
 
-            read_field(stream_view, l_ref);
+            read_integral_byte_field(stream_view, l_ref);
 
             if constexpr (detail::decays_to_ignore_v<ref_seqs_type>) // no reference information given
             {
@@ -417,7 +397,11 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read id
     // -------------------------------------------------------------------------------------------------------------
-    read_field(stream_view | detail::take_exactly_or_throw(core.l_read_name - 1), id); // field::id
+    auto id_view = stream_view | detail::take_exactly_or_throw(core.l_read_name - 1);
+    if constexpr (!detail::decays_to_ignore_v<id_type>)
+        read_forward_range_field(id_view, id); // field::id
+    else
+        detail::consume(id_view);
     std::ranges::next(std::ranges::begin(stream_view)); // skip '\0'
 
     // read cigar string
@@ -536,8 +520,15 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
     // read qual string
     // -------------------------------------------------------------------------------------------------------------
-    read_field(stream_view | detail::take_exactly_or_throw(core.l_seq)
-                           | std::views::transform([] (char chr) { return static_cast<char>(chr + 33); }), qual);
+    auto qual_view = stream_view | detail::take_exactly_or_throw(core.l_seq)
+                                 | std::views::transform([] (char chr)
+                                   {
+                                       return static_cast<char>(chr + 33);
+                                   });
+    if constexpr (!detail::decays_to_ignore_v<qual_type>)
+        read_forward_range_field(qual_view, qual);
+    else
+        detail::consume(qual_view);
 
     // All remaining optional fields if any: SAM tags dictionary
     // -------------------------------------------------------------------------------------------------------------
@@ -547,7 +538,12 @@ inline void format_bam::read_alignment_record(stream_type & stream,
     auto tags_view = stream_view | detail::take_exactly_or_throw(remaining_bytes);
 
     while (tags_view.size() > 0)
-        read_field(tags_view, tag_dict);
+    {
+        if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
+            read_sam_dict_field(tags_view, tag_dict);
+        else
+            detail::consume(tags_view);
+    }
 
     // DONE READING - wrap up
     // -------------------------------------------------------------------------------------------------------------
@@ -931,14 +927,26 @@ inline void format_bam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
                                              value_type const & SEQAN3_DOXYGEN_ONLY(value))
 {
     int32_t count;
-    read_field(stream_view, count); // read length of vector
+    read_integral_byte_field(stream_view, count); // read length of vector
     std::vector<value_type> tmp_vector;
     tmp_vector.reserve(count);
 
     while (count > 0)
     {
         value_type tmp{};
-        read_field(stream_view, tmp);
+        if constexpr(std::integral<value_type>)
+        {
+            read_integral_byte_field(stream_view, tmp);
+        }
+        else if constexpr(std::same_as<value_type, float>)
+        {
+            read_float_byte_field(stream_view, tmp);
+        }
+        else
+        {
+            constexpr bool always_false = std::is_same_v<value_type, void>;
+            static_assert(always_false, "format_bam::read_sam_dict_vector: unsupported value_type");
+        }
         tmp_vector.push_back(std::move(tmp));
         --count;
     }
@@ -963,7 +971,7 @@ inline void format_bam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
  * the actual error.
  */
 template <typename stream_view_type>
-inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dictionary & target)
+inline void format_bam::read_sam_dict_field(stream_view_type && stream_view, sam_tag_dictionary & target)
 {
     /* Every BA< tag has the format "[TAG][TYPE_ID][VALUE]", where TAG is a two letter
        name tag which is converted to a unique integer identifier and TYPE_ID is one character in [A,i,Z,H,B,f]
@@ -993,49 +1001,49 @@ inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dict
         case 'c' : // int8_t
         {
             int8_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
             break;
         }
         case 'C' : // uint8_t
         {
             uint8_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
             break;
         }
         case 's' : // int16_t
         {
             int16_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
             break;
         }
         case 'S' : // uint16_t
         {
             uint16_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
             break;
         }
         case 'i' : // int32_t
         {
             int32_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = std::move(tmp); // readable sam format only allows int32_t
             break;
         }
         case 'I' : // uint32_t
         {
             uint32_t tmp;
-            read_field(stream_view, tmp);
+            read_integral_byte_field(stream_view, tmp);
             target[tag] = static_cast<int32_t>(tmp); // readable sam format only allows int32_t
             break;
         }
         case 'f' : // float
         {
             float tmp;
-            read_field(stream_view, tmp);
+            read_float_byte_field(stream_view, tmp);
             target[tag] = tmp;
             break;
         }
@@ -1066,7 +1074,7 @@ inline void format_bam::read_field(stream_view_type && stream_view, sam_tag_dict
 
                 string_buffer.push_back(*it);
                 ++it;
-                read_field(string_buffer, value);
+                read_byte_field(string_buffer, value);
                 byte_array.push_back(value);
             }
             ++it; // skip \0

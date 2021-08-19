@@ -86,20 +86,14 @@ protected:
 
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const;
 
-    template <typename stream_view_type>
-    void read_field(stream_view_type && stream_view, detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target));
-
     template <typename stream_view_t>
-    void read_field(stream_view_t && stream_view, std::byte & byte_target);
+    void read_byte_field(stream_view_t && stream_view, std::byte & byte_target);
 
     template <typename stream_view_type, std::ranges::forward_range target_range_type>
-    void read_field(stream_view_type && stream_view, target_range_type & target);
+    void read_forward_range_field(stream_view_type && stream_view, target_range_type & target);
 
     template <typename stream_view_t, arithmetic arithmetic_target_type>
-    void read_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target);
-
-    template <typename stream_view_type, typename optional_value_type>
-    void read_field(stream_view_type && stream_view, std::optional<optional_value_type> & target);
+    void read_arithmetic_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target);
 
     template <typename stream_view_type, typename ref_ids_type, typename ref_seqs_type>
     void read_header(stream_view_type && stream_view,
@@ -260,19 +254,6 @@ inline void format_sam_base::construct_alignment(align_type                     
     }
 }
 
-/*!\brief Decays to detail::consume for std::ignore.
- * \tparam stream_view_type  The type of the stream as a view.
- *
- * \param[in, out] stream_view  The stream view to consume.
- * \param[in]      target       A std::ignore placeholder.
- */
-template <typename stream_view_type>
-inline void format_sam_base::read_field(stream_view_type && stream_view,
-                                        detail::ignore_t const & SEQAN3_DOXYGEN_ONLY(target))
-{
-    detail::consume(stream_view);
-}
-
 /*!\brief Reads std::byte fields using std::from_chars.
  * \tparam stream_view_t The type of the stream as a view.
  *
@@ -283,7 +264,7 @@ inline void format_sam_base::read_field(stream_view_type && stream_view,
  *         of type std::byte.
  */
 template <typename stream_view_t>
-inline void format_sam_base::read_field(stream_view_t && stream_view, std::byte & byte_target)
+inline void format_sam_base::read_byte_field(stream_view_t && stream_view, std::byte & byte_target)
 {
     // unfortunately std::from_chars only accepts char const * so we need a buffer.
     auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
@@ -312,7 +293,7 @@ inline void format_sam_base::read_field(stream_view_t && stream_view, std::byte 
  * \param[out]     target       The range to store the parsed sequence.
  */
 template <typename stream_view_type, std::ranges::forward_range target_range_type>
-inline void format_sam_base::read_field(stream_view_type && stream_view, target_range_type & target)
+inline void format_sam_base::read_forward_range_field(stream_view_type && stream_view, target_range_type & target)
 {
     using target_range_value_t = std::ranges::range_value_t<target_range_type>;
     using begin_iterator_t = std::ranges::iterator_t<stream_view_type>;
@@ -344,7 +325,7 @@ inline void format_sam_base::read_field(stream_view_type && stream_view, target_
  *         of type arithmetic_target_type.
  */
 template <typename stream_view_t, arithmetic arithmetic_target_type>
-inline void format_sam_base::read_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target)
+inline void format_sam_base::read_arithmetic_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target)
 {
     // unfortunately std::from_chars only accepts char const * so we need a buffer.
     auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
@@ -361,24 +342,6 @@ inline void format_sam_base::read_field(stream_view_t && stream_view, arithmetic
         throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
                                        "' into type " + detail::type_name_as_string<arithmetic_target_type> +
                                        " would cause an overflow."};
-}
-
-/*!\brief Delegate parsing of std::optional types to parsing of the inner value type.
- * \tparam stream_view_type     The type of the stream as a view.
- * \tparam optional_value_type  The inner type of a the std::optional type of \p target.
- *
- * \param[in, out] stream_view The stream view to iterate over.
- * \param[out] target The std::optional object to store the parsed value.
- *
- * \throws seqan3::format_error if the character sequence in stream_view cannot be successfully converted to a value
- *         of type target_type.
- */
-template <typename stream_view_type, typename optional_value_type>
-inline void format_sam_base::read_field(stream_view_type && stream_view, std::optional<optional_value_type> & target)
-{
-    optional_value_type tmp;
-    read_field(std::forward<stream_view_type>(stream_view), tmp);
-    target = tmp;
 }
 
 /*!\brief Reads the SAM header.
@@ -438,12 +401,11 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
             ++it;
     };
 
-    auto parse_tag_value = [&] (auto & value) // helper function to parse the next tag value
+    auto copy_next_tag_value_into_buffer = [&] ()
     {
         skip_until_predicate(is_char<':'>);
         ++it; // skip :
         take_until_predicate(is_char<'\t'> || is_char<'\n'>);
-        read_field(string_buffer, value);
     };
 
     // Some tags are not parsed individually. Instead, these are simply copied into a std::string.
@@ -460,7 +422,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
             value.push_back('\t');
         value.push_back(raw_tag[0]);
         value.push_back(raw_tag[1]);
-        read_field(string_buffer, value);
+        read_forward_range_field(string_buffer, value);
     };
 
     auto print_cerr_of_unspported_tag = [&it] (char const * const header_tag, std::array<char, 2> raw_tag)
@@ -511,7 +473,10 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     }
 
                     if (header_entry != nullptr)
-                        parse_tag_value(*header_entry);
+                    {
+                        copy_next_tag_value_into_buffer();
+                        read_forward_range_field(string_buffer, *header_entry);
+                    }
                     else
                         skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
                 }
@@ -539,12 +504,16 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     {
                         case make_tag('S', 'N'): // parse required SN (sequence name) tag
                         {
-                            parse_tag_value(id);
+                            copy_next_tag_value_into_buffer();
+                            read_forward_range_field(string_buffer, id);
                             break;
                         }
                         case make_tag('L', 'N'): // parse required LN (length) tag
                         {
-                            parse_tag_value(sequence_length);
+                            int32_t sequence_length_tmp{};
+                            copy_next_tag_value_into_buffer();
+                            read_arithmetic_field(string_buffer, sequence_length_tmp);
+                            sequence_length = sequence_length_tmp;
                             break;
                         }
                         default: // Any other tag
@@ -606,7 +575,8 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     {
                         case make_tag('I', 'D'): // parse required ID tag
                         {
-                            parse_tag_value(get<0>(tmp));
+                            copy_next_tag_value_into_buffer();
+                            read_forward_range_field(string_buffer, get<0>(tmp));
                             break;
                         }
                         default: // Any other tag
@@ -673,7 +643,10 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                     }
 
                     if (program_info_entry != nullptr)
-                        parse_tag_value(*program_info_entry);
+                    {
+                        copy_next_tag_value_into_buffer();
+                        read_forward_range_field(string_buffer, *program_info_entry);
+                    }
                     else
                         skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
                 }
@@ -691,7 +664,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
                 ++it; // skip tab
                 std::string tmp;
                 take_until_predicate(is_char<'\n'>);
-                read_field(string_buffer, tmp);
+                read_forward_range_field(string_buffer, tmp);
                 ++it; // skip newline
                 hdr.comments.emplace_back(std::move(tmp));
                 break;
