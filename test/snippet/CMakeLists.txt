@@ -51,7 +51,7 @@ foreach (source_snippet IN ITEMS "test/snippet/alphabet/nucleotide/@target_alpha
                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in"
                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_vector.cpp.in"
                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_views.cpp.in"
-                                 "doc/fragments/@target_alphabet@_implicit_conversion_from_@source_alphabet@.hpp.in")
+                                 "doc/fragments/@target_alphabet@_implicit_conversion_from_@source_alphabet@.md.in")
     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna4 -Dsource_alphabet=rna4)
     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna4 -Dsource_alphabet=dna4)
     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna5 -Dsource_alphabet=rna5)

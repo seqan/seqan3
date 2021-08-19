@@ -77,7 +77,7 @@ public:
     /*!\brief Allow implicit construction from seqan3::rna15 of the same size.
      * \details
      *
-     * \copydetails seqan3::doxygen::dna15_implicit_conversion_from_rna15
+     * \include{doc} doc/fragments/dna15_implicit_conversion_from_rna15.md
      *
      * \stableapi{Since version 3.1.}
      */

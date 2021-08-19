@@ -1,0 +1,22 @@
+Normally, we do not allow implicit conversion of single argument constructors, but in this case we make an exception,
+because seqan3::${target_alphabet} and seqan3::${source_alphabet} are interchangeable as they behave nearly the same (e.g. same ranks, same
+char to rank conversion).
+<br>
+\snippet test/snippet/alphabet/nucleotide/${target_alphabet}_implicit_conversion_from_${source_alphabet}.cpp main
+
+<br>
+`seqan3::sequence`s (e.g. seqan3::${target_alphabet}_vector) in general are not implicitly convertible and must be explicitly
+copied to be converted:
+<br>
+\snippet test/snippet/alphabet/nucleotide/${target_alphabet}_implicit_conversion_from_${source_alphabet}_vector.cpp main
+
+<br>
+You can avoid this copy by using `std::ranges::view`s:
+<br>
+\snippet test/snippet/alphabet/nucleotide/${target_alphabet}_implicit_conversion_from_${source_alphabet}_views.cpp main
+
+<br>
+This conversion constructor only allows converting seqan3::${source_alphabet} to seqan3::${target_alphabet}. Other alphabets that inherit
+from seqan3::${source_alphabet} will not be implicitly convertible to seqan3::${target_alphabet}.
+<br>
+\snippet test/snippet/alphabet/nucleotide/${target_alphabet}_implicit_conversion_from_${source_alphabet}_inherit.cpp main

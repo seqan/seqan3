@@ -32,5 +32,5 @@
   *
   * The following table outlines the valid characters in the seqan3::cigar::operation alphabet.
   *
-  * \copydoc seqan3::doxygen::cigar_operation_table
+  * \include{doc} doc/fragments/cigar_operation_table.md
   */

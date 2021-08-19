@@ -48,7 +48,7 @@ namespace seqan3
  * no user defined literal operators. Always assign from a pair of
  * uint32_t and seqan3::cigar::operation.
  *
- * \copydoc seqan3::doxygen::cigar_operation_table
+ * \include{doc} doc/fragments/cigar_operation_table.md
  *
  * ### Example
  *
@@ -80,7 +80,7 @@ public:
      * The main purpose of the seqan3::cigar::operation alphabet is to be used in the seqan3::cigar
      * composition, where a cigar operation is paired with a count value.
      *
-     * \copydoc seqan3::doxygen::cigar_operation_table
+     * \include{doc} doc/fragments/cigar_operation_table.md
      *
      * Example usage:
      * \include test/snippet/alphabet/cigar/cigar_operation.cpp
