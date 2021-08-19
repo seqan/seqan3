@@ -86,7 +86,7 @@ private:
          */
         auto operator()(index_t const row_index) noexcept
         {
-            return matrix_index{row_index_type{row_index}, column_index_type{column_index}};
+            return matrix_index<index_t>{row_index_type{row_index}, column_index_type{column_index}};
         }
     };
 
