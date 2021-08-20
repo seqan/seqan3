@@ -68,10 +68,10 @@ private:
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
                                            std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
-    template <typename rng_t>
-    using basic_iterator = std::ranges::iterator_t<rng_t>;
+    template <bool const_range>
+    using basic_iterator = seqan3::detail::maybe_const_iterator_t<const_range, urng_t>;
 
-    template <bool is_const_range>
+    template <bool const_range>
     class basic_sentinel;
 
     template <typename rng_t>
@@ -134,7 +134,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
             return basic_consume_iterator<urng_t>{std::ranges::begin(urange), static_cast<fun_t &>(fun), std::ranges::end(urange)};
         else
-            return basic_iterator<urng_t>{std::ranges::begin(urange)};
+            return basic_iterator<false>{std::ranges::begin(urange)};
     }
 
     //!\copydoc begin()
@@ -144,7 +144,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_iterator<urng_t const>{std::ranges::cbegin(urange), static_cast<fun_t const &>(fun), std::ranges::cend(urange)};
         else
-            return basic_iterator<urng_t const>{std::ranges::cbegin(urange)};
+            return basic_iterator<true>{std::ranges::cbegin(urange)};
     }
 
     /*!\brief Returns an iterator to the element following the last element of the range.
@@ -331,16 +331,16 @@ public:
 
 //!\brief The sentinel type of take_until, provides the comparison operators.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
-template <bool is_const_range>
+template <bool const_range>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
 {
 private:
     //!\brief The base type of the underlying range.
-    using urng_base_type = std::conditional_t<is_const_range, std::add_const_t<urng_t>, urng_t>;
+    using urng_base_type = std::conditional_t<const_range, std::add_const_t<urng_t>, urng_t>;
     //!\brief The sentinel type of the underlying range.
     using urng_sentinel_type = std::ranges::sentinel_t<urng_base_type>;
     //!\brief Auxiliary type.
-    using predicate_ref_t = std::conditional_t<is_const_range,
+    using predicate_ref_t = std::conditional_t<const_range,
                                                std::remove_reference_t<fun_t> const &,
                                                std::remove_reference_t<fun_t> &>;
 
@@ -349,8 +349,6 @@ private:
 
     //!\brief Reference to the predicate stored in the view.
     seqan3::semiregular_box_t<predicate_ref_t> predicate{};
-
-    using underlying_iterator_t = basic_iterator<urng_base_type>;
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -373,8 +371,8 @@ public:
     {}
 
     //!\brief Construct from a not const range a const range.
-    basic_sentinel(basic_sentinel<!is_const_range> other)
-        requires is_const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, urng_sentinel_type>
+    basic_sentinel(basic_sentinel<!const_range> other)
+        requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, urng_sentinel_type>
         : urng_sentinel{std::move(other.urng_sentinel)},
           predicate{other.predicate}
     {}
@@ -385,7 +383,7 @@ public:
      */
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    friend bool operator==(underlying_iterator_t const & lhs, basic_sentinel const & rhs)
+    friend bool operator==(basic_iterator<const_range> const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
         if (lhs == rhs.urng_sentinel)
@@ -400,25 +398,25 @@ public:
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    friend bool operator==(basic_sentinel const & lhs, underlying_iterator_t const & rhs)
+    friend bool operator==(basic_sentinel const & lhs, basic_iterator<const_range> const & rhs)
     {
         return rhs == lhs;
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    friend bool operator!=(underlying_iterator_t const & lhs, basic_sentinel const & rhs)
+    friend bool operator!=(basic_iterator<const_range> const & lhs, basic_sentinel const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    friend bool operator!=(basic_sentinel const & lhs, underlying_iterator_t const & rhs)
+    friend bool operator!=(basic_sentinel const & lhs, basic_iterator<const_range> const & rhs)
     {
         return rhs != lhs;
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    template <bool other_const_range = !is_const_range>
+    template <bool other_const_range = !const_range>
         requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
     friend bool operator==(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
     {
@@ -435,7 +433,7 @@ public:
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    template <bool other_const_range = !is_const_range>
+    template <bool other_const_range = !const_range>
         requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
     friend bool operator==(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
     {
@@ -443,7 +441,7 @@ public:
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    template <bool other_const_range = !is_const_range>
+    template <bool other_const_range = !const_range>
         requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
     friend bool operator!=(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
     {
@@ -451,7 +449,7 @@ public:
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    template <bool other_const_range = !is_const_range>
+    template <bool other_const_range = !const_range>
         requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
     friend bool operator!=(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
     {
