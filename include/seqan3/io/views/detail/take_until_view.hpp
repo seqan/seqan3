@@ -69,7 +69,7 @@ private:
                                            std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
     template <typename rng_t>
-    class basic_iterator;
+    using basic_iterator = std::ranges::iterator_t<rng_t>;
 
     template <bool is_const_range>
     class basic_sentinel;
@@ -184,38 +184,6 @@ public:
 //!\relates seqan3::detail::view_take_until
 template <typename urng_t, typename fun_t, bool or_throw = false, bool and_consume = false>
 view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
-
-//!\brief The iterator type inherits from the underlying type, but overwrites several operators.
-//!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
-template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
-template <typename rng_t>
-class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_iterator :
-    public inherited_iterator_base<basic_iterator<rng_t>, std::ranges::iterator_t<rng_t>>
-{
-private:
-    //!\brief The iterator type of the underlying range.
-    using base_base_t = std::ranges::iterator_t<rng_t>;
-    //!\brief The CRTP wrapper type.
-    using base_t = inherited_iterator_base<basic_iterator, std::ranges::iterator_t<rng_t>>;
-
-public:
-    /*!\name Constructors, destructor and assignment
-     * \brief Exceptions specification is implicitly inherited.
-     * \{
-     */
-    constexpr basic_iterator() = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator const & rhs) = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator && rhs) = default; //!< Defaulted.
-    constexpr basic_iterator & operator=(basic_iterator const & rhs) = default; //!< Defaulted.
-    constexpr basic_iterator & operator=(basic_iterator && rhs) = default; //!< Defaulted.
-    ~basic_iterator() = default; //!< Defaulted.
-
-    //!\brief Constructor that delegates to the CRTP layer.
-    basic_iterator(base_base_t it) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}
-    {}
-    //!\}
-};
 
 //!\brief Special iterator type used when consuming behaviour is selected.
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
@@ -382,6 +350,8 @@ private:
     //!\brief Reference to the predicate stored in the view.
     seqan3::semiregular_box_t<predicate_ref_t> predicate{};
 
+    using underlying_iterator_t = basic_iterator<urng_base_type>;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -415,11 +385,10 @@ public:
      */
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    template <typename rng_t>
-    friend bool operator==(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
+    friend bool operator==(underlying_iterator_t const & lhs, basic_sentinel const & rhs)
     {
         // Actual comparison delegated to lhs base
-        if (lhs.base() == rhs.urng_sentinel)
+        if (lhs == rhs.urng_sentinel)
         {
             if constexpr (or_throw)
                 throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
@@ -431,22 +400,60 @@ public:
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
-    template <typename rng_t>
-    friend bool operator==(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
+    friend bool operator==(basic_sentinel const & lhs, underlying_iterator_t const & rhs)
     {
         return rhs == lhs;
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    template <typename rng_t>
-    friend bool operator!=(basic_iterator<rng_t> const & lhs, basic_sentinel const & rhs)
+    friend bool operator!=(underlying_iterator_t const & lhs, basic_sentinel const & rhs)
     {
         return !(lhs == rhs);
     }
 
     //!\brief Compares `lhs` with `rhs` for inequality.
-    template <typename rng_t>
-    friend bool operator!=(basic_sentinel const & lhs, basic_iterator<rng_t> const & rhs)
+    friend bool operator!=(basic_sentinel const & lhs, underlying_iterator_t const & rhs)
+    {
+        return rhs != lhs;
+    }
+
+    //!\brief Compares `lhs` with `rhs` for equality.
+    template <bool other_const_range = !is_const_range>
+        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
+    friend bool operator==(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
+    {
+        // Actual comparison delegated to lhs base
+        if (lhs == rhs.urng_sentinel)
+        {
+            if constexpr (or_throw)
+                throw unexpected_end_of_input{"Reached end of input before functor evaluated to true."};
+            else
+                return true;
+        }
+
+        return rhs.predicate(*lhs);
+    }
+
+    //!\brief Compares `lhs` with `rhs` for equality.
+    template <bool other_const_range = !is_const_range>
+        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
+    friend bool operator==(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
+    {
+        return rhs == lhs;
+    }
+
+    //!\brief Compares `lhs` with `rhs` for inequality.
+    template <bool other_const_range = !is_const_range>
+        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
+    friend bool operator!=(seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & lhs, basic_sentinel const & rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    //!\brief Compares `lhs` with `rhs` for inequality.
+    template <bool other_const_range = !is_const_range>
+        requires (std::sentinel_for<urng_sentinel_type, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t>>)
+    friend bool operator!=(basic_sentinel const & lhs, seqan3::detail::maybe_const_iterator_t<other_const_range, urng_t> const & rhs)
     {
         return rhs != lhs;
     }
