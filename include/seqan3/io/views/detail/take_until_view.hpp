@@ -284,13 +284,22 @@ public:
     }
 
     //!\brief Post-increment implemented via pre-increment.
-    basic_consume_iterator operator++(int)
+    decltype(auto) operator++(int)
         noexcept(noexcept(++std::declval<basic_consume_iterator &>()) &&
-                 std::is_nothrow_copy_constructible_v<basic_consume_iterator>)
+                 (std::same_as<decltype(std::declval<underlying_iterator_t &>()++), void> ||
+                  std::is_nothrow_copy_constructible_v<basic_consume_iterator>))
     {
-        basic_consume_iterator cpy{*this};
-        ++(*this);
-        return cpy;
+        // if underlying iterator is a C++20 input iterator (i.e. returns void), return void too.
+        if constexpr (std::same_as<decltype(std::declval<underlying_iterator_t &>()++), void>)
+        {
+            ++(*this);
+        }
+        else
+        {
+            basic_consume_iterator cpy{*this};
+            ++(*this);
+            return cpy;
+        }
     }
     //!\}
     /*!\name Comparison operators
