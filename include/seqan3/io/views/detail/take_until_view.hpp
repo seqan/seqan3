@@ -68,15 +68,23 @@ private:
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
                                            std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
 
+    //!\brief Iterator of the underlying range (urng_t).
+    //!\tparam const_range Whether iterator is a const iterator (const_range = true) or a non-const iterator.
     template <bool const_range>
     using basic_iterator = seqan3::detail::maybe_const_iterator_t<const_range, urng_t>;
 
+    //!\brief The sentinel type of take_until, provides the comparison operators.
+    //!\tparam const_range Whether sentinel is a const sentinel (const_range = true) or a non-const sentinel.
     template <bool const_range>
     class basic_sentinel;
 
+    //!\brief Special iterator type used when consuming behaviour is selected.
+    //!\tparam const_range Whether iterator is a const iterator (const_range = true) or a non-const iterator.
     template <bool const_range>
     class basic_consume_iterator;
 
+    //!\brief The sentinel type of take_until when consuming behaviour is selected.
+    //!\tparam const_range Whether sentinel is a const sentinel (const_range = true) or a non-const sentinel.
     template <bool const_range>
     using basic_consume_sentinel = std::default_sentinel_t;
 
@@ -189,8 +197,6 @@ public:
 template <typename urng_t, typename fun_t, bool or_throw = false, bool and_consume = false>
 view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
 
-//!\brief Special iterator type used when consuming behaviour is selected.
-//!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <bool const_range>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_consume_iterator :
@@ -334,7 +340,6 @@ public:
     //!\}
 };
 
-//!\brief The sentinel type of take_until, provides the comparison operators.
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <bool const_range>
 class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
