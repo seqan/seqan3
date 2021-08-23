@@ -29,6 +29,8 @@ struct sequence_file_input_options
     bool truncate_ids = false;
     //!\brief Read the complete_header into the seqan3::field::id for embl or genbank format.
     bool embl_genbank_complete_header = false;
+    //!\brief Remove spaces after ">" (or ";") before the actual ID.
+    bool fasta_ignore_blanks_before_id = true;
 };
 
 } // namespace seqan3

@@ -186,8 +186,11 @@ private:
             throw parse_error{std::string{"Expected to be on beginning of ID, but "} + is_id.msg +
                               " evaluated to false on " + detail::make_printable(*begin(stream_view))};
 
-        // read id
-        if constexpr (!detail::decays_to_ignore_v<id_type>)
+        if constexpr (detail::decays_to_ignore_v<id_type>) // Skip the ID, it is not requested by the user.
+        {
+            detail::consume(stream_view | detail::take_line_or_throw);
+        }
+        else // read ID
         {
             if (options.truncate_ids)
             {
@@ -196,8 +199,11 @@ private:
                 auto e = stream_view.end();
                 ++it; // already checked `is_id`
 
-                for (; (it != e) && (is_blank)(*it); ++it)
-                {}
+                if (options.fasta_ignore_blanks_before_id)
+                {
+                    for (; (it != e) && (is_blank)(*it); ++it) // skip leading ' '
+                    {}
+                }
 
                 bool at_delimiter = false;
                 for (; it != e; ++it)
@@ -217,27 +223,39 @@ private:
                 {}
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
-
+                if (options.fasta_ignore_blanks_before_id)
+                {
+                    std::ranges::copy(stream_view | std::views::drop(1)                               // skip leading '>' or ';'
+                                                  | std::views::drop_while(is_blank)                  // skip leading ' '
+                                                  | detail::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));                               // … ^A is old delimiter
+                }
+                else
+                {
                 std::ranges::copy(stream_view | std::views::drop(1)                               // skip leading '>' or ';'
-                                              | std::views::drop_while(is_blank)                  // skip leading ' '
                                               | detail::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::back_inserter(id));                                 // … ^A is old delimiter
+                }
 
                 // consume rest of line
                 detail::consume(stream_view | detail::take_line_or_throw);
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 
             }
-            else
+            else // options.truncate_ids
             {
             #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
                 auto it = stream_view.begin();
                 auto e = stream_view.end();
                 ++it; // skip leading '>' or ';'
 
-                for (; (it != e) && (is_blank)(*it); ++it) // skip leading ' '
-                {}
+                if (options.fasta_ignore_blanks_before_id)
+                {
+                    for (; (it != e) && (is_blank)(*it); ++it) // skip leading ' '
+                    {}
+                }
 
                 bool at_delimiter = false;
                 for (; it != e; ++it)
@@ -254,18 +272,23 @@ private:
                     throw unexpected_end_of_input{"FASTA ID line did not end in newline."};
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
-
-                std::ranges::copy(stream_view | detail::take_line_or_throw          // read line
-                                              | std::views::drop(1)                 // skip leading '>' or ';'
-                                              | std::views::drop_while(is_blank)    // skip leading ' '
-                                              | views::char_to<std::ranges::range_value_t<id_type>>,
-                                  std::back_inserter(id));
+                if (options.fasta_ignore_blanks_before_id)
+                {
+                    std::ranges::copy(stream_view | detail::take_line_or_throw                   // read line
+                                                  | std::views::drop(1)                          // skip leading '>' or ';'
+                                                  | std::views::drop_while(is_blank)             // skip leading ' '
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));
+                }
+                else
+                {
+                    std::ranges::copy(stream_view | detail::take_line_or_throw                   // read line
+                                                  | std::views::drop(1)                          // skip leading '>' or ';'
+                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));
+                }
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
             }
-        }
-        else
-        {
-            detail::consume(stream_view | detail::take_line_or_throw);
         }
     }
 
