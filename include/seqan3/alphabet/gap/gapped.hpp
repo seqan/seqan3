@@ -56,7 +56,7 @@ namespace seqan3::detail
 template <typename t>
 constexpr bool is_gapped_alphabet = false;
 
-//!\brief Helper variable to determine if an alphabet is gapped, true for specilisations of seqan3::gapped.
+//!\brief Helper variable to determine if an alphabet is gapped, true for specialisations of seqan3::gapped.
 //!\ingroup alphabet_gap
 template <typename t>
 constexpr bool is_gapped_alphabet<gapped<t>> = true;
