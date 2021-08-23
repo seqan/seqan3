@@ -27,7 +27,7 @@ struct sequence_file_output_options
     //!\brief Begin the ID line with ";" instead of ">" (not recommended).
     bool        fasta_legacy_id_marker  = false;
     //!\brief Insert a single space after ">" (or ";") before the actual ID.
-    bool        fasta_blank_before_id   = true;
+    bool        fasta_blank_before_id   = false;
     //!\brief Inserts linebreaks after every n-th letter in the sequence; 0 means no linebreaks.
     uint32_t    fasta_letters_per_line  = 80;
     //TODO:
