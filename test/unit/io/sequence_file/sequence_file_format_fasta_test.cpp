@@ -21,32 +21,32 @@ struct sequence_file_read<seqan3::format_fasta> : public sequence_file_data
 {
     std::string standard_input
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGTTTA\n"
     };
 
     std::string illegal_alphabet_character_input
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGPTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGTTTA\n"
     };
 
     std::string standard_output
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\nTT\n"
         //                                             linebreak inserted after 80 char  ^
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGTTTA\n"
     };
 
@@ -96,11 +96,11 @@ TEST_F(read, newline_before_eof)
 {
     std::string input
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGTTTA"
     };
     do_read_test(input);
@@ -124,12 +124,12 @@ TEST_F(read, whitespace_in_seq)
 {
     std::string input
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTTTT\n\nTTTTTTTTTTT\n"
         "\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTT\t\tTTTTTTTTTTT\t\nTTTTTTTTTTT\vTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\rTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGT\fTTA\n"
     };
     do_read_test(input);
@@ -139,12 +139,12 @@ TEST_F(read, digits_in_seq)
 {
     std::string input
     {
-        "> ID1\n"
+        ">ID1\n"
         "10  ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "  80 ACGTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT  900"
         "1000 TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGT9T5T2A\n"
     };
     do_read_test(input);
@@ -169,12 +169,12 @@ TEST_F(read, mixed_issues)
 {
     std::string input
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTTTT\n\nTTTTTTTTTTT\n"
         "\n"
         ";ID2\n"
         "ACGTTTT\t75\tTTTTTTTTTTT\t\nTTTTTTTTTTT9\vTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\rTTTTTTTTTTTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGT\fTTA"
     };
     do_read_test(input);
@@ -248,12 +248,12 @@ TEST_F(write, options_letters_per_line)
 
     std::string comp
     {
-        "> TEST 1\n"
+        ">TEST 1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\nAGGCTGN\n"
         "AGGCTGN\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTAT\nAATATAT\nATATATA\nTAT\n"
     };
 
@@ -268,12 +268,12 @@ TEST_F(write, options_legacy_id_marker)
 
     std::string comp
     {
-        "; TEST 1\n"
+        ";TEST 1\n"
         "ACGT\n"
-        "; Test2\n"
+        ";Test2\n"
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\nCTGNAGGCTGN\n"
         //                                             linebreak inserted after 80 char  ^
-        "; Test3\n"
+        ";Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
@@ -284,16 +284,16 @@ TEST_F(write, options_legacy_id_marker)
 
 TEST_F(write, options_blank_before_id)
 {
-    options.fasta_blank_before_id = false;
+    options.fasta_blank_before_id = true;
 
     std::string comp
     {
-        ">TEST 1\n"
+        "> TEST 1\n"
         "ACGT\n"
-        ">Test2\n"
+        "> Test2\n"
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\nCTGNAGGCTGN\n"
         //                                             linebreak inserted after 80 char  ^
-        ">Test3\n"
+        "> Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
@@ -308,12 +308,12 @@ TEST_F(write, options_add_carriage_return)
 
     std::string comp
     {
-        "> TEST 1\r\n"
+        ">TEST 1\r\n"
         "ACGT\r\n"
-        "> Test2\r\n"
+        ">Test2\r\n"
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\r\nCTGNAGGCTGN\r\n"
         //                                             linebreak inserted after 80 char  ^
-        "> Test3\r\n"
+        ">Test3\r\n"
         "GGAGTATAATATATATATATATAT\r\n"
     };
 
@@ -325,18 +325,18 @@ TEST_F(write, options_add_carriage_return)
 TEST_F(write, options_all)
 {
     options.add_carriage_return = true;
-    options.fasta_blank_before_id = false;
+    options.fasta_blank_before_id = true;
     options.fasta_legacy_id_marker = true;
     options.fasta_letters_per_line = 21;
 
     std::string comp
     {
-        ";TEST 1\r\n"
+        "; TEST 1\r\n"
         "ACGT\r\n"
-        ";Test2\r\n"
+        "; Test2\r\n"
         "AGGCTGNAGGCTGNAGGCTGN\r\nAGGCTGNAGGCTGNAGGCTGN\r\nAGGCTGNAGGCTGNAGGCTGN\r\nAGGCTGNAGGCTGNAGGCTGN\r\n"
         "AGGCTGN\r\n"
-        ";Test3\r\n"
+        "; Test3\r\n"
         "GGAGTATAATATATATATATA\r\nTAT\r\n"
     };
     do_write_test();

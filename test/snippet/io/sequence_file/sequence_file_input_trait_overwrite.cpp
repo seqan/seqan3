@@ -4,11 +4,11 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 ACGT
-> Test2
+>Test2
 AGGCTGA
-> Test3
+>Test3
 GGAGTATAATATATATATATATAT)";
 
 struct my_traits : seqan3::sequence_file_input_default_traits_dna
