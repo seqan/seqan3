@@ -411,13 +411,13 @@ public:
         "[SEQAN3 INFO] :: A new SeqAn version is available online.\n"
         "[SEQAN3 INFO] :: Please visit www.github.com/seqan/seqan3.git for an update\n"
         "[SEQAN3 INFO] :: or inform the developer of this app.\n"
-        "[SEQAN3 INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";
+        "[SEQAN3 INFO] :: If you don't wish to receive further notifications, set --version-check false.\n\n";
     //!\brief The message directed to the developer of the app if the app is not yet registered with us.
     static constexpr std::string_view message_unregistered_app =
         "[SEQAN3 INFO] :: Thank you for using SeqAn!\n"
         "[SEQAN3 INFO] :: Do you wish to register your app for update notifications?\n"
         "[SEQAN3 INFO] :: Just send an email to support@seqan.de with your app name and version number.\n"
-        "[SEQAN3 INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";
+        "[SEQAN3 INFO] :: If you don't wish to receive further notifications, set --version-check false.\n\n";
     //!\brief The message directed to the developer if the application is registered but under a lower version.
     static constexpr std::string_view message_registered_app_update =
         "[APP INFO] :: We noticed the app version you use is newer than the one registered with us.\n"
@@ -425,7 +425,7 @@ public:
     //!\brief The message directed to the user of the app if a new app version is available.
     std::string message_app_update =
         "[APP INFO] :: A new version of this application is now available.\n"
-        "[APP INFO] :: If you don't wish to receive further notifications, set --version-check OFF.\n\n";
+        "[APP INFO] :: If you don't wish to receive further notifications, set --version-check false.\n\n";
         /*Might be extended if a url is given on construction.*/
 
     //!\brief The environment name of the home environment used by getenv()

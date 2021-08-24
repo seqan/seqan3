@@ -26,6 +26,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 # 3.1.0
 
+## New features
+
+#### Build system
+
+* We now use Doxygen version 1.9.2 to build our documentation ([\#2765](https://github.com/seqan/seqan3/pull/2765)).
+
 ## Notable Bug-fixes
 
 #### Search
