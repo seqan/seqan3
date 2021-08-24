@@ -246,19 +246,13 @@ public:
     }
 
     //!\brief Post-increment.
-    auto operator++(int) noexcept
+    void operator++(int) noexcept
     {
-        if constexpr (std::output_iterator<base_iterator_type, reference> &&
-                      std::copy_constructible<base_iterator_type>)
-        {
-            basic_iterator tmp{*this};
-            ++(*this);
-            return tmp;
-        }
-        else
-        {
-            ++(*this);
-        }
+        // this post-increment can't be an std::output_iterator, because it would require that `*it++ = value` must have
+        // the same semantic as `*i = value; ++i`, but it actually has the following `++i; *i = value` semantic, due to
+        // the centralised storage of the underlying_iterator in the view where each copy of a basic_iterator points to
+        // the same centralised state.
+        ++(*this);
     }
     //!\}
 
@@ -342,7 +336,7 @@ namespace seqan3::views
  * | std::ranges::view                |                                       | *guaranteed*                                       |
  * | std::ranges::sized_range         |                                       | *lost*                                             |
  * | std::ranges::common_range        |                                       | *lost*                                             |
- * | std::ranges::output_range        |                                       | *preserved*                                        |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     |                                       | *lost*                                             |
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |

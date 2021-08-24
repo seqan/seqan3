@@ -291,12 +291,21 @@ public:
     }
 
     //!\brief Returns an iterator incremented by one.
-    constexpr basic_iterator operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>()) &&
-                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
+    constexpr decltype(auto) operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>()) &&
+                                                      (std::same_as<decltype(std::declval<base_base_t &>()++), void> ||
+                                                       std::is_nothrow_copy_constructible_v<basic_iterator>))
     {
-        basic_iterator cpy{*this};
-        ++(*this);
-        return cpy;
+        // if underlying iterator is a C++20 input iterator (i.e. returns void), return void too.
+        if constexpr (std::same_as<decltype(std::declval<base_base_t &>()++), void>)
+        {
+            ++(*this);
+        }
+        else
+        {
+            basic_iterator cpy{*this};
+            ++(*this);
+            return cpy;
+        }
     }
 
     //!\brief Decrements the iterator by one.

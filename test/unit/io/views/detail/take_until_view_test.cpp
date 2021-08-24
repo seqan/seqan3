@@ -79,7 +79,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
     EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), char>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), char>)); // lost by single_pass_input
 
     // explicit test for non const-iterable views
     // https://github.com/seqan/seqan3/pull/1734#discussion_r408829267

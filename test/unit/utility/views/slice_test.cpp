@@ -89,7 +89,7 @@ TEST(view_slice, concepts)
     EXPECT_EQ(std::ranges::sized_range<decltype(v2)>, false);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), int>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(v2), int>)); // single_pass_input loses it
 }
 
 TEST(view_slice, underlying_is_shorter)
