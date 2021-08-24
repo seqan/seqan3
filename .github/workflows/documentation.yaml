@@ -9,7 +9,7 @@ on:
 
 env:
   CMAKE_VERSION: 3.8.2
-  DOXYGEN_VERSION: 1.9.1
+  DOXYGEN_VERSION: 1.9.2
   TZ: Europe/Berlin
 
 defaults:
