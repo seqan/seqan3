@@ -336,7 +336,7 @@ namespace seqan3::views
  * | std::ranges::view                |                                       | *guaranteed*                                       |
  * | std::ranges::sized_range         |                                       | *lost*                                             |
  * | std::ranges::common_range        |                                       | *lost*                                             |
- * | std::ranges::output_range        |                                       | *preserved*                                        |
+ * | std::ranges::output_range        |                                       | *lost*                                             |
  * | seqan3::const_iterable_range     |                                       | *lost*                                             |
  * |                                  |                                       |                                                    |
  * | std::ranges::range_reference_t   |                                       | std::ranges::range_reference_t<urng_t>             |
