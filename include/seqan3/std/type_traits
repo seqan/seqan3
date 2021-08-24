@@ -15,6 +15,13 @@
 
 #include <type_traits>
 
+//!\brief std::common_reference has no feature detection macro, but is available since gcc version >=10 (in C++2a mode).
+#ifndef SEQAN3_CPP_LIB_COMMON_REFERENCE
+#   if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 10 && __cplusplus > 201703L
+#       define SEQAN3_CPP_LIB_COMMON_REFERENCE 1
+#   endif
+#endif
+
 //!\brief A workaround for __cpp_lib_remove_cvref for gcc version >=9.0 and <9.4 (in C++17 mode).
 //!       Those versions implemented std::remove_cvref_t, but did not define that feature detection macro.
 #ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
@@ -87,3 +94,17 @@ using type_identity_t = typename type_identity<t>::type;
 #endif // __cpp_lib_type_identity
 
 } // namespace std
+
+#ifndef SEQAN3_CPP_LIB_COMMON_REFERENCE
+#include <range/v3/utility/common_type.hpp>
+//!\cond
+namespace std
+{
+template <typename ...Ts>
+using common_reference = ::ranges::common_reference<Ts...>;
+
+template <typename ...Ts>
+using common_reference_t = ::ranges::common_reference_t<Ts...>;
+//!\endcond
+} // namespace std
+#endif
