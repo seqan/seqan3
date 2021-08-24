@@ -690,7 +690,7 @@ private:
     //!\brief The implementation updates the rank in the parent object.
     constexpr void on_update() noexcept
     {
-        parent->assign_component_rank<index>(to_rank());
+        parent->assign_component_rank<index>(this->to_rank());
     }
 
 public:
