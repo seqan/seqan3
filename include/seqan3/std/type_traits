@@ -95,7 +95,6 @@ using type_identity_t = typename type_identity<t>::type;
 
 } // namespace std
 
-
 #ifndef SEQAN3_CPP_LIB_COMMON_REFERENCE
 #include <range/v3/utility/common_type.hpp>
 //!cond
