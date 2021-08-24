@@ -15,7 +15,7 @@
 
 #include <type_traits>
 
-//!\brief std::common_reference has no feature detection macro, but is available since gcc version >10 (in C++2a mode).
+//!\brief std::common_reference has no feature detection macro, but is available since gcc version >=10 (in C++2a mode).
 #ifndef SEQAN3_CPP_LIB_COMMON_REFERENCE
 #   if defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE >= 10 && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_COMMON_REFERENCE 1
