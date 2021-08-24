@@ -66,7 +66,7 @@ private:
 
     //!\brief Whether this view is const_iterable or not.
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
-                                           std::regular_invocable<fun_t, std::ranges::range_reference_t<urng_t>>;
+                                           indirect_unary_predicate_on_range<fun_t const, urng_t const>;
 
     //!\brief Iterator of the underlying range (urng_t).
     //!\tparam const_range Whether iterator is a const iterator (const_range = true) or a non-const iterator.

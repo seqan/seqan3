@@ -121,9 +121,9 @@ TEST(view_take_until, concepts)
     auto adapt = seqan3::detail::take_until(is_newline);
     do_concepts(adapt, true);
 
-    // mutable adapters make the view loose const-iterability, but this is not checked by conepts unfortunately
-//     auto adapt2 = seqan3::detail::take_until([count = 0] (char c) mutable { ++count; return c == '\n'; });
-//     do_concepts(adapt2, false);
+    // mutable adapters make the view lose const-iterability
+    auto adapt2 = seqan3::detail::take_until([count = 0] (char c) mutable { ++count; return c == '\n'; });
+    do_concepts(adapt2, false);
 }
 
 // ============================================================================
