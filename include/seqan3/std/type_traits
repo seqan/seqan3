@@ -98,7 +98,7 @@ using type_identity_t = typename type_identity<t>::type;
 
 #ifndef SEQAN3_CPP_LIB_COMMON_REFERENCE
 #include <range/v3/utility/common_type.hpp>
-
+//!cond
 namespace std
 {
 template <typename ...Ts>
@@ -106,5 +106,6 @@ using common_reference = ::ranges::common_reference<Ts...>;
 
 template <typename ...Ts>
 using common_reference_t = ::ranges::common_reference_t<Ts...>;
+//!\endcond
 } // namespace std
 #endif
