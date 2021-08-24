@@ -377,7 +377,7 @@ using dynamic_buffer_queue = buffer_queue<value_t, buffer_t, buffer_queue_policy
 // Functions
 // ============================================================================
 
-template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
+template <std::semiregular value_t, sequence_container buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
     requires (std::convertible_to<value2_t, value_t>) &&
              (buffer_policy == buffer_queue_policy::dynamic)
@@ -455,7 +455,7 @@ inline bool buffer_queue<value_t, buffer_t, buffer_policy>::overflow(value2_t &&
  *                            Default is @link ParallelismTags#Parallel @endlink.
  * @return        bool        Returns <tt>true</tt> if a value could be dequeued and <tt>false</tt> otherwise.
  */
-template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
+template <std::semiregular value_t, sequence_container buffer_t, buffer_queue_policy buffer_policy>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(value_t & result)
 {
     // try to extract a value
@@ -530,7 +530,7 @@ inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_pop(v
  *                            @endlink tag can only be used if one thread calls <tt>appendValue</tt> at a time.
  *                            Default is @link ParallelismTags#Parallel @endlink.
  */
-template <typename value_t, typename buffer_t, buffer_queue_policy buffer_policy>
+template <std::semiregular value_t, sequence_container buffer_t, buffer_queue_policy buffer_policy>
 template <typename value2_t>
     requires std::convertible_to<value2_t, value_t>
 inline queue_op_status buffer_queue<value_t, buffer_t, buffer_policy>::try_push(value2_t && value)

@@ -161,7 +161,7 @@ public:
 };
 
 //!\brief The iterator of the seqan3::detail::async_input_buffer_view.
-template <typename urng_t>
+template <std::ranges::range urng_t>
 class async_input_buffer_view<urng_t>::iterator
 {
     //!\brief The sentinel type to compare to.

@@ -671,6 +671,10 @@ private:
  * \noapi
  */
 template <typename derived_type, typename ...component_types>
+//!\cond
+    requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
+             (std::regular<component_types> && ...)
+//!\endcond
 template <typename alphabet_type, size_t index>
 class alphabet_tuple_base<derived_type, component_types...>::component_proxy : public alphabet_proxy<component_proxy<alphabet_type, index>, alphabet_type>
 {

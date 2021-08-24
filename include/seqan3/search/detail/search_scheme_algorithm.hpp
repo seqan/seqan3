@@ -660,6 +660,9 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename configuration_t, typename index_t, typename ...policies_t>
+//!\cond
+    requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
+//!\endcond
 template <bool abort_on_hit, typename query_t, typename delegate_t>
 inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(
     query_t & query,
