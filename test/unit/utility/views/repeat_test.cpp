@@ -13,7 +13,6 @@
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/repeat.hpp>
@@ -163,9 +162,18 @@ TEST(view, factory)
     // combinability
     {
         std::string str{"foobar"};
-        auto v = seqan3::views::repeat(str) | seqan3::detail::take_exactly(3);
-        EXPECT_EQ(*v.begin(), str);
-        EXPECT_EQ(std::ranges::size(v), 3u);
+        auto v = seqan3::views::repeat(str) | std::views::take(3);
+
+        using it_t = std::ranges::iterator_t<decltype(v)>;
+
+        // Note: std::views::take doesn't handle infinite std::ranges::random_access_range's that are not
+        //       std::ranges::sized_range, so we can't use std::ranges::size() to compute the size.
+        // See https://eel.is/c++draft/range.take.view
+        it_t it = v.begin();
+        it_t sentinel = std::ranges::next(v.begin(), v.end()); // unfortunately linear in time
+        auto size = sentinel - it;
+        EXPECT_EQ(*it, str);
+        EXPECT_EQ(size, 3u);
     }
 }
 
