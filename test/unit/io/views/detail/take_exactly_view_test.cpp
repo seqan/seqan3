@@ -49,6 +49,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::forward_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(vec)>);
+    EXPECT_TRUE(std::ranges::contiguous_range<decltype(vec)>);
     EXPECT_FALSE(std::ranges::view<decltype(vec)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(vec)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
@@ -61,6 +62,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::contiguous_range<decltype(v1)>); // same iterator/sentinel as from vector
     EXPECT_TRUE(std::ranges::view<decltype(v1)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
@@ -73,6 +75,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_TRUE(std::ranges::forward_range<decltype(v3)>);
     EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v3)>);
     EXPECT_TRUE(std::ranges::random_access_range<decltype(v3)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v3)>);
     EXPECT_TRUE(std::ranges::view<decltype(v3)>);
     EXPECT_TRUE(std::ranges::sized_range<decltype(v3)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v3)>);
@@ -85,6 +88,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_FALSE(std::ranges::forward_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2)>);
     EXPECT_FALSE(std::ranges::random_access_range<decltype(v2)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::view<decltype(v2)>);
     EXPECT_EQ(std::ranges::sized_range<decltype(v2)>, exactly);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
@@ -99,6 +103,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
     EXPECT_FALSE(std::ranges::forward_range<decltype(v2_cref)>);
     EXPECT_FALSE(std::ranges::bidirectional_range<decltype(v2_cref)>);
     EXPECT_FALSE(std::ranges::random_access_range<decltype(v2_cref)>);
+    EXPECT_FALSE(std::ranges::contiguous_range<decltype(v2_cref)>);
     EXPECT_FALSE(std::ranges::view<decltype(v2_cref)>);
     EXPECT_FALSE(std::ranges::sized_range<decltype(v2_cref)>);
     EXPECT_FALSE(std::ranges::common_range<decltype(v2_cref)>);
