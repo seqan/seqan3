@@ -25,7 +25,7 @@
 #ifndef SEQAN3_CPP_LIB_BITOPS
 #   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
-#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L
+#   elif defined(_GLIBCXX_RELEASE) && (_GLIBCXX_RELEASE == 9) && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_BITOPS 1
 #   endif
 #endif
@@ -48,7 +48,7 @@
 #ifndef SEQAN3_CPP_LIB_ENDIAN
 #   if defined(__cpp_lib_endian)
 #       define SEQAN3_CPP_LIB_ENDIAN 1
-#   elif defined(__GNUC__) && __GNUC__ == 8 && __cplusplus > 201703L
+#   elif defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE == 8 && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_ENDIAN 1
 #   endif
 #endif
