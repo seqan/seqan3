@@ -106,7 +106,7 @@ struct bin_index : public detail::strong_type<size_t, bin_index, detail::strong_
  *
  * ### Querying
  * To query the Interleaved Bloom Filter for a value, call seqan3::interleaved_bloom_filter::membership_agent() and use
- * the returned seqan3::interleaved_bloom_filter::membership_agent.
+ * the returned seqan3::interleaved_bloom_filter::membership_agent_type.
  *
  * To count the occurrences of a range of values in the Interleaved Bloom Filter, call
  * seqan3::interleaved_bloom_filter::counting_agent() and use
@@ -191,7 +191,8 @@ public:
     //!\brief Indicates whether the Interleaved Bloom Filter is compressed.
     static constexpr data_layout data_layout_mode = data_layout_mode_;
 
-    class membership_agent; // documented upon definition below
+    class membership_agent_type; // documented upon definition below
+
     template <std::integral value_t>
     class counting_agent_type; // documented upon definition below
 
@@ -354,8 +355,8 @@ public:
      *
      * \attention This function is only available for **uncompressed** Interleaved Bloom Filters.
      * \attention The new number of bins must be greater or equal to the current number of bins.
-     * \attention This function invalidates all seqan3::interleaved_bloom_filter::membership_agent constructed for this
-     * Interleaved Bloom Filter.
+     * \attention This function invalidates all seqan3::interleaved_bloom_filter::membership_agent_type constructed for
+     * this Interleaved Bloom Filter.
      *
      * \details
      *
@@ -417,20 +418,20 @@ public:
     /*!\name Lookup
      * \{
      */
-    /*!\brief Returns a seqan3::interleaved_bloom_filter::membership_agent to be used for lookup.
+    /*!\brief Returns a seqan3::interleaved_bloom_filter::membership_agent_type to be used for lookup.
      * \attention Calling seqan3::interleaved_bloom_filter::increase_bin_number_to invalidates all
-     * `seqan3::interleaved_bloom_filter::membership_agent`s constructed for this Interleaved Bloom Filter.
+     * `seqan3::interleaved_bloom_filter::membership_agent_type`s constructed for this Interleaved Bloom Filter.
      *
      * \details
      *
      * ### Example
      *
      * \include test/snippet/search/dream_index/membership_agent_construction.cpp
-     * \sa seqan3::interleaved_bloom_filter::membership_agent::bulk_contains
+     * \sa seqan3::interleaved_bloom_filter::membership_agent_type::bulk_contains
      */
-    membership_agent membership_agent() const
+    membership_agent_type membership_agent() const
     {
-        return typename interleaved_bloom_filter<data_layout_mode>::membership_agent{*this};
+        return membership_agent_type{*this};
     }
 
     /*!\brief Returns a seqan3::interleaved_bloom_filter::counting_agent_type to be used for counting.
@@ -568,7 +569,7 @@ public:
  * \include test/snippet/search/dream_index/membership_agent_construction.cpp
  */
 template <data_layout data_layout_mode>
-class interleaved_bloom_filter<data_layout_mode>::membership_agent
+class interleaved_bloom_filter<data_layout_mode>::membership_agent_type
 {
 private:
     //!\brief The type of the augmented seqan3::interleaved_bloom_filter.
@@ -583,18 +584,18 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    membership_agent() = default; //!< Defaulted.
-    membership_agent(membership_agent const &) = default; //!< Defaulted.
-    membership_agent & operator=(membership_agent const &) = default; //!< Defaulted.
-    membership_agent(membership_agent &&) = default; //!< Defaulted.
-    membership_agent & operator=(membership_agent &&) = default; //!< Defaulted.
-    ~membership_agent() = default; //!< Defaulted.
+    membership_agent_type() = default; //!< Defaulted.
+    membership_agent_type(membership_agent_type const &) = default; //!< Defaulted.
+    membership_agent_type & operator=(membership_agent_type const &) = default; //!< Defaulted.
+    membership_agent_type(membership_agent_type &&) = default; //!< Defaulted.
+    membership_agent_type & operator=(membership_agent_type &&) = default; //!< Defaulted.
+    ~membership_agent_type() = default; //!< Defaulted.
 
-    /*!\brief Construct a membership_agent from a seqan3::interleaved_bloom_filter.
+    /*!\brief Construct a membership_agent_type from a seqan3::interleaved_bloom_filter.
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    explicit membership_agent(ibf_t const & ibf) :
+    explicit membership_agent_type(ibf_t const & ibf) :
         ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count())
     {}
     //!\}
@@ -620,7 +621,7 @@ public:
      * ### Thread safety
      *
      * Concurrent invocations of this function are not thread safe, please create a
-     * seqan3::interleaved_bloom_filter::membership_agent for each thread.
+     * seqan3::interleaved_bloom_filter::membership_agent_type for each thread.
      */
     [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) & noexcept
     {
@@ -658,7 +659,7 @@ public:
 
 //!\brief A bitvector representing the result of a call to `bulk_contains` of the seqan3::interleaved_bloom_filter.
 template <data_layout data_layout_mode>
-class interleaved_bloom_filter<data_layout_mode>::membership_agent::binning_bitvector
+class interleaved_bloom_filter<data_layout_mode>::membership_agent_type::binning_bitvector
 {
 private:
     //!\brief The underlying datatype to use.
@@ -666,7 +667,7 @@ private:
     //!\brief The bitvector.
     data_type data{};
 
-    friend class membership_agent;
+    friend class membership_agent_type;
 
     template <std::integral value_t>
     friend class counting_vector;
@@ -776,19 +777,19 @@ public:
 };
 
 /*!\brief A data structure that behaves like a std::vector and can be used to consolidate the results of multiple calls
- *        to seqan3::interleaved_bloom_filter::membership_agent::bulk_contains.
+ *        to seqan3::interleaved_bloom_filter::membership_agent_type::bulk_contains.
  * \ingroup search_dream_index
  * \tparam value_t The type of the count. Must model std::integral.
  *
  * \details
  *
- * When using the seqan3::interleaved_bloom_filter::membership_agent::bulk_contains operation, a common use case is to
+ * When using the seqan3::interleaved_bloom_filter::membership_agent_type::bulk_contains operation, a common use case is to
  * add up, for example, the results for all k-mers in a query. This yields, for each bin, the number of k-mers of a
  * query that are in the respective bin. Such information can be used to apply further filtering or abundance estimation
  * based on the k-mer counts.
  *
  * The seqan3::counting_vector offers an easy way to add up the individual
- * seqan3::interleaved_bloom_filter::membership_agent::binning_bitvector by offering an `+=` operator.
+ * seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector by offering an `+=` operator.
  *
  * The `value_t` template parameter should be chosen in a way that no overflow occurs if all calls to `bulk_contains`
  * return a hit for a specific bin. For example, `uint8_t` will suffice when processing short Illumina reads, whereas
@@ -818,10 +819,10 @@ public:
     using base_t::base_t;
     //!\}
 
-    /*!\brief Bin-wise adds the bits of a seqan3::interleaved_bloom_filter::membership_agent::binning_bitvector.
+    /*!\brief Bin-wise adds the bits of a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
      * \tparam rhs_t The type of the right-hand side.
-     *         Must be seqan3::interleaved_bloom_filter::membership_agent::binning_bitvector.
-     * \param rhs The seqan3::interleaved_bloom_filter::membership_agent::binning_bitvector.
+     *         Must be seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+     * \param rhs The seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
      * \attention The counting_vector must be at least as big as `rhs`.
      *
      * \details
@@ -833,10 +834,12 @@ public:
     template <typename rhs_t>
     //!\cond
         requires std::same_as<rhs_t,
-                              interleaved_bloom_filter<data_layout::uncompressed>::membership_agent::binning_bitvector>
+                              interleaved_bloom_filter<data_layout::uncompressed>::membership_agent_type
+                              ::binning_bitvector>
                  ||
                  std::same_as<rhs_t,
-                              interleaved_bloom_filter<data_layout::compressed>::membership_agent::binning_bitvector>
+                              interleaved_bloom_filter<data_layout::compressed>::membership_agent_type
+                              ::binning_bitvector>
     //!\endcond
     counting_vector & operator+=(rhs_t const & rhs)
     {
@@ -906,7 +909,7 @@ private:
     ibf_t const * ibf_ptr{nullptr};
 
     //!\brief Store a seqan3::interleaved_bloom_filter::membership_agent to call `bulk_contains`.
-    typename ibf_t::membership_agent membership_agent;
+    membership_agent_type membership_agent;
 
 public:
     /*!\name Constructors, destructor and assignment
