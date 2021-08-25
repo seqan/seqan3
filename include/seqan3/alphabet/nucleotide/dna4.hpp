@@ -79,7 +79,7 @@ public:
     /*!\brief Allow implicit construction from seqan3::rna4 of the same size.
      * \details
      *
-     * \copydetails seqan3::doxygen::dna4_implicit_conversion_from_rna4
+     * \include{doc} doc/fragments/dna4_implicit_conversion_from_rna4.md
      *
      * \stableapi{Since version 3.1.}
      */
