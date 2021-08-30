@@ -19,7 +19,7 @@
 #include <vector>
 
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/detail/to_little_endian.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 

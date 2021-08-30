@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
