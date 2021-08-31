@@ -158,7 +158,7 @@ public:
      */
 
      //!\brief Returns the current position in the file via `std::streampos`.
-     std::streampos const file_position()
+     std::streampos file_position() const
      {
          assert(host != nullptr);
          return host->position_buffer;
