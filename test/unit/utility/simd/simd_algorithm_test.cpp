@@ -10,9 +10,9 @@
 #include <iostream>
 #include <numeric>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 
 #include <seqan3/test/simd_utility.hpp>
 

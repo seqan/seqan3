@@ -20,7 +20,6 @@
 #include <variant>
 #include <vector>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/io/detail/out_file_iterator.hpp>

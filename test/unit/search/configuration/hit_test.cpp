@@ -8,7 +8,6 @@
 #include <gtest/gtest.h>
 
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/search/configuration/hit.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 
