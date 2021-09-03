@@ -43,7 +43,7 @@ namespace seqan3::detail
  *
  * ### Example
  *
- * \include test/snippet/core/detail/all_of_in_pack.cpp
+ * \include test/snippet/utility/type_pack/detail/type_pack_algorithm_all_of.cpp
  *
  * ### Complexity
  *
@@ -83,7 +83,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
  *
  * ### Example
  *
- * \include test/snippet/core/detail/for_each_in_pack.cpp
+ * \include test/snippet/utility/type_pack/detail/type_pack_algorithm_for_each.cpp
  *
  * ### Complexity
  *
