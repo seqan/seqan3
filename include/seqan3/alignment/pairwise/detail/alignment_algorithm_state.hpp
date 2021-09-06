@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/alignment/matrix/detail/alignment_optimum.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
