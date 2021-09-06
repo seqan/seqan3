@@ -25,12 +25,9 @@
  *
  * Here are currently only implementations which are part of detail and therefore not of interest for the common user.
  *
- * \if DEV
  * ### Concurrency support
  *
  * This module contains helper classes to synchronise threads in concurrent environments.
- *
- * \endif
  */
 //!\endcond
 
