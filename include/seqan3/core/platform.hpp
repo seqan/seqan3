@@ -384,6 +384,32 @@
 #   endif
 #endif
 
+/*!\brief gcc only: Constrain friend declarations to limit access to internals.
+ *
+ * \details
+ *
+ * We have some instances where we constrain friend declarations to limit which class instance can
+ * access private information. For example
+ *
+ * ```
+ * template <typename type_t>
+ *     requires std::same_as<type_t, int>
+ * friend class std::tuple;
+ * ```
+ *
+ * would only allow `std::tuple<int>` to access the internals.
+ *
+ * It seems that this is not standard behaviour and more like a gcc-only extension, as neither clang nor msvc supports
+ * it. For now we will keep this code, but it should be removed if it turns out that this is non-standard. (i.e. a newer
+ * gcc release does not support it any more)
+ */
+#ifndef SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
+#   if defined(__clang__)
+#       define SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION 1
+#   else
+#       define SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION 0
+#   endif
+#endif
 
 // ============================================================================
 //  Backmatter
