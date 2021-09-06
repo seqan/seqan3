@@ -201,7 +201,12 @@ inline void move_forward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_en
     // pre-increment
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
-    for (auto it = std::move(it_begin); true;)
+    auto it = std::move(it_begin);
+
+    EXPECT_NE(rng_it, rng_it_end);
+    EXPECT_NE(it, it_end);
+
+    for (; true;)
     {
         // if it_begin_t is copy_constructible copy result, otherwise take it by reference (if move-only iterator)
         using it_copy_or_reference_t = std::conditional_t<std::copy_constructible<it_begin_t>,
@@ -216,6 +221,7 @@ inline void move_forward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_en
         expect_iter_equal<test_type>(it_copy_or_reference, rng_it);
     }
     EXPECT_EQ(rng_it, rng_it_end);
+    EXPECT_EQ(it, it_end);
 }
 
 template <typename test_type, typename it_begin_t, typename it_sentinel_t, typename rng_t>
@@ -224,6 +230,10 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
     // post-increment
     auto rng_it = std::ranges::begin(rng);
     auto rng_it_end = std::ranges::end(rng);
+    auto it = std::move(it_begin);
+
+    EXPECT_NE(rng_it, rng_it_end);
+    EXPECT_NE(it, it_end);
 
     static constexpr bool is_cpp20_input_iterator = std::same_as<decltype(it_begin++), void>;
 
@@ -235,7 +245,7 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
         EXPECT_FALSE(std::forward_iterator<it_begin_t>);
     }
 
-    for (auto it = std::move(it_begin); it != it_end && rng_it != rng_it_end;)
+    for (; it != it_end && rng_it != rng_it_end;)
     {
         expect_iter_equal<test_type>(it, rng_it);
 
@@ -250,6 +260,7 @@ inline void move_forward_post_test(it_begin_t && it_begin, it_sentinel_t && it_e
         }
     }
     EXPECT_EQ(rng_it, rng_it_end);
+    EXPECT_EQ(it, it_end);
 }
 
 TYPED_TEST_P(iterator_fixture, move_forward_pre)
