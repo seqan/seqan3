@@ -12,11 +12,12 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/phred63.hpp>
 #include <seqan3/alphabet/quality/phred68solexa.hpp>
 #include <seqan3/alphabet/quality/phred94.hpp>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>
 
 template <typename T>
 using quality_conversion = ::testing::Test;
