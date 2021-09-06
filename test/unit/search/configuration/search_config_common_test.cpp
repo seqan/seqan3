@@ -11,7 +11,6 @@
 
 #include <seqan3/search/configuration/all.hpp>
 #include <seqan3/search/search_result.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 
 #include "../../core/configuration/pipeable_config_element_test_template.hpp"
