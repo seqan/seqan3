@@ -118,8 +118,14 @@ struct iterator_fixture<range_test_fixture_t> : public ::testing::Test
                                                        std::forward<expected_iter_value_t>(expected_iter_value));
     }
 
+    virtual void SetUp() override
+    {
+        // re-initialise iterator_fixture after each TestCase in case this is an input iterator
+        test_range = range_test_fixture_t{}.range();
+    }
+
     using test_range_t = decltype(range_test_fixture_t{}.range());
-    test_range_t test_range = range_test_fixture_t{}.range();
+    test_range_t test_range;
 
     using expected_range_t = decltype(range_test_fixture_t{}.expected_range());
     expected_range_t expected_range = range_test_fixture_t{}.expected_range();
