@@ -29,9 +29,9 @@ int main()
     seqan3::sequence_file_input file_in{filename};
     std::vector<seqan3::dna5_vector> sequences;
 
-    for (auto & [ seq, id, qual ] : file_in)
+    for (auto & record : file_in)
     {
-        sequences.push_back(seq);
+        sequences.push_back(record.sequence());
     }
 
     // Call a global pairwise alignment with edit distance and traceback.

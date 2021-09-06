@@ -3,7 +3,8 @@
 
 int main()
 {
-    using tl = seqan3::type_list<int, char, double>;
-    using t = seqan3::detail::transfer_template_args_onto_t<tl, std::tuple>;
-    // t is std::tuple<int, char, double>
+    using list_to_transfer = seqan3::type_list<int, char, double>;
+    using resulting_t = seqan3::detail::transfer_template_args_onto_t<list_to_transfer, std::tuple>;
+
+    static_assert(std::same_as<resulting_t, std::tuple<int, char, double>>);
 }

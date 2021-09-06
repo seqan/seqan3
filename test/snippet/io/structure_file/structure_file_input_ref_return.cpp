@@ -1,8 +1,6 @@
 #include <sstream>
 
-#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/structure_file/input.hpp>
-#include <seqan3/std/ranges>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA
@@ -19,6 +17,6 @@ int main()
     // the following are equivalent:
     auto & rec0 = *it;
     auto & rec1 = fin.front();
-
+    std::cout << std::boolalpha << (rec0.id() == rec1.id()) << '\n'; // true
     // both become invalid after incrementing "it"!
 }

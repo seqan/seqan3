@@ -141,7 +141,7 @@ inline constexpr auto instantiate_if_v = instantiate_if_t<t, condition>::value;
  *
  * ### Example
  *
- * \include test/snippet/utility/type_traits/lazy_conditional.cpp
+ * \include test/snippet/utility/type_traits/lazy_conditional.cpp complete
  */
 template <bool decision, typename on_true_t, typename on_false_t>
 struct lazy_conditional : instantiate<std::conditional_t<decision, on_true_t, on_false_t>>

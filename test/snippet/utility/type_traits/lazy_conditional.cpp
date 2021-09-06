@@ -1,3 +1,8 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+
+//![complete]
 #include <forward_list>                                    // std::forward_list
 #include <seqan3/std/ranges>                               // std::ranges::input_range
 #include <vector>                                          // std::vector
@@ -32,3 +37,6 @@ int main()
     foobar(std::vector<int>{});         // sized
     foobar(std::forward_list<int>{});   // not sized
 }
+//![complete]
+
+#pragma GCC diagnostic pop

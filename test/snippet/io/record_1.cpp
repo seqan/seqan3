@@ -1,5 +1,6 @@
 #include <sstream>
 
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/record.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
@@ -13,8 +14,6 @@ GGAGTATAATATATATATATATAT)";
 
 int main()
 {
-    using seqan3::get;
-
     // specify custom field combination/order to file:
     seqan3::sequence_file_input fin{std::istringstream{input},
                                     seqan3::format_fasta{},
@@ -23,5 +22,7 @@ int main()
     auto record = fin.front(); // get current record, in this case the first
 
     auto & id = record.id();
+    seqan3::debug_stream << id << '\n'; // TEST1
     auto & seq = record.sequence();
+    seqan3::debug_stream << seq << '\n'; // ACGT
 }

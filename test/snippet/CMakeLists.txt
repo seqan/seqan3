@@ -18,7 +18,6 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
 
     add_executable (${target} "${snippet_base_path}/${snippet}")
     target_link_libraries (${target} seqan3::test::unit)
-    target_compile_options (${target} PUBLIC "-Wno-unused")
     set_target_properties(${target}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${snippet_target_path}"
