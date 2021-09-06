@@ -347,9 +347,9 @@ inline void move_backward_pre_test(it_begin_t && it_begin, it_sentinel_t && it_e
     auto const rng_it_begin = std::ranges::begin(rng);
 
     // pre-decrement
-    for (auto it = last_it, rng_it = rng_last_it;
-         it != it_begin && rng_it != rng_it_begin;
-         --rng_it)
+    auto it = last_it;
+    auto rng_it = rng_last_it;
+    for (; it != it_begin && rng_it != rng_it_begin; --rng_it)
     {
        expect_iter_equal<test_type>(it, rng_it);
        --it;
@@ -366,9 +366,9 @@ inline void move_backward_post_test(it_begin_t && it_begin, it_sentinel_t && it_
     auto const rng_it_begin = std::ranges::begin(rng);
 
     // post-decrement
-    for (auto it = last_it, rng_it = rng_last_it;
-         it != it_begin && rng_it != rng_it_begin;
-         --rng_it)
+    auto it = last_it;
+    auto rng_it = rng_last_it;
+    for (; it != it_begin && rng_it != rng_it_begin; --rng_it)
     {
        expect_iter_equal<test_type>(it--, rng_it);
     }
