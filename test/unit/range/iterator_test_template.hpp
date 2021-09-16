@@ -558,31 +558,36 @@ TYPED_TEST_P(iterator_fixture, jump_random)
     }
 }
 
-template <typename it_begin_t, typename it_sentinel_t, typename rng_t>
-inline void difference_test(it_begin_t && it_begin, it_sentinel_t && it_end, rng_t && rng)
+template <typename iterator_t, typename rng_t>
+inline void difference_test(iterator_t && it_begin, iterator_t && it_end, rng_t && rng)
 {
-    using difference_t = std::iter_difference_t<it_begin_t>;
-    difference_t sz = std::ranges::distance(rng);
+    using difference_t = std::iter_difference_t<iterator_t>;
+    difference_t size = std::ranges::distance(rng);
 
-    it_begin_t last_it = std::get<0>(last_iterators(it_begin, it_end, rng));
-
-    for (difference_t n = 0; n < sz; ++n)
+    for (difference_t n = 0; n <= size; ++n)
         EXPECT_EQ(n, (it_begin + n) - it_begin);
 
-    for (difference_t n = 0; n < sz; ++n)
-        EXPECT_EQ(n, last_it - (last_it - n));
+    for (difference_t n = 0; n <= size; ++n)
+        EXPECT_EQ(n, it_end - (it_end - n));
 }
 
 TYPED_TEST_P(iterator_fixture, difference_common)
 {
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::random_access_iterator_tag>)
-    {
-        difference_test(std::ranges::begin(this->test_range), std::ranges::end(this->test_range), this->expected_range);
+    static constexpr bool is_random_access = std::derived_from<typename TestFixture::iterator_tag,
+                                                               std::random_access_iterator_tag>;
 
-        if constexpr (TestFixture::const_iterable)
-            difference_test(std::ranges::cbegin(this->test_range),
-                            std::ranges::cend(this->test_range),
-                            std::as_const(this->expected_range));
+    if constexpr (is_random_access)
+    {
+        auto it = std::ranges::begin(this->test_range);
+        auto sentinel = std::ranges::next(it, std::ranges::end(this->test_range));
+        difference_test(it, sentinel, this->expected_range);
+    }
+
+    if constexpr (is_random_access && TestFixture::const_iterable)
+    {
+        auto const_it = std::ranges::cbegin(this->test_range);
+        auto const_sentinel = std::ranges::next(const_it, std::ranges::cend(this->test_range));
+        difference_test(const_it, const_sentinel, std::as_const(this->expected_range));
     }
 }
 
