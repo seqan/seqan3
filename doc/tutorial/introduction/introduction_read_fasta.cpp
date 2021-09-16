@@ -31,9 +31,9 @@ int main(int argc, char * argv[])
 
     // Iterate through the file and store the sequences.
     seqan3::sequence_file_input file_in{filename};
-    for (auto & [ seq, id, qual ] : file_in)
+    for (auto & record : file_in)
     {
-        sequences.push_back(seq);
+        sequences.push_back(record.sequence());
     }
 
     seqan3::debug_stream << sequences << '\n';

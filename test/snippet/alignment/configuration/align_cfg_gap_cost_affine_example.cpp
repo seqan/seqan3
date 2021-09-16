@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <seqan3/alignment/configuration/align_config_gap_cost_affine.hpp>
 
 int main()
@@ -11,6 +13,8 @@ int main()
                                                   seqan3::align_cfg::extension_score{-10}};
 
     // Accessing the members of the gap scheme
-    int open = affine_cfg.open_score; // open == -1
-    int extension = affine_cfg.extension_score; // extension == -10
+    int open = affine_cfg.open_score;
+    int extension = affine_cfg.extension_score;
+    std::cout << open << '\n'; // -1
+    std::cout << extension << '\n'; // -10
 }
