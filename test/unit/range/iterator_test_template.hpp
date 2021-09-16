@@ -70,6 +70,29 @@ void expect_iter_equal(it_t && it, rng_it_t && rng_it)
     expect_iter_value_equal<T>(*it, *rng_it);
 }
 
+// std c++20 input iterator aren't required to have an operator==(iterator_t, iterator_t), but if they have one we
+// test the semantic
+template <typename type_param_t>
+SEQAN3_CONCEPT iterator_is_equality_comparable =
+    std::derived_from<typename iterator_fixture<type_param_t>::iterator_tag, std::forward_iterator_tag> ||
+#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
+    requires (decltype(std::ranges::begin(std::declval<iterator_fixture<type_param_t> &>().test_range)) & it)
+{
+    { it == it };
+};
+#else // ^^^ workaround / no workaround vvv
+    requires (iterator_fixture<type_param_t> & fixture)
+{
+    typename std::ranges::iterator_t<decltype(fixture.test_range)>;
+
+    requires requires(std::ranges::iterator_t<decltype(fixture.test_range)> & it)
+    {
+        // we don't assume anything about the return type, this will be done in the tests
+        { it == it };
+    };
+};
+#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
+
 TYPED_TEST_SUITE_P(iterator_fixture);
 
 TYPED_TEST_P(iterator_fixture, concept_check)
@@ -134,12 +157,15 @@ TYPED_TEST_P(iterator_fixture, const_non_const_compatibility)
     {
         using const_iterator_type = decltype(std::ranges::cbegin(this->test_range));
 
-        const_iterator_type it{std::ranges::begin(this->test_range)};
+        [[maybe_unused]] const_iterator_type it{std::ranges::begin(this->test_range)};
 
         const_iterator_type it2{};
         it2 = std::ranges::begin(this->test_range);
 
-        EXPECT_EQ(it, it2);
+        if constexpr(iterator_is_equality_comparable<TypeParam>)
+        {
+            EXPECT_EQ(it, it2);
+        }
     }
 }
 
@@ -162,7 +188,7 @@ TYPED_TEST_P(iterator_fixture, compare)
     EXPECT_FALSE(std::ranges::end(this->test_range) == std::ranges::begin(this->test_range));
     EXPECT_TRUE(std::ranges::end(this->test_range) != std::ranges::begin(this->test_range));
 
-    if constexpr (std::derived_from<typename TestFixture::iterator_tag, std::forward_iterator_tag>) // iterate over it again
+    if constexpr(iterator_is_equality_comparable<TypeParam>)
     {
         EXPECT_TRUE(std::ranges::begin(this->test_range) == std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::begin(this->test_range) != std::ranges::begin(this->test_range));
@@ -170,24 +196,36 @@ TYPED_TEST_P(iterator_fixture, compare)
 
     if constexpr (TestFixture::const_iterable)
     {
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::cbegin(this->test_range));
-        EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::cbegin(this->test_range));
+        if constexpr(iterator_is_equality_comparable<TypeParam>)
+        {
+            EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::cbegin(this->test_range));
+            EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::cbegin(this->test_range));
+        }
+
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) == std::ranges::cend(this->test_range));
         EXPECT_TRUE(std::ranges::cbegin(this->test_range) != std::ranges::cend(this->test_range));
         EXPECT_FALSE(std::ranges::cend(this->test_range) == std::ranges::cbegin(this->test_range));
         EXPECT_TRUE(std::ranges::cend(this->test_range) != std::ranges::cbegin(this->test_range));
 
         // (non-const lhs)
-        EXPECT_TRUE(std::ranges::begin(this->test_range) == std::ranges::cbegin(this->test_range));
-        EXPECT_FALSE(std::ranges::begin(this->test_range) != std::ranges::cbegin(this->test_range));
+        if constexpr(iterator_is_equality_comparable<TypeParam>)
+        {
+            EXPECT_TRUE(std::ranges::begin(this->test_range) == std::ranges::cbegin(this->test_range));
+            EXPECT_FALSE(std::ranges::begin(this->test_range) != std::ranges::cbegin(this->test_range));
+        }
+
         EXPECT_FALSE(std::ranges::begin(this->test_range) == std::ranges::cend(this->test_range));
         EXPECT_TRUE(std::ranges::begin(this->test_range) != std::ranges::cend(this->test_range));
         EXPECT_FALSE(std::ranges::end(this->test_range) == std::ranges::cbegin(this->test_range));
         EXPECT_TRUE(std::ranges::end(this->test_range) != std::ranges::cbegin(this->test_range));
 
         // (non-const rhs)
-        EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::begin(this->test_range));
-        EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::begin(this->test_range));
+        if constexpr(iterator_is_equality_comparable<TypeParam>)
+        {
+            EXPECT_TRUE(std::ranges::cbegin(this->test_range) == std::ranges::begin(this->test_range));
+            EXPECT_FALSE(std::ranges::cbegin(this->test_range) != std::ranges::begin(this->test_range));
+        }
+
         EXPECT_FALSE(std::ranges::cend(this->test_range) == std::ranges::begin(this->test_range));
         EXPECT_TRUE(std::ranges::cend(this->test_range) != std::ranges::begin(this->test_range));
         EXPECT_FALSE(std::ranges::cbegin(this->test_range) == std::ranges::end(this->test_range));
