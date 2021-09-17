@@ -1,7 +1,6 @@
 #include <sstream>
 
 #include <seqan3/io/sam_file/input.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
 
 auto sam_file_raw = R"(@HD	VN:1.6	SO:coordinate	GO:none
 @SQ	SN:ref	LN:45
@@ -20,5 +19,6 @@ int main()
     // the following are equivalent:
     auto & rec0 = *it;
     auto & rec1 = fin.front();
+    std::cout << std::boolalpha << (rec0.id() == rec1.id()) << '\n'; // true
     // Note: both become invalid after incrementing "it"!
 }

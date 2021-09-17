@@ -10,23 +10,18 @@ int main()
 
     seqan3::qualified<seqan3::dna4, seqan3::phred42> letter{'A'_dna4, '('_phred42};
 
-    seqan3::debug_stream << seqan3::to_rank(letter) << ' '
-                         << seqan3::to_rank(get<0>(letter)) << ' '
-                         << seqan3::to_rank(get<1>(letter)) << '\n';
-    // prints "7 0 7"
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' ' // 7
+                         << seqan3::to_rank(get<0>(letter)) << ' ' // 0
+                         << seqan3::to_rank(get<1>(letter)) << '\n'; // 7
 
-    seqan3::debug_stream << seqan3::to_char(letter) << ' '
-                         << seqan3::to_char(get<0>(letter)) << ' '
-                         << seqan3::to_char(get<1>(letter)) << '\n';
-    // prints "A A ("
+    seqan3::debug_stream << seqan3::to_char(letter) << ' ' // A
+                         << seqan3::to_char(get<0>(letter)) << ' ' // A
+                         << seqan3::to_char(get<1>(letter)) << '\n'; // (
 
-    seqan3::debug_stream << seqan3::to_phred(letter) << ' '
-                         << seqan3::to_phred(get<1>(letter)) << '\n';
-    // prints "7 7"
+    seqan3::debug_stream << seqan3::to_phred(letter) << ' ' // 7
+                         << seqan3::to_phred(get<1>(letter)) << '\n'; // 7
 
-    // Modify via structured bindings and references:
-    auto & [ sequence_letter, quality_letter ] = letter;
-    sequence_letter = 'G'_dna4;
-    seqan3::debug_stream << seqan3::to_char(letter) << '\n';
-    // prints "G"
+    // Modify:
+    get<0>(letter) = 'G'_dna4;
+    seqan3::debug_stream << seqan3::to_char(letter) << '\n'; // G
 }

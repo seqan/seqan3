@@ -13,8 +13,8 @@
 
 #include <seqan3/core/configuration/configuration.hpp>
 #include <seqan3/core/configuration/pipeable_config_element.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/test/expect_same_type.hpp>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 
 #include "../configuration/configuration_mock.hpp"
 

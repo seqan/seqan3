@@ -10,9 +10,9 @@
 #include <iostream>
 #include <seqan3/std/type_traits>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 
 #ifdef __clang__

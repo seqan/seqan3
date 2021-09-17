@@ -1,11 +1,17 @@
+#include <iostream>
+
 #include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 
 int main()
 {
     using namespace seqan3::literals;
 
-    auto r2 = seqan3::to_rank('A');         // calls seqan3::custom::to_rank('A'); r2 == 65
-    auto r3 = seqan3::to_rank('A'_dna5);    // calls .to_char() member; r3 == 0
+    auto char_to_rank = seqan3::to_rank('A'); // calls seqan3::custom::to_rank('A')
+    static_assert(std::same_as<decltype(char_to_rank), uint8_t>);
+    std::cout << static_cast<uint16_t>(char_to_rank) << '\n'; // 65
+
+    auto dna5_to_rank = seqan3::to_rank('A'_dna5); // calls .to_char() member
+    static_assert(std::same_as<decltype(dna5_to_rank), uint8_t>);
+    std::cout << static_cast<uint16_t>(dna5_to_rank) << '\n'; // 0
 }

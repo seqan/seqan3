@@ -6,16 +6,19 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link alignment_matrix Alignment / Matrix submodule \endlink.
+ * \brief Meta-header for the \cond DEV \link alignment_matrix Alignment / Matrix submodule \endlink \endcond.
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
 #pragma once
+
+//!\cond DEV
 
 /*!\defgroup alignment_matrix Matrix
  * \brief Provides data structures for representing alignment coordinates and alignments as a matrix.
  * \ingroup alignment
  * \see alignment
  */
+//!\endcond
 
 #include <seqan3/core/platform.hpp> // make header test happy

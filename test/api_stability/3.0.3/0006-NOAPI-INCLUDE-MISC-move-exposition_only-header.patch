@@ -1,0 +1,165 @@
+From 525a35e61aaa753053462f9c3f0746af9dd9f796 Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Mon, 30 Aug 2021 13:56:27 +0200
+Subject: [PATCH 6/6] [NOAPI] [INCLUDE] [MISC] move exposition_only header
+
+---
+ ...t@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in | 2 +-
+ .../nucleotide/dna15_implicit_conversion_from_rna15_inherit.cpp | 2 +-
+ .../nucleotide/dna4_implicit_conversion_from_rna4_inherit.cpp   | 2 +-
+ .../nucleotide/dna5_implicit_conversion_from_rna5_inherit.cpp   | 2 +-
+ .../nucleotide/rna15_implicit_conversion_from_dna15_inherit.cpp | 2 +-
+ .../nucleotide/rna4_implicit_conversion_from_dna4_inherit.cpp   | 2 +-
+ .../nucleotide/rna5_implicit_conversion_from_dna5_inherit.cpp   | 2 +-
+ test/unit/alphabet/semi_alphabet_test_template.hpp              | 2 +-
+ test/unit/std/concept/comparison_test.cpp                       | 2 +-
+ test/unit/std/concept/object_test.cpp                           | 2 +-
+ test/unit/utility/detail/exposition_only_concept_test.cpp       | 2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in b/test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in
+index e5119f1fc..e4148bc23 100644
+--- a/test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in
++++ b/test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::${source_alphabet}, seqan3::${target_alphabet}>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::${source_alphabet}, my_${target_alphabet}>);
+diff --git a/test/snippet/alphabet/nucleotide/dna15_implicit_conversion_from_rna15_inherit.cpp b/test/snippet/alphabet/nucleotide/dna15_implicit_conversion_from_rna15_inherit.cpp
+index 791f18803..b825cf438 100644
+--- a/test/snippet/alphabet/nucleotide/dna15_implicit_conversion_from_rna15_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/dna15_implicit_conversion_from_rna15_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::rna15, seqan3::dna15>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::rna15, my_dna15>);
+diff --git a/test/snippet/alphabet/nucleotide/dna4_implicit_conversion_from_rna4_inherit.cpp b/test/snippet/alphabet/nucleotide/dna4_implicit_conversion_from_rna4_inherit.cpp
+index ed0b237e1..0ee801814 100644
+--- a/test/snippet/alphabet/nucleotide/dna4_implicit_conversion_from_rna4_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/dna4_implicit_conversion_from_rna4_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::rna4, seqan3::dna4>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::rna4, my_dna4>);
+diff --git a/test/snippet/alphabet/nucleotide/dna5_implicit_conversion_from_rna5_inherit.cpp b/test/snippet/alphabet/nucleotide/dna5_implicit_conversion_from_rna5_inherit.cpp
+index 5a8fa69ad..23aa29218 100644
+--- a/test/snippet/alphabet/nucleotide/dna5_implicit_conversion_from_rna5_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/dna5_implicit_conversion_from_rna5_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::rna5, seqan3::dna5>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::rna5, my_dna5>);
+diff --git a/test/snippet/alphabet/nucleotide/rna15_implicit_conversion_from_dna15_inherit.cpp b/test/snippet/alphabet/nucleotide/rna15_implicit_conversion_from_dna15_inherit.cpp
+index 4f4af6269..d1d8bf23c 100644
+--- a/test/snippet/alphabet/nucleotide/rna15_implicit_conversion_from_dna15_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/rna15_implicit_conversion_from_dna15_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::dna15, seqan3::rna15>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::dna15, my_rna15>);
+diff --git a/test/snippet/alphabet/nucleotide/rna4_implicit_conversion_from_dna4_inherit.cpp b/test/snippet/alphabet/nucleotide/rna4_implicit_conversion_from_dna4_inherit.cpp
+index 35d39b199..2a5ccd045 100644
+--- a/test/snippet/alphabet/nucleotide/rna4_implicit_conversion_from_dna4_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/rna4_implicit_conversion_from_dna4_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::dna4, seqan3::rna4>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::dna4, my_rna4>);
+diff --git a/test/snippet/alphabet/nucleotide/rna5_implicit_conversion_from_dna5_inherit.cpp b/test/snippet/alphabet/nucleotide/rna5_implicit_conversion_from_dna5_inherit.cpp
+index 90affe12f..6f3d6e2df 100644
+--- a/test/snippet/alphabet/nucleotide/rna5_implicit_conversion_from_dna5_inherit.cpp
++++ b/test/snippet/alphabet/nucleotide/rna5_implicit_conversion_from_dna5_inherit.cpp
+@@ -21,7 +21,7 @@ int main()
+ }
+ //![main]
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ static_assert(seqan3::implicitly_convertible_to<seqan3::dna5, seqan3::rna5>);
+ static_assert(!seqan3::implicitly_convertible_to<seqan3::dna5, my_rna5>);
+diff --git a/test/unit/alphabet/semi_alphabet_test_template.hpp b/test/unit/alphabet/semi_alphabet_test_template.hpp
+index cb01b2eea..52dea639b 100644
+--- a/test/unit/alphabet/semi_alphabet_test_template.hpp
++++ b/test/unit/alphabet/semi_alphabet_test_template.hpp
+@@ -11,7 +11,7 @@
+ #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+ #include <seqan3/alphabet/exception.hpp>
+ #include <seqan3/test/pretty_printing.hpp>
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ template <typename T>
+ using semi_alphabet_test = ::testing::Test;
+diff --git a/test/unit/std/concept/comparison_test.cpp b/test/unit/std/concept/comparison_test.cpp
+index dfd58fabb..b86ba0e6d 100644
+--- a/test/unit/std/concept/comparison_test.cpp
++++ b/test/unit/std/concept/comparison_test.cpp
+@@ -10,7 +10,7 @@
+ #include <seqan3/std/concepts>
+ #include <random>
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ #include "auxiliary.hpp"
+ 
+diff --git a/test/unit/std/concept/object_test.cpp b/test/unit/std/concept/object_test.cpp
+index 858b500c8..645264aab 100644
+--- a/test/unit/std/concept/object_test.cpp
++++ b/test/unit/std/concept/object_test.cpp
+@@ -10,7 +10,7 @@
+ #include <seqan3/std/concepts>
+ #include <random>
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ #include "auxiliary.hpp"
+ 
+diff --git a/test/unit/utility/detail/exposition_only_concept_test.cpp b/test/unit/utility/detail/exposition_only_concept_test.cpp
+index 12170ca42..c46318e88 100644
+--- a/test/unit/utility/detail/exposition_only_concept_test.cpp
++++ b/test/unit/utility/detail/exposition_only_concept_test.cpp
+@@ -10,7 +10,7 @@
+ #include <seqan3/std/iterator>
+ #include <random>
+ 
+-#include <seqan3/utility/detail/exposition_only_concept.hpp>
++#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+ 
+ #include "../../std/concept/auxiliary.hpp"
+ 
+-- 
+2.33.0
+

@@ -1,8 +1,7 @@
 #include <seqan3/std/ranges>
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/views/to.hpp>
 
@@ -12,11 +11,12 @@ int main()
     std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
 
     // pipe notation
-    auto v = vec | seqan3::views::convert<bool>; // == [1, 1, 0, 1, 0, 0, 1, 1, 1];
-
-    // function notation and immediate conversion to vector again
-    auto v2 = seqan3::views::convert<bool>(vec) | seqan3::views::to<std::vector<bool>>;
+    seqan3::debug_stream << (vec | seqan3::views::convert<bool>) << '\n'; // [1,1,0,1,0,0,1,1,1]
 
     // combinability
-    auto v3 = vec | seqan3::views::convert<bool> | std::views::reverse; // == [1, 1, 1, 0, 0, 1, 0, 1, 1];
+    seqan3::debug_stream << (vec | seqan3::views::convert<bool> | std::views::reverse) << '\n'; // [1,1,1,0,0,1,0,1,1]
+
+    // function notation and immediate conversion to vector again
+    auto bool_vec = seqan3::views::convert<bool>(vec) | seqan3::views::to<std::vector<bool>>;
+    seqan3::debug_stream << std::boolalpha << (bool_vec == std::vector<bool>{1,1,0,1,0,0,1,1,1}) << '\n'; // true
 }
