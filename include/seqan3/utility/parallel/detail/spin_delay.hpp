@@ -14,9 +14,14 @@
 
 #include <thread>
 
-#if defined(__SSE2__)  // AMD and Intel
-#include <xmmintrin.h>  // _mm_pause()
-#endif
+//!\cond
+#ifndef SEQAN3_HAS_MM_PAUSE
+#   if defined(__SSE2__) && __has_include(<xmmintrin.h>)
+#       include <xmmintrin.h> // _mm_pause()
+#       define SEQAN3_HAS_MM_PAUSE 1
+#   endif // defined(__SSE2__) && __has_include(<xmmintrin.h>)
+#endif // SEQAN3_HAS_MM_PAUSE
+//!\endcond
 
 #include <seqan3/core/platform.hpp>
 
@@ -74,7 +79,7 @@ private:
     //!\brief Efficient instruction to pause the CPU.
     void pause_processor()
     {
-        #if defined(__SSE2__)  // AMD and Intel
+        #if SEQAN3_HAS_MM_PAUSE  // AMD and Intel
             _mm_pause();
         #elif defined(__armel__) || defined(__ARMEL__) // arm, but broken? ; repeat of default case as armel also defines __arm__
             asm volatile ("nop" ::: "memory");  // default operation - does nothing => Might lead to passive spinning.
