@@ -356,12 +356,9 @@ private:
     /*!\brief Parses the given option value and appends it to the target container.
      * \tparam container_option_t Must model the seqan3::sequence_container and
      *                            its value_type must be parseable via parse_option_value
-     *
-     * \cond DEV
-     * \tparam format_parse_t is needed to make the function "dependent" (i.e. do instantiation in the second phase of
+     * \tparam format_parse_t Needed to make the function "dependent" (i.e. do instantiation in the second phase of
      *                        two-phase lookup) as the requires clause needs to be able to access the other
      *                        parse_option_value overloads.
-     * \endcond
      *
      * \param[out] value The container that stores the parsed value.
      * \param[in] in The input argument to be parsed.
