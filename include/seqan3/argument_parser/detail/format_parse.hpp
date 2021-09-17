@@ -356,16 +356,23 @@ private:
     /*!\brief Parses the given option value and appends it to the target container.
      * \tparam container_option_t Must model the seqan3::sequence_container and
      *                            its value_type must be parseable via parse_option_value
+     * \tparam format_parse_t Needed to make the function "dependent" (i.e. do instantiation in the second phase of
+     *                        two-phase lookup) as the requires clause needs to be able to access the other
+     *                        parse_option_value overloads.
      *
      * \param[out] value The container that stores the parsed value.
      * \param[in] in The input argument to be parsed.
      * \returns A seqan3::option_parse_result whether parsing was successful or not.
      */
-    template <sequence_container container_option_t>
+    template <sequence_container container_option_t, typename format_parse_t = format_parse>
     //!\cond
-        requires requires (format_parse fp, typename container_option_t::value_type & container_value, std::string const & in)
+        requires requires (format_parse_t fp,
+                           typename container_option_t::value_type & container_value,
+                           std::string const & in)
         {
-            SEQAN3_RETURN_TYPE_CONSTRAINT(fp.parse_option_value(container_value, in), std::same_as, option_parse_result);
+            SEQAN3_RETURN_TYPE_CONSTRAINT(fp.parse_option_value(container_value, in),
+                                          std::same_as,
+                                          option_parse_result);
         }
     //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
