@@ -10,19 +10,15 @@ int main()
 
     seqan3::structured_rna<seqan3::rna4, seqan3::dot_bracket3> letter{'G'_rna4, '('_db3};
 
-    seqan3::debug_stream << seqan3::to_rank(letter) << ' '
-                         << seqan3::to_rank(get<0>(letter)) << ' '
-                         << seqan3::to_rank(get<1>(letter)) << '\n';
-    // prints "7 2 1"
+    seqan3::debug_stream << seqan3::to_rank(letter) << ' ' // 7
+                         << seqan3::to_rank(get<0>(letter)) << ' ' // 2
+                         << seqan3::to_rank(get<1>(letter)) << '\n'; // 1
 
-    seqan3::debug_stream << seqan3::to_char(letter) << ' '
-                         << seqan3::to_char(get<0>(letter)) << ' '
-                         << seqan3::to_char(get<1>(letter)) << '\n';
-    // prints "G G (""
+    seqan3::debug_stream << seqan3::to_char(letter) << ' ' // G
+                         << seqan3::to_char(get<0>(letter)) << ' ' // G
+                         << seqan3::to_char(get<1>(letter)) << '\n'; // (
 
-    // modify via structured bindings and references:
-    auto & [ sequence_letter, structure_letter ] = letter;
-    sequence_letter = 'U'_rna4;
-    seqan3::debug_stream << seqan3::to_char(letter) << '\n';
-    // prints "U"
+    // Modify:
+    get<0>(letter) = 'U'_rna4;
+    seqan3::debug_stream << seqan3::to_char(letter) << '\n'; // U
 }

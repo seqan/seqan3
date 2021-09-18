@@ -2,6 +2,7 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/utility/views/deep.hpp>
 
 namespace my
@@ -14,11 +15,11 @@ int main()
 {
     using namespace seqan3::literals;
 
-    std::vector<seqan3::dna5_vector> foo{"AAATTT"_dna5, "CCCGGG"_dna5};
+    std::vector<seqan3::dna5_vector> sequences{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-    auto r = foo | std::views::reverse;                     // == [ [C,C,C,G,G,G], [A,A,A,T,T,T] ]
+    seqan3::debug_stream << (sequences | std::views::reverse) << '\n'; // [CCCGGG,AAATTT]
 
     // These two are equivalent:
-    auto e = foo | my::deep_reverse;                       // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
-    auto d = foo | seqan3::views::deep{std::views::reverse}; // == [ [T,T,T,A,A,A], [G,G,G,C,C,C] ]
+    seqan3::debug_stream << (sequences | my::deep_reverse) << '\n'; // [TTTAAA,GGGCCC]
+    seqan3::debug_stream << (sequences | seqan3::views::deep{std::views::reverse}) << '\n'; // [TTTAAA,GGGCCC]
 }

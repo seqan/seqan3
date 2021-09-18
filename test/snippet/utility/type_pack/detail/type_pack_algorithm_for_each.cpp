@@ -1,7 +1,7 @@
 #include <string>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/utility/type_pack/detail/type_pack_algorithm.hpp>
 
 int main()
 {
