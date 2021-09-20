@@ -516,26 +516,6 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Export targets
-# ----------------------------------------------------------------------------
-
-separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
-
-add_library (seqan3_seqan3 INTERFACE)
-target_compile_definitions (seqan3_seqan3 INTERFACE ${SEQAN3_DEFINITIONS})
-target_compile_options (seqan3_seqan3 INTERFACE ${SEQAN3_CXX_FLAGS_LIST})
-target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
-# include seqan3/include/ as -I, because seqan3 should never produce warnings.
-target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_INCLUDE_DIR}")
-# include everything except seqan3/include/ as -isystem, i.e.
-# a system header which suppresses warnings of external libraries.
-target_include_directories (seqan3_seqan3 SYSTEM INTERFACE "${SEQAN3_DEPENDENCY_INCLUDE_DIRS}")
-add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
-
-# propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
-set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-
-# ----------------------------------------------------------------------------
 # Finish find_package call
 # ----------------------------------------------------------------------------
 
@@ -547,6 +527,28 @@ find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQA
 foreach (package_var FOUND DIR ROOT CONFIG VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH VERSION_TWEAK VERSION_COUNT)
     set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
 endforeach ()
+
+# propagate SEQAN3_INCLUDE_DIR into SEQAN3_INCLUDE_DIRS
+set (SEQAN3_INCLUDE_DIRS ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+
+# ----------------------------------------------------------------------------
+# Export targets
+# ----------------------------------------------------------------------------
+
+if (SEQAN3_FOUND AND NOT TARGET seqan3::seqan3)
+    separate_arguments (SEQAN3_CXX_FLAGS_LIST UNIX_COMMAND "${SEQAN3_CXX_FLAGS}")
+
+    add_library (seqan3_seqan3 INTERFACE)
+    target_compile_definitions (seqan3_seqan3 INTERFACE ${SEQAN3_DEFINITIONS})
+    target_compile_options (seqan3_seqan3 INTERFACE ${SEQAN3_CXX_FLAGS_LIST})
+    target_link_libraries (seqan3_seqan3 INTERFACE "${SEQAN3_LIBRARIES}")
+    # include seqan3/include/ as -I, because seqan3 should never produce warnings.
+    target_include_directories (seqan3_seqan3 INTERFACE "${SEQAN3_INCLUDE_DIR}")
+    # include everything except seqan3/include/ as -isystem, i.e.
+    # a system header which suppresses warnings of external libraries.
+    target_include_directories (seqan3_seqan3 SYSTEM INTERFACE "${SEQAN3_DEPENDENCY_INCLUDE_DIRS}")
+    add_library (seqan3::seqan3 ALIAS seqan3_seqan3)
+endif ()
 
 set (CMAKE_REQUIRED_QUIET ${CMAKE_REQUIRED_QUIET_SAVE})
 
