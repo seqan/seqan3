@@ -20,7 +20,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     target_link_libraries (${target} seqan3::test::unit)
     set_target_properties(${target}
         PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${snippet_target_path}"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${snippet_target_path}"
     )
 
     add_test (NAME "${test_name_prefix}/${snippet_test_name}_snippet" COMMAND ${target})
@@ -41,8 +41,8 @@ endmacro ()
 seqan3_require_ccache ()
 seqan3_require_test ()
 
-seqan3_snippets ("doc/snippet" "${CMAKE_SOURCE_DIR}/../../doc")
-seqan3_snippets ("snippet" "${CMAKE_SOURCE_DIR}")
+seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
+seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}")
 
 include (seqan3_generate_snippet)
 
