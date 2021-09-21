@@ -1,0 +1,85 @@
+From 3327d55e5057617e84a674d43a2a2341e6bf150e Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 13 Aug 2021 13:14:15 +0200
+Subject: [PATCH 8/9] [NOAPI] [FIX] [TEST]
+ seqan3::views::single_pass_input::iterator::operator++(int) must return void
+ (real cxx20 std::input_iterator)
+
+No-api since it is utility/.
+---
+ test/unit/io/detail/take_exactly_view_test.cpp     | 2 +-
+ test/unit/io/detail/take_line_view_test.cpp        | 2 +-
+ test/unit/io/detail/take_until_view_test.cpp       | 2 +-
+ test/unit/utility/views/single_pass_input_test.cpp | 3 +--
+ test/unit/utility/views/slice_test.cpp             | 2 +-
+ 5 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/test/unit/io/detail/take_exactly_view_test.cpp b/test/unit/io/detail/take_exactly_view_test.cpp
+index 0b016a607..46a102854 100644
+--- a/test/unit/io/detail/take_exactly_view_test.cpp
++++ b/test/unit/io/detail/take_exactly_view_test.cpp
+@@ -89,7 +89,7 @@ void do_concepts(adaptor_t && adaptor, bool const exactly)
+     EXPECT_EQ(std::ranges::sized_range<decltype(v2)>, exactly);
+     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
+-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), int>));
++    EXPECT_FALSE((std::ranges::output_range<decltype(v2), int>));
+ 
+     // explicit test for non const-iterable views
+     // https://github.com/seqan/seqan3/pull/1734#discussion_r408829267
+diff --git a/test/unit/io/detail/take_line_view_test.cpp b/test/unit/io/detail/take_line_view_test.cpp
+index c97a2a6c0..e758e8d2b 100644
+--- a/test/unit/io/detail/take_line_view_test.cpp
++++ b/test/unit/io/detail/take_line_view_test.cpp
+@@ -75,7 +75,7 @@ void do_concepts(adaptor_t const & adaptor)
+     EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
+-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), char>));
++    EXPECT_FALSE((std::ranges::output_range<decltype(v2), char>));
+ }
+ 
+ // ============================================================================
+diff --git a/test/unit/io/detail/take_until_view_test.cpp b/test/unit/io/detail/take_until_view_test.cpp
+index a0e87d546..226ef63e4 100644
+--- a/test/unit/io/detail/take_until_view_test.cpp
++++ b/test/unit/io/detail/take_until_view_test.cpp
+@@ -79,7 +79,7 @@ void do_concepts(adaptor_t && adaptor, bool const_it)
+     EXPECT_FALSE(std::ranges::sized_range<decltype(v2)>);
+     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
+-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), char>));
++    EXPECT_FALSE((std::ranges::output_range<decltype(v2), char>)); // lost by single_pass_input
+ 
+     // explicit test for non const-iterable views
+     // https://github.com/seqan/seqan3/pull/1734#discussion_r408829267
+diff --git a/test/unit/utility/views/single_pass_input_test.cpp b/test/unit/utility/views/single_pass_input_test.cpp
+index e2b0334a9..911909471 100644
+--- a/test/unit/utility/views/single_pass_input_test.cpp
++++ b/test/unit/utility/views/single_pass_input_test.cpp
+@@ -73,8 +73,7 @@ TYPED_TEST(single_pass_input, view_concept)
+     EXPECT_TRUE(std::ranges::range<view_t>);
+     EXPECT_TRUE(std::ranges::view<view_t>);
+     EXPECT_TRUE(std::ranges::input_range<view_t>);
+-    EXPECT_EQ((std::ranges::output_range<view_t, std::ranges::range_reference_t<view_t>>),
+-              (std::ranges::output_range<rng_t, std::ranges::range_reference_t<rng_t>>));
++    EXPECT_FALSE((std::ranges::output_range<view_t, std::ranges::range_reference_t<view_t>>));
+     EXPECT_FALSE(std::ranges::common_range<view_t>);
+     EXPECT_FALSE(std::ranges::forward_range<view_t>);
+     EXPECT_FALSE(std::ranges::bidirectional_range<view_t>);
+diff --git a/test/unit/utility/views/slice_test.cpp b/test/unit/utility/views/slice_test.cpp
+index 3b910d36f..11d195968 100644
+--- a/test/unit/utility/views/slice_test.cpp
++++ b/test/unit/utility/views/slice_test.cpp
+@@ -89,7 +89,7 @@ TEST(view_slice, concepts)
+     EXPECT_EQ(std::ranges::sized_range<decltype(v2)>, false);
+     EXPECT_FALSE(std::ranges::common_range<decltype(v2)>);
+     EXPECT_FALSE(seqan3::const_iterable_range<decltype(v2)>);
+-    EXPECT_TRUE((std::ranges::output_range<decltype(v2), int>));
++    EXPECT_FALSE((std::ranges::output_range<decltype(v2), int>)); // single_pass_input loses it
+ }
+ 
+ TEST(view_slice, underlying_is_shorter)
+-- 
+2.33.0
+

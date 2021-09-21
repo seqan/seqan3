@@ -24,6 +24,21 @@ The following API changes should be documented as such:
 If possible, provide tooling that performs the changes, e.g. a shell-script.
 -->
 
+# 3.2.0
+
+## Notable Bug-fixes
+
+#### Utility
+
+* `seqan3::views::single_pass_input` can't keep the `std::ranges::output_range` property, because it can't satisfy the following property:
+  ```cpp
+  *it++ = value;
+  // must be the same as
+  *i = value; ++i;
+  // but it actually would be the same as
+  ++i; *i = value;
+  ```
+
 # 3.1.0
 
 ## New features
