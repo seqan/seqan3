@@ -23,7 +23,11 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${snippet_target_path}"
     )
 
-    add_test (NAME "${test_name_prefix}/${snippet_test_name}_snippet" COMMAND ${target})
+    set (snippet_test_target "${test_name_prefix}/${snippet_test_name}_snippet")
+    add_test (NAME "${snippet_test_target}" COMMAND ${target})
+
+    # disable version checker, as it interferes with comparing the snippet output
+    set_tests_properties ("${snippet_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
 
     unset (snippet_target_name)
     unset (snippet_test_name)
