@@ -9,6 +9,7 @@ cmake_minimum_required (VERSION 3.7)
 project (seqan3_test_snippet CXX)
 
 include (../seqan3-test.cmake)
+include (../cmake/diagnostics/list_unused_snippets.cmake)
 
 option (seqan3_generate_snippets "Whether seqan3 snippets should be generated and overwritten within the source tree." ON)
 
@@ -24,6 +25,7 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${snippet_target_path}"
     )
+    collect_used_snippet (${target})
 
     add_test (NAME "${test_name_prefix}/${snippet_test_name}_snippet" COMMAND ${target})
 
@@ -45,6 +47,9 @@ seqan3_require_test ()
 
 seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
 seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}")
+
+list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}")
+list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
 
 if (seqan3_generate_snippets)
     include (seqan3_generate_snippet)
