@@ -21,7 +21,7 @@
 macro (seqan3_test_files VAR test_base_path_ extension_wildcards)
     # test_base_path is /home/.../seqan3/test/
     get_filename_component(test_base_path "${test_base_path_}" ABSOLUTE)
-    file (RELATIVE_PATH test_base_path_relative "${CMAKE_SOURCE_DIR}" "${test_base_path}")
+    file (RELATIVE_PATH test_base_path_relative "${CMAKE_CURRENT_SOURCE_DIR}" "${test_base_path}")
     # ./ is a hack to deal with empty test_base_path_relative
     set (test_base_path_relative "./${test_base_path_relative}")
     # collect all cpp files
