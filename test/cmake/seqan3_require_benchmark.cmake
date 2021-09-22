@@ -7,6 +7,12 @@
 
 # Exposes the google-benchmark target `gbenchmark`.
 macro (seqan3_require_benchmark_old gbenchmark_git_tag)
+    set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
+
+    # needed for add_library (seqan3::test::* INTERFACE IMPORTED)
+    # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
+    file (MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/)
+
     set (gbenchmark_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_TESTING=false")
     # google-benchmarks suggest to use LTO (link-time optimisation), but we don't really need that because we are a
@@ -36,6 +42,7 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
     add_dependencies (gbenchmark gbenchmark_project)
     set_target_properties (gbenchmark PROPERTIES IMPORTED_LOCATION "${gbenchmark_path}")
     set_property (TARGET gbenchmark APPEND PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
+    set_property (TARGET gbenchmark APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 
     # NOTE: google benchmarks needs Shlwapi (Shell Lightweight Utility Functions) on windows
     # see https://msdn.microsoft.com/en-us/library/windows/desktop/bb759844(v=vs.85).aspx
