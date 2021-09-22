@@ -34,9 +34,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ```cpp
   *it++ = value;
   // must be the same as
-  *i = value; ++i;
+  *it = value; ++it;
   // but it actually would be the same as
-  ++i; *i = value;
+  ++it; *it = value;
   ```
 
 # 3.1.0
