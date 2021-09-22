@@ -5,14 +5,14 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-# A compatible function for cmake <= 3.19 that basically returns `cmake_path (GET <filename> STEM LAST_ONLY <out_var>)`
+# A compatible function for cmake < 3.20 that basically returns `cmake_path (GET <filename> STEM LAST_ONLY <out_var>)`
 function (seqan3_path_longest_stem out_var filename)
-    if (CMAKE_VERSION VERSION_LESS 3.19)  # cmake < 3.19
+    if (CMAKE_VERSION VERSION_LESS 3.20)  # cmake < 3.20
         get_filename_component (result "${filename}" NAME)
         if (result MATCHES "\\.")
             string (REGEX REPLACE "(.+)[.].*" "\\1" result "${result}")
         endif ()
-    else () # cmake >= 3.19
+    else () # cmake >= 3.20
         cmake_path (GET filename STEM LAST_ONLY result)
     endif ()
 
