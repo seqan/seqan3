@@ -27,7 +27,7 @@ int main()
     {
         seqan3::debug_stream << record.id() << '\n';
         seqan3::debug_stream << record.sequence() << '\n';
-        seqan3::debug_stream << record.flag() << '\n';
+        seqan3::debug_stream << record.flag() << '\n' << '\n';
     }
 }
 //![main]

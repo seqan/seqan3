@@ -202,7 +202,7 @@ You can pass reference ids and reference sequences as additional constructor par
 \snippet doc/tutorial/sam_file/sam_file_alignments_with_ref.cpp main
 
 The code will print the following:
-\include doc/tutorial/sam_file/sam_file_sam_record.out
+\include doc/tutorial/sam_file/sam_file_sam_record.err
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 

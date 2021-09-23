@@ -195,7 +195,7 @@ Note: you include the seqan3::debug_stream with the following header
 \snippet doc/tutorial/sequence_file/sequence_file_solution1.cpp solution
 
 The code will print the following:
-\include doc/tutorial/sequence_file/sequence_file_solution1.out
+\include doc/tutorial/sequence_file/sequence_file_solution1.err
 \endsolution
 
 ## The record type
@@ -222,7 +222,7 @@ Test your program with the following file:
 
 It should print the following:
 
-\include doc/tutorial/sequence_file/sequence_file_solution2.out
+\include doc/tutorial/sequence_file/sequence_file_solution2.err
 Note that the quality (third element in the triple) is empty because we are reading a FASTA file.
 \endassignment
 \solution
