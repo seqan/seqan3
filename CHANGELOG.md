@@ -30,7 +30,8 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Utility
 
-* `seqan3::views::single_pass_input` can't keep the `std::ranges::output_range` property, because it can't satisfy the following property:
+* `seqan3::views::single_pass_input` cannot propagate the `std::ranges::output_range` property, because it cannot 
+  satisfy the following requirement ([\#2775](https://github.com/seqan/seqan3/pull/2775)):
   ```cpp
   *it++ = value;
   // must be the same as
