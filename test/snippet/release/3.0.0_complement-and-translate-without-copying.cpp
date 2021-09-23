@@ -9,10 +9,10 @@ int main()
 {
     using namespace seqan3::literals;
 
-    std::vector vec{"ACGTACGTACGTA"_dna5};
+    seqan3::dna5_vector sequence{"ACGTACGTACGTA"_dna5};
     // pipe the vector through two view adaptors:
-    auto v = vec | seqan3::views::complement | seqan3::views::translate_single;
-    // v is a view of length 4, accessing the elements on-demand will return
+    auto aminoacid_sequence = sequence | seqan3::views::complement | seqan3::views::translate_single;
+    // aminoacid_sequence is a view of length 4, accessing the elements on-demand will return
 
-    seqan3::debug_stream << v << '\n'; // [C,M,H,A]
+    seqan3::debug_stream << aminoacid_sequence << '\n'; // "CMHA"
 }
