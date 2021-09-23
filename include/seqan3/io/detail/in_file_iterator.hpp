@@ -152,6 +152,33 @@ public:
     }
     //!\}
 
+    /*!\name File position functionality
+     * \brief Low level API. Enables seeking to and returning specific file positions from the iterator.
+     * \{
+     */
+
+     //!\brief Returns the current position in the file via `std::streampos`.
+     std::streampos file_position() const
+     {
+         assert(host != nullptr);
+         return host->position_buffer;
+     }
+
+     //!\brief Low level API. Sets the current position of the iterator to the given position, throws if at end of file.
+     in_file_iterator & seek_to(std::streampos const & pos)
+     {
+         assert(host != nullptr);
+         host->secondary_stream->seekg(pos);
+         if (host->secondary_stream->fail())
+         {
+             throw std::runtime_error{"Seeking to file position failed!"};
+         }
+         host->at_end = false; // iterator will not be at end if seeking to a specific record
+         host->read_next_record();
+         return *this;
+     }
+     //!\}
+
 private:
     //!\brief Pointer to file host.
     file_type * host{};

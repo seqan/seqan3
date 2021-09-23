@@ -1,0 +1,32 @@
+LOCUS ID1
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID1
+ACCESSION   U49845
+VERSION     U49845.1  GI:1293613
+KEYWORDS    .
+SOURCE      Saccharomyces cerevisiae (baker's yeast)
+  ORGANISM  Saccharomyces cerevisiae
+            Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;
+            Saccharomycetales; Saccharomycetaceae; Saccharomyces.
+REFERENCE   1  (bases 1 to 5028)
+FEATURES             Location/Qualifiers
+     source          1..5028
+ORIGIN
+        1 ACGTTTTTTT TTTTTTTT
+//
+LOCUS ID2
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID2
+ORIGIN
+        1  ACGTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT TTTTTTTTTT
+       61 TTTTTTTTTT TTTTTTTTTT TT
+//
+LOCUS ID3 lala
+DEFINITION  Homo sapiens mRNA for prepro cortistatin like peptide, complete
+            cds.
+ACCESSION   ID3
+ORIGIN
+        1 ACGTTTA
+//

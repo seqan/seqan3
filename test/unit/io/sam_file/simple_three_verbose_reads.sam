@@ -1,0 +1,5 @@
+@HD	VN:1.6
+@SQ	SN:ref	LN:34
+read1	41	ref	1	61	1S1M1D1M1I	=	10	300	ACGT	!##$	aa:A:c	NM:i:-7	AS:i:2	ff:f:3.1	zz:Z:str	CC:i:300	cc:i:-300
+read2	42	ref	2	62	1H7M1D1M1S	ref	10	300	AGGCTGNAG	!##$&'()*	bc:B:c,-3	bC:B:C,3,200	bs:B:s,-3,200,-300	bS:B:S,300,40,500	bi:B:i,-3,200,-66000	bI:B:I,294967296	bf:B:f,3.5,0.1,43.8	bH:H:1AE301
+read3	43	ref	3	63	1S1M1P1M1I1M1I1D1M1S	ref	10	300	GGAGTATA	!!*+,-./

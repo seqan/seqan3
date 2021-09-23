@@ -1,0 +1,50 @@
+This BAM File is special crafted as it consists of 5 BGZF blocks
+
+1. Block is the BAM-Header
+2. Block is read1
+3. Block is read2
+4. Block is read3
+5. Block is a special EOF-Block (see also 4.1.2 End-of-file marker, SAM specification)
+   1f 8b 08 04 00 00 00 00 00 ff 06 00 42 43 02 00 1b 00 03 00 00 00 00 00 00 00 00 00
+
+### File creation
+
+Create 3 BAM files for each read
+
+```bash
+sed -n '1,2p;3p' simple_three_verbose_reads.sam | samtools view --no-PG -bS  > simple_three_verbose_reads.read1.bam
+sed -n '1,2p;4p' simple_three_verbose_reads.sam | samtools view --no-PG -bS  > simple_three_verbose_reads.read2.bam
+sed -n '1,2p;5p' simple_three_verbose_reads.sam | samtools view --no-PG -bS  > simple_three_verbose_reads.read3.bam
+```
+
+each of those files have 3 BGZF Blocks (header, read, EOF).
+
+```bash
+samtools view --no-PG -h simple_three_verbose_reads.read1.bam
+samtools view --no-PG -h simple_three_verbose_reads.read2.bam
+samtools view --no-PG -h simple_three_verbose_reads.read3.bam
+```
+
+I wrote a tool bam_bgzf_split that splits each BGZF block in bgzf compressed file.
+
+```bash
+./bam_bgzf_split simple_three_verbose_reads.read1.bam
+./bam_bgzf_split simple_three_verbose_reads.read2.bam
+./bam_bgzf_split simple_three_verbose_reads.read3.bam
+```
+
+Concat all BGZF Blocks to one new bam file
+
+```bash
+cat simple_three_verbose_reads.read1.bam.000.gz \
+    simple_three_verbose_reads.read{1,2,3}.bam.075.gz \
+    simple_three_verbose_reads.read1.bam.179.gz > simple_three_verbose_reads.bam
+
+rm simple_three_verbose_reads.read*
+```
+
+Double check file
+
+```bash
+samtools view --no-PG -h simple_three_verbose_reads.bam
+```

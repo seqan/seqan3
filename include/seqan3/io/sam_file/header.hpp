@@ -18,7 +18,6 @@
 #include <vector>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/alphabet/range/hash.hpp>
 #include <seqan3/io/sam_file/detail/cigar.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
 
@@ -96,6 +95,25 @@ private:
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
 
+    //!\brief Custom hash function since std::hash is not defined for all range types (e.g. std::span<char>).
+    struct key_hasher
+    {
+        //!\brief Hash a key.
+        template <typename key_t>
+        size_t operator()(key_t && key) const noexcept
+        {
+            using char_t = std::ranges::range_value_t<key_t>;
+            size_t result{0};
+            std::hash<char_t> h{};
+            for (char_t character : key)
+            {
+                result *= 0x8F3F73B5CF1C9ADE;
+                result += h(character);
+            }
+            return result;
+        }
+    };
+
 public:
     /*!\brief The range of reference ids.
      *
@@ -154,7 +172,7 @@ public:
     std::vector<std::tuple<int32_t, std::string>> ref_id_info{};
 
     //!\brief The mapping of reference id to position in the ref_ids() range and the ref_id_info range.
-    std::unordered_map<key_type, int32_t, std::hash<key_type>, detail::view_equality_fn> ref_dict{};
+    std::unordered_map<key_type, int32_t, key_hasher, detail::view_equality_fn> ref_dict{};
 
     /*!\brief The Read Group Dictionary (used by the SAM/BAM format).
      *
