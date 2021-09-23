@@ -62,46 +62,56 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
-add_library (seqan3_test INTERFACE)
-target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
-target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
-target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
-add_library (seqan3::test ALIAS seqan3_test)
+if (NOT TARGET seqan3::test)
+    add_library (seqan3_test INTERFACE)
+    target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
+    target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
+    target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
+    add_library (seqan3::test ALIAS seqan3_test)
+endif ()
 
 # seqan3::test::performance specifies required flags, includes and libraries
 # needed for performance test cases in seqan3/test/performance
-add_library (seqan3_test_performance INTERFACE)
-target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+if (NOT TARGET seqan3::test::performance)
+    add_library (seqan3_test_performance INTERFACE)
+    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
 
-if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
-    target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
+    if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
+        target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
+    endif ()
+
+    target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+    add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 endif ()
-
-target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
-add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 
 # seqan3::test::unit specifies required flags, includes and libraries
 # needed for unit test cases in seqan3/test/unit
-add_library (seqan3_test_unit INTERFACE)
-target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
-target_include_directories (seqan3_test_unit INTERFACE "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
-add_library (seqan3::test::unit ALIAS seqan3_test_unit)
+if (NOT TARGET seqan3::test::unit)
+    add_library (seqan3_test_unit INTERFACE)
+    target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
+    target_include_directories (seqan3_test_unit INTERFACE "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
+    add_library (seqan3::test::unit ALIAS seqan3_test_unit)
+endif ()
 
 # seqan3::test::coverage specifies required flags, includes and libraries
 # needed for coverage test cases in seqan3/test/coverage
-add_library (seqan3_test_coverage INTERFACE)
-target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
-target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
-add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
+if (NOT TARGET seqan3::test::coverage)
+    add_library (seqan3_test_coverage INTERFACE)
+    target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
+    target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
+    add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
+endif ()
 
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
-add_library (seqan3_test_header INTERFACE)
-target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
-target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
-target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
-target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_HEADER_TEST)
-add_library (seqan3::test::header ALIAS seqan3_test_header)
+if (NOT TARGET seqan3::test::header)
+    add_library (seqan3_test_header INTERFACE)
+    target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
+    target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
+    target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
+    target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_HEADER_TEST)
+    add_library (seqan3::test::header ALIAS seqan3_test_header)
+endif ()
 
 # ----------------------------------------------------------------------------
 # Commonly shared options for external projects.

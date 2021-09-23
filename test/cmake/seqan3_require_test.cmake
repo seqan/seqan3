@@ -72,5 +72,7 @@ macro (seqan3_require_test)
         seqan3_require_test_old ("${gtest_git_tag}")
     endif ()
 
-    add_custom_target (gtest_build DEPENDS gtest_main gtest)
+    if (NOT TARGET gtest_build)
+        add_custom_target (gtest_build DEPENDS gtest_main gtest)
+    endif ()
 endmacro ()
