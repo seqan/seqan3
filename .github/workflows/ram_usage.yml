@@ -38,6 +38,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure APT
         continue-on-error: true
