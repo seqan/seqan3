@@ -107,9 +107,11 @@ jobs:
 
       - name: Install lcov
         if: matrix.build == 'coverage'
+        env:
+          CC: ${{ matrix.cc }}
         run: |
           sudo apt-get install --yes lcov
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
+          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
 
       - name: Load ccache
         uses: actions/cache@v2
