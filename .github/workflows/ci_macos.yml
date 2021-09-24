@@ -89,7 +89,9 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh ccache
 
       - name: Install compiler ${{ matrix.cxx }}
-        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh gcc $(echo "${{ matrix.cxx }}" | sed "s/g++-//g")
+        env:
+          CC: ${{ matrix.cc }}
+        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh $(echo ${CC/clang/llvm} | awk -F '-' '{print $1, $2}')
 
       - name: Load ccache
         uses: actions/cache@v2
