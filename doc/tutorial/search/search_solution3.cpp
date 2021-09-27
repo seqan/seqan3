@@ -14,5 +14,5 @@ int main()
 
     seqan3::configuration const cfg = seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}};
 
-    seqan3::debug_stream << search("GCT"_dna4, index, cfg);
+    seqan3::debug_stream << search("GCT"_dna4, index, cfg) << '\n';
 }
