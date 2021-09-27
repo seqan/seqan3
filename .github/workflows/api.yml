@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.9.6
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
   ISSUE: 2746 # Issue number to use for reporting failures
@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: seqan3
+          fetch-depth: 2
           submodules: true
 
       - name: Checkout SeqAn2
@@ -40,6 +41,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure APT
         continue-on-error: true

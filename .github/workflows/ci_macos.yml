@@ -1,4 +1,5 @@
 name: SeqAn3 CI on macOS
+
 on:
   push:
     branches:
@@ -9,7 +10,7 @@ on:
   pull_request:
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.9.6
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
@@ -26,6 +27,15 @@ jobs:
       fail-fast: true
       matrix:
         include:
+          - name: "Unit gcc11"
+            os: macos-10.15
+            cxx: "g++-11"
+            cc: "gcc-11"
+            build: unit
+            build_type: Release
+            build_threads: 3
+            test_threads: 3
+
           - name: "Unit gcc10"
             os: macos-10.15
             cxx: "g++-10"
@@ -77,6 +87,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure Homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -88,7 +99,9 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh ccache
 
       - name: Install compiler ${{ matrix.cxx }}
-        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh gcc $(echo "${{ matrix.cxx }}" | sed "s/g++-//g")
+        env:
+          CC: ${{ matrix.cc }}
+        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh $(echo ${CC/clang/llvm} | awk -F '-' '{print $1, $2}')
 
       - name: Load ccache
         uses: actions/cache@v2

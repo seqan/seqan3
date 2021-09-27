@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.9.6
   DOXYGEN_VERSION: 1.9.2
   TZ: Europe/Berlin
 

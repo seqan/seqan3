@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.9.6
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
   ISSUE: 2747 # Issue number to use for reporting failures
