@@ -451,7 +451,7 @@ private:
         if (res == option_parse_result::error)
         {
             throw user_input_error{msg + "Argument " + input_value + " could not be parsed as type " +
-                                   get_type_name_as_string(input_value) + "."};
+                                   get_type_name_as_string(option_type{}) + "."};
         }
 
         if constexpr (arithmetic<option_type>)
@@ -467,7 +467,7 @@ private:
         assert(res == option_parse_result::success); // if nothing was thrown, the result must have been a success
     }
 
-    /*!\brief Handles value retrieval for options based on different kev value pairs.
+    /*!\brief Handles value retrieval for options based on different key-value pairs.
      *
      * \param[out] value     Stores the value found in argv, parsed by parse_option_value.
      * \param[in]  option_it The iterator where the option identifier was found.
