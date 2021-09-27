@@ -7,7 +7,7 @@ on:
       - 'master'
       # Push events to branches matching refs/heads/release*
       - 'release*'
-  pull_request:
+  # pull_request:
 
 env:
   SEQAN3_NO_VERSION_CHECK: 1

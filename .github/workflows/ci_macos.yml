@@ -7,7 +7,7 @@ on:
       - 'master'
       # Push events to branches matching refs/heads/release*
       - 'release*'
-  pull_request:
+  # pull_request:
 
 env:
   CMAKE_VERSION: 3.10.3
