@@ -10,8 +10,8 @@ int main()
     std::ostringstream o;
     seqan3::debug_stream_type my_stream{o};
 
-    my_stream << "ACGT"_dna5;
+    my_stream << "ACGT"_dna5 << '\n';
 
     o.flush();
-    seqan3::debug_stream << o.str(); // prints the string stream's buffer: "ACGT"
+    seqan3::debug_stream << o.str() << '\n'; // prints the string stream's buffer: "ACGT"
 }
