@@ -121,7 +121,7 @@ namespace seqan3::views
  * \param[in] seed           The seed used to skew the hash values. Default: 0x8F3F73B5CF1C9ADE.
  * \returns                  A range of `size_t` where each value is the minimiser of the resp. window.
  *                           See below for the properties of the returned range.
- * \ingroup utility_views
+ * \ingroup search_views
  *
  * \details
  *
