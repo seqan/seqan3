@@ -1,0 +1,7 @@
+Score between DNA5 A and G: -1
+Score between DNA5 A and A: 0
+Score between DNA5 A and RNA15 G: -2
+Score between DNA5 A and RNA15 A: 3
+Score between DNA A and G before edit: -1
+Score after editing: 3
+Score: -2

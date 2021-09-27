@@ -91,5 +91,6 @@ int main()
     // iterate over vec, but with your custom iterator
     while (it != vec.end())
         std::cout << seqan3::to_char(*it++) << ' ';
+    std::cout << '\n';
 }
 //![end]

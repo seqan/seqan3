@@ -1,0 +1,16 @@
+id:  r001
+read sequence: TTAGATAAAGGATACTG
+mapping position: 6
+mapping quality: 30
+id:  r003
+read sequence: GCCTAAGCTAA
+mapping position: 28
+mapping quality: 30
+id:  r003
+read sequence: TAGGC
+mapping position: 28
+mapping quality: 17
+id:  r001
+read sequence: CAGCGGCAT
+mapping position: 236
+mapping quality: 30

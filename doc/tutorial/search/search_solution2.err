@@ -1,0 +1,11 @@
+=====   Running on a single text   =====
+The following hits were found:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:0, reference_pos:41>
+<query_id:0, reference_id:0, reference_pos:77>
+
+===== Running on a text collection =====
+The following hits were found:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:1, reference_pos:9>
+<query_id:0, reference_id:2, reference_pos:16>

@@ -1,0 +1,29 @@
+Searching all best hits allowing for 1 error in a single text
+-----------------
+score:    0
+database: GCT
+query:    GCT
+=============
+score:    0
+database: GCT
+query:    GCT
+=============
+score:    0
+database: GCT
+query:    GCT
+=============
+
+Searching all best hits allowing for 1 error in a text collection
+-----------------
+score:    0
+database: GCT
+query:    GCT
+=============
+score:    0
+database: GCT
+query:    GCT
+=============
+score:    0
+database: GCT
+query:    GCT
+=============

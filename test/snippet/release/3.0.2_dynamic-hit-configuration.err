@@ -1,0 +1,31 @@
+All single best hits:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:1, reference_pos:9>
+<query_id:0, reference_id:2, reference_pos:16>
+
+All x+1 hits:
+<query_id:0, reference_id:0, reference_pos:1>
+<query_id:0, reference_id:0, reference_pos:2>
+<query_id:0, reference_id:0, reference_pos:4>
+<query_id:0, reference_id:0, reference_pos:5>
+<query_id:0, reference_id:0, reference_pos:6>
+<query_id:0, reference_id:0, reference_pos:12>
+<query_id:0, reference_id:0, reference_pos:17>
+<query_id:0, reference_id:0, reference_pos:19>
+<query_id:0, reference_id:0, reference_pos:23>
+<query_id:0, reference_id:0, reference_pos:27>
+<query_id:0, reference_id:0, reference_pos:29>
+<query_id:0, reference_id:1, reference_pos:4>
+<query_id:0, reference_id:1, reference_pos:9>
+<query_id:0, reference_id:1, reference_pos:10>
+<query_id:0, reference_id:1, reference_pos:17>
+<query_id:0, reference_id:1, reference_pos:20>
+<query_id:0, reference_id:1, reference_pos:25>
+<query_id:0, reference_id:1, reference_pos:26>
+<query_id:0, reference_id:2, reference_pos:1>
+<query_id:0, reference_id:2, reference_pos:14>
+<query_id:0, reference_id:2, reference_pos:16>
+<query_id:0, reference_id:2, reference_pos:17>
+<query_id:0, reference_id:2, reference_pos:22>
+<query_id:0, reference_id:2, reference_pos:24>
+<query_id:0, reference_id:2, reference_pos:25>
