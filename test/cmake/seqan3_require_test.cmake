@@ -7,6 +7,12 @@
 
 # Exposes the google-test targets `gtest` and `gtest_main`.
 macro (seqan3_require_test_old gtest_git_tag)
+    set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
+
+    # needed for add_library (seqan3::test::* INTERFACE IMPORTED)
+    # see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
+    file (MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
+
     set (gtest_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gtest_project_args "-DBUILD_GMOCK=0")
 
@@ -42,9 +48,10 @@ macro (seqan3_require_test_old gtest_git_tag)
     set_target_properties (gtest_main PROPERTIES IMPORTED_LOCATION "${gtest_main_path}")
 
     add_library (gtest STATIC IMPORTED)
-    add_dependencies (gtest gtest_main)
+    add_dependencies (gtest gtest_project)
     set_target_properties (gtest PROPERTIES IMPORTED_LOCATION "${gtest_path}")
     set_property (TARGET gtest APPEND PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
+    set_property (TARGET gtest APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
 
     unset(gtest_main_path)
     unset(gtest_path)

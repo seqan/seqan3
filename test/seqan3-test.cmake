@@ -48,14 +48,6 @@ find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${C
 find_path (SEQAN3_TEST_CMAKE_MODULE_DIR NAMES seqan3_test_component.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
 list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 
-set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
-set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
-
-# needed for add_library (seqan3::test::* INTERFACE IMPORTED)
-# see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
-file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/)
-file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
-
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
 # ----------------------------------------------------------------------------
@@ -80,7 +72,6 @@ if (NOT TARGET seqan3::test::performance)
         target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
     endif ()
 
-    target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
     add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 endif ()
 
@@ -89,7 +80,6 @@ endif ()
 if (NOT TARGET seqan3::test::unit)
     add_library (seqan3_test_unit INTERFACE)
     target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
-    target_include_directories (seqan3_test_unit INTERFACE "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
     add_library (seqan3::test::unit ALIAS seqan3_test_unit)
 endif ()
 
