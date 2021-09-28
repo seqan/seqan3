@@ -14,11 +14,6 @@ function (collect_include_target include_target)
 endfunction ()
 
 function (list_missing_unit_tests)
-    if (CMAKE_VERSION VERSION_LESS 3.8) # MANUALLY_ADDED_DEPENDENCIES since cmake >= 3.8
-        message (WARNING "list_missing_unit_tests requires at least cmake >= 3.8")
-        return ()
-    endif ()
-
     list (SORT seqan3_test_include_targets)
     foreach (include_target ${seqan3_test_include_targets})
         if (NOT TARGET ${include_target})

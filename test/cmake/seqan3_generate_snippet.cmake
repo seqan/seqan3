@@ -25,8 +25,8 @@ cmake_minimum_required (VERSION 3.10)
 # * all ${placeholder} will be replaced by the specified `-Dplaceholder=value` value
 # * see `cmake`s [configure_file](https://cmake.org/cmake/help/latest/command/configure_file.html) for more detail
 function (seqan3_generate_snippet source_snippet)
-    if (NOT SEQAN3_CLONE_DIR OR CMAKE_VERSION VERSION_LESS 3.9.0)
-        message (AUTHOR_WARNING "seqan3_generate_snippet needs at least cmake 3.9.0.")
+    if (NOT SEQAN3_CLONE_DIR)
+        message (AUTHOR_WARNING "seqan3_generate_snippet can't be used if SEQAN3_CLONE_DIR (i.e. no git checkout) is not defined.")
         return ()
     endif ()
     # e.g. source_snippet: <...>/@target_alphabet@_implicit_conversion_from_@source_alphabet@.cpp.in

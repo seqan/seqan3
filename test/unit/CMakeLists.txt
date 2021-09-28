@@ -29,7 +29,7 @@ macro (seqan3_test unit_test_cpp)
     target_link_libraries (${target} seqan3::test::unit)
     add_include_dependencies (${target} "${SEQAN3_TEST_CYCLIC_DEPENDING_INCLUDES}")
     collect_used_test (${target})
-    if (SEQAN3_VERBOSE_TESTS AND NOT CMAKE_VERSION VERSION_LESS 3.10) # cmake >= 3.10
+    if (SEQAN3_VERBOSE_TESTS)
         gtest_discover_tests(${target} TEST_PREFIX "${test_name}::" PROPERTIES TIMEOUT "30")
     else ()
         add_test (NAME "${test_name}" COMMAND ${target})
