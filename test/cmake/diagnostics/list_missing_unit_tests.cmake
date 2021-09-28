@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 set(seqan3_test_include_targets "" CACHE STRING "" FORCE)
 
 function (collect_include_target include_target)

@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 # Calls add_subdirectory on all (direct) subdirectories of the given directory if they contain a `CMakeLists.txt`
 #
 # Example:
