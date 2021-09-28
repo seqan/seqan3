@@ -12,7 +12,7 @@ on:
         descriptions: 'CXXFLAGS to pass to compiler'
 
 env:
-  CMAKE_VERSION: 3.9.6
+  CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
