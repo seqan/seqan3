@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.10)
 project (seqan3_test_unit CXX)
 
 include (../seqan3-test.cmake)
@@ -17,10 +17,6 @@ include (include_dependencies/add_include_dependencies)
 
 option (SEQAN3_VERBOSE_TESTS "Run each test case individually" ON)
 option (SEQAN3_USE_INCLUDE_DEPENDENCIES "Build tests in an hierarchical order (by an include graph, i.e. tests with less dependencies are build first)" OFF)
-
-if (SEQAN3_USE_INCLUDE_DEPENDENCIES)
-    cmake_minimum_required (VERSION 3.8)
-endif ()
 
 macro (seqan3_test unit_test_cpp)
     cmake_parse_arguments(SEQAN3_TEST "" "" "CYCLIC_DEPENDING_INCLUDES" ${ARGN})
