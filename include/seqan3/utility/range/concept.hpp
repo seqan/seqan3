@@ -91,14 +91,14 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
     std::sized_sentinel_for<iterator_t, iterator_t> &&
     requires (iterator_t i, iterator_t const j, std::iter_difference_t<iterator_t> const n)
 {
-    std::same_as<decltype( i += n ), iterator_t &>;
-    std::same_as<decltype( j +  n ), iterator_t>;
-    std::same_as<decltype( n +  j ), iterator_t>;
-    std::same_as<decltype(   --i  ), iterator_t &>;
-    std::same_as<decltype(   i--  ), iterator_t>;
-    std::same_as<decltype( i -= n ), iterator_t &>;
-    std::same_as<decltype( j -  n ), iterator_t>;
-    std::same_as<decltype(  j[n]  ), std::iter_reference_t<iterator_t>>;
+    requires std::same_as<decltype( i += n ), iterator_t &>;
+    requires std::same_as<decltype( j +  n ), iterator_t>;
+    requires std::same_as<decltype( n +  j ), iterator_t>;
+    requires std::same_as<decltype(   --i  ), iterator_t &>;
+    requires std::same_as<decltype(   i--  ), iterator_t>;
+    requires std::same_as<decltype( i -= n ), iterator_t &>;
+    requires std::same_as<decltype( j -  n ), iterator_t>;
+    requires std::same_as<decltype(  j[n]  ), std::iter_reference_t<iterator_t>>;
 };
 //!\endcond
 
