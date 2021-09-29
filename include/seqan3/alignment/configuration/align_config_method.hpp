@@ -11,6 +11,7 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Wiep van der Toorn <w.vandertoorn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -28,12 +29,53 @@ namespace seqan3::align_cfg
  *
  * \details
  *
- * The alignment algorithm can be categorised in different methods. For example, the
- * \ref seqan3::align_cfg::method_local "local" and the
- * \ref seqan3::align_cfg::method_global "global" alignment are two different methods, while the semi-global alignment
- * is a variation of the global alignment. This differentiation makes it possible to define a subset of configurations
- * that can work with a particular method. Since it is not possible to guess what the desired method for a user is,
- * there is no default and this configuration must always be provided for the alignment algorithm.
+ * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
+ * and \ref seqan3::align_cfg::method_global "global" alignments and the semi-global alignment in between, which is a
+ * variation of the global alignment.
+ *
+ * **Global Alignment**:\verbatim
+--T--CC-C-AGT--TATGT-CAGGGGACACG-A-GCATGCAGA-GAC
+  |  || |  ||  | | | |||    || | | |  | ||||   |
+AATTGCCGCC-GTCGT-T-TTCAG----CA-GTTATG-T-CAGAT--C\endverbatim
+ * Finding the optimal global alignment of two sequences is solved by the **Needleman-Wunsch algorithm** a “dynamic
+ * program”. Hence, the algorithm requires O(nm) time and memory.
+ *
+ * **Local Alignment** (better suited to find conserved segment):
+ * \verbatim
+                  tccCAGTTATGTCAGgggacacgagcatgcagagac
+                     ||||||||||||
+aattgccgccgtcgttttcagCAGTTATGTCAGatc
+\endverbatim
+ * A \ref seqan3::align_cfg::method_local "local" alignment is effectively a global alignment of two partial sequences,
+ * that is, when two genes from different species are similar in short conserved regions and dissimilar in the remaining
+ * regions. A global alignment would not find the local matching because it would try to align the entire sequence.
+ * This is solved by the **Smith-Waterman algorithm**.
+ *
+ * **Complexity** of both algorithms:
+ *
+ * We need to store (n+1)(m+1) numbers, with a constant number of calculations required for each number (three sums and
+ * one maximum). Therefore, the algorithm requires **O(nm)** time and memory.
+ *
+ * To reduce the time complexity you can use a \ref seqan3::align_cfg::band_fixed_size "banded" alignment.
+ *
+ * --
+ *
+ * By distinguishing between these alignments, it is possible to define a subset of
+ * \ref seqan3::align_cfg "configurations" that can work with a particular method. Since it is not possible to guess
+ * which method a user wants, there is no default and this \ref seqan3::align_cfg "configuration" must always be
+ * specified for the alignment algorithm.
+ *
+ * These include configurations for a semi-global alignment, such as the overlap alignment when you do not wish to
+ * penalize \ref seqan3::align_cfg::free_end_gaps_sequence1_leading "first sequence leading",
+ * \ref seqan3::align_cfg::free_end_gaps_sequence2_leading "second sequence leading" or
+ * \ref seqan3::align_cfg::free_end_gaps_sequence1_trailing "first sequence trailing",
+ * \ref seqan3::align_cfg::free_end_gaps_sequence2_trailing "second sequence trailing" gaps.
+ *
+ * If you want to define affine gap costs instead of linear ones, you can define a
+ * \ref seqan3::align_cfg::gap_cost_affine "affine gap cost scheme". If the gap scheme is not configured, it will
+ * default to a linear gap scheme initialised with edit distance.
+ *
+ * \see [lecture script - pairwise alignment](https://www.mi.fu-berlin.de/en/inf/groups/abi/teaching/lectures/lectures_past/WS0910/V___Algorithmen_und_Datenstrukturen/scripts/alignment.pdf)
  *
  * ### Example
  *
