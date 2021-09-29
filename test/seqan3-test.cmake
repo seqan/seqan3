@@ -9,7 +9,7 @@
 # SeqAn3. To build tests, run cmake on one of the sub-folders in this directory
 # which contain a CMakeLists.txt.
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.10)
 
 # require SeqAn3 package
 find_package (SeqAn3 REQUIRED

@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 include (seqan3_path_longest_stem)
 
 # Get a specific component of a test file which follows the seqan3 naming scheme.

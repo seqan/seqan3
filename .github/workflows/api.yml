@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  CMAKE_VERSION: 3.9.6
+  CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
   ISSUE: 2746 # Issue number to use for reporting failures
@@ -112,4 +112,3 @@ jobs:
         with:
           issue-number: ${{ env.ISSUE }}
           body: ${{ steps.comment-body.outputs.body }}
-

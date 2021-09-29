@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 # Exposes the google-test targets `gtest` and `gtest_main`.
 macro (seqan3_require_test_old gtest_git_tag)
     set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")

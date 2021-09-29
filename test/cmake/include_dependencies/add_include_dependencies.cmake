@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 include (diagnostics/list_missing_unit_tests)
 
 # get_include_target (<VAR> TARGET dna4_test)
