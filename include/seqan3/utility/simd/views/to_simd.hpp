@@ -64,8 +64,10 @@ private:
                   "The underlying range must model forward_range.");
     static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
                   "Expects the value type of the underlying range to be an input_range.");
-    static_assert(std::default_initializable<std::ranges::range_value_t<urng_t>>,
-                  "Expects the inner range to be default constructible.");
+    static_assert(std::default_initializable<std::ranges::iterator_t<std::ranges::range_value_t<urng_t>>>,
+                  "Expects the inner range iterator to be default initializable.");
+    static_assert(std::default_initializable<std::ranges::sentinel_t<std::ranges::range_value_t<urng_t>>>,
+                  "Expects the inner range sentinel to be default initializable.");
     static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
                   "Expects semi-alphabet as value type of the inner range.");
 
@@ -106,7 +108,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr view_to_simd() = default; //!< Defaulted.
+    constexpr view_to_simd() requires std::default_initializable<urng_t> = default; //!< Defaulted.
     constexpr view_to_simd(view_to_simd const &) = default; //!< Defaulted.
     constexpr view_to_simd(view_to_simd &&) = default; //!< Defaulted.
     constexpr view_to_simd & operator=(view_to_simd const &) = default; //!< Defaulted.
