@@ -30,15 +30,14 @@ namespace seqan3::align_cfg
  * \details
  *
  * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
- * and \ref seqan3::align_cfg::method_global "global" alignments and the semi-global alignment in between, which is a
+ * and \ref seqan3::align_cfg::method_global "global" alignments. The semi-global alignment is implemented as a
  * variation of the global alignment.
  *
  * **Global Alignment**:\verbatim
 --T--CC-C-AGT--TATGT-CAGGGGACACG-A-GCATGCAGA-GAC
   |  || |  ||  | | | |||    || | | |  | ||||   |
 AATTGCCGCC-GTCGT-T-TTCAG----CA-GTTATG-T-CAGAT--C\endverbatim
- * Finding the optimal global alignment of two sequences is solved by the **Needleman-Wunsch algorithm** a “dynamic
- * program”. Hence, the algorithm requires O(nm) time and memory.
+ * Finding the optimal global alignment of two sequences is solved by the **Needleman-Wunsch algorithm**.
  *
  * **Local Alignment** (better suited to find conserved segment):
  * \verbatim
@@ -51,6 +50,14 @@ aattgccgccgtcgttttcagCAGTTATGTCAGatc
  * regions. A global alignment would not find the local matching because it would try to align the entire sequence.
  * This is solved by the **Smith-Waterman algorithm**.
  *
+ * **Semi-global Alignment** (e.g. overlapping sequences):
+ * \verbatim
+                  TCCCAGTTATGTCAGgggacacgagcatgcagagac
+                  |||||||||||||||
+aattgccgccgtcgttttTCCCAGTTATGTCAG
+\endverbatim
+ * The semi-global alignment is a specially configured global alignment.
+ *
  * **Complexity** of both algorithms:
  *
  * We need to store (n+1)(m+1) numbers, with a constant number of calculations required for each number (three sums and
@@ -60,7 +67,7 @@ aattgccgccgtcgttttcagCAGTTATGTCAGatc
  *
  * --
  *
- * By distinguishing between these alignments, it is possible to define a subset of
+ * This differentiation between these alignments makes it possible to define a subset of
  * \ref seqan3::align_cfg "configurations" that can work with a particular method. Since it is not possible to guess
  * which method a user wants, there is no default and this \ref seqan3::align_cfg "configuration" must always be
  * specified for the alignment algorithm.
