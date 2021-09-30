@@ -36,6 +36,17 @@ macro (seqan3_snippet test_name_prefix snippet snippet_base_path)
     # disable version checker, as it interferes with comparing the snippet output
     set_tests_properties ("${snippet_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
 
+    set (snippet_compare_test_target "${test_name_prefix}/${snippet_test_name}_snippet_cmp_output")
+
+    add_test (NAME "${snippet_compare_test_target}"
+              COMMAND ${CMAKE_COMMAND}
+                      -DTARGET_FILE=$<TARGET_FILE:${target}>
+                      -DSOURCE_FILE=${snippet_base_path}/${snippet}
+                      -P "${CMAKE_SOURCE_DIR}/compare_snippet_output.cmake")
+
+    # disable version checker, as it interferes with comparing the snippet output
+    set_tests_properties ("${snippet_compare_test_target}" PROPERTIES ENVIRONMENT SEQAN3_NO_VERSION_CHECK=0)
+
     unset (snippet_target_name)
     unset (snippet_test_name)
     unset (snippet_target_path)
@@ -52,8 +63,15 @@ endmacro ()
 seqan3_require_ccache ()
 seqan3_require_test ()
 
-seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
 seqan3_snippets ("snippet" "${CMAKE_CURRENT_SOURCE_DIR}")
+seqan3_snippets ("doc/snippet" "${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
+
+# These are the tests that are known to have non-deterministic output.
+set_tests_properties ("snippet/alignment/pairwise/parallel_align_pairwise_with_callback_snippet_cmp_output"
+                      "snippet/io/views/async_input_buffer_snippet_cmp_output"
+                      "snippet/release/3.0.2_user-callback-in-alignment-and-search_snippet_cmp_output"
+                      "snippet/utility/container/aligned_allocator_snippet_cmp_output"
+                      PROPERTIES SKIP_RETURN_CODE 1)
 
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}")
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
