@@ -75,7 +75,9 @@ struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
 
     using reverse_kmer_hash_view_t = decltype(rev_kmer_view(text));
 
-    using test_range_t = decltype(seqan3::detail::minimiser_view{kmer_hash_view_t{}, reverse_kmer_hash_view_t{}, 5});
+    using test_range_t = decltype(seqan3::detail::minimiser_view{std::declval<kmer_hash_view_t &>(),
+                                                                 std::declval<reverse_kmer_hash_view_t &>(),
+                                                                 5});
     test_range_t test_range = seqan3::detail::minimiser_view{vec, rev_kmer_view(text), 5};
 };
 
