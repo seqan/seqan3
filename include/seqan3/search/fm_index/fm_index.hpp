@@ -23,7 +23,6 @@
 #include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/detail/fm_index_cursor.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
-#include <seqan3/utility/views/join_with.hpp>
 
 namespace seqan3::detail
 {
@@ -216,6 +215,30 @@ private:
     //!\brief Rank support for text_begin.
     sdsl::rank_support_sd<1> text_begin_rs;
 
+    //!\brief Eagerly convert sequence into ranks, shift by one and copy them into output_it.
+    template <typename output_it_t, typename sequence_t>
+    static output_it_t copy_sequence_ranks_shifted_by_one(output_it_t output_it, sequence_t && sequence)
+    {
+        constexpr size_t sigma = alphabet_size<alphabet_t>;
+        constexpr size_t max_sigma = text_layout_mode_ == text_layout::single ? 256u : 255u;
+
+        static constexpr auto warn_if_rank_out_of_range = [](uint8_t const rank)
+        {
+            if (rank >= max_sigma - 1) // same as rank + 1 >= max_sigma but without overflow
+                throw std::out_of_range("The input text cannot be indexed, because for full"
+                                        "character alphabets the last one/two values are reserved"
+                                        "(single sequence/collection).");
+        };
+
+        return std::ranges::transform(sequence, output_it, [](auto const & chr)
+        {
+            uint8_t const rank = seqan3::to_rank(chr);
+            if constexpr (sigma >= max_sigma)
+                warn_if_rank_out_of_range(rank);
+            return rank + 1;
+        }).out;
+    }
+
     /*!\brief Constructs the index given a range.
               The range cannot be an rvalue (i.e. a temporary object) and has to be non-empty.
      * \tparam text_t The type of range to construct from; must model std::ranges::bidirectional_range.
@@ -243,8 +266,6 @@ private:
     {
         detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
 
-        constexpr auto sigma = alphabet_size<alphabet_t>;
-
         // TODO:
         // * check what happens in sdsl when constructed twice!
         // * choose between in-memory/external and construction algorithms
@@ -252,21 +273,8 @@ private:
         // uint8_t largest_char = 0;
         sdsl::int_vector<8> tmp_text(std::ranges::distance(text));
 
-        std::ranges::move(text
-                          | views::to_rank
-                          | std::views::transform([] (uint8_t const r)
-                          {
-                              if constexpr (sigma == 256)
-                              {
-                                  if (r == 255)
-                                      throw std::out_of_range("The input text cannot be indexed, because for full"
-                                                              "character alphabets the last one/two values are reserved"
-                                                              "(single sequence/collection).");
-                              }
-                              return r + 1;
-                          })
-                          | std::views::reverse,
-                          std::ranges::begin(tmp_text)); // reverse and increase rank by one
+        // copy ranks into tmp_text
+        copy_sequence_ranks_shifted_by_one(std::ranges::begin(tmp_text), text | std::views::reverse);
 
         sdsl::construct_im(index, tmp_text, 0);
 
@@ -321,25 +329,27 @@ private:
 
         constexpr uint8_t delimiter = sigma >= 255 ? 255 : sigma + 1;
 
-        std::ranges::move(text
-                          | views::deep{views::to_rank}
-                          | views::deep
-                          {
-                              std::views::transform([] (uint8_t const r)
-                              {
-                                  if constexpr (sigma >= 255)
-                                  {
-                                      if (r >= 254)
-                                          throw std::out_of_range("The input text cannot be indexed, because"
-                                                                  " for full character alphabets the last one/"
-                                                                  "two values are reserved (single sequence/"
-                                                                  "collection).");
-                                  }
-                                  return r + 1;
-                              })
-                          }
-                          | views::join_with(delimiter),
-                          std::ranges::begin(tmp_text));
+        auto copy_join_with = [](auto output_it, auto && collection)
+        {
+            // this is basically std::views::join() with a delimiter
+            auto collection_it = std::ranges::begin(collection);
+            auto const collection_sentinel = std::ranges::end(collection);
+            if (collection_it != collection_sentinel)
+            {
+                output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
+                ++collection_it;
+
+                for (; collection_it != collection_sentinel; ++collection_it)
+                {
+                    *output_it = delimiter;
+                    ++output_it;
+                    output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
+                }
+            }
+        };
+
+        // copy ranks into tmp_text
+        copy_join_with(std::ranges::begin(tmp_text), text);
 
         if (!reverse)
         {
