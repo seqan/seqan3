@@ -87,7 +87,9 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    minimiser_view() = default; //!< Defaulted.
+    minimiser_view()
+        requires std::default_initializable<urng1_t> && std::default_initializable<urng2_t>
+        = default; //!< Defaulted.
     minimiser_view(minimiser_view const & rhs) = default; //!< Defaulted.
     minimiser_view(minimiser_view && rhs) = default; //!< Defaulted.
     minimiser_view & operator=(minimiser_view const & rhs) = default; //!< Defaulted.
