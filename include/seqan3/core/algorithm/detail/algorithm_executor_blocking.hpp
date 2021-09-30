@@ -120,10 +120,9 @@ public:
      *
      * Constant if the underlying resource type models std::ranges::random_access_range, otherwise linear.
      */
-    algorithm_executor_blocking(algorithm_executor_blocking && other) noexcept
-    {
-        move_initialise(std::move(other));
-    }
+    algorithm_executor_blocking(algorithm_executor_blocking && other) noexcept :
+        algorithm_executor_blocking{std::move(other), other.resource_position()}
+    {}
 
     //!\brief This class provides unique ownership over the managed resource and is therefor not copyable.
     algorithm_executor_blocking & operator=(algorithm_executor_blocking const &) = delete;
@@ -132,7 +131,10 @@ public:
     //!\copydetails seqan3::detail::algorithm_executor_blocking::algorithm_executor_blocking(algorithm_executor_blocking && other)
     algorithm_executor_blocking & operator=(algorithm_executor_blocking && other)
     {
-        move_initialise(std::move(other));
+        auto old_resource_position = other.resource_position();
+
+        resource = std::move(other.resource);
+        move_initialise(std::move(other), old_resource_position);
         return *this;
     }
 
@@ -163,7 +165,7 @@ public:
         algorithm{std::move(algorithm)}
     {
         if constexpr (std::same_as<execution_handler_t, execution_handler_parallel>)
-            buffer_size = static_cast<size_t>(std::ranges::distance(resource));
+            buffer_size = static_cast<size_t>(std::ranges::distance(this->resource));
 
         buffer.resize(buffer_size);
         buffer_it = buffer.end();
@@ -211,6 +213,31 @@ public:
     }
 
 private:
+    /*!\brief This constructor is needed to ensure initialisation order for the move construction.
+     * \details
+     * We need to access the processed seqan3::detail::algorithm_executor_blocking::resource_position BEFORE moving the
+     * resource range. As that could invalidate iterators.
+     */
+    algorithm_executor_blocking(algorithm_executor_blocking && other, std::ptrdiff_t old_resource_position) noexcept :
+        resource{std::move(other.resource)}
+    {
+        move_initialise(std::move(other), old_resource_position);
+    }
+
+    /*!\brief How many times was the resource_it incremented?
+     * \details
+     * \note This function isn't const-qualified, as seqan3::detail::algorithm_executor_blocking::resource isn't
+     * required to be seqan3::const_iterable_range by this class (i.e. having a const-qualified begin/end member
+     * function). The same reason why seqan3::detail::algorithm_executor_blocking::is_eof() isn't const-qualified.
+     */
+    std::ptrdiff_t resource_position()
+    {
+        // Get the old resource position.
+        auto position = std::ranges::distance(std::ranges::begin(resource), resource_it);
+        assert (position >= 0);
+        return position;
+    }
+
     //!\brief Fills the buffer by storing the results of an algorithm invocation into a pre-assigned bucket.
     fill_status fill_buffer()
     {
@@ -307,17 +334,12 @@ private:
     }
 
     //!\brief Helper function to move initialise `this` from `other`.
-    //!\copydetails seqan3::detail::algorithm_executor_blocking::algorithm_executor_blocking(algorithm_executor_blocking && other)
-    void move_initialise(algorithm_executor_blocking && other) noexcept
+    void move_initialise(algorithm_executor_blocking && other, std::ptrdiff_t old_resource_position) noexcept
     {
         algorithm = std::move(other.algorithm);
         buffer_size = std::move(other.buffer_size);
         exec_handler = std::move(other.exec_handler);
-        // Get the old resource position.
-        auto old_resource_position = std::ranges::distance(std::ranges::begin(other.resource),
-                                                           other.resource_it);
         // Move the resource and set the iterator state accordingly.
-        resource = std::move(other.resource);
         resource_it = std::ranges::next(std::ranges::begin(resource), old_resource_position);
 
         // Get the old buffer and bucket iterator positions.
@@ -341,7 +363,7 @@ private:
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource.
-    resource_type resource{};
+    resource_type resource;
     //!\brief The iterator over the resource that stores the current state of the executor.
     resource_iterator_type resource_it{};
     //!\brief The algorithm to invoke.
