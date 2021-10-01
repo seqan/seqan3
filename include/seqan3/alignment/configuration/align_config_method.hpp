@@ -30,25 +30,27 @@ namespace seqan3::align_cfg
  * \details
  *
  * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
- * and \ref seqan3::align_cfg::method_global "global" alignments. The semi-global alignment is implemented as a
+ * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
  * variation of the global alignment.
  *
  * **Global Alignment**:\verbatim
 --T--CC-C-AGT--TATGT-CAGGGGACACG-A-GCATGCAGA-GAC
   |  || |  ||  | | | |||    || | | |  | ||||   |
 AATTGCCGCC-GTCGT-T-TTCAG----CA-GTTATG-T-CAGAT--C\endverbatim
- * Finding the optimal global alignment of two sequences is solved by the **Needleman-Wunsch algorithm**.
+ * Finding the optimal global alignment of two sequences is solved by the
+ * [Needleman-Wunsch algorithm](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm).
  *
- * **Local Alignment** (better suited to find conserved segment):
+ * **Local Alignment** (better suited to find conserved segments):
  * \verbatim
                   tccCAGTTATGTCAGgggacacgagcatgcagagac
                      ||||||||||||
 aattgccgccgtcgttttcagCAGTTATGTCAGatc
 \endverbatim
- * A \ref seqan3::align_cfg::method_local "local" alignment is effectively a global alignment of two partial sequences,
- * that is, when two genes from different species are similar in short conserved regions and dissimilar in the remaining
- * regions. A global alignment would not find the local matching because it would try to align the entire sequence.
- * This is solved by the **Smith-Waterman algorithm**.
+ * A \ref seqan3::align_cfg::method_local "local" alignment is effectively a global alignment of two partial sequences.
+ * For example when two genes from different species are similar in short conserved regions and dissimilar in the
+ * remaining regions. A global alignment would not find the local matching because it would try to align the entire
+ * sequence. This is solved by the
+ * [Smith-Waterman algorithm](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm).
  *
  * **Semi-global Alignment** (e.g. overlapping sequences):
  * \verbatim
@@ -56,14 +58,20 @@ aattgccgccgtcgttttcagCAGTTATGTCAGatc
                   |||||||||||||||
 aattgccgccgtcgttttTCCCAGTTATGTCAG
 \endverbatim
- * The semi-global alignment is a specially configured global alignment.
+ * The semi-global alignment is a specially configured global alignment, namely we do not penalize gaps at the ends of
+ * the alignment. Semi-global alignments are often used in genome assembly applications when trying to find matching
+ * overlaps.
  *
  * **Complexity** of both algorithms:
  *
- * We need to store (n+1)(m+1) numbers, with a constant number of calculations required for each number (three sums and
- * one maximum). Therefore, the algorithm requires **O(nm)** time and memory.
+ * Since both algorithms are based on dynamic programming, they run in quadratic time and memory **O(nm)** (where `n`
+ * and `m` are the lengths of the respective aligned sequences).
  *
- * To reduce the time complexity you can use a \ref seqan3::align_cfg::band_fixed_size "banded" alignment.
+ * To reduce the time complexity you can use a \ref seqan3::align_cfg::band_fixed_size "banded" alignment. It reduces
+ * the runtime by a constant although remaining quadratic and limiting the possible solutions slightly.
+ *
+ * You can speed up the computation significantly if you \ref seqan3::align_cfg::parallel "parallelize" and
+ * \ref seqan3::simd "simdify" your alignment.
  *
  * --
  *
