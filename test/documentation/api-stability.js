@@ -23,7 +23,7 @@ $(document).ready(function()
             prev = entry_obj;
             do prev = prev.previousSibling; while(prev && prev.nodeType !== 1);
 
-            prev.innerText = prev.innerText + '  ' + '[' + api_type + '] ';
+            prev.innerContent = prev.innerContent + '  ' + '[' + api_type + '] ';
 
             if (api_type != "stable-api") // for now, leave stable api background in blue.
             {
