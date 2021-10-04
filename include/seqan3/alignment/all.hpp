@@ -225,6 +225,10 @@
  * This option, however, is not available for the local alignment where penalising gaps at the ends of the
  * sequences is always disabled.
  *
+ * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_global
+ *
+ * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_local
+ *
  * ## Algorithmic details
  *
  * By default a generic alignment algorithm is used that supports all valid alignment configurations but for some

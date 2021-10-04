@@ -33,68 +33,13 @@ namespace seqan3::align_cfg
  * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
  * variation of the global alignment.
  *
- * **Global Alignment**:\verbatim
---T--CC-C-AGT--TATGT-CAGGGGACACG-A-GCATGCAGA-GAC
-  |  || |  ||  | | | |||    || | | |  | ||||   |
-AATTGCCGCC-GTCGT-T-TTCAG----CA-GTTATG-T-CAGAT--C\endverbatim
- * Finding the optimal global alignment of two sequences is solved by the
- * [Needleman-Wunsch algorithm](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm).
- *
- * **Local Alignment** (better suited to find conserved segments):
- * \verbatim
-                  tccCAGTTATGTCAGgggacacgagcatgcagagac
-                     ||||||||||||
-aattgccgccgtcgttttcagCAGTTATGTCAGatc
-\endverbatim
- * A \ref seqan3::align_cfg::method_local "local" alignment is effectively a global alignment of two partial sequences.
- * For example when two genes from different species are similar in short conserved regions and dissimilar in the
- * remaining regions. A global alignment would not find the local matching because it would try to align the entire
- * sequence. This is solved by the
- * [Smith-Waterman algorithm](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm).
- *
- * **Semi-global Alignment** (e.g. overlapping sequences):
- * \verbatim
-                  TCCCAGTTATGTCAGgggacacgagcatgcagagac
-                  |||||||||||||||
-aattgccgccgtcgttttTCCCAGTTATGTCAG
-\endverbatim
- * The semi-global alignment is a specially configured global alignment, namely we do not penalize gaps at the ends of
- * the alignment. Semi-global alignments are often used in genome assembly applications when trying to find matching
- * overlaps.
- *
- * **Complexity** of both algorithms:
- *
- * Since both algorithms are based on dynamic programming, they run in quadratic time and memory **O(nm)** (where `n`
- * and `m` are the lengths of the respective aligned sequences).
- *
- * To reduce the time complexity you can use a \ref seqan3::align_cfg::band_fixed_size "banded" alignment. It reduces
- * the runtime by a constant although remaining quadratic and limiting the possible solutions slightly.
- *
- * You can speed up the computation significantly if you \ref seqan3::align_cfg::parallel "parallelize" and
- * \ref seqan3::simd "simdify" your alignment.
- *
- * --
- *
- * This differentiation between these alignments makes it possible to define a subset of
- * \ref seqan3::align_cfg "configurations" that can work with a particular method. Since it is not possible to guess
- * which method a user wants, there is no default and this \ref seqan3::align_cfg "configuration" must always be
- * specified for the alignment algorithm.
- *
- * These include configurations for a semi-global alignment, such as the overlap alignment when you do not wish to
- * penalize \ref seqan3::align_cfg::free_end_gaps_sequence1_leading "first sequence leading",
- * \ref seqan3::align_cfg::free_end_gaps_sequence2_leading "second sequence leading" or
- * \ref seqan3::align_cfg::free_end_gaps_sequence1_trailing "first sequence trailing",
- * \ref seqan3::align_cfg::free_end_gaps_sequence2_trailing "second sequence trailing" gaps.
- *
- * If you want to define affine gap costs instead of linear ones, you can define a
- * \ref seqan3::align_cfg::gap_cost_affine "affine gap cost scheme". If the gap scheme is not configured, it will
- * default to a linear gap scheme initialised with edit distance.
- *
- * \see [lecture script - pairwise alignment](https://www.mi.fu-berlin.de/en/inf/groups/abi/teaching/lectures/lectures_past/WS0910/V___Algorithmen_und_Datenstrukturen/scripts/alignment.pdf)
+ * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_local
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_method_local.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 class method_local : private pipeable_config_element
 {
@@ -158,7 +103,20 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
 
 /*!\brief Sets the global alignment method.
  * \ingroup alignment_configuration
- * \copydetails seqan3::align_cfg::method_local
+
+ * \details
+ *
+ * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
+ * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
+ * variation of the global alignment.
+ *
+ * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_global
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/align_cfg_method_global.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 class method_global : private pipeable_config_element
 {
