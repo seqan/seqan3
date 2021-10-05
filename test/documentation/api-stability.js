@@ -20,15 +20,13 @@ $(document).ready(function()
             $(this).find('span.mlabels').prepend('<span class="mlabel ' + api_type + '">' + api_type + '</span>');
 
             // get header above the item, append the api_type tag to the header and change the bg color
-            prev = entry_obj;
-            do prev = prev.previousSibling; while(prev && prev.nodeType !== 1);
-
-            prev.innerContent = prev.innerContent + '  ' + '[' + api_type + '] ';
+            var header = $(entry_obj).prev('h2.memtitle')[0];
+            header.append(' [' + api_type + '] ');
 
             if (api_type != "stable-api") // for now, leave stable api background in blue.
             {
-                prev.style.backgroundImage = "none";
-                prev.style.backgroundColor = api_color;
+                header.style.backgroundImage = "none";
+                header.style.backgroundColor = api_color;
             }
         }
         else if (entry_type == "header")
