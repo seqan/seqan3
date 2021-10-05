@@ -24,6 +24,7 @@ namespace seqan3::search_cfg
 
 /*!\brief Configuration element to provide a user defined callback function for the search.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \tparam callback_t The type of the callback; must model std::invocable with the generated seqan3::search_result
  *                    and std::move_constructible.

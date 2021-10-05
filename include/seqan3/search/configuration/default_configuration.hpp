@@ -24,6 +24,7 @@ namespace seqan3::search_cfg
 
 /*!\brief The default configuration: Compute all exact matches.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \if DEV
  * \todo Make constexpr after GCC7 support is dropped.

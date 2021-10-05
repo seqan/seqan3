@@ -23,6 +23,7 @@ namespace seqan3::search_cfg
 
 /*!\brief A strong type of underlying type `uint8_t` that represents the number of errors.
  * \ingroup search_configuration
+ * \see search_configuration
  * \tparam value_t The underlying type.
  */
 struct error_count : detail::strong_type<uint8_t,
@@ -37,6 +38,7 @@ struct error_count : detail::strong_type<uint8_t,
 
 /*!\brief A strong type of underlying type `double` that represents the rate of errors.
  * \ingroup search_configuration
+ * \see search_configuration
  * \tparam value_t The underlying type.
  */
 struct error_rate : detail::strong_type<double,
