@@ -225,9 +225,9 @@
  * This option, however, is not available for the local alignment where penalising gaps at the ends of the
  * sequences is always disabled.
  *
- * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_global
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
  *
- * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_local
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
  *
  * ## Algorithmic details
  *

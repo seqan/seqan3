@@ -33,7 +33,7 @@ namespace seqan3::align_cfg
  * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
  * variation of the global alignment.
  *
- * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_local
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
  *
  * ### Example
  *
@@ -110,7 +110,7 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
  * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
  * variation of the global alignment.
  *
- * \copydoc seqan3::doxygen::alignment_configuration_align_config_method_global
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
  *
  * ### Example
  *
