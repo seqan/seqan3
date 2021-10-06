@@ -334,17 +334,17 @@ private:
             // this is basically std::views::join() with a delimiter
             auto collection_it = std::ranges::begin(collection);
             auto const collection_sentinel = std::ranges::end(collection);
-            if (collection_it != collection_sentinel)
-            {
-                output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
-                ++collection_it;
+            if (collection_it == collection_sentinel)
+                return;
 
-                for (; collection_it != collection_sentinel; ++collection_it)
-                {
-                    *output_it = delimiter;
-                    ++output_it;
-                    output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
-                }
+            output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
+            ++collection_it;
+
+            for (; collection_it != collection_sentinel; ++collection_it)
+            {
+                *output_it = delimiter;
+                ++output_it;
+                output_it = copy_sequence_ranks_shifted_by_one(output_it, *collection_it);
             }
         };
 
