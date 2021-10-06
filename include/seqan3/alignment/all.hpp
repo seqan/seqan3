@@ -225,6 +225,10 @@
  * This option, however, is not available for the local alignment where penalising gaps at the ends of the
  * sequences is always disabled.
  *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
+ *
  * ## Algorithmic details
  *
  * By default a generic alignment algorithm is used that supports all valid alignment configurations but for some

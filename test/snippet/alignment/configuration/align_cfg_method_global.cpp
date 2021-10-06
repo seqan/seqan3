@@ -9,8 +9,8 @@ using namespace seqan3::literals;
 
 int main()
 {
-    // configure a local alignment for DNA sequences
-    auto min_cfg = seqan3::align_cfg::method_local{} |
+    // configure a global alignment for DNA sequences
+    auto min_cfg = seqan3::align_cfg::method_global{} |
                    seqan3::align_cfg::scoring_scheme{seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
                                                                                        seqan3::mismatch_score{-5}}};
 
