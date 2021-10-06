@@ -457,7 +457,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
         }
         else
         {
-            std::ranges::next(std::ranges::begin(field_view)); // skip '*'
+            ++std::ranges::begin(field_view); // skip '*'
         }
     }
     else
@@ -570,7 +570,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     }
     else
     {
-        std::ranges::next(std::ranges::begin(field_view)); // skip '*'
+        ++std::ranges::begin(field_view); // skip '*'
     }
 
     // Field 11:  Quality
@@ -597,7 +597,7 @@ inline void format_sam::read_alignment_record(stream_type & stream,
     // -------------------------------------------------------------------------------------------------------------
     while (is_char<'\t'>(*std::ranges::begin(stream_view))) // read all tags if present
     {
-        std::ranges::next(std::ranges::begin(stream_view)); // skip tab
+        ++std::ranges::begin(stream_view); // skip tab
         auto stream_until_tab_or_end = stream_view | detail::take_until_or_throw(tab_or_end);
         if constexpr (!detail::decays_to_ignore_v<tag_dict_type>)
             read_sam_dict_field(stream_until_tab_or_end, tag_dict);
@@ -943,7 +943,7 @@ inline void format_sam::read_sam_dict_vector(seqan3::detail::sam_tag_variant & v
         tmp_vector.push_back(value);
 
         if (is_char<','>(*std::ranges::begin(stream_view)))
-            std::ranges::next(std::ranges::begin(stream_view)); // skip ','
+            ++std::ranges::begin(stream_view); // skip ','
     }
     variant = std::move(tmp_vector);
 }
@@ -1011,20 +1011,20 @@ inline void format_sam::read_sam_dict_field(stream_view_type && stream_view, sam
        VALUE's and the inner value type is identified by the character following ':', one of [cCsSiIf].
     */
     uint16_t tag = static_cast<uint16_t>(*std::ranges::begin(stream_view)) << 8;
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
+    ++std::ranges::begin(stream_view); // skip char read before
     tag += static_cast<uint16_t>(*std::ranges::begin(stream_view));
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
-    std::ranges::next(std::ranges::begin(stream_view)); // skip ':'
+    ++std::ranges::begin(stream_view); // skip char read before
+    ++std::ranges::begin(stream_view); // skip ':'
     char type_id = *std::ranges::begin(stream_view);
-    std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
-    std::ranges::next(std::ranges::begin(stream_view)); // skip ':'
+    ++std::ranges::begin(stream_view); // skip char read before
+    ++std::ranges::begin(stream_view); // skip ':'
 
     switch (type_id)
     {
         case 'A' : // char
         {
             target[tag] = static_cast<char>(*std::ranges::begin(stream_view));
-            std::ranges::next(std::ranges::begin(stream_view)); // skip char that has been read
+            ++std::ranges::begin(stream_view); // skip char that has been read
             break;
         }
         case 'i' : // int32_t
@@ -1054,8 +1054,8 @@ inline void format_sam::read_sam_dict_field(stream_view_type && stream_view, sam
         case 'B' : // Array. Value type depends on second char [cCsSiIf]
         {
             char array_value_type_id = *std::ranges::begin(stream_view);
-            std::ranges::next(std::ranges::begin(stream_view)); // skip char read before
-            std::ranges::next(std::ranges::begin(stream_view)); // skip first ','
+            ++std::ranges::begin(stream_view); // skip char read before
+            ++std::ranges::begin(stream_view); // skip first ','
 
             switch (array_value_type_id)
             {

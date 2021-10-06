@@ -320,7 +320,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
 
             string_buffer.resize(l_name - 1);
             std::ranges::copy_n(std::ranges::begin(stream_view), l_name - 1, string_buffer.data()); // copy without \0 character
-            std::ranges::next(std::ranges::begin(stream_view)); // skip \0 character
+            ++std::ranges::begin(stream_view); // skip \0 character
 
             read_integral_byte_field(stream_view, l_ref);
 
@@ -407,7 +407,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         read_forward_range_field(id_view, id); // field::id
     else
         detail::consume(id_view);
-    std::ranges::next(std::ranges::begin(stream_view)); // skip '\0'
+    ++std::ranges::begin(stream_view); // skip '\0'
 
     // read cigar string
     // -------------------------------------------------------------------------------------------------------------
@@ -442,7 +442,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
             {
                 detail::consume(seq_stream);
                 if (core.l_seq & 1)
-                    std::ranges::next(std::ranges::begin(stream_view));
+                    ++std::ranges::begin(stream_view);
             };
 
             if constexpr (!detail::decays_to_ignore_v<align_type>)
@@ -511,7 +511,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
             {
                 dna16sam d = dna16sam{}.assign_rank(std::min(15, static_cast<uint8_t>(*std::ranges::begin(stream_view)) >> 4));
                 seq.push_back(from_dna16[to_rank(d)]);
-                std::ranges::next(std::ranges::begin(stream_view));
+                ++std::ranges::begin(stream_view);
             }
 
             if constexpr (!detail::decays_to_ignore_v<align_type>)
