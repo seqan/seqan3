@@ -331,7 +331,7 @@ public:
     /*!\brief Initiates the actual command line parsing.
      *
      * \attention The function must be called at the very end of all parser
-     * related code and should be enclosed in a try catch block as the argument parser may throw,.
+     * related code and should be enclosed in a try catch block as the argument parser may throw.
      *
      * \throws seqan3::design_error if this function was already called before.
      *
