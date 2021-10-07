@@ -26,24 +26,7 @@
  *
  * \details
  *
- * # Introduction
- *
- * An essential step in almost every bioinformatics application or pipeline is to determine the evolutionary distances
- * of two or more biological sequences (genomic or protein sequences). To get this information on base level resolution
- * one needs to align these sequences. During this alignment step a score is computed which estimates how similar
- * the sequences in question are. Moreover, an alignment transcript can be computed which describes the insertions,
- * deletions and substitutions of bases necessary to transform one sequence into another.
- *
- * There have been numerous adaptions and modifications of the original global alignment problem to solve similar
- * problems such as the local alignment. Here, the goal is to find a maximal homologue region between two
- * sequences that has been conserved during the evolution. Other examples are the semi-global alignment which is
- * frequently used in read mapping in order to align a smaller sequence into the context of a larger reference sequence.
- *
- * SeqAn offers a generic multi-purpose alignment library comprising all widely known alignment algorithms as well as
- * many special algorithms. These algorithms are all accessible through an easy to use alignment interface which
- * is described below.
- *
- * # Pairwise alignment
+ * # Introduction to pairwise alignment
  *
  * Pairwise sequence alignments can be computed with the free function seqan3::align_pairwise. This function is called
  * in the default case with a sequence pair and an alignment configuration object.
@@ -69,8 +52,7 @@
  * \attention In addition to the type requirements above the alignment interface requires that the passed sequences
  *            model std::ranges::random_access_range and std::ranges::sized_range in order to work correctly, e.g. a
  *            std::vector.
- *
- * ## Configuring pairwise alignments
+ * # Configuring pairwise alignments
  *
  * In SeqAn the alignment algorithm can be configured in many different ways. The core of this configuration are the
  * different configuration elements that select specific features of the algorithm. To allow a maximal flexibility
@@ -78,12 +60,86 @@
  * invoked. The respective alignment configurations are defined in their own
  * namespace called seqan3::align_cfg. This namespace is used to disambiguate configurations for the
  * alignment algorithm with configurations from other algorithms in SeqAn.
- * To compute a pairwise alignment at least two configuration elements must be provided: The alignment method and the
- * scoring scheme. Thus, a valid alignment configuration must specify what kind of alignment shall be computed, as
+ *
+ * To compute a pairwise alignment at least two configuration elements must be provided: The alignment **method** and the
+ * **scoring scheme**. Thus, a valid alignment configuration must specify what kind of alignment shall be computed, as
  * it strongly depends on the corresponding context. A default wouldn't make much sense here. For similar
  * reasons the scoring scheme has to be always provided by the user.
  *
- * ### Combining configuration elements
+ * # Global and local alignments
+ *
+ * There have been numerous adaptions and modifications of the original global alignment problem to solve similar
+ * problems such as the local alignment. Here, the goal is to find a maximal homologue region between two
+ * sequences that has been conserved during the evolution. Other examples are the **semi-global** alignment which is
+ * frequently used in read mapping in order to align a smaller sequence into the context of a larger reference sequence.
+ *
+ * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and
+ * seqan3::align_cfg::method_local, respectively.
+ *
+ * A **semi-global** alignment can be computed by specifying the free end-gaps in the constructor of
+ * seqan3::align_cfg::method_global. The parameters enable, respectively disable, the scoring of
+ * leading and trailing gaps at the respective sequence ends (
+ * \ref seqan3::align_cfg::free_end_gaps_sequence1_leading "first sequence leading",
+ * \ref seqan3::align_cfg::free_end_gaps_sequence2_leading "second sequence leading" or
+ * \ref seqan3::align_cfg::free_end_gaps_sequence1_trailing "first sequence trailing",
+ * \ref seqan3::align_cfg::free_end_gaps_sequence2_trailing "second sequence trailing" gaps).
+ * The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
+ * algorithm.
+ * This option, however, is not available for the local alignment where penalising gaps at the ends of the
+ * sequences is always disabled.
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
+ *
+ * # Using scoring and gap schemes
+ *
+ * To compute an alignment a scoring and a gap scheme must be provided which give a "score" for substituting, inserting,
+ * or deleting a base within the alignment computation. Throughout SeqAn, a positive score implies
+ * higher similarity and/or a closer relatedness and a lower or even negative score implies distance.
+ * If you are used to dealing with "penalties" or "distances", instead think of "negative scores" when using SeqAn
+ * interfaces.
+ *
+ * ## Scoring two letters
+ *
+ * Scoring two letters of a single alphabet (or two similar alphabets) is performed by scoring schemes. A scoring
+ * scheme is any type that models seqan3::scoring_scheme_for, i.e. it must provide a member function that
+ * takes the two letters and returns the scheme-specific score. Algorithms that expect a scoring scheme should check
+ * this concept with their respective alphabet(s).
+ *
+ * Two generic scoring schemes are available in SeqAn:
+ *
+ *   1. seqan3::nucleotide_scoring_scheme that accepts all nucleotides (and any alphabet that is explicitly
+ * convertible to seqan3::dna15)
+ *   2. seqan3::aminoacid_scoring_scheme that accepts all amino acids (and any alphabet that is explicitly convertible
+ * to seqan3::aa27).
+ *
+ * These also support scoring two nucleotides/amino acids of different types and they also support modification of
+ * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
+ * add completely different types, as long as they model seqan3::scoring_scheme_for for the respective sequence
+ * alphabet type. In fact, when invoking the seqan3::align_pairwise interface it will be checked at compile time if
+ * the provided scoring scheme can be used in combination with the passed sequences and if not a static
+ * assertion is raised.
+ *
+ * The scoring scheme can be configured with the seqan3::align_cfg::scoring_scheme element. Since the scoring scheme is
+ * strongly coupled on the sequences to be aligned, there is no default for it. Thus, it is mandatory for
+ * the developer to specify this configuration.
+ *
+ * ## Scoring gaps
+ *
+ * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref alphabet_gap) and a gap interval to
+ * refer to a stretch of consecutive gaps.
+ * When aligning two sequences a gap is introduced to mark an insertion or deletion with respect to the other sequence.
+ * However, because it is widely recognised that the likelihood of `n` consecutive gaps is much higher than that
+ * of `n` individual gaps the scoring of an individual gap or a stretch of gaps is not handled by the scoring scheme.
+ * This is based on the assumption that one biological event often introduces more than one gap at a time and
+ * that single character gaps are not common due to other biological factors like frame preservation in protein-coding
+ * sequences.
+ *
+ * SeqAn offers the additional seqan3::gap_cost_affine which can be used to set the scores for opening
+ * (seqan3::align_cfg::open_score) or extending a gap (seqan3::align_cfg::extension_score).
+ *
+ * # Combining configuration elements
  *
  * Configurations can be combined using the `|`-operator. If a combination is invalid, a static assertion is raised
  * during the compilation of the program. It will inform the user that some configurations cannot be combined together
@@ -114,7 +170,7 @@
  * all other configuration elements.
  * \endif
  *
- * ## Accessing the alignment results
+ * # Accessing the alignment results
  * \anchor seqan3_align_cfg_output_configurations
  *
  * The seqan3::align_pairwise interface returns a seqan3::algorithm_result_generator_range. This range is a lazy single
@@ -160,74 +216,17 @@
  *       computed pair of sequences. In the future, there will be a mechanism for the user to specify the id of
  *       the sequences.
  *
- * ## Using scoring and gap schemes
+ * # Algorithmic details
  *
- * To compute an alignment a scoring and a gap scheme must be provided which give a "score" for substituting, inserting,
- * or deleting a base within the alignment computation. Throughout SeqAn, a positive score implies
- * higher similarity and/or a closer relatedness and a lower or even negative score implies distance.
- * If you are used to dealing with "penalties" or "distances", instead think of "negative scores" when using SeqAn
- * interfaces.
+ * Since both algorithms ([Smith-Waterman](https://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm) and
+ * [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) algorithm) are based on dynamic
+ * programming, they run in quadratic time and memory **O(nm)** (where `n` and `m` are the lengths of the respective
+ * aligned sequences).
  *
- * ### Scoring two letters
- *
- * Scoring two letters of a single alphabet (or two similar alphabets) is performed by scoring schemes. A scoring
- * scheme is any type that models seqan3::scoring_scheme_for, i.e. it must provide a member function that
- * takes the two letters and returns the scheme-specific score. Algorithms that expect a scoring scheme should check
- * this concept with their respective alphabet(s).
- *
- * Two generic scoring schemes are available in SeqAn:
- *
- *   1. seqan3::nucleotide_scoring_scheme that accepts all nucleotides (and any alphabet that is explicitly
- * convertible to seqan3::dna15)
- *   2. seqan3::aminoacid_scoring_scheme that accepts all amino acids (and any alphabet that is explicitly convertible
- * to seqan3::aa27).
- *
- * These also support scoring two nucleotides/amino acids of different types and they also support modification of
- * their scores via `set_()` functions and by returning references to their internal score matrix. You can however
- * add completely different types, as long as they model seqan3::scoring_scheme_for for the respective sequence
- * alphabet type. In fact, when invoking the seqan3::align_pairwise interface it will be checked at compile time if
- * the provided scoring scheme can be used in combination with the passed sequences and if not a static
- * assertion is raised.
- *
- * The scoring scheme can be configured with the seqan3::align_cfg::scoring_scheme element. Since the scoring scheme is
- * strongly coupled on the sequences to be aligned, there is no default for it. Thus, it is mandatory for
- * the developer to specify this configuration.
- *
- * ### Scoring gaps
- *
- * Throughout SeqAn we use the term gap to refer to an individual gap (see \ref alphabet_gap) and a gap interval to
- * refer to a stretch of consecutive gaps.
- * When aligning two sequences a gap is introduced to mark an insertion or deletion with respect to the other sequence.
- * However, because it is widely recognised that the likelihood of `n` consecutive gaps is much higher than that
- * of `n` individual gaps the scoring of an individual gap or a stretch of gaps is not handled by the scoring scheme.
- * This is based on the assumption that one biological event often introduces more than one gap at a time and
- * that single character gaps are not common due to other biological factors like frame preservation in protein-coding
- * sequences.
- *
- * SeqAn offers the additional seqan3::gap_cost_affine which can be used to set the scores for opening
- * (seqan3::align_cfg::open_score) or extending a gap (seqan3::align_cfg::extension_score).
- *
- * ## Computing banded alignments
- *
- * \include{doc} doc/fragments/alignment_configuration_align_config_band.md
- *
- * ## Global and local alignments
- *
- * The standard global and local alignments can be configured using seqan3::align_cfg::method_global and
- * seqan3::align_cfg::method_local, respectively.
- * A semi-global alignment can be computed by specifying the free end-gaps in the constructor of
- * seqan3::align_cfg::method_global. The parameters enable, respectively disable, the scoring of
- * leading and trailing gaps at the respective sequence ends.
- * The SeqAn alignment algorithm allows any free end-gap settings making it a very versatile
- * algorithm.
- * This option, however, is not available for the local alignment where penalising gaps at the ends of the
- * sequences is always disabled.
- *
- * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
- *
- * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
- *
- * ## Algorithmic details
+ * To reduce the time complexity you can use a \ref seqan3::align_cfg::band_fixed_size "banded" alignment. It reduces
+ * the runtime by a constant although remaining quadratic and limiting the possible solutions slightly.
+ * You can speed up the computation significantly if you \ref seqan3::align_cfg::parallel "parallelize" and simdify your
+ * alignment. More about banded and parallelization can be read below.
  *
  * By default a generic alignment algorithm is used that supports all valid alignment configurations but for some
  * special combinations of parameters a notably faster algorithm is available.
@@ -247,11 +246,15 @@
  * \note If there was a configuration that is not suitable for the edit distance algorithm the standard alignment
  *       algorithm is executed as a fallback.
  *
+ * # Computing banded alignments
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_band.md
+ *
  * # Parallel alignment execution
  *
  * \include{doc} doc/fragments/alignment_configuration_align_config_parallel.md
  *
- * ## User callback
+ * # User callback
  *
  * In some cases, for example when executing the alignments in parallel, it can be beneficial for the performance to
  * use a continuation interface rather than collecting the results first through the seqan3::algorithm_result_generator_range.
@@ -265,5 +268,7 @@
  *
  * \include test/snippet/alignment/pairwise/parallel_align_pairwise_with_callback.cpp
  *
- * \see alignment
+ * \see
+ *  - [lecture script - pairwise alignment](https://www.mi.fu-berlin.de/en/inf/groups/abi/teaching/lectures/lectures_past/WS0910/V___Algorithmen_und_Datenstrukturen/scripts/alignment.pdf)\n
+ *  - alignment
  */
