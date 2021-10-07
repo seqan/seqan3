@@ -222,7 +222,7 @@ private:
         constexpr size_t sigma = alphabet_size<alphabet_t>;
         constexpr size_t max_sigma = text_layout_mode_ == text_layout::single ? 256u : 255u;
 
-        static constexpr auto warn_if_rank_out_of_range = [](uint8_t const rank)
+        [[maybe_unused]] static constexpr auto warn_if_rank_out_of_range = [](uint8_t const rank)
         {
             if (rank >= max_sigma - 1) // same as rank + 1 >= max_sigma but without overflow
                 throw std::out_of_range("The input text cannot be indexed, because for full"
