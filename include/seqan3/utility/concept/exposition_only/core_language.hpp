@@ -31,10 +31,10 @@ SEQAN3_CONCEPT weakly_equality_comparable_with =
     requires(std::remove_reference_t<T> const & t,
              std::remove_reference_t<U> const & u)
     {
-        std::convertible_to<decltype(t == u), bool>;
-        std::convertible_to<decltype(t != u), bool>;
-        std::convertible_to<decltype(u == t), bool>;
-        std::convertible_to<decltype(u != t), bool>;
+        requires std::convertible_to<decltype(t == u), bool>;
+        requires std::convertible_to<decltype(t != u), bool>;
+        requires std::convertible_to<decltype(u == t), bool>;
+        requires std::convertible_to<decltype(u != t), bool>;
     };
 //!\endcond
 
@@ -56,15 +56,15 @@ template <typename t1, typename t2>
 SEQAN3_CONCEPT weakly_ordered_with = requires (std::remove_reference_t<t1> const & v1,
                                                std::remove_reference_t<t2> const & v2)
 {
-    std::convertible_to<decltype(v1 <  v2), bool>;
-    std::convertible_to<decltype(v1 <= v2), bool>;
-    std::convertible_to<decltype(v1 >  v2), bool>;
-    std::convertible_to<decltype(v1 >= v2), bool>;
+    requires std::convertible_to<decltype(v1 <  v2), bool>;
+    requires std::convertible_to<decltype(v1 <= v2), bool>;
+    requires std::convertible_to<decltype(v1 >  v2), bool>;
+    requires std::convertible_to<decltype(v1 >= v2), bool>;
 
-    std::convertible_to<decltype(v2 <  v1), bool>;
-    std::convertible_to<decltype(v2 <= v1), bool>;
-    std::convertible_to<decltype(v2 >  v1), bool>;
-    std::convertible_to<decltype(v2 >= v1), bool>;
+    requires std::convertible_to<decltype(v2 <  v1), bool>;
+    requires std::convertible_to<decltype(v2 <= v1), bool>;
+    requires std::convertible_to<decltype(v2 >  v1), bool>;
+    requires std::convertible_to<decltype(v2 >= v1), bool>;
 };
 //!\endcond
 
