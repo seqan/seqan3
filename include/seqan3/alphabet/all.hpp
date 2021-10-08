@@ -152,7 +152,7 @@
  * that accepts different alphabet types, you need to use the free function / type trait interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
- * # containers over alphabets
+ * # Containers over alphabets
  *
  * In SeqAn it is recommended you use the STL container classes like std::vector for storing sequence data,
  * but you can use other class templates if they satisfy the respective seqan3::container, e.g. `std::deque` or
