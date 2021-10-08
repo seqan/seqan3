@@ -42,7 +42,7 @@
  *
  * # The alphabet concepts
  *
- * ### alphabet size
+ * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
  * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
@@ -160,14 +160,14 @@
  * <tt>folly::fbvector</tt></a> or even <a href="https://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.
  *
- * `std::basic_string` is also supported, however, we recommend against using it,
+ * `std::basic_string` is also supported, however, we do not recommend using it,
  * because it is not safe (and not useful) to call certain members like `.c_str()` if our alphabets are used as
  * value type.
  *
  * We provide specialised containers with certain properties in the \link alphabet_container Alphabet Container module
  * \endlink.
  *
- * A container over an seqan3::alphabet automatically models the seqan3::sequence concept.
+ * A container over a seqan3::alphabet automatically models the seqan3::sequence concept.
  */
 
 /*!\namespace seqan3::literals
