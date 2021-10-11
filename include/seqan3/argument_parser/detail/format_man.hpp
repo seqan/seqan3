@@ -31,6 +31,8 @@ namespace seqan3::detail
  * In addition the needed order would be different from the parse format.
  * Thus the calls are stored (parser_set_up_calls and positional_option_calls)
  * and only evaluated when calling seqan3::detail::format_help_base::parse.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_man : public format_help_base<format_man>
 {

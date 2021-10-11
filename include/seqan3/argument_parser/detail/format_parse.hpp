@@ -48,6 +48,8 @@ namespace seqan3::detail
  * When parsing flags and options, the identifiers (and values) are removed from
  * the vector format_parse::argv. That way, options that are specified multiple times,
  * but are no container type, can be identified and an error is reported.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser 
  */
 class format_parse : public format_base
 {

@@ -45,6 +45,8 @@ namespace seqan3::custom
  *
  * \note Only use this if you cannot provide respective functions in your namespace. See the tutorial
  * \ref tutorial_argument_parser for an example of customising a type within your own namespace.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename t>
 struct argument_parsing
@@ -74,7 +76,8 @@ template <typename t>
 std::unordered_map<std::string_view, t> enumeration_names(t) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enumeration_names.
-//!\ingroup alphabet
+//!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 template <typename option_t>
 struct enumeration_names_cpo : public detail::customisation_point_object<enumeration_names_cpo<option_t>, 1>
 {
@@ -154,6 +157,8 @@ namespace seqan3
  *
  * \include test/snippet/argument_parser/custom_argument_parsing_enumeration.cpp
  *
+ * \remark For a complete overview, take a look at \ref argument_parser
+ *
  * ### Customisation point
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own type,
@@ -175,6 +180,8 @@ inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<op
  *
  * * A instance of seqan3::enumeration_names<option_type> must exist and be of type
  *   `std::unordered_map<std::string, option_type>`.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 //!\cond
 template <typename option_type>
@@ -193,6 +200,8 @@ SEQAN3_CONCEPT named_enumeration = requires
  *
  * In order to model this concept, the type must either be streamable to std::istringstream or
  * model seqan3::named_enumeration<option_type>.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 //!\cond
 template <typename option_type>
@@ -239,6 +248,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
  * \include test/snippet/argument_parser/auxiliary.cpp
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 enum option_spec
 {
@@ -275,6 +286,8 @@ enum class update_notifications
  *
  * The meta information is assembled in a struct to provide a central access
  * point that can be easily extended.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 struct argument_parser_meta_data // holds all meta information
 {

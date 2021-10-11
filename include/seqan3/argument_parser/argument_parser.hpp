@@ -331,7 +331,7 @@ public:
     /*!\brief Initiates the actual command line parsing.
      *
      * \attention The function must be called at the very end of all parser
-     * related code and should be enclosed in a try catch block.
+     * related code and should be enclosed in a try catch block as the argument parser may throw.
      *
      * \throws seqan3::design_error if this function was already called before.
      *
@@ -358,8 +358,6 @@ public:
      * - <b>\--version-check false/0/true/1</b> Disable/enable update notifications.
      *
      * Example:
-     *
-     * \note Since the argument parser may throw, you should always wrap `parse()` into a try-catch block.
      *
      * \include test/snippet/argument_parser/argument_parser_2.cpp
      *

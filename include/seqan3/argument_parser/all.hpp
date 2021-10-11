@@ -18,8 +18,9 @@
 #include <seqan3/argument_parser/validators.hpp>
 
 
-/*!\defgroup argument_parser Argument Parser
+/*!\file
  * \brief The Argument Parser Module
+ * \defgroup argument_parser Argument Parser
  *
  * # The Argument Parser Class
  *
