@@ -13,14 +13,14 @@ $(document).ready(function()
         $(this).find('div.memproto').html(new_html);
     }
 
-    var add_labels = function(api_type, entry_obj, entry_type)
+    var add_labels = function(api_type, entry_type)
     {
         if (entry_type == "member")
         {
             $(this).find('span.mlabels').prepend('<span class="mlabel ' + api_type + '">' + api_type + '</span>');
 
             // get header above the item, append the api_type tag to the header and change the style class
-            var header = $(entry_obj).prev('h2.memtitle')[0];
+            var header = $(this).prev('h2.memtitle')[0];
             header.append(' [' + api_type + '] ');
             header.className += ' ' + api_type;
         }
@@ -41,13 +41,13 @@ $(document).ready(function()
             add_mlabel.call(this);
 
         if (is_no_api)
-            add_labels.call(this, "no-api", entry_obj, entry_type);
+            add_labels.call(this, "no-api", entry_type);
         else if (is_experimental_api)
-            add_labels.call(this, "experimental-api", entry_obj, entry_type);
+            add_labels.call(this, "experimental-api", entry_type);
         else if (is_stable_api)
-            add_labels.call(this, "stable-api", entry_obj, entry_type);
+            add_labels.call(this, "stable-api", entry_type);
         else
-            add_labels.call(this, "no-api", entry_obj, entry_type);
+            add_labels.call(this, "no-api", entry_type);
     }
 
     // Badges for members
