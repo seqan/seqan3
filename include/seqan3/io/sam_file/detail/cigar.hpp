@@ -151,7 +151,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_
     {
         auto buff_end = (std::ranges::copy(cigar_view | detail::take_until_or_throw(!is_digit), buffer.data())).out;
         cigar_operation = *std::ranges::begin(cigar_view);
-        std::ranges::next(std::ranges::begin(cigar_view));
+        ++std::ranges::begin(cigar_view);
 
         if (std::from_chars(buffer.begin(), buff_end, cigar_count).ec != std::errc{})
             throw format_error{"Corrupted cigar string encountered"};
