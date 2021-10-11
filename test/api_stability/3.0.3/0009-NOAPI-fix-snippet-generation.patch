@@ -1,0 +1,25 @@
+From 667cd702ec7b469bf055f8b5488b758ca2268bc9 Mon Sep 17 00:00:00 2001
+From: Enrico Seiler <enrico.seiler@hotmail.de>
+Date: Mon, 11 Oct 2021 09:22:09 +0200
+Subject: [PATCH 9/9] [NOAPI] fix snippet generation
+
+---
+ test/snippet/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test/snippet/CMakeLists.txt b/test/snippet/CMakeLists.txt
+index 6463f6f..cf6a933 100644
+--- a/test/snippet/CMakeLists.txt
++++ b/test/snippet/CMakeLists.txt
+@@ -51,7 +51,7 @@ foreach (source_snippet IN ITEMS "test/snippet/alphabet/nucleotide/@target_alpha
+                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_inherit.cpp.in"
+                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_vector.cpp.in"
+                                  "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@_views.cpp.in"
+-                                 "doc/fragments/@target_alphabet@_implicit_conversion_from_@source_alphabet@.hpp.in")
++                                 "doc/fragments/@target_alphabet@_implicit_conversion_from_@source_alphabet@.md.in")
+     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna4 -Dsource_alphabet=rna4)
+     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=rna4 -Dsource_alphabet=dna4)
+     seqan3_generate_snippet("${source_snippet}" -Dtarget_alphabet=dna5 -Dsource_alphabet=rna5)
+-- 
+2.25.1
+
