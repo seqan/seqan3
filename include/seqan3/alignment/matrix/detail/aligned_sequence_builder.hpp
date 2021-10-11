@@ -134,7 +134,10 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aligned_sequence_builder() = default; //!< Defaulted.
+    constexpr aligned_sequence_builder()
+        requires std::default_initializable<type_reduce_t<fst_sequence_t>> &&
+                 std::default_initializable<type_reduce_t<sec_sequence_t>>
+        = default; //!< Defaulted.
     constexpr aligned_sequence_builder(aligned_sequence_builder const &) = default; //!< Defaulted.
     constexpr aligned_sequence_builder(aligned_sequence_builder &&) = default; //!< Defaulted.
     constexpr aligned_sequence_builder & operator=(aligned_sequence_builder const &) = default; //!< Defaulted.
