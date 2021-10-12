@@ -11,7 +11,7 @@ project (seqan3_test_snippet CXX)
 include (../seqan3-test.cmake)
 include (../cmake/diagnostics/list_unused_snippets.cmake)
 
-option (seqan3_generate_snippets "Whether seqan3 snippets should be generated and overwritten within the source tree." ON)
+option (SEQAN3_GENERATE_SNIPPETS "Whether seqan3 snippets should be generated and overwritten within the source tree." ON)
 
 add_library (snippet_main snippet_main.cpp)
 target_link_libraries (snippet_main PUBLIC seqan3::test gtest)
@@ -76,7 +76,7 @@ set_tests_properties ("snippet/alignment/pairwise/parallel_align_pairwise_with_c
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}")
 list_unused_snippets ("${CMAKE_CURRENT_SOURCE_DIR}/../../doc")
 
-if (seqan3_generate_snippets)
+if (SEQAN3_GENERATE_SNIPPETS)
     include (seqan3_generate_snippet)
 
     foreach (source_snippet IN ITEMS "test/snippet/alphabet/nucleotide/@target_alphabet@_implicit_conversion_from_@source_alphabet@.cpp.in"
