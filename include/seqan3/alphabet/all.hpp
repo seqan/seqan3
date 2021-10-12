@@ -160,7 +160,7 @@
  * <tt>folly::fbvector</tt></a> or even <a href="https://doc.qt.io/qt-5/qvector.html" target="_blank">
  * <tt>Qt::QVector</tt></a>.
  *
- * `std::basic_string` is also supported, however, we do not recommend using it,
+ * `std::basic_string` is also supported, however, we recommend against using it,
  * because it is not safe (and not useful) to call certain members like `.c_str()` if our alphabets are used as
  * value type.
  *
