@@ -54,6 +54,8 @@ namespace seqan3
  * \brief You can expect these **member types** of all types that satisfy seqan3::sequence_file_input_traits.
  * \memberof seqan3::sequence_file_input_traits
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
+ *
  * \details
  *
  * \{
@@ -124,6 +126,8 @@ SEQAN3_CONCEPT sequence_file_input_traits = requires (t v)
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
  * \include test/snippet/io/sequence_file/sequence_file_input_trait_overwrite.cpp
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 struct sequence_file_input_default_traits_dna
 {
@@ -192,6 +196,8 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \details
  *
  * \include{doc} doc/fragments/sequence_file_input.md
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 
 template <

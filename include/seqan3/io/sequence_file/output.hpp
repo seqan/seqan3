@@ -58,6 +58,8 @@ namespace seqan3
  * \details
  *
  * \include{doc} doc/fragments/sequence_file_output.md
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 
 template <detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::qual>,
