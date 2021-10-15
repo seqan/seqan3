@@ -232,6 +232,8 @@ struct sam_file_input_default_traits
  * \details
  *
  * \include{doc} doc/fragments/io_sam_file_input.md
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <
     sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,

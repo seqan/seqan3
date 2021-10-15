@@ -54,6 +54,8 @@ namespace seqan3
  * \details
  *
  * \include{doc} doc/fragments/io_sam_file_output.md
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <detail::fields_specialisation selected_field_ids_ =
               fields<field::seq,
