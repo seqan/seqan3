@@ -54,6 +54,8 @@ namespace seqan3
  * \details
  *
  * \include{doc} doc/fragments/io_structure_output.md
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 template <detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::structure>,
           detail::type_list_of_structure_file_output_formats valid_formats_ = type_list<format_vienna>>

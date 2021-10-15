@@ -351,6 +351,8 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
  * \details
  *
  * \include{doc} doc/fragments/io_structure_input.md
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 template <structure_file_input_traits traits_type_ = structure_file_input_default_traits_rna,
           detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::structure>,
