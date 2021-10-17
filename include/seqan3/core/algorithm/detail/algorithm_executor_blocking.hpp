@@ -70,6 +70,8 @@ private:
     using resource_type = std::views::all_t<resource_t>;
     //!\brief The iterator over the underlying resource.
     using resource_iterator_type = std::ranges::iterator_t<resource_type>;
+    //!\brief The difference type over the underlying resource.
+    using resource_difference_type = std::iter_difference_t<resource_iterator_type>;
     //!\}
 
     /*!\name Buffer types
@@ -218,7 +220,8 @@ private:
      * We need to access the processed seqan3::detail::algorithm_executor_blocking::resource_position BEFORE moving the
      * resource range. As that could invalidate iterators.
      */
-    algorithm_executor_blocking(algorithm_executor_blocking && other, std::ptrdiff_t old_resource_position) noexcept :
+    algorithm_executor_blocking(algorithm_executor_blocking && other,
+                                resource_difference_type old_resource_position) noexcept :
         resource{std::move(other.resource)}
     {
         move_initialise(std::move(other), old_resource_position);
@@ -230,7 +233,7 @@ private:
      * required to be seqan3::const_iterable_range by this class (i.e. having a const-qualified begin/end member
      * function). The same reason why seqan3::detail::algorithm_executor_blocking::is_eof() isn't const-qualified.
      */
-    std::ptrdiff_t resource_position()
+    resource_difference_type resource_position()
     {
         // Get the old resource position.
         auto position = std::ranges::distance(std::ranges::begin(resource), resource_it);
@@ -334,7 +337,7 @@ private:
     }
 
     //!\brief Helper function to move initialise `this` from `other`.
-    void move_initialise(algorithm_executor_blocking && other, std::ptrdiff_t old_resource_position) noexcept
+    void move_initialise(algorithm_executor_blocking && other, resource_difference_type old_resource_position) noexcept
     {
         algorithm = std::move(other.algorithm);
         buffer_size = std::move(other.buffer_size);
