@@ -19,6 +19,7 @@ an existing stream and a known format. The first one automatically picks the for
 of the file name. The second can be used if you have a non-file stream, like std::cout or std::ostringstream,
 that you want to read from and/or if you cannot use file-extension based detection, but know that your output
 file has a certain format.
+<br><br>
 In most cases the template parameters are deduced completely automatically:
 
 \snippet test/snippet/io/sequence_file/sequence_file_output_template_deduction.cpp main
