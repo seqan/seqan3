@@ -46,9 +46,7 @@
  *
  * The Search module offers a unified search interface seqan3::search.
  * The algorithm chooses the best search method based on the provided index and given configuration.
- * ```
- * auto results = seqan3::search(queries, index, config);
- * ```
+ * \snippet snippet/search/search.cpp Performing search
  *
  * # Available Indices
  * ## (bidirectional) FM index
