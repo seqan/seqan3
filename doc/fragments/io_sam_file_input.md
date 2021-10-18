@@ -4,13 +4,11 @@
 
 The seqan3::sam_file_input class comes with four constructors: One for construction from a file name, one for
 construction from an existing stream and a known format and both of the former with or without additional
-reference information.
-
-Constructing from a file name automatically picks the format based on the extension
+reference information. Constructing from a file name automatically picks the format based on the extension
 of the file name. Constructing from a stream can be used if you have a non-file stream, like std::cin or
 std::istringstream, that you want to read from and/or if you cannot use file-extension based detection,
 but know that your input file has a certain format.
-
+<br><br>
 The reference information is specific to the SAM format. The SAM format only stores a "semi-alignment" meaning that
 it has the query sequence and the cigar string representing the gap information but not the reference information.
 If you want to retrieve valid/full alignments, you need to pass the corresponding reference information:
@@ -31,7 +29,7 @@ are explicitly set to their default values, in the former case
 [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
 chooses different parameters depending on the constructor arguments. For opening from file, `sam_file_input<>`
 would have also worked, but for opening from stream it would not have.
-
+<br><br>
 You can define your own traits type to further customise the types used by and returned by this class, see
 seqan3::sam_file_input_default_traits for more details. As mentioned above, specifying at least one
 template parameter yourself means that you loose automatic deduction. The following is equivalent to the automatic
@@ -49,7 +47,7 @@ In the above example, `rec` has the type seqan3::sam_file_input::record_type whi
 and behaves like an std::tuple (that's why we can access it via `get`). Instead of using the seqan3::field based
 interface on the record, you could also use `std::get<0>` or even `std::get<dna4_vector>` to retrieve the sequence,
 but it is not recommended, because it is more error-prone.
-
+<br><br>
 *Note:* It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
 to store it somewhere without copying:
