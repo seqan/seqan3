@@ -45,7 +45,7 @@
  * # Search algorithm
  *
  * The Search module offers a unified search interface seqan3::search.
- * The algorithm chooses the best search method based on the provided index and given configuration.
+ * The function chooses the best search method based on the provided index and an optional configuration.
  * \snippet snippet/search/search.cpp Performing search
  *
  * # Available Indices
