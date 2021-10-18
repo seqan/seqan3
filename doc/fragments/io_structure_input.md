@@ -5,7 +5,7 @@ contain the nucleotide or amino acid sequences and descriptions as well. Interac
 either as fixed _secondary structure_, where every character is assigned at most one interaction partner
 (structure of minimum free energy), or an _annotated sequence_, where every character is assigned a set
 of interaction partners with specific base pair probabilities.
-
+<br><br>
 The structured sequence file abstraction supports reading ten different fields:
 
 1. seqan3::field::seq (sequence)
@@ -30,8 +30,9 @@ an existing stream and a known format. The first one automatically picks the for
 of the file name. The second can be used if you have a non-file stream, like std::cin or std::istringstream,
 that you want to read from and/or if you cannot use file-extension based detection, but know that your input
 file has a certain format.
-
+<br><br>
 In most cases the template parameters are deduced completely automatically, e.g. reading from a std::istringstream:
+
 \include test/snippet/io/structure_file/structure_file_input_auto_temp_deduc.cpp
 
 Note that this is not the same as writing `structure_file_input<>` (with angle brackets). In the latter case they are
@@ -39,7 +40,7 @@ explicitly set to their default values, in the former case
 [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
 chooses different parameters depending on the constructor arguments. For opening from file, `structure_file_input<>`
 would have also worked, but for opening from stream it would not have.
-
+<br><br>
 In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
 
 \include test/snippet/io/structure_file/structure_file_input_arg_spec.cpp
@@ -61,7 +62,7 @@ In the above example, rec has the type seqan3::structure_file_input::record_type
 seqan3::record and behaves like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field
 based interface on the record, you could also use `std::get<0>` or even `std::get<rna4_vector>` to retrieve the
 sequence, but it is not recommended, because it is more error-prone.
-
+<br><br>
 *Note:* It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
 to store it somewhere without copying:

@@ -5,7 +5,7 @@ contain the nucleotide or amino acid sequences and descriptions as well. Interac
 either as fixed _secondary structure_, where every character is assigned at most one interaction partner
 (structure of minimum free energy), or an _annotated sequence_, where every character is assigned a set
 of interaction partners with specific base pair probabilities.
-
+<br><br>
 The structured sequence file abstraction supports writing ten different fields:
 
 1. seqan3::field::seq (sequence)
@@ -29,7 +29,7 @@ an existing stream and a known format. The first one automatically picks the for
 of the file name. The second can be used if you have a non-file stream, like std::cout or std::ostringstream,
 that you want to read from and/or if you cannot use file-extension based detection, but know that your output
 file has a certain format.
-
+<br><br>
 In most cases the template parameters are deduced completely automatically:
 
 \include test/snippet/io/structure_file/structure_file_output_temp_param_deduc.cpp
@@ -57,7 +57,7 @@ and the third one seqan3::field::structure. You may give less fields than are se
 writing to can cope with less
 (e.g. for Vienna it is sufficient to write seqan3::field::seq, seqan3::field::id and seqan3::field::structure,
 even if selected_field_ids also contains seqan3::field::energy).
-
+<br><br>
 You may also use the output file's iterator for writing, however, this rarely provides an advantage.
 
 #### Writing record-wise (custom fields)
@@ -65,7 +65,7 @@ You may also use the output file's iterator for writing, however, this rarely pr
 If you want to pass a combined object for SEQ and STRUCTURE fields to push_back() / emplace_back(), or if you want
 to change the order of the parameters, you can pass a non-empty fields trait object to the
 structure_file_output constructor to select the fields that are used for interpreting the arguments.
-
+<br><br>
 The following snippets demonstrates the usage of such a fields trait object.
 
 \include test/snippet/io/structure_file/structure_file_output_write_fields.cpp
@@ -94,7 +94,7 @@ files are also input ranges in SeqAn. This can be combined with file-based views
 
 The record-based interface treats the file as a range of tuples (the records), but in certain situations
 you might have the data as columns, i.e. a tuple-of-ranges, instead of range-of-tuples.
-
+<br><br>
 You can use column-based writing in that case, it uses operator=() and seqan3::views::zip():
 
 \include test/snippet/io/structure_file/structure_file_output_col_based.cpp
