@@ -165,8 +165,11 @@ namespace seqan3::detail::adl_only
 template <typename ...args_t>
 void assign_rank_to(args_t ...) = delete;
 
-//!\brief Functor definition for seqan3::assign_rank_to.
-//!\ingroup alphabet
+/*!\brief The `rank_type` of the semi-alphabet; defined as the return type of seqan3::to_rank.
+ * !\ingroup alphabet
+ *
+ * \stableapi{Since version 3.1.}
+ */
 struct assign_rank_to_fn
 {
 public:
