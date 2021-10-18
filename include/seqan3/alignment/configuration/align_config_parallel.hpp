@@ -24,17 +24,15 @@ namespace seqan3::align_cfg
  *
  * \details
  *
- * With this configuration you can enable the parallel execution of the pairwise sequence alignment. This means that for
- * a batch of pairwise sequence alignments the specified number of threads will be spawned to compute them in parallel.
- * Note that only independent alignment computations can be executed in parallel, i.e. you use this method when
- * computing a batch of alignments rather than executing them separately.
- * Depending on your processor architecture you can gain a significant speed-up.
+ * \include{doc} doc/fragments/alignment_configuration_align_config_parallel.md
  *
  * The value represents the number of threads to be used and must be greater than `0`.
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_parallel_example.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 using parallel = seqan3::detail::parallel_mode<std::integral_constant<seqan3::detail::align_config_id,
                                                                       seqan3::detail::align_config_id::parallel>>;
