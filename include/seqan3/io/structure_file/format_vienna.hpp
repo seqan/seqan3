@@ -47,7 +47,7 @@ namespace seqan3
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
  * \implements  seqan3::structure_file_input_format
  * \implements  seqan3::structure_file_output_format
- * \ingroup     structure_file
+ * \ingroup     io_structure_file
  *
  * \details
  *
