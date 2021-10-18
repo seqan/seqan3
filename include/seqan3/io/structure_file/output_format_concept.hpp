@@ -64,6 +64,8 @@ namespace seqan3
  * The details of this concept are only relevant to developers who wish to implement their own format.
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 //!\cond
 template <typename t>
