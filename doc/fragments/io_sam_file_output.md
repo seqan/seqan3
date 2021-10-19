@@ -30,12 +30,12 @@ opening from stream it would not have.
 
 \include test/snippet/io/sam_file/record_based_writing.cpp
 
-The easiest way to write to an alignment file is to use the push_back() member functions. These
-work similarly to how they work on an std::vector.
-You may also use a tuple like interface or the emplace_back()
+The easiest way to write to an alignment file is to use the `push_back()` member functions. These
+work similarly to how they work on a std::vector.
+You may also use a tuple like interface or the `emplace_back()`
 function but this is not recommended since one would have to keep track of the
 correct order of many fields (14 in total). For the record based interface
-using push_back please also see the seqan3::record documentation on how to specify
+using `push_back()` please also see the seqan3::record documentation on how to specify
 a record with the correct field and type lists.
 <br><br>
 You may also use the output file's iterator for writing, however, this rarely provides an advantage.
@@ -46,20 +46,21 @@ If you want to omit non-required parameter or
 change the order of the parameters, you can pass a non-empty fields trait object to the
 seqan3::sam_file_output constructor to select the fields that are used for interpreting the arguments.
 <br><br>
-The following snippets demonstrates the usage of such a field_traits object.
+The following snippet demonstrates the usage of such a `field_traits` object.
 
 \include test/snippet/io/sam_file/record_based_writing2.cpp
 
 A different way of passing custom fields to the file is to pass a seqan3::record – instead of a tuple – to
-push_back(). The seqan3::record clearly indicates which of its elements has which seqan3::field so **the file will
+`push_back()`. The seqan3::record clearly indicates which of its elements has which seqan3::field so **the file will
 use that information instead of the template argument**. This is especially handy when reading from one file and
 writing to another, because you don't have to configure the output file to match the input file, it will just work:
 
 \include test/snippet/io/sam_file/sam_file_output_custom_fields.cpp
 
-This will copy the FLAG and REF_OFFSET value into the new output file. Note that the other SAM columns in the
-output file will have a default value, so unless you specify to read all SAM columns (see seqan3::format_sam)
-the output file will not be equal to the input file.
+This will copy the FLAG and REF_OFFSET value into the new output file.
+
+\note Note that the other SAM columns in the output file will have a default value, so unless you specify to read
+all SAM columns (see seqan3::format_sam) the output file will not be equal to the input file.
 
 #### Writing record-wise in batches
 

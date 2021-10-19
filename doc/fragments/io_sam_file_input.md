@@ -6,8 +6,8 @@ The seqan3::sam_file_input class comes with four constructors: One for construct
 construction from an existing stream and a known format and both of the former with or without additional
 reference information. Constructing from a file name automatically picks the format based on the extension
 of the file name. Constructing from a stream can be used if you have a non-file stream, like std::cin or
-std::istringstream, that you want to read from and/or if you cannot use file-extension based detection,
-but know that your input file has a certain format.
+std::istringstream. It also comes in handy, if you cannot use file-extension based detection, but know that
+your input file has a certain format.
 <br><br>
 The reference information is specific to the SAM format. The SAM format only stores a "semi-alignment" meaning that
 it has the query sequence and the cigar string representing the gap information but not the reference information.
@@ -47,8 +47,8 @@ In the above example, `rec` has the type seqan3::sam_file_input::record_type whi
 and behaves like an std::tuple (that's why we can access it via `get`). Instead of using the seqan3::field based
 interface on the record, you could also use `std::get<0>` or even `std::get<dna4_vector>` to retrieve the sequence,
 but it is not recommended, because it is more error-prone.
-<br><br>
-*Note:* It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
+
+\note It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
 Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
 to store it somewhere without copying:
 
@@ -77,7 +77,8 @@ like before you can also write:
 
 In this case you immediately get the two elements of the tuple: `flag` of seqan3::sam_file_input::flag_type and `mapq`
 of seqan3::sam_file_input::mapq_type.
-**But beware: with structured bindings you do need to get the order of elements correctly!**
+
+\note But beware: with structured bindings you do need to get the order of elements correctly!
 
 #### Views on files
 
@@ -88,7 +89,7 @@ based on certain criteria, e.g. minimum length of the sequence field:
 
 #### End of file
 
-You can check whether a file is at its end by comparing begin() and end() (if they are the same, the file is
+You can check whether a file is at its end by comparing `begin()` and `end()` (if they are the same, the file is
 at its end).
 
 #### Formats
