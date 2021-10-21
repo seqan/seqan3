@@ -30,7 +30,7 @@ This is a detailed introduction to the alphabet module and demonstrates its main
 Nucleotides are the components of (Deoxy)Ribonucleic acid (DNA/RNA) and contain one of the nucleobases
 Adenine (A), Cytosine (C), Guanine (G), Thymine (T, only DNA) and Uracil (U, only RNA).
 In SeqAn the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
-The trailed number in the alphabets' name represents the number of entities the alphabet holds –
+The trailing number in the alphabet's name represents the number of entities the alphabet holds –
 we denote this number as *alphabet size*.
 For instance, the alphabet seqan3::dna5 represents five entities as it contains the additional symbol 'N'
 to refer to an unknown nucleotide.
@@ -186,7 +186,7 @@ The following combinations still fit into a single byte (which can hold up-to 25
  - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
  - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
 
-Using seqan3::qualified can half the storage usage compared to storing qualities and nucleotides separately.
+Using seqan3::qualified can halve the storage usage compared to storing qualities and nucleotides separately.
 
 While we use DNA alphabets in this example, the same properties hold true for RNA alphabets.
 
