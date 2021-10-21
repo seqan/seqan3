@@ -188,6 +188,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \ingroup io_sequence_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must satisfy
  *                              seqan3::sequence_file_input_traits.
+ *                              (Default: seqan3::sequence_file_input_default_traits_dna)
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
  *                              must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
