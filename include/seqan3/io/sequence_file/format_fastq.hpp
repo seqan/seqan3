@@ -73,6 +73,7 @@ namespace seqan3
  *   * line breaks and/or other whitespace characters in any part of the sequence and/or qualities (only when reading!)
  *   * writing the ID to the `+`-line also (line is always ignored when reading)
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_fastq
 {

@@ -68,6 +68,7 @@ namespace seqan3
  *
  * Passed qualities to either the read or write function are ignored.
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_embl
 {

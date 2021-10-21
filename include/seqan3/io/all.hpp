@@ -14,31 +14,6 @@
 /*!\defgroup io IO
  * \brief The IO module provides stream handling formatted I/O.
  *
- * # Streams and (de-)compression {#io_compression}
- *
- * SeqAn works with regular iostreams as provided by the standard library, but it also handles compressed streams:
- *
- * | **Format** | **Extension**   | **Dependency**                             | **Description**                                                                                                       |
- * |:-----------|:----------------|:-------------------------------------------|:----------------------------------------------------------------------------------------------------------------------|
- * | GZip       | `.gz`¹          | [zlib](https://zlib.net/)                  | GNU-Zip, most common format on UNIX                                                                                   |
- * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)                  | [Blocked GZip](https://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
- * | BZip2      | `.bz2`          | [libbz2](https://www.sourceware.org/bzip2) | Stronger compression than GZip, slower to compress                                                                    |
- *
- * <small>¹ SeqAn always assumes GZip and does not handle pure `.Z`.<br>
- * ² Some file formats like `.bam` or `.bcf` are implicitly BGZF-compressed without showing this in the
- * extension.</small>
- *
- * Support for these compression formats is **optional** and depends on whether the respective dependency is available
- * when you build your program (if you use CMake, this should happen automatically).
- *
- * SeqAn file types apply compression/decompression streams transparently, i.e. if the given file-extension or
- * "magic-header" of a file suggest this, the respective stream is automatically (de-)compressed.
- *
- * The (de)compression stream wrappers are currently only used internally and not part of the API.
- *
- * The number of threads used for (de-)compression of BGZF-streams can be adjusted via
- * \ref setting_compression_threads "setting seqan3::contrib::bgzf_thread_count".
- *
  * # Formatted I/O
  *
  * ## Files and formats {#io_files}
@@ -90,6 +65,31 @@
  *
  * Please have a look the tutorial for \ref tutorial_sequence_file and the API docs for seqan3::sequence_file_input
  * to learn about this design in practice.
+ *
+ * # Streams and (de-)compression {#io_compression}
+ *
+ * SeqAn works with regular iostreams as provided by the standard library, but it also handles compressed streams:
+ *
+ * | **Format** | **Extension**   | **Dependency**                             | **Description**                                                                                                       |
+ * |:-----------|:----------------|:-------------------------------------------|:----------------------------------------------------------------------------------------------------------------------|
+ * | GZip       | `.gz`¹          | [zlib](https://zlib.net/)                  | GNU-Zip, most common format on UNIX                                                                                   |
+ * | BGZF       | `.gz`, `.bgzf`² | [zlib](https://zlib.net/)                  | [Blocked GZip](https://samtools.github.io/hts-specs/SAMv1.pdf), compatible extension to GZip, features parallelisation|
+ * | BZip2      | `.bz2`          | [libbz2](https://www.sourceware.org/bzip2) | Stronger compression than GZip, slower to compress                                                                    |
+ *
+ * <small>¹ SeqAn always assumes GZip and does not handle pure `.Z`.<br>
+ * ² Some file formats like `.bam` or `.bcf` are implicitly BGZF-compressed without showing this in the
+ * extension.</small>
+ *
+ * Support for these compression formats is **optional** and depends on whether the respective dependency is available
+ * when you build your program (if you use CMake, this should happen automatically).
+ *
+ * SeqAn file types apply compression/decompression streams transparently, i.e. if the given file-extension or
+ * "magic-header" of a file suggest this, the respective stream is automatically (de-)compressed.
+ *
+ * The (de)compression stream wrappers are currently only used internally and not part of the API.
+ *
+ * The number of threads used for (de-)compression of BGZF-streams can be adjusted via
+ * \ref setting_compression_threads "setting seqan3::contrib::bgzf_thread_count".
  *
  * # Serialisation {#serialisation}
  *
