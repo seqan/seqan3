@@ -77,7 +77,7 @@ When calling the seqan3::argument_parser::parse function, the following potentia
 
 ## Special Requests (std::exit)
 
-We denote "special requests" to command line input that does not aim to execute your program but rather display information about your program. Because on those request we never expect that the program is intended to run, we exit the program at the end of the seqan3::argument_parser::parse call via std::exit.
+We define "special requests" as command line inputs that do not aim to execute your program but rather display information about your program. Because we do not expect the program to be executed in the case of a special request, we exit the program at the end of the seqan3::argument_parser::parse call via std::exit.
 
 Currently we support the following *special requests*:
 
@@ -148,9 +148,9 @@ So how does this look like? The following code snippet adds a positional option 
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp add_positional_option
 
-Additionally to the variable that will store the value, you need to pass a description. This description will help users of your application to understand how the option is affecting your program.
+In addition to the variable that will store the value, you need to pass a description. This description will help users of your application to understand how the option is affecting your program.
 
-\note As the name suggest, positional options are identified by their position. In SeqAn, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
+\note As the name suggests, positional options are identified by their position. In SeqAn, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
 We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier to spot errors.
 
 You can add an option like this:
@@ -289,7 +289,7 @@ For this purpose we need to use the seqan3::option_spec enum interface that is a
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp required_option
 
-If the user does **not** supply the required option via the command line, he will now get the following error:
+If the user does **not** supply the required option via the command line, they will now get the following error:
 
 ```console
 ./example_program --some-other-option
@@ -302,7 +302,7 @@ Option -n/--name is required but not set.
 
 Additionally to the *required* tag, there is also the possibility of **declaring an option as advanced or hidden**.
 
-Set an option/flag to advanced, if you do not want the option to be displayed in the normal help page (`-h/--help`). Instead, the advanced options are only displayed when calling `-hh/--advanced-help`. This can be helpful, if you want to avoid to bloat your help page with too much information for inexperienced users of your application, but still provide thorough information on demand.
+Set an option/flag to advanced, if you do not want the option to be displayed in the normal help page (`-h/--help`). Instead, the advanced options are only displayed when calling `-hh/--advanced-help`. This can be helpful, if you want to avoid bloating your help page with too much information for inexperienced users of your application, but still provide thorough information on demand.
 
 Set an option/flag to hidden, if you want to completely hide it from the user. It will neither appear on the help page nor in any export format. For example, this might be useful for debugging reasons.
 
@@ -336,7 +336,7 @@ Check if your options are set correctly by trying the following call:
 
 # Validation of (positional) option values {#section_validation}
 
-Our applications often do not allow just any value to be passed as input arguments and if we do not check for them, the program may run into undefined behaviour. The best way to carefully restrict user input is to directly check the input when parsing the command line. The seqan3::argument_parser provides **validators** for a given (positional) option.
+Our applications often do not allow just any value to be passed as input arguments and if we do not check for them, the program may exhibit undefined behaviour. The best way to carefully restrict user input is to directly check the input when parsing the command line. The seqan3::argument_parser provides **validators** for a given (positional) option.
 
 A *validator* is a [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses) that is called within the argument parser after retrieving and converting a command line argument. We provide several validators, which we hope cover most of the use cases, but you can always create your own validator (see section [Create your own validator](#section_create_your_own_validator)).
 
@@ -410,7 +410,7 @@ to provide an input directory (using the seqan3::input_directory_validator) or o
 (using the seqan3::output_directory_validator) where multiple files need to be read from or written to.
 The seqan3::input_directory_validator checks whether the specified path is a directory and is readable.
 Similarly, the seqan3::output_directory_validator checks whether the specified directory is writable and can be created,
-if it does not already exists.
+if it does not already exist.
 If the tests fail, a seqan3::validation_error exception will be thrown. Also, if something unexpected with the
 filesystem happens, a std::filesystem_error will be thrown.
 
@@ -433,7 +433,7 @@ Store the result in `file_path`.
 ### The seqan3::regex_validator
 
 On construction, the validator receives a pattern for a regular expression.
-The pattern variable will be used for constructing an std::regex and the validator will call std::regex_match on the command line argument.
+The pattern variable will be used for constructing a std::regex and the validator will call std::regex_match on the command line argument.
 
 Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The validator throws a seqan3::validation_error exception whenever a given parameter does not match the given regular expression.
 
