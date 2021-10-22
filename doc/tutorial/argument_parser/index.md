@@ -1,7 +1,8 @@
 # Parsing command line arguments with SeqAn {#tutorial_argument_parser}
 
 <b>Learning Objective:</b> <br>
-You will learn how to use the seqan3::argument_parser class to parse command line arguments. This tutorial is a walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
+You will learn how to use the seqan3::argument_parser class to parse command line arguments. This tutorial is a 
+walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
 
 \tutorial_head{Easy, 30-60 min, \ref setup, [POSIX conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html)}
 
@@ -11,13 +12,15 @@ You will learn how to use the seqan3::argument_parser class to parse command lin
 
 # Introduction
 
-An easy and very flexible interface to a program is through the command line. This tutorial explains how to parse the command line using the SeqAn library’s seqan3::argument_parser class.
+An easy and very flexible interface to a program is through the command line. This tutorial explains how to parse the 
+command line using the SeqAn library’s seqan3::argument_parser class.
 
 This class will give you the following functionality:
 
 * Robust parsing of command line arguments.
 * Simple validation of arguments (e.g. within a range or one of a list of allowed values).
-* Automatically generated and nicely formatted help screens when your program is called with `--help`. You can also export this help to HTML and man pages.
+* Automatically generated and nicely formatted help screens when your program is called with `--help`. You can also 
+* export this help to HTML and man pages.
 * In the future, you are also able to automatically generate nodes for work flow engines such as KNIME or Galaxy.
 
 ## Command line argument terminology
@@ -26,7 +29,12 @@ Before we start, let's agree on some terminology. Consider the following command
 ```sh
 mycomputer$ ./program1 -f -i 4 --long-id 6 file1.txt
 ```
-The binary `program1` is called with several command line **arguments**. We call every single input an **argument** but differentiate their purpose into **options**, **positional_options**, **flags** or simply a **value** corresponding to one of the former. In our example above, `-f` is a **flag** which is never followed by a value, `-i` is an **option** with a short identifier (id) followed by its **value** `4`, `--long-id` is also an **option** with a long identifier followed by its **value** `6`, and **file1.txt** is a **positional_option**, because it is an option identified by its position instead of an identifier.
+The binary `program1` is called with several command line **arguments**. We call every single input an **argument** but 
+differentiate their purpose into **options**, **positional_options**, **flags** or simply a **value** corresponding to 
+one of the former. In our example above, `-f` is a **flag** which is never followed by a value, `-i` is an **option** 
+with a short identifier (id) followed by its **value** `4`, `--long-id` is also an **option** with a long identifier 
+followed by its **value** `6`, and **file1.txt** is a **positional_option**, because it is an option identified by its 
+position instead of an identifier.
 
 | Name                   | Purpose                                        | Example                 |
 |:-----------------------|:-----------------------------------------------|:------------------------|
@@ -34,37 +42,55 @@ The binary `program1` is called with several command line **arguments**. We call
 | **flag**               | boolean on/off flag (*id*)                     | `-f`                    |
 | **positional option**  | identify an argument by position (*value*)     | `file1.txt`             |
 
-Have a look at the [POSIX conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html) for command line arguments if you want a detailed description on the requirements for the above. (Note: in the linked article the following holds: value="argument", option="option", flag = "option that does not require arguments", positional option ="non-option").
+Have a look at the [POSIX conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html) for 
+command line arguments if you want a detailed description on the requirements for the above. (Note: in the linked 
+article the following holds: value="argument", option="option", flag = "option that does not require arguments", 
+positional option ="non-option").
 
 ## A continuous example
-We will get to know the wide functionality of the argument parser by writing a little application and extending it step by step.  Let's say we have a tab separated file `data.tsv` with information on the Game of Thrones Seasons ([by Wikipedia](https://en.wikipedia.org/wiki/List_of_Game_of_Thrones_episodes)):
+We will get to know the wide functionality of the argument parser by writing a little application and extending it step 
+by step.  Let's say we have a tab separated file `data.tsv` with information on the Game of Thrones 
+Seasons ([by Wikipedia](https://en.wikipedia.org/wiki/List_of_Game_of_Thrones_episodes)):
 
 \include doc/tutorial/argument_parser/data.tsv
 
-We want to build an application that is able to read the file with or without a header line, select certain seasons and compute the average or median from the "Avg. U.S. viewers (millions)" of the selected seasons.
+We want to build an application that is able to read the file with or without a header line, select certain seasons and 
+compute the average or median from the "Avg. U.S. viewers (millions)" of the selected seasons.
 
 # The SeqAn argument parser class
 
-Before we add any of the options, flags, and positional options, we will take a look at the seqan3::argument_parser class itself. It is constructed by giving a program's name and passing the parameters `argc` and `argv` from main. Note that no command line arguments have been parsed so far, but we can now add more information to the parser. After adding all desired information, the parsing is triggered by calling the seqan3::argument_parser::parse member function. Since the function throws in case any errors occur, we need to wrap it into a try-catch block. Here is a first working example:
+Before we add any of the options, flags, and positional options, we will take a look at the seqan3::argument_parser 
+class itself. It is constructed by giving a program's name and passing the parameters `argc` and `argv` from main. 
+Note that no command line arguments have been parsed so far, but we can now add more information to the parser. 
+After adding all desired information, the parsing is triggered by calling the seqan3::argument_parser::parse member 
+function. Since the function throws in case any errors occur, we need to wrap it into a try-catch block. Here is a 
+first working example:
 
 \include doc/tutorial/argument_parser/basic_parser_setup.cpp
 
-There are two types of exceptions: The seqan3::design_error which indicates that the parser setup was wrong (directed to the developer of the program, not the user!) and any other exception derived from seqan3::argument_parser_error, which detects corrupted user input. Additionally, there are special user requests that are handled by the argument parser by exiting the program via std::exit, e.g. calling `--help` that prints a help page screen.
+There are two types of exceptions: The seqan3::design_error which indicates that the parser setup was wrong 
+(directed to the developer of the program, not the user!) and any other exception derived from 
+seqan3::argument_parser_error, which detects corrupted user input. Additionally, there are special user requests that 
+are handled by the argument parser by exiting the program via std::exit, e.g. calling `--help` that prints a help page 
+screen.
 
 ## Design restrictions (seqan3::design_error)
 
 The argument parser checks the following restrictions and throws a seqan3::design_error if they are not satisfied:
 
-* **Long identifiers**: must be unique, more than one character long, may only contain alphanumeric characters, as well as `_`, `-`, or `@`, but never start with `-`.
+* **Long identifiers**: must be unique, more than one character long, may only contain alphanumeric characters, as well
+* as `_`, `-`, or `@`, but never start with `-`.
 * **Short identifiers**: must be unique and consist of only a single letter that is alphanumeric characters, `_` or `@`.
 * either the short or long id may be empty but not both at the same time.
 * Only the last positional option may be a list (see [lists](#section_list_positional_options)).
-* The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright` are predefined and cannot be specified manually or used otherwise.
+* The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright`
+* are predefined and cannot be specified manually or used otherwise.
 * The seqan3::argument_parser::parse function may only be called once (per parser).
 
 ## Input restrictions
 
-When calling the seqan3::argument_parser::parse function, the following potential user errors are caught (and handled by throwing a corresponding exception):
+When calling the seqan3::argument_parser::parse function, the following potential user errors are caught (and handled 
+by throwing a corresponding exception):
 
 <table border="0">
 <tr> <td> seqan3::unknown_option </td> <td> The option/flag identifier is not known to the parser. </td> </tr>
@@ -77,7 +103,9 @@ When calling the seqan3::argument_parser::parse function, the following potentia
 
 ## Special Requests (std::exit)
 
-We define "special requests" as command line inputs that do not aim to execute your program but rather display information about your program. Because we do not expect the program to be executed in the case of a special request, we exit the program at the end of the seqan3::argument_parser::parse call via std::exit.
+We define "special requests" as command line inputs that do not aim to execute your program but rather display 
+information about your program. Because we do not expect the program to be executed in the case of a special request, 
+we exit the program at the end of the seqan3::argument_parser::parse call via std::exit.
 
 Currently we support the following *special requests*:
 
@@ -96,7 +124,9 @@ Play around with the binary, e.g. requesting special behaviour like printing the
 
 ## Meta data {#section_meta_data}
 
-Of course there is not much information to display yet, since we did not provide any. Let's improve this by modifying the seqan3::argument_parser::info member of our parser. The seqan3::argument_parser::info member is a struct of type seqan3::argument_parser_meta_data and contains the following members that can be customised:
+Of course there is not much information to display yet, since we did not provide any. Let's improve this by modifying 
+the seqan3::argument_parser::info member of our parser. The seqan3::argument_parser::info member is a struct of type 
+seqan3::argument_parser_meta_data and contains the following members that can be customised:
 
 - **app_name**, which is already set on construction (seqan3::argument_parser_meta_data::app_name)
 - **author** (seqan3::argument_parser_meta_data::author)
@@ -134,45 +164,67 @@ Of course there is not much information to display yet, since we did not provide
 
 # Adding options, flags and positional_options
 
-Now that we're done with the meta information, we will learn how to add the actual functionality of options, flags and positional options. For each of these three there is a respective member function:
+Now that we're done with the meta information, we will learn how to add the actual functionality of options, flags and 
+positional options. For each of these three there is a respective member function:
 
 * seqan3::argument_parser::add_option
 * seqan3::argument_parser::add_flag
 * seqan3::argument_parser::add_positional_option
 
-Each of the functions above take a variable by reference as the first parameter, which will directly store the corresponding parsed value from the command line. This has two advantages compared to other command line parsers: (1) There is no need for a getter function after parsing and (2) the type is automatically deduced (e.g. with boost::program_options you would need to access `parser["file_path"].as<std::filesystem::path>()` afterwards).
+Each of the functions above take a variable by reference as the first parameter, which will directly store the 
+corresponding parsed value from the command line. This has two advantages compared to other command line parsers:
+(1) There is no need for a getter function after parsing and (2) the type is automatically deduced 
+(e.g. with boost::program_options you would need to access `parser["file_path"].as<std::filesystem::path>()` afterwards).
 
-The seqan3::argument_parser::add_flag only allows boolean variables while seqan3::argument_parser::add_option and seqan3::argument_parser::add_positional_option allow **any type that is convertible from a std::string via std::from_chars** or a container of the former (see \ref tutorial_argument_parser_list_options). Besides accepting generic types, the parser will **automatically check if the given command line argument can be converted into the desired type** and otherwise throw a seqan3::type_conversion_error exception.
+The seqan3::argument_parser::add_flag only allows boolean variables while seqan3::argument_parser::add_option and 
+seqan3::argument_parser::add_positional_option allow **any type that is convertible from a std::string via std::from_chars** or 
+a container of the former (see \ref tutorial_argument_parser_list_options). Besides accepting generic types, the parser 
+will **automatically check if the given command line argument can be converted into the desired type** and otherwise 
+throw a seqan3::type_conversion_error exception.
 
 So how does this look like? The following code snippet adds a positional option to `parser`.
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp add_positional_option
 
-In addition to the variable that will store the value, you need to pass a description. This description will help users of your application to understand how the option is affecting your program.
+In addition to the variable that will store the value, you need to pass a description. This description will help users 
+of your application to understand how the option is affecting your program.
 
-\note As the name suggests, positional options are identified by their position. In SeqAn, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
-We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier to spot errors.
+\note As the name suggests, positional options are identified by their position. In SeqAn, the first
+`add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a 
+flag. So the order of initialising your parser determines the order of assigning command line arguments to the 
+respective variables.
+We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier
+to spot errors.
 
 You can add an option like this:
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp add_option
 
-Additionally to the variable that will store the value and the description, you need to specify a short and long identifier. The example above will recognize an option `-n` or `--my-number` given on the command line and expect it to be followed by a value separated only by `=` or space or by nothing at all.
+Additionally to the variable that will store the value and the description, you need to specify a short and long 
+identifier. The example above will recognize an option `-n` or `--my-number` given on the command line and expect it to 
+be followed by a value separated only by `=` or space or by nothing at all.
 
 Finally, you can add a flag with the following call:
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp add_flag
 
-Note that you can omit either the short identifier by passing <code>'\0'</code> or the long identifier by passing `""` but you can never omit both at the same time.
+Note that you can omit either the short identifier by passing <code>'\0'</code> or the long identifier by passing `""` 
+but you can never omit both at the same time.
 
 ## Default values
 
-With the current design, every option/flag/positional automatically has a **default value** which simply is the value with which you initialise the corresponding variable that is passed as the first parameter. Yes it is that easy, just make sure to always initialise your variables properly.
+With the current design, every option/flag/positional automatically has a **default value** which simply is the value 
+with which you initialise the corresponding variable that is passed as the first parameter. Yes it is that easy, just 
+make sure to always initialise your variables properly.
 
 \assignment{Assignment 3}
 Getting back to our example application, let's extend our code from Assignment 2 by the following:
 
-As a *best practice* recommendation for handling multiple options/flags/positionals, you should store the variables in a struct and pass this struct to your parser initialisation function. You can use the following code that introduces a `cmd_arguments` struct storing all relevant command line arguments. Furthermore, it provides you with a small function `run_program()` that reads in the data file and aggregates the data by the given information. You don't need to look at the code of `run_program()`, it is only so that we have a working program.
+As a *best practice* recommendation for handling multiple options/flags/positionals, you should store the variables in 
+a struct and pass this struct to your parser initialisation function. You can use the following code that introduces a 
+`cmd_arguments` struct storing all relevant command line arguments. Furthermore, it provides you with a small function 
+`run_program()` that reads in the data file and aggregates the data by the given information. You don't need to look at 
+the code of `run_program()`, it is only so that we have a working program.
 
 \htmlonly <details> <summary>Copy and paste this code into the beginning of your application: </summary>  \endhtmlonly
 \snippet doc/tutorial/argument_parser/solution3.cpp program
@@ -180,8 +232,9 @@ As a *best practice* recommendation for handling multiple options/flags/position
 
 Your task is now to extend the initialisation function by the following:
 
-1. Extend your `initialise_argument_parser` function by a parameter that takes a `cmd_arguments` object and adapt the function call in your main function to pass on `args`;
-2. Set the default value of `aggregate_by` to `"mean"`.
+1. Extend your `initialise_argument_parser` function by a parameter that takes a `cmd_arguments` object and adapt the 
+2. function call in your main function to pass on `args`;
+3. Set the default value of `aggregate_by` to `"mean"`.
 
 You can now use the variables from `args` to add the following inside of the `initialise_argument_parser` function:
 
@@ -190,7 +243,9 @@ You can now use the variables from `args` to add the following inside of the `in
 5. Add an option `-a/--aggregate-by` that sets the variable `aggregate_by`, which will enable our program choose between aggregating by mean or median.
 6. Add a flag `-H/--header-is-set` that sets the variable `header_is_set`, which lets the program know whether it should ignore the first line in the file.
 
-Take a look at the help page again after you've done all of the above. You will notice that your options have been automatically included. **Copy and paste the example data file from the introduction** and check if your options are set correctly by trying the following few calls:
+Take a look at the help page again after you've done all of the above. You will notice that your options have been 
+automatically included. **Copy and paste the example data file from the introduction** and check if your options are set
+correctly by trying the following few calls:
 
 ```console
 ./game_of_parsing -H -y 2014 data.tsv
@@ -205,7 +260,8 @@ Take a look at the help page again after you've done all of the above. You will 
 \solution
 \snippet doc/tutorial/argument_parser/solution3.cpp solution
 
-\htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks like this:</summary> \endhtmlonly
+\htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks 
+like this:</summary> \endhtmlonly
 \include doc/tutorial/argument_parser/solution3.cpp
 \htmlonly </details> </div> \endhtmlonly
 
@@ -213,7 +269,10 @@ Take a look at the help page again after you've done all of the above. You will 
 
 # List options {#tutorial_argument_parser_list_options}
 
-In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a container type (e.g. std::vector). The parser registers the container type through seqan3::container and will adapt the parsing of command line arguments accordingly.
+In some use cases you may want to allow the user to specify an option multiple times and store the values in a list. 
+With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a 
+container type (e.g. std::vector). The parser registers the container type through seqan3::container and will adapt the 
+parsing of command line arguments accordingly.
 
 Example:
 
@@ -229,7 +288,9 @@ The vector `list_variable` will then contain all three names `["Jon", "Arya", "N
 
 ## List positional options? {#section_list_positional_options}
 
-An arbitrary positional option cannot be a list because of the ambiguity of which value belongs to which positional option. We do allow the very last option to be a list for convenience though. Note that if you try to add a positional list option which is not the last positional option, a seqan3::design_error will be thrown.
+An arbitrary positional option cannot be a list because of the ambiguity of which value belongs to which positional 
+option. We do allow the very last option to be a list for convenience though. Note that if you try to add a positional 
+list option which is not the last positional option, a seqan3::design_error will be thrown.
 
 Example:
 
@@ -241,7 +302,8 @@ Adding these positional options to a parser will allow you to call the program l
 ./some_program Stark Jon Arya Ned
 ```
 
-The first `variable` will be filled with the value `Stark` while the vector `list_variable` will then contain the three names `["Jon", "Arya", "Ned"]`.
+The first `variable` will be filled with the value `Stark` while the vector `list_variable` will then contain the three 
+names `["Jon", "Arya", "Ned"]`.
 
 \assignment{Assignment 4}
 
@@ -251,14 +313,17 @@ We extend the solution from assignment 3:
 
 2. Add a variable `seasons` of type `std::vector<uint8_t>` to the struct `cmd_arguments`.
 
-3. Add a list option `-s/--season` that will fill the variable `seasons` which lets the user specify which seasons to aggregate instead of the year.
+3. Add a list option `-s/--season` that will fill the variable `seasons` which lets the user specify which seasons to 
+4. aggregate instead of the year.
 
-4. [BONUS] If you have some spare time, try to adjust the program code to aggregate by season. Hint: Use std::find.
+5. [BONUS] If you have some spare time, try to adjust the program code to aggregate by season. Hint: Use std::find.
 \htmlonly <details> <summary>Otherwise just replace the while loop with the following: </summary>  \endhtmlonly
 \snippet doc/tutorial/argument_parser/solution4.cpp altered_while
 \htmlonly </details> \endhtmlonly
 
-Take a look at the help page again after you've done all of the above. You will notice that your option `-s/--season` even tells you that it is of type `List of unsigned 8 bit integer's`. Check if your options are set correctly by trying the following few calls:
+Take a look at the help page again after you've done all of the above. You will notice that your option `-s/--season` 
+even tells you that it is of type `List of unsigned 8 bit integer's`. Check if your options are set correctly by trying 
+the following few calls:
 
 ```console
 ./game_of_parsing -H -s 2 -s 4 data.tsv
@@ -273,7 +338,8 @@ Take a look at the help page again after you've done all of the above. You will 
 \solution
 \snippet doc/tutorial/argument_parser/solution4.cpp solution
 
-\htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks like this:</summary> \endhtmlonly
+\htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks like 
+this:</summary> \endhtmlonly
 \include doc/tutorial/argument_parser/solution4.cpp
 \htmlonly </details> </div> \endhtmlonly
 
@@ -283,9 +349,14 @@ Take a look at the help page again after you've done all of the above. You will 
 
 ## Required options {#section_required_option}
 
-There is a flaw in the example application we have programmed in assignment 4, did you notice? You can make it misbehave by not giving it any option `-s` (which is technically correct for the seqan3::argument_parser because a list may be empty). You could of course handle this in the program itself by checking whether the vector `seasons` is empty, but since supplying no season is not expected we can force the user to supply the option at least once by **declaring an option as required**.
+There is a flaw in the example application we have programmed in assignment 4, did you notice? You can make it 
+misbehave by not giving it any option `-s` (which is technically correct for the seqan3::argument_parser because a list 
+may be empty). You could of course handle this in the program itself by checking whether the vector `seasons` is empty, 
+but since supplying no season is not expected we can force the user to supply the option at least once by **declaring an
+option as required**.
 
-For this purpose we need to use the seqan3::option_spec enum interface that is accepted as an additional argument by all of the `add_[positional_option/option/flag]` calls:
+For this purpose we need to use the seqan3::option_spec enum interface that is accepted as an additional argument by all
+of the `add_[positional_option/option/flag]` calls:
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp required_option
 
@@ -302,9 +373,13 @@ Option -n/--name is required but not set.
 
 Additionally to the *required* tag, there is also the possibility of **declaring an option as advanced or hidden**.
 
-Set an option/flag to advanced, if you do not want the option to be displayed in the normal help page (`-h/--help`). Instead, the advanced options are only displayed when calling `-hh/--advanced-help`. This can be helpful, if you want to avoid bloating your help page with too much information for inexperienced users of your application, but still provide thorough information on demand.
+Set an option/flag to advanced, if you do not want the option to be displayed in the normal help page (`-h/--help`). 
+Instead, the advanced options are only displayed when calling `-hh/--advanced-help`. This can be helpful, if you want to
+avoid bloating your help page with too much information for inexperienced users of your application, but still provide 
+thorough information on demand.
 
-Set an option/flag to hidden, if you want to completely hide it from the user. It will neither appear on the help page nor in any export format. For example, this might be useful for debugging reasons.
+Set an option/flag to hidden, if you want to completely hide it from the user. It will neither appear on the help page 
+nor in any export format. For example, this might be useful for debugging reasons.
 
 Summary:
 
@@ -336,11 +411,17 @@ Check if your options are set correctly by trying the following call:
 
 # Validation of (positional) option values {#section_validation}
 
-Our applications often do not allow just any value to be passed as input arguments and if we do not check for them, the program may exhibit undefined behaviour. The best way to carefully restrict user input is to directly check the input when parsing the command line. The seqan3::argument_parser provides **validators** for a given (positional) option.
+Our applications often do not allow just any value to be passed as input arguments and if we do not check for them, 
+the program may exhibit undefined behaviour. The best way to carefully restrict user input is to directly check the 
+input when parsing the command line. The seqan3::argument_parser provides **validators** for a given (positional) option.
 
-A *validator* is a [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses) that is called within the argument parser after retrieving and converting a command line argument. We provide several validators, which we hope cover most of the use cases, but you can always create your own validator (see section [Create your own validator](#section_create_your_own_validator)).
+A *validator* is a [functor](https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses) that is 
+called within the argument parser after retrieving and converting a command line argument. We provide several validators,
+which we hope cover most of the use cases, but you can always create your own validator
+(see section [Create your own validator](#section_create_your_own_validator)).
 
-\attention You can pass a validator to the seqan3::argument_parser::add_option function only after passing the seqan3::option_spec parameter. Pass the seqan3::option_spec::standard tag if there are no further restrictions on your option.
+\attention You can pass a validator to the seqan3::argument_parser::add_option function only after passing the 
+seqan3::option_spec parameter. Pass the seqan3::option_spec::standard tag if there are no further restrictions on your option.
 
 ## SeqAn validators
 
@@ -348,18 +429,22 @@ The following validators are provided in the SeqAn library and can be included w
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp validator_include
 
-All the validators below work on single values or a container of values. In case the variable is a container, the validator is called **on each element** separately.
+All the validators below work on single values or a container of values. In case the variable is a container, 
+the validator is called **on each element** separately.
 
-\note If the validators below do not suit your needs, you can always create your own validator. See the concept tutorial for an example of how to create your own validator.
+\note If the validators below do not suit your needs, you can always create your own validator. See the concept tutorial
+for an example of how to create your own validator.
 
 ### The seqan3::arithmetic_range_validator
 
 On construction, this validator receives a maximum and a minimum number.
-The validator throws a seqan3::validation_error exception whenever a given value does not lie inside the given min/max range.
+The validator throws a seqan3::validation_error exception whenever a given value does not lie inside the given min/max 
+range.
 
 \snippet test/snippet/argument_parser/validators_1.cpp validator_call
 
-Our application has a another flaw that you might have noticed by now: If you supply a season that is not in the data file, the program will again misbehave. Instead of fixing the program, let's restrict the user input accordingly.
+Our application has a another flaw that you might have noticed by now: If you supply a season that is not in the data 
+file, the program will again misbehave. Instead of fixing the program, let's restrict the user input accordingly.
 
 \assignment{Assignment 6}
 Add a seqan3::arithmetic_range_validator to the `-s/--season` option that sets the range to `[1,7]`.
@@ -433,17 +518,22 @@ Store the result in `file_path`.
 ### The seqan3::regex_validator
 
 On construction, the validator receives a pattern for a regular expression.
-The pattern variable will be used for constructing a std::regex and the validator will call std::regex_match on the command line argument.
+The pattern variable will be used for constructing a std::regex and the validator will call std::regex_match on the 
+command line argument.
 
-Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search which also matches substrings). The validator throws a seqan3::validation_error exception whenever a given parameter does not match the given regular expression.
+Note that a regex_match will only return true if the string matches the pattern completely (in contrast to regex_search 
+which also matches substrings). The validator throws a seqan3::validation_error exception whenever a given parameter 
+does not match the given regular expression.
 
 \snippet test/snippet/argument_parser/validators_4.cpp validator_call
 
 ## Chaining validators
 
-You can also chain validators using the pipe operator (`|`). The pipe operator is the AND operation for two validators, which means that a value must pass both validators in order to be accepted by the combined validator.
+You can also chain validators using the pipe operator (`|`). The pipe operator is the AND operation for two validators, 
+which means that a value must pass both validators in order to be accepted by the combined validator.
 
-For example, you may want a file name that only accepts absolute paths, but also must have one out of a list of given file extensions.
+For example, you may want a file name that only accepts absolute paths, but also must have one out of a list of given 
+file extensions.
 For this purpose you can chain a seqan3::regex_validator to a seqan3::input_file_validator:
 
 \snippet test/snippet/argument_parser/validators_chaining.cpp validator_call
@@ -451,7 +541,8 @@ For this purpose you can chain a seqan3::regex_validator to a seqan3::input_file
 You can chain as many validators as you want, they will be evaluated one after the other from left to right (first to last).
 
 \assignment{Assignment 9}
-Add a seqan3::regex_validator to the first positional option that expects the `file_path` by chaining it to the already present seqan3::input_file_validator. The parsed file name should have a suffix called `seasons`.
+Add a seqan3::regex_validator to the first positional option that expects the `file_path` by chaining it to the already 
+present seqan3::input_file_validator. The parsed file name should have a suffix called `seasons`.
 \endassignment
 \solution
 \snippet doc/tutorial/argument_parser/solution6.cpp file_validator
@@ -480,4 +571,5 @@ This is a feature that helps inform users about updates
 and helps the SeqAn project get a rough estimate on which SeqAn-based apps are popular.
 
 See the API documentation of seqan3::argument_parser for information on how to configure (or turn off) this feature.
-See our [wiki entry](https://github.com/seqan/seqan3/wiki/Update-Notifications) for more information on how it works and our privacy policy.
+See our [wiki entry](https://github.com/seqan/seqan3/wiki/Update-Notifications) for more information on how it works and
+our privacy policy.
