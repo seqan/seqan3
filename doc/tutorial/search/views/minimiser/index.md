@@ -14,8 +14,8 @@ more information about views and how to implement your own view, please see
 A common way to work with sequences is to obtain their k-mers, but even with a large size of k, the number of k-mers is
 non-trivial, therefore storing k-mers is costly. At the same time, due to the overlap of consecutive k-mers, the
 information they contain is highly redundant. That is why minimisers come in handy. Minimisers are k-mers, which have
-a minimal value in a window of a specified size.  Minimal could for example mean lexicographically smallest. By storing only
-these minimal k-mers the storage cost is significantly reduced while maintaining a similar amount of information.
+a minimal value in a window of a specified size.  Minimal could for example mean lexicographically smallest. By storing 
+only these minimal k-mers the storage cost is significantly reduced while maintaining a similar amount of information.
 
 # Minimiser Workflow
 
@@ -66,9 +66,9 @@ Task: Obtain the minimisers for "CCACGTCGACGGTT" with an ungapped shape of size 
 \endsolution
 
 If you have completed the assignment, you're probably wondering what those large numbers mean. As explained above,
-lexicographical ordering is less than optimal. Therefore, SeqAn3 uses a seed to randomize the order. To do so, SeqAn3 simply
-XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would you get back the actual hash values
-then?
+lexicographical ordering is less than optimal. Therefore, SeqAn3 uses a seed to randomize the order. To do so, SeqAn3 
+simply XORs the hash values with a random seed (Default: 0x8F3F73B5CF1C9ADE). How would you get back the actual hash 
+values then?
 Well, you just use XOR again!
 
 \include doc/tutorial/search/views/minimiser/seed_example.cpp
@@ -77,7 +77,8 @@ From these hash values, you can obtain the sequence they represent by transformi
 example, 134 is "2012" in base four and therefore represents "GACG".)
 
 Now take a closer look at the resulting minimiser sequences. Are they what you
-expected? Probably not since they do not correspond to the minimsers computed in our original example. Can you figure out why?
+expected? Probably not since they do not correspond to the minimsers computed in our original example. Can you figure 
+out why?
 
 \hint
 The example above is based on a lexicographical ordering, our first assignment is not.
