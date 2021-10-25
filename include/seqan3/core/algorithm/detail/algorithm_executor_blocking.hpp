@@ -227,7 +227,7 @@ private:
         move_initialise(std::move(other), old_resource_position);
     }
 
-    /*!\brief How many times was the resource_it incremented?
+    /*!\brief Number of times the resource_it was incremented.
      * \details
      * \note This function isn't const-qualified, as seqan3::detail::algorithm_executor_blocking::resource isn't
      * required to be seqan3::const_iterable_range by this class (i.e. having a const-qualified begin/end member
@@ -366,7 +366,7 @@ private:
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource.
-    resource_type resource;
+    resource_type resource; // this is a std::ranges::view
     //!\brief The iterator over the resource that stores the current state of the executor.
     resource_iterator_type resource_it{};
     //!\brief The algorithm to invoke.
