@@ -366,7 +366,7 @@ private:
     execution_handler_t exec_handler{};
 
     //!\brief The underlying resource.
-    resource_type resource; // this is a std::ranges::view
+    resource_type resource; // a std::ranges::view
     //!\brief The iterator over the resource that stores the current state of the executor.
     resource_iterator_type resource_it{};
     //!\brief The algorithm to invoke.
