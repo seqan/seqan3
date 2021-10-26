@@ -20,7 +20,7 @@ In most cases the template parameters are deduced automatically:
 
 \include test/snippet/io/sam_file/sam_file_input_construction_from_filename.cpp
 
-Reading from an std::istringstream:
+Reading from a std::istringstream:
 
 \include test/snippet/io/sam_file/sam_file_input_construction_from_stream.cpp
 
@@ -44,7 +44,7 @@ You can iterate over this file record-wise:
 \include test/snippet/io/sam_file/sam_file_input_reading_range_based_for_loop.cpp
 
 In the above example, `rec` has the type seqan3::sam_file_input::record_type which is a specialisation of seqan3::record
-and behaves like an std::tuple (that's why we can access it via `get`). Instead of using the seqan3::field based
+and behaves like a std::tuple (that's why we can access it via `get`). Instead of using the seqan3::field based
 interface on the record, you could also use `std::get<0>` or even `std::get<dna4_vector>` to retrieve the sequence,
 but it is not recommended, because it is more error-prone.
 
