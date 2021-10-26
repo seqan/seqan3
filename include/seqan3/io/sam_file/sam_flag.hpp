@@ -69,6 +69,8 @@ struct ref_info_not_given
  *   seqan3::sam_flag::second_in_pair (bits `0x2`, `0x8`, `0x20`, `0x40` and `0x80`).
  *
  * \sa https://broadinstitute.github.io/picard/explain-flags.html
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 enum class sam_flag : uint16_t
 {

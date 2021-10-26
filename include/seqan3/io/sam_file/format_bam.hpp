@@ -43,6 +43,8 @@ namespace seqan3
  * The BAM format is the binary version of the SAM format:
  *
  * \copydetails seqan3::format_sam
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 class format_bam : private detail::format_sam_base
 {
