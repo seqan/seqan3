@@ -81,7 +81,7 @@ public:
                       detail::writable_constexpr_alphabet<other_aa_type>)
         {
             static_cast<derived_type &>(*this) =
-                detail::convert_through_char_representation<derived_type, other_aa_type>[seqan3::to_rank(other)];
+                detail::convert_through_char_representation<other_aa_type, derived_type>[seqan3::to_rank(other)];
         }
         else
         {

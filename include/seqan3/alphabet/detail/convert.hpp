@@ -27,11 +27,11 @@ namespace seqan3::detail
 
 /*!\brief A precomputed conversion table for two alphabets based on their char representations.
  * \ingroup alphabet
- * \tparam out_t The type of the output, must satisfy seqan3::alphabet.
  * \tparam in_t The type of the input, must satisfy seqan3::alphabet.
+ * \tparam out_t The type of the output, must satisfy seqan3::alphabet.
  * \hideinitializer
  */
-template <alphabet out_t, alphabet in_t>
+template <alphabet in_t, alphabet out_t>
 constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation
 {
     [] () constexpr
