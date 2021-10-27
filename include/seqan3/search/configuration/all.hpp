@@ -29,8 +29,8 @@
 
 /*!\defgroup search_configuration Configuration
  * \ingroup search
- * \brief Data structures and utility functions for configuring search algorithm.
  * \see search
+ * \brief Data structures and utility functions for configuring search algorithm.
  *
  * \details
  *

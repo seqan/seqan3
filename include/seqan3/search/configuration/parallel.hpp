@@ -19,6 +19,7 @@ namespace seqan3::search_cfg
 {
 /*!\brief Enables the parallel execution of the search algorithm if possible for the given configuration.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \details
  *

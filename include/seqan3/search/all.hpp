@@ -17,11 +17,10 @@
 #include <seqan3/search/search.hpp>
 
 /*!\defgroup search Search
- * \brief Data structures and algorithms for the search of query sequences in a large collection of text.
+ * \brief Data structures and approximate string search algorithms for large collection of text (e.g. DNA).
+ * \brief Meta-header for the \link search Search module \endlink.
  *
  * \details
- * # Introduction
- *
  * Searching is a key component in many sequence analysis tools. The search module is a powerful and easy way to search
  * sequences in a large text or an arbitrary nested collection of texts. When it comes to searching, indices are a core
  * component for searching large amounts of data and are used for tools such as read mappers, assemblers or protein
@@ -45,12 +44,14 @@
  *
  * # Search algorithm
  *
- * The Search module offers a simple unified interface for searching a query in a large indexed text.
- * The algorithm chooses the best search method based on the provided index.
+ * The Search module offers a unified search interface seqan3::search.
+ * The function chooses the best search method based on the provided index and an optional configuration.
+ * \snippet snippet/search/search.cpp Performing search
  *
- * # FM index
- *
- * The search algorithms for FM indices implement either a trivial backtracking approach or an optimum search scheme.
+ * # Available Indices
+ * ## (bidirectional) FM index
+ * Two FM indices are available: seqan3::fm_index and seqan3::bi_fm_index.
+ * The search algorithms for these FM indices implement either a trivial backtracking approach or an optimum search scheme.
  * The latter are currently only available for searches with up to three errors using bidirectional indices.
  * In the future we plan to improve the optimum search schemes to handle higher error counts.
  *
@@ -83,7 +84,8 @@
  * https://doi.org/10.1101/301085
  *
  *
- * # K-mer index
+ * \if KMER
+ * ## K-mer index
  *
  * A k-mer index can be used to efficiently retrieve all occurrences of a certain k-mer in the text.
  * The k-mer can be either an exact string of length k or it can contain one or more wildcards,
@@ -95,4 +97,10 @@
  * \note The k-mer index is not yet implemented.
  * \sa seqan3::views::kmer_hash
  * \sa seqan3::views::minimiser
+ * \endif
+ *
+ * # Configuration
+ *
+ * The approximate string search algorithm can be configured in multiple ways.
+ * See \ref search_configuration for details.
  */
