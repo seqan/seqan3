@@ -200,7 +200,6 @@ template <typename ...alternative_types>
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
-             //TODO same char_type
 //!\endcond
 class alphabet_variant;
 
