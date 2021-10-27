@@ -113,7 +113,7 @@ inline void update_alignment_lengths(int32_t & ref_length,
     {
         case 'M': case '=': case 'X': ref_length += cigar_count, seq_length += cigar_count; break;
         case 'D': case 'N':           ref_length += cigar_count; break;
-        case 'I' :                    seq_length += cigar_count; break;
+        case 'I':                     seq_length += cigar_count; break;
         case 'S': case 'H': case 'P': break; // no op (soft-clipping or padding does not increase either length)
         default: throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
     }
