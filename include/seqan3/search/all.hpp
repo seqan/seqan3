@@ -56,11 +56,11 @@
  * searched (`s.pi`), the lower error bounds (`s.l`) and the upper error bounds (`s.u`). If the number of blocks that
  * the query sequences are split into are known at compile time, the data structure seqan3::detail::search is
  * recommended, otherwise one has to use seqan3::detail::search_dyn. The first one implements its member variables as an
- * an `std::array` of integers, the latter as an `std::vector` of integers.
- * Search search schemes are defined similiar. They are either implemented as an `std::array` of searches if the number
- * of searches is known at compile time, or as an `std::vector` if not.
+ * a `std::array` of integers, the latter as a `std::vector` of integers.
+ * Search search schemes are defined similiar. They are either implemented as a `std::array` of searches if the number
+ * of searches is known at compile time, or as a `std::vector` if not.
  *
- * Precomputed optimum search schemes are represented as an `std::array` of seqan3::detail::search since both the
+ * Precomputed optimum search schemes are represented as a `std::array` of seqan3::detail::search since both the
  * number of searches and the number of blocks are known at compile time. Search schemes computed at run time are
  * represented as `std::vector` of seqan3::detail::search_dyn.
  *

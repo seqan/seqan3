@@ -59,7 +59,7 @@ You can iterate over this file record-wise:
 \include test/snippet/io/structure_file/structure_file_input_record_iter.cpp
 
 In the above example, rec has the type seqan3::structure_file_input::record_type which is a specialisation of
-seqan3::record and behaves like an std::tuple (that's why we can access it via get). Instead of using the seqan3::field
+seqan3::record and behaves like a std::tuple (that's why we can access it via get). Instead of using the seqan3::field
 based interface on the record, you could also use `std::get<0>` or even `std::get<rna4_vector>` to retrieve the
 sequence, but it is not recommended, because it is more error-prone.
 <br><br>

@@ -176,7 +176,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::vector\<seqan3::cigar\> representing the alignment.
+ * \returns A std::vector\<seqan3::cigar\> representing the alignment.
  *
  * \details
  *
@@ -282,7 +282,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::string representing the alignment as a cigar string.
+ * \returns A std::string representing the alignment as a cigar string.
  *
  * \details
  *
@@ -324,7 +324,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::string representing the alignment as a cigar string.
+ * \returns A std::string representing the alignment as a cigar string.
  *
  * \details
  *

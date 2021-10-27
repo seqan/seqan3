@@ -23,7 +23,7 @@ namespace seqan3
  * \ingroup alphabet_range
  * \extends std::ranges::input_range
  *
- * A (biological) sequence is (at least) an std::ranges::input_range whose reference type models seqan3::alphabet.
+ * A (biological) sequence is (at least) a std::ranges::input_range whose reference type models seqan3::alphabet.
  *
  * For example std::vector<seqan3::dna4> is a sequence of seqan3::dna4 characters.
  *

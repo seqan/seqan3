@@ -46,7 +46,7 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
  *
  * \details
  *
- * This concept requires that the given type is a seqan3::tuple_like type but neither an std::ranges::input_range nor
+ * This concept requires that the given type is a seqan3::tuple_like type but neither a std::ranges::input_range nor
  * an alphabet (see seqan3::alphabet_tuple_base).
  */
 //!\cond

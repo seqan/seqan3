@@ -99,7 +99,7 @@ namespace seqan3
 /*!\typedef using bpp_queue
  * \brief A container template representing a set of interactions of type bpp_item,
  * which are (comparable) tuples of `bpp_prob` and `bpp_partner`;
- * must satisfy seqan3::container and must provide an std::emplace(bpp_prob, bpp_partner) function.
+ * must satisfy seqan3::container and must provide a std::emplace(bpp_prob, bpp_partner) function.
  */
 /*!\typedef using bpp_container
  * \brief Type template of the seqan3::field::bpp, a container template over a set (bpp_queue) of interactions;
@@ -682,7 +682,7 @@ protected:
     //!\brief File is at position 1 behind the last record.
     bool at_end{false};
 
-    //!\brief Type of the format, an std::variant over the `valid_formats`.
+    //!\brief Type of the format, a std::variant over the `valid_formats`.
     using format_type = typename detail::variant_from_tags<valid_formats,
                                                            detail::structure_file_input_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.

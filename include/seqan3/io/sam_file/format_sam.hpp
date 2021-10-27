@@ -759,7 +759,7 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     }
 
     if (ref_offset.has_value() && (ref_offset.value() + 1) < 0)
-        throw format_error{"The ref_offset object must be an std::integral >= 0."};
+        throw format_error{"The ref_offset object must be a std::integral >= 0."};
 
     // ---------------------------------------------------------------------
     // Writing the Header on first call
@@ -1117,7 +1117,7 @@ inline void format_sam::write_range_or_asterisk(stream_it_t & stream_it, char co
 template <typename stream_it_t>
 inline void format_sam::write_tag_fields(stream_it_t & stream_it, sam_tag_dictionary const & tag_dict, char const separator)
 {
-    auto const stream_variant_fn = [&stream_it] (auto && arg) // helper to print an std::variant
+    auto const stream_variant_fn = [&stream_it] (auto && arg) // helper to print a std::variant
     {
         using T = std::remove_cvref_t<decltype(arg)>;
 

@@ -121,7 +121,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::rna5.
+/*!\brief Alias for a std::vector of seqan3::rna5.
  * \relates rna5
  * \details
  * \stableapi{Since version 3.1.}
