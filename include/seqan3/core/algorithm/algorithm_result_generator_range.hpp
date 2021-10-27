@@ -38,6 +38,8 @@ namespace seqan3
  * Note that the required type is not enforced in order to test this class without adding the entire machinery for
  * the seqan3::detail::algorithm_executor_blocking.
  * \endif
+ *
+ * \see core_algorithm
  */
 template <typename algorithm_executor_type>
 class algorithm_result_generator_range
