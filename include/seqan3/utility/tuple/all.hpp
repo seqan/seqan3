@@ -17,10 +17,6 @@
  *        specific to a SeqAn module.
  * \ingroup utility
  * \see utility
- *
- * \details
- *
- * \todo write me.
  */
 
 #include <seqan3/utility/tuple/concept.hpp>
