@@ -26,5 +26,4 @@
 
 /*!\namespace seqan3::pack_traits
  * \brief Namespace containing traits for working on type packs.
- * \ingroup utility_type_pack
  */

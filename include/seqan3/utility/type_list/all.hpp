@@ -26,5 +26,4 @@
 
 /*!\namespace seqan3::list_traits
  * \brief Namespace containing traits for working on seqan3::type_list.
- * \ingroup utility_type_list
  */
