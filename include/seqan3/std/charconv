@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides std::from_chars and std::to_chars if not defined in the stdlib \<charconv\> header.
+ * \brief The [\<charconv\> header](https://en.cppreference.com/w/cpp/header/charconv) from C++17's standard library.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -19,11 +19,17 @@
 
 #include <utility> // __cpp_lib_to_chars may be defined here as currently documented
 
+/*!\defgroup std_charconv charconv
+ * \ingroup std
+ * \brief The [\<charconv\> header](https://en.cppreference.com/w/cpp/header/charconv) from C++17's standard library.
+ */
+
 // =========================================================================
 // Determine charconv implementation state (full, int only or no implementation)
 // =========================================================================
 
 /*!\brief A workaround for __cpp_lib_to_chars.
+ * \ingroup std_charconv
  *
  * \details
  *
@@ -102,17 +108,15 @@ using ::seqan3::contrib::charconv::from_chars;
 #include <seqan3/std/concepts>
 #include <sstream>
 
-/*!\defgroup charconv charconv
- * \ingroup std
- * \brief The \<charconv\> header from C++17's standard library.
- */
 namespace seqan3::contrib::charconv_float
 {
 using ::std::to_chars_result;
 using ::std::from_chars_result;
 using ::std::chars_format;
 
-//!\brief std::to_chars implementation for floating point via a std::stringstream for default base = 10.
+/*!\brief std::to_chars implementation for floating point via a std::stringstream for default base = 10.
+ * \ingroup std_charconv
+ */
 template <std::floating_point value_type>
 inline to_chars_result to_chars_floating_point(char * first, char * last, value_type value) noexcept
 {
@@ -131,7 +135,9 @@ inline to_chars_result to_chars_floating_point(char * first, char * last, value_
     return {first + str.size(), std::errc{}};
 }
 
-//!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
+/*!\brief Delegates to functions strto[d/f/ld] for floating point value extraction.
+ * \ingroup std_charconv
+ */
 template <std::floating_point value_type>
 inline from_chars_result from_chars_floating_point(char const * first,
                                                    char const * last,
@@ -245,8 +251,9 @@ namespace seqan3::contrib::charconv_float
 // to_chars for floating point types
 // -----------------------------------------------------------------------------
 
-//!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
-//!\ingroup charconv
+/*!\brief std::to_chars overload for floating point via a std::stringstream for default base = 10.
+ * \ingroup std_charconv
+ */
 template <std::floating_point floating_point_type>
 inline to_chars_result to_chars(char * first, char * last, floating_point_type value) noexcept
 {
@@ -258,7 +265,7 @@ inline to_chars_result to_chars(char * first, char * last, floating_point_type v
 // -----------------------------------------------------------------------------
 
 /*!\brief Parse a char sequence into an floating point value.
- * \ingroup charconv
+ * \ingroup std_charconv
  * \tparam value_type The type to parse the string into; Must model std::integral.
  * \param[in]      first The start of the string to parse.
  * \param[in]      last  The end of the string to parse.
