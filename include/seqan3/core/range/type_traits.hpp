@@ -64,6 +64,7 @@ namespace seqan3
  * \details
  *
  * Attention, this transformation trait implicitly removes cv-qualifiers on all value_types except the one returned.
+ * \see core_range
  */
 template <typename t>
 //!\cond
