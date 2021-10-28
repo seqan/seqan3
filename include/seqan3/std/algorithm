@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Adaptations of algorithms from the Ranges TS
+ * \brief The [\<algorithm\> header](https://en.cppreference.com/w/cpp/header/algorithm) from C++20's standard library.
  * \author René Rahn <rene.rahn AT fu-berlin.de>
  */
 
@@ -15,7 +15,7 @@
 
 /*!\defgroup std_algorithm algorithm
  * \ingroup std
- * \brief The \<algorithm\> header with additional ranges algorithm from C++20's standard library.
+ * \brief The [\<algorithm\> header](https://en.cppreference.com/w/cpp/header/algorithm) from C++20's standard library.
  */
 
 #include <algorithm>

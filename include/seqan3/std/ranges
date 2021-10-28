@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Adaptations of concepts from the Ranges TS
+ * \brief The [\<ranges\> header](https://en.cppreference.com/w/cpp/header/ranges) from C++20's standard library.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -16,6 +16,11 @@
 #if __has_include(<ranges>)
 #include <ranges>
 #endif // __has_include(<ranges>)
+
+/*!\defgroup std_ranges ranges
+ * \ingroup std
+ * \brief The [\<ranges\> header](https://en.cppreference.com/w/cpp/header/ranges) from C++20's standard library.
+ */
 
 //!\cond
 #ifndef RANGES_DEEP_STL_INTEGRATION
@@ -134,12 +139,6 @@ inline constexpr bool enable_borrowed_range<T> = true;
 // ============================================================================
 //  namespace aliasing
 // ============================================================================
-
-/*!\defgroup ranges ranges
- * \ingroup std
- * \brief The \<ranges\> header from C++20's standard library.
- */
-
 namespace std::ranges
 {
 
