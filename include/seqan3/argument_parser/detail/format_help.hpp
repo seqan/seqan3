@@ -33,6 +33,8 @@ namespace seqan3::detail
  * In addition the needed order would be different from the parse format.
  * Thus the calls are stored (parser_set_up_calls and positional_option_calls)
  * and only evaluated when calling format_help::parse().
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_help : public format_help_base<format_help>
 {
@@ -390,6 +392,8 @@ protected:
  * The short help message printing is not done immediately, because the user cannot provide
  * meta information (e.g. app_name) on construction of the parser. Thus the meta information is collected
  * and only evaluated when calling seqan3::detail::format_version::parse.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_short_help : public format_help
 {
@@ -420,6 +424,8 @@ public:
  * The version printing is not done immediately, because the user cannot provide
  * meta information on construction of the parser. Thus the meta information is collected
  * and only evaluated when calling format_version::parse().
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_version : public format_help
 {
@@ -446,6 +452,8 @@ public:
  * The copyright message printing is not done immediately, because the user cannot provide
  * meta information (e.g. long_copyright) on construction of the parser. Thus the meta information is collected
  * and only evaluated when calling seqan3::detail::format_version::parse.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser 
  */
 class format_copyright : public format_help
 {

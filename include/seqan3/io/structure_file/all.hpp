@@ -15,6 +15,10 @@
 /*!\defgroup io_structure_file Structure File
  * \ingroup io
  * \brief Provides files and formats for handling structure data.
+ *
+ * \include{doc} doc/fragments/io_structure_input.md
+ *
+ * \include{doc} doc/fragments/io_structure_output.md
  */
 
 #include <seqan3/io/structure_file/format_vienna.hpp>

@@ -24,6 +24,7 @@ namespace seqan3::search_cfg
 
 /*!\brief Include the query_id in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
 class output_query_id : private pipeable_config_element
@@ -48,6 +49,7 @@ public:
 
 /*!\brief Include the reference_id in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
 class output_reference_id : private pipeable_config_element
@@ -72,6 +74,7 @@ public:
 
 /*!\brief Include the reference_begin_position in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
 class output_reference_begin_position : private pipeable_config_element
@@ -96,6 +99,7 @@ public:
 
 /*!\brief Include the index_cursor in the seqan3::search_result returned by a call to seqan3::search.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_output "Section on Output"
  */
 class output_index_cursor : private pipeable_config_element

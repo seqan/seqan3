@@ -19,6 +19,8 @@ namespace seqan3
 
 /*!\brief The options type defines various option members that influence the behaviour of all or some formats.
  * \ingroup io_structure_file
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 struct structure_file_output_options
 {

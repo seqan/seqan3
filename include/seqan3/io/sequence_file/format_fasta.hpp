@@ -74,6 +74,7 @@ namespace seqan3
  *
  *   * Multiple comment lines (starting with either `;` or `>`), only one ID line before the sequence line is accepted
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_fasta
 {

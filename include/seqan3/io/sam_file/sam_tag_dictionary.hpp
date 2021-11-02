@@ -170,6 +170,7 @@ constexpr uint16_t operator""_tag()
  * | "U2"_tag | std::string           |
  * | "UQ"_tag | int32_t               |
  *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <uint16_t tag_value>
 struct sam_tag_type
@@ -324,6 +325,8 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * As mentioned before you can either overload the type trait seqan3::sam_tag_type
  * for the tag "XZ" or learn more about an std::variant at
  * https://en.cppreference.com/w/cpp/utility/variant.
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  *
  * \sa seqan3::sam_tag_type
  * \sa https://en.cppreference.com/w/cpp/utility/variant

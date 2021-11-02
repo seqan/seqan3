@@ -110,6 +110,8 @@ namespace seqan3
  *
  * The SAM header (if present) is read/written once in the beginning before the
  * first record is read/written.
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 class format_sam : private detail::format_sam_base
 {

@@ -7,13 +7,12 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief This header includes C++17 filesystem support and imports it into namespace std::filesystem (independent of
- *        whether it is marked as "experimental").
+ * \brief The [\<filesystem\> header](https://en.cppreference.com/w/cpp/header/filesystem) from C++17's standard
+ *        library.
  * \author Vitor C. Piro <pirov AT zedat.fu-berlin.de>
  * \author Enrico Seiler <enricoseiler AT fu-berlin.de>
  */
 
-//!\cond
 #pragma once
 
 #if __has_include(<filesystem>)
@@ -21,6 +20,13 @@
 #else
 #include <experimental/filesystem>
 
+/*!\defgroup std_filesystem filesystem
+ * \ingroup std
+ * \brief The [\<filesystem\> header](https://en.cppreference.com/w/cpp/header/filesystem) from C++17's standard
+ *        library.
+ */
+
+//!\cond
 namespace std::experimental::filesystem
 {
 

@@ -16,7 +16,7 @@
  * \ingroup io
  * \brief Provides files and formats for handling read mapping data.
  *
- * ### Introduction
+ * # Introduction
  *
  * SAM/BAM files are primarily used to store pairwise alignments of read mapping data.
  *
@@ -26,7 +26,9 @@
  *
  * All of these fields are retrieved by default (and in that order).
  *
- * Please see the corresponding formats for more details.
+ * \include{doc} doc/fragments/io_sam_file_input.md
+ *
+ * \include{doc} doc/fragments/io_sam_file_output.md
  */
 
 #include <seqan3/io/sam_file/format_bam.hpp>

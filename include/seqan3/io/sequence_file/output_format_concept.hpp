@@ -34,6 +34,8 @@ namespace seqan3::detail
  *
  * Exposes the protected member function `write_sequence_record` from the given `format_type`, such that the file can
  * call the proper function for the selected format.
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 template <typename format_type>
 struct sequence_file_output_format_exposer : public format_type

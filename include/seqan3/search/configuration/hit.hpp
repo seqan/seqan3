@@ -27,6 +27,7 @@ namespace seqan3::search_cfg
 
 /*!\brief Configuration element to receive all hits within the error bounds.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
 class hit_all : private pipeable_config_element
@@ -51,6 +52,7 @@ public:
 
 /*!\brief Configuration element to receive all hits with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
 class hit_all_best : private pipeable_config_element
@@ -75,6 +77,7 @@ public:
 
 /*!\brief Configuration element to receive a single best hit with the lowest number of errors within the error bounds.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
 class hit_single_best : private pipeable_config_element
@@ -100,6 +103,7 @@ public:
 /*!\brief Configuration element to receive all hits with the best number of errors plus the given stratum.
  *        All hits are found with the fewest number of errors plus 'stratum'.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
 class hit_strata : private pipeable_config_element
@@ -132,6 +136,7 @@ public:
 
 /*!\brief A dynamic configuration element to configure the hit strategy at runtime.
  * \ingroup search_configuration
+ * \see search_configuration
  * \sa \ref search_configuration_subsection_hit_strategy "Section on Hit Strategy"
  */
 class hit : private pipeable_config_element

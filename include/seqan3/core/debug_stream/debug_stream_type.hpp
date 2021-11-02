@@ -57,6 +57,8 @@ constexpr bool add_enum_bitwise_operators<fmtflags2> = true;
  * data structures are visualised more elaborately via the debug stream and there are extra flags to configure it
  * (seqan3::fmtflags2).
  *
+ * \see core_debug_stream
+ *
  * # Example
  *
  *  Simple usage:

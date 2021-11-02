@@ -25,6 +25,8 @@ namespace seqan3
  *
  * An empty base class which is used by the algorithm configurations to be identified as a configuration element and
  * to compose an algorithm configuration using the pipe-operator.
+ *
+ * \see core_configuration
  */
 struct pipeable_config_element
 {};

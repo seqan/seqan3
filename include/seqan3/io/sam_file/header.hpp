@@ -24,8 +24,11 @@
 namespace seqan3
 {
 
-//!\brief Stores the header information of alignment files.
-//!\ingroup io_sam_file
+/*!\brief Stores the header information of alignment files.
+ * \ingroup io_sam_file
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
+ */
 template <std::ranges::forward_range ref_ids_type = std::deque<std::string>>
 class sam_file_header
 {

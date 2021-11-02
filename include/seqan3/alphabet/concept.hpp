@@ -164,8 +164,11 @@ namespace seqan3
 inline constexpr auto to_rank = detail::adl_only::to_rank_cpo{};
 //!\}
 
-//!\brief The `rank_type` of the semi-alphabet; defined as the return type of seqan3::to_rank.
-//!\ingroup alphabet
+ /*!\brief The `rank_type` of the semi-alphabet; defined as the return type of seqan3::to_rank.
+ * !\ingroup alphabet
+ *
+ * \stableapi{Since version 3.1.}
+ */
 template <typename semi_alphabet_type>
 //!\cond
     requires requires { { seqan3::to_rank(std::declval<semi_alphabet_type>()) }; }

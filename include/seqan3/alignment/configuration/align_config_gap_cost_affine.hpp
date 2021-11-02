@@ -62,9 +62,11 @@ struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::det
  *
  * Configures the gap scheme for the alignment algorithm. The gap scheme determines how gaps are penalised inside
  * of the alignment algorithm. If the gap scheme is not configured, it will default to a linear gap scheme initialised
- * with edit distance. Note that the gap open score is used as an additional score. This means that the score for
- * opening a gap during the affine alignment execution is the sum of the gap score and the gap open score.
+ * with edit distance. Note that the \ref seqan3::align_cfg::open_score "gap open score" is used as an additional score.
+ * This means that the score for opening a gap during the affine alignment execution is the sum of the gap score and the
+ * gap open score.
  *
+ * \see seqan3::align_cfg::method_global
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_gap_cost_affine_example.cpp

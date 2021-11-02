@@ -16,8 +16,12 @@ int main()
     // build an FM index
     seqan3::fm_index index{genomes};
 
+    //! [Performing search]
+    auto results = seqan3::search(queries, index);
+    //! [Performing search]
+
     // search for the queries "GCT" and "ACCC"
-    for (auto && result : seqan3::search(queries, index))
+    for (auto && result : results)
         seqan3::debug_stream << result << '\n';
     // This should result in:
     // <query_id:0, reference_id:0, reference_pos:1>

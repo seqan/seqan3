@@ -32,6 +32,7 @@ namespace seqan3::detail
 
 /*!\brief The format that contains all helper functions needed in all formats.
  * \ingroup argument_parser
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_base
 {
@@ -199,6 +200,7 @@ protected:
 /*!\brief The format that contains all helper functions needed in all formats for
  *        printing the interface description of the application (to std::cout).
  * \ingroup argument_parser
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename derived_type>
 class format_help_base : public format_base
