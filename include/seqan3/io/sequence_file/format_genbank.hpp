@@ -67,6 +67,7 @@ namespace seqan3
  *
  * Qualities passed to the write function are ignored.
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_genbank
 {

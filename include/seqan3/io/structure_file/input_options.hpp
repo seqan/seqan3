@@ -22,6 +22,8 @@ namespace seqan3
  * \tparam seq_legal_alphabet The sequence legal alphabet exposed as type trait to the format.
  * \tparam structured_seq_combined Trait that exposes to the format whether seq and structure arguments are actually the
  * same/combined.
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 template <typename seq_legal_alphabet, bool structured_seq_combined>
 struct structure_file_input_options

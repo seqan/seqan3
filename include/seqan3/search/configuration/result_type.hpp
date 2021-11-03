@@ -24,6 +24,7 @@ namespace seqan3::search_cfg::detail
 
 /*!\brief Configuration element storing the configured seqan3::search_result for the search algorithm.
  * \ingroup search_configuration
+ * \see search_configuration
  * \tparam search_result_t The search result type to store; must be a type specialisation of seqan3::search_result.
  *
  * \details

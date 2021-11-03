@@ -11,7 +11,7 @@ int main()
     // Here a consecutive shape with size 4 (so the k-mer size is 4) and a window size of 8 is used.
     auto minimisers = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}},
                                                            seqan3::window_size{8});
-    // results in: [10322096095657499240, 10322096095657499142, 10322096095657499224]
-    // representing the k-mers [GTAC, TCGA, GACG]
+    // results in: [10322096095657499224, 10322096095657499142, 10322096095657499224]
+    // representing the k-mers [GACG, TCGA, GACG]
     seqan3::debug_stream << minimisers << '\n';
 }

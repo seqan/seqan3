@@ -212,7 +212,7 @@ inline constexpr ptrdiff_t find_if = -1;
  * \ingroup utility_type_list
  * \copydetails seqan3::pack_traits::find_if
  *
- * \include test/snippet/utility/type_list/list_traits_find.cpp
+ * \include test/snippet/utility/type_list/list_traits_find_if.cpp
  */
 template <template <typename> typename pred_t, typename ...pack_t>
 inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =

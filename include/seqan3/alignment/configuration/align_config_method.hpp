@@ -11,6 +11,7 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  * \author Jörg Winkler <j.winkler AT fu-berlin.de>
  * \author Wiep van der Toorn <w.vandertoorn AT fu-berlin.de>
+ * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
 #pragma once
@@ -28,16 +29,17 @@ namespace seqan3::align_cfg
  *
  * \details
  *
- * The alignment algorithm can be categorised in different methods. For example, the
- * \ref seqan3::align_cfg::method_local "local" and the
- * \ref seqan3::align_cfg::method_global "global" alignment are two different methods, while the semi-global alignment
- * is a variation of the global alignment. This differentiation makes it possible to define a subset of configurations
- * that can work with a particular method. Since it is not possible to guess what the desired method for a user is,
- * there is no default and this configuration must always be provided for the alignment algorithm.
+ * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
+ * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
+ * variation of the global alignment.
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_local.md
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_method_local.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 class method_local : private pipeable_config_element
 {
@@ -101,7 +103,20 @@ struct free_end_gaps_sequence2_trailing : public seqan3::detail::strong_type<boo
 
 /*!\brief Sets the global alignment method.
  * \ingroup alignment_configuration
- * \copydetails seqan3::align_cfg::method_local
+
+ * \details
+ *
+ * There are several methods for sequence alignment. We distinguish between \ref seqan3::align_cfg::method_local "local"
+ * and \ref seqan3::align_cfg::method_global "global" alignments. The *semi-global* alignment is implemented as a
+ * variation of the global alignment.
+ *
+ * \include{doc} doc/fragments/alignment_configuration_align_config_method_global.md
+ *
+ * ### Example
+ *
+ * \include test/snippet/alignment/configuration/align_cfg_method_global.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 class method_global : private pipeable_config_element
 {

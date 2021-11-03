@@ -34,6 +34,8 @@ namespace seqan3
  *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
+ *
+ * \see core_concept
  */
 //!\cond
 #if SEQAN3_WITH_CEREAL
@@ -55,6 +57,8 @@ SEQAN3_CONCEPT cereal_output_archive = false;
  *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
+ *
+ * \see core_concept
  */
 //!\cond
 #if SEQAN3_WITH_CEREAL
@@ -72,6 +76,8 @@ SEQAN3_CONCEPT cereal_input_archive = false;
  *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
+ *
+ * \see core_concept
  */
 //!\cond
 #if SEQAN3_WITH_CEREAL
@@ -93,6 +99,8 @@ SEQAN3_CONCEPT cereal_archive = false;
  *
  * \attention
  * The cereal library is an optional dependency of SeqAn, if it is not found **no types** satisfy this concept.
+ *
+ * \see core_concept
  */
 //!\cond
 #if SEQAN3_WITH_CEREAL

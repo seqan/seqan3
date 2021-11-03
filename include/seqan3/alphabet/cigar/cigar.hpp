@@ -235,7 +235,7 @@ inline namespace literals
  *
  * \stableapi{Since version 3.1.}
  */
-inline cigar::operation operator""_cigar_operation(char const c) noexcept
+constexpr cigar::operation operator""_cigar_operation(char const c) noexcept
 {
     return cigar::operation{}.assign_char(c);
 }

@@ -362,3 +362,15 @@ dl.no-api {
     font-size: 12px;
     margin-top: -3px;
 }
+
+.memtitle.no-api
+{
+    background-image: none;
+    background-color: #ffb3b3;
+}
+
+.memtitle.experimental-api
+{
+    background-image: none;
+    background-color: #FBF0E0;
+}

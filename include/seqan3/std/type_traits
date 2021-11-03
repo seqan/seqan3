@@ -7,8 +7,15 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides C++20 additions to the type_traits header.
+ * \brief The [\<type_traits\> header](https://en.cppreference.com/w/cpp/header/type_traits) from C++20's standard
+ *        library.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
+ */
+
+/*!\defgroup std_type_traits type_traits
+ * \ingroup std
+ * \brief The [\<type_traits\> header](https://en.cppreference.com/w/cpp/header/type_traits) from C++20's standard
+ *        library.
  */
 
 #pragma once
@@ -22,8 +29,18 @@
 #   endif
 #endif
 
-//!\brief A workaround for __cpp_lib_remove_cvref for gcc version >=9.0 and <9.4 (in C++17 mode).
-//!       Those versions implemented std::remove_cvref_t, but did not define that feature detection macro.
+/*!\brief A workaround for __cpp_lib_remove_cvref for gcc version >=9.0 and <9.4 (in C++17 mode).
+ *        Those versions implemented std::remove_cvref_t, but did not define that feature detection macro.
+ * \ingroup std_type_traits
+ */
+#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
+#if SEQAN3_DOXYGEN_ONLY(1)0
+// documentation-only
+#define SEQAN3_CPP_LIB_REMOVE_CVREF IMPLEMENTATION_DEFINED
+#undef SEQAN3_CPP_LIB_REMOVE_CVREF
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+#endif // SEQAN3_DOXYGEN_ONLY
+
 #ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
 #   if defined(__cpp_lib_remove_cvref)
 #       define SEQAN3_CPP_LIB_REMOVE_CVREF 1
@@ -41,6 +58,7 @@ namespace std
 #ifndef SEQAN3_CPP_LIB_REMOVE_CVREF
 /*!\brief Return the input type with `const`, `volatile` and references removed.
  * \tparam t The type to operate on.
+ * \ingroup std_type_traits
  */
 template <typename t>
 struct remove_cvref;
@@ -56,6 +74,7 @@ struct remove_cvref<t> // needed for gcc-9, it defines std::remove_cvref but doe
 
 /*!\brief Return the input type with `const`, `volatile` and references removed (transformation_trait shortcut).
  * \tparam t The type to operate on.
+ * \ingroup std_type_traits
  */
 template <typename t>
 using remove_cvref_t = typename remove_cvref<t>::type;
@@ -65,12 +84,9 @@ using remove_cvref_t = typename remove_cvref<t>::type;
 // type_identity
 // ----------------------------------------------------------------------------
 #ifndef __cpp_lib_type_identity
-/*!\defgroup std_type_traits type_traits
- * \ingroup std
- * \brief The \<concepts\> header from C++20's standard library.
- */
 
 /*!\brief The identity transformation (a transformation_trait that returns the input).
+ * \tparam t The type to operate on.
  * \see https://en.cppreference.com/w/cpp/types/type_identity
  * \ingroup std_type_traits
  */
@@ -87,8 +103,10 @@ struct type_identity<t>
 };
 //!\endcond
 
-//!\brief A shortcut for std::type_identity.
-//!\ingroup std_type_traits
+/*!\brief A shortcut for std::type_identity.
+ * \tparam t The type to operate on.
+ * \ingroup std_type_traits
+ */
 template <typename t>
 using type_identity_t = typename type_identity<t>::type;
 #endif // __cpp_lib_type_identity

@@ -21,6 +21,8 @@ namespace seqan3
  * \implements seqan3::detail::record_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids A seqan3::fields type with seqan3::field IDs corresponding to field_types.
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 template <typename field_types, typename field_ids>
 class structure_record : public record<field_types, field_ids>

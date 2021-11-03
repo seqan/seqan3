@@ -47,7 +47,7 @@ namespace seqan3
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
  * \implements  seqan3::structure_file_input_format
  * \implements  seqan3::structure_file_output_format
- * \ingroup     structure_file
+ * \ingroup     io_structure_file
  *
  * \details
  *
@@ -79,6 +79,8 @@ namespace seqan3
  * When reading the ID-line the identifier (`>`) and any blank characters before the actual ID are
  * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
  * Numbers and spaces within the sequence are simply ignored, but not within the structure.
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 class format_vienna
 {

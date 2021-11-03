@@ -15,6 +15,11 @@
 /*!\defgroup io_sequence_file Sequence File
  * \brief Provides files and formats for handling sequence data.
  * \ingroup io
+ *
+ * \include{doc} doc/fragments/sequence_file_input.md
+ *
+ * \include{doc} doc/fragments/sequence_file_output.md
+ *
  * \see io
  * \see \ref tutorial_sequence_file
  */

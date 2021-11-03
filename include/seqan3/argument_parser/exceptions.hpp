@@ -33,6 +33,8 @@ namespace seqan3
  * - Option is not a list but specified multiple times
  * - Type conversion failed
  * - Validation failed (as defined by the developer)
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class argument_parser_error : public std::runtime_error
 {
@@ -45,6 +47,7 @@ public:
 
 //!\brief Argument parser exception thrown when encountering unknown option.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class unknown_option : public argument_parser_error
 {
 public:
@@ -56,6 +59,7 @@ public:
 
 //!\brief Argument parser exception thrown when too many arguments are provided.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class too_many_arguments : public argument_parser_error
 {
 public:
@@ -67,6 +71,7 @@ public:
 
 //!\brief Argument parser exception thrown when too few arguments are provided.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class too_few_arguments : public argument_parser_error
 {
 public:
@@ -78,6 +83,7 @@ public:
 
 //!\brief Argument parser exception thrown when a required option is missing.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class required_option_missing : public argument_parser_error
 {
 public:
@@ -89,6 +95,7 @@ public:
 
 //!\brief Argument parser exception thrown when a non-list option is declared multiple times.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class option_declared_multiple_times : public argument_parser_error
 {
 public:
@@ -100,6 +107,7 @@ public:
 
 //!\brief Argument parser exception thrown when an incorrect argument is given as (positional) option value.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class user_input_error : public argument_parser_error
 {
 public:
@@ -111,6 +119,7 @@ public:
 
 //!\brief Argument parser exception thrown when an argument could not be casted to the according type.
 //!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 class validation_error : public argument_parser_error
 {
 public:

@@ -50,6 +50,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## Notable Bug-fixes
 
+#### Argument Parser
+
+* Fixed an issue that led to the wrong option type being printed on errors
+  ([\#2836](https://github.com/seqan/seqan3/pull/2836)).
+
 #### Search
 
 * Resolved an issue that prevented the FM-Index from being constructed correctly for inputs larger than 4 GiB

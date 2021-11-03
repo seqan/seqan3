@@ -25,6 +25,7 @@ namespace seqan3::search_cfg
 {
 /*!\brief Configuration element that represents the number or rate of total errors.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \details
  * This configuration element can be used to determine the number or rate of total errors that are supported.
@@ -68,6 +69,7 @@ public:
 
 /*!\brief Configuration element that represents the number or rate of substitution errors.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \details
  * This configuration element can be used to determine the number or rate of substitution errors that are supported.
@@ -112,6 +114,7 @@ public:
 
 /*!\brief Configuration element that represents the number or rate of insertion errors.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \details
  * This configuration element can be used to determine the number or rate of insertion errors that are supported.
@@ -156,6 +159,7 @@ public:
 
 /*!\brief Configuration element that represents the number or rate of deletion errors.
  * \ingroup search_configuration
+ * \see search_configuration
  *
  * \details
  * This configuration element can be used to determine the number or rate of deletion errors that are supported.

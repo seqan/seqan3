@@ -16,7 +16,7 @@
 #include <seqan3/search/fm_index/fm_index.hpp>
 
 /*!\defgroup search_fm_index FM Index
- * \brief Provides seqan3:fm_index and seqan3:bi_fm_index as well as respective cursors.
+ * \brief Provides seqan3::fm_index and seqan3::bi_fm_index as well as respective cursors.
  * \ingroup search
  *
  * \details
