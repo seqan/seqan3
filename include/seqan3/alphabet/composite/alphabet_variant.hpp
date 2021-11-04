@@ -122,18 +122,21 @@ template <typename ...alternative_types>
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
-             //TODO same char_type
 //!\endcond
 class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
-                                               (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
-                                               char> //TODO underlying char t
-
+                                              (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
+                                              char>
 {
 private:
     //!\brief The base type.
     using base_t = alphabet_base<alphabet_variant<alternative_types...>,
-                                                   (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
-                                                   char>;
+                                                  (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
+                                                  char>;
+
+    static_assert((std::is_same_v<alphabet_char_t<alternative_types>, char> && ...),
+                  "The alphabet_variant is currently only tested for alphabets with char_type char. "
+                  "Contact us on GitHub if you have a different use case: https://github.com/seqan/seqan3 .");
+
     //!\brief Befriend the base type.
     friend base_t;
 
