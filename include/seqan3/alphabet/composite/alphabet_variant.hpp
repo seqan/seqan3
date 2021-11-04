@@ -124,8 +124,8 @@ template <typename ...alternative_types>
              (sizeof...(alternative_types) >= 2)
 //!\endcond
 class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
-                                               (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
-                                               char>
+                                              (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
+                                              char>
 {
 private:
     //!\brief The base type.
