@@ -98,13 +98,13 @@
  *
  * **Sink-only views:** The opposite of a *source-only view*. It can only be placed at the end of a pipe, i.e.
  * it operates on views, but does not actually return a range (has no `rrng_t` column in the second table).
- * The C++ standard doesn't have this concept yet.
+ * The C++20 standard doesn't have this concept.
  *
  * **Deep views:** Some views are declared as "deeps views". This means, that in case they are given a range-of-range
  * as input (as opposed to just a range), they will apply their transformation on the innermost range (instead of
  * the outermost range which would be default). Most alphabet-based transformations are defined as deep, but
  * you can use seqan3::views::deep to make any view (adaptor) deep. See seqan3::views::deep for more details.
- * The C++ standard doesn't have this concept yet.
+ * The C++20 standard doesn't have this concept.
  *
  * **For all views the following are documented:**
  *
