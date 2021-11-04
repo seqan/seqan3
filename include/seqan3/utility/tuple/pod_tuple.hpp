@@ -103,7 +103,7 @@ struct pod_tuple<type0, types...>
     //!\}
 };
 
-/*!\brief Recursion anchor for pod_tuple.
+/*!\brief Recursion anchor for seqan3::pod_tuple.
  * \ingroup utility_tuple
  * \tparam type0 The value's type (every tuple must contain at least one type).
  */

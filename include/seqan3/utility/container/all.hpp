@@ -19,7 +19,7 @@
 #include <seqan3/utility/container/small_vector.hpp>
 
 /*!\defgroup utility_container Container
- * \brief Provides various general purpose container.
+ * \brief Provides various general purpose container and concepts.
  * \ingroup utility
  * \see utility
  */

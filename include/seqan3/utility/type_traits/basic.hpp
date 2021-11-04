@@ -21,11 +21,13 @@
 // is_constexpr
 // ----------------------------------------------------------------------------
 
+//!\cond DEV
 /*!\brief Returns true if the expression passed to this macro can be evaluated at compile time, false otherwise.
  * \ingroup utility_type_traits
  * \returns true or false.
  */
 #define SEQAN3_IS_CONSTEXPR(...) std::integral_constant<bool, __builtin_constant_p((__VA_ARGS__, 0))>::value
+//!\endcond
 
 namespace seqan3
 {
@@ -59,7 +61,7 @@ using remove_rvalue_reference_t = typename remove_rvalue_reference<t>::type;
 // is_constexpr_default_constructible
 // ----------------------------------------------------------------------------
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context.
+/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (unary_type_trait specialisation).
  * \ingroup utility_type_traits
  * \implements seqan3::unary_type_trait
  * \tparam t The type to operate on.
@@ -68,17 +70,12 @@ template <typename t>
 struct is_constexpr_default_constructible : std::false_type
 {};
 
-/*!\brief Whether a type std::is_default_constructible in `constexpr`-context (unary_type_trait specialisation).
- * \ingroup utility_type_traits
- * \tparam t A type that std::is_default_constructible.
- * \see seqan3::is_constexpr_default_constructible
- */
-template <typename t>
 //!\cond
+template <typename t>
     requires std::is_default_constructible_v<t>
-//!\endcond
 struct is_constexpr_default_constructible<t> : std::integral_constant<bool, SEQAN3_IS_CONSTEXPR(t{})>
 {};
+//!\endcond
 
 /*!\brief Whether a type std::is_default_constructible in `constexpr`-context (unary_type_trait shortcut).
  * \tparam t The type to operate on.
@@ -142,6 +139,7 @@ constexpr bool decays_to_ignore_v = std::is_same_v<std::remove_cvref_t<t>, ignor
 // SEQAN3_IS_SAME
 // ----------------------------------------------------------------------------
 
+//!\cond DEV
 /*!\brief A macro that behaves like std::is_same_v, except that it doesn't need to instantiate the template on GCC and
  *        Clang.
  * \ingroup utility_type_traits
@@ -153,3 +151,4 @@ constexpr bool decays_to_ignore_v = std::is_same_v<std::remove_cvref_t<t>, ignor
 #else
 #   define SEQAN3_IS_SAME(...)              std::is_same_v<__VA_ARGS__>
 #endif
+//!\endcond
