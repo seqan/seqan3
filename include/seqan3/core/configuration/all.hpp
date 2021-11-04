@@ -10,12 +10,6 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/core/configuration/detail/all.hpp>
-#include <seqan3/core/configuration/pipeable_config_element.hpp>
-
 /*!\defgroup core_configuration Configuration
  * \ingroup core
  * \see core
@@ -77,3 +71,8 @@
  *
  * \include test/snippet/core/configuration/configuration_get_or.cpp
  */
+
+#pragma once
+
+#include <seqan3/core/configuration/configuration.hpp>
+#include <seqan3/core/configuration/pipeable_config_element.hpp>

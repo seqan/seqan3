@@ -10,9 +10,6 @@
  * \brief Meta-header for the \link utility_type_list Utility / Type List submodule \endlink.
  */
 
-#include <seqan3/utility/type_list/traits.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
-
 /*!\defgroup utility_type_list Type List
  * \brief Provides seqan3::type_list and metaprogramming utilities for working on type lists.
  * \ingroup utility
@@ -27,3 +24,8 @@
 /*!\namespace seqan3::list_traits
  * \brief Namespace containing traits for working on seqan3::type_list.
  */
+
+#pragma once
+
+#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>

@@ -10,8 +10,6 @@
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
-#pragma once
-
 /*!\defgroup io_sam_file SAM File
  * \ingroup io
  * \brief Provides files and formats for handling read mapping data.
@@ -31,6 +29,8 @@
  * \include{doc} doc/fragments/io_sam_file_output.md
  */
 
+#pragma once
+
 #include <seqan3/io/sam_file/format_bam.hpp>
 #include <seqan3/io/sam_file/format_sam.hpp>
 #include <seqan3/io/sam_file/header.hpp>
@@ -40,4 +40,6 @@
 #include <seqan3/io/sam_file/output.hpp>
 #include <seqan3/io/sam_file/output_format_concept.hpp>
 #include <seqan3/io/sam_file/output_options.hpp>
+#include <seqan3/io/sam_file/record.hpp>
+#include <seqan3/io/sam_file/sam_flag.hpp>
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>

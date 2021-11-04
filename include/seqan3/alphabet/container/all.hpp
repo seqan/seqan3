@@ -9,13 +9,14 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the \link alphabet_container Alphabet / Container submodule \endlink.
  */
-#pragma once
-
-#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
-#include <seqan3/alphabet/container/concatenated_sequences.hpp>
 
 /*!\defgroup alphabet_container Container
  * \brief Alphabet related container.
  * \ingroup alphabet
  * \see alphabet
  */
+
+#pragma once
+
+#include <seqan3/alphabet/container/bitpacked_sequence.hpp>
+#include <seqan3/alphabet/container/concatenated_sequences.hpp>

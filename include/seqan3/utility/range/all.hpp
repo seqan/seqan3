@@ -10,10 +10,6 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/range/concept.hpp>
-
 /*!\defgroup utility_range Range
  * \ingroup utility
  * \brief The range module provides general purpose range concepts.
@@ -79,3 +75,7 @@
  * \sa https://ericniebler.github.io/range-v3/index.html
  * \see utility
  */
+
+#pragma once
+
+#include <seqan3/utility/range/concept.hpp>

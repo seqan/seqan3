@@ -10,12 +10,12 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
-
 /*!\defgroup core_algorithm Algorithm
  * \ingroup core
  * \see core
  * \brief Provides core functionality used for algorithms.
  */
+
+#pragma once
+
+#include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>

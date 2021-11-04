@@ -10,12 +10,12 @@
  * \brief Meta-header for the \link search_dream_index Search / DREAM Index submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>
-
 /*!\defgroup search_dream_index DREAM Index
  * \brief Provides seqan3::interleaved_bloom_filter.
  * \ingroup search
  * \see search
  */
+
+#pragma once
+
+#include <seqan3/search/dream_index/interleaved_bloom_filter.hpp>

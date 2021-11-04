@@ -10,11 +10,6 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/simd/views/iota_simd.hpp>
-#include <seqan3/utility/simd/views/to_simd.hpp>
-
 //!\cond DEV
 
 /*!\defgroup utility_simd_views Views
@@ -24,3 +19,8 @@
  */
 
 //!\endcond
+
+#pragma once
+
+#include <seqan3/utility/simd/views/iota_simd.hpp>
+#include <seqan3/utility/simd/views/to_simd.hpp>

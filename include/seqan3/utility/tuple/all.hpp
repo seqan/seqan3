@@ -10,8 +10,6 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
 /*!\defgroup utility_tuple Tuple
  * \brief Additional helper utilities for "tuple" types like std::tuple, std::pair, seqan3::pod_tuple that are not
  *        specific to a SeqAn module.
@@ -19,6 +17,10 @@
  * \see utility
  */
 
+#pragma once
+
+#include <seqan3/utility/tuple/common_tuple.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/tuple/pod_tuple.hpp>
 #include <seqan3/utility/tuple/pop_front.hpp>
 #include <seqan3/utility/tuple/split.hpp>

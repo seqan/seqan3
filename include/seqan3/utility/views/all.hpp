@@ -10,23 +10,6 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/views/chunk.hpp>
-#include <seqan3/utility/views/convert.hpp>
-#include <seqan3/utility/views/deep.hpp>
-#include <seqan3/utility/views/elements.hpp>
-#include <seqan3/utility/views/enforce_random_access.hpp>
-#include <seqan3/utility/views/interleave.hpp>
-#include <seqan3/utility/views/join_with.hpp>
-#include <seqan3/utility/views/pairwise_combine.hpp>
-#include <seqan3/utility/views/repeat_n.hpp>
-#include <seqan3/utility/views/repeat.hpp>
-#include <seqan3/utility/views/single_pass_input.hpp>
-#include <seqan3/utility/views/to.hpp>
-#include <seqan3/utility/views/type_reduce.hpp>
-#include <seqan3/utility/views/zip.hpp>
-
 /*!\defgroup utility_views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
  * \ingroup utility
@@ -181,3 +164,21 @@
  *
  * See the \link views views submodule \endlink of the range module for more details.
  */
+
+#pragma once
+
+#include <seqan3/utility/views/chunk.hpp>
+#include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/deep.hpp>
+#include <seqan3/utility/views/elements.hpp>
+#include <seqan3/utility/views/enforce_random_access.hpp>
+#include <seqan3/utility/views/interleave.hpp>
+#include <seqan3/utility/views/join_with.hpp>
+#include <seqan3/utility/views/pairwise_combine.hpp>
+#include <seqan3/utility/views/repeat.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
+#include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
+#include <seqan3/utility/views/zip.hpp>

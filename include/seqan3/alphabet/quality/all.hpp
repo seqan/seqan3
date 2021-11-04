@@ -11,16 +11,6 @@
  * \brief Meta-header for the \link alphabet_quality Alphabet / Quality submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/alphabet/quality/aliases.hpp>
-#include <seqan3/alphabet/quality/concept.hpp>
-#include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
-#include <seqan3/alphabet/quality/phred63.hpp>
-#include <seqan3/alphabet/quality/phred68solexa.hpp>
-#include <seqan3/alphabet/quality/phred94.hpp>
-
 /*!\defgroup alphabet_quality Quality
  * \brief Provides the various quality score types.
  * \ingroup alphabet
@@ -123,3 +113,14 @@
  * one alphabet are mapped to the closest value in the target alphabet (e.g. a `seqan3::phred63` letter with value 60
  * will convert to a `seqan3::phred42` letter of score 41, this also applies to `seqan3::phred94`).
  */
+
+#pragma once
+
+#include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/alphabet/quality/concept.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
+#include <seqan3/alphabet/quality/phred63.hpp>
+#include <seqan3/alphabet/quality/phred68solexa.hpp>
+#include <seqan3/alphabet/quality/phred94.hpp>
+#include <seqan3/alphabet/quality/phred_base.hpp>
+#include <seqan3/alphabet/quality/qualified.hpp>
