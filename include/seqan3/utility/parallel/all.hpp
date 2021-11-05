@@ -10,8 +10,6 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
 //!\cond DEV
 
 /*!\defgroup utility_parallel Parallel
@@ -31,6 +29,6 @@
  */
 //!\endcond
 
- #include <seqan3/utility/parallel/detail/latch.hpp>
- #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
- #include <seqan3/utility/parallel/detail/spin_delay.hpp>
+#pragma once
+
+#include <seqan3/core/platform.hpp>

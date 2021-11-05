@@ -11,11 +11,6 @@
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/alphabet/mask/mask.hpp>
-#include <seqan3/alphabet/mask/masked.hpp>
-
 /*!\defgroup alphabet_mask Mask
  * \brief Provides the mask alphabet and functionality for creating masked composites.
  * \ingroup alphabet
@@ -46,3 +41,8 @@
  * denoted by lowercase characters. Note that larger repeats, such as segmental duplications, large tandem repeats and
  * whole gene duplications are generally not masked.
  */
+
+#pragma once
+
+#include <seqan3/alphabet/mask/mask.hpp>
+#include <seqan3/alphabet/mask/masked.hpp>

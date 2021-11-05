@@ -24,11 +24,12 @@
  * is described in \ref alignment_pairwise.
  */
 
- #pragma once
+#pragma once
 
- #include <seqan3/alignment/aligned_sequence/all.hpp>
- #include <seqan3/alignment/configuration/all.hpp>
- #include <seqan3/alignment/exception.hpp>
- #include <seqan3/alignment/matrix/all.hpp>
- #include <seqan3/alignment/pairwise/all.hpp>
- #include <seqan3/alignment/scoring/all.hpp>
+#include <seqan3/alignment/aligned_sequence/all.hpp>
+#include <seqan3/alignment/configuration/all.hpp>
+#include <seqan3/alignment/decorator/all.hpp>
+#include <seqan3/alignment/exception.hpp>
+#include <seqan3/alignment/matrix/all.hpp>
+#include <seqan3/alignment/pairwise/all.hpp>
+#include <seqan3/alignment/scoring/all.hpp>

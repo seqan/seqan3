@@ -10,16 +10,6 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/alignment/pairwise/align_pairwise.hpp>
-#include <seqan3/alignment/pairwise/align_result_selector.hpp>
-#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
-#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
-#include <seqan3/alignment/pairwise/alignment_result.hpp>
-#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
-#include <seqan3/alignment/pairwise/policy/all.hpp>
-
 /*!\defgroup alignment_pairwise Pairwise
  * \ingroup alignment
  * \brief Provides the algorithmic components for the computation of pairwise alignments.
@@ -272,3 +262,15 @@
  *  - [lecture script - pairwise alignment](https://www.mi.fu-berlin.de/en/inf/groups/abi/teaching/lectures/lectures_past/WS0910/V___Algorithmen_und_Datenstrukturen/scripts/alignment.pdf)\n
  *  - alignment
  */
+
+#pragma once
+
+#include <seqan3/alignment/pairwise/align_pairwise.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
+#include <seqan3/alignment/pairwise/alignment_configurator.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_fwd.hpp>
+#include <seqan3/alignment/pairwise/edit_distance_unbanded.hpp>
+#include <seqan3/alignment/pairwise/policy/all.hpp>

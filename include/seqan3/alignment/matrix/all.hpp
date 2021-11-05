@@ -10,8 +10,6 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
-#pragma once
-
 //!\cond DEV
 
 /*!\defgroup alignment_matrix Matrix
@@ -21,4 +19,6 @@
  */
 //!\endcond
 
-#include <seqan3/core/platform.hpp> // make header test happy
+#pragma once
+
+#include <seqan3/core/platform.hpp>

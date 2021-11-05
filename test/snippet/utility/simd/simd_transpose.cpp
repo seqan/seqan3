@@ -2,6 +2,7 @@
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/utility/simd/all.hpp>
+#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
 
 using uint8x4_t = seqan3::simd::simd_type_t<uint8_t, 4>;
 

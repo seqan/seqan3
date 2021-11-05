@@ -12,16 +12,6 @@
  */
 //!\endcond
 
-#pragma once
-
-#include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/scoring_scheme_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/simd_affine_gap_policy.hpp>
-#include <seqan3/alignment/pairwise/policy/simd_find_optimum_policy.hpp>
-
 //!\cond DEV
 /*!\defgroup alignment_pairwise_policy Alignment policies
  * \ingroup alignment_pairwise
@@ -134,3 +124,13 @@
  *  - seqan3::detail::find_optimum_policy
  */
 //!\endcond
+
+#pragma once
+
+#include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/scoring_scheme_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/simd_affine_gap_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/simd_find_optimum_policy.hpp>

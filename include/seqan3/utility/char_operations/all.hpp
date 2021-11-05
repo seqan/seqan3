@@ -11,14 +11,15 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/char_operations/predicate.hpp>
-#include <seqan3/utility/char_operations/pretty_print.hpp>
-#include <seqan3/utility/char_operations/transform.hpp>
-
 /*!\defgroup utility_char_operations Builtin Character Operations
  * \brief Provides various operations on character types.
  * \ingroup utility
  * \see utility
  */
+
+#pragma once
+
+#include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/char_operations/predicate_detail.hpp>
+#include <seqan3/utility/char_operations/pretty_print.hpp>
+#include <seqan3/utility/char_operations/transform.hpp>

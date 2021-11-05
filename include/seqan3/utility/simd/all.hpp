@@ -10,16 +10,6 @@
  * \brief Meta-header for the \cond DEV \link utility_simd Utility / SIMD submodule \endlink \endcond.
  */
 
-#pragma once
-
-#include <seqan3/utility/simd/algorithm.hpp>
-#include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/detail/debug_stream_simd.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
-#include <seqan3/utility/simd/simd.hpp>
-#include <seqan3/utility/simd/views/iota_simd.hpp>
-#include <seqan3/utility/simd/views/to_simd.hpp>
-
 //!\cond DEV
 
 /*!\defgroup utility_simd SIMD
@@ -46,3 +36,11 @@
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  */
 //!\endcond
+
+#pragma once
+
+#include <seqan3/utility/simd/algorithm.hpp>
+#include <seqan3/utility/simd/concept.hpp>
+#include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
+#include <seqan3/utility/simd/views/all.hpp>

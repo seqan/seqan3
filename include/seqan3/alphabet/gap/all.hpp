@@ -10,11 +10,6 @@
  * \brief Meta-header for the \link alphabet_gap Alphabet / Gap submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/alphabet/gap/gap.hpp>
-#include <seqan3/alphabet/gap/gapped.hpp>
-
 /*!\defgroup alphabet_gap Gap
  * \brief Provides the gap alphabet and functionality to make an alphabet a gapped alphabet.
  * \ingroup alphabet
@@ -32,3 +27,8 @@
  * seqan3::gapped<> template which transforms any other alphabet to be a composite of that alphabet + the gap
  * character.
  */
+
+#pragma once
+
+#include <seqan3/alphabet/gap/gap.hpp>
+#include <seqan3/alphabet/gap/gapped.hpp>

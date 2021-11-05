@@ -10,14 +10,14 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/search/views/kmer_hash.hpp>
-#include <seqan3/search/views/minimiser_hash.hpp>
-#include <seqan3/search/views/minimiser.hpp>
-
 /*!\defgroup search_views Views
  * \brief Search related views.
  * \ingroup search
  * \see search
  */
+
+#pragma once
+
+#include <seqan3/search/views/kmer_hash.hpp>
+#include <seqan3/search/views/minimiser.hpp>
+#include <seqan3/search/views/minimiser_hash.hpp>

@@ -10,12 +10,12 @@
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/alignment/decorator/gap_decorator.hpp>
-
 /*!\defgroup alignment_decorator Decorator
  * \brief The decorator submodule contains special SeqAn decorators.
  * \ingroup alignment
  * \see alignment
  */
+
+#pragma once
+
+#include <seqan3/alignment/decorator/gap_decorator.hpp>

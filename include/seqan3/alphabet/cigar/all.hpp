@@ -10,10 +10,6 @@
  * \brief Meta-header for the \link alphabet_cigar Alphabet / CIGAR submodule \endlink.
  */
 
- #pragma once
-
- #include <seqan3/alphabet/cigar/cigar.hpp>
-
  /*!\defgroup alphabet_cigar CIGAR
   * \brief Provides (semi-)alphabets for representing elements in CIGAR strings.
   * \ingroup alphabet
@@ -34,3 +30,7 @@
   *
   * \copydoc seqan3::doxygen::cigar_operation_table
   */
+
+#pragma once
+
+#include <seqan3/alphabet/cigar/cigar.hpp>
