@@ -199,7 +199,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::dna4.
+/*!\brief Alias for a std::vector of seqan3::dna4.
  * \relates dna4
  * \details
  * \stableapi{Since version 3.1.}

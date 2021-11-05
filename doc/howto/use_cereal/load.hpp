@@ -27,7 +27,7 @@ void store(std::vector<int16_t> const & data, seqan3::test::tmp_filename & tmp_f
 
 int main()
 {
-    // The following example is for an std::vector but any seqan3 data structure that is documented as serialisable
+    // The following example is for a std::vector but any seqan3 data structure that is documented as serialisable
     // could be used, e.g. seqan3::fm_index.
     seqan3::test::tmp_filename tmp_file{"data.out"}; // This is a temporary file, use any other filename.
 

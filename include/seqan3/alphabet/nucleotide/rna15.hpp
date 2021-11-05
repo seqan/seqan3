@@ -133,7 +133,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::rna15.
+/*!\brief Alias for a std::vector of seqan3::rna15.
  * \relates rna15
  * \details
  * \stableapi{Since version 3.1.}

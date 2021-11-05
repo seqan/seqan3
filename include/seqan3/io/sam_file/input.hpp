@@ -312,10 +312,10 @@ public:
      * \attention SeqaAn3 transforms the 1-based SAM format position into a 0-based position.
      */
     using ref_id_type              = std::optional<int32_t>;
-    /*!\brief The type of field::ref_offset is fixed to an std::optional<int32_t>.
+    /*!\brief The type of field::ref_offset is fixed to a std::optional<int32_t>.
      *
      * The SAM format is 1-based and a 0 in the ref_offset field indicated an unmapped read. Since we convert 1-based
-     * positions to 0-based positions when reading the SAM format, we model the ref_offset_type as an std::optional.
+     * positions to 0-based positions when reading the SAM format, we model the ref_offset_type as a std::optional.
      * If the input value is 0, the std::optional will remain valueless.
      */
     using ref_offset_type          = std::optional<int32_t>;
@@ -789,7 +789,7 @@ protected:
     //!\brief File is one position behind the last record.
     bool at_end{false};
 
-    //!\brief Type of the format, an std::variant over the `valid_formats`.
+    //!\brief Type of the format, a std::variant over the `valid_formats`.
     using format_type = typename detail::variant_from_tags<valid_formats,
                                                            detail::sam_file_input_format_exposer>::type;
 

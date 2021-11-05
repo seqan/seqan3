@@ -29,7 +29,7 @@ namespace seqan3::detail
  * \tparam    ...Is   Indices of the tuple elements that should be extracted.
  *
  * \param[in] t       The original tuple to split.
- * \param[in] idx     An std::index_sequence with all indices that should be extracted beginning at `beg`.
+ * \param[in] idx     A std::index_sequence with all indices that should be extracted beginning at `beg`.
  *
  * \returns A new tuple with the extracted elements.
  */

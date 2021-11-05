@@ -131,7 +131,7 @@ using recursive_required_types_t = typename recursive_required_types<t>::type;
 // ------------------------------------------------------------------
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
- * Returns an std::true_type if the `type` is constructable from `T`.
+ * Returns a std::true_type if the `type` is constructable from `T`.
  */
 template <typename T>
 struct constructible_from
@@ -142,7 +142,7 @@ struct constructible_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
- * Returns an std::true_type if the `T` is implicitly convertible to `type`.
+ * Returns a std::true_type if the `T` is implicitly convertible to `type`.
  */
 template <typename T>
 struct implicitly_convertible_from
@@ -153,7 +153,7 @@ struct implicitly_convertible_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
- * Returns an std::true_type if the `type` is assignable from `T`.
+ * Returns a std::true_type if the `type` is assignable from `T`.
  */
 template <typename T>
 struct assignable_from
@@ -164,7 +164,7 @@ struct assignable_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
- * Returns an std::true_type if the `type` is weakly equality comparable to `T`.
+ * Returns a std::true_type if the `type` is weakly equality comparable to `T`.
  */
 template <typename T>
 struct weakly_equality_comparable_with_
@@ -175,7 +175,7 @@ struct weakly_equality_comparable_with_
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
- * Returns an std::true_type if the `type` is comparable via <,<=,>,>= to `T`.
+ * Returns a std::true_type if the `type` is comparable via <,<=,>,>= to `T`.
  */
 template <typename T>
 struct weakly_ordered_with_

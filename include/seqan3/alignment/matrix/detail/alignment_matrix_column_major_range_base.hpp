@@ -290,7 +290,7 @@ private:
      * When dereferenced the iterator returns a seqan3::detail::alignment_matrix_column_major_range_base::column_type.
      * The initialisation of the alignment-column depends on the derived type.
      * This iterator models the std::input_iterator since in some cases the underlying semantics would only guarantee
-     * an std::input_iterator, e.g. in the one column score matrix implementation. Both the previous and the current
+     * a std::input_iterator, e.g. in the one column score matrix implementation. Both the previous and the current
      * column refer to the same data storage.
      */
     class iterator_type
