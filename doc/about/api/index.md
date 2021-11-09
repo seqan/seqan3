@@ -1,4 +1,4 @@
-# Stability and future-proofness {#about_api}
+# Stability and long-term promises {#about_api}
 
 [TOC]
 
