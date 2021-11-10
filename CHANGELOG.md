@@ -46,7 +46,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes 
 
-The in [3.0.3](#3.0.3-api) deprecated files (marked there with a `[deleted without replacement]`) have been removed.
+The files deprecated in [3.0.3](#3.0.3-api) (denoted by `[deleted without replacement]`) have been removed.
 
 # 3.0.3
 
