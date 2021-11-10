@@ -2,17 +2,18 @@
 
 [TOC]
 
-Summary: SeqAn3 adheres to [semantic versioning](https://semver.org) and provides a stable API within
+SeqAn3 adheres to [semantic versioning](https://semver.org) and provides a stable API within
 one major release (all of `seqan-3.*.*`) unless otherwise noted.
+
 There is no ABI stability.
 
 Many of the rules on this page are derived from the [abseil library](https://abseil.io/about/compatibility).
 
 # API stability {#api_stability}
 
-In general, you can expect all entities within the `seqan3` namespace to be usable throughout the entire
+In general, you can expect all **stable** entities within the `seqan3` namespace to be usable throughout the entire
 release cycle of SeqAn3, i.e. if you write an application that includes `seqan-3.1.1`, you should be able
-to re-compile it against `seqan-3.4.5` without errors.
+to compile it against `seqan-3.4.5` without errors.
 
 Exceptions to the previous rule:
   -# **Do not depend upon internal details.** If something is in a namespace or filename/path that includes the word
@@ -22,7 +23,7 @@ Exceptions to the previous rule:
      are often first marked as experimental within a minor release cycle. This means we do not guarantee
      stability until the next minor release happens and the experimental flag is removed in favour of the stable flag.
      Some entities in namespace `seqan3` are permanently marked as "NOAPI" which designates them as subject to
-     unannounced change. In addition, all entities in **core** and **utility** are always marked "NOAPI". This is the
+     unannounced change. In addition, all entities in **core** and **utility** are always marked "no-api". This is the
      case for auxiliary data structures (usually in `seqan3::detail`) that are needed for the public API documentation
      or because they are considered a nice-to-have feature for users.
   -# **Do not depend on the *signatures* of SeqAn APIs.** In particular, you may not take the address of APIs in SeqAn
@@ -55,7 +56,7 @@ update path:
   * The next (or another future) minor version removes the old API.
 
 \warning
-As a special case of point 2. **the entire 3.0.* release is not stable**.
+As a special case of point 2, **the entire 3.0.* release is not stable**.
 We will do our best not to break things, but similar to the releases of GCC, we start labelling entities as stable
 starting from `seqan-3.1.0`. Please refer to the documentation of the individual entities for their stability status.
 
