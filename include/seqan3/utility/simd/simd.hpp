@@ -40,7 +40,7 @@ inline namespace simd
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
  * \sa https://github.com/edanor/umesimd Underlying library of *seqan3::detail::ume_simd* types.
- * \sa https://software.intel.com/sites/landingpage/IntrinsicsGuide Instruction sets and their low-level intrinsics.
+ * \sa https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html Instruction sets and their low-level intrinsics.
  */
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
