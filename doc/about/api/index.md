@@ -1,46 +1,48 @@
-# Stability and future-proofness {#about_api}
+# Stability and long-term promises {#about_api}
 
 [TOC]
 
-Summary: SeqAn3 adheres to [semantic versioning](https://semver.org) and provides a stable API within
+SeqAn3 adheres to [semantic versioning](https://semver.org) and provides a stable API within
 one major release (all of `seqan-3.*.*`) unless otherwise noted.
+
 There is no ABI stability.
 
 Many of the rules on this page are derived from the [abseil library](https://abseil.io/about/compatibility).
 
 # API stability {#api_stability}
 
-In general, you can expect all entities within the `seqan3` namespace to be usable throughout the entire
+In general, you can expect all **stable** entities within the `seqan3` namespace to be usable throughout the entire
 release cycle of SeqAn3, i.e. if you write an application that includes `seqan-3.1.1`, you should be able
-to re-compile it against `seqan-3.4.5` without errors.
+to compile it against `seqan-3.4.5` without errors.
 
 Exceptions to the previous rule:
-  1. **Do not depend upon internal details.** If something is in a namespace or filename/path that includes the word
-     `detail` or if it is private to a class type, you are not allowed to depend upon it any way. More generally,
+  -# **Do not depend upon internal details.** If something is in a namespace or filename/path that includes the word
+     `detail` or if it is private to a class type, you are not allowed to depend upon it in any way. More generally,
      if it is not part of the *user documentation*, it is not part of the API.
-  2. **Do not depend on entities marked as "experimental" or "NOAPI"**. Major changes to the library like new modules
-     are often marked as experimental within the first minor release they appear in. This means we do not guarantee
-     stability until the next minor release happens and the experimental flag is removed. Very few entities in namespace
-     `seqan3` are permanently marked as "NOAPI" which designates them as subject to unannounced change. This is usually
-     the case for auxiliary data structures that would be part of `seqan3::detail` were they not needed to generate
-     correct API documentation for entities in `seqan3`.
-  4. **Do not depend on the *signatures* of SeqAn APIs.** In particular you may not take the address of APIs in SeqAn
+  -# **Do not depend on entities marked as "experimental" or "no-api"**. Major changes to the library like new modules
+     are often first marked as experimental within a minor release cycle. This means we do not guarantee
+     stability until the next minor release happens and the experimental flag is removed in favour of the stable flag.
+     Some entities in namespace `seqan3` are permanently marked as "no-api" which designates them as subject to
+     unannounced change. In addition, all entities in **core** and **utility** are always marked "no-api". This is the
+     case for auxiliary data structures (usually in `seqan3::detail`) that are needed for the public API documentation
+     or because they are considered a nice-to-have feature for users.
+  -# **Do not depend on the *signatures* of SeqAn APIs.** In particular, you may not take the address of APIs in SeqAn
      and you may not use metaprogramming tricks to depend on those signatures. We reserve the right to:
      * Add new names to namespace `seqan3` and any sub-namespaces
      * Add new member functions to types in namespace `seqan3`
      * Add new overloads to existing functions
      * Add new default arguments to functions and templates
      * Change return-types of functions in compatible ways (void to anything, numeric types in a widening fashion, etc.).
-  5. **Do not forward declare SeqAn APIs.** This is actually a sub-point of the previous one, but can be
+  -# **Do not forward declare SeqAn APIs.** This is actually a sub-point of the previous one, but can be
      surprising. Any refactoring that changes template parameters, default parameters, or namespaces will be a breaking
      change in the face of forward-declarations.
-  6. **Avoid unnecessary dependency on Argument-Dependent Lookup (ADL) when calling SeqAn APIs.** Some APIs are designed
+  -# **Avoid unnecessary dependency on Argument-Dependent Lookup (ADL) when calling SeqAn APIs.** Some APIs are designed
      to work via ADL (e.g. `operator<<` for iostreams, unqualified `swap` in generic code, etc.) For most APIs, however,
      ADL is not part of the design. Calling functions from namespace `seqan3` via ADL, unless that is explicitly
      intended as part of the design, should be avoided.
-  7. **Include What You Use.** We may make changes to the internal include-graph for SeqAn headers - if you use an
+  -# **Include What You Use.** We may make changes to the internal include-graph for SeqAn headers - if you use an
      API, please include the relevant header file directly.
-  8. **Do not make unqualified calls in the global namespace.** A call like `f(a);` for a function `f` in the global
+  -# **Do not make unqualified calls in the global namespace.** A call like `f(a);` for a function `f` in the global
      namespace can become ambiguous if/when we add `seqan3::f` (especially if `a` is a SeqAn type). We generally do
      not recommend you use the global namespace for anything. If you must, please qualify any call that accepts a type
      provided by SeqAn.
@@ -54,9 +56,9 @@ update path:
   * The next (or another future) minor version removes the old API.
 
 \warning
-As a special case of point 2. **the entire 3.0.* release is marked as experimental**.
-We will do our best not to break things, but similar to the releases of GCC, you should consider `seqan-3.1.0` as
-the first API-stable release of SeqAn3.
+As a special case of point 2, **the entire 3.0.* release is not stable**.
+We will do our best not to break things, but similar to the releases of GCC, we start labelling entities as stable
+starting from `seqan-3.1.0`. Please refer to the documentation of the individual entities for their stability status.
 
 # ABI stability
 
@@ -73,13 +75,16 @@ a different (updated) on-disk format.
 
 # Platform stability {#platform_stability}
 
-The main requirement for being able to use SeqAn is a supported compiler and in general all operating systems that
-provide a supported compiler should be supported. We currently support the
-following compilers on 64-bit operating systems with little-endian CPU
-architectures only:
+The main requirement for SeqAn3 is that your operating system provides one of the compilers supported by us.
+In general, we only support the latest three major compiler versions.
+We currently support the following compilers on 64-bit operating systems with little-endian CPU architectures:
   * GCC7, GCC8, GCC9, GCC10, GCC11
 
-We promise to support all of the above compilers until the last release of SeqAn3, or until all of the following
+\note Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-10.4` is released,
+we may drop support for `gcc-10.3`. Since all platforms with an older version receive minor release updates,
+this should not be a problem.
+
+We promise to support the above compilers in the latest release of SeqAn3, or until all the following
 operating systems provide a newer supported compiler:
 
 | Operating System             | Supported Releases¹                    |
@@ -99,11 +104,6 @@ cases), it merely states that you should be able to build applications that depe
 This implies the availability of a supported compiler in the default package repositories or via easy-to-use
 third party services.
 
-\note
-Only the most recent minor release of a compiler is guaranteed to be supported, e.g. when `gcc-10.4` is released,
-we may drop support for `gcc-10.3`.
-Since all platforms with an older version receive minor release updates, this should not be a problem.
-
 More platforms and compilers will be added during the SeqAn3 lifecycle, but some will be marked as
 *experimentally supported* which means support may be dropped again later on.
 
@@ -112,7 +112,7 @@ are added by newer versions of a supported compiler.
 
 <small>¹ [This site](https://linuxlifecycle.com) provides a good overview of what the current release and its
 lifecycle is.</small><br>
-<small>² We consider CentOS 7 / RedHat Enterprise Linux (RHEL) 7 as being community-supported. That means issues and 
+<small>² We consider CentOS 7 / RedHat Enterprise Linux (RHEL) 7 as being community-supported. That means issues and
 patches are welcome, but we do not actively test for those operating systems. See this related
 [issue](https://github.com/seqan/seqan3/issues/2244).</small>
 
