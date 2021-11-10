@@ -19,7 +19,7 @@ Exceptions to the previous rule:
   -# **Do not depend upon internal details.** If something is in a namespace or filename/path that includes the word
      `detail` or if it is private to a class type, you are not allowed to depend upon it in any way. More generally,
      if it is not part of the *user documentation*, it is not part of the API.
-  -# **Do not depend on entities marked as "experimental" or "NOAPI"**. Major changes to the library like new modules
+  -# **Do not depend on entities marked as "experimental" or "no-api"**. Major changes to the library like new modules
      are often first marked as experimental within a minor release cycle. This means we do not guarantee
      stability until the next minor release happens and the experimental flag is removed in favour of the stable flag.
      Some entities in namespace `seqan3` are permanently marked as "NOAPI" which designates them as subject to
