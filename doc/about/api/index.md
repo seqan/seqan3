@@ -22,7 +22,7 @@ Exceptions to the previous rule:
   -# **Do not depend on entities marked as "experimental" or "no-api"**. Major changes to the library like new modules
      are often first marked as experimental within a minor release cycle. This means we do not guarantee
      stability until the next minor release happens and the experimental flag is removed in favour of the stable flag.
-     Some entities in namespace `seqan3` are permanently marked as "NOAPI" which designates them as subject to
+     Some entities in namespace `seqan3` are permanently marked as "no-api" which designates them as subject to
      unannounced change. In addition, all entities in **core** and **utility** are always marked "no-api". This is the
      case for auxiliary data structures (usually in `seqan3::detail`) that are needed for the public API documentation
      or because they are considered a nice-to-have feature for users.
