@@ -12,7 +12,7 @@ int main()
         // print the fields:
         seqan3::debug_stream << "ID:  " << id << '\n';
         seqan3::debug_stream << "SEQ: " << seq << '\n';
-        seqan3::debug_stream << "QUAL:" << qual << '\n'; // qual is empty for FastA files
+        seqan3::debug_stream << "QUAL:" << qual << '\n'; // qual is empty for FASTA files
     }
 }
 //![main]

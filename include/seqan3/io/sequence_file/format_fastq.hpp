@@ -44,7 +44,7 @@
 namespace seqan3
 {
 
-/*!\brief The FastQ format.
+/*!\brief The FASTQ format.
  * \implements SequenceFileFormat
  * \ingroup io_sequence_file
  *
@@ -52,12 +52,12 @@ namespace seqan3
  *
  * ### Introduction
  *
- * FastQ is the de-facto-standard for storing sequences together with quality information. See the
+ * FASTQ is the de-facto-standard for storing sequences together with quality information. See the
  * [article on wikipedia](https://en.wikipedia.org/wiki/FASTQ_format) for a an in-depth description of the format.
  *
  * ### fields_specialisation
  *
- * The FastQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual. All three fields
+ * The FASTQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual. All three fields
  * are required when writing and the sequence and qualities are required to be of the same length.
  *
  * ### Encodings

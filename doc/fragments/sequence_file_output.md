@@ -1,7 +1,7 @@
 ### Writing Sequence Files
 
 Sequence files are the most generic and common biological files. Well-known formats include
-FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
+FASTA and FASTQ, but some may also be interested in treating SAM or BAM files as sequence
 files, discarding the alignment.
 
 The Sequence file abstraction supports writing three different fields:
@@ -45,7 +45,7 @@ emplace_back() the seqan3::field ID of the i-th tuple-element/argument is assume
 selected_field_ids, i.e. by default the first is assumed to be seqan3::field::seq, the second seqan3::field::id
 and the third one seqan3::field::qual. You may give less fields than are selected if the actual format you are
 writing to can cope with less
-(e.g. for FastA it is sufficient to write seqan3::field::seq and seqan3::field::id, even if selected_field_ids
+(e.g. for FASTA it is sufficient to write seqan3::field::seq and seqan3::field::id, even if selected_field_ids
 also contains seqan3::field::qual at the third position).
 You may also use the output file's iterator for writing, however, this rarely provides an advantage.
 

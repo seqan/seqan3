@@ -16,6 +16,6 @@ int main()
     {
         seqan3::debug_stream << "ID: "        << id       << '\n';
         seqan3::debug_stream << "SEQ: "       << sequence << '\n';
-        seqan3::debug_stream << "EMPTY QUAL." << quality  << '\n'; // quality is empty for FastA files
+        seqan3::debug_stream << "EMPTY QUAL." << quality  << '\n'; // quality is empty for FASTA files
     }
 }

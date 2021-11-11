@@ -56,7 +56,7 @@ namespace seqan3
  * Dot Bracket or Vienna Notation is widely used for secondary structure annotation. Is is a very simple format,
  * containing one or more sequences. Each sequence must appear as a single line in the file.
  * A sequence may be preceded by a special line starting with the '>' character followed by a sequence name
- * (like FastA). After each sequence line there is usually a line containing
+ * (like FASTA). After each sequence line there is usually a line containing
  * secondary structure, using brackets to denote interacting nucleotides or amino acids, and dots for unpaired sites.
  * The length of the struture must equal the length of the sequence.
  * Optionally, the structure may be followed by a space character and the minimum free energy value enclosed

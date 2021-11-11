@@ -18,6 +18,6 @@ int main()
     {
         seqan3::debug_stream << "ID:  " << record.id() << '\n';
         seqan3::debug_stream << "SEQ: " << record.sequence() << '\n';
-        // a quality field also exists, but is not printed, because we know it's empty for FastA files.
+        // a quality field also exists, but is not printed, because we know it's empty for FASTA files.
     }
 }

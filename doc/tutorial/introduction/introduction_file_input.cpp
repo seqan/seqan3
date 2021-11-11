@@ -47,7 +47,7 @@ int main ()
 {
     std::filesystem::path tmp_dir = std::filesystem::temp_directory_path(); // get the tmp directory
 
-    // Initialise a file input object with a FastA file.
+    // Initialise a file input object with a FASTA file.
     seqan3::sequence_file_input file_in{tmp_dir/"seq.fasta"};
 
     // Retrieve the sequences and ids.
@@ -55,7 +55,7 @@ int main ()
     {
         seqan3::debug_stream << "ID:     " << id << '\n';
         seqan3::debug_stream << "SEQ:    " << seq << '\n';
-        seqan3::debug_stream << "Empty Qual." << qual << '\n';  // qual is empty for FastAfiles
+        seqan3::debug_stream << "Empty Qual." << qual << '\n';  // qual is empty for FASTA files
     }
 
     return 0;
