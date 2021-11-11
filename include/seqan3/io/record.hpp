@@ -166,13 +166,13 @@ struct fields
 // record
 // ----------------------------------------------------------------------------
 
-/*!\brief The class template that file records are based on; behaves like an std::tuple.
+/*!\brief The class template that file records are based on; behaves like a std::tuple.
  * \ingroup io
  * \implements seqan3::tuple_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
  *
- * This class template behaves just like an std::tuple, with the exception that it provides an additional
+ * This class template behaves just like a std::tuple, with the exception that it provides an additional
  * get-interface that takes a seqan3::field identifier. The traditional get interfaces (via index and
  * via type) are also supported, but discouraged, because accessing via seqan3::field is unambiguous and
  * better readable.

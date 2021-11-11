@@ -1181,7 +1181,7 @@ inline std::string format_bam::get_tag_dict_str(sam_tag_dictionary const & tag_d
 {
     std::string result{};
 
-    auto stream_variant_fn = [&result] (auto && arg) // helper to print an std::variant
+    auto stream_variant_fn = [&result] (auto && arg) // helper to print a std::variant
     {
         // T is either char, int32_t, float, std::string, or a std::vector<some int>
         using T = std::remove_cvref_t<decltype(arg)>;

@@ -76,7 +76,6 @@ SEQAN3_CONCEPT const_iterable_range =
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  *
  * \noapi{Exposition only.}
@@ -113,7 +112,6 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  *
  * \noapi{Exposition only.}

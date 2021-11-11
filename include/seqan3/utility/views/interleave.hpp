@@ -367,7 +367,8 @@ namespace seqan3::views
  *
  * * `urng_t` is the type of the range modified by this view (input).
  * * `rrng_t` is the type of the range returned by this view.
- * * for more details, see \ref views.
+ *
+ * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
  * ### Example
  *

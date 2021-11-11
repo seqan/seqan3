@@ -40,7 +40,7 @@ You can iterate over this file record-wise:
 \include test/snippet/io/sequence_file/sequence_file_output_record_wise_iteration.cpp
 
 The easiest way to write to a sequence file is to use the push_back() or emplace_back() member functions. These
-work similarly to how they work on an std::vector. If you pass a tuple to push_back() or give arguments to
+work similarly to how they work on a std::vector. If you pass a tuple to push_back() or give arguments to
 emplace_back() the seqan3::field ID of the i-th tuple-element/argument is assumed to be the i-th value of
 selected_field_ids, i.e. by default the first is assumed to be seqan3::field::seq, the second seqan3::field::id
 and the third one seqan3::field::qual. You may give less fields than are selected if the actual format you are

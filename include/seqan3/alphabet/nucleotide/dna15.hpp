@@ -178,7 +178,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::dna15.
+/*!\brief Alias for a std::vector of seqan3::dna15.
  * \relates dna15
  * \details
  * \stableapi{Since version 3.1.}

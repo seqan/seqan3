@@ -60,6 +60,10 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Resolved an issue that prevented the FM-Index from being constructed correctly for inputs larger than 4 GiB
   ([\#2756](https://github.com/seqan/seqan3/pull/2756)).
 
+## API changes 
+
+The files deprecated in [3.0.3](#3.0.3-api) (denoted by `[deleted without replacement]`) have been removed.
+
 # 3.0.3
 
 Note that 3.1.0 will be the first API stable release and interfaces in this release might still change.
@@ -160,7 +164,7 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * Unknown tags will emit a warning. Before, a error was raised.
 
 ## API changes
-
+<a name="3.0.3-api"></a>
 Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if
 applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code.
 You can either directly check the reported code or verify with our documentation how the new API should be used.
@@ -464,9 +468,9 @@ Header Changes:
 
 #### Search
 
-* We removed the concepts seqan3::[bi_]fm_index[_cursor]_specialisation. We did this because we currently have only one
+* We removed the concepts `seqan3::[bi_]fm_index[_cursor]_specialisation`. We did this because we currently have only one
   implementation modelling each concept and are not completely sure if the current definition of the concepts is the
-  right one. If you used those concepts, you can check whether the cursor type is seqan3::[bi_]fm_index_cursor as a
+  right one. If you used those concepts, you can check whether the cursor type is `seqan3::[bi_]fm_index_cursor` as a
   substitute. ([\#2348](https://github.com/seqan/seqan3/pull/2348))
 
 # 3.0.2

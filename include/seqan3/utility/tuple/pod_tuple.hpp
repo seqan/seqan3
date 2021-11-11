@@ -103,7 +103,7 @@ struct pod_tuple<type0, types...>
     //!\}
 };
 
-/*!\brief Recursion anchor for pod_tuple.
+/*!\brief Recursion anchor for seqan3::pod_tuple.
  * \ingroup utility_tuple
  * \tparam type0 The value's type (every tuple must contain at least one type).
  */
@@ -168,11 +168,11 @@ pod_tuple(types && ...) -> pod_tuple<types...>;
 
 /*!\name Access an element of a pod_tuple by index
  * \{
- * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+ * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  */
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
@@ -186,7 +186,7 @@ constexpr auto & get(seqan3::pod_tuple<types...> & t) noexcept
         return seqan3::get<i-1>(t._tail);
 }
 
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
@@ -201,7 +201,7 @@ constexpr auto const & get(seqan3::pod_tuple<types...> const & t) noexcept
 }
 
 // extra overloads for temporaries required, because members of temporaries may only be returned as temporaries
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
@@ -215,7 +215,7 @@ constexpr auto && get(seqan3::pod_tuple<types...> && t) noexcept
         return seqan3::get<i-1>(std::move(t._tail));
 }
 
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <std::size_t i, typename ...types>
 constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
@@ -231,14 +231,14 @@ constexpr auto const && get(seqan3::pod_tuple<types...> const && t) noexcept
 //!\}
 
 /*!\name Access an element of a pod_tuple by type
- * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+ * \brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
  *
  * Note that these functions are available, both, in the seqan3 namespace and in namespace std.
  * As is the case with std::tuple, this function is only defined if the type appears once
  * in the tuple, i.e. `std::get<int>(std::tuple<int, int>{1,2})` is not defined.
  * \{
  */
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <typename type, typename ...arg_types>
 constexpr auto & get(seqan3::pod_tuple<arg_types...> & t) noexcept
@@ -249,7 +249,7 @@ constexpr auto & get(seqan3::pod_tuple<arg_types...> & t) noexcept
     return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(t);
 }
 
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <typename type, typename ...arg_types>
 constexpr auto const & get(seqan3::pod_tuple<arg_types...> const & t) noexcept
@@ -260,7 +260,7 @@ constexpr auto const & get(seqan3::pod_tuple<arg_types...> const & t) noexcept
     return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(t);
 }
 
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <typename type, typename ...arg_types>
 constexpr auto && get(seqan3::pod_tuple<arg_types...> && t) noexcept
@@ -271,7 +271,7 @@ constexpr auto && get(seqan3::pod_tuple<arg_types...> && t) noexcept
     return seqan3::get<seqan3::pack_traits::find<type, arg_types...>>(std::move(t));
 }
 
-//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on an std::tuple.
+//!\brief The same as [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get) on a std::tuple.
 //!\relates seqan3::pod_tuple
 template <typename type, typename ...arg_types>
 constexpr auto const && get(seqan3::pod_tuple<arg_types...> const && t) noexcept

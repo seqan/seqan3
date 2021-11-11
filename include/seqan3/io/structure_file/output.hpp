@@ -487,7 +487,7 @@ protected:
     //!\brief The secondary stream is a compression layer on the primary or just points to the primary (no compression).
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
-    //!\brief Type of the format, an std::variant over the `valid_formats`.
+    //!\brief Type of the format, a std::variant over the `valid_formats`.
     using format_type = typename detail::variant_from_tags<valid_formats,
                                                            detail::structure_file_output_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.

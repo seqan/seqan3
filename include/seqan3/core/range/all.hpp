@@ -10,12 +10,12 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/core/range/type_traits.hpp>
-
 /*!\defgroup core_range Range
  * \ingroup core
  * \see core
  * \brief Provides seqan3 general purpose range functionality.
  */
+
+#pragma once
+
+#include <seqan3/core/range/type_traits.hpp>

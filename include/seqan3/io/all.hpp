@@ -109,3 +109,4 @@
 #include <seqan3/io/sequence_file/all.hpp>
 #include <seqan3/io/stream/all.hpp>
 #include <seqan3/io/structure_file/all.hpp>
+#include <seqan3/io/views/all.hpp>

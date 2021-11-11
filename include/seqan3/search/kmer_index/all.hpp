@@ -10,10 +10,6 @@
  * \brief Meta-header for the \link search_kmer_index Search / k-mer Index submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/search/kmer_index/shape.hpp>
-
 /*!\defgroup search_kmer_index k-mer Index
  * \ingroup search
  * \brief Implementation of shapes for a k-mer Index.
@@ -31,3 +27,7 @@
  * The parameter k and the position(s) of wildcards must be fixed at index creation with
  * seqan3::ungapped or seqan3::shape.
  */
+
+#pragma once
+
+#include <seqan3/search/kmer_index/shape.hpp>

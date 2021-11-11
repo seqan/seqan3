@@ -915,7 +915,7 @@ public:
  * \details
  *
  * On construction, the validator must receive a pattern for a regular expression.
- * The pattern variable will be used for constructing an std::regex and the
+ * The pattern variable will be used for constructing a std::regex and the
  * validator will call std::regex_match on the command line argument.
  * Note: A regex_match will only return true if the strings matches the pattern
  * completely (in contrast to regex_search which also matches substrings).

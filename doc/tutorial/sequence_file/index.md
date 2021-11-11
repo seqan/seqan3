@@ -304,7 +304,7 @@ Writing to std::cout:
 ## Writing records
 
 The easiest way to write to a sequence file is to use the seqan3::sequence_file_output::push_back() member function.
-It works similarly to how it works on an std::vector.
+It works similarly to how it works on a std::vector.
 
 \include doc/tutorial/sequence_file//sequence_file_output_record.cpp
 

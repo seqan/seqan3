@@ -9,16 +9,6 @@
  * \author Sara Hetzel <sara.hetzel AT fu-berlin.de>
  * \brief Meta-header for the \link alphabet_aminoacid Alphabet / Aminoacid submodule \endlink.
  */
-#pragma once
-
-#include <seqan3/alphabet/aminoacid/aa10li.hpp>
-#include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
-#include <seqan3/alphabet/aminoacid/aa20.hpp>
-#include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/concept.hpp>
-#include <seqan3/alphabet/aminoacid/translation.hpp>
-#include <seqan3/alphabet/aminoacid/translation_details.hpp>
-#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 
 /*!\defgroup alphabet_aminoacid Aminoacid
  * \brief Provides the amino acid alphabets and functionality for translation from nucleotide.
@@ -74,3 +64,15 @@
  * no benefits in regard to space consumption (both need 5bits).
  * Use it only when you know you need to interface with other software of formats that only support the canonical set.
  */
+
+#pragma once
+
+#include <seqan3/alphabet/aminoacid/aa10li.hpp>
+#include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
+#include <seqan3/alphabet/aminoacid/aa20.hpp>
+#include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/aminoacid/aminoacid_base.hpp>
+#include <seqan3/alphabet/aminoacid/concept.hpp>
+#include <seqan3/alphabet/aminoacid/translation.hpp>
+#include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>

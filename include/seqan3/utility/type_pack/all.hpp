@@ -10,8 +10,6 @@
  * \brief Meta-header for the \link utility_type_pack Utility / Type Pack submodule \endlink.
  */
 
-#include <seqan3/utility/type_pack/traits.hpp>
-
 /*!\defgroup utility_type_pack Type Pack
  * \brief Provides metaprogramming utilities for working on template parameter packs.
  * \ingroup utility
@@ -26,5 +24,8 @@
 
 /*!\namespace seqan3::pack_traits
  * \brief Namespace containing traits for working on type packs.
- * \ingroup utility_type_pack
  */
+
+#pragma once
+
+#include <seqan3/utility/type_pack/traits.hpp>

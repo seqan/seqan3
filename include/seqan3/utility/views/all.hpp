@@ -10,23 +10,6 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/views/chunk.hpp>
-#include <seqan3/utility/views/convert.hpp>
-#include <seqan3/utility/views/deep.hpp>
-#include <seqan3/utility/views/elements.hpp>
-#include <seqan3/utility/views/enforce_random_access.hpp>
-#include <seqan3/utility/views/interleave.hpp>
-#include <seqan3/utility/views/join_with.hpp>
-#include <seqan3/utility/views/pairwise_combine.hpp>
-#include <seqan3/utility/views/repeat_n.hpp>
-#include <seqan3/utility/views/repeat.hpp>
-#include <seqan3/utility/views/single_pass_input.hpp>
-#include <seqan3/utility/views/to.hpp>
-#include <seqan3/utility/views/type_reduce.hpp>
-#include <seqan3/utility/views/zip.hpp>
-
 /*!\defgroup utility_views Views
  * \brief Views are "lazy range combinators" that offer modified views onto other ranges.
  * \ingroup utility
@@ -50,8 +33,8 @@
  *
  * ### Namespaces
  *
- *   * [All views from the range-v3 libary](https://ericniebler.github.io/range-v3/index.html#range-views) are available
- * in the namespace `ranges::view`.
+ *   * [All views from the std libary](https://en.cppreference.com/w/cpp/ranges#Range_adaptors) are available
+ * in the namespace `std::ranges::views` or in the namespace alias `std::views`.
  *
  *   * All SeqAn views are available in the namespace `seqan3::views`.
  *
@@ -73,7 +56,7 @@
  *   1. the view (this is the type that is a range and meets std::ranges::view; it is what we refer to with
  * `auto vec_view` above)
  *   2. the view adaptor (this is the functor that returns the actual view based on it's parameters, including the
- * underlying range; in the above example `views::reverse` and `views::complement` are view adaptors)
+ * underlying range; in the above example `std::views::reverse` and `seqan3::views::complement` are view adaptors)
  *
  * The view adaptor also facilitates the piping behaviour. It is the only entity that is publicly documented and
  * the actual view type (the range type returned by the adaptor) is considered implementation defined.
@@ -88,20 +71,23 @@
  *
  * ### View properties
  *
- * There are three view properties that are documented for a view, **only if that view fulfills them:**
+ * There are three view properties that are documented for a view, **only if that view fulfils them:**
  *
  * **Source-only views:** Most views operate on an underlying range and return a (modified) range, i.e. they can be placed
  * at the beginning, middle or end of a "pipe" of view operations. However, some views are limited to being at
- * the front ("source"), e.g. `std::views::single`, `ranges::view::concat` and `std::views::ints`. These views
- * are marked as "source-only" and have no `urng_t` column in the second table.
+ * the front ("source"), e.g. `std::views::empty`, `std::view::single` and `std::views::iota`. These views
+ * are marked as "source-only" and have no `urng_t` column in the second table. The C++ standard calls these [Range
+ * factories](https://eel.is/c++draft/range.factories), which are utilities to create a view.
  *
  * **Sink-only views:** The opposite of a *source-only view*. It can only be placed at the end of a pipe, i.e.
  * it operates on views, but does not actually return a range (has no `rrng_t` column in the second table).
+ * The C++20 standard doesn't have this concept.
  *
  * **Deep views:** Some views are declared as "deeps views". This means, that in case they are given a range-of-range
  * as input (as opposed to just a range), they will apply their transformation on the innermost range (instead of
  * the outermost range which would be default). Most alphabet-based transformations are defined as deep, but
  * you can use seqan3::views::deep to make any view (adaptor) deep. See seqan3::views::deep for more details.
+ * The C++20 standard doesn't have this concept.
  *
  * **For all views the following are documented:**
  *
@@ -149,7 +135,7 @@
  * (since dereferencing an iterator or calling operator[] returns the reference type). The reference type may or may
  * not actually contain a `&` (see below). For many SeqAn specific views additional concept requirements are defined
  * for the input range's reference type, e.g. seqan3::views::complement can only operate on ranges whose elements are
- * nucleotides (meet seqan3::nucleotide_alphabet_check). In some case the type may even be a specific type or the result
+ * nucleotides (meet seqan3::nucleotide_alphabet). In some case the type may even be a specific type or the result
  * of a type trait.
  *
  * **Returned range's reference type:** Conversely certain views make guarantees on the concepts satisfied by the
@@ -159,13 +145,14 @@
  * of seqan3::views::complement has any actual `&` removed from the underlying ranges' reference type (if originally present),
  * this goes hand-in-hand with std::ranges::output_range being lost → original elements cannot be written to through
  * this view.
- * This is because *new elements* are being generated. Other views like `views::reverse` also preserve the
+ * This is because *new elements* are being generated. Other views like `std::views::reverse` also preserve the
  * `&` (if originally present), because the elements in the return view still point to the elements in the original
  * range (just in different order). This has the effect that through some combinations of views you can modify the
  * elements in the original range (if all views in the pipe preserve std::ranges::output_range), but through others
  * you can't.
  *
  * \sa https://ericniebler.github.io/range-v3/index.html#range-views
+ * \sa https://en.cppreference.com/w/cpp/ranges
  */
 
 /*!
@@ -177,3 +164,21 @@
  *
  * See the \link views views submodule \endlink of the range module for more details.
  */
+
+#pragma once
+
+#include <seqan3/utility/views/chunk.hpp>
+#include <seqan3/utility/views/convert.hpp>
+#include <seqan3/utility/views/deep.hpp>
+#include <seqan3/utility/views/elements.hpp>
+#include <seqan3/utility/views/enforce_random_access.hpp>
+#include <seqan3/utility/views/interleave.hpp>
+#include <seqan3/utility/views/join_with.hpp>
+#include <seqan3/utility/views/pairwise_combine.hpp>
+#include <seqan3/utility/views/repeat.hpp>
+#include <seqan3/utility/views/repeat_n.hpp>
+#include <seqan3/utility/views/single_pass_input.hpp>
+#include <seqan3/utility/views/slice.hpp>
+#include <seqan3/utility/views/to.hpp>
+#include <seqan3/utility/views/type_reduce.hpp>
+#include <seqan3/utility/views/zip.hpp>

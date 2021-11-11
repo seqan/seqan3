@@ -10,11 +10,6 @@
  * \brief Meta-header for the \link search_fm_index Search / FM Index submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/search/fm_index/bi_fm_index.hpp>
-#include <seqan3/search/fm_index/fm_index.hpp>
-
 /*!\defgroup search_fm_index FM Index
  * \brief Provides seqan3::fm_index and seqan3::bi_fm_index as well as respective cursors.
  * \ingroup search
@@ -47,3 +42,11 @@
  * Note that the SeqAn index cursor, although having similar behaviour, doesn't model any of the standard library
  * iterator concepts, not even std::input_or_output_iterator.
  */
+
+#pragma once
+
+#include <seqan3/search/fm_index/bi_fm_index.hpp>
+#include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
+#include <seqan3/search/fm_index/fm_index_cursor.hpp>

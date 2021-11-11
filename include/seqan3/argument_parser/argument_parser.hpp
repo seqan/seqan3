@@ -201,7 +201,6 @@ public:
             }
         }
 
-
         info.app_name = std::move(app_name);
 
         init(argc, argv);

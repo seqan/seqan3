@@ -20,6 +20,5 @@
 
 #include <seqan3/utility/type_traits/basic.hpp>
 #include <seqan3/utility/type_traits/concept.hpp>
-#include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 #include <seqan3/utility/type_traits/function_traits.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>

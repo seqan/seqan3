@@ -10,13 +10,9 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/range/concept.hpp>
-
 /*!\defgroup utility_range Range
  * \ingroup utility
- * \brief The range module provides general purpose containers, decorators and views.
+ * \brief The range module provides general purpose range concepts.
  *
  * ### Introduction
  *
@@ -71,12 +67,15 @@
  * does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
  * and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container.
  *
- * \attention
- *
- * There are ranges in SeqAn that fit neither of these storage categories, e.g. all the files are
- * \link std::ranges::input_range input ranges \endlink (if they are input files) and
- * \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
- * containers, decorators nor views.
+ * \attention There are ranges in SeqAn that fit neither of these storage categories, e.g. all the files are
+ *            \link std::ranges::input_range input ranges \endlink (if they are input files) and
+ *            \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
+ *            containers, decorators nor views.
  *
  * \sa https://ericniebler.github.io/range-v3/index.html
+ * \see utility
  */
+
+#pragma once
+
+#include <seqan3/utility/range/concept.hpp>

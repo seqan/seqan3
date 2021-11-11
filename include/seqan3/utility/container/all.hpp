@@ -10,6 +10,12 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
+/*!\defgroup utility_container Container
+ * \brief Provides various general purpose container and concepts.
+ * \ingroup utility
+ * \see utility
+ */
+
 #pragma once
 
 #include <seqan3/utility/container/aligned_allocator.hpp>
@@ -17,9 +23,3 @@
 #include <seqan3/utility/container/dynamic_bitset.hpp>
 #include <seqan3/utility/container/small_string.hpp>
 #include <seqan3/utility/container/small_vector.hpp>
-
-/*!\defgroup utility_container Container
- * \brief Provides various general purpose container.
- * \ingroup utility
- * \see utility
- */

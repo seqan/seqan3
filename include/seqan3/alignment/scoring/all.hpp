@@ -10,13 +10,13 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
 /*!\defgroup alignment_scoring Scoring
  * \brief Provides the data structures used for scoring alphabets and sequences.
  * \ingroup alignment
  * \see alignment
  */
+
+#pragma once
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>

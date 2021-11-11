@@ -181,11 +181,18 @@
 #pragma once
 
 #include <seqan3/alphabet/adaptation/all.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/cigar/all.hpp>
 #include <seqan3/alphabet/composite/all.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/container/all.hpp>
+#include <seqan3/alphabet/exception.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
+#include <seqan3/alphabet/hash.hpp>
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/range/all.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
+#include <seqan3/alphabet/views/all.hpp>

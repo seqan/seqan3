@@ -25,7 +25,7 @@ In most cases the template parameters are deduced completely automatically:
 
 \snippet test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp main
 
-Reading from an std::istringstream:
+Reading from a std::istringstream:
 
 \include test/snippet/io/sequence_file/sequence_file_input_istringstream.cpp
 

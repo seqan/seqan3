@@ -9,11 +9,6 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the \link alphabet_composite Alphabet / Composite submodule \endlink.
  */
-#pragma once
-
-#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
-#include <seqan3/alphabet/composite/alphabet_variant.hpp>
-#include <seqan3/alphabet/composite/semialphabet_any.hpp>
 
 /*!\defgroup alphabet_composite Composite
  * \brief Provides templates for combining existing alphabets into new alphabet types.
@@ -36,3 +31,9 @@
  * * seqan3::semialphabet_any which type erases other alphabets of the same size and allows again transformation to
  *   alphabets of the same size by copying the rank.
  */
+
+#pragma once
+
+#include <seqan3/alphabet/composite/alphabet_tuple_base.hpp>
+#include <seqan3/alphabet/composite/alphabet_variant.hpp>
+#include <seqan3/alphabet/composite/semialphabet_any.hpp>

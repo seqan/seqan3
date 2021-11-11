@@ -179,7 +179,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::aa10li.
+/*!\brief Alias for a std::vector of seqan3::aa10li.
  * \relates aa10li
  *
  * \stableapi{Since version 3.1.}

@@ -10,12 +10,12 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/io/views/async_input_buffer.hpp>
-
 /*!\defgroup io_views Views
  * \brief IO related views.
  * \ingroup io
  * \see io
  */
+
+#pragma once
+
+#include <seqan3/io/views/async_input_buffer.hpp>

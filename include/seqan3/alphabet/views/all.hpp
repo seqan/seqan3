@@ -10,6 +10,12 @@
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
+/*!\defgroup alphabet_views Views
+ * \brief Alphabet related views.
+ * \ingroup alphabet
+ * \see alphabet
+ */
+
 #pragma once
 
 #include <seqan3/alphabet/views/char_to.hpp>
@@ -18,10 +24,5 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
+#include <seqan3/alphabet/views/translate_join.hpp>
 #include <seqan3/alphabet/views/trim_quality.hpp>
-
-/*!\defgroup alphabet_views Views
- * \brief Alphabet related views.
- * \ingroup alphabet
- * \see alphabet
- */
