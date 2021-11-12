@@ -43,7 +43,7 @@
 namespace seqan3
 {
 
-/*!\brief The FastA format.
+/*!\brief The FASTA format.
  * \implements sequence_file_input_format
  * \implements sequence_file_output_format
  * \ingroup io_sequence_file
@@ -52,12 +52,12 @@ namespace seqan3
  *
  * ### Introduction
  *
- * FastA is the de-facto-standard for sequence storage in bionformatics. See the
+ * FASTA is the de-facto-standard for sequence storage in bionformatics. See the
  * [article on wikipedia](https://en.wikipedia.org/wiki/FASTA_format) for a an in-depth description of the format.
  *
  * ### fields_specialisation
  *
- * The FastA format provides the fields seqan3::field::seq and seqan3::field::id. Both fields are required when writing.
+ * The FASTA format provides the fields seqan3::field::seq and seqan3::field::id. Both fields are required when writing.
  *
  * ### Implementation notes
  *
@@ -209,7 +209,7 @@ private:
                 }
 
                 if (!at_delimiter)
-                    throw unexpected_end_of_input{"FastA ID line did not end in newline."};
+                    throw unexpected_end_of_input{"FASTA ID line did not end in newline."};
 
                 for (; (it != e) && ((!is_char<'\n'>)(*it)); ++it)
                 {}
@@ -246,7 +246,7 @@ private:
                 }
 
                 if (!at_delimiter)
-                    throw unexpected_end_of_input{"FastA ID line did not end in newline."};
+                    throw unexpected_end_of_input{"FASTA ID line did not end in newline."};
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 

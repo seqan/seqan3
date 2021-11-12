@@ -107,7 +107,7 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::seq, i.e. the "sequence".
- * \param[in]     id        The data for seqan3::field::id, e.g. the header line in FastA.
+ * \param[in]     id        The data for seqan3::field::id, e.g. the header line in FASTA.
  * \param[in]     qualities The data for seqan3::field::qual.
  *
  * \details

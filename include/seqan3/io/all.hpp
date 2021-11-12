@@ -55,12 +55,12 @@
  *   * You can iterate over a seqan3::sequence_file_input just like you iterate over a std::vector.
  *   * The element type is seqan3::record and for seqan3::sequence_file_input the records typically consist of three
  *     fields: ID, sequence and qualities.
- *   * Not every *format* may provide every field (e.g. all three fields can be extracted from a FastQ file, but only
- *     ID and sequence can be extracted from a FastA file).
+ *   * Not every *format* may provide every field (e.g. all three fields can be extracted from a FASTQ file, but only
+ *     ID and sequence can be extracted from a FASTA file).
  *   * This is not a problem when reading files; the format is detected at run-time and either it provides all desired
  *     fields, or some of them will be empty.
  *   * When writing files it depends on the format whether it allows certain fields to be unset; e.g. you can convert
- *     a FastQ file to a FastA file, but not the other way around (at least not without providing placeholders for the
+ *     a FASTQ file to a FASTA file, but not the other way around (at least not without providing placeholders for the
  *     qualitites).
  *
  * Please have a look the tutorial for \ref tutorial_sequence_file and the API docs for seqan3::sequence_file_input

@@ -108,7 +108,7 @@ Can you imagine anything easier? After you have initialised the instance with a 
 you can simply step through the file in a for loop and retrieve the fields via
 [structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding).
 The returned fields are `SEQ`, `ID` and `QUAL` to retrieve sequences, ids and qualities, respectively.
-The latter is empty unless you read FastQ files. The appropriate file format is detected by SeqAn from
+The latter is empty unless you read FASTQ files. The appropriate file format is detected by SeqAn from
 your filename's suffix.
 
 Here is the content of `seq.fasta`, so you can try it out!
@@ -120,8 +120,8 @@ ACGTGATG
 AGTGATACT
 ~~~
 
-\assignment{Assignment 2: Read a FastA file}
-Combine the code from above to read a FastA file and store its sequences in a std::vector of type seqan3::dna5_vector
+\assignment{Assignment 2: Read a FASTA file}
+Combine the code from above to read a FASTA file and store its sequences in a std::vector of type seqan3::dna5_vector
 (which is a common DNA sequence type in SeqAn). Use the argument parser for obtaining the filename as command line
 argument to your program (e.g. call `./myprogram seq.fasta`).
 \endassignment
@@ -129,7 +129,7 @@ argument to your program (e.g. call `./myprogram seq.fasta`).
 \snippet introduction_read_fasta.cpp read
 \endsolution
 
-Note that the same code can also read FastQ files and the `qual` variable will not be empty then. If you like, try it!
+Note that the same code can also read FASTQ files and the `qual` variable will not be empty then. If you like, try it!
 
 \note
 SeqAn3 uses `snake_case` for almost everything, also class names. Only C++ concepts are named using `CamelCase`.

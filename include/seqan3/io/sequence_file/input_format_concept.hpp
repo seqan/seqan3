@@ -120,7 +120,7 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  * \param[in,out] position_buffer The buffer to store the current record's file position.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::seq input, i.e. the "sequence".
- * \param[out]    id        The buffer for seqan3::field::id input, e.g. the header line in FastA.
+ * \param[out]    id        The buffer for seqan3::field::id input, e.g. the header line in FASTA .
  * \param[out]    qualities The buffer for seqan3::field::qual input.
  *
  * \details

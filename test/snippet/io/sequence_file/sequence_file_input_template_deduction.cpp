@@ -23,7 +23,7 @@ int main()
         fout.emplace_back("GGAGTATAATATATATATATATAT"_dna4, "Test3");
     }
 
-    // FastA with DNA sequences assumed, regular std::ifstream taken as stream
+    // FASTA with DNA sequences assumed, regular std::ifstream taken as stream
     seqan3::sequence_file_input fin{fasta_file};
 }
 //![main]

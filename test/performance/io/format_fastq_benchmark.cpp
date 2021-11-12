@@ -27,11 +27,11 @@
 constexpr unsigned default_seed = 1234u;
 
 // ============================================================================
-// generate fastq file
+// generate FASTQ file
 // ============================================================================
 
 inline constexpr size_t default_sequence_length = 50; //length of nucleotide and quality sequence
-inline std::string const fastq_id{"the fastq file"};
+inline std::string const fastq_id{"the FASTQ file"};
 
 std::string generate_fastq_string(size_t const entries_size)
 {
@@ -62,7 +62,7 @@ auto create_fastq_file_for(std::string const & fastq_string)
     seqan3::test::tmp_filename fastq_file{"format_fastq_benchmark_test_file.fastq"};
     auto fastq_file_path = fastq_file.get_path();
 
-    // fill temporary file with a fastq file
+    // fill temporary file with a FASTQ file
     std::ofstream ostream{fastq_file_path};
     ostream << fastq_string;
     ostream.close();
@@ -70,11 +70,11 @@ auto create_fastq_file_for(std::string const & fastq_string)
 }
 
 // ============================================================================
-// seqan3 fastq output benchmark
+// seqan3 FASTQ output benchmark
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// write dummy fastq file to a string stream
+// write dummy FASTQ file to a string stream
 // ----------------------------------------------------------------------------
 
 void fastq_write_to_stream_seqan3(benchmark::State & state)
@@ -107,11 +107,11 @@ void fastq_write_to_stream_seqan3(benchmark::State & state)
 BENCHMARK(fastq_write_to_stream_seqan3)->Arg(100)->Arg(1000)->Arg(10000);
 
 // ============================================================================
-// seqan3 fastq input benchmark
+// seqan3 FASTQ input benchmark
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// read dummy fastq file from a stream
+// read dummy FASTQ file from a stream
 // ----------------------------------------------------------------------------
 
 void fastq_read_from_stream_seqan3(benchmark::State & state)
@@ -138,7 +138,7 @@ void fastq_read_from_stream_seqan3(benchmark::State & state)
 }
 
 // ----------------------------------------------------------------------------
-// read dummy fastq file from temporary file on disk
+// read dummy FASTQ file from temporary file on disk
 // ----------------------------------------------------------------------------
 
 void fastq_read_from_disk_seqan3(benchmark::State & state)
@@ -162,13 +162,13 @@ void fastq_read_from_disk_seqan3(benchmark::State & state)
 }
 
 // ============================================================================
-// seqan2 fastq input benchmark
+// seqan2 FASTQ input benchmark
 // ============================================================================
 
 #if SEQAN3_HAS_SEQAN2
 
 // ----------------------------------------------------------------------------
-// read dummy fastq file from a stream
+// read dummy FASTQ file from a stream
 // ----------------------------------------------------------------------------
 
 void fastq_read_from_stream_seqan2(benchmark::State & state)
@@ -203,7 +203,7 @@ void fastq_read_from_stream_seqan2(benchmark::State & state)
 }
 
 // ----------------------------------------------------------------------------
-// read dummy fastq file from temporary file on disk
+// read dummy FASTQ file from temporary file on disk
 // ----------------------------------------------------------------------------
 
 void fastq_read_from_disk_seqan2(benchmark::State & state)

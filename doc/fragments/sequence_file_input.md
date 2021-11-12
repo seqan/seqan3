@@ -1,7 +1,7 @@
 ### Reading Sequence Files
 
 Sequence files are the most generic and common biological files. Well-known formats include
-FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
+FASTA and FASTQ, but some may also be interested in treating SAM or BAM files as sequence
 files, discarding the alignment.
 
 The Sequence file abstraction supports reading three different fields:

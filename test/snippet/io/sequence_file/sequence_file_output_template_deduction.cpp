@@ -11,7 +11,7 @@ int main()
 {
     auto fasta_file = std::filesystem::current_path() / "my.fasta";
 
-    // FastA format detected, std::ofstream opened for file
+    // FASTA format detected, std::ofstream opened for file
     seqan3::sequence_file_output fin{fasta_file};
 }
 //![main]
