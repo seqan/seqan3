@@ -316,7 +316,7 @@ public:
             throw design_error{"You added a positional option with a list value before so you cannot add "
                                       "any other positional options."};
 
-        if constexpr (sequence_container<option_type> && !std::same_as<option_type, std::string>)
+        if constexpr (detail::is_container_option<option_type>)
             has_positional_list_option = true; // keep track of a list option because there must be only one!
 
         // copy variables into the lambda because the calls are pushed to a stack

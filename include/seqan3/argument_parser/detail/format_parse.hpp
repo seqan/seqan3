@@ -355,7 +355,7 @@ private:
     //!\endcond
 
     /*!\brief Parses the given option value and appends it to the target container.
-     * \tparam container_option_t Must model the seqan3::sequence_container and
+     * \tparam container_option_t Must model seqan3::detail::is_container_option and
      *                            its value_type must be parseable via parse_option_value
      * \tparam format_parse_t Needed to make the function "dependent" (i.e. do instantiation in the second phase of
      *                        two-phase lookup) as the requires clause needs to be able to access the other
@@ -365,7 +365,7 @@ private:
      * \param[in] in The input argument to be parsed.
      * \returns A seqan3::option_parse_result whether parsing was successful or not.
      */
-    template <sequence_container container_option_t, typename format_parse_t = format_parse>
+    template <detail::is_container_option container_option_t, typename format_parse_t = format_parse>
     //!\cond
         requires requires (format_parse_t fp,
                            typename container_option_t::value_type & container_value,
@@ -578,10 +578,7 @@ private:
      * multiple times.
      *
      */
-    template <sequence_container option_type, typename id_type>
-    //!\cond
-        requires (!std::is_same_v<option_type, std::string>)
-    //!\endcond
+    template <detail::is_container_option option_type, typename id_type>
     bool get_option_by_id(option_type & value, id_type const & id)
     {
         auto it = find_option_id(argv.begin(), end_of_options_it, id);
@@ -689,8 +686,7 @@ private:
         bool long_id_is_set{get_option_by_id(value, long_id)};
 
         // if value is no container we need to check for multiple declarations
-        if (short_id_is_set && long_id_is_set &&
-            !(sequence_container<option_type> && !std::is_same_v<option_type, std::string>))
+        if (short_id_is_set && long_id_is_set && !detail::is_container_option<option_type>)
             throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
                                                  " is no list/container but specified multiple times");
 
@@ -763,7 +759,7 @@ private:
                                     std::to_string(positional_option_calls.size()) +
                                     "). See -h/--help for more information.");
 
-        if constexpr (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
+        if constexpr (detail::is_container_option<option_type>) // vector/list will be filled with all remaining arguments
         {
             assert(positional_option_count == positional_option_calls.size()); // checked on set up.
 
