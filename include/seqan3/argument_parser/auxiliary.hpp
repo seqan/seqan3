@@ -21,7 +21,6 @@
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::custom
 {
@@ -91,8 +90,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      */
     template <typename option_type>
     using option_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>> &&
-                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_type>>,
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>>,
                              std::remove_cvref_t<option_type>,
                              std::type_identity<option_type>>;
 
