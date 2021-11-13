@@ -86,7 +86,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
+    /*!\brief If `option_t` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename option_type>
@@ -112,7 +112,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      * \details
      *
      * If the option_type isn't std::is_nothrow_default_constructible,
-     * `enumeration_names(std::type_identity<alphabet_type>{})` will be called.
+     * `enumeration_names(std::type_identity<option_t>{})` will be called.
      */
     template <typename option_type = option_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
