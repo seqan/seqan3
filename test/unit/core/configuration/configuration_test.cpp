@@ -86,8 +86,7 @@ TEST(configuration, get_by_position)
     { // const r-value
         seqan3::configuration<bax, bar> const cfg_rc{cfg};
         EXPECT_EQ(std::get<1>(std::move(cfg_rc)).value, 3);
-        // TODO(rrahn): Enable when seqan3::get(const &&) is fixed for gcc7 as well.
-        // EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_rc))), bar const &&>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<1>(std::move(cfg_rc))), bar const &&>));
     }
 }
 
@@ -119,8 +118,7 @@ TEST(configuration, get_by_type)
     { // const r-value
         seqan3::configuration<bax, bar> const cfg_rc{cfg};
         EXPECT_EQ(std::get<bar>(std::move(cfg_rc)).value, 3);
-        // TODO(rrahn): Enable when seqan3::get(const &&) is fixed for gcc7 as well.
-        // EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(std::move(cfg_rc))), bar const &&>));
+        EXPECT_TRUE((std::is_same_v<decltype(std::get<bar>(std::move(cfg_rc))), bar const &&>));
     }
 }
 
@@ -148,8 +146,7 @@ TEST(configuration, get_by_type_template)
     { // const r-value
         seqan3::configuration<bar, foobar<>> const cfg_cr{cfg};
         EXPECT_RANGE_EQ(seqan3::get<foobar>(std::move(cfg_cr)).value, (std::vector{0, 1, 2, 3}));
-        // TODO(rrahn): Enable when seqan3::get(const &&) is fixed for gcc7 as well.
-        // EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(std::move(cfg_cr))), foobar<> const &&>));
+        EXPECT_TRUE((std::is_same_v<decltype(seqan3::get<foobar>(std::move(cfg_cr))), foobar<> const &&>));
     }
 }
 
@@ -313,9 +310,8 @@ TEST(configuration, get_or_by_type)
     { // const r-value
         seqan3::configuration<bax, bar> const cfg_cr{cfg};
         EXPECT_FLOAT_EQ(std::move(cfg_cr).get_or(bax{1.3}).value, 2.2);
-        // TODO: Enable when gcc7 support is dropped or seqan3::get is implemented as CPO.
-        // seqan3::configuration<bax, bar> const cfg_cr2{cfg};
-        // EXPECT_SAME_TYPE(decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&);
+        seqan3::configuration<bax, bar> const cfg_cr2{cfg};
+        EXPECT_SAME_TYPE(decltype(std::move(cfg_cr2).get_or(bax{1.3})), bax const &&);
         seqan3::configuration<bax, bar> const cfg_cr3{cfg};
         EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
     }
@@ -386,10 +382,9 @@ TEST(configuration, get_or_by_type_template)
         EXPECT_RANGE_EQ(std::move(cfg_cr2).get_or(alternative).value, (std::vector{0, 1, 2, 3}));
         seqan3::configuration<bar, foobar<>> const cfg_cr3{cfg};
         EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
-        // TODO: Enable when gcc7 support is dropped or seqan3::get is implemented as CPO.
-        // seqan3::configuration<bar, foobar<>> const cfg_cr4{cfg};
-        // EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr4).get_or(alternative)),
-        //             foobar<std::vector<int>> const &&>));
+        seqan3::configuration<bar, foobar<>> const cfg_cr4{cfg};
+        EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr4).get_or(alternative)),
+                     foobar<std::vector<int>> const &&>));
     }
 }
 

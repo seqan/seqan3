@@ -52,13 +52,13 @@ public:
     /*!\brief Initialises the total error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of total errors allowed in the search.
      */
-    explicit max_error_total(error_count error) : error{std::move(error)}
+    constexpr explicit max_error_total(error_count error) : error{std::move(error)}
     {}
 
     /*!\brief Initialises the total error with the given seqan3::search_cfg::error_rate.
      * \param[in] error The maximal total error rate allowed in the search.
      */
-    explicit max_error_total(error_rate error) : error{std::move(error)}
+    constexpr explicit max_error_total(error_rate error) : error{std::move(error)}
     {}
     //!\}
 
@@ -97,13 +97,13 @@ public:
     /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of substitution errors allowed in the search.
      */
-    explicit max_error_substitution(error_count error) : error{std::move(error)}
+    constexpr explicit max_error_substitution(error_count error) : error{std::move(error)}
     {}
 
     /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_rate.
      * \param[in] error The maximal error rate for substitutions allowed in the search.
      */
-    explicit max_error_substitution(error_rate error) : error{std::move(error)}
+    constexpr explicit max_error_substitution(error_rate error) : error{std::move(error)}
     {}
     //!\}
 
@@ -142,13 +142,13 @@ public:
     /*!\brief Initialises the insertion error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of insertion errors allowed in the search.
      */
-    explicit max_error_insertion(error_count error) : error{std::move(error)}
+    constexpr explicit max_error_insertion(error_count error) : error{std::move(error)}
     {}
 
     /*!\brief Initialises the insertion error with the given seqan3::search_cfg::error_rate.
      * \param[in] error The maximal error rate for insertions allowed in the search.
      */
-    explicit max_error_insertion(error_rate error) : error{std::move(error)}
+    constexpr explicit max_error_insertion(error_rate error) : error{std::move(error)}
     {}
     //!\}
 
@@ -188,13 +188,13 @@ public:
     /*!\brief Initialises the deletion error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of deletion errors allowed in the search.
      */
-    explicit max_error_deletion(error_count error) : error{std::move(error)}
+    constexpr explicit max_error_deletion(error_count error) : error{std::move(error)}
     {}
 
     /*!\brief Initialises the deletion error with the given seqan3::search_cfg::error_rate.
      * \param[in] error The maximal error rate for deletions allowed in the search.
      */
-    explicit max_error_deletion(error_rate error) : error{std::move(error)}
+    constexpr explicit max_error_deletion(error_rate error) : error{std::move(error)}
     {}
     //!\}
 

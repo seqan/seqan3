@@ -877,9 +877,7 @@ inline void format_sam::write_alignment_record(stream_type & stream,
     else if constexpr (detail::is_type_specialisation_of_v<std::remove_reference_t<decltype(get<0>(mate))>, std::optional>)
     {
         if (get<0>(mate).has_value())
-            // value_or(0) instead of value() (which is equivalent here) as a
-            // workaround for a ubsan false-positive in GCC8: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90058
-            write_range_or_asterisk(stream_it, header.ref_ids()[get<0>(mate).value_or(0)]);
+            write_range_or_asterisk(stream_it, header.ref_ids()[get<0>(mate).value()]);
         else
             *stream_it = '*';
     }

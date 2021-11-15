@@ -58,10 +58,8 @@ concept tuple_get = requires (tuple_t & v, tuple_t const & v_c)
     SEQAN3_RETURN_TYPE_CONSTRAINT(get<0>(v_c), std::convertible_to, typename std::tuple_element<0, tuple_t>::type);
     SEQAN3_RETURN_TYPE_CONSTRAINT(get<0>(std::move(v)),
                                   std::convertible_to, typename std::tuple_element<0, tuple_t>::type);
-    // TODO: The return type for std::tuple is wrong until gcc-8.0, for gcc > 8.0 this is fixed.
-    { get<0>(std::move(v_c)) };// -> typename std::tuple_element<0, tuple_t>::type const &&;
-    // SEQAN3_RETURN_TYPE_CONSTRAINT(get<0>(std::move(v_c)),
-    //                               std::convertible_to, typename std::tuple_element<0, tuple_t>::type const &&);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(get<0>(std::move(v_c)),
+                                  std::convertible_to, typename std::tuple_element<0, tuple_t>::type const &&);
 };
 //!\endcond
 
