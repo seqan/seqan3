@@ -235,15 +235,6 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90897
-#ifndef SEQAN3_WORKAROUND_GCC_90897 // fixed since gcc8.4
-#   if defined(__GNUC__) && (__GNUC__ == 8 && __GNUC_MINOR__ < 4)
-#       define SEQAN3_WORKAROUND_GCC_90897 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_90897 0
-#   endif
-#endif
-
 //!\brief Various concept problems only present in GCC7 and GCC8.
 #ifndef SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 #   if defined(__GNUC__) && ((__GNUC__ == 7) || (__GNUC__ == 8))
