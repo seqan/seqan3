@@ -226,15 +226,6 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
-#ifndef SEQAN3_WORKAROUND_GCC_87113
-#   if defined(__GNUC_MINOR__) && ((__GNUC__ == 7) || ((__GNUC__ == 8) && (__GNUC_MINOR__ < 3)))
-#       define SEQAN3_WORKAROUND_GCC_87113 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_87113 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
 #ifndef SEQAN3_WORKAROUND_GCC_89953
 #   if defined(__GNUC_MINOR__) && (__GNUC__ == 9 && __GNUC_MINOR__ < 3)
