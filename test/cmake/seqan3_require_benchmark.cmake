@@ -59,7 +59,7 @@ endmacro ()
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (gbenchmark_git_tag "v1.5.0")
+    set (gbenchmark_git_tag "v1.6.0")
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
         # NOTE: setting the standard prevents an ICE involving passing -fconcepts through CMAKE_CXX_FLAGS
