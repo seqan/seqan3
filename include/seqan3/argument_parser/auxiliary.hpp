@@ -21,7 +21,6 @@
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::custom
 {
@@ -86,13 +85,12 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
+    /*!\brief If `option_t` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename option_type>
     using option_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>> &&
-                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_type>>,
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>>,
                              std::remove_cvref_t<option_type>,
                              std::type_identity<option_type>>;
 
@@ -112,7 +110,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      * \details
      *
      * If the option_type isn't std::is_nothrow_default_constructible,
-     * `enumeration_names(std::type_identity<alphabet_type>{})` will be called.
+     * `enumeration_names(std::type_identity<option_t>{})` will be called.
      */
     template <typename option_type = option_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
