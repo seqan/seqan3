@@ -45,7 +45,7 @@ jobs:
       - name: Update googletest
         run: |
           grep 'gtest_git_tag ".*"' seqan3/test/cmake/seqan3_require_test.cmake
-          sed -i 's/gtest_git_tag ".*"/gtest_git_tag "master"/' seqan3/test/cmake/seqan3_require_test.cmake
+          sed -i 's/gtest_git_tag ".*"/gtest_git_tag "main"/' seqan3/test/cmake/seqan3_require_test.cmake
           grep 'gtest_git_tag ".*"' seqan3/test/cmake/seqan3_require_test.cmake
 
       - name: Update googlebenchmark
