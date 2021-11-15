@@ -47,7 +47,7 @@ struct iterator_fixture : public ::testing::Test
 
 // Helper concept to check whether the test fixture has a member function expect_eq.
 template <typename t>
-SEQAN3_CONCEPT has_expect_equal_member_function = requires(t & a)
+concept has_expect_equal_member_function = requires(t & a)
 {
     SEQAN3_RETURN_TYPE_CONSTRAINT(t::expect_eq(*std::ranges::begin(a.test_range),
                                                *std::ranges::begin(a.expected_range)),
@@ -73,7 +73,7 @@ void expect_iter_equal(it_t && it, rng_it_t && rng_it)
 // std c++20 input iterator aren't required to have an operator==(iterator_t, iterator_t), but if they have one we
 // test the semantic
 template <typename type_param_t>
-SEQAN3_CONCEPT iterator_is_equality_comparable =
+concept iterator_is_equality_comparable =
     std::derived_from<typename iterator_fixture<type_param_t>::iterator_tag, std::forward_iterator_tag> ||
 #if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
     requires (decltype(std::ranges::begin(std::declval<iterator_fixture<type_param_t> &>().test_range)) & it)

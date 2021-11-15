@@ -30,7 +30,7 @@ namespace seqan3::detail
 
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT has_range_value_type = requires { typename std::ranges::range_value_t<std::remove_cvref_t<t>>; };
+concept has_range_value_type = requires { typename std::ranges::range_value_t<std::remove_cvref_t<t>>; };
 //!\endcond
 
 //!\brief Makes range_t const if const_range is true; otherwise keeps range_t as is.
@@ -51,8 +51,9 @@ using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const
 //!\cond
 //!\brief The same as std::indirect_unary_predicate but on a range type instead of an iterator type.
 template <typename unary_predicate_fn_t, typename urng_t>
-SEQAN3_CONCEPT indirect_unary_predicate_on_range = std::ranges::range<urng_t> &&
-    std::indirect_unary_predicate<unary_predicate_fn_t, std::ranges::iterator_t<urng_t>>;
+concept indirect_unary_predicate_on_range = std::ranges::range<urng_t> &&
+                                            std::indirect_unary_predicate<unary_predicate_fn_t,
+                                                                          std::ranges::iterator_t<urng_t>>;
 //!\endcond
 } // namespace seqan3::detail
 

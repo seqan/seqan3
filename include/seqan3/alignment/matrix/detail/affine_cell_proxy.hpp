@@ -31,7 +31,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
+concept arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::tracedirections_or_simd <>
@@ -41,7 +41,7 @@ SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, trace_directions> || simd_concept<t>;
+concept tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, trace_directions> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_cell <>
@@ -56,11 +56,11 @@ SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, tr
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
-                                   std::tuple_size_v<t> == 3 &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+concept affine_score_cell = tuple_like<t> &&
+                            std::tuple_size_v<t> == 3 &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_trace_cell <>
@@ -75,11 +75,11 @@ SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_trace_cell = tuple_like<t> &&
-                                   std::tuple_size_v<t> == 3 &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+concept affine_trace_cell = tuple_like<t> &&
+                            std::tuple_size_v<t> == 3 &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_and_trace_cell <>
@@ -94,10 +94,10 @@ SEQAN3_CONCEPT affine_trace_cell = tuple_like<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_score_and_trace_cell = tuple_like<t> &&
-                                             std::tuple_size_v<t> == 2 &&
-                                             affine_score_cell<std::tuple_element_t<0, t>> &&
-                                             affine_trace_cell<std::tuple_element_t<1, t>>;
+concept affine_score_and_trace_cell = tuple_like<t> &&
+                                      std::tuple_size_v<t> == 2 &&
+                                      affine_score_cell<std::tuple_element_t<0, t>> &&
+                                      affine_trace_cell<std::tuple_element_t<1, t>>;
 //!\endcond
 
 /*!\brief A proxy for an affine score matrix cell.

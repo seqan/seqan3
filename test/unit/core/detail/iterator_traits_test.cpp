@@ -18,7 +18,7 @@
 #include <seqan3/test/expect_same_type.hpp>
 
 template <typename t>
-SEQAN3_CONCEPT has_iterator_category = requires()
+concept has_iterator_category = requires()
 {
     typename t::iterator_category;
 };
@@ -181,7 +181,7 @@ TEST(maybe_iterator_category, random_access_iterator_tag)
 }
 
 template <typename t>
-SEQAN3_CONCEPT has_iterator_concept = requires()
+concept has_iterator_concept = requires()
 {
     typename t::iterator_concept;
 };

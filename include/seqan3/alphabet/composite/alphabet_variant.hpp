@@ -30,7 +30,7 @@ namespace seqan3::detail
 
 #if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 template <typename t>
-SEQAN3_CONCEPT variant_guard_pseudoalphabet = requires { requires seqan3::alphabet_size<t> > 0; };
+concept variant_guard_pseudoalphabet = requires { requires seqan3::alphabet_size<t> > 0; };
 #endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.

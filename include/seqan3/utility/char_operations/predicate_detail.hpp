@@ -103,7 +103,7 @@ struct char_predicate_base;
  */
 //!\cond
 template <typename condition_t>
-SEQAN3_CONCEPT char_predicate = requires
+concept char_predicate = requires
 {
     requires std::predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<char_predicate_base<std::remove_cvref_t<condition_t>>,

@@ -109,7 +109,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT aligned_sequence =
+concept aligned_sequence =
     sequence<t> &&
     std::equality_comparable_with<std::ranges::range_reference_t<t>, gap>;
 //!\endcond
@@ -221,7 +221,7 @@ SEQAN3_CONCEPT aligned_sequence =
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT writable_aligned_sequence =
+concept writable_aligned_sequence =
     aligned_sequence<t> &&
     std::ranges::forward_range<t> &&
     requires { typename detail::unaligned_seq_t<t>; } &&

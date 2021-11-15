@@ -74,7 +74,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sam_file_input_format =
+concept sam_file_input_format =
     requires (detail::sam_file_input_format_exposer<t>                            & v,
               std::ifstream                                                       & stream,
               sam_file_input_options<dna5>                                        & options,
@@ -251,6 +251,6 @@ constexpr bool is_type_list_of_sam_file_input_formats_v<type_list<ts...>> = (sam
  * \see seqan3::is_type_list_of_sam_file_input_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sam_file_input_formats = is_type_list_of_sam_file_input_formats_v<t>;
+concept type_list_of_sam_file_input_formats = is_type_list_of_sam_file_input_formats_v<t>;
 
 } // namespace seqan3::detail

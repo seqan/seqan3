@@ -27,7 +27,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT transformation_trait = requires { typename t::type; };
+concept transformation_trait = requires { typename t::type; };
 //!\endcond
 
 /*!\interface seqan3::unary_type_trait
@@ -38,7 +38,7 @@ SEQAN3_CONCEPT transformation_trait = requires { typename t::type; };
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT unary_type_trait = std::is_base_of_v<std::integral_constant<typename t::value_type, t::value>, t>;
+concept unary_type_trait = std::is_base_of_v<std::integral_constant<typename t::value_type, t::value>, t>;
 //!\endcond
 
 } // namespace seqan3

@@ -12,7 +12,7 @@
 #include <seqan3/test/expect_same_type.hpp>
 
 template <typename t>
-SEQAN3_CONCEPT has_type = requires()
+concept has_type = requires()
 {
     typename t::type;
 };

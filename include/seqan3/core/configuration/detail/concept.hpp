@@ -136,7 +136,7 @@ public:
 //!\}
 //!\cond
 template <typename config_t>
-SEQAN3_CONCEPT config_element = requires
+concept config_element = requires
 {
     requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
     requires std::semiregular<config_t>;
@@ -165,7 +165,7 @@ SEQAN3_CONCEPT config_element = requires
  */
 //!\cond
 template <typename config1_t, typename config2_t>
-SEQAN3_CONCEPT config_element_pipeable_with =
+concept config_element_pipeable_with =
     config_element<config1_t> &&
     config_element<config2_t> &&
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT

@@ -255,7 +255,7 @@ using valid_template_spec_or_t = typename valid_template_spec_or<fallback_t, tem
  */
 //!\cond
 template <typename mytype, template <typename ...> typename type_template>
-SEQAN3_CONCEPT template_specialisation_of = is_type_specialisation_of_v<mytype, type_template>;
+concept template_specialisation_of = is_type_specialisation_of_v<mytype, type_template>;
 
 //!\endcond
 

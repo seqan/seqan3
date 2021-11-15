@@ -31,7 +31,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename tuple_t>
-SEQAN3_CONCEPT tuple_size = requires (tuple_t v)
+concept tuple_size = requires (tuple_t v)
 {
     SEQAN3_RETURN_TYPE_CONSTRAINT(std::tuple_size<tuple_t>::value, std::convertible_to, size_t);
 };
@@ -44,7 +44,7 @@ SEQAN3_CONCEPT tuple_size = requires (tuple_t v)
  */
 //!\cond
 template <typename tuple_t>
-SEQAN3_CONCEPT tuple_get = requires (tuple_t & v, tuple_t const & v_c)
+concept tuple_get = requires (tuple_t & v, tuple_t const & v_c)
 {
     requires std::tuple_size_v<tuple_t> > 0;
 
@@ -176,7 +176,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && requires(t v)
+concept tuple_like = detail::tuple_size<std::remove_reference_t<t>> && requires(t v)
 {
     typename detail::tuple_type_list<std::remove_cvref_t<t>>::type;
 
@@ -203,7 +203,7 @@ SEQAN3_CONCEPT tuple_like = detail::tuple_size<std::remove_reference_t<t>> && re
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT pair_like = tuple_like<t> && std::tuple_size_v<std::remove_reference_t<t>> == 2;
+concept pair_like = tuple_like<t> && std::tuple_size_v<std::remove_reference_t<t>> == 2;
 //!\endcond
 
 } // namespace seqan3

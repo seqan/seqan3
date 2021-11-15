@@ -183,7 +183,7 @@ inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<op
  */
 //!\cond
 template <typename option_type>
-SEQAN3_CONCEPT named_enumeration = requires
+concept named_enumeration = requires
 {
     { seqan3::enumeration_names<option_type> };
 };
@@ -203,8 +203,8 @@ SEQAN3_CONCEPT named_enumeration = requires
  */
 //!\cond
 template <typename option_type>
-SEQAN3_CONCEPT argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
-                                                   named_enumeration<option_type>;
+concept argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
+                                            named_enumeration<option_type>;
 //!\endcond
 
 /*!\name Formatted output overloads

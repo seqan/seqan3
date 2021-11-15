@@ -32,7 +32,7 @@ namespace seqan3::detail
  * \ingroup io
  */
 template <typename t>
-SEQAN3_CONCEPT fields_specialisation = is_value_specialisation_of_v<t, fields>;
+concept fields_specialisation = is_value_specialisation_of_v<t, fields>;
 
 // ----------------------------------------------------------------------------
 // select_types_with_ids

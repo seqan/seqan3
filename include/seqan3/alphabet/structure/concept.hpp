@@ -558,7 +558,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
+concept rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
 {
     { seqan3::is_pair_open(val) };
     { seqan3::is_pair_close(val) };

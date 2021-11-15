@@ -34,7 +34,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename pairwise_alignment_t>
-SEQAN3_CONCEPT pairwise_alignment =
+concept pairwise_alignment =
     pair_like<pairwise_alignment_t> &&
 #if SEQAN3_WORKAROUND_ISSUE_286
     aligned_sequence<
@@ -69,7 +69,7 @@ SEQAN3_CONCEPT pairwise_alignment =
  */
 //!\cond
 template <typename pairwise_alignment_t>
-SEQAN3_CONCEPT writable_pairwise_alignment =
+concept writable_pairwise_alignment =
     pairwise_alignment<pairwise_alignment_t> &&
 #if SEQAN3_WORKAROUND_ISSUE_286
     writable_aligned_sequence<

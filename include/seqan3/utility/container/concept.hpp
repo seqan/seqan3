@@ -70,7 +70,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typename type::iterator it)
+concept container = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -138,7 +138,7 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cval)
+concept sequence_container = requires (type val, type val2, type const cval)
 {
     requires container<type>;
 
@@ -227,7 +227,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT random_access_container = requires (type val)
+concept random_access_container = requires (type val)
 {
     requires sequence_container<type>;
 
@@ -256,7 +256,7 @@ SEQAN3_CONCEPT random_access_container = requires (type val)
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT reservible_container = requires (type val)
+concept reservible_container = requires (type val)
 {
     requires random_access_container<type>;
 

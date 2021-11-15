@@ -56,7 +56,7 @@ if ("${HEADER_COMPONENT}" MATCHES "seqan3")
 class A{ int i{5}; };
 
 template <typename t>
-SEQAN3_CONCEPT private_bug = requires(t a){a.i;};
+concept private_bug = requires(t a){a.i;};
 
 static_assert(!private_bug<A>, \"See https://github.com/seqan/seqan3/issues/1317\");")
 endif ()

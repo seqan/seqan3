@@ -27,7 +27,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <class T, class U>
-SEQAN3_CONCEPT weakly_equality_comparable_with =
+concept weakly_equality_comparable_with =
     requires(std::remove_reference_t<T> const & t,
              std::remove_reference_t<U> const & u)
     {
@@ -53,8 +53,8 @@ struct weakly_equality_comparable_with_trait :
  */
 //!\cond
 template <typename t1, typename t2>
-SEQAN3_CONCEPT weakly_ordered_with = requires (std::remove_reference_t<t1> const & v1,
-                                               std::remove_reference_t<t2> const & v2)
+concept weakly_ordered_with = requires (std::remove_reference_t<t1> const & v1,
+                                        std::remove_reference_t<t2> const & v2)
 {
     requires std::convertible_to<decltype(v1 <  v2), bool>;
     requires std::convertible_to<decltype(v1 <= v2), bool>;
@@ -88,7 +88,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT implicitly_convertible_to = std::is_convertible_v<t, u>;
+concept implicitly_convertible_to = std::is_convertible_v<t, u>;
 //!\endcond
 
 /*!\interface seqan3::explicitly_convertible_to <>
@@ -101,7 +101,7 @@ SEQAN3_CONCEPT implicitly_convertible_to = std::is_convertible_v<t, u>;
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt)}; };
+concept explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt)}; };
 //!\endcond
 
 /*!\interface seqan3::arithmetic <>
@@ -116,7 +116,7 @@ SEQAN3_CONCEPT explicitly_convertible_to = requires (t vt) { { static_cast<u>(vt
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT arithmetic = std::is_arithmetic_v<t>;
+concept arithmetic = std::is_arithmetic_v<t>;
 //!\endcond
 
 /*!\interface seqan3::floating_point <>
@@ -132,7 +132,7 @@ SEQAN3_CONCEPT arithmetic = std::is_arithmetic_v<t>;
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT floating_point = arithmetic<t> && std::is_floating_point_v<t>;
+concept floating_point = arithmetic<t> && std::is_floating_point_v<t>;
 //!\endcond
 
 /*!\interface seqan3::builtin_character <>
@@ -148,12 +148,16 @@ SEQAN3_CONCEPT floating_point = arithmetic<t> && std::is_floating_point_v<t>;
 //!\cond
 
 template <typename t>
-SEQAN3_CONCEPT builtin_character = std::integral<t> &&
-                      (std::same_as<t, char> || std::same_as<t, unsigned char> || std::same_as<t, signed char> ||
+concept builtin_character = std::integral<t> &&
+                            (std::same_as<t, char> ||
+                             std::same_as<t, unsigned char> ||
+                             std::same_as<t, signed char> ||
 #ifdef __cpp_char8_t
-                       std::same_as<t, char8_t> ||
+                             std::same_as<t, char8_t> ||
 #endif
-                       std::same_as<t, char16_t> || std::same_as<t, char32_t> || std::same_as<t, wchar_t>);
+                             std::same_as<t, char16_t> ||
+                             std::same_as<t, char32_t> ||
+                             std::same_as<t, wchar_t>);
 //!\endcond
 
 /*!\interface seqan3::trivially_destructible <>
@@ -169,7 +173,7 @@ SEQAN3_CONCEPT builtin_character = std::integral<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivially_destructible = std::destructible<t> && std::is_trivially_destructible_v<t>;
+concept trivially_destructible = std::destructible<t> && std::is_trivially_destructible_v<t>;
 //!\endcond
 
 /*!\interface seqan3::trivially_copyable
@@ -185,7 +189,7 @@ SEQAN3_CONCEPT trivially_destructible = std::destructible<t> && std::is_triviall
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyable_v<t>;
+concept trivially_copyable = std::copyable<t> && std::is_trivially_copyable_v<t>;
 //!\endcond
 
 /*!\interface seqan3::trivial
@@ -202,7 +206,7 @@ SEQAN3_CONCEPT trivially_copyable = std::copyable<t> && std::is_trivially_copyab
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT trivial = trivially_copyable<t> && trivially_destructible<t> && std::is_trivial_v<t>;
+concept trivial = trivially_copyable<t> && trivially_destructible<t> && std::is_trivial_v<t>;
 //!\endcond
 
 /*!\interface seqan3::standard_layout
@@ -217,7 +221,7 @@ SEQAN3_CONCEPT trivial = trivially_copyable<t> && trivially_destructible<t> && s
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
+concept standard_layout = std::is_standard_layout_v<t>;
 //!\endcond
 
 /*!\interface seqan3::weakly_assignable_from
@@ -235,6 +239,6 @@ SEQAN3_CONCEPT standard_layout = std::is_standard_layout_v<t>;
  */
 //!\cond
 template <typename t, typename u>
-SEQAN3_CONCEPT weakly_assignable_from = std::is_assignable_v<t, u>;
+concept weakly_assignable_from = std::is_assignable_v<t, u>;
 //!\endcond
 }  // namespace seqan3

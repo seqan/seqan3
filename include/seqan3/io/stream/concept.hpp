@@ -30,8 +30,8 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT output_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                         requires (stream_type & os, value_type & val)
+concept output_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+                             requires (stream_type & os, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
     typename std::remove_reference_t<stream_type>::traits_type;
@@ -46,8 +46,8 @@ SEQAN3_CONCEPT output_stream_over = std::is_base_of_v<std::ios_base, std::remove
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT output_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                          output_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+concept output_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                        output_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::output_stream_over
@@ -99,8 +99,8 @@ SEQAN3_CONCEPT output_stream = requires { typename std::remove_reference_t<strea
  */
 //!\cond
 template <typename stream_type, typename value_type>
-SEQAN3_CONCEPT input_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                         requires (stream_type & is, value_type & val)
+concept input_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
+                            requires (stream_type & is, value_type & val)
 {
     typename std::remove_reference_t<stream_type>::char_type;
     typename std::remove_reference_t<stream_type>::traits_type;
@@ -116,8 +116,8 @@ SEQAN3_CONCEPT input_stream_over = std::is_base_of_v<std::ios_base, std::remove_
 };
 
 template <typename stream_type>
-SEQAN3_CONCEPT input_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                          input_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+concept input_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
+                       input_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::input_stream_over

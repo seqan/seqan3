@@ -136,13 +136,13 @@ struct iterator_fixture<range_test_fixture_t> : public ::testing::Test
 TYPED_TEST_SUITE_P(range_test);
 
 template <typename range_t>
-SEQAN3_CONCEPT has_size_member = requires(range_t range)
+concept has_size_member = requires(range_t range)
 {
     { range.size() };
 };
 
 template <typename range_t>
-SEQAN3_CONCEPT has_subscript_member = requires(range_t range)
+concept has_subscript_member = requires(range_t range)
 {
     { range[0] };
 };
