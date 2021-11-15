@@ -26,13 +26,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Snippet gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
+          - name: "Snippet gcc9"
+            cxx: "g++-9"
+            cc: "gcc-9"
             build: snippet
             build_type: Release
             build_threads: 2
             test_threads: 1 # snippets create and delete files and some separate tests create/delete the same files
+            cxx_flags: "-std=c++2a"
             cmake: 3.10.3
             requires_toolchain: true
             requires_ccache: true
@@ -40,13 +41,14 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: false
 
-          - name: "Performance gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
+          - name: "Performance gcc9"
+            cxx: "g++-9"
+            cc: "gcc-9"
             build: performance
             build_type: Release
             build_threads: 2
             test_threads: 2
+            cxx_flags: "-std=c++2a"
             cmake: 3.10.3
             requires_toolchain: true
             requires_ccache: true
@@ -54,13 +56,14 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: false
 
-          - name: "Header gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
+          - name: "Header gcc9"
+            cxx: "g++-9"
+            cc: "gcc-9"
             build: header
             build_type: Release
             build_threads: 2
             test_threads: 2
+            cxx_flags: "-std=c++2a"
             cmake: 3.10.3
             requires_toolchain: true
             requires_ccache: true
@@ -69,12 +72,13 @@ jobs:
             use_include_dependencies: false
 
           - name: "Non-cyclic tests"
-            cxx: "g++-7"
-            cc: "gcc-7"
+            cxx: "g++-9"
+            cc: "gcc-9"
             build: unit
             build_type: Debug
             build_threads: 2
             test_threads: 2
+            cxx_flags: "-std=c++2a"
             cmake: 3.10.3
             requires_toolchain: true
             requires_ccache: true
@@ -83,12 +87,13 @@ jobs:
             use_include_dependencies: true
 
           - name: "CMake external project"
-            cxx: "g++-7"
-            cc: "gcc-7"
+            cxx: "g++-9"
+            cc: "gcc-9"
             build: external_project
             build_type: Debug
             build_threads: 1 # output is important to be in sequential order
             test_threads: 2
+            cxx_flags: "-std=c++2a"
             cmake: 3.14.6 # the whole test suite needs at least cmake 3.14
             requires_toolchain: true
             requires_ccache: false

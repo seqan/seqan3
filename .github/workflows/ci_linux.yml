@@ -27,9 +27,9 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - name: "Coverage gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
+          - name: "Coverage gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: coverage
             build_type: Debug
             build_threads: 2
@@ -59,22 +59,6 @@ jobs:
             build_threads: 2
             test_threads: 2
             cxx_flags: "-std=c++2a"
-
-          - name: "Unit gcc8"
-            cxx: "g++-8"
-            cc: "gcc-8"
-            build: unit
-            build_type: Release
-            build_threads: 2
-            test_threads: 2
-
-          - name: "Unit gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
-            build: unit
-            build_type: Release
-            build_threads: 2
-            test_threads: 2
 
     steps:
       - name: Checkout SeqAn3
