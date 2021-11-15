@@ -28,22 +28,13 @@
 namespace seqan3::detail
 {
 
-#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-template <typename t>
-concept variant_guard_pseudoalphabet = requires { requires seqan3::alphabet_size<t> > 0; };
-#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-
 //!\brief Prevents wrong instantiations of std::alphabet_variant's constructors.
 template <typename other_t, typename ... alternative_types>
 inline constexpr bool variant_general_guard =
-        (!std::same_as<other_t,      alphabet_variant<alternative_types...>>) &&
-        (!std::is_base_of_v<alphabet_variant<alternative_types...>, other_t>) &&
-        (!(std::same_as<other_t,     alternative_types> || ...)) &&
-        (!list_traits::contains<alphabet_variant<alternative_types...>, recursive_required_types_t<other_t>>)
-#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-        && variant_guard_pseudoalphabet<other_t>
-#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-        ;
+    (!std::same_as<other_t, alphabet_variant<alternative_types...>>) &&
+    (!std::is_base_of_v<alphabet_variant<alternative_types...>, other_t>) &&
+    (!(std::same_as<other_t, alternative_types> || ...)) &&
+    (!list_traits::contains<alphabet_variant<alternative_types...>, recursive_required_types_t<other_t>>);
 
 //!\brief Prevents wrong instantiations of std::alphabet_variant's comparison operators.
 template <typename lhs_t, typename rhs_t, bool lhs_rhs_switched, typename ... alternative_types>

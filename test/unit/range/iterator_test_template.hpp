@@ -75,12 +75,6 @@ void expect_iter_equal(it_t && it, rng_it_t && rng_it)
 template <typename type_param_t>
 concept iterator_is_equality_comparable =
     std::derived_from<typename iterator_fixture<type_param_t>::iterator_tag, std::forward_iterator_tag> ||
-#if SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-    requires (decltype(std::ranges::begin(std::declval<iterator_fixture<type_param_t> &>().test_range)) & it)
-{
-    { it == it };
-};
-#else // ^^^ workaround / no workaround vvv
     requires (iterator_fixture<type_param_t> & fixture)
 {
     typename std::ranges::iterator_t<decltype(fixture.test_range)>;
@@ -91,7 +85,6 @@ concept iterator_is_equality_comparable =
         { it == it };
     };
 };
-#endif // SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
 
 TYPED_TEST_SUITE_P(iterator_fixture);
 
