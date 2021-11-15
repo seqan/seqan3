@@ -81,12 +81,12 @@ jobs:
           cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=Release \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          if [[ "${{ matrix.build }}" =~ ^(unit|snippet|header)$ ]]; then
-            make gtest_build
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
-            make gbenchmark_build
-          fi
+          case "${{ matrix.build }}" in
+            unit) make -j${{ matrix.build_threads }} gtest_build;;
+            snippet) make -j${{ matrix.build_threads }} gtest_build;;
+            performance) make -j${{ matrix.build_threads }} gbenchmark_build;;
+            header) make -j${{ matrix.build_threads }} gtest_build gbenchmark_build;;
+          esac
 
       - name: Build tests
         run: |

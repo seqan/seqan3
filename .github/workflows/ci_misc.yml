@@ -182,22 +182,14 @@ jobs:
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          if [[ "${{ matrix.build }}" =~ ^(header|snippet)$ ]]; then
-            make gtest_build
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
-            make gbenchmark_build
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(external_project)$ ]]; then
-            make seqan3_test_prerequisite
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
-            make download-cppreference-doxygen-web-tag
-          fi
-          if [[ "${{ matrix.use_include_dependencies }}" == "true" ]]; then
-            cmake -DSEQAN3_USE_INCLUDE_DEPENDENCIES=1 .
-            make all_dependencies
-            cmake . # are tests cyclic?
+          case "${{ matrix.build }}" in
+            unit) make -j${{ matrix.build_threads }} gtest_build;;
+            snippet) make -j${{ matrix.build_threads }} gtest_build;;
+            performance) make -j${{ matrix.build_threads }} gbenchmark_build;;
+            header) make -j${{ matrix.build_threads }} gtest_build gbenchmark_build;;
+            external_project) make -j${{ matrix.build_threads }} seqan3_test_prerequisite;;
+            documentation) make -j${{ matrix.build_threads }} download-cppreference-doxygen-web-tag;;
+          esac
           fi
 
       - name: Build tests
