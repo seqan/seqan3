@@ -53,7 +53,7 @@ struct maybe_iterator_category
 
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT has_iterator_category = requires ()
+concept has_iterator_category = requires ()
 {
     typename t::iterator_category;
 };

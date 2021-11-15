@@ -74,7 +74,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sam_file_output_format =
+concept sam_file_output_format =
     requires (detail::sam_file_output_format_exposer<t>                            & v,
               std::ofstream                                                        & stream,
               sam_file_output_options                                              & options,
@@ -213,5 +213,5 @@ constexpr bool is_type_list_of_sam_file_output_formats_v<type_list<ts...>> = (sa
  * \see seqan3::is_type_list_of_sam_file_output_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sam_file_output_formats = is_type_list_of_sam_file_output_formats_v<t>;
+concept type_list_of_sam_file_output_formats = is_type_list_of_sam_file_output_formats_v<t>;
 } // namespace seqan3::detail

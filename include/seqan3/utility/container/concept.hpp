@@ -19,7 +19,7 @@
 
 #include <seqan3/core/platform.hpp>
 
-#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI || SEQAN3_WORKAROUND_GCC_83328
+#if SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 #include <string>
 
 namespace seqan3::detail
@@ -46,7 +46,7 @@ template <typename basic_string_t>
 constexpr bool is_basic_string_v = is_basic_string<basic_string_t>::value;
 
 } // seqan3::detail
-#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI || SEQAN3_WORKAROUND_GCC_83328
+#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 
 namespace seqan3
 {
@@ -70,7 +70,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typename type::iterator it)
+concept container = requires (type val, type val2, type const cval, typename type::iterator it)
 {
     // member types
     typename type::value_type;
@@ -138,7 +138,7 @@ SEQAN3_CONCEPT container = requires (type val, type val2, type const cval, typen
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cval)
+concept sequence_container = requires (type val, type val2, type const cval)
 {
     requires container<type>;
 
@@ -175,13 +175,6 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
                                       std::same_as, typename type::iterator);
         SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), val2.begin(), val2.end()),
                                       std::same_as, typename type::iterator);
-#if SEQAN3_WORKAROUND_GCC_83328
-    };
-
-    requires detail::is_basic_string_v<type> || requires(type val)
-    {
-// This function is not defined on strings (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328).
-#endif // SEQAN3_WORKAROUND_GCC_83328
         SEQAN3_RETURN_TYPE_CONSTRAINT(val.insert(val.cbegin(), std::initializer_list<typename type::value_type>{}),
                                       std::same_as, typename type::iterator);
     };
@@ -227,7 +220,7 @@ SEQAN3_CONCEPT sequence_container = requires (type val, type val2, type const cv
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT random_access_container = requires (type val)
+concept random_access_container = requires (type val)
 {
     requires sequence_container<type>;
 
@@ -256,7 +249,7 @@ SEQAN3_CONCEPT random_access_container = requires (type val)
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT reservible_container = requires (type val)
+concept reservible_container = requires (type val)
 {
     requires random_access_container<type>;
 

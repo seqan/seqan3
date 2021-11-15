@@ -79,9 +79,6 @@ public:
      */
     template <std::same_as<dna5> t>
     constexpr rna5(t const & r) noexcept
-#if SEQAN3_WORKAROUND_GCC_90897
-        requires true
-#endif
     {
         assign_rank(r.to_rank());
     }

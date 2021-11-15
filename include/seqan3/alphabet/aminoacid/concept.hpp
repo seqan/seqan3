@@ -176,7 +176,7 @@ inline constexpr bool enable_aminoacid =
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT aminoacid_alphabet = alphabet<type> && enable_aminoacid<type>;
+concept aminoacid_alphabet = alphabet<type> && enable_aminoacid<type>;
 //!\endcond
 
 } // namespace seqan3

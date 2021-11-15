@@ -38,14 +38,7 @@
 #endif
 
 // C++ Concepts [required]
-#ifdef __cpp_concepts
-#   if __cpp_concepts == 201507 // GCC and Concepts TS
-#       define SEQAN3_CONCEPT concept bool
-#   else
-        static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
-#       define SEQAN3_CONCEPT concept
-#   endif
-#else
+#ifndef __cpp_concepts
 #   error "SeqAn3 requires C++ Concepts, either via the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
 #endif
 
@@ -233,24 +226,6 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328
-#ifndef SEQAN3_WORKAROUND_GCC_83328
-#   if defined(__GNUC__) && (__GNUC__ <= 8)
-#       define SEQAN3_WORKAROUND_GCC_83328 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_83328 0
-#   endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
-#ifndef SEQAN3_WORKAROUND_GCC_87113
-#   if defined(__GNUC_MINOR__) && ((__GNUC__ == 7) || ((__GNUC__ == 8) && (__GNUC_MINOR__ < 3)))
-#       define SEQAN3_WORKAROUND_GCC_87113 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_87113 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
 #ifndef SEQAN3_WORKAROUND_GCC_89953
 #   if defined(__GNUC_MINOR__) && (__GNUC__ == 9 && __GNUC_MINOR__ < 3)
@@ -260,40 +235,12 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90897
-#ifndef SEQAN3_WORKAROUND_GCC_90897 // fixed since gcc8.4
-#   if defined(__GNUC__) && (__GNUC__ == 8 && __GNUC_MINOR__ < 4)
-#       define SEQAN3_WORKAROUND_GCC_90897 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_90897 0
-#   endif
-#endif
-
-//!\brief Various concept problems only present in GCC7 and GCC8.
-#ifndef SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-#   if defined(__GNUC__) && ((__GNUC__ == 7) || (__GNUC__ == 8))
-#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
 #ifndef SEQAN3_WORKAROUND_GCC_93467 // fixed since gcc10.2
 #   if defined(__GNUC__) && ((__GNUC__ <= 9) || (__GNUC__ == 10 && __GNUC_MINOR__ < 2))
 #       define SEQAN3_WORKAROUND_GCC_93467 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_93467 0
-#   endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-//!       gcc7 does not preserve the const && type using std::get
-#ifndef SEQAN3_WORKAROUND_GCC_94967 // fixed since gcc8
-#   if defined(__GNUC__) && (__GNUC__ <= 7)
-#       define SEQAN3_WORKAROUND_GCC_94967 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_94967 0
 #   endif
 #endif
 
@@ -372,15 +319,6 @@
 #       define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT 0
-#   endif
-#endif
-
-//!\brief GCC 7 only offers an experimental filesystems implementation.
-#ifndef SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
-#   if defined(__GNUC__) && (__GNUC__ == 7)
-#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 0
 #   endif
 #endif
 

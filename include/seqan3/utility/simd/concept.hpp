@@ -31,7 +31,7 @@ struct simd_traits_has_rebind : std::true_type {};
 //     error: invalid use of incomplete type ‘struct incomplete::template_type<int>’
 //          requires std::same_as<decltype(a - b), simd_t>;
 template <typename simd_t>
-SEQAN3_CONCEPT simd_concept = requires (simd_t a, simd_t b)
+concept simd_concept = requires (simd_t a, simd_t b)
 {
     typename simd_traits<std::remove_reference_t<simd_t>>::scalar_type;
     typename simd_traits<std::remove_reference_t<simd_t>>::mask_type;
@@ -95,7 +95,7 @@ inline namespace simd
  */
 //!\cond
 template <typename simd_t>
-SEQAN3_CONCEPT simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
+concept simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail::simd_concept<simd_t>;
 //!\endcond
 
 /*!\interface seqan3::simd::simd_index <>
@@ -108,7 +108,7 @@ SEQAN3_CONCEPT simd_concept = !std::is_pointer_v<std::decay_t<simd_t>> && detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT simd_index = simd::simd_concept<t> && requires ()
+concept simd_index = simd::simd_concept<t> && requires ()
 {
     requires std::integral<typename simd_traits<std::remove_reference_t<t>>::scalar_type>;
 };

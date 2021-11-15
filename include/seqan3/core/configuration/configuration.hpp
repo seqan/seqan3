@@ -451,9 +451,7 @@ constexpr auto const && get(configuration<configs_t...> const && config) noexcep
     constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
     static_assert(pos > -1, "Access error: The requested type is not contained.");
 
-    // TODO: change after GCC-7 bug with const && version of get in std::tuple is fixed.
-    // return get<pos>(std::move(config));
-    return std::move(get<pos>(config));
+    return get<pos>(std::move(config));
 }
 //!\}
 

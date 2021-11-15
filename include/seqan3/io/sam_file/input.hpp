@@ -111,7 +111,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sam_file_input_traits = requires (t v)
+concept sam_file_input_traits = requires (t v)
 {
     // field::seq
     requires writable_alphabet<typename t::sequence_alphabet>;

@@ -31,7 +31,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
+concept arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::tracedirections_or_simd <>
@@ -41,7 +41,7 @@ SEQAN3_CONCEPT arithmetic_or_simd = arithmetic<t> || simd_concept<t>;
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, trace_directions> || simd_concept<t>;
+concept tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, trace_directions> || simd_concept<t>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_cell <>
@@ -56,11 +56,11 @@ SEQAN3_CONCEPT tracedirections_or_simd = std::same_as<std::remove_cvref_t<t>, tr
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
-                                   std::tuple_size_v<t> == 3 &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
-                                   arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+concept affine_score_cell = tuple_like<t> &&
+                            std::tuple_size_v<t> == 3 &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                            arithmetic_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_trace_cell <>
@@ -75,11 +75,11 @@ SEQAN3_CONCEPT affine_score_cell = tuple_like<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_trace_cell = tuple_like<t> &&
-                                   std::tuple_size_v<t> == 3 &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
-                                   tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
+concept affine_trace_cell = tuple_like<t> &&
+                            std::tuple_size_v<t> == 3 &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<0, t>>> &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<1, t>>> &&
+                            tracedirections_or_simd<std::remove_reference_t<std::tuple_element_t<2, t>>>;
 //!\endcond
 
 /*!\interface seqan3::detail::affine_score_and_trace_cell <>
@@ -94,10 +94,10 @@ SEQAN3_CONCEPT affine_trace_cell = tuple_like<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT affine_score_and_trace_cell = tuple_like<t> &&
-                                             std::tuple_size_v<t> == 2 &&
-                                             affine_score_cell<std::tuple_element_t<0, t>> &&
-                                             affine_trace_cell<std::tuple_element_t<1, t>>;
+concept affine_score_and_trace_cell = tuple_like<t> &&
+                                      std::tuple_size_v<t> == 2 &&
+                                      affine_score_cell<std::tuple_element_t<0, t>> &&
+                                      affine_trace_cell<std::tuple_element_t<1, t>>;
 //!\endcond
 
 /*!\brief A proxy for an affine score matrix cell.
@@ -214,16 +214,7 @@ public:
     //!\overload
     decltype(auto) best_score() && noexcept { return get_score_impl<0>(std::move(*this)); }
     //!\overload
-    decltype(auto) best_score() const && noexcept
-    {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<0, score_cell_type>;
-        return static_cast<return_t const &&>(get_score_impl<0>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
-        return get_score_impl<0>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
-    }
+    decltype(auto) best_score() const && noexcept { return get_score_impl<0>(std::move(*this)); }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
     decltype(auto) horizontal_score() & noexcept { return get_score_impl<1>(*this); }
@@ -232,16 +223,7 @@ public:
     //!\overload
     decltype(auto) horizontal_score() && noexcept { return get_score_impl<1>(std::move(*this)); }
     //!\overload
-    decltype(auto) horizontal_score() const && noexcept
-    {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<1, score_cell_type>;
-        return static_cast<return_t const &&>(get_score_impl<1>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
-        return get_score_impl<1>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
-    }
+    decltype(auto) horizontal_score() const && noexcept { return get_score_impl<1>(std::move(*this)); }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
     decltype(auto) vertical_score() & noexcept { return get_score_impl<2>(*this); }
@@ -250,16 +232,7 @@ public:
     //!\overload
     decltype(auto) vertical_score() && noexcept { return get_score_impl<2>(std::move(*this)); }
     //!\overload
-    decltype(auto) vertical_score() const && noexcept
-    {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<2, score_cell_type>;
-        return static_cast<return_t const &&>(get_score_impl<2>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
-        return get_score_impl<2>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
-    }
+    decltype(auto) vertical_score() const && noexcept { return get_score_impl<2>(std::move(*this)); }
     //!\}
 
     /*!\name Trace value accessor
@@ -296,13 +269,7 @@ public:
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
     {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<0, trace_cell_type>;
-        return static_cast<return_t const &&>(get_trace_impl<0>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
         return get_trace_impl<0>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
@@ -335,13 +302,7 @@ public:
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
     {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<1, trace_cell_type>;
-        return static_cast<return_t const &&>(get_trace_impl<1>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
         return get_trace_impl<1>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
@@ -374,13 +335,7 @@ public:
         requires affine_score_and_trace_cell<tuple_t>
     //!\endcond
     {
-#if SEQAN3_WORKAROUND_GCC_94967
-        // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-        using return_t = std::tuple_element_t<2, trace_cell_type>;
-        return static_cast<return_t const &&>(get_trace_impl<2>(std::move(*this)));
-#else // ^^^ workaround / no workaround vvv
         return get_trace_impl<2>(std::move(*this));
-#endif // SEQAN3_WORKAROUND_GCC_94967
     }
     //!\}
 

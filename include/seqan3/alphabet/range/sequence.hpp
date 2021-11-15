@@ -36,6 +36,6 @@ namespace seqan3
  */
 //!\cond
 template <typename rng_t>
-SEQAN3_CONCEPT sequence = std::ranges::input_range<rng_t> && alphabet<std::ranges::range_reference_t<rng_t>>;
+concept sequence = std::ranges::input_range<rng_t> && alphabet<std::ranges::range_reference_t<rng_t>>;
 //!\endcond
 } // namespace seqan3

@@ -35,7 +35,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_pair = requires ()
+concept sequence_pair = requires ()
 {
     requires tuple_like<t>;
     requires std::tuple_size_v<t> == 2;
@@ -59,7 +59,7 @@ SEQAN3_CONCEPT sequence_pair = requires ()
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_pair_range = std::ranges::forward_range<t> && sequence_pair<std::ranges::range_value_t<t>>;
+concept sequence_pair_range = std::ranges::forward_range<t> && sequence_pair<std::ranges::range_value_t<t>>;
 //!\endcond
 
 /*!\interface seqan3::detail::indexed_sequence_pair_range <>
@@ -81,8 +81,8 @@ SEQAN3_CONCEPT sequence_pair_range = std::ranges::forward_range<t> && sequence_p
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT indexed_sequence_pair_range = std::ranges::forward_range<t> &&
-                                             requires (std::ranges::range_value_t<t> value)
+concept indexed_sequence_pair_range = std::ranges::forward_range<t> &&
+                                      requires (std::ranges::range_value_t<t> value)
 {
     requires tuple_like<decltype(value)>;
     requires std::tuple_size_v<decltype(value)> == 2;
@@ -106,7 +106,7 @@ SEQAN3_CONCEPT indexed_sequence_pair_range = std::ranges::forward_range<t> &&
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT align_pairwise_single_input =
+concept align_pairwise_single_input =
     sequence_pair<std::remove_reference_t<t>> &&
     std::is_lvalue_reference_v<t> ||
     (std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<t>>> &&
@@ -132,7 +132,7 @@ SEQAN3_CONCEPT align_pairwise_single_input =
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT align_pairwise_range_input =
+concept align_pairwise_range_input =
     std::ranges::forward_range<t> &&
     sequence_pair<std::ranges::range_value_t<t>> &&
     ((std::ranges::viewable_range<t> && std::is_lvalue_reference_v<std::ranges::range_reference_t<t>>) ||

@@ -79,9 +79,6 @@ public:
      */
     template <std::same_as<dna4> t>
     constexpr rna4(t const & r) noexcept
-#if SEQAN3_WORKAROUND_GCC_90897
-        requires true
-#endif
     {
         assign_rank(r.to_rank());
     }

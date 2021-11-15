@@ -35,7 +35,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT alphabet_tuple_like = requires
+concept alphabet_tuple_like = requires
 {
     requires t::seqan3_alphabet_tuple_like;
 };

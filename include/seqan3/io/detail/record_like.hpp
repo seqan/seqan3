@@ -42,7 +42,7 @@ public:
  */
 //!\cond
 template <typename record_t>
-SEQAN3_CONCEPT record_like = tuple_like<record_t> &&
-                             is_derived_from_record<std::remove_cvref_t<record_t>>::value;
+concept record_like = tuple_like<record_t> &&
+                      is_derived_from_record<std::remove_cvref_t<record_t>>::value;
 //!\endcond
 } // namespace seqan3::detail

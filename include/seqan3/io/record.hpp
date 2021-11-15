@@ -249,22 +249,7 @@ protected:
     static decltype(auto) get_impl(field_constant<f>, tuple_t && record_as_tuple)
     {
         static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-#if SEQAN3_WORKAROUND_GCC_94967
-        // is_rvalue_reference_v can't be used, because tuple_t won't contain `&&` in the type due to reference
-        // collapsing
-        if constexpr (!std::is_lvalue_reference_v<tuple_t> && std::is_const_v<tuple_t>)
-        {
-            // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-            using return_t = std::tuple_element_t<field_ids::index_of(f), tuple_t>;
-            return static_cast<return_t const &&>(std::get<field_ids::index_of(f)>(std::move(record_as_tuple)));
-        }
-        else
-        {
-            return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
-        }
-#else // ^^^ workaround / no workaround vvv
         return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
-#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 };
 
