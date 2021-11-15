@@ -56,6 +56,20 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
+          - name: "Header gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
+            build: header
+            build_type: Release
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.10.3
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: false
+            skip_run_tests: false
+            use_include_dependencies: "OFF"
+
           - name: "Header gcc9"
             cxx: "g++-9"
             cc: "gcc-9"
