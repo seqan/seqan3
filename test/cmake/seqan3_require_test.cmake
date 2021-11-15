@@ -65,7 +65,7 @@ macro (seqan3_require_test)
     set (gtest_git_tag "release-1.11.0")
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
-        message (STATUS "Fetch googletest:")
+        message (STATUS "Fetch Google Test:")
 
         include (FetchContent)
         FetchContent_Declare (
@@ -76,7 +76,7 @@ macro (seqan3_require_test)
         option (BUILD_GMOCK "" OFF)
         FetchContent_MakeAvailable(gtest_fetch_content)
     else ()
-        message (STATUS "Use googletest as external project:")
+        message (STATUS "Use Google Test as external project:")
 
         seqan3_require_test_old ("${gtest_git_tag}")
     endif ()
