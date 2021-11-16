@@ -14,59 +14,89 @@ if (CMAKE_BUILD_TYPE AND NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
     message(WARNING "Coverage test must be build in debug mode [build type = ${CMAKE_BUILD_TYPE}]")
 endif ()
 
-find_program (LCOV_COMMAND  NAMES lcov lcov.bat lcov.exe lcov.perl)
-find_program (GENHTML_COMMAND NAMES genhtml genhtml.perl genhtml.bat)
+find_program (GCOVR_COMMAND NAMES gcovr)
 
-if (NOT LCOV_COMMAND)
-    message(FATAL_ERROR "lcov not found! Aborting...")
+if (NOT GCOVR_COMMAND)
+    message(FATAL_ERROR "gcovr not found! Aborting...")
 endif ()
 
-# Files which should not be included in the coverage report
-set (TEST_COVERAGE_EXCLUDE_FILES
-    "'/usr/*'"
-    "'${SEQAN3_CLONE_DIR}/include/seqan3/contrib/*'"
-    "'${SEQAN3_CLONE_DIR}/include/seqan3/std/*'"
-    "'${SEQAN3_CLONE_DIR}/submodules/*'"
-    "'${SEQAN3_CLONE_DIR}/test/unit/*'"
-    "'${PROJECT_BINARY_DIR}/vendor/*'"
-)
 # Holds all target's defined by seqan3_test
 set_property (GLOBAL PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS "")
 
+set (SEQAN3_COVERAGE_PARALLEL_LEVEL "1" CACHE STRING "Number of threads to use for coverage report generation.")
+
+# Arguments for gcovr.
+# Each line is an argument, ';' will end up being a whitespace due to expansion by CMake.
+# Special characters like '"', '\', ')' need to be escaped by a number of '\', depending how often they are evaluated.
+# gcovr uses python regex expressions.
+# See https://gcovr.com/en/5.0/guide.html#the-gcovr-command for an overview of parameters.
+# See https://gcovr.com/en/5.0/faq.html#why-does-c-code-have-so-many-uncovered-branches for an explanation on branches.
+set (SEQAN3_GCOVR_ARGUMENTS "")
+# The directory of the CMakeLists.txt used for invoking cmake.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--root;${CMAKE_CURRENT_LIST_DIR}")
+# The build directory.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "${PROJECT_BINARY_DIR}")
+# Include all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/.*'.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--filter;\'${SEQAN3_CLONE_DIR}/include/seqan3/.*\'")
+# Include all files whose path match '${SEQAN3_CLONE_DIR}/test/include/seqan3/test/.*'.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--filter;\'${SEQAN3_CLONE_DIR}/test/include/seqan3/test/.*\'")
+# Remove all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/contrib/.*'.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude;\'${SEQAN3_CLONE_DIR}/include/seqan3/contrib/.*\'")
+# Remove all files whose path match '${SEQAN3_CLONE_DIR}/include/seqan3/std/.*'.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude;\'${SEQAN3_CLONE_DIR}/include/seqan3/std/.*\'")
+# Remove line coverage for all lines that match '^\s*$', i.e. empty lines.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-lines-by-pattern;\\\'^\\\\s*$$\\\'")
+# Remove line coverage for all lines that match "^\s*[\{\}]\s*\;*\s*(//.*)?$", i.e. lines with a single '{' or '}' which
+# might be followed by a semicolon or a comment '//'.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-lines-by-pattern;\\\'^\\\\s*[\\{\\}]\\\\s*\\\\\\;*\\\\s*\\(//.*\\)?$$\\\'")
+# Will exclude branches that are unreachable.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-unreachable-branches")
+# Will exclude branches that are only generated for exception handling.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "--exclude-throw-branches")
+# Run up to this many gcov instances in parallel.
+list (APPEND SEQAN3_GCOVR_ARGUMENTS "-j;${SEQAN3_COVERAGE_PARALLEL_LEVEL}")
+
 add_custom_command (
-    OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage
-    # Cleanup lcov (resetting code coverage counters to zero)
-    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --zerocounters
-    # Create baseline to make sure untouched files show up in the report
-    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --initial --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.baseline
+    OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
 
-    # Run tests
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    # Run tests.
+    COMMAND ${CMAKE_CTEST_COMMAND} -j ${SEQAN3_COVERAGE_PARALLEL_LEVEL} --output-on-failure
 
-    # Capturing lcov counters and generating report
-    COMMAND ${LCOV_COMMAND} --directory ${PROJECT_BINARY_DIR} --capture --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.captured
-    # merge baseline counters and captured counters
-    COMMAND ${LCOV_COMMAND} -a ${PROJECT_BINARY_DIR}/seqan3_coverage.baseline -a ${PROJECT_BINARY_DIR}/seqan3_coverage.captured --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage.total
-    COMMAND ${LCOV_COMMAND} --remove ${PROJECT_BINARY_DIR}/seqan3_coverage.total ${TEST_COVERAGE_EXCLUDE_FILES} --output-file ${PROJECT_BINARY_DIR}/seqan3_coverage
-
-    BYPRODUCTS seqan3_coverage.baseline seqan3_coverage.captured seqan3_coverage.total
+    # Run gcovr and create XML report.
+    COMMAND ${GCOVR_COMMAND} ${SEQAN3_GCOVR_ARGUMENTS} --xml --output ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
 
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-    COMMENT "Processing code coverage counters."
+    COMMENT "Processing code coverage counters and generating XML report."
+    COMMAND_EXPAND_LISTS
 )
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "seqan3_coverage.baseline;seqan3_coverage.captured;seqan3_coverage.total")
 
 add_custom_target (
     coverage ALL
     DEPENDS
-    ${PROJECT_BINARY_DIR}/seqan3_coverage
+    ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
+)
+
+add_custom_command (
+    OUTPUT ${PROJECT_BINARY_DIR}/html/index.html
+
+    # Run tests.
+    COMMAND ${CMAKE_CTEST_COMMAND} -j ${SEQAN3_COVERAGE_PARALLEL_LEVEL} --output-on-failure
+
+    # Create output directory.
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/html/
+
+    # Run gcovr and create HTML report.
+    COMMAND ${GCOVR_COMMAND} ${SEQAN3_GCOVR_ARGUMENTS} --html-details --output ${PROJECT_BINARY_DIR}/html/index.html
+
+    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    COMMENT "Processing code coverage counters and generating HTML report."
+    COMMAND_EXPAND_LISTS
 )
 
 add_custom_target (
     coverage_html
-    COMMAND ${GENHTML_COMMAND} --highlight --legend --output-directory html ${PROJECT_BINARY_DIR}/seqan3_coverage
-    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-    DEPENDS coverage
+    DEPENDS
+    ${PROJECT_BINARY_DIR}/html/index.html
     COMMENT "Generate coverage report."
 )
 
@@ -105,7 +135,7 @@ add_subdirectories_of ("${CMAKE_CURRENT_SOURCE_DIR}/../unit")
 # add collected test cases as dependency
 get_property(TEST_COVERAGE_ALL_TESTS GLOBAL PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS)
 add_custom_command (
-    OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage
+    OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
     DEPENDS ${TEST_COVERAGE_ALL_TESTS}
     APPEND
 )

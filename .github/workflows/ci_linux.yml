@@ -89,13 +89,13 @@ jobs:
       - name: Install compiler ${{ matrix.cxx }}
         run: sudo apt-get install --yes ${{ matrix.cxx }}
 
-      - name: Install lcov
+      - name: Install gcovr
         if: matrix.build == 'coverage'
         env:
           CC: ${{ matrix.cc }}
         run: |
-          sudo apt-get install --yes lcov
           sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
+          pip install gcovr
 
       - name: Load ccache
         uses: actions/cache@v2
@@ -120,8 +120,12 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          make gtest_build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
+                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
+                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
+                                                   -DSEQAN3_COVERAGE_PARALLEL_LEVEL=${{ matrix.test_threads }}
+          make -j${{ matrix.build_threads }} gtest_build
 
       - name: Build tests
         env:
@@ -130,6 +134,7 @@ jobs:
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
           CCACHE_MAXSIZE: 1G
+          GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
           ccache -p || true
           cd seqan3-build
@@ -144,7 +149,7 @@ jobs:
 
       - name: Submit coverage build
         if: matrix.build == 'coverage'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
-          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage
+          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
           root_dir: ${{ github.workspace }}/seqan3
