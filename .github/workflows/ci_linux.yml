@@ -125,7 +125,7 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '350M' || '50M' }}
           GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
           ccache -p || true

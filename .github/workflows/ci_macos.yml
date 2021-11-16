@@ -114,7 +114,7 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_MAXSIZE: 50M
         run: |
           ccache -p || true
           cd seqan3-build
