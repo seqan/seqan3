@@ -33,8 +33,6 @@ jobs:
             cc: "gcc-11"
             build: unit
             build_type: Release
-            build_threads: 3
-            test_threads: 3
 
           - name: "Unit gcc10"
             os: macos-10.15
@@ -42,8 +40,6 @@ jobs:
             cc: "gcc-10"
             build: unit
             build_type: Release
-            build_threads: 3
-            test_threads: 3
 
           - name: "Unit gcc9 (c++2a)"
             os: macos-10.15
@@ -51,8 +47,6 @@ jobs:
             cc: "gcc-9"
             build: unit
             build_type: Release
-            build_threads: 3
-            test_threads: 3
             cxx_flags: "-std=c++2a"
 
     steps:
@@ -112,7 +106,7 @@ jobs:
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          make gtest_build
+          make -j3 gtest_build
 
       - name: Build tests
         env:
@@ -124,10 +118,10 @@ jobs:
         run: |
           ccache -p || true
           cd seqan3-build
-          make -k -j${{ matrix.build_threads }}
+          make -k -j3
           ccache -s || true
 
       - name: Run tests
         run: |
           cd seqan3-build
-          ctest . -j${{ matrix.test_threads }} --output-on-failure
+          ctest . -j3 --output-on-failure

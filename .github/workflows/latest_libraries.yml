@@ -82,10 +82,10 @@ jobs:
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01
           case "${{ matrix.build }}" in
-            unit) make -j${{ matrix.build_threads }} gtest_build;;
-            snippet) make -j${{ matrix.build_threads }} gtest_build;;
-            performance) make -j${{ matrix.build_threads }} gbenchmark_build;;
-            header) make -j${{ matrix.build_threads }} gtest_build gbenchmark_build;;
+            unit) make -j2 gtest_build;;
+            snippet) make -j2 gtest_build;;
+            performance) make -j2 gbenchmark_build;;
+            header) make -j2 gtest_build gbenchmark_build;;
           esac
 
       - name: Build tests
