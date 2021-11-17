@@ -20,7 +20,6 @@
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
-#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3::detail
 {
@@ -49,7 +48,7 @@ namespace seqan3::detail
  * the vector format_parse::argv. That way, options that are specified multiple times,
  * but are no container type, can be identified and an error is reported.
  *
- * \remark For a complete overview, take a look at \ref argument_parser 
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_parse : public format_base
 {
