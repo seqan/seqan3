@@ -60,7 +60,8 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/api_stability -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1"
+          cmake ../seqan3/test/api_stability -DCMAKE_BUILD_TYPE=Release \
+                                             -DCMAKE_CXX_FLAGS="-DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1"
 
       - name: Build tests
         run: |

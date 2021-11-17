@@ -39,7 +39,7 @@ jobs:
             requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
-            use_include_dependencies: false
+            use_include_dependencies: "OFF"
 
           - name: "Performance gcc9"
             cxx: "g++-9"
@@ -54,7 +54,21 @@ jobs:
             requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
-            use_include_dependencies: false
+            use_include_dependencies: "OFF"
+
+          - name: "Header gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
+            build: header
+            build_type: Release
+            build_threads: 2
+            test_threads: 2
+            cmake: 3.10.3
+            requires_toolchain: true
+            requires_ccache: true
+            skip_build_tests: false
+            skip_run_tests: false
+            use_include_dependencies: "OFF"
 
           - name: "Header gcc9"
             cxx: "g++-9"
@@ -69,7 +83,7 @@ jobs:
             requires_ccache: true
             skip_build_tests: false
             skip_run_tests: false
-            use_include_dependencies: false
+            use_include_dependencies: "OFF"
 
           - name: "Non-cyclic tests"
             cxx: "g++-9"
@@ -84,7 +98,7 @@ jobs:
             requires_ccache: true
             skip_build_tests: true
             skip_run_tests: true
-            use_include_dependencies: true
+            use_include_dependencies: "ON"
 
           - name: "CMake external project"
             cxx: "g++-9"
@@ -99,7 +113,7 @@ jobs:
             requires_ccache: false
             skip_build_tests: false
             skip_run_tests: true
-            use_include_dependencies: false
+            use_include_dependencies: "OFF"
 
           - name: "Documentation"
             build: documentation
@@ -111,7 +125,7 @@ jobs:
             requires_ccache: false
             skip_build_tests: true
             skip_run_tests: false
-            use_include_dependencies: false
+            use_include_dependencies: "OFF"
 
     steps:
       - name: Checkout SeqAn3
@@ -178,33 +192,35 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          if [[ "${{ matrix.build }}" =~ ^(header|snippet)$ ]]; then
-            make gtest_build
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(performance|header)$ ]]; then
-            make gbenchmark_build
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(external_project)$ ]]; then
-            make seqan3_test_prerequisite
-          fi
-          if [[ "${{ matrix.build }}" =~ ^(documentation)$ ]]; then
-            make download-cppreference-doxygen-web-tag
-          fi
-          if [[ "${{ matrix.use_include_dependencies }}" == "true" ]]; then
-            cmake -DSEQAN3_USE_INCLUDE_DEPENDENCIES=1 .
-            make all_dependencies
-            cmake . # are tests cyclic?
-          fi
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
+                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
+                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
+                                                   -DSEQAN3_USE_INCLUDE_DEPENDENCIES="${{ matrix.use_include_dependencies }}"
+          case "${{ matrix.build }}" in
+            unit) make -j${{ matrix.build_threads }} gtest_build;;
+            snippet) make -j${{ matrix.build_threads }} gtest_build;;
+            performance) make -j${{ matrix.build_threads }} gbenchmark_build;;
+            header) make -j${{ matrix.build_threads }} gtest_build gbenchmark_build;;
+            external_project) make -j${{ matrix.build_threads }} seqan3_test_prerequisite;;
+            documentation) make -j${{ matrix.build_threads }} download-cppreference-doxygen-web-tag;;
+          esac
+
+      - name: Check cyclic includes
+        if: matrix.use_include_dependencies == 'ON'
+        run: |
+          cd seqan3-build
+          make -k -j${{ matrix.build_threads }} all_dependencies
+          cmake . # are tests cyclic?
 
       - name: Build tests
-        if: ${{!matrix.skip_build_tests}}
+        if: ${{ !matrix.skip_build_tests }}
         env:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_MAXSIZE: 50M
         run: |
           ccache -p || true
           cd seqan3-build
@@ -212,7 +228,7 @@ jobs:
           ccache -s || true
 
       - name: Run tests
-        if: ${{!matrix.skip_run_tests}}
+        if: ${{ !matrix.skip_run_tests }}
         run: |
           cd seqan3-build
           ctest . -j${{ matrix.test_threads }} --output-on-failure

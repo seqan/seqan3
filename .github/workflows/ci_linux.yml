@@ -32,32 +32,24 @@ jobs:
             cc: "gcc-11"
             build: coverage
             build_type: Debug
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc11"
             cxx: "g++-11"
             cc: "gcc-11"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc10"
             cxx: "g++-10"
             cc: "gcc-10"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc9 (c++2a)"
             cxx: "g++-9"
             cc: "gcc-9"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
             cxx_flags: "-std=c++2a"
 
     steps:
@@ -124,8 +116,8 @@ jobs:
                                                    -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
                                                    -DSEQAN3_VERBOSE_TESTS=OFF \
                                                    -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
-                                                   -DSEQAN3_COVERAGE_PARALLEL_LEVEL=${{ matrix.test_threads }}
-          make -j${{ matrix.build_threads }} gtest_build
+                                                   -DSEQAN3_COVERAGE_PARALLEL_LEVEL=2
+          make -j2 gtest_build
 
       - name: Build tests
         env:
@@ -133,19 +125,19 @@ jobs:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
           CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '350M' || '50M' }}
           GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
           ccache -p || true
           cd seqan3-build
-          make -k -j${{ matrix.build_threads }}
+          make -k -j2
           ccache -s || true
 
       - name: Run tests
         if: matrix.build != 'coverage'
         run: |
           cd seqan3-build
-          ctest . -j${{ matrix.test_threads }} --output-on-failure
+          ctest . -j2 --output-on-failure
 
       - name: Submit coverage build
         if: matrix.build == 'coverage'

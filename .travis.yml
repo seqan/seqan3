@@ -19,7 +19,7 @@ cache:
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-11
 
@@ -51,27 +51,35 @@ install:
 before_script:
   - mkdir ../seqan3-build
   - cd ../seqan3-build
-  - cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-Wno-psabi" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
   - |
-    if [[ "${BUILD}" =~ ^(unit|header|snippet)$ ]]; then
-      make gtest_build
-    fi
+    cmake ../seqan3/test/${BUILD} -DCMAKE_BUILD_TYPE=Release \
+                                  -DCMAKE_CXX_FLAGS="-Wno-psabi" \
+                                  -DSEQAN3_VERBOSE_TESTS=OFF \
+                                  -DSEQAN3_BENCHMARK_MIN_TIME=0.01
   - |
-    if [[ "${BUILD}" =~ ^(performance|header)$ ]]; then
-      make gbenchmark_build
-    fi
+    case "${BUILD}" in
+      unit) make -j2 gtest_build;;
+      snippet) make -j2 gtest_build;;
+      performance) make -j2 gbenchmark_build;;
+      header) make -j2 gtest_build gbenchmark_build;;
+    esac
 
+# The runners with exotic architecture have fewer memory available (around 3 GB).
+# Usually, we can build everything using 2 threads, but if we are unfortunate, something gets killed.
+# In this case, we just build the killed targets with 1 thread:
+# make -k -j2 || make -k
+# The same applies to running ctest.
 script:
   - export SEQAN3_NO_VERSION_CHECK=1
   - export CCACHE_COMPRESS=true
   - export CCACHE_COMPRESSLEVEL=6
   - export CCACHE_MAXSIZE=500M
-  - make -k -j2
+  - make -k -j2 || make -k
   - |
     if [[ "${BUILD}" =~ ^(snippet)$ ]]; then
       ctest . --output-on-failure
     else
-      ctest . -j2 --output-on-failure
+      ctest . -j2 --output-on-failure || ctest . --rerun-failed --output-on-failure
     fi
 
 after_script:

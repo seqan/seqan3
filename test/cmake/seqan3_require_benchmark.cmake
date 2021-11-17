@@ -59,12 +59,12 @@ endmacro ()
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (gbenchmark_git_tag "v1.5.0")
+    set (gbenchmark_git_tag "v1.6.0")
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
         # NOTE: setting the standard prevents an ICE involving passing -fconcepts through CMAKE_CXX_FLAGS
         set (CMAKE_CXX_STANDARD 17)
-        message (STATUS "Fetch google benchmark:")
+        message (STATUS "Fetch Google Benchmark:")
 
         include (FetchContent)
         FetchContent_Declare (
@@ -79,7 +79,7 @@ macro (seqan3_require_benchmark)
         add_library (gbenchmark ALIAS benchmark_main)
         unset (CMAKE_CXX_STANDARD)
     else ()
-        message (STATUS "Use google benchmark as external project:")
+        message (STATUS "Use Google Benchmark as external project:")
 
         seqan3_require_benchmark_old ("${gbenchmark_git_tag}")
     endif ()
