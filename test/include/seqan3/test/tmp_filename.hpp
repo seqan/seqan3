@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #endif
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/core/platform.hpp>
 

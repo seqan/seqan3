@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 
 #include <seqan3/core/platform.hpp>

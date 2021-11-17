@@ -5,7 +5,7 @@
 #define main sam_file_filename_construction
 
 //![main]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/io/sam_file/all.hpp>
 

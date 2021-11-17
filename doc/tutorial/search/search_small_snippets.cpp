@@ -11,7 +11,7 @@ seqan3::cleanup index_file{"index.file"};
 #include <seqan3/search/search.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 using namespace std::string_literals;
 

@@ -1,6 +1,6 @@
 //![program]
 #include <seqan3/std/charconv>            // includes std::from_chars
-#include <seqan3/std/filesystem>          // use std::filesystem::path
+#include <filesystem>                     // use std::filesystem::path
 #include <fstream>
 #include <numeric>
 

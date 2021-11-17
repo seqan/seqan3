@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <seqan3/std/ranges>
 #include <utility>
 

@@ -14,7 +14,7 @@
 
 #include <cassert>
 #include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <seqan3/std/ranges>
 #include <string>

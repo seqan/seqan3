@@ -1,4 +1,4 @@
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <sstream>
 #include <tuple>
 

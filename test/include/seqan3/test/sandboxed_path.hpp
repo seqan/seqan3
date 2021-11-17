@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/algorithm>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <numeric>
 
 #include <seqan3/core/platform.hpp>

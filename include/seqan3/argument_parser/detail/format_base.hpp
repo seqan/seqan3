@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <limits>
 #include <sstream>
