@@ -1,5 +1,5 @@
 #include <seqan3/argument_parser/all.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 //![validator_include]
 #include <seqan3/argument_parser/validators.hpp>

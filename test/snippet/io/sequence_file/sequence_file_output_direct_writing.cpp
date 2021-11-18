@@ -2,7 +2,7 @@
 
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 auto input = R"(@TEST1
 ACGT

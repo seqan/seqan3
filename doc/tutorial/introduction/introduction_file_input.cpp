@@ -1,4 +1,4 @@
-#include <seqan3/std/filesystem>                // to create tmp directory
+#include <filesystem>                           // to create tmp directory
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>  // to create right datastructure in tmp file
 #include <seqan3/io/sequence_file/output.hpp>   // to create tmp file

@@ -26,7 +26,7 @@ r003	2064	chr2	18	10	5M	*	0	0	TAGGC	*
 
 //![solution]
 #include <seqan3/std/algorithm> // std::ranges::count
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>

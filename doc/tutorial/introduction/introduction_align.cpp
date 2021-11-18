@@ -9,7 +9,7 @@
 #include <seqan3/argument_parser/all.hpp>                 // for argument_parser
 #include <seqan3/core/debug_stream.hpp>                   // for debug_stream
 #include <seqan3/io/sequence_file/all.hpp>                // for sequence_file_input and sequence_file_output
-#include <seqan3/std/filesystem>                          // for tmp_dir
+#include <filesystem>                                     // for tmp_dir
 
 int main()
 {

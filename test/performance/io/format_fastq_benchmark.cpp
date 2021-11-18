@@ -8,7 +8,7 @@
 #include <benchmark/benchmark.h>
 
 #include <cstring>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 
 #include <seqan3/alphabet/nucleotide/dna5.hpp>

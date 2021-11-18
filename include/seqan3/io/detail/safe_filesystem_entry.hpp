@@ -16,7 +16,7 @@
 #include <system_error>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 namespace seqan3::detail
 {

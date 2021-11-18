@@ -3,7 +3,7 @@
 seqan3::test::create_temporary_snippet_file my_fasta{"my.fasta", ""};
 
 //![main]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence_file/input.hpp>

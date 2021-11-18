@@ -14,7 +14,7 @@
 
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <seqan3/std/ranges>
 #include <regex>

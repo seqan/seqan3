@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <seqan3/std/ranges>

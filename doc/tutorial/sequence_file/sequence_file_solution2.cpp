@@ -11,7 +11,7 @@ CGATCGA
 }; // std::filesystem::current_path() / "my.fasta" will be deleted after the execution
 
 //![solution]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <seqan3/std/ranges> // std::ranges::copy
 
 #include <seqan3/core/debug_stream.hpp>
