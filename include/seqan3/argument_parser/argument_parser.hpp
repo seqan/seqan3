@@ -826,7 +826,8 @@ private:
      */
     void verify_identifiers(char const short_id, std::string const & long_id)
     {
-        auto constexpr allowed = is_alnum || is_char<'_'> || is_char<'@'>;
+        constexpr std::string_view valid_chars{"@_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+        auto is_valid = [&valid_chars] (char const c) { return valid_chars.find(c) != std::string::npos; };
 
         if (id_exists(short_id))
             throw design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
@@ -834,14 +835,14 @@ private:
             throw design_error("Option Identifier '" + long_id + "' was already used before.");
         if (long_id.length() == 1)
             throw design_error("Long IDs must be either empty, or longer than one character.");
-        if (!allowed(short_id) && !is_char<'\0'>(short_id))
+        if ((short_id != '\0') && !is_valid(short_id))
             throw design_error("Option identifiers may only contain alphanumeric characters, '_', or '@'.");
-        if (long_id.size() > 0 && is_char<'-'>(long_id[0]))
+        if (long_id.size() > 0 && (long_id[0] == '-'))
             throw design_error("First character of long ID cannot be '-'.");
 
-        std::for_each(long_id.begin(), long_id.end(), [&allowed] (char c)
+        std::for_each(long_id.begin(), long_id.end(), [&is_valid] (char c)
                       {
-                          if (!(allowed(c) || is_char<'-'>(c)))
+                          if (!((c == '-') || is_valid(c)))
                               throw design_error("Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
                       });
         if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
