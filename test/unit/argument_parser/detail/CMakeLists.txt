@@ -11,3 +11,4 @@ seqan3_test(format_html_test.cpp CYCLIC_DEPENDING_INCLUDES
 seqan3_test(format_man_test.cpp)
 seqan3_test(version_check_debug_test.cpp)
 seqan3_test(version_check_release_test.cpp)
+seqan3_test(concept_is_container_option_test.cpp)
