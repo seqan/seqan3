@@ -23,22 +23,19 @@ namespace seqan3::detail
 
 /*!\interface seqan3::detail::is_container_option <>
  * \ingroup argument_parser
- * \brief Decides whether an option type is considered a list.
+ * \brief Whether the option type is considered to be a container.
  * \details
  *
- * In the seqan3::argument_parser::add_option or seqan3::argument_parser::add_positional_argument calls,
- * it is important whether the type of the value, in which the respective option is stored (option_type),
- * is a container or not because nternal handling of option containers is different.
+ * When adding options or positionial arguments, a distinction needs to be made between container and non-container `option_type`s.
  *
- * This concept decides whether an option type is considered a container or not.
- * In general, all standard library containers except std::string can be considered option containers.
+ * In general, all standard library containers except std::string can be considered  containers.
  *
- * In order to be considered an option container, the `option_type` as to fulfil the following:
- * * `option_type` may not be `std::string`
- * * Member type `option_type::value_type` must exist
- * * Member function `option_type::push_back(typename option_type::value_type) -> void` must exist.
+ * In order to be considered a container, the `option_type` must:
+ * * not be `std::string`
+ * * define a member type `value_type`
+ * * provide a member function `push_back(value_type)`
  *
- * \noapi{Exposition only.}
+ * \noapi
  */
 //!\cond
 template <typename option_type>
