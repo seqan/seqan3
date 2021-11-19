@@ -26,9 +26,10 @@ namespace seqan3::detail
  * \brief Whether the option type is considered to be a container.
  * \details
  *
- * When adding options or positionial arguments, a distinction needs to be made between container and non-container `option_type`s.
+ * When adding options or positionial arguments, a distinction needs to be made between container and non-container
+ * `option_type`s.
  *
- * In general, all standard library containers except std::string can be considered  containers.
+ * In general, all standard library containers except std::string can be considered containers.
  *
  * In order to be considered a container, the `option_type` must:
  * * not be `std::string`
@@ -40,8 +41,8 @@ namespace seqan3::detail
 //!\cond
 template <typename option_type>
 concept is_container_option = !std::is_same_v<std::remove_cvref_t<option_type>, std::string> &&
-                                     requires (option_type container,
-                                               typename std::remove_reference_t<option_type>::value_type value)
+                              requires (option_type container,
+                                        typename std::remove_reference_t<option_type>::value_type value)
 {
     { container.push_back(value) };
 };
