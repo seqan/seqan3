@@ -93,6 +93,30 @@ template <ptrdiff_t idx,
           typename ...pack1_t>
 pack_traits::split_after<idx, pack1_t...> split_after(type_list<pack1_t...>);
 
+/*!\brief Implementation for seqan3::list_traits::repeat.
+ * \tparam count The number of repititions.
+ * \tparam t The type to repeat
+ * \ingroup utility_type_list
+ */
+template <size_t count, typename t>
+auto repeat()
+{
+    if constexpr (count == 0)
+        return type_list<>{};
+    else if constexpr (count == 1)
+        return type_list<t>{};
+    else if constexpr (count == 2)
+        return type_list<t,t>{};
+    else if constexpr (count == 3)
+        return type_list<t,t,t>{};
+    else if constexpr (count == 4)
+        return type_list<t,t,t,t>{};
+    else if constexpr (count == 5)
+        return type_list<t,t,t,t,t>{};
+    else
+        return concat(repeat<5, t>(), repeat<count - 5, t>());
+}
+
 /*!\brief Implementation for seqan3::list_traits::replace_at.
  * \tparam replace_t The type replacing the old one.
  * \tparam idx The index of the type to replace.
@@ -491,6 +515,20 @@ template <typename replace_t, std::ptrdiff_t i, typename list_t>
 //!\endcond
 using replace_at = decltype(detail::replace_at<replace_t, i>(list_t{}));
 
+/*!\brief Create a type list with the given type repeated `count` times..
+ * \tparam count The number of repititions.
+ * \tparam t The type to repeat
+ * \ingroup utility_type_list
+ *
+ * ### (Compile-time) Complexity
+ *
+ * * Number of template instantiations: O(n)
+ * * Other operations: O(n)
+ *
+ * However, with a constant of 0.2, e.g. repeat<10,int> results in 2-3 instantiations.
+ */
+template <size_t count, typename t>
+using repeat = decltype(detail::repeat<count, t>());
 //!\}
 
 } // namespace seqan3::list_traits
