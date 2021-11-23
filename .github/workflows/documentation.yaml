@@ -7,6 +7,10 @@ on:
   # Enables a manual trigger.
   workflow_dispatch:
 
+concurrency:
+  group: docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 env:
   CMAKE_VERSION: 3.10.3
   DOXYGEN_VERSION: 1.9.2

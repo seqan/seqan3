@@ -9,6 +9,10 @@ on:
       - 'release*'
   pull_request:
 
+concurrency:
+  group: linux-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
@@ -76,7 +80,9 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
       - name: Install ccache
-        run: sudo apt-get install --yes ccache
+        run: |
+          conda install --yes --override-channels --channel conda-forge ccache
+          sudo ln -s $CONDA/bin/ccache /usr/bin/ccache
 
       - name: Install compiler ${{ matrix.cxx }}
         run: sudo apt-get install --yes ${{ matrix.cxx }}
@@ -124,14 +130,15 @@ jobs:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '350M' || '50M' }}
+          CCACHE_COMPRESSLEVEL: 12
+          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '525M' || '75M' }}
+          CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
           GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
-          ccache -p || true
+          ccache -z
           cd seqan3-build
           make -k -j2
-          ccache -s || true
+          ccache -sv
 
       - name: Run tests
         if: matrix.build != 'coverage'

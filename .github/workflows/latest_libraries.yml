@@ -7,6 +7,10 @@ on:
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
+concurrency:
+  group: libs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
