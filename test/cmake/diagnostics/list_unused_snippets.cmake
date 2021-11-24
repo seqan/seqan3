@@ -31,13 +31,13 @@ function (list_unused_snippets snippet_base_path)
         # e.g. /seqan3/test/snippet/../../doc/tutorial/pairwise_alignment
         get_filename_component (source_dir "${source}" DIRECTORY)
         # e.g. ../../doc/tutorial/pairwise_alignment
-        file (RELATIVE_PATH source_relative_dir "${snippet_base_path}" "${source_dir}")
+        file (RELATIVE_PATH source_relative_stem "${snippet_base_path}" "${source_dir}/${source_wle}")
 
         # test_snippet_output_list adds all potential cout / cerr files even if they don't really exist
         # This list will be subtracted from the real list of files, so it can contain "more" without changing the
         # result.
-        list (APPEND test_snippet_output_list "${source_relative_dir}/${source_wle}.out")
-        list (APPEND test_snippet_output_list "${source_relative_dir}/${source_wle}.err")
+        list (APPEND test_snippet_output_list "${source_relative_stem}.out")
+        list (APPEND test_snippet_output_list "${source_relative_stem}.err")
     endforeach ()
 
     # create the difference between test_snippet_output_glob_list set and test_snippet_output_list set.
