@@ -15,6 +15,7 @@ int main()
                                           seqan3::field::ref_id,
                                           seqan3::field::ref_offset,
                                           seqan3::field::alignment,
+                                          seqan3::field::cigar,
                                           seqan3::field::mapq,
                                           seqan3::field::qual,
                                           seqan3::field::flag,
