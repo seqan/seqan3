@@ -9,6 +9,10 @@ on:
       - 'release*'
   pull_request:
 
+concurrency:
+  group: misc-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
@@ -161,7 +165,9 @@ jobs:
 
       - name: Install ccache
         if: matrix.requires_ccache
-        run: sudo apt-get install --yes ccache
+        run: |
+          conda install --yes --override-channels --channel conda-forge ccache
+          sudo ln -s $CONDA/bin/ccache /usr/bin/ccache
 
       - name: Install compiler ${{ matrix.cxx }}
         if: matrix.requires_toolchain
@@ -219,13 +225,13 @@ jobs:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 50M
+          CCACHE_COMPRESSLEVEL: 12
+          CCACHE_MAXSIZE: 75M
         run: |
-          ccache -p || true
+          ccache -z || true
           cd seqan3-build
           make -k -j${{ matrix.build_threads }}
-          ccache -s || true
+          ccache -sv || true
 
       - name: Run tests
         if: ${{ !matrix.skip_run_tests }}
