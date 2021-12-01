@@ -457,7 +457,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
                 {
                     assert(core.l_seq == (seq_length + offset_tmp + soft_clipping_end)); // sanity check
                     using alph_t = std::ranges::range_value_t<decltype(get<1>(align))>;
-                    constexpr auto from_dna16 = detail::convert_through_char_representation<alph_t, dna16sam>;
+                    constexpr auto from_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
 
                     get<1>(align).reserve(seq_length);
 
@@ -501,7 +501,7 @@ inline void format_bam::read_alignment_record(stream_type & stream,
         else
         {
             using alph_t = std::ranges::range_value_t<decltype(seq)>;
-            constexpr auto from_dna16 = detail::convert_through_char_representation<alph_t, dna16sam>;
+            constexpr auto from_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
 
             for (auto [d1, d2] : seq_stream)
             {
@@ -891,7 +891,7 @@ inline void format_bam::write_alignment_record([[maybe_unused]] stream_type &  s
 
         // write seq (bit-compressed: dna16sam characters go into one byte)
         using alph_t = std::ranges::range_value_t<seq_type>;
-        constexpr auto to_dna16 = detail::convert_through_char_representation<dna16sam, alph_t>;
+        constexpr auto to_dna16 = detail::convert_through_char_representation<alph_t, dna16sam>;
 
         auto sit = std::ranges::begin(seq);
         for (int32_t sidx = 0; sidx < ((core.l_seq & 1) ? core.l_seq - 1 : core.l_seq); ++sidx, ++sit)

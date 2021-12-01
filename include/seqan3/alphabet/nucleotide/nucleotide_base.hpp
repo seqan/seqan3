@@ -86,7 +86,7 @@ public:
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
         static_cast<derived_type &>(*this) =
-            detail::convert_through_char_representation<derived_type, other_nucl_type>[seqan3::to_rank(other)];
+            detail::convert_through_char_representation<other_nucl_type, derived_type>[seqan3::to_rank(other)];
     }
     //!\}
 
