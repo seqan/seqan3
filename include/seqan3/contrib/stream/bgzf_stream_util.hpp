@@ -35,10 +35,9 @@
 namespace seqan3::contrib
 {
 
-/*!\brief A static variable indicating the number of threads to use for the bgzf-streams.
- *       Defaults to std::thread::hardware_concurrency.
+/*!\brief A static variable indicating the number of threads to use for the bgzf-streams. Defaults to 4.
  */
-inline static uint64_t bgzf_thread_count = std::thread::hardware_concurrency();
+inline static uint64_t bgzf_thread_count = 4;
 
 // ============================================================================
 // Forwards
