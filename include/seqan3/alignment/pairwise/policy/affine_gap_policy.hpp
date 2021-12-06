@@ -171,7 +171,6 @@ private:
     /*!\brief Initialise the alignment state for affine gap computation.
      * \tparam alignment_configuration_t The type of alignment configuration.
      * \param[in] config The alignment configuration.
-     * \returns The initialised seqan3::detail::alignment_algorithm_state.
      *
      * \details
      *

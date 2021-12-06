@@ -730,7 +730,6 @@ public:
      * \{
      */
     /*!\brief Removes all elements from the container.
-     * \returns The number of elements in the container.
      *
      * ### Complexity
      *
