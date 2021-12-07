@@ -1,5 +1,5 @@
 ---
-name: Question
+name: Question (alternative to Discussions)
 about: Ask us about anything SeqAn-related that you would like to know.
 title: ''
 labels: 'question'

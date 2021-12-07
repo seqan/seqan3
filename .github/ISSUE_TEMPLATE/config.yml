@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and Answers
+    url: https://github.com/seqan/seqan3/discussions
+    about: Ask us about installing and using SeqAn3 in our GitHub Discussions forum!
+  - name: Documentation
+    url: https://docs.seqan.de/
+    about: See our extensive documentation for usage examples and more!
