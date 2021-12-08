@@ -13,6 +13,7 @@
 #pragma once
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <vector>
 
