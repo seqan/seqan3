@@ -1,6 +1,7 @@
 add_subdirectories()
 
 seqan3_test(char_to_test.cpp)
+seqan3_test(char_strictly_to_test.cpp)
 seqan3_test(complement_test.cpp)
 seqan3_test(rank_to_test.cpp)
 seqan3_test(to_char_test.cpp)
@@ -8,3 +9,4 @@ seqan3_test(to_rank_test.cpp)
 seqan3_test(translate_join_test.cpp)
 seqan3_test(translate_test.cpp)
 seqan3_test(trim_quality_test.cpp)
+seqan3_test(validate_char_for_test.cpp)
