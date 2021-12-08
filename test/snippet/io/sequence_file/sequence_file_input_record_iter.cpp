@@ -3,11 +3,11 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 ACGT
-> Test2
+>Test2
 AGGCTGA
-> Test3
+>Test3
 GGAGTATAATATATATATATATAT)";
 
 int main()

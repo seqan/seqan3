@@ -52,7 +52,7 @@ namespace seqan3
  *
  * ### Introduction
  *
- * FASTA is the de-facto-standard for sequence storage in bionformatics. See the
+ * FASTA is the de-facto-standard for sequence storage in bioinformatics. See the
  * [article on wikipedia](https://en.wikipedia.org/wiki/FASTA_format) for a an in-depth description of the format.
  *
  * ### fields_specialisation

@@ -4,11 +4,11 @@
 #include <seqan3/utility/type_list/type_list.hpp>
 
 // ... input had amino acid sequences
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 FQTWE
-> Test2
+>Test2
 KYRTW
-> Test3
+>Test3
 EEYQTWEEFARAAEKLYLTDPMKV)";
 
 int main()

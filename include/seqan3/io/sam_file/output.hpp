@@ -640,7 +640,7 @@ protected:
     format_type format;
     //!\}
 
-    //!\brief The header type, which specilised with ref_ids_type if reference information are given.
+    //!\brief The header type, which specialised with ref_ids_type if reference information are given.
     using header_type = sam_file_header<std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>,
                                         std::vector<std::string>,
                                         ref_ids_type>>;

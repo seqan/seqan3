@@ -35,11 +35,11 @@ struct sequence_file_input_f : public ::testing::Test
 {
     std::string input
     {
-        "> TEST 1\n"
+        ">TEST 1\n"
         "ACGT\n"
         ">Test2\n"
         "AGGCTGN\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
@@ -264,11 +264,11 @@ TEST_F(sequence_file_input_f, record_reading_custom_options)
 {
     std::istringstream istream{std::string
     {
-        "> ID1 lala\n"
+        ">ID1 lala\n"
         "ACGTTTTTTTTTTTTTTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "ACGTTTTTTT\n"
-        "> ID3 lala\n"
+        ">ID3 lala\n"
         "ACGTTTA\n"
     }};
 

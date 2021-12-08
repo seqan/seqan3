@@ -40,6 +40,12 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
   ++it; *it = value;
   ```
 
+## API changes
+
+#### I/O
+ * Changed default of `output_options::fasta_blank_before_id` to `false`
+   ([\#2769](https://github.com/seqan/seqan3/pull/2769)).
+
 # 3.1.0
 
 ## New features
