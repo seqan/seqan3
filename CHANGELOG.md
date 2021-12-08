@@ -42,11 +42,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
-The files deprecated in [3.0.3](#3.0.3-api) (denoted by `[deleted without replacement]`) have been removed.
-=======
 #### I/O
- * **Breaking change**: Changed default of `output_options::fasta_blank_before_id` to `false`
-    ([\#2769](https://github.com/seqan/seqan3/pull/2769)).
+ * Changed default of `output_options::fasta_blank_before_id` to `false`
+   ([\#2769](https://github.com/seqan/seqan3/pull/2769)).
 
 # 3.1.0
 
