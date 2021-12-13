@@ -5,7 +5,7 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.10)
+cmake_minimum_required (VERSION 3.10...3.22)
 project (seqan3_header_test CXX)
 
 include (../seqan3-test.cmake)
