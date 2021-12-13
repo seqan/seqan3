@@ -23,6 +23,16 @@
 //!\endcond
 
 // ============================================================================
+//  Documentation
+// ============================================================================
+
+// Doxygen related
+// this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
+#ifndef SEQAN3_DOXYGEN_ONLY
+#   define SEQAN3_DOXYGEN_ONLY(x)
+#endif
+
+// ============================================================================
 //  Compiler support
 // ============================================================================
 
@@ -34,20 +44,29 @@
 //  C++ standard and features
 // ============================================================================
 
+#if SEQAN3_DOXYGEN_ONLY(1)0
+//!\brief This disables the warning you would get if you compile with `-std=c++17`.
+#define SEQAN3_DISABLE_CPP17_DIAGNOSTIC
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
 // C++ standard [required]
 #ifdef __cplusplus
-    static_assert(__cplusplus >= 201703, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
+#   if (__cplusplus < 201703)
+#       error "SeqAn3 requires C++20, make sure that you have set -std=c++2a (gcc9) or -std=c++20 (gcc10 and higher)."
+#   elif not defined(SEQAN3_DISABLE_CPP17_DIAGNOSTIC) && (__cplusplus >= 201703) && (__cplusplus < 201709)
+#      pragma GCC warning "SeqAn 3.1.x is the last version that supports C++17. Newer SeqAn versions, including this one, might not compile with -std=c++17. To disable this warning, use -std=c++2a (gcc9), -std=c++20 (gcc10 and higher), or -DSEQAN3_DISABLE_CPP17_DIAGNOSTIC."
+#   endif
 #else
 #   error "This is not a C++ compiler."
 #endif
 
-#if __has_include(<version>)
-#   include <version>
-#endif
-
 // C++ Concepts [required]
 #ifndef __cpp_concepts
-#   error "SeqAn3 requires C++ Concepts, either via the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
+#   error "SeqAn3 requires C++ Concepts, either via -fconcepts (gcc9), or -std=c++20 (gcc10 and higher)."
+#endif
+
+#if __has_include(<version>)
+#   include <version>
 #endif
 
 //!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
@@ -57,13 +76,6 @@
 #else
 #   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
        {expression} -> concept_name<__VA_ARGS__>
-#endif
-
-// filesystem [required]
-#if !__has_include(<filesystem>)
-#   if !__has_include(<experimental/filesystem>)
-#      error SeqAn3 requires C++17 filesystem support, but it was not found.
-#   endif
 #endif
 
 // ============================================================================
@@ -177,16 +189,6 @@
 #endif
 
 // TODO (doesn't have a version.hpp, yet)
-
-// ============================================================================
-//  Documentation
-// ============================================================================
-
-// Doxygen related
-// this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
-#ifndef SEQAN3_DOXYGEN_ONLY
-#   define SEQAN3_DOXYGEN_ONLY(x)
-#endif
 
 // ============================================================================
 //  Deprecation Messages
