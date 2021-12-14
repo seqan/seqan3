@@ -68,7 +68,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## API changes
 
-The files deprecated in [3.0.3](#3.0.3-api) (denoted by `[deleted without replacement]`) have been removed.
+The files deprecated in [3.0.3](#api303) (denoted by `[deleted without replacement]`) have been removed.
 
 # 3.0.3
 
@@ -169,8 +169,8 @@ Note that 3.1.0 will be the first API stable release and interfaces in this rele
   * The order of tags within the header may be arbitrary. Before, necessary tags where required to be first.
   * Unknown tags will emit a warning. Before, a error was raised.
 
-## API changes
-<a name="3.0.3-api"></a>
+## API changes {#api303}
+<a name="api303"></a>
 Most of our API or header file changes will trigger a deprecation warning to let you know if something changed and, if
 applicable, when it will be removed. We recommend upgrading version-by-version to check whether you need to change code.
 You can either directly check the reported code or verify with our documentation how the new API should be used.
