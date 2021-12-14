@@ -30,7 +30,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 #### Utility
 
-* `seqan3::views::single_pass_input` cannot propagate the `std::ranges::output_range` property, because it cannot 
+* `seqan3::views::single_pass_input` cannot propagate the `std::ranges::output_range` property, because it cannot
   satisfy the following requirement ([\#2775](https://github.com/seqan/seqan3/pull/2775)):
   ```cpp
   *it++ = value;
@@ -66,7 +66,7 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 * Resolved an issue that prevented the FM-Index from being constructed correctly for inputs larger than 4 GiB
   ([\#2756](https://github.com/seqan/seqan3/pull/2756)).
 
-## API changes 
+## API changes
 
 The files deprecated in [3.0.3](#3.0.3-api) (denoted by `[deleted without replacement]`) have been removed.
 
