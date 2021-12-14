@@ -139,7 +139,7 @@ namespace std
 template<class T> constexpr int countl_zero(T x) noexcept;
 #endif // SEQAN3_CPP_LIB_BITOPS
 
-// // bit_­cast
+// // bit_cast
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
 //
 // // integral powers of 2

@@ -68,7 +68,7 @@ using ::concepts::derived_from;
 // [concept.convertible], concept convertible_to
 using ::concepts::convertible_to;
 
-// [concept.commonref], concept common_­reference_­with
+// [concept.commonref], concept common_reference_with
 using ::concepts::common_reference_with;
 
 // [concept.common], concept common_with

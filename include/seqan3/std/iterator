@@ -122,7 +122,7 @@ using ::ranges::cpp20::forward_iterator;
 // [iterator.concept.bidir], concept bidirectional_iterator
 using ::ranges::cpp20::bidirectional_iterator;
 
-// [iterator.concept.random.access], concept random_­access_­iterator
+// [iterator.concept.random.access], concept random_access_iterator
 using ::ranges::cpp20::random_access_iterator;
 
 // [iterator.concept.contiguous], concept contiguous_iterator

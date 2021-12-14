@@ -44,10 +44,10 @@ struct maybe_iterator_category
     /*!\brief The iterator category tag. (not always present!)
      * \details
      *
-     * This member is only defined if and only if std::iterator_­traits<underlying_iterator_t>::​iterator_­category is
+     * This member is only defined if and only if std::iterator_traits<underlying_iterator_t>::iterator_category is
      * valid and denotes a type.
      */
-    using iterator_category = MAYBE_PRESENT(std::iterator_­traits<underlying_iterator_t>::​iterator_­category);
+    using iterator_category = MAYBE_PRESENT(std::iterator_traits<underlying_iterator_t>::iterator_category);
 #endif // SEQAN3_DOXYGEN_ONLY(1)0
 };
 
