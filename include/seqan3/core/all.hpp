@@ -50,7 +50,7 @@
   * state to express a general intend of the API without being explicit about it.
   *
   * For example, see https://eel.is/c++draft/iterator.concept.readable where `indirectly-readable-impl` describes the
-  * general intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_­readable
+  * general intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_readable
   * concept.
   */
 
