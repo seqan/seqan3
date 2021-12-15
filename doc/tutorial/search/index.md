@@ -79,7 +79,7 @@ The indices can also be stored and loaded from disk by using cereal.
 
 Note that in contrast to the construction via a given `text`, the template cannot be deduced by the compiler when
 using the default constructor so you have to provide template arguments.
-<a name="assignment_create_index"></a>
+\anchor assignment_create_index
 \assignment{Assignment 1}
 You are given the text
 \code
@@ -124,7 +124,7 @@ You can also pass multiple queries at the same time:
 The returned result is a lazy range over individual results, where each entry represents a specific location
 within the reference sequence for a particular query.
 
-<a name="assignment_exact_search"></a>
+\anchor assignment_exact_search
 \assignment{Assignment 2}
 Search for all exact occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
 Print the number of hits and their positions within the reference sequence.<br>
