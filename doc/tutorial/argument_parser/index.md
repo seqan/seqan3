@@ -171,7 +171,7 @@ positional options. For each of these three there is a respective member functio
 * seqan3::argument_parser::add_flag
 * seqan3::argument_parser::add_positional_option
 
-Each of the functions above take a variable by reference as the first parameter, which will directly store the
+Each of the functions above takes a variable by reference as the first parameter, which will directly store the
 corresponding parsed value from the command line. This has two advantages compared to other command line parsers:
 (1) There is no need for a getter function after parsing and (2) the type is automatically deduced
 (e.g. with boost::program_options you would need to access `parser["file_path"].as<std::filesystem::path>()` afterwards).
@@ -214,7 +214,7 @@ but you can never omit both at the same time.
 ## Default values
 
 With the current design, every option/flag/positional automatically has a **default value** which simply is the value
-with which you initialise the corresponding variable that is passed as the first parameter. Yes it is that easy, just
+with which you initialise the corresponding variable that is passed as the first parameter. Yes, it is that easy, just
 make sure to always initialise your variables properly.
 
 \assignment{Assignment 3}
@@ -240,7 +240,7 @@ You can now use the variables from `args` to add the following inside of the `in
 
 3. Add a positional option to the parser that sets the variable `file_path` so our program knows the location of the data file to read in.
 4. Add an option `-y/--year` that sets the variable `year`, which will enable our program to filter the data by only including a season if it got released after the value `year`.
-5. Add an option `-a/--aggregate-by` that sets the variable `aggregate_by`, which will enable our program choose between aggregating by mean or median.
+5. Add an option `-a/--aggregate-by` that sets the variable `aggregate_by`, which will enable our program to choose between aggregating by mean or median.
 6. Add a flag `-H/--header-is-set` that sets the variable `header_is_set`, which lets the program know whether it should ignore the first line in the file.
 
 Take a look at the help page again after you've done all of the above. You will notice that your options have been
@@ -269,7 +269,7 @@ like this:</summary> \endhtmlonly
 
 # List options {#tutorial_argument_parser_list_options}
 
-In some use cases you may want to allow the user to specify an option multiple times and store the values in a list.
+In some use cases, you may want to allow the user to specify an option multiple times and store the values in a list.
 With the seqan3::argument_parser this behaviour can be achieved simply by choosing your input variable to be of a
 container type (e.g. std::vector). The parser registers the container type through seqan3::container and will adapt the
 parsing of command line arguments accordingly.
@@ -443,7 +443,7 @@ range.
 
 \snippet test/snippet/argument_parser/validators_1.cpp validator_call
 
-Our application has a another flaw that you might have noticed by now: If you supply a season that is not in the data
+Our application has another flaw that you might have noticed by now: If you supply a season that is not in the data
 file, the program will again misbehave. Instead of fixing the program, let's restrict the user input accordingly.
 
 \assignment{Assignment 6}

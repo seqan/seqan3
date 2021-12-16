@@ -2,7 +2,7 @@
 
 <b>Learning Objective:</b> <br/>
 
-In this tutorial you will learn how to compute pairwise sequence alignments with SeqAn.
+In this tutorial, you will learn how to compute pairwise sequence alignments with SeqAn.
 This tutorial is a walkthrough with links to the API documentation and is also meant as a source for copy-and-paste code.
 
 \tutorial_head{Intermediate, 60-90 min, \ref setup \ref tutorial_alphabets \ref tutorial_ranges, }
@@ -24,7 +24,7 @@ necessary to translate the one sequence into the other, as can be seen in the fo
 \image html align_transcript.png width=800px
 
 The alignment problem is solved with a dynamic programming (DP) algorithm which runs in \f$ (\mathcal{O}(n^2))\f$ time
-and space. Besides the global alignment approach many more variations of this DP based algorithm have been developed
+and space. Besides the global alignment approach, many more variations of this DP based algorithm have been developed
 over time. SeqAn unified all of these approaches into a single DP core implementation which can be extended easily and
 thus, with all possible configurations, is a very versatile and powerful tool to compute many desired alignment variants.
 
@@ -34,16 +34,16 @@ Let us first have a look at an example of computing a global alignment in SeqAn.
 
 \includelineno doc/tutorial/pairwise_alignment/pairwise_alignment_first_global.cpp
 
-In the above example we want to compute the similarity of two seqan3::dna4 sequences using a global alignment.
-For this we need to import the dna4 alphabet, the seqan3::nucleotide_scoring_scheme and the seqan3::align_pairwise in
+In the above example, we want to compute the similarity of two seqan3::dna4 sequences using a global alignment.
+For this, we need to import the dna4 alphabet, the seqan3::nucleotide_scoring_scheme and the seqan3::align_pairwise in
 the beginning of our file. We also import the seqan3::debug_stream which allows us to print various types in a nice
 formatted manner.
 
-In the beginning of the file we are defining our two DNA sequences `s1` and `s2`.
-If you feel puzzled about what the `_dna4` suffix does we recommend to read the \ref tutorial_alphabets and
+At the beginning of the file, we are defining our two DNA sequences `s1` and `s2`.
+If you feel puzzled about what the `_dna4` suffix does, we recommend reading the \ref tutorial_alphabets and
 \ref tutorial_ranges before.
 In line 16-17 we configure the alignment job with the most simplistic configuration possible.
-In this case it is a global alignment with edit distance.
+In this case, it is a global alignment with edit distance.
 Later in this tutorial we will give a more detailed description of the \ref alignment_configurations "configuration" and
 how it can be used.
 The minimum requirement for computing a pairwise alignment is to specify the alignment method
@@ -54,10 +54,10 @@ provides the scoring scheme that should be used to score a pair of sequence char
 Now we are going to call seqan3::align_pairwise. This interface requires two arguments: a tuple or a range of tuples
 with exactly two elements and the configuration object. Independent of the number of pairwise alignment jobs submitted
 to the algorithm it always returns a range over seqan3::alignment_result. Later we will see how we can use a
-continuation interface which calls a user-defined function rather than iterating over the results sequentially.
+continuation interface that calls a user-defined function rather than iterating over the results sequentially.
 Finally, we output the score for the computed alignment.
 
-\attention Just calling `pairwise_align` does nothing as it returns a range which is evaluated in a lazy manner.
+\attention Just calling `pairwise_align` does nothing as it returns a range that is evaluated in a lazy manner.
            Only when calling begin or incrementing the iterator over the range the alignment computation is invoked.
 
 \assignment{Assignment 1}
@@ -73,7 +73,7 @@ You can use the seqan3::views::pairwise_combine to generate all pairwise combina
 
 \include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_1.cpp
 
-First we create the vector of seqan3::dna4 sequences. We keep the configuration as is and then modify the initial code
+First, we create the vector of seqan3::dna4 sequences. We keep the configuration as is and then modify the initial code
 to a range-based for loop looping over the alignment results. Since the seqan3::alignment_result is a class template and the
 template parameters are determined during the configuration step we use auto as the result type.
 The current result is cached inside of the lazy range and we capture the result as `const &` in order to not tamper with
@@ -83,7 +83,7 @@ the result values.
 
 Congratulations, you have computed your first pairwise alignment with SeqAn!
 As you can see, the interface is really simple, yet the configuration object makes it extremely flexible to conduct
-various different alignment calculations. In the following chapter you will learn more about the various configuration
+various different alignment calculations. In the following chapter, you will learn more about the various configuration
 possibilities.
 
 # Alignment configurations
@@ -99,7 +99,7 @@ The configurations for the alignment module are available in:
 
 The configuration elements are all classes that wrap the actual information necessary for the configuration of the
 alignment algorithm. Depending on the configuration specification certain features of the algorithm are enabled or
-disabled. Moreover, during the initialisation of the algorithm the best implementation is chosen based on the given
+disabled. Moreover, during the initialisation of the algorithm, the best implementation is chosen based on the given
 configurations. To avoid possible ambiguities with the configurations of other algorithms, the configuration elements
 for the alignment are defined in the special namespace seqan3::align_cfg.
 
@@ -189,7 +189,7 @@ To configure the scoring scheme and the gap scheme for the alignment algorithm y
 seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap_cost_affine configurations. The
 seqan3::align_cfg::scoring_scheme is mandatory - similarly to the alignment method configuration. It would be
 wrong to assume what the default scoring scheme should be. If you do not provide these configurations, the compilation
-will fail with a corresponding error message. Not providing the gap scheme is ok. In this case the default initialised
+will fail with a corresponding error message. Not providing the gap scheme is ok. In this case, the default initialised
 gap scheme will be used for the alignment computation.
 
 \assignment{Assignment 3}
@@ -209,7 +209,7 @@ the assignment. Et voilà, we have computed a pairwise alignment over aminoacid 
 
 ## Alignment result
 
-So far we have only used the score, but obviously in many situations the final alignment is required, e.g. when
+So far, we have only used the score. However, in many situations the final alignment is required, e.g. when
 mapping reads and the user wishes to write the alignment to the final SAM/BAM file.
 In SeqAn you can simply configure what is going to be computed by the alignment algorithm using the
 different \ref seqan3_align_cfg_output_configurations "output configurations".
@@ -260,8 +260,8 @@ overlaps between two sequences can be computed which is a common use case during
 
 In many situations it is not necessary to compute the entire alignment matrix but only a part of it. This has
 positive impacts on the performance. To limit the computation space the alignment matrix can be bounded by a band.
-Thus, only the alignment is computed that fits in this band. Note that this must not be the optimal alignment but in
-many cases we can give a rough bound on how similar the sequences will be and therefor use the banded alignment.
+Thus, only the alignment is computed that fits in this band. Notably, this alignment does not need to be the optimal alignment.
+However, in many cases, we can give a rough bound on how similar the sequences will be and therefor use the banded alignment.
 To do so, you can configure the alignment using the seqan3::align_cfg::band_fixed_size option. This configuration
 element will be initialised with a seqan3::align_cfg::lower_diagonal and seqan3::align_cfg::upper_diagonal parameter.
 
@@ -283,7 +283,7 @@ How does the result change?
 
 A special form of the pairwise sequence alignment is the edit distance. This distance metric counts the number of
 edits necessary to transform one sequence into the other. The cost model for the edit distance is fixed. In particular,
-the match score is `0` and the scores for a mismatch and a gap is `-1`. Due to the special metric a fast
+the match score is `0` and the scores for a mismatch and a gap is `-1`. Due to the special metric, a fast
 [bitvector](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.332.9395&rep=rep1&type=pdf) implementation can be
 used to compute the edit distance. This happens in SeqAn automatically if the respective configurations are used.
 To do so, you need a scoring scheme initialised with Manhattan distance (at the moment only
@@ -317,7 +317,7 @@ seqan3::align_cfg::output_begin_position and seqan3::align_cfg::output_end_posit
 \assignment{Assignment 6}
 
 Compute all pairwise alignments from the assignment 1 (only the scores). Only allow at most 7 errors and
-filter all alignments with 6 or less errors.
+filter all alignments with 6 or fewer errors.
 
 \hint
 You can use the std::views::filter to get only those alignments that fit the requirements.

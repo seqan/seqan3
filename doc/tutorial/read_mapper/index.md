@@ -1,7 +1,7 @@
 # Implementing your own read mapper with SeqAn {#tutorial_read_mapper}
 
 <b>Learning Objective:</b><br>
-In this tutorial you will learn how to combine the components of previous tutorials to create your very first
+In this tutorial, you will learn how to combine the components of previous tutorials to create your very first
 SeqAn application: a read mapper!
 
 \tutorial_head{High, 90 Minutes, All,}
@@ -16,7 +16,7 @@ Read mapping is a common task in bioinformatics and is often the first step of a
 [Next Generation Sequencing](https://en.wikipedia.org/wiki/DNA_sequencing#High-throughput_methods) data. Its aim
 is to identify positions where a query sequence (read) matches with up to `e` errors to a reference sequence.
 
-In this example we will implement a read mapper step by step and make use of what we have learned in
+In this example, we will implement a read mapper step by step and make use of what we have learned in
 the previous tutorials.
 As it is common practice with read mappers, we will first create an *indexer* that creates an index from the reference
 and stores it to disk. After this, we will implement the actual read mapper that will use the stored index and
@@ -170,7 +170,7 @@ if you have any questions.
 
 \assignment{Assignment 5: Reading the input}
 Extend your program to read the reference file the same way the indexer does.
-After this you can load the index and print results of a search.
+After this, you can load the index and print results of a search.
 
 To do this, you should:
 * Carry over the `read_reference` function and the `reference_storage_t` struct from the indexer
