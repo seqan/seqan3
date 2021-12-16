@@ -12,7 +12,7 @@ of what to expect in the other tutorials and how to use this documentation.
 before the current one. You should also have a look at the links provided in "recommended reading" and maybe keep
 them open in separate tabs/windows as reference.*
 
-***These tutorials try to briefly introduce C++ features not well known, however they do not teach programming in C++!
+***These tutorials try to briefly introduce C++ features not well known. However, they do not teach programming in C++!
 If you know how to program in another language, but are not familiar with C++ and/or the significant
 changes in the language in recent years, we recommend the following resources:***
 
@@ -64,7 +64,7 @@ program call and prints it to your terminal.
 
 Implementing a program with seqan3::argument_parser requires three steps:
 1. Initialise the seqan3::argument_parser with your program's name and pass the `argc` and `argv` variables.
-2. Register (positional) options in the parser object. In this way it knows which options to expect and
+2. Register (positional) options in the parser object. In this way, it knows which options to expect and
    it can generate the help page for your program. You will learn more about the option types in the *Argument Parser
    Tutorial*.
 3. Run the parser. As it throws exceptions on wrong user behaviour, it should be surrounded with a try-catch block.
@@ -90,7 +90,7 @@ directory. Whenever you use functions of a module, make sure to `include` the co
 Each directory in the SeqAn sources contains an `all.hpp` file which includes all the functionality
 of the respective (sub-) module.
 For small examples and quick prototyping, you can just include these `all.hpp`-headers.
-However, for larger projects we recommend you include only the necessary headers, because this will reduce the
+However, for larger projects, we recommend you include only the necessary headers, because this will reduce the
 compile time measurably.
 
 \note
@@ -161,7 +161,7 @@ between library features and standard C++. The only exception are string literal
 We use a lot of Modern C++ in SeqAn so some things might look alien at first,
 e.g. type templates are used like ordinary types in many situations (no `<>`).
 We also always use `{}` to initialise objects and not `()` which is only used for function calls.
-In general the style should be much easier for newcomers.
+In general, the style should be much easier for newcomers.
 
 Now that you reached the end of this first tutorial, you know how SeqAn code looks like and you are able
 to write some first code fragments. Let's go more into detail with the module-based tutorials!

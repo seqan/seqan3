@@ -16,10 +16,10 @@ your own concepts, we recommend:
 
 ## Motivation
 
-One central design goal of SeqAn is to provide generic algorithms and data structures which can be used for different
+One central design goal of SeqAn is to provide generic algorithms and data structures that can be used for different
 types without reimplementing the same algorithms over and over again for particular types.
 This has multiple benefits: improved maintainability due to an additional level of abstraction
-and more importantly the ability to reuse the code with user provided types.
+and, more importantly, the ability to reuse the code with user provided types.
 A familiar example for generic code is std::vector and the algorithms in the standard library.
 They are *templates* which means that they can be *instantiated* with other types.
 Most often the type cannot be arbitrary, because the template expects a particular interface from the type.
@@ -30,7 +30,7 @@ The algorithm is generic in so far that it allows any alphabet that offers the m
 is used inside the algorithm (e.g. objects of the alphabet type must be equality comparable).
 Before C++20, this could not be checked easily and using the interface with non-conforming types would result in
 very hard to read compiler errors and consequently frustration of the user.
-In the following part of the tutorial you will learn how to *constrain* such template arguments of generic functions
+In the following part of the tutorial, you will learn how to *constrain* such template arguments of generic functions
 and data structures and how this can have a huge impact on your code.
 
 Here's a shorter example:
@@ -49,7 +49,7 @@ int main()
 ```
 
 The template parameter `t` is said to be *unconstrained*, in theory it can be instantiated with any type.
-But of course it won't actually compile for all types, because the function template **implicitly requires** that
+But of course, it won't actually compile for all types because the function template **implicitly requires** that
 types provide a `+` operator.
 If a type is used that does not have a `+` operator, this implicitness causes the compiler to fail at the place where
 such operator is used – and not at the place the template is instantiated.
@@ -209,14 +209,14 @@ templates.
 \include doc/tutorial/concepts/specialisation.cpp
 
 This is a typical example of a "type transformation trait".
-It maps one type to another type; in this case it returns a type that is able to represent the square root of the
+It maps one type to another type; in this case, it returns a type that is able to represent the square root of the
 "input type".
 This can be used in generic algorithms to hold data in different types depending on the type of the input –
-in this case we could avoid half of the space consumption for unsigned integral types VS signed integral types.
+in this case, we could avoid half of the space consumption for unsigned integral types VS signed integral types.
 
 \note The std::same_as used above is a concept with two template parameters.
 It requires that both parameters are the same. The `static_assert` checks conditions at compile-time; it can be
-used to verify whether a type or a combination of types model a concept. In the above case we can use the combination
+used to verify whether a type or a combination of types model a concept. In the above case, we can use the combination
 to check the "return type" of the transformation trait.
 
 # Concepts in SeqAn and this documentation
@@ -246,7 +246,7 @@ if a numeric argument is an integral square (i.e. the user shall only be allowed
 
 ### Understanding the requirements
 
-In the previous section you analysed seqan3::validator.
+You analysed seqan3::validator in the previous section.
 Do you understand the requirements formulated on that page?
 
 \hint
@@ -304,7 +304,7 @@ It should fail for the arguments `-i 3`; and/or `-j 144` or `-j 3`.
 \assignment{Assignment 4: Custom validator II}
 Implement your validator fully, i.e. make it throw seqan3::validation_error if the number provided is not a
 square.
-Also give a nice description for the help page.
+Also, give a nice description for the help page.
 
 \endassignment
 \solution

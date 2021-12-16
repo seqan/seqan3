@@ -1,7 +1,7 @@
 # Sequence File Input and Output {#tutorial_sequence_file}
 
 <b>Learning Objective:</b> <br/>
-You will get an overview of how file Input/Output is handled in SeqAn and learn how to read and write
+You will get an overview of how Input/Output files are handled in SeqAn and learn how to read and write
 sequence files. This tutorial is a walk-through with links into the API documentation and also meant as a
 source for copy-and-paste code.
 
@@ -162,7 +162,7 @@ See the detailed information on seqan3::sequence_file_input_default_traits_dna f
 
 ## Reading records
 
-After construction you can now read the seqan3::sequence_record's. As described in the basic file layout,
+After construction, you can now read the seqan3::sequence_record's. As described in the basic file layout,
 our file objects behave like ranges so you can use a range based for loop to conveniently iterate over the file:
 
 \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
@@ -232,7 +232,7 @@ Note that the quality (third element in the triple) is empty because we are read
 # Sequence files as views
 
 Since SeqAn files are ranges, you can also create views over files.
-This enables us to create solutions for lot of use cases using only a few lines of code.
+This enables us to create solutions for lots of use cases using only a few lines of code.
 
 ## Reading a file in chunks
 
@@ -247,7 +247,7 @@ If no 10 records are available any more, it will just print the remaining record
 
 ## Applying a filter to a file
 
-In some occasions you are only interested in sequence records that fulfill a certain criteria,
+On some occasions, you are only interested in sequence records that fulfill a certain criteria,
 e.g. having a minimum sequence length or a minimum average quality.
 Just like in the example with *ranges::view::chunk* you can use *std::ranges::filter* for this purpose:
 
@@ -328,7 +328,7 @@ The file `output.fastq` should contain the following records:
 
 Again we want to point out the convenient advantage of modelling files as ranges. The seqan3::sequence_file_input models
 std::ranges::input_range and in the "reading a file" section you already saw a few examples of how to pipe a view onto
-such a range. The output files model std::ranges::output_range and with that we can use ranges algorithm like
+such a range. The output files model std::ranges::output_range. This allows us to use ranges algorithms like
 std::ranges::move to "move" records from input to output files.
 
 \cond DEV
