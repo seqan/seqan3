@@ -211,33 +211,43 @@ option (SEQAN3_NO_ZLIB  "Don't use ZLIB, even if present." OFF)
 option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 
 # ----------------------------------------------------------------------------
-# Require C++17
+# Require C++20
 # ----------------------------------------------------------------------------
 
 set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
 set (CXXSTD_TEST_SOURCE
-    "#if !defined (__cplusplus) || (__cplusplus < 201703L)
-    #error NOCXX17
+    "#if !defined (__cplusplus) || (__cplusplus < 201709)
+    #error NOCXX20
     #endif
     int main() {}")
 
-check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CXX17_BUILTIN)
+set (SEQAN3_FEATURE_CPP20_FLAG_BUILTIN "")
+set (SEQAN3_FEATURE_CPP20_FLAG_STD20 "-std=c++20")
+set (SEQAN3_FEATURE_CPP20_FLAG_STD2a "-std=c++2a")
 
-if (CXX17_BUILTIN)
-    seqan3_config_print ("C++ Standard-17 support:    builtin")
-else ()
-    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} -std=c++17")
+set (SEQAN3_CPP20_FLAG "")
 
-    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CXX17_FLAG)
+foreach (_FLAG BUILTIN STD20 STD2a)
+    set (CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS_SAVE} ${SEQAN3_FEATURE_CPP20_FLAG_${_FLAG}}")
 
-    if (CXX17_FLAG)
-        seqan3_config_print ("C++ Standard-17 support:    via -std=c++17")
-    else ()
-        seqan3_config_error ("SeqAn3 requires C++17, but your compiler does not support it.")
+    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" CPP20_FLAG_${_FLAG})
+
+    if (CPP20_FLAG_${_FLAG})
+        set (SEQAN3_CPP20_FLAG ${_FLAG})
+        break ()
     endif ()
+endforeach ()
 
-    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} -std=c++17")
+set (CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS_SAVE})
+
+if (SEQAN3_CPP20_FLAG STREQUAL "BUILTIN")
+    seqan3_config_print ("C++ Standard-20 support:    builtin")
+elseif (SEQAN3_CPP20_FLAG)
+    set (SEQAN3_CXX_FLAGS "${SEQAN3_CXX_FLAGS} ${SEQAN3_FEATURE_CPP20_FLAG_${SEQAN3_CPP20_FLAG}}")
+    seqan3_config_print ("C++ Standard-20 support:    via ${SEQAN3_FEATURE_CPP20_FLAG_${SEQAN3_CPP20_FLAG}}")
+else ()
+    seqan3_config_error ("SeqAn3 requires C++20, but your compiler does not support it.")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -277,68 +287,6 @@ elseif (SEQAN3_CONCEPTS_FLAG)
     seqan3_config_print ("C++ Concepts support:       via ${SEQAN3_FEATURE_CONCEPT_FLAG_${SEQAN3_CONCEPTS_FLAG}}")
 else ()
     seqan3_config_error ("SeqAn3 requires C++ Concepts, but your compiler does not support them.")
-endif ()
-
-# ----------------------------------------------------------------------------
-# Require C++ Filesystem
-# ----------------------------------------------------------------------------
-
-# find the correct header
-check_include_file_cxx (filesystem _SEQAN3_HAVE_FILESYSTEM)
-check_include_file_cxx (experimental/filesystem _SEQAN3_HAVE_EXP_FILESYSTEM)
-
-if (_SEQAN3_HAVE_FILESYSTEM)
-    seqan3_config_print ("C++ Filesystem header:      <filesystem>")
-
-    set (CXXSTD_TEST_SOURCE
-        "#include <filesystem>
-        int main()
-        {
-            std::filesystem::path p{\"\tmp/\"};
-            throw std::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
-        }")
-elseif (_SEQAN3_HAVE_EXP_FILESYSTEM)
-    seqan3_config_print ("C++ Filesystem header:      <experimental/filesystem>")
-
-    set (CXXSTD_TEST_SOURCE
-        "#include <experimental/filesystem>
-        int main()
-        {
-            std::experimental::filesystem::path p{\"/tmp/\"};
-            throw std::experimental::filesystem::filesystem_error(\"Empty file name!\", std::make_error_code(std::errc::invalid_argument));
-        }")
-else ()
-    seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but the filesystem header was not found.")
-endif ()
-
-# check if library is required
-set (CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
-
-set (SEQAN3_FEATURE_FILESYSTEM_BUILTIN "")
-set (SEQAN3_FEATURE_FILESYSTEM_LIB "stdc++fs")
-
-set (SEQAN3_FILESYSTEM_FLAG "")
-
-foreach (_FLAG BUILTIN LIB)
-    set (CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES_SAVE} ${SEQAN3_FEATURE_FILESYSTEM_${_FLAG}}")
-
-    check_cxx_source_compiles ("${CXXSTD_TEST_SOURCE}" FILESYSTEM_FLAG_${_FLAG})
-
-    if (FILESYSTEM_FLAG_${_FLAG})
-        set (SEQAN3_FILESYSTEM_FLAG ${_FLAG})
-        break ()
-    endif ()
-endforeach ()
-
-set (CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
-
-if (SEQAN3_FILESYSTEM_FLAG STREQUAL "BUILTIN")
-    seqan3_config_print ("C++ Filesystem library:     builtin")
-elseif (SEQAN3_FILESYSTEM_FLAG)
-    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${SEQAN3_FEATURE_FILESYSTEM_${SEQAN3_FILESYSTEM_FLAG}})
-    seqan3_config_print ("C++ Filesystem library:     via -l${SEQAN3_FEATURE_FILESYSTEM_${SEQAN3_FILESYSTEM_FLAG}}")
-else ()
-    seqan3_config_error ("SeqAn3 requires C++17 filesystem support, but your compiler does not offer it.")
 endif ()
 
 # ----------------------------------------------------------------------------
