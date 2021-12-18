@@ -432,6 +432,10 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
         detail::transpose_matrix_sse4(matrix);
     else if constexpr (simd_traits<simd_t>::length == 32) // AVX2 implementation
         detail::transpose_matrix_avx2(matrix);
+#if defined(__AVX512BW__) // Requires byte-word extension of AVX512 instruction set.
+    else if constexpr (simd_traits<simd_t>::length == 64) // AVX512 implementation
+        detail::transpose_matrix_avx512(matrix);
+#endif // defined(__AVX512BW__)
     else
         detail::transpose(matrix);
 }
