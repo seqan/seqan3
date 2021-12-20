@@ -57,6 +57,14 @@ list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
     target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
+
+    # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12)
+            target_compile_options (seqan3_test INTERFACE "-Wno-interference-size")
+        endif ()
+    endif ()
+
     target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
     target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
     add_library (seqan3::test ALIAS seqan3_test)
