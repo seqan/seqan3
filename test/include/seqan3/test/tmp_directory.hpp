@@ -27,6 +27,7 @@
 #include <filesystem>
 #include <iostream>
 #include <optional>
+#include <utility>
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/test/sandboxed_path.hpp>
