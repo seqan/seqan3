@@ -170,8 +170,8 @@ public:
      *
      * \throws seqan3::design_error if the application name contains illegal characters.
      *
-     * The application name must only contain alpha-numeric characters, '_' or '-',
-     * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
+     * The application name must only contain alpha-numeric characters, `_` or `-`,
+     * i.e. the following regex must evaluate to true: `"^[a-zA-Z0-9_-]+$"`.
      *
      * See the [argument parser tutorial](https://docs.seqan.de/seqan/3-master-dev/tutorial_argument_parser.html)
      * for more information about the version check functionality.
