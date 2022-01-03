@@ -393,16 +393,12 @@ namespace std
 {
 //!\cond
 template <typename tuple_t>
-//!\cond
     requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
-//!\endcond
 struct tuple_size<seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_size<tuple_t>
 {};
 
 template <size_t index, typename tuple_t>
-//!\cond
     requires (seqan3::detail::affine_score_cell<tuple_t> || seqan3::detail::affine_score_and_trace_cell<tuple_t>)
-//!\endcond
 struct tuple_element<index, seqan3::detail::affine_cell_proxy<tuple_t>> : public tuple_element<index, tuple_t>
 {};
 //!\endcond

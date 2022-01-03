@@ -24,11 +24,9 @@ namespace seqan3
 #define SEQAN_NOT_POD "If you are not going to insert a POD type, use std::tuple instead."
 //!\endcond
 
-//!cond
 template <typename ...types>
 struct pod_tuple
 {};
-//!\endcond
 
 /*!\brief Behaves like std::tuple but is an aggregate [PODType](https://en.cppreference.com/w/cpp/named_req/PODType).
  * \ingroup utility_tuple
