@@ -262,6 +262,19 @@ constexpr simd_t extract_eighth(simd_t const & src)
 }
 //!\endcond
 
+//!\cond
+template <simd::simd_concept simd_t>
+constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
+{
+    std::array<simd_t, simd_traits<simd_t>::length> tmp{};
+
+    for (size_t i = 0; i < matrix.size(); ++i)
+        for (size_t j = 0; j < matrix.size(); ++j)
+            tmp[j][i] = matrix[i][j];
+
+    std::swap(tmp, matrix);
+}
+//!\endcond
 } // namespace seqan3::detail
 
 namespace seqan3
@@ -404,13 +417,7 @@ constexpr void store(void * mem_addr, simd_t const & simd_vec)
 template <simd::simd_concept simd_t>
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
-    std::array<simd_t, simd_traits<simd_t>::length> tmp{};
-
-    for (size_t i = 0; i < matrix.size(); ++i)
-        for (size_t j = 0; j < matrix.size(); ++j)
-            tmp[j][i] = matrix[i][j];
-
-    std::swap(tmp, matrix);
+    detail::transpose(matrix);
 }
 
 //!\cond
@@ -425,8 +432,12 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
         detail::transpose_matrix_sse4(matrix);
     else if constexpr (simd_traits<simd_t>::length == 32) // AVX2 implementation
         detail::transpose_matrix_avx2(matrix);
+#if defined(__AVX512BW__) // Requires byte-word extension of AVX512 instruction set.
+    else if constexpr (simd_traits<simd_t>::length == 64) // AVX512 implementation
+        detail::transpose_matrix_avx512(matrix);
+#endif // defined(__AVX512BW__)
     else
-        transpose(matrix);
+        detail::transpose(matrix);
 }
 //!\endcond
 
