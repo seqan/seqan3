@@ -161,6 +161,8 @@ constexpr simd_t extract_half(simd_t const & src)
         return detail::extract_half_sse4<index>(src);
     else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_half_avx2<index>(src);
+    else if constexpr (simd_traits<simd_t>::max_length == 64) // AVX512
+        return detail::extract_half_avx512<index>(src);
     else // Anything else
         return detail::extract_impl<2>(src, index);
 }
@@ -210,6 +212,10 @@ constexpr simd_t extract_quarter(simd_t const & src)
         return detail::extract_quarter_sse4<index>(src);
     else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_quarter_avx2<index>(src);
+#if defined(__AVX512DQ__)
+    else if constexpr (simd_traits<simd_t>::max_length == 64) // AVX512
+        return detail::extract_quarter_avx512<index>(src);
+#endif // defined(__AVX512DQ__)
     else // Anything else
         return detail::extract_impl<4>(src, index);
 }
@@ -257,6 +263,10 @@ constexpr simd_t extract_eighth(simd_t const & src)
         return detail::extract_eighth_sse4<index>(src);
     else if constexpr (simd_traits<simd_t>::max_length == 32) // AVX2
         return detail::extract_eighth_avx2<index>(src);
+#if defined(__AVX512DQ__)
+    else if constexpr (simd_traits<simd_t>::max_length == 64) // AVX512
+        return detail::extract_eighth_avx512<index>(src);
+#endif // defined(__AVX512DQ__)
     else  // Anything else
         return detail::extract_impl<8>(src, index);
 }

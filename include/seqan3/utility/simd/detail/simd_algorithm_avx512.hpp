@@ -253,17 +253,33 @@ constexpr target_simd_t upcast_unsigned_avx512(source_simd_t const & src)
     }
 }
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_half
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_half_avx512(simd_t const & src);
+constexpr simd_t extract_half_avx512(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm512_castsi256_si512(
+            _mm512_extracti64x4_epi64(reinterpret_cast<__m512i const &>(src), index)));
+}
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_quarter
+#if defined(__AVX512DQ__)
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_quarter_avx512(simd_t const & src);
+constexpr simd_t extract_quarter_avx512(simd_t const & src)
+{
+    return reinterpret_cast<simd_t>(_mm512_castsi128_si512(
+            _mm512_extracti64x2_epi64(reinterpret_cast<__m512i const &>(src), index)));
+}
 
-// TODO: not implemented and used yet, if you implement it don't forget to add it to seqan3::detail::extract_eighth
 template <uint8_t index, simd::simd_concept simd_t>
-constexpr simd_t extract_eighth_avx512(simd_t const & src);
+constexpr simd_t extract_eighth_avx512(simd_t const & src)
+{
+    __m512i tmp = reinterpret_cast<__m512i const &>(src);
+
+    // for uneven index exchange higher 64 bits with lower 64 bits for each 128 bit lane.
+    if constexpr (index % 2 == 1)
+        tmp = _mm512_shuffle_epi32(tmp, 0b0100'1110); // := [1, 0, 3, 2].
+
+    return reinterpret_cast<simd_t>(_mm512_castsi128_si512(_mm512_extracti64x2_epi64(tmp, index / 2)));
+}
+#endif // defined(__AVX512DQ__)
 
 } // namespace seqan3::detail
 
