@@ -379,6 +379,18 @@ public:
         return minimiser_value;
     }
 
+    //!\brief Return the underlying iterator. It will point to the last element in the current window.
+    constexpr urng1_iterator_t const & base() const & noexcept
+    {
+        return urng1_iterator;
+    }
+
+    //!\brief Return the underlying iterator. It will point to the last element in the current window.
+    constexpr urng1_iterator_t base() &&
+    {
+        return std::move(urng1_iterator);
+    }
+
 private:
     //!\brief The minimiser value.
     value_type minimiser_value{};
