@@ -669,9 +669,6 @@ private:
 
     friend class membership_agent_type;
 
-    template <std::integral value_t>
-    friend class counting_vector;
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -857,7 +854,7 @@ public:
         for (size_t bit_pos = 0; bit_pos < rhs.size(); bit_pos += 64)
         {
             // get 64 bits starting at position `bit_pos`
-            size_t bit_sequence = rhs.data.get_int(bit_pos);
+            size_t bit_sequence = rhs.raw_data().get_int(bit_pos);
 
             // process each relative bin inside the bit_sequence
             for (size_t bin = bit_pos; bit_sequence != 0u; ++bin, bit_sequence >>= 1)
