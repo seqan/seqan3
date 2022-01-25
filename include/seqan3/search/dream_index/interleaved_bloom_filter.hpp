@@ -669,9 +669,6 @@ private:
 
     friend class membership_agent_type;
 
-    template <std::integral value_t>
-    friend class counting_vector;
-
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -845,24 +842,28 @@ public:
     {
         assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
 
-        // Each iteration can handle 64 bits, so we need to iterate `((rhs.size() + 63) >> 6` many times
-        for (size_t batch = 0, bin = 0; batch < ((rhs.size() + 63) >> 6); bin = 64 * ++batch)
+        // Jump to the next 1 and return the number of places jumped in the bit_sequence
+        auto jump_to_next_1bit = [] (size_t & x)
         {
-            size_t tmp = rhs.data.get_int(batch * 64); // get 64 bits starting at position `batch * 64`
-            if (tmp ^ (1ULL<<63)) // This is a special case, because we would shift by 64 (UB) in the while loop.
+            auto const zeros = std::countr_zero(x);
+            x >>= zeros; // skip number of zeros
+            return zeros;
+        };
+
+        // Each iteration can handle 64 bits
+        for (size_t bit_pos = 0; bit_pos < rhs.size(); bit_pos += 64)
+        {
+            // get 64 bits starting at position `bit_pos`
+            size_t bit_sequence = rhs.raw_data().get_int(bit_pos);
+
+            // process each relative bin inside the bit_sequence
+            for (size_t bin = bit_pos; bit_sequence != 0u; ++bin, bit_sequence >>= 1)
             {
-                while (tmp > 0)
-                {
-                    // Jump to the next 1 and increment the corresponding vector entry.
-                    uint8_t step = std::countr_zero(tmp);
-                    bin += step++;
-                    tmp >>= step;
-                    ++(*this)[bin++];
-                }
-            }
-            else
-            {
-                ++(*this)[bin + 63];
+                // Jump to the next 1 and
+                bin += jump_to_next_1bit(bit_sequence);
+
+                // increment the corresponding vector entry.
+                ++(*this)[bin];
             }
         }
         return *this;
