@@ -526,7 +526,7 @@ public:
      */
     friend difference_type operator-(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     //!\cond
-        requires std::random_access_iterator<it_t>
+        requires std::sized_sentinel_for<it_t, it_t>
     //!\endcond
     {
         return static_cast<difference_type>(lhs.text_right - rhs.text_right);
