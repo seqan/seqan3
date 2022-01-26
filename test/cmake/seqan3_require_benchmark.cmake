@@ -17,6 +17,7 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
 
     set (gbenchmark_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_TESTING=false")
+    list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_WERROR=false") # Does not apply to Debug builds.
     # google-benchmarks suggest to use LTO (link-time optimisation), but we don't really need that because we are a
     # header only library. This option might be still interesting for external libraries benchmarks.
     # see https://github.com/google/benchmark#debug-vs-release
@@ -71,6 +72,7 @@ macro (seqan3_require_benchmark)
             GIT_TAG "${gbenchmark_git_tag}"
         )
         option (BENCHMARK_ENABLE_TESTING "" OFF)
+        option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
         FetchContent_MakeAvailable(gbenchmark_fetch_content)
 
         # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
