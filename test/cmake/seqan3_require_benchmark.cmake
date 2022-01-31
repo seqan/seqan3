@@ -17,6 +17,7 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
 
     set (gbenchmark_project_args ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS})
     list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_TESTING=false")
+    list (APPEND gbenchmark_project_args "-DBENCHMARK_ENABLE_WERROR=false") # Does not apply to Debug builds.
     # google-benchmarks suggest to use LTO (link-time optimisation), but we don't really need that because we are a
     # header only library. This option might be still interesting for external libraries benchmarks.
     # see https://github.com/google/benchmark#debug-vs-release
@@ -59,23 +60,10 @@ endmacro ()
 macro (seqan3_require_benchmark)
     enable_testing ()
 
-    set (gbenchmark_git_tag "v1.6.0")
+    set (gbenchmark_git_tag "v1.6.1")
 
     if (NOT CMAKE_VERSION VERSION_LESS 3.14)
         message (STATUS "Fetch Google Benchmark:")
-
-        # We clear the CXX_FLAGS while initialising Google Benchmark, and restore them afterwards.
-        # Google Benchmark wants to compile with `-std=c++11`.
-        # If we pass `-DCMAKE_CXX_FLAGS=-std=c++17 -fconcepts`, it will append the `-std=c++11`:
-        # `-std=c++17 -fconcepts -std=c++11`, flags are evaluated left to right and may overwrite the previous flag:
-        # `-fconcepts -std=c++11`: This results in an ICE, because `-fconcepts` needs `-std=c++17`.
-        #
-        # The same behaviour is applied when compiling with `-std=c++20`, but as there is no `-fconcepts` passed,
-        # the flag is just overwritten with `-std=c++11`.
-        #
-        # The version that uses ExternalProject is not affected, because we do not pass our `CMAKE_CXX_FLAGS`.
-        set (SEQAN3_BACKUP_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-        set (CMAKE_CXX_FLAGS "" CACHE INTERNAL "")
 
         include (FetchContent)
         FetchContent_Declare (
@@ -84,10 +72,8 @@ macro (seqan3_require_benchmark)
             GIT_TAG "${gbenchmark_git_tag}"
         )
         option (BENCHMARK_ENABLE_TESTING "" OFF)
+        option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
         FetchContent_MakeAvailable(gbenchmark_fetch_content)
-
-        set (CMAKE_CXX_FLAGS "${SEQAN3_BACKUP_CXX_FLAGS}" CACHE INTERNAL "")
-        unset (SEQAN3_BACKUP_CXX_FLAGS)
 
         # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
         add_library (gbenchmark ALIAS benchmark_main)
