@@ -292,7 +292,7 @@ TEST(sandboxed_path_symbolic_link, symbolic_link)
     // if link already exists, remove it
     if (std::filesystem::exists(tmp_dir))
     {
-        std::filesystem::remove_all(tmp_dir);
+        std::filesystem::remove(tmp_dir);
     }
 
     // create symlink and a sandboxed_path
@@ -303,5 +303,5 @@ TEST(sandboxed_path_symbolic_link, symbolic_link)
     EXPECT_EQ(tmp_dir, path);
 
     // Cleanup, remove link
-    std::filesystem::remove_all(tmp_dir);
+    std::filesystem::remove(tmp_dir);
 }
