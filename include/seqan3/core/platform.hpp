@@ -282,6 +282,16 @@
 #   endif
 #endif
 
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100252
+//!       ICE in template instantiation.
+#ifndef SEQAN3_WORKAROUND_GCC_100252 // not yet fixed
+#   if defined(__GNUC__) && (__GNUC__ >= 12)
+#       define SEQAN3_WORKAROUND_GCC_100252 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_100252 0
+#   endif
+#endif
+
 /*!\brief This is needed to support CentOS 7 or RHEL 7; Newer CentOS's include a more modern default-gcc version making
  *        this macro obsolete.
  *
