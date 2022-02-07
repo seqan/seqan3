@@ -46,8 +46,10 @@
 
 namespace ranges
 {
-//!\brief std::ranges::views are valid range-v3 views
-template<::std::derived_from<::std::ranges::view_base> T>
+//!\brief std::ranges::views are valid range-v3 views.
+template<typename T>
+    requires ::std::derived_from<T, ::std::ranges::view_base> ||
+             ::std::derived_from<T, ::std::ranges::view_interface<T>>
 inline constexpr bool enable_view<T> = true;
 
 //!\cond
