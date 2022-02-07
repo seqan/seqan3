@@ -68,7 +68,7 @@ TYPED_TEST(single_pass_input, view_concept)
 {
     using rng_t = decltype(std::declval<TypeParam &>() | std::views::all);
     using view_t = seqan3::detail::single_pass_input_view<rng_t>;
-    EXPECT_TRUE((std::derived_from<view_t, std::ranges::view_base>));
+    EXPECT_TRUE((std::derived_from<view_t, std::ranges::view_interface<view_t>>));
     EXPECT_TRUE((std::sentinel_for<std::ranges::sentinel_t<view_t>, std::ranges::iterator_t<view_t>>));
     EXPECT_TRUE(std::ranges::range<view_t>);
     EXPECT_TRUE(std::ranges::view<view_t>);
