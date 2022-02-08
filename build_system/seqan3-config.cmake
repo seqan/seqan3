@@ -127,7 +127,9 @@ endmacro ()
 # Note that seqan3-config.cmake can be standalone and thus SEQAN3_CLONE_DIR might be empty.
 # * `SEQAN3_CLONE_DIR` was already found in seqan3-config-version.cmake
 # * `SEQAN3_INCLUDE_DIR` was already found in seqan3-config-version.cmake
-find_path (SEQAN3_SUBMODULES_DIR NAMES submodules/sdsl-lite HINTS "${SEQAN3_CLONE_DIR}" "${SEQAN3_INCLUDE_DIR}/seqan3")
+find_path (SEQAN3_SUBMODULES_DIR
+           NAMES submodules/sdsl-lite
+           HINTS "${SEQAN3_CLONE_DIR}" "${SEQAN3_INCLUDE_DIR}/seqan3")
 
 if (SEQAN3_INCLUDE_DIR)
     seqan3_config_print ("SeqAn3 include dir found:   ${SEQAN3_INCLUDE_DIR}")
@@ -217,10 +219,10 @@ option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
 set (CXXSTD_TEST_SOURCE
-    "#if !defined (__cplusplus) || (__cplusplus < 201709)
-    #error NOCXX20
-    #endif
-    int main() {}")
+     "#if !defined (__cplusplus) || (__cplusplus < 201709)
+      #error NOCXX20
+      #endif
+      int main() {}")
 
 set (SEQAN3_FEATURE_CPP20_FLAG_BUILTIN "")
 set (SEQAN3_FEATURE_CPP20_FLAG_STD20 "-std=c++20")
@@ -256,9 +258,8 @@ endif ()
 
 set (CMAKE_REQUIRED_FLAGS_SAVE ${CMAKE_REQUIRED_FLAGS})
 
-set (CXXSTD_TEST_SOURCE
-    "static_assert (__cpp_concepts >= 201507);
-    int main() {}")
+set (CXXSTD_TEST_SOURCE "static_assert (__cpp_concepts >= 201507);\
+                         int main() {}")
 
 set (SEQAN3_FEATURE_CONCEPT_FLAG_BUILTIN "")
 set (SEQAN3_FEATURE_CONCEPT_FLAG_STD20 "-std=c++20")
@@ -316,7 +317,8 @@ check_include_file_cxx (range/v3/version.hpp _SEQAN3_HAVE_RANGEV3)
 if (_SEQAN3_HAVE_RANGEV3)
     seqan3_config_print ("Required dependency:        Range-V3 found.")
 else ()
-    seqan3_config_error ("The range-v3 library is required, but wasn't found. Get it from https://github.com/ericniebler/range-v3/")
+    seqan3_config_error (
+        "The range-v3 library is required, but wasn't found. Get it from https://github.com/ericniebler/range-v3/")
 endif ()
 
 check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
@@ -324,7 +326,8 @@ check_include_file_cxx (sdsl/version.hpp _SEQAN3_HAVE_SDSL)
 if (_SEQAN3_HAVE_SDSL)
     seqan3_config_print ("Required dependency:        SDSL found.")
 else ()
-    seqan3_config_error ("The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
+    seqan3_config_error (
+        "The SDSL library is required, but wasn't found. Get it from https://github.com/xxsds/sdsl-lite")
 endif ()
 
 # ----------------------------------------------------------------------------
@@ -418,9 +421,9 @@ endif ()
 # ----------------------------------------------------------------------------
 
 # librt
-if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") OR
-    (${CMAKE_SYSTEM_NAME} STREQUAL "kFreeBSD") OR
-    (${CMAKE_SYSTEM_NAME} STREQUAL "GNU"))
+if ((${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    OR (${CMAKE_SYSTEM_NAME} STREQUAL "kFreeBSD")
+    OR (${CMAKE_SYSTEM_NAME} STREQUAL "GNU"))
     set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} rt)
 endif ()
 
@@ -440,14 +443,13 @@ endif ()
 # Perform compilability test of platform.hpp (tests some requirements)
 # ----------------------------------------------------------------------------
 
-set (CXXSTD_TEST_SOURCE
-     "#include <seqan3/core/platform.hpp>
-     int main() {}")
+set (CXXSTD_TEST_SOURCE "#include <seqan3/core/platform.hpp>
+                         int main() {}")
 
 # using try_compile instead of check_cxx_source_compiles to capture output in case of failure
 file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CXXSTD_TEST_SOURCE}\n")
 
-try_compile (SEQAN3_PLATFORM_TEST
+try_compile (SEQAN3_PLATFORM_TEST #
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
              CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}"
@@ -472,7 +474,17 @@ find_package_handle_standard_args (${CMAKE_FIND_PACKAGE_NAME} REQUIRED_VARS SEQA
 # Set SEQAN3_* variables with the content of ${CMAKE_FIND_PACKAGE_NAME}_(FOUND|...|VERSION)
 # This needs to be done, because `find_package(SeqAn3)` might be called in any case-sensitive way and we want to
 # guarantee that SEQAN3_* are always set.
-foreach (package_var FOUND DIR ROOT CONFIG VERSION VERSION_MAJOR VERSION_MINOR VERSION_PATCH VERSION_TWEAK VERSION_COUNT)
+foreach (package_var
+         FOUND
+         DIR
+         ROOT
+         CONFIG
+         VERSION
+         VERSION_MAJOR
+         VERSION_MINOR
+         VERSION_PATCH
+         VERSION_TWEAK
+         VERSION_COUNT)
     set (SEQAN3_${package_var} "${${CMAKE_FIND_PACKAGE_NAME}_${package_var}}")
 endforeach ()
 

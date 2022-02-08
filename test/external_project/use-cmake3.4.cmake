@@ -18,8 +18,7 @@ include (FetchContent)
 FetchContent_Declare (
     cmake34
     URL "https://github.com/Kitware/CMake/releases/download/v3.4.3/cmake-3.4.3-Linux-x86_64.tar.gz"
-    URL_HASH "SHA256=66b8d315c852908be9f79e1a18b8778714659fce4ddb2d041af8680a239202fc"
-)
+    URL_HASH "SHA256=66b8d315c852908be9f79e1a18b8778714659fce4ddb2d041af8680a239202fc")
 FetchContent_MakeAvailable (cmake34)
 
 set (cmake34_command "${cmake34_SOURCE_DIR}/bin/cmake")

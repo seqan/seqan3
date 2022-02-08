@@ -29,7 +29,8 @@ macro (seqan3_test_files VAR test_base_path_ extension_wildcards)
     # collect all cpp files
     set (${VAR} "")
     foreach (extension_wildcard ${extension_wildcards})
-        file (GLOB_RECURSE test_files RELATIVE "${test_base_path}"
+        file (GLOB_RECURSE test_files
+              RELATIVE "${test_base_path}"
               "${test_base_path_relative}/${extension_wildcard}")
         list (APPEND ${VAR} ${test_files})
     endforeach ()

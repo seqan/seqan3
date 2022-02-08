@@ -1,4 +1,3 @@
-
 seqan3_test (phred42_test.cpp)
 seqan3_test (phred63_test.cpp)
 seqan3_test (phred68solexa_test.cpp)

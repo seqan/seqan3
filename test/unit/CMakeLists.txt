@@ -16,7 +16,9 @@ include (diagnostics/list_unused_unit_tests)
 include (include_dependencies/add_include_dependencies)
 
 option (SEQAN3_VERBOSE_TESTS "Run each test case individually" ON)
-option (SEQAN3_USE_INCLUDE_DEPENDENCIES "Build tests in an hierarchical order (by an include graph, i.e. tests with less dependencies are build first)" OFF)
+option (SEQAN3_USE_INCLUDE_DEPENDENCIES
+        "Build tests in an hierarchical order (by an include graph, i.e. tests with less dependencies are build first)"
+        OFF)
 
 macro (seqan3_test unit_test_cpp)
     cmake_parse_arguments (SEQAN3_TEST "" "" "CYCLIC_DEPENDING_INCLUDES" ${ARGN})
@@ -30,7 +32,11 @@ macro (seqan3_test unit_test_cpp)
     add_include_dependencies (${target} "${SEQAN3_TEST_CYCLIC_DEPENDING_INCLUDES}")
     collect_used_test (${target})
     if (SEQAN3_VERBOSE_TESTS)
-        gtest_discover_tests(${target} TEST_PREFIX "${test_name}::" PROPERTIES TIMEOUT "30")
+        gtest_discover_tests (
+            ${target}
+            TEST_PREFIX "${test_name}::"
+            PROPERTIES
+            TIMEOUT "30")
     else ()
         add_test (NAME "${test_name}" COMMAND ${target})
     endif ()

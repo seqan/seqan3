@@ -12,8 +12,7 @@
 cmake_minimum_required (VERSION 3.10)
 
 # require SeqAn3 package
-find_package (SeqAn3 REQUIRED
-              HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
+find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
 include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
@@ -38,14 +37,20 @@ option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark bui
 #   set -mtune=native
 #   and -fcf-protection=check
 # See https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/rawhide/f/buildflags.md for an overview
-set (CMAKE_CXX_FLAGS_FEDORA "-O2 -flto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -mtune=native -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection=check")
+set (CMAKE_CXX_FLAGS_FEDORA
+     "-O2 -flto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -mtune=native -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection=check"
+)
 
 # ----------------------------------------------------------------------------
 # Paths to folders.
 # ----------------------------------------------------------------------------
 
-find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
-find_path (SEQAN3_TEST_CMAKE_MODULE_DIR NAMES seqan3_test_component.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
+find_path (SEQAN3_TEST_INCLUDE_DIR
+           NAMES seqan3/test/tmp_filename.hpp
+           HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
+find_path (SEQAN3_TEST_CMAKE_MODULE_DIR
+           NAMES seqan3_test_component.cmake
+           HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
 list (APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 
 # ----------------------------------------------------------------------------

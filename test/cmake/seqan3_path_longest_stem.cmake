@@ -18,7 +18,9 @@ function (seqan3_path_longest_stem out_var filename)
         cmake_path (GET filename STEM LAST_ONLY result)
     endif ()
 
-    set ("${out_var}" "${result}" PARENT_SCOPE) # out-var
+    set ("${out_var}"
+         "${result}"
+         PARENT_SCOPE) # out-var
 endfunction ()
 
 # ======
@@ -27,20 +29,24 @@ endfunction ()
 
 seqan3_path_longest_stem (seqan3_cmake_test_path "/a/b/c/")
 if (NOT seqan3_cmake_test_path STREQUAL "")
-    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs '', seqan3_path_longest_stem produces wrong result")
+    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs '', "
+                         "seqan3_path_longest_stem produces wrong result")
 endif ()
 
 seqan3_path_longest_stem (seqan3_cmake_test_path "/a/b/c/hello")
 if (NOT seqan3_cmake_test_path STREQUAL "hello")
-    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello', seqan3_path_longest_stem produces wrong result")
+    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello', "
+                         "seqan3_path_longest_stem produces wrong result")
 endif ()
 
 seqan3_path_longest_stem (seqan3_cmake_test_path "/a/b/c/hello.cpp")
 if (NOT seqan3_cmake_test_path STREQUAL "hello")
-    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello', seqan3_path_longest_stem produces wrong result")
+    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello', "
+                         "seqan3_path_longest_stem produces wrong result")
 endif ()
 
 seqan3_path_longest_stem (seqan3_cmake_test_path "/a/b/c/hello.world.cpp")
 if (NOT seqan3_cmake_test_path STREQUAL "hello.world")
-    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello.world', seqan3_path_longest_stem produces wrong result")
+    message (FATAL_ERROR "internal error: '${seqan3_cmake_test_path}' vs 'hello.world', "
+                         "seqan3_path_longest_stem produces wrong result")
 endif ()

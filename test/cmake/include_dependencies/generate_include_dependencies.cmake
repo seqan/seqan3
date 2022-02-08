@@ -9,12 +9,11 @@ cmake_minimum_required (VERSION 3.10)
 
 function (generate_include_dependencies_impl)
     cmake_parse_arguments (
-        ""
-        ""
-        "TARGET;TARGET_INTERNAL_DEPENDENCY_MAKE_FILE;SEQAN3_INCLUDE_DIR;TARGET_DEPENDENCIES_FILE"
-        "TARGET_CYCLIC_DEPENDING_INCLUDES"
-        ${ARGN}
-    )
+        "" #
+        "" #
+        "TARGET;TARGET_INTERNAL_DEPENDENCY_MAKE_FILE;SEQAN3_INCLUDE_DIR;TARGET_DEPENDENCIES_FILE" #
+        "TARGET_CYCLIC_DEPENDING_INCLUDES" #
+        ${ARGN})
 
     if (NOT EXISTS "${_TARGET_INTERNAL_DEPENDENCY_MAKE_FILE}")
         return ()
@@ -110,6 +109,5 @@ if (CMAKE_SCRIPT_MODE_FILE)
         SEQAN3_INCLUDE_DIR "${SEQAN3_INCLUDE_DIR}"
         # e.g. alphabet/nucleotide/dna4_test_dependencies.cmake (will be generated)
         TARGET_DEPENDENCIES_FILE "${TARGET_DEPENDENCIES_FILE}"
-        TARGET_CYCLIC_DEPENDING_INCLUDES "${TARGET_CYCLIC_DEPENDING_INCLUDES}"
-    )
+        TARGET_CYCLIC_DEPENDING_INCLUDES "${TARGET_CYCLIC_DEPENDING_INCLUDES}")
 endif ()

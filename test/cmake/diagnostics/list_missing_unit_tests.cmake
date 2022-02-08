@@ -7,10 +7,14 @@
 
 cmake_minimum_required (VERSION 3.10)
 
-set(seqan3_test_include_targets "" CACHE STRING "" FORCE)
+set (seqan3_test_include_targets
+     ""
+     CACHE STRING "" FORCE)
 
 function (collect_include_target include_target)
-    set(seqan3_test_include_targets "${seqan3_test_include_targets};${include_target}" CACHE STRING "" FORCE)
+    set (seqan3_test_include_targets
+         "${seqan3_test_include_targets};${include_target}"
+         CACHE STRING "" FORCE)
 endfunction ()
 
 function (list_missing_unit_tests)

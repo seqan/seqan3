@@ -26,7 +26,8 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
     list (APPEND gbenchmark_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
-    set (gbenchmark_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (gbenchmark_path
+         "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
     include (ExternalProject)
     ExternalProject_Add (
@@ -37,15 +38,18 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
         SOURCE_DIR "${SEQAN3_BENCHMARK_CLONE_DIR}"
         CMAKE_ARGS "${gbenchmark_project_args}"
         BUILD_BYPRODUCTS "${gbenchmark_path}"
-        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE}
-    )
+        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE})
     unset (gbenchmark_project_args)
 
     add_library (gbenchmark STATIC IMPORTED)
     add_dependencies (gbenchmark gbenchmark_project)
     set_target_properties (gbenchmark PROPERTIES IMPORTED_LOCATION "${gbenchmark_path}")
-    set_property (TARGET gbenchmark APPEND PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
-    set_property (TARGET gbenchmark APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+    set_property (TARGET gbenchmark
+                  APPEND
+                  PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
+    set_property (TARGET gbenchmark
+                  APPEND
+                  PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
 
     # NOTE: google benchmarks needs Shlwapi (Shell Lightweight Utility Functions) on windows
     # see https://msdn.microsoft.com/en-us/library/windows/desktop/bb759844(v=vs.85).aspx
@@ -69,8 +73,7 @@ macro (seqan3_require_benchmark)
         FetchContent_Declare (
             gbenchmark_fetch_content
             GIT_REPOSITORY "https://github.com/google/benchmark.git"
-            GIT_TAG "${gbenchmark_git_tag}"
-        )
+            GIT_TAG "${gbenchmark_git_tag}")
         option (BENCHMARK_ENABLE_TESTING "" OFF)
         option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
         FetchContent_MakeAvailable (gbenchmark_fetch_content)

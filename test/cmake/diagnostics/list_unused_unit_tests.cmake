@@ -7,11 +7,15 @@
 
 cmake_minimum_required (VERSION 3.10)
 
-set(seqan3_test_targets "" CACHE STRING "" FORCE)
+set (seqan3_test_targets
+     ""
+     CACHE STRING "" FORCE)
 
 # Add the `target` to the list of used test targets. This effectively marks the `target` as a used test.
 function (collect_used_test target)
-    set(seqan3_test_targets "${seqan3_test_targets};${target}" CACHE STRING "" FORCE)
+    set (seqan3_test_targets
+         "${seqan3_test_targets};${target}"
+         CACHE STRING "" FORCE)
 endfunction ()
 
 # Glob all test files (e.g. *.cpp files) and compare them to the list of used test targets.
