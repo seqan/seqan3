@@ -6,7 +6,7 @@
 # -----------------------------------------------------------------------------------------------------
 
 # Minimum cmake version
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required (VERSION 3.7)
 
 ### Find seqan3
 include (../../build_system/seqan3-config-version.cmake)
@@ -26,11 +26,11 @@ include (seqan3-doxygen.cmake)
 enable_testing ()
 
 if (SEQAN3_USER_DOC)
-    add_subdirectory(doc_usr)
+    add_subdirectory (doc_usr)
 endif ()
 
 if (SEQAN3_DEV_DOC)
-    add_subdirectory(doc_dev)
+    add_subdirectory (doc_dev)
 endif ()
 
 include (seqan3-doxygen-package.cmake)

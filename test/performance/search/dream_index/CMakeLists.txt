@@ -1,1 +1,1 @@
-seqan3_benchmark(interleaved_bloom_filter_benchmark.cpp)
+seqan3_benchmark (interleaved_bloom_filter_benchmark.cpp)

@@ -20,15 +20,15 @@ FetchContent_Declare (
     URL "https://github.com/Kitware/CMake/releases/download/v3.4.3/cmake-3.4.3-Linux-x86_64.tar.gz"
     URL_HASH "SHA256=66b8d315c852908be9f79e1a18b8778714659fce4ddb2d041af8680a239202fc"
 )
-FetchContent_MakeAvailable(cmake34)
+FetchContent_MakeAvailable (cmake34)
 
 set (cmake34_command "${cmake34_SOURCE_DIR}/bin/cmake")
 
-execute_process(COMMAND ${cmake34_command} --version
-                RESULT_VARIABLE cmake34_result
-                OUTPUT_VARIABLE cmake34_output)
+execute_process (COMMAND ${cmake34_command} --version
+                 RESULT_VARIABLE cmake34_result
+                 OUTPUT_VARIABLE cmake34_output)
 
-if("${cmake34_result}" STREQUAL "0" AND cmake34_output MATCHES "cmake version 3.4.3")
+if ("${cmake34_result}" STREQUAL "0" AND cmake34_output MATCHES "cmake version 3.4.3")
     set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${cmake34_command}")
     message (STATUS "Use cmake3.4 in tests [${cmake34_command}]")
 else ()

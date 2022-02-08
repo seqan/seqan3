@@ -1,5 +1,5 @@
 
-seqan3_macro_benchmark(
+seqan3_macro_benchmark (
     memcpy_macro_benchmark.cpp
     REPETITIONS 10 # optional, default: 3
     META_DATA # optional

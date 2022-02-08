@@ -55,8 +55,8 @@ macro (seqan3_require_test_old gtest_git_tag)
     set_property (TARGET gtest APPEND PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
     set_property (TARGET gtest APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
 
-    unset(gtest_main_path)
-    unset(gtest_path)
+    unset (gtest_main_path)
+    unset (gtest_path)
 endmacro ()
 
 macro (seqan3_require_test)
@@ -74,7 +74,7 @@ macro (seqan3_require_test)
             GIT_TAG "${gtest_git_tag}"
         )
         option (BUILD_GMOCK "" OFF)
-        FetchContent_MakeAvailable(gtest_fetch_content)
+        FetchContent_MakeAvailable (gtest_fetch_content)
     else ()
         message (STATUS "Use Google Test as external project:")
 

@@ -15,9 +15,9 @@ include (diagnostics/list_missing_unit_tests)
 function (get_include_target VAR source_type source)
     if (source_type STREQUAL "TARGET")
         # e.g. dna4_test.cpp
-        get_target_property(target_source "${source}" SOURCES)
+        get_target_property (target_source "${source}" SOURCES)
         # e.g. <seqan3-root>/test/unit/alphabet/nucleotide
-        get_target_property(target_source_dir "${source}" SOURCE_DIR)
+        get_target_property (target_source_dir "${source}" SOURCE_DIR)
         # e.g. alphabet/nucleotide/dna4_test.cpp
         file (RELATIVE_PATH target_source_file "${CMAKE_SOURCE_DIR}" "${target_source_dir}/${target_source}")
     elseif (source_type STREQUAL "SOURCE")

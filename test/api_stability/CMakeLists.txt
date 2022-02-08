@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required (VERSION 3.8)
 
 project (api_stability)
 
-find_package(Git)
+find_package (Git)
 
 include (../seqan3-test.cmake)
 
@@ -14,7 +14,7 @@ set (SEQAN3_LAST_STABLE_SOURCE_SHA256 "0b37b1c3450e19c0ebe42c052c3f87babb8074bd7
 set (SEQAN3_API_STABILITY_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSEQAN3_REMOVE_DEPRECATED_310=1")
 
 macro (seqan3_api_stability_test test_suite)
-    ExternalProject_Add(api_stability_${test_suite}
+    ExternalProject_Add (api_stability_${test_suite}
     URL               ${SEQAN3_LAST_STABLE_SOURCE_URL}
     URL_HASH          SHA256=${SEQAN3_LAST_STABLE_SOURCE_SHA256}
     SOURCE_SUBDIR     "test/${test_suite}"

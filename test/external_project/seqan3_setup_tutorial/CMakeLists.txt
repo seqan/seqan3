@@ -10,18 +10,18 @@ include (../find-package-diagnostics.cmake)
 # ---
 
 # Copy the cpp so we can use add_executable like in the tutorial
-file(COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-file(RENAME "${CMAKE_CURRENT_BINARY_DIR}/hello_world.cpp" "${CMAKE_CURRENT_BINARY_DIR}/another_program.cpp")
-file(COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file (COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file (RENAME "${CMAKE_CURRENT_BINARY_DIR}/hello_world.cpp" "${CMAKE_CURRENT_BINARY_DIR}/another_program.cpp")
+file (COPY "${CMAKE_SOURCE_DIR}/../src/hello_world.cpp" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 # In the tutorial, the CMAKE_CURRENT_SOURCE_DIR is a sibling directory of the seqan3 checkout
-set(CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../source")
+set (CMAKE_CURRENT_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../source")
 
 ## [adding_files]
 cmake_minimum_required (VERSION 3.4)
 project (seqan3_tutorial CXX)
 
 # add seqan3 to search path
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../seqan3/build_system")
+list (APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../seqan3/build_system")
 
 # require seqan3 with a version between >=3.0.0 and <4.0.0
 find_package (seqan3 3.0 REQUIRED)
@@ -35,7 +35,7 @@ target_link_libraries (another_program seqan3::seqan3)
 ## [adding_files]
 
 if (CMAKE_VERSION VERSION_LESS 3.14)
-install (TARGETS hello_world another_program RUNTIME DESTINATION bin)
+    install (TARGETS hello_world another_program RUNTIME DESTINATION bin)
 else ()
-install (TARGETS hello_world another_program) # RUNTIME DESTINATION not needed anymore since cmake 3.14
+    install (TARGETS hello_world another_program) # RUNTIME DESTINATION not needed anymore since cmake 3.14
 endif ()

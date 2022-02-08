@@ -19,7 +19,7 @@ option (SEQAN3_VERBOSE_TESTS "Run each test case individually" ON)
 option (SEQAN3_USE_INCLUDE_DEPENDENCIES "Build tests in an hierarchical order (by an include graph, i.e. tests with less dependencies are build first)" OFF)
 
 macro (seqan3_test unit_test_cpp)
-    cmake_parse_arguments(SEQAN3_TEST "" "" "CYCLIC_DEPENDING_INCLUDES" ${ARGN})
+    cmake_parse_arguments (SEQAN3_TEST "" "" "CYCLIC_DEPENDING_INCLUDES" ${ARGN})
 
     file (RELATIVE_PATH unit_test "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/${unit_test_cpp}")
     seqan3_test_component (target "${unit_test}" TARGET_NAME)
@@ -45,5 +45,5 @@ seqan3_require_test ()
 
 add_subdirectories ()
 
-list_missing_unit_tests()
+list_missing_unit_tests ()
 list_unused_unit_tests ()

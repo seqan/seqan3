@@ -99,7 +99,7 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to in
             "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}"
             "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
     )
-    add_dependencies(seqan3_installed seqan3_test_prerequisite)
+    add_dependencies (seqan3_installed seqan3_test_prerequisite)
 endif ()
 
 # 4) This tests test/external_project/seqan3_fetch_content_zip/CMakeLists.txt
@@ -119,7 +119,7 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to us
             "-DSEQAN3_PACKAGE_ZIP_URL=${SEQAN3_PACKAGE_ZIP_URL}"
             "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
     )
-    add_dependencies(seqan3_fetch_content_zip seqan3_test_prerequisite)
+    add_dependencies (seqan3_fetch_content_zip seqan3_test_prerequisite)
 endif ()
 
 # 5) This test is the same as 2) but emulates the settings within the setup tutorial.

@@ -80,7 +80,7 @@ macro (seqan3_header_test component header_base_path exclude_regex)
     # filter out headers
     if (NOT ";${exclude_regex};" STREQUAL ";;")
         list (FILTER header_files EXCLUDE REGEX "${exclude_regex}")
-    endif()
+    endif ()
 
     file (WRITE "${PROJECT_BINARY_DIR}/${target}.cpp" "")
     add_executable (${target} ${PROJECT_BINARY_DIR}/${target}.cpp)

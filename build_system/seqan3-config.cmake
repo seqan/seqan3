@@ -76,8 +76,8 @@ cmake_minimum_required (VERSION 3.4...3.12)
 # ----------------------------------------------------------------------------
 
 # make output globally quiet if required by find_package, this effects cmake functions like `check_*`
-set(CMAKE_REQUIRED_QUIET_SAVE ${CMAKE_REQUIRED_QUIET})
-set(CMAKE_REQUIRED_QUIET ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY})
+set (CMAKE_REQUIRED_QUIET_SAVE ${CMAKE_REQUIRED_QUIET})
+set (CMAKE_REQUIRED_QUIET ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY})
 
 # ----------------------------------------------------------------------------
 # Greeter
@@ -158,10 +158,10 @@ endif ()
 # ----------------------------------------------------------------------------
 
 # deactivate messages in check_*
-set (CMAKE_REQUIRED_QUIET       1)
+set (CMAKE_REQUIRED_QUIET 1)
 # use global variables in Check* calls
-set (CMAKE_REQUIRED_INCLUDES    ${CMAKE_INCLUDE_PATH} ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
-set (CMAKE_REQUIRED_FLAGS       ${CMAKE_CXX_FLAGS})
+set (CMAKE_REQUIRED_INCLUDES ${CMAKE_INCLUDE_PATH} ${SEQAN3_INCLUDE_DIR} ${SEQAN3_DEPENDENCY_INCLUDE_DIRS})
+set (CMAKE_REQUIRED_FLAGS ${CMAKE_CXX_FLAGS})
 
 # ----------------------------------------------------------------------------
 # Force-deactivate optional dependencies
@@ -170,7 +170,7 @@ set (CMAKE_REQUIRED_FLAGS       ${CMAKE_CXX_FLAGS})
 # Cereal is auto-detected by default, i.e. used if found, not used if not found.
 # You can optionally set a hard requirement so a build fails without cereal,
 # or you can force-disable cereal even if present on the system.
-option (SEQAN3_CEREAL    "Require cereal and fail if not present." OFF)
+option (SEQAN3_CEREAL "Require cereal and fail if not present." OFF)
 option (SEQAN3_NO_CEREAL "Don't use cereal, even if present." OFF)
 
 if (SEQAN3_CEREAL AND SEQAN3_NO_CEREAL)
@@ -189,7 +189,7 @@ endif ()
 # Lemon is auto-detected by default, i.e. used if found, not used if not found.
 # You can optionally set a hard requirement so a build fails without Lemon,
 # or you can force-disable Lemon even if present on the system.
-option (SEQAN3_LEMON    "Require Lemon and fail if not present." OFF)
+option (SEQAN3_LEMON "Require Lemon and fail if not present." OFF)
 option (SEQAN3_NO_LEMON "Don't use Lemon, even if present." OFF)
 
 if (SEQAN3_LEMON AND SEQAN3_NO_LEMON)
@@ -207,7 +207,7 @@ endif ()
 
 # These two are "opt-in", because detected by CMake
 # If you want to force-require these, just do find_package (zlib REQUIRED) before find_package (seqan3)
-option (SEQAN3_NO_ZLIB  "Don't use ZLIB, even if present." OFF)
+option (SEQAN3_NO_ZLIB "Don't use ZLIB, even if present." OFF)
 option (SEQAN3_NO_BZIP2 "Don't use BZip2, even if present." OFF)
 
 # ----------------------------------------------------------------------------
@@ -380,9 +380,9 @@ if (NOT SEQAN3_NO_ZLIB)
 endif ()
 
 if (ZLIB_FOUND)
-    set (SEQAN3_LIBRARIES         ${SEQAN3_LIBRARIES}         ${ZLIB_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS      ${SEQAN3_DEPENDENCY_INCLUDE_DIRS}      ${ZLIB_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS       ${SEQAN3_DEFINITIONS}       "-DSEQAN3_HAS_ZLIB=1")
+    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${ZLIB_LIBRARIES})
+    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_ZLIB=1")
     seqan3_config_print ("Optional dependency:        ZLIB-${ZLIB_VERSION_STRING} found.")
 else ()
     seqan3_config_print ("Optional dependency:        ZLIB not found.")
@@ -405,9 +405,9 @@ if (NOT ZLIB_FOUND AND BZIP2_FOUND)
 endif ()
 
 if (BZIP2_FOUND)
-    set (SEQAN3_LIBRARIES         ${SEQAN3_LIBRARIES}         ${BZIP2_LIBRARIES})
-    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS      ${SEQAN3_DEPENDENCY_INCLUDE_DIRS}      ${BZIP2_INCLUDE_DIRS})
-    set (SEQAN3_DEFINITIONS       ${SEQAN3_DEFINITIONS}       "-DSEQAN3_HAS_BZIP2=1")
+    set (SEQAN3_LIBRARIES ${SEQAN3_LIBRARIES} ${BZIP2_LIBRARIES})
+    set (SEQAN3_DEPENDENCY_INCLUDE_DIRS ${SEQAN3_DEPENDENCY_INCLUDE_DIRS} ${BZIP2_INCLUDE_DIRS})
+    set (SEQAN3_DEFINITIONS ${SEQAN3_DEFINITIONS} "-DSEQAN3_HAS_BZIP2=1")
     seqan3_config_print ("Optional dependency:        BZip2-${BZIP2_VERSION_STRING} found.")
 else ()
     seqan3_config_print ("Optional dependency:        BZip2 not found.")
@@ -450,11 +450,11 @@ file (WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx" "${CX
 try_compile (SEQAN3_PLATFORM_TEST
              ${CMAKE_BINARY_DIR}
              ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx
-             CMAKE_FLAGS         "-DCOMPILE_DEFINITIONS:STRING=${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}"
-                                 "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
+             CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${CMAKE_CXX_FLAGS} ${SEQAN3_CXX_FLAGS}"
+                         "-DINCLUDE_DIRECTORIES:STRING=${CMAKE_INCLUDE_PATH};${SEQAN3_INCLUDE_DIR};${SEQAN3_DEPENDENCY_INCLUDE_DIRS}"
              COMPILE_DEFINITIONS ${SEQAN3_DEFINITIONS}
-             LINK_LIBRARIES      ${SEQAN3_LIBRARIES}
-             OUTPUT_VARIABLE     SEQAN3_PLATFORM_TEST_OUTPUT)
+             LINK_LIBRARIES ${SEQAN3_LIBRARIES}
+             OUTPUT_VARIABLE SEQAN3_PLATFORM_TEST_OUTPUT)
 
 if (SEQAN3_PLATFORM_TEST)
     seqan3_config_print ("SeqAn3 platform.hpp build:  passed.")
@@ -501,24 +501,24 @@ endif ()
 set (CMAKE_REQUIRED_QUIET ${CMAKE_REQUIRED_QUIET_SAVE})
 
 if (SEQAN3_FIND_DEBUG)
-  message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
-  message ("")
-  message ("  CMAKE_BUILD_TYPE            ${CMAKE_BUILD_TYPE}")
-  message ("  CMAKE_SOURCE_DIR            ${CMAKE_SOURCE_DIR}")
-  message ("  CMAKE_INCLUDE_PATH          ${CMAKE_INCLUDE_PATH}")
-  message ("  SEQAN3_INCLUDE_DIR          ${SEQAN3_INCLUDE_DIR}")
-  message ("")
-  message ("  ${CMAKE_FIND_PACKAGE_NAME}_FOUND                ${${CMAKE_FIND_PACKAGE_NAME}_FOUND}")
-  message ("  SEQAN3_HAS_ZLIB             ${ZLIB_FOUND}")
-  message ("  SEQAN3_HAS_BZIP2            ${BZIP2_FOUND}")
-  message ("")
-  message ("  SEQAN3_INCLUDE_DIRS         ${SEQAN3_INCLUDE_DIRS}")
-  message ("  SEQAN3_LIBRARIES            ${SEQAN3_LIBRARIES}")
-  message ("  SEQAN3_DEFINITIONS          ${SEQAN3_DEFINITIONS}")
-  message ("  SEQAN3_CXX_FLAGS            ${SEQAN3_CXX_FLAGS}")
-  message ("")
-  message ("  SEQAN3_VERSION              ${SEQAN3_VERSION}")
-  message ("  SEQAN3_VERSION_MAJOR        ${SEQAN3_VERSION_MAJOR}")
-  message ("  SEQAN3_VERSION_MINOR        ${SEQAN3_VERSION_MINOR}")
-  message ("  SEQAN3_VERSION_PATCH        ${SEQAN3_VERSION_PATCH}")
+    message ("Result for ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
+    message ("")
+    message ("  CMAKE_BUILD_TYPE            ${CMAKE_BUILD_TYPE}")
+    message ("  CMAKE_SOURCE_DIR            ${CMAKE_SOURCE_DIR}")
+    message ("  CMAKE_INCLUDE_PATH          ${CMAKE_INCLUDE_PATH}")
+    message ("  SEQAN3_INCLUDE_DIR          ${SEQAN3_INCLUDE_DIR}")
+    message ("")
+    message ("  ${CMAKE_FIND_PACKAGE_NAME}_FOUND                ${${CMAKE_FIND_PACKAGE_NAME}_FOUND}")
+    message ("  SEQAN3_HAS_ZLIB             ${ZLIB_FOUND}")
+    message ("  SEQAN3_HAS_BZIP2            ${BZIP2_FOUND}")
+    message ("")
+    message ("  SEQAN3_INCLUDE_DIRS         ${SEQAN3_INCLUDE_DIRS}")
+    message ("  SEQAN3_LIBRARIES            ${SEQAN3_LIBRARIES}")
+    message ("  SEQAN3_DEFINITIONS          ${SEQAN3_DEFINITIONS}")
+    message ("  SEQAN3_CXX_FLAGS            ${SEQAN3_CXX_FLAGS}")
+    message ("")
+    message ("  SEQAN3_VERSION              ${SEQAN3_VERSION}")
+    message ("  SEQAN3_VERSION_MAJOR        ${SEQAN3_VERSION_MAJOR}")
+    message ("  SEQAN3_VERSION_MINOR        ${SEQAN3_VERSION_MINOR}")
+    message ("  SEQAN3_VERSION_PATCH        ${SEQAN3_VERSION_PATCH}")
 endif ()

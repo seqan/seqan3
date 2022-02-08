@@ -1,1 +1,1 @@
-seqan3_benchmark(char_predicate_benchmark.cpp)
+seqan3_benchmark (char_predicate_benchmark.cpp)

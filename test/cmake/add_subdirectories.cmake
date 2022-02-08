@@ -37,5 +37,5 @@ macro (add_subdirectories_of directory)
 endmacro ()
 
 macro (add_subdirectories)
-    add_subdirectories_of(${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectories_of (${CMAKE_CURRENT_SOURCE_DIR})
 endmacro ()

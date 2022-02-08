@@ -50,9 +50,9 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
     # NOTE: google benchmarks needs Shlwapi (Shell Lightweight Utility Functions) on windows
     # see https://msdn.microsoft.com/en-us/library/windows/desktop/bb759844(v=vs.85).aspx
     # see https://github.com/google/benchmark/blob/c614dfc0d4eadcd19b188ff9c7e226c138f894a1/README.md#platform-specific-libraries
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         target_link_libraries (gbenchmark INTERFACE "Shlwapi")
-    endif()
+    endif ()
 
     unset (gbenchmark_path)
 endmacro ()
@@ -73,7 +73,7 @@ macro (seqan3_require_benchmark)
         )
         option (BENCHMARK_ENABLE_TESTING "" OFF)
         option (BENCHMARK_ENABLE_WERROR "" OFF) # Does not apply to Debug builds.
-        FetchContent_MakeAvailable(gbenchmark_fetch_content)
+        FetchContent_MakeAvailable (gbenchmark_fetch_content)
 
         # NOTE: google benchmark's CMakeLists.txt already defines Shlwapi
         add_library (gbenchmark ALIAS benchmark_main)

@@ -1,1 +1,1 @@
-seqan3_test(cigar_operation_test.cpp)
+seqan3_test (cigar_operation_test.cpp)

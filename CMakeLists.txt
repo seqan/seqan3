@@ -28,7 +28,7 @@ endif ()
 
 find_package (SeqAn3 3.0 REQUIRED HINTS ${SEQAN3_MODULE_PATH})
 
-option(INSTALL_SEQAN3 "Enable installation of seqan3. (Projects embedding seqan3 may want to turn this OFF.)" ON)
+option (INSTALL_SEQAN3 "Enable installation of seqan3. (Projects embedding seqan3 may want to turn this OFF.)" ON)
 
 if (INSTALL_SEQAN3)
     include (seqan3-install)

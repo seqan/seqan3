@@ -11,13 +11,13 @@ project (seqan3_test_coverage CXX)
 include (../seqan3-test.cmake)
 
 if (CMAKE_BUILD_TYPE AND NOT ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug"))
-    message(WARNING "Coverage test must be build in debug mode [build type = ${CMAKE_BUILD_TYPE}]")
+    message (WARNING "Coverage test must be build in debug mode [build type = ${CMAKE_BUILD_TYPE}]")
 endif ()
 
 find_program (GCOVR_COMMAND NAMES gcovr)
 
 if (NOT GCOVR_COMMAND)
-    message(FATAL_ERROR "gcovr not found! Aborting...")
+    message (FATAL_ERROR "gcovr not found! Aborting...")
 endif ()
 
 # Holds all target's defined by seqan3_test
@@ -119,7 +119,7 @@ macro (seqan3_test unit_test_cpp)
     # NOTE that this is a GLOBAL variable, because a normal
     # `set(GLOBAL_TEST_COVERAGE_ALL_TESTS)` would not propagate the result when
     # CMakeLists.txt goes out of scope due to a `add_subdirectory`
-    set_property(GLOBAL APPEND PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS ${target})
+    set_property (GLOBAL APPEND PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS ${target})
 
     unset (unit_test)
     unset (target)
@@ -133,7 +133,7 @@ seqan3_require_test ()
 add_subdirectories_of ("${CMAKE_CURRENT_SOURCE_DIR}/../unit")
 
 # add collected test cases as dependency
-get_property(TEST_COVERAGE_ALL_TESTS GLOBAL PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS)
+get_property (TEST_COVERAGE_ALL_TESTS GLOBAL PROPERTY GLOBAL_TEST_COVERAGE_ALL_TESTS)
 add_custom_command (
     OUTPUT ${PROJECT_BINARY_DIR}/seqan3_coverage.xml
     DEPENDS ${TEST_COVERAGE_ALL_TESTS}

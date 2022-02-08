@@ -1,3 +1,3 @@
-add_subdirectories()
+add_subdirectories ()
 
 seqan3_test (type_pack_traits_test.cpp)

@@ -46,7 +46,7 @@ set (CMAKE_CXX_FLAGS_FEDORA "-O2 -flto -ffat-lto-objects -fexceptions -g -grecor
 
 find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
 find_path (SEQAN3_TEST_CMAKE_MODULE_DIR NAMES seqan3_test_component.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
-list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
+list (APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
@@ -56,7 +56,7 @@ list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 # libraries which are in common for **all** seqan3 tests
 if (NOT TARGET seqan3::test)
     add_library (seqan3_test INTERFACE)
-    target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
+    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra" "-Werror")
 
     # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")

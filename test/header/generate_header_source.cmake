@@ -21,7 +21,7 @@ else ()
     file (APPEND "${HEADER_TARGET_SOURCE}" "
 #include <${HEADER_FILE_INCLUDE}>
 #include <${HEADER_FILE_INCLUDE}>")
-endif()
+endif ()
 
 # these includes are required by some headers (note that they follow)
 file (APPEND "${HEADER_TARGET_SOURCE}" "

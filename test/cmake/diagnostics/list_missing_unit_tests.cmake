@@ -28,10 +28,10 @@ function (list_missing_unit_tests)
             continue ()
         endif ()
 
-        string(REPLACE "-" "/" header ${include_target})
-        string(REPLACE "_test" ".hpp" header ${header})
+        string (REPLACE "-" "/" header ${include_target})
+        string (REPLACE "_test" ".hpp" header ${header})
 
-        get_filename_component(header_filename "${header}" NAME)
+        get_filename_component (header_filename "${header}" NAME)
 
         # skip these headers
         if (header_filename MATCHES "all.hpp|concept.hpp")

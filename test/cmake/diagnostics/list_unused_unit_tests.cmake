@@ -16,13 +16,13 @@ endfunction ()
 
 # Glob all test files (e.g. *.cpp files) and compare them to the list of used test targets.
 function (list_unused_unit_tests)
-    file(GLOB_RECURSE test_source_glob_list *.cpp)
+    file (GLOB_RECURSE test_source_glob_list *.cpp)
     set (test_source_declared_list "")
 
     # get the source location of each "used" test target and collect it.
     foreach (test_target ${seqan3_test_targets})
-        get_target_property(sources "${test_target}" SOURCES)
-        get_target_property(source_dir "${test_target}" SOURCE_DIR)
+        get_target_property (sources "${test_target}" SOURCES)
+        get_target_property (source_dir "${test_target}" SOURCE_DIR)
 
         list (APPEND test_source_declared_list "${source_dir}/${sources}")
     endforeach ()
