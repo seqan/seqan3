@@ -22,9 +22,11 @@ macro (seqan3_require_test_old gtest_git_tag)
     list (APPEND gtest_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
     # google sets CMAKE_DEBUG_POSTFIX = "d"
-    set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    set (gtest_main_path
+         "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set (gtest_main_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
+        set (gtest_main_path
+             "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_maind${CMAKE_STATIC_LIBRARY_SUFFIX}")
     endif ()
 
     set (gtest_path "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}")
@@ -41,8 +43,7 @@ macro (seqan3_require_test_old gtest_git_tag)
         SOURCE_DIR "${SEQAN3_TEST_CLONE_DIR}"
         CMAKE_ARGS "${gtest_project_args}"
         BUILD_BYPRODUCTS "${gtest_main_path}" "${gtest_path}"
-        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE}
-    )
+        UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE})
     unset (gtest_project_args)
 
     add_library (gtest_main STATIC IMPORTED)
@@ -52,11 +53,15 @@ macro (seqan3_require_test_old gtest_git_tag)
     add_library (gtest STATIC IMPORTED)
     add_dependencies (gtest gtest_project)
     set_target_properties (gtest PROPERTIES IMPORTED_LOCATION "${gtest_path}")
-    set_property (TARGET gtest APPEND PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
-    set_property (TARGET gtest APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
+    set_property (TARGET gtest
+                  APPEND
+                  PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
+    set_property (TARGET gtest
+                  APPEND
+                  PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
 
-    unset(gtest_main_path)
-    unset(gtest_path)
+    unset (gtest_main_path)
+    unset (gtest_path)
 endmacro ()
 
 macro (seqan3_require_test)
@@ -71,10 +76,9 @@ macro (seqan3_require_test)
         FetchContent_Declare (
             gtest_fetch_content
             GIT_REPOSITORY "https://github.com/google/googletest.git"
-            GIT_TAG "${gtest_git_tag}"
-        )
+            GIT_TAG "${gtest_git_tag}")
         option (BUILD_GMOCK "" OFF)
-        FetchContent_MakeAvailable(gtest_fetch_content)
+        FetchContent_MakeAvailable (gtest_fetch_content)
     else ()
         message (STATUS "Use Google Test as external project:")
 

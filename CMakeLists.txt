@@ -17,18 +17,21 @@ list (APPEND CMAKE_MODULE_PATH "${SEQAN3_MODULE_PATH}")
 include (seqan3-config-version)
 
 if (CMAKE_VERSION VERSION_LESS 3.12)
-    project (seqan3 LANGUAGES CXX VERSION "${SEQAN3_PROJECT_VERSION}")
+    project (seqan3
+             LANGUAGES CXX
+             VERSION "${SEQAN3_PROJECT_VERSION}")
 else ()
-    project (
-        seqan3 LANGUAGES CXX VERSION "${SEQAN3_PROJECT_VERSION}"
-        DESCRIPTION "SeqAn3 -- the modern C++ library for sequence analysis" # since cmake 3.9
-        HOMEPAGE_URL "https://github.com/seqan/seqan3" # since cmake 3.12
+    project (seqan3
+             LANGUAGES CXX
+             VERSION "${SEQAN3_PROJECT_VERSION}"
+             DESCRIPTION "SeqAn3 -- the modern C++ library for sequence analysis" # since cmake 3.9
+             HOMEPAGE_URL "https://github.com/seqan/seqan3" # since cmake 3.12
     )
 endif ()
 
 find_package (SeqAn3 3.0 REQUIRED HINTS ${SEQAN3_MODULE_PATH})
 
-option(INSTALL_SEQAN3 "Enable installation of seqan3. (Projects embedding seqan3 may want to turn this OFF.)" ON)
+option (INSTALL_SEQAN3 "Enable installation of seqan3. (Projects embedding seqan3 may want to turn this OFF.)" ON)
 
 if (INSTALL_SEQAN3)
     include (seqan3-install)

@@ -34,21 +34,23 @@ set (SEQAN3_DOXYGEN_SOURCE_DIR "${SEQAN3_CLONE_DIR}")
 set (SEQAN3_DOXYFILE_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_doxygen_cfg.in)
 set (SEQAN3_FOOTER_HTML_IN ${SEQAN3_DOXYGEN_INPUT_DIR}/seqan3_footer.html.in)
 
-option(SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
-option(SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
-option(SEQAN3_VERCEL_PREVIEW_DOC "Is this a preview build by vercel.com?" OFF)
+option (SEQAN3_USER_DOC "Create build target and test for user documentation." ON)
+option (SEQAN3_DEV_DOC "Create build target and test for developer documentation." ON)
+option (SEQAN3_VERCEL_PREVIEW_DOC "Is this a preview build by vercel.com?" OFF)
 
 if (SEQAN3_VERCEL_PREVIEW_DOC)
     set (SEQAN3_DOXYGEN_USE_MATHJAX "YES")
     set (SEQAN3_DOXYGEN_DOT_NUM_THREADS "2")
-    set (SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL "HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/.vercel/powered-by-vercel.svg")
+    set (SEQAN3_DOXYFILE_OPTION_POWERED_BY_VERCEL
+         "HTML_EXTRA_FILES       += ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation/.vercel/powered-by-vercel.svg")
     set (SEQAN3_FOOTER_HTML_OPTION_POWERED_BY_VERCEL
-         "<li class='footer'><a href='https://vercel.com/?utm_source=seqan&utm_campaign=oss'><img class='footer' src='$relpath^powered-by-vercel.svg' width='104' height='31' alt='Powered by Vercel'/></a></li>")
+         "<li class='footer'><a href='https://vercel.com/?utm_source=seqan&utm_campaign=oss'><img class='footer' src='$relpath^powered-by-vercel.svg' width='104' height='31' alt='Powered by Vercel'/></a></li>"
+    )
 endif ()
 
 ### Download and extract cppreference-doxygen-web.tag.xml for std:: documentation links
-set(SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")
-include(ExternalProject)
+set (SEQAN3_DOXYGEN_STD_TAGFILE "${PROJECT_BINARY_DIR}/cppreference-doxygen-web.tag.xml")
+include (ExternalProject)
 ExternalProject_Add (
     download-cppreference-doxygen-web-tag
     URL "https://github.com/PeterFeicht/cppreference-doc/releases/download/v20201016/html-book-20201016.tar.xz"
@@ -60,21 +62,19 @@ ExternalProject_Add (
     BINARY_DIR "${PROJECT_BINARY_DIR}"
     CONFIGURE_COMMAND /bin/sh -c "xzcat html-book.tar.xz | tar -xf - cppreference-doxygen-web.tag.xml"
     BUILD_COMMAND rm "html-book.tar.xz"
-    INSTALL_COMMAND ""
-)
+    INSTALL_COMMAND "")
 
 ### TEST HELPER
 
 # doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
-set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS "
-    ${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr;
-    cat \"doxygen.cerr\";
-    test ! -s \"doxygen.cerr\"")
+set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS
+     "${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr;
+      cat \"doxygen.cerr\";
+      test ! -s \"doxygen.cerr\"")
 
 # We search the HTML output to ensure that no `requires` clauses are at wrong places.
 set (SEQAN3_TEST_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
      "! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
-
 
 ### install helper
 

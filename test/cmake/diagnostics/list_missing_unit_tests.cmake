@@ -7,10 +7,14 @@
 
 cmake_minimum_required (VERSION 3.10)
 
-set(seqan3_test_include_targets "" CACHE STRING "" FORCE)
+set (seqan3_test_include_targets
+     ""
+     CACHE STRING "" FORCE)
 
 function (collect_include_target include_target)
-    set(seqan3_test_include_targets "${seqan3_test_include_targets};${include_target}" CACHE STRING "" FORCE)
+    set (seqan3_test_include_targets
+         "${seqan3_test_include_targets};${include_target}"
+         CACHE STRING "" FORCE)
 endfunction ()
 
 function (list_missing_unit_tests)
@@ -28,10 +32,10 @@ function (list_missing_unit_tests)
             continue ()
         endif ()
 
-        string(REPLACE "-" "/" header ${include_target})
-        string(REPLACE "_test" ".hpp" header ${header})
+        string (REPLACE "-" "/" header ${include_target})
+        string (REPLACE "_test" ".hpp" header ${header})
 
-        get_filename_component(header_filename "${header}" NAME)
+        get_filename_component (header_filename "${header}" NAME)
 
         # skip these headers
         if (header_filename MATCHES "all.hpp|concept.hpp")

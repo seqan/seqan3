@@ -21,11 +21,11 @@ message (STATUS "ACTUAL_ERROR_FILE: ${ACTUAL_ERROR_FILE}")
 message (STATUS "EXPECTED_ERROR_FILE: ${EXPECTED_ERROR_FILE}")
 
 # execute snippet
-execute_process(COMMAND "${TARGET_FILE}"
-                WORKING_DIRECTORY "${TARGET_FILE_DIR}"
-                OUTPUT_FILE "${ACTUAL_OUTPUT_FILE}"
-                ERROR_FILE "${ACTUAL_ERROR_FILE}"
-                RESULT_VARIABLE error_result)
+execute_process (COMMAND "${TARGET_FILE}"
+                 WORKING_DIRECTORY "${TARGET_FILE_DIR}"
+                 OUTPUT_FILE "${ACTUAL_OUTPUT_FILE}"
+                 ERROR_FILE "${ACTUAL_ERROR_FILE}"
+                 RESULT_VARIABLE error_result)
 
 if (error_result) # != 0 return code
     message (SEND_ERROR "error: executing snippet exited with '${error_result}'")
@@ -47,7 +47,7 @@ function (compare_files actual_file expected_file)
 
         find_package (Git)
         if (Git_FOUND)
-            execute_process(COMMAND "${GIT_EXECUTABLE}" diff --no-index "${expected_file}" "${actual_file}")
+            execute_process (COMMAND "${GIT_EXECUTABLE}" diff --no-index "${expected_file}" "${actual_file}")
         endif ()
     elseif (EXISTS "${expected_file}")
         message (SEND_ERROR "error: `${expected_file}` exists, but `${actual_file}` has no output.")
@@ -59,5 +59,5 @@ function (compare_files actual_file expected_file)
 endfunction ()
 
 # compare output to file
-compare_files("${ACTUAL_OUTPUT_FILE}" "${EXPECTED_OUTPUT_FILE}")
-compare_files("${ACTUAL_ERROR_FILE}" "${EXPECTED_ERROR_FILE}")
+compare_files ("${ACTUAL_OUTPUT_FILE}" "${EXPECTED_OUTPUT_FILE}")
+compare_files ("${ACTUAL_ERROR_FILE}" "${EXPECTED_ERROR_FILE}")

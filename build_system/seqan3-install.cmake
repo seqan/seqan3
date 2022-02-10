@@ -12,23 +12,17 @@ cmake_minimum_required (VERSION 3.14)
 include (GNUInstallDirs)
 
 # install documentation files in /share/doc
-install (
-    FILES
-    "${SEQAN3_CLONE_DIR}/CHANGELOG.md"
-    "${SEQAN3_CLONE_DIR}/CODE_OF_CONDUCT.md"
-    "${SEQAN3_CLONE_DIR}/CONTRIBUTING.md"
-    "${SEQAN3_CLONE_DIR}/LICENSE.md"
-    "${SEQAN3_CLONE_DIR}/README.md"
-    TYPE DOC
-)
+install (FILES "${SEQAN3_CLONE_DIR}/CHANGELOG.md" #
+               "${SEQAN3_CLONE_DIR}/CODE_OF_CONDUCT.md" #
+               "${SEQAN3_CLONE_DIR}/CONTRIBUTING.md" #
+               "${SEQAN3_CLONE_DIR}/LICENSE.md" #
+               "${SEQAN3_CLONE_DIR}/README.md"
+         TYPE DOC)
 
 # install cmake files in /share/cmake
-install (
-    FILES
-    "${SEQAN3_CLONE_DIR}/build_system/seqan3-config.cmake"
-    "${SEQAN3_CLONE_DIR}/build_system/seqan3-config-version.cmake"
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/seqan3"
-)
+install (FILES "${SEQAN3_CLONE_DIR}/build_system/seqan3-config.cmake"
+               "${SEQAN3_CLONE_DIR}/build_system/seqan3-config-version.cmake"
+         DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/seqan3")
 
 # install seqan3 header files in /include/seqan3
 install (DIRECTORY "${SEQAN3_INCLUDE_DIR}/seqan3" TYPE INCLUDE)

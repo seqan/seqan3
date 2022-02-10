@@ -7,14 +7,18 @@
 
 cmake_minimum_required (VERSION 3.10)
 
-set(seqan3_test_snippets "" CACHE STRING "" FORCE)
+set (seqan3_test_snippets
+     ""
+     CACHE STRING "" FORCE)
 
 include ("${CMAKE_CURRENT_LIST_DIR}/../seqan3_path_longest_stem.cmake")
 include ("${CMAKE_CURRENT_LIST_DIR}/../seqan3_test_files.cmake")
 
 # Add the `target` to the list of used test targets. This effectively marks the `target` as a used test.
 function (collect_used_snippet target)
-    set(seqan3_test_snippets "${seqan3_test_snippets};${target}" CACHE STRING "" FORCE)
+    set (seqan3_test_snippets
+         "${seqan3_test_snippets};${target}"
+         CACHE STRING "" FORCE)
 endfunction ()
 
 # Glob all snippet output files (e.g. *.out and *.err files) and compare them to the list of used snippet outputs.
@@ -25,7 +29,7 @@ function (list_unused_snippets snippet_base_path)
     # get the source location of each "used" test target and collect it.
     foreach (test_target ${seqan3_test_snippets})
         # e.g. /seqan3/test/snippet/../../doc/tutorial/pairwise_alignment/configurations.cpp
-        get_target_property(source "${test_target}" SOURCES)
+        get_target_property (source "${test_target}" SOURCES)
         # e.g. configurations
         seqan3_path_longest_stem (source_wle "${source}")
         # e.g. /seqan3/test/snippet/../../doc/tutorial/pairwise_alignment
@@ -45,6 +49,7 @@ function (list_unused_snippets snippet_base_path)
 
     # list all unused tests
     foreach (test_snippet_output ${test_snippet_output_glob_list})
-        message (AUTHOR_WARNING "'${snippet_base_path}/${test_snippet_output}' snippet output exists, but the corresponding .cpp file is missing!")
+        message (AUTHOR_WARNING "'${snippet_base_path}/${test_snippet_output}' snippet output exists, "
+                                "but the corresponding .cpp file is missing!")
     endforeach ()
 endfunction ()

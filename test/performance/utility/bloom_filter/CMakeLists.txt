@@ -1,1 +1,1 @@
-seqan3_benchmark(bloom_filter_benchmark.cpp)
+seqan3_benchmark (bloom_filter_benchmark.cpp)
