@@ -26,6 +26,7 @@ jobs:
     name: ${{ matrix.build }} gcc${{ matrix.compiler }}
     runs-on: ubuntu-20.04
     timeout-minutes: 300
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:

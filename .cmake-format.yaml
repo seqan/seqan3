@@ -1,7 +1,7 @@
 _seqan3_cmake_format_documentation_only:
   install:
     command:
-      - pip install cmakelang
+      - pip install cmakelang[YAML]
     repo:
       - https://github.com/cheshirekow/cmake_format
   example:
