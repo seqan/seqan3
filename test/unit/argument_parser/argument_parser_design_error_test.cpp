@@ -51,7 +51,7 @@ TEST(parse_test, design_error)
     EXPECT_THROW(parser4.add_flag(true_value, 'i', "int", "oh oh default is true."),
                  seqan3::design_error);
 
-    bool flag_value;
+    bool flag_value{false};
 
     // short flag
     seqan3::argument_parser parser5{"test_parser", 1, argv};
