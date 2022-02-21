@@ -578,4 +578,3 @@ and helps the SeqAn project get a rough estimate on which SeqAn-based apps are p
 See the API documentation of seqan3::argument_parser for information on how to configure (or turn off) this feature.
 See our [wiki entry](https://github.com/seqan/seqan3/wiki/Update-Notifications) for more information on how it works and
 our privacy policy.
-
