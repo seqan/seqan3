@@ -264,7 +264,7 @@ public:
 
     /*!\brief Adds a flag to the seqan3::argument_parser.
      *
-     * \param[in, out] value     The variable in which to store the given command line argument.
+     * \param[in, out] value     The variable which shows if the flag is turned off (default) or on.
      * \param[in]      short_id  The short identifier for the flag (e.g. 'i').
      * \param[in]      long_id   The long identifier for the flag (e.g. "integer").
      * \param[in]      desc      The description of the flag to be shown in the help page.

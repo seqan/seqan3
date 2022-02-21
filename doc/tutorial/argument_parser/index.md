@@ -57,8 +57,9 @@ The argument parser checks the following restrictions and throws a seqan3::desig
 
 * **Long identifiers**: must be unique, more than one character long, may only contain alphanumeric characters, as well as `_`, `-`, or `@`, but never start with `-`.
 * **Short identifiers**: must be unique and consist of only a single letter that is alphanumeric characters, `_` or `@`.
-* either the short or long id may be empty but not both at the same time.
+* Either the short or long id may be empty but not both at the same time.
 * Only the last positional option may be a list (see [lists](#section_list_positional_options)).
+* **Flags**: value must be false by default. Passing the flag identifier on the command line marks it as true.
 * The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright` are predefined and cannot be specified manually or used otherwise.
 * The seqan3::argument_parser::parse function may only be called once (per parser).
 
@@ -152,6 +153,8 @@ Additionally to the variable that will store the value, you need to pass a descr
 
 \note As the name suggest, positional options are identified by their position. In SeqAn, the first `add_positional_option()` will be linked to the first command line argument that is neither an option-value pair nor a flag. So the order of initialising your parser determines the order of assigning command line arguments to the respective variables.
 We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier to spot errors.
+
+\note Unlike regular options which take id-value pairs, flags are passed as an identifier only. The variable associated to a flag must be false by default and is switched to true when the flag is present on the command line.
 
 You can add an option like this:
 

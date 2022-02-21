@@ -67,7 +67,7 @@ struct cmd_arguments
     std::filesystem::path file_path{};
     uint32_t year{};
     std::string aggregate_by{"mean"};
-    bool header_is_set{};
+    bool header_is_set{false};
 };
 //![program]
 
