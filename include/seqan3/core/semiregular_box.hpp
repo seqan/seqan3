@@ -22,7 +22,7 @@ namespace seqan3
           Imported from ranges::semiregular_box.
  * \ingroup core
  *
- * \see https://en.cppreference.com/w/cpp/ranges/semiregular_wrapper
+ * \see https://en.cppreference.com/w/cpp/ranges/copyable_wrapper
  */
 using SEQAN3_DOXYGEN_ONLY(semiregular_box =) ::ranges::semiregular_box;
 
@@ -30,7 +30,7 @@ using SEQAN3_DOXYGEN_ONLY(semiregular_box =) ::ranges::semiregular_box;
           ranges::semiregular_box_t.
  * \ingroup core
  *
- * \see https://en.cppreference.com/w/cpp/ranges/semiregular_wrapper
+ * \see https://en.cppreference.com/w/cpp/ranges/copyable_wrapper
  */
 using SEQAN3_DOXYGEN_ONLY(semiregular_box_t =) ::ranges::semiregular_box_t;
 

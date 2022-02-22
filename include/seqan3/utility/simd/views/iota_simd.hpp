@@ -14,7 +14,7 @@
 
 #include <seqan3/std/ranges>
 
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
@@ -23,7 +23,7 @@ namespace seqan3::detail
 {
 
 /*!\brief Implements a special version of a counted iterator over a simd vector.
- * \ingroup simd
+ * \ingroup utility_simd_views
  * \implements std::forward_iterator
  *
  * \tparam index_simd_t The type of the index; must model seqan3::simd::simd_concept.
@@ -134,7 +134,7 @@ public:
 };
 
 /*!\brief The simd iota view.
- * \ingroup simd
+ * \ingroup utility_simd_views
  * \tparam index_simd_t The represented index type; must model seqan3::simd::simd_concept.
  */
 template <simd_concept index_simd_t>
@@ -191,7 +191,7 @@ public:
 };
 
 /*!\brief The view adaptor returning the seqan3::detail::iota_simd_view.
- * \ingroup simd
+ * \ingroup utility_simd_views
  * \tparam index_simd_t The represented index type; must model seqan3::simd::simd_concept.
  */
 template <simd_concept index_simd_t>
@@ -218,7 +218,7 @@ namespace seqan3::views
 {
 
 /*!\brief An iota view over a simd vector.
- * \ingroup simd
+ * \ingroup utility_simd_views
  * \implements std::ranges::forward_range
  * \implements std::ranges::sized_range
  * \implements std::ranges::common_range

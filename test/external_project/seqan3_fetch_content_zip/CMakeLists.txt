@@ -22,10 +22,10 @@ FetchContent_Declare (
     URL "${SEQAN3_PACKAGE_ZIP_URL}" # change these values
     URL_HASH "SHA256=${SEQAN3_PACKAGE_ZIP_HASH}" # change these values
 )
-FetchContent_MakeAvailable(seqan3)
+FetchContent_MakeAvailable (seqan3)
 
 # add seqan3 to search path
-list(APPEND CMAKE_PREFIX_PATH "${seqan3_SOURCE_DIR}")
+list (APPEND CMAKE_PREFIX_PATH "${seqan3_SOURCE_DIR}")
 
 # require seqan3 with a version between >=3.0.0 and <4.0.0
 find_package (seqan3 3.0 REQUIRED)

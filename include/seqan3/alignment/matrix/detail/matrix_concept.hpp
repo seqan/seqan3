@@ -38,7 +38,7 @@ constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
  */
 //!\cond
 template <typename matrix_t>
-SEQAN3_CONCEPT matrix = requires(std::remove_cvref_t<matrix_t> m)
+concept matrix = requires(std::remove_cvref_t<matrix_t> m)
 {
 //!\endcond
 

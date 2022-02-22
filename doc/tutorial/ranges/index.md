@@ -25,7 +25,7 @@ What about the two examples that suggest superiority of the iterator-based appro
   * sorting only all elements after the fifth one: `std::ranges::sort(std::views::drop(v, 5))`
   * sorting in reverse order: `std::ranges::sort(std::views::reverse(v))`
 
-We will discuss later what `std::views::reverse(v)` does, for now it is enough to understand that it returns something
+We will discuss later what `std::views::reverse(v)` does. For now, it is enough to understand that it returns something
 that appears like a container and that std::ranges::sort can sort it.
 Later we will see that this approach offers even more flexibility than working with iterators.
 
@@ -63,7 +63,7 @@ For the well-known containers from the standard library this matrix shows which 
 | std::ranges::random_access_range   |                   |           | ✅         | ✅         | ✅          |
 | std::ranges::contiguous_range      |                   |           |            | ✅         | ✅          |
 
-There are also range concepts that are independent of input or output or one of the above concept, e.g.
+There are also range concepts that are independent of input or output or one of the above concepts, e.g.
 std::ranges::sized_range which requires that the size of a range can be computed and in constant time.
 
 ## Storage behaviour
@@ -72,7 +72,7 @@ std::ranges::sized_range which requires that the size of a range can be computed
 like `std::vector`, but also implements some custom containers.
 
 **Decorators** are ranges that are always defined on another range and decorate/annotate the underlying range
-with additional information. They do not own the underlying range, but can contain member data of their own.
+with additional information. They do not own the underlying range but can contain member data of their own.
 
 **Views** are ranges that are usually defined on another range and transform the underlying range
 via some algorithm or operation.
@@ -125,8 +125,8 @@ std::views::reverse v{vec};
 That's because `std::views::reverse` is not the view itself, it's an *adaptor* that takes the underlying range
 (in our case the vector) and returns a view object over the vector.
 The exact type of this view is hidden behind the `auto` statement.
-This has the advantage, that we don't need to worry about the template arguments of the view type, but more importantly
-the adaptor has an additional feature: it can be *chained* with other adaptors!
+This has the advantage that we don't need to worry about the template arguments of the view type.
+The adaptor has another, very useful feature: it can be *chained* with other adaptors!
 
 \snippet doc/tutorial/ranges/range_snippets.cpp piped
 
@@ -135,14 +135,14 @@ What will this print?
 It will print "4".
 \endhint
 
-In the above example the vector is "piped" (similar to the unix command line) into the reverse adaptor and then into
+In the above example, the vector is "piped" (similar to the unix command line) into the reverse adaptor and then into
 the drop adaptor and a combined view object is returned.
 Note that accessing the 0th element of the view is still lazy, determining which element it maps to happens at the time
 of access.
 
 \assignment{Assignment 1: Fun with views I}
 Look up the documentation of std::views::transform and std::views::filter.
-Both take a invocable object as parameter, e.g. a lambda function.
+Both take an invocable object as parameter, e.g. a lambda function.
 std::views::transform applies the lambda on each element in the underlying range and std::views::filter
 filter "removes" those elements that its lambda function evaluates to false for.
 
@@ -175,7 +175,7 @@ It depends on the underlying range and also the view itself.
 With few exceptions, views don't model more/stronger range concepts than their underlying range (other than
 std::ranges::view) and they try to preserve as much of the underlying range's concepts as possible.
 For instance the view returned by `std::views::reverse` models std::ranges::random_access_range (and weaker concepts)
-iff the underlying range also models the respective concept.
+if the underlying range also models the respective concept.
 It never models std::ranges::contiguous_range, because the third element of the view is not located immediately after
 the second in memory (but instead before the second).
 
@@ -239,14 +239,14 @@ Most views provided by SeqAn3 are specific to biological operations, like seqan3
 based on the quality or seqan3::views::complement which generates the complement of a nucleotide sequence.
 But SeqAn3 also provides some general purpose views.
 
-Have a look at the \link views views-submodule \endlink to get an overview of SeqAn's views and also read through the
-detailed description on that page now that you had a more gentle introduction.
+Have a look at the \link utility_views views-submodule \endlink to get an overview of SeqAn's views and also read
+through the detailed description on that page now that you had a more gentle introduction.
 
 \assignment{Assignment 3: Fun with views III}
 Create a small program that
   1. reads a string from the command line (first argument to the program)
   2. "converts" the string to a range of seqan3::dna5 (Bonus: throw an exception if loss of information occurs)
-  3. prints the string and it's reverse complement
+  3. prints the string and its reverse complement
   4. prints the six-frame translation of the string
 
 Use views to implement steps 2.-4.
@@ -286,7 +286,7 @@ On Linux based systems use `/usr/bin/time -v <program> <args>` and look for "Max
 
 On macOS and BSD use `/usr/bin/time -l <program> <args>` and look for "maximum resident set size".
 
-\note This command diplays the peak memory usage and only gives you a first impression. You can use [valgrind]
+\note This command displays the peak memory usage and only gives you a first impression. You can use [valgrind]
 (https://valgrind.org/docs/manual/ms-manual.html) if you want to have a more detailed analysis of your memory
 consumption.
 \endassignment

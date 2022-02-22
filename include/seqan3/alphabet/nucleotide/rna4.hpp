@@ -73,15 +73,12 @@ public:
     /*!\brief Allow implicit construction from seqan3::dna4 of the same size.
      * \details
      *
-     * \copydetails seqan3::doxygen::rna4_implicit_conversion_from_dna4
+     * \include{doc} doc/fragments/rna4_implicit_conversion_from_dna4.md
      *
      * \stableapi{Since version 3.1.}
      */
     template <std::same_as<dna4> t>
     constexpr rna4(t const & r) noexcept
-#if SEQAN3_WORKAROUND_GCC_90897
-        requires true
-#endif
     {
         assign_rank(r.to_rank());
     }
@@ -121,7 +118,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::rna4.
+/*!\brief Alias for a std::vector of seqan3::rna4.
  * \relates rna4
  * \details
  * \stableapi{Since version 3.1.}

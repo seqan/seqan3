@@ -3,11 +3,11 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 ACGT
-> Test2
+>Test2
 AGGCTGA
-> Test3
+>Test3
 GGAGTATAATATATATATATATAT)";
 
 int main()
@@ -18,6 +18,6 @@ int main()
     {
         seqan3::debug_stream << "ID:  " << record.id() << '\n';
         seqan3::debug_stream << "SEQ: " << record.sequence() << '\n';
-        // a quality field also exists, but is not printed, because we know it's empty for FastA files.
+        // a quality field also exists, but is not printed, because we know it's empty for FASTA files.
     }
 }

@@ -6,16 +6,13 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the \link range range module \endlink.
+ * \brief Meta-header for the \link utility_range Utility / Range submodule \endlink.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/range/concept.hpp>
-
-/*!\defgroup range Range
- * \brief The range module provides general purpose containers, decorators and views.
+/*!\defgroup utility_range Range
+ * \ingroup utility
+ * \brief The range module provides general purpose range concepts.
  *
  * ### Introduction
  *
@@ -49,8 +46,8 @@
  * ### Storage behaviour
  *
  * **Containers** are the ranges most well known, they own their elements. SeqAn makes use of standard STL containers
- * like `std::vector`, but also implements some custom containers. See the \link container container submodule \endlink
- * for more details.
+ * like `std::vector`, but also implements some custom containers. See the \link utility_container container submodule
+ * \endlink for more details.
  *
  * **Decorators** are ranges that are always defined on another range and decorate/annotate the underlying range
  * with additional information. They do not own the underlying range, but can contain member data of their own.
@@ -60,7 +57,7 @@
  * via some algorithm or operation, however, some views are stand-alone, i.e. they are just an algorithm that
  * produces elements. Views do not own any data beyond their algorithm and possible parameters to it and they
  * can always be copied in constant time. The algorithm is required to be lazy-evaluated so it is feasible to
- * combine multiple views. See the \link views views submodule \endlink for more details.
+ * combine multiple views. See the \link utility_views views submodule \endlink for more details.
  *
  * If you are confused about *decorators* vs *views*, think of decorators as "underlying range + data" and
  * views as "underlying range + algorithm".
@@ -70,13 +67,15 @@
  * does not) and you can have views or decorators that do so or don't. For some combinations of iterator capabilities
  * and storage behaviour there are extra concept definitions, e.g. seqan3::random_access_container.
  *
- * \attention
+ * \attention There are ranges in SeqAn that fit neither of these storage categories, e.g. all the files are
+ *            \link std::ranges::input_range input ranges \endlink (if they are input files) and
+ *            \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
+ *            containers, decorators nor views.
  *
- * There are ranges in SeqAn that fit neither of these storage categories, e.g. all the files are
- * \link std::ranges::input_range input ranges \endlink (if they are input files) and
- * \link std::ranges::output_range output ranges \endlink (if they are output files), but they are neither
- * containers, decorators nor views.
- *
- * \sa range.hpp
  * \sa https://ericniebler.github.io/range-v3/index.html
+ * \see utility
  */
+
+#pragma once
+
+#include <seqan3/utility/range/concept.hpp>

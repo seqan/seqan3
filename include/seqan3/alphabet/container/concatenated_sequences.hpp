@@ -415,7 +415,7 @@ public:
 
     /*!\brief Construct/assign from `std::initializer_list`.
      * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
-     * \param ilist an `std::initializer_list` of `value_type_t`.
+     * \param ilist a `std::initializer_list` of `value_type_t`.
      *
      * ### Complexity
      *
@@ -438,7 +438,7 @@ public:
 
     /*!\brief Construct/assign from `std::initializer_list`.
      * \tparam value_type_t The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
-     * \param ilist an `std::initializer_list` of `value_type_t`.
+     * \param ilist a `std::initializer_list` of `value_type_t`.
      *
      * ### Complexity
      *
@@ -540,7 +540,7 @@ public:
 
     /*!\brief Construct/assign from `std::initializer_list`.
      * \tparam rng_type The type of range to be inserted; must satisfy \ref is_compatible_with_value_type.
-     * \param ilist an `std::initializer_list` of `rng_type`.
+     * \param ilist a `std::initializer_list` of `rng_type`.
      *
      * ### Complexity
      *
@@ -777,7 +777,7 @@ public:
     }
 
     /*!\brief Provides direct, unsafe access to underlying data structures.
-     * \returns An std::pair of the concatenated sequences and the delimiter string.
+     * \returns A std::pair of the concatenated sequences and the delimiter string.
      *
      * \details
      *
@@ -1001,7 +1001,6 @@ public:
      * \{
      */
     /*!\brief Removes all elements from the container.
-     * \returns The number of elements in the container.
      *
      * ### Complexity
      *

@@ -7,15 +7,13 @@
 
 /*!\file
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
- * \brief Provides seqan3::type_list and associated metaprogramming utilities.
+ * \brief Meta-header for the \link utility_type_list Utility / Type List submodule \endlink.
  */
 
-#include <seqan3/utility/type_list/traits.hpp>
-#include <seqan3/utility/type_list/type_list.hpp>
-
-/*!\defgroup type_list Type List
+/*!\defgroup utility_type_list Type List
  * \brief Provides seqan3::type_list and metaprogramming utilities for working on type lists.
  * \ingroup utility
+ * \see utility
  *
  * \details
  *
@@ -25,5 +23,9 @@
 
 /*!\namespace seqan3::list_traits
  * \brief Namespace containing traits for working on seqan3::type_list.
- * \ingroup type_list
  */
+
+#pragma once
+
+#include <seqan3/utility/type_list/traits.hpp>
+#include <seqan3/utility/type_list/type_list.hpp>

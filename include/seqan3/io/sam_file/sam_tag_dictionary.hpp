@@ -18,8 +18,8 @@
 
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/container/small_string.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
 
 namespace seqan3::detail
 {
@@ -170,11 +170,12 @@ constexpr uint16_t operator""_tag()
  * | "U2"_tag | std::string           |
  * | "UQ"_tag | int32_t               |
  *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <uint16_t tag_value>
 struct sam_tag_type
 {
-    //!\brief The type for all unknown tags with no extra overload defaults to an std::variant.
+    //!\brief The type for all unknown tags with no extra overload defaults to a std::variant.
     using type = detail::sam_tag_variant;
 };
 
@@ -322,8 +323,10 @@ template <> struct sam_tag_type<"UQ"_tag> { using type = int32_t; };
  * \include test/snippet/io/sam_file/sam_tag_dictionary/unknown_tag.cpp
  *
  * As mentioned before you can either overload the type trait seqan3::sam_tag_type
- * for the tag "XZ" or learn more about an std::variant at
+ * for the tag "XZ" or learn more about a std::variant at
  * https://en.cppreference.com/w/cpp/utility/variant.
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  *
  * \sa seqan3::sam_tag_type
  * \sa https://en.cppreference.com/w/cpp/utility/variant

@@ -11,20 +11,9 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
 // ============================================================================
 // External concept implementations
 // ============================================================================
-
-#include <seqan3/core/add_enum_bitwise_operators.hpp>
-#include <seqan3/core/algorithm/all.hpp>
-#include <seqan3/core/concept/all.hpp>
-#include <seqan3/core/configuration/all.hpp>
-#include <seqan3/core/debug_stream.hpp>
-#include <seqan3/core/detail/all.hpp>
-#include <seqan3/core/platform.hpp>
-#include <seqan3/core/range/type_traits.hpp>
 
 /*!\defgroup core Core
  * \brief Provides core functionality used by multiple modules.
@@ -61,7 +50,7 @@
   * state to express a general intend of the API without being explicit about it.
   *
   * For example, see https://eel.is/c++draft/iterator.concept.readable where `indirectly-readable-impl` describes the
-  * general intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_­readable
+  * general intention of the concept, but does not name it since it is a helper-entity for the std::indirectly_readable
   * concept.
   */
 
@@ -78,3 +67,15 @@
 /*!\namespace std
  * \brief SeqAn specific customisations in the standard namespace.
  */
+
+#pragma once
+
+#include <seqan3/core/add_enum_bitwise_operators.hpp>
+#include <seqan3/core/algorithm/all.hpp>
+#include <seqan3/core/concept/all.hpp>
+#include <seqan3/core/configuration/all.hpp>
+#include <seqan3/core/debug_stream/all.hpp>
+#include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/platform.hpp>
+#include <seqan3/core/range/all.hpp>
+#include <seqan3/core/semiregular_box.hpp>

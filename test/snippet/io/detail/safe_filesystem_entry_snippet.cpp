@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 int main()
 {

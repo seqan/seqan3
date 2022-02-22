@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides C++20 additions to the \<memory\> header.
+ * \brief The [\<memory\> header](https://en.cppreference.com/w/cpp/header/memory) from C++20's standard library.
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
@@ -17,12 +17,27 @@
 #include <version> // from C++20 all feature macros should be defined here
 #endif
 
-//!\brief A workaround for __cpp_lib_to_address for gcc version >=8.0 and < 9.4 (in C++20 mode).
-//!       Those versions implemented std::to_address, but did not define that feature detection macro.
+/*!\defgroup std_memory memory
+ * \ingroup std
+ * \brief The [\<memory\> header](https://en.cppreference.com/w/cpp/header/memory) from C++20's standard library.
+ */
+
+/*!\brief A workaround for __cpp_lib_to_address for gcc version >=8.0 and < 9.4 (in C++20 mode).
+ *        Those versions implemented std::to_address, but did not define that feature detection macro.
+ * \ingroup std_memory
+ */
+#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
+#if SEQAN3_DOXYGEN_ONLY(1)0
+// documentation-only
+#define SEQAN3_CPP_LIB_TO_ADDRESS IMPLEMENTATION_DEFINED
+#undef SEQAN3_CPP_LIB_TO_ADDRESS
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+#endif // SEQAN3_DOXYGEN_ONLY
+
 #ifndef SEQAN3_CPP_LIB_TO_ADDRESS
 #   if defined(__cpp_lib_to_address)
 #       define SEQAN3_CPP_LIB_TO_ADDRESS 1
-#   elif defined(__GNUC__) && (__GNUC__ == 8 || __GNUC__ == 9) && __cplusplus > 201703L
+#   elif defined(__GNUC__) && (_GLIBCXX_RELEASE == 8 || _GLIBCXX_RELEASE == 9) && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_TO_ADDRESS 1
 #   endif
 #endif
@@ -31,17 +46,21 @@
 
 #ifndef SEQAN3_CPP_LIB_TO_ADDRESS
 
-/*!\defgroup memory memory
- * \ingroup std
- * \brief The \<memory\> header from C++20's standard library.
- */
-
 namespace std
 {
 
+// prior to gcc-10; requires statements weren't allowed within constexpr if's
+#if defined(__GNUC__) && (__GNUC__ < 10)
+template <typename T>
+concept bool _pointer_traits_has_to_address = requires(T const & p)
+{
+    { std::pointer_traits<T>::to_address(p) };
+};
+#endif // defined(__GNUC__) && (__GNUC__ < 10)
+
 /*!\brief Obtain the address represented by p without forming a reference to the object pointed to by p.
  * \sa https://en.cppreference.com/w/cpp/memory/to_address
- * \ingroup memory
+ * \ingroup std_memory
  */
 template <typename T>
 constexpr T * to_address(T * p) noexcept
@@ -50,11 +69,18 @@ constexpr T * to_address(T * p) noexcept
     return p;
 }
 
-//!\overload
-template<typename T>
+/*!\brief Obtain the address represented by p without forming a reference to the object pointed to by p.
+ * \sa https://en.cppreference.com/w/cpp/memory/to_address
+ * \ingroup std_memory
+ */
+template <typename T>
 constexpr auto to_address(const T & p) noexcept
 {
+#if defined(__GNUC__) && (__GNUC__ < 10)
+    if constexpr (_pointer_traits_has_to_address<T>)
+#else // ^^^ workaround / no workaround vvv
     if constexpr (requires { std::pointer_traits<T>::to_address(p); })
+#endif // defined(__GNUC__) && (__GNUC__ < 10)
         return std::pointer_traits<T>::to_address(p);
     else
         return std::to_address(p.operator->());

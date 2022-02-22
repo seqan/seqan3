@@ -1158,6 +1158,34 @@ TEST(parse_test, enum_error_message)
     }
 }
 
+// https://github.com/seqan/seqan3/issues/2835
+TEST(parse_test, error_message_parsing)
+{
+    const char * argv[] = {"./argument_parser_test", "--value", "-30"};
+
+    uint64_t option_value{};
+
+    seqan3::argument_parser parser{"test_parser", 3, argv, seqan3::update_notifications::off};
+    parser.add_option(option_value, '\0', "value", "Please specify a value.");
+
+    std::string expected_message{"Value parse failed for --value: Argument -30 could not be parsed as type "
+                                 "unsigned 64 bit integer."};
+
+    try
+    {
+        parser.parse();
+        FAIL();
+    }
+    catch (seqan3::user_input_error const & exception)
+    {
+        EXPECT_EQ(expected_message, exception.what());
+    }
+    catch (...)
+    {
+        FAIL();
+    }
+}
+
 // https://github.com/seqan/seqan3/pull/2381
 TEST(parse_test, container_options)
 {

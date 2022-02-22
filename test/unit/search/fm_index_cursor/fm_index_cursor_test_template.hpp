@@ -45,7 +45,7 @@ TYPED_TEST_P(fm_index_cursor_test, ctr)
     // custom constructor
     TypeParam it0{fm};
     EXPECT_EQ(it0.query_length(), 0u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it0.suffix_array_interval() == (seqan3::suffix_array_interval{0u, fm.size()}));
     }
@@ -80,7 +80,7 @@ TYPED_TEST_P(fm_index_cursor_test, begin)
     // sentinel position included
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}}));
     EXPECT_EQ(it.query_length(), 0u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{0u, fm.size()}));
     }
@@ -96,7 +96,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 4, 6)));  // "CG"
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 2u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{5u, 7u}));
     }
@@ -105,7 +105,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range)
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 1)));  // "A"
     EXPECT_EQ(it.locate(), (locate_result_t{{0, 1}}));
     EXPECT_EQ(it.query_length(), 3u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{2u, 3u}));
     }
@@ -144,7 +144,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
     EXPECT_TRUE(it.extend_right(this->text1[0]));  // 'A'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 1u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{1u, 3u}));
     }
@@ -152,7 +152,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char)
     EXPECT_TRUE(it.extend_right(this->text1[1]));  // 'C'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 2u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{3u, 5u}));
     }
@@ -185,7 +185,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range_and_cycle)
     EXPECT_TRUE(it.extend_right(seqan3::views::slice(this->text1, 0, 4)));  // "ACGA"
     EXPECT_EQ(it.locate(), (locate_result_t{{0, 0}}));
     EXPECT_EQ(it.query_length(), 4u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{3u, 4u}));
     }
@@ -193,7 +193,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_range_and_cycle)
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(it.locate(), (locate_result_t{{0, 4}}));
     EXPECT_EQ(it.query_length(), 4u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{6u, 7u}));
     }
@@ -208,7 +208,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char_and_cycle)
     EXPECT_TRUE(it.extend_right(this->text2[0]));  // 'A'
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 1u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{1u, 4u}));
     }
@@ -216,7 +216,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_char_and_cycle)
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 5}, {0, 7}}));
     EXPECT_EQ(it.query_length(), 1u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{4u, 7u}));
     }
@@ -231,7 +231,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_and_cycle)
     EXPECT_TRUE(it.extend_right());
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 0}, {0, 3}}));
     EXPECT_EQ(it.query_length(), 1u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{1u, 3u}));
     }
@@ -239,7 +239,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_and_cycle)
     EXPECT_TRUE(it.cycle_back());
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 1u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{3u, 5u}));
     }
@@ -247,7 +247,7 @@ TYPED_TEST_P(fm_index_cursor_test, extend_right_and_cycle)
     EXPECT_TRUE(it.extend_right());
     EXPECT_EQ(seqan3::uniquify(it.locate()), (locate_result_t{{0, 1}, {0, 4}}));
     EXPECT_EQ(it.query_length(), 2u);
-    if constexpr (!this->is_bi_fm_index)
+    if constexpr (!TestFixture::is_bi_fm_index)
     {
         EXPECT_TRUE(it.suffix_array_interval() == (seqan3::suffix_array_interval{5u, 7u}));
     }

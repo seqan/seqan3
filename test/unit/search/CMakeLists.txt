@@ -1,4 +1,4 @@
-add_subdirectories()
+add_subdirectories ()
 
 seqan3_test (sdsl_index_test.cpp)
 

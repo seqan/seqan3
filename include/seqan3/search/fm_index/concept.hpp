@@ -32,7 +32,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sdsl_index = requires (t sdsl_index)
+concept sdsl_index = requires (t sdsl_index)
 {
     typename t::size_type;
 

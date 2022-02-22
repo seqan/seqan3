@@ -42,7 +42,7 @@
  *
  * # The alphabet concepts
  *
- * ### alphabet size
+ * ### Alphabet size
  *
  * All alphabets in SeqAn have a fixed size. It
  * can be queried via the seqan3::alphabet_size type trait and *optionally* also the `alphabet_size` static
@@ -152,7 +152,7 @@
  * that accepts different alphabet types, you need to use the free function / type trait interface, because
  * it is the only interface guaranteed to exist (member functions are **not** required/enforced by the concept).
  *
- * # containers over alphabets
+ * # Containers over alphabets
  *
  * In SeqAn it is recommended you use the STL container classes like std::vector for storing sequence data,
  * but you can use other class templates if they satisfy the respective seqan3::container, e.g. `std::deque` or
@@ -167,7 +167,7 @@
  * We provide specialised containers with certain properties in the \link alphabet_container Alphabet Container module
  * \endlink.
  *
- * A container over an seqan3::alphabet automatically models the seqan3::sequence concept.
+ * A container over a seqan3::alphabet automatically models the seqan3::sequence concept.
  */
 
 /*!\namespace seqan3::literals
@@ -181,11 +181,18 @@
 #pragma once
 
 #include <seqan3/alphabet/adaptation/all.hpp>
+#include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/aminoacid/all.hpp>
+#include <seqan3/alphabet/cigar/all.hpp>
 #include <seqan3/alphabet/composite/all.hpp>
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/container/all.hpp>
+#include <seqan3/alphabet/exception.hpp>
 #include <seqan3/alphabet/gap/all.hpp>
+#include <seqan3/alphabet/hash.hpp>
 #include <seqan3/alphabet/mask/all.hpp>
 #include <seqan3/alphabet/nucleotide/all.hpp>
 #include <seqan3/alphabet/quality/all.hpp>
+#include <seqan3/alphabet/range/all.hpp>
 #include <seqan3/alphabet/structure/all.hpp>
+#include <seqan3/alphabet/views/all.hpp>

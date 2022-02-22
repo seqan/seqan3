@@ -1,3 +1,3 @@
-add_subdirectories()
+add_subdirectories ()
 
-seqan3_test(range_iterator_test.cpp)
+seqan3_test (range_iterator_test.cpp)

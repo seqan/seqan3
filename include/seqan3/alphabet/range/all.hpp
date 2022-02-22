@@ -9,13 +9,14 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  * \brief Meta-header for the \link alphabet_range Alphabet / Range submodule \endlink.
  */
-#pragma once
-
-#include <seqan3/alphabet/range/hash.hpp>
-#include <seqan3/alphabet/range/sequence.hpp>
 
 /*!\defgroup alphabet_range Range
  * \brief Alphabet related ranges.
  * \ingroup alphabet
  * \see alphabet
  */
+
+#pragma once
+
+#include <seqan3/alphabet/range/hash.hpp>
+#include <seqan3/alphabet/range/sequence.hpp>

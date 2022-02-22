@@ -1,7 +1,7 @@
 # Indexing and searching with SeqAn {#tutorial_index_search}
 
 <b>Learning Objective:</b><br>
-In this tutorial you will learn how to construct an index and conduct searches.
+In this tutorial, you will learn how to construct an index and conduct searches.
 
 \tutorial_head{Moderate,
               60 Minutes,
@@ -79,7 +79,7 @@ The indices can also be stored and loaded from disk by using cereal.
 
 Note that in contrast to the construction via a given `text`, the template cannot be deduced by the compiler when
 using the default constructor so you have to provide template arguments.
-<a name="assignment_create_index"></a>
+\anchor assignment_create_index
 \assignment{Assignment 1}
 You are given the text
 \code
@@ -99,7 +99,7 @@ The indices are identical!
 
 # Search
 
-Using an index, we can now conduct searches for a given query. In this part we will learn how to search exactly,
+Using an index, we can now conduct searches for a given query. In this part, we will learn how to search exactly,
 allow substitutions and indels, and how to configure what kind of results we want, e.g. all results vs. only
 the best result.
 
@@ -124,7 +124,7 @@ You can also pass multiple queries at the same time:
 The returned result is a lazy range over individual results, where each entry represents a specific location
 within the reference sequence for a particular query.
 
-<a name="assignment_exact_search"></a>
+\anchor assignment_exact_search
 \assignment{Assignment 2}
 Search for all exact occurrences of `GCT` in the text from [assignment 1](#assignment_create_index).<br>
 Print the number of hits and their positions within the reference sequence.<br>
@@ -162,7 +162,7 @@ Up until now, we have seen that we can call the search with the query sequences 
 can provide a third parameter to provide a user defined
 \ref search_configuration_section_introduction "search configuration".
 If we do not provide a user defined search configuration, the seqan3::search_cfg::default_configuration will be used,
-which triggers an exact search, finding all hits for a particular query. In the following we will see how we can
+which triggers an exact search, finding all hits for a particular query. In the following, we will see how we can
 change the behaviour of the search algorithm by providing a user defined search configuration.
 
 ### Max error configuration
@@ -198,8 +198,8 @@ This basically means that the error counts/rates do not have to sum up to the to
 
 \snippet doc/tutorial/search/search_small_snippets.cpp error_sum
 
-In the above example we allow 2 errors, which can be any combination of 2 substitutions, 1 insertion and 1 deletion.
-Defining only the total will set all error types to this value, i.e. if total error is set to an error count of 2, any
+In the above example, we allow 2 errors, which can be any combination of 2 substitutions, 1 insertion and 1 deletion.
+Defining only the total will set all error types to this value, i.e. if the total error is set to an error count of 2, any
 combination of 2 substitutions, 2 insertions and 2 deletions is allowed.
 On the other hand, when defining any of the error types but no total, the total will be set to the sum of all error
 types. For example, if we would not specify a total error of 1 in the first example above, the total error would be set
@@ -247,7 +247,7 @@ configurations:
 - seqan3::search_cfg::hit_strata: best+x strategy. Report all hits within the x-neighbourhood of the best hit.
 
 In contrast to the max error configuration, which allows a combination of the different error configuration objects, the hit
-configuration can only exists once within one search configuration. Trying to specify more than one hit configuration
+configuration can only exist once within one search configuration. Trying to specify more than one hit configuration
 in one search configuration will fail at compile time with a static assertion.
 Sometimes the program you write requires to choose between different hit configurations depending on a user given
 program argument at runtime. To handle such cases you can also use the dynamic configuration seqan3::search_cfg::hit.
@@ -310,13 +310,13 @@ There are 25 hits.
 ## Controlling the search output
 
 When calling the search algorithm, a lazy range over seqan3::search_result objects is returned. Each result object represents a
-single hit. This means that merely calling the seqan3::search algorithm will do nothing except configuring the search
+single hit. This means that merely calling the seqan3::search algorithm will do nothing except configure the search
 algorithm based on the given search configuration, query and index. Only when iterating over the lazy search result
 range, the actual search for every query is triggered. We have done this automatically in the previous examples when
 printing the result to the seqan3::debug_stream which then invokes a range based iteration over the returned range or
-by using the std::ranges::distance algorithm. However, in many cases we want to access the specific positions and
+by using the std::ranges::distance algorithm. However, in many cases, we want to access the specific positions and
 information stored in the seqan3::search_result object to proceed with our application. Since some information might be
-more compute intensive then others there is a way to control what the final search result object will contain.
+more compute-intensive than others, there is a way to control what the final search result object will contain.
 
 ### Output configuration
 
@@ -340,8 +340,8 @@ hit was found, you can use the seqan3::search_cfg::output_index_cursor configura
 
 ## One last exercise
 
-In the final example we will extend our previous search examples to also compute the alignment of the found hits and their
-respective reference infixes. To do so, we recommend to work through the \ref tutorial_pairwise_alignment tutorial
+In the final example, we will extend our previous search examples to also compute the alignment of the found hits and their
+respective reference infixes. To do so, we recommend working through the \ref tutorial_pairwise_alignment tutorial
 first.
 
 \assignment{Assignment 5}

@@ -4,12 +4,16 @@ on:
   push:
     branches:
       - master
-  # Enables a manual trigger.
+  # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
+concurrency:
+  group: docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 env:
-  CMAKE_VERSION: 3.8.2
-  DOXYGEN_VERSION: 1.9.1
+  CMAKE_VERSION: 3.10.3
+  DOXYGEN_VERSION: 1.9.3
   TZ: Europe/Berlin
 
 defaults:
@@ -21,6 +25,7 @@ jobs:
     name: Deploy Documentation
     runs-on: ubuntu-20.04
     timeout-minutes: 30
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

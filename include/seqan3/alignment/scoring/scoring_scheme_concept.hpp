@@ -58,9 +58,9 @@ namespace seqan3
 
 //!\cond
 template <typename t, typename alphabet_t, typename alphabet2_t = alphabet_t>
-SEQAN3_CONCEPT scoring_scheme_for = requires (t scheme,
-                                              alphabet_t const alph1,
-                                              alphabet2_t const alph2)
+concept scoring_scheme_for = requires (t scheme,
+                                       alphabet_t const alph1,
+                                       alphabet2_t const alph2)
 {
     requires alphabet<alphabet_t>;
     requires alphabet<alphabet2_t>;

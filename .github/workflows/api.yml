@@ -7,8 +7,12 @@ on:
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
+concurrency:
+  group: api-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
   ISSUE: 2746 # Issue number to use for reporting failures
@@ -22,6 +26,7 @@ jobs:
     name: API-Stability gcc${{ matrix.compiler }}
     runs-on: ubuntu-20.04
     timeout-minutes: 300
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +37,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: seqan3
+          fetch-depth: 2
           submodules: true
 
       - name: Checkout SeqAn2
@@ -40,6 +46,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure APT
         continue-on-error: true
@@ -58,7 +65,8 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/api_stability -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1"
+          cmake ../seqan3/test/api_stability -DCMAKE_BUILD_TYPE=Release \
+                                             -DCMAKE_CXX_FLAGS="-DSEQAN3_DISABLE_DEPRECATED_WARNINGS=1"
 
       - name: Build tests
         run: |
@@ -110,4 +118,3 @@ jobs:
         with:
           issue-number: ${{ env.ISSUE }}
           body: ${{ steps.comment-body.outputs.body }}
-

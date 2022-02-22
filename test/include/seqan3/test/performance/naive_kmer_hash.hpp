@@ -70,7 +70,7 @@ namespace seqan3::views
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of unsigned integral values where each value is the hash of the resp. k-mer.
  *                      See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * ### View properties
  *

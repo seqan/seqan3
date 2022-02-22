@@ -9,7 +9,7 @@
 #include <seqan3/argument_parser/all.hpp>                 // for argument_parser
 #include <seqan3/core/debug_stream.hpp>                   // for debug_stream
 #include <seqan3/io/sequence_file/all.hpp>                // for sequence_file_input and sequence_file_output
-#include <seqan3/std/filesystem>                          // for tmp_dir
+#include <filesystem>                                     // for tmp_dir
 
 int main()
 {
@@ -29,9 +29,9 @@ int main()
     seqan3::sequence_file_input file_in{filename};
     std::vector<seqan3::dna5_vector> sequences;
 
-    for (auto & [ seq, id, qual ] : file_in)
+    for (auto & record : file_in)
     {
-        sequences.push_back(seq);
+        sequences.push_back(record.sequence());
     }
 
     // Call a global pairwise alignment with edit distance and traceback.

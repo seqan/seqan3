@@ -19,15 +19,12 @@
 namespace seqan3::detail
 {
 
-/*!\addtogroup type_traits
- * \{
- */
-
 // ----------------------------------------------------------------------------
 // lazy
 // ----------------------------------------------------------------------------
 
 /*!\brief An empty type whose only purpose is to hold an uninstantiated template plus its arguments.
+ * \ingroup utility_type_traits
  * \tparam template_t The uninstantiated template.
  * \tparam spec_t     The arguments to template_t.
  */
@@ -40,6 +37,7 @@ struct lazy
 // ----------------------------------------------------------------------------
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types. Base template is the identity transformation.
+ * \ingroup utility_type_traits
  * \tparam t The type to operate on.
  * \implements seqan3::transformation_trait
  */
@@ -48,6 +46,7 @@ struct instantiate : std::type_identity<t>
 {};
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types.
+ * \ingroup utility_type_traits
  * \tparam template_t The uninstantiated template.
  * \tparam spec_t     The arguments to template_t.
  * \implements seqan3::transformation_trait
@@ -75,6 +74,7 @@ using instantiate_t = typename instantiate<t>::type;
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
  *        Base template is std::false_type.
+ * \ingroup utility_type_traits
  * \tparam t The type to operate on.
  * \implements seqan3::transformation_trait
  */
@@ -84,6 +84,7 @@ struct instantiate_if : std::false_type
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
  *        If condition is true and parameter is not lazy, the type identity.
+ * \ingroup utility_type_traits
  * \tparam t The type to operate on.
  * \implements seqan3::transformation_trait
  */
@@ -93,6 +94,7 @@ struct instantiate_if<t, true> : std::type_identity<t>
 
 /*!\brief A transformation trait that instantiates seqan3::lazy types given a boolean condition.
  *        If condition is true and parameter is lazy, the instantiated type.
+ * \ingroup utility_type_traits
  * \tparam template_t The uninstantiated template.
  * \tparam spec_t     The arguments to template_t.
  * \implements seqan3::transformation_trait
@@ -129,6 +131,7 @@ inline constexpr auto instantiate_if_v = instantiate_if_t<t, condition>::value;
 // ----------------------------------------------------------------------------
 
 /*!\brief Behaves like std::conditional, but instantiates types wrapped in seqan3::lazy.
+ * \ingroup utility_type_traits
  * \tparam decision   Whether to resolve to the first type or the second.
  * \tparam on_true_t  The return type in case `decision` is true.
  * \tparam on_false_t The return type in case `decision` is false.
@@ -138,7 +141,7 @@ inline constexpr auto instantiate_if_v = instantiate_if_t<t, condition>::value;
  *
  * ### Example
  *
- * \include test/snippet/utility/type_traits/lazy_conditional.cpp
+ * \include test/snippet/utility/type_traits/lazy_conditional.cpp complete
  */
 template <bool decision, typename on_true_t, typename on_false_t>
 struct lazy_conditional : instantiate<std::conditional_t<decision, on_true_t, on_false_t>>
@@ -155,7 +158,5 @@ template <bool decision, typename on_true_t, typename on_false_t>
     requires requires { typename instantiate_t<std::conditional_t<decision, on_true_t, on_false_t>>; }
 //!\endcond
 using lazy_conditional_t = instantiate_t<std::conditional_t<decision, on_true_t, on_false_t>>;
-
-//!\}
 
 } // namespace seqan3::detail

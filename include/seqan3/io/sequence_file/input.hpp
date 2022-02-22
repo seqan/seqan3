@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <variant>
@@ -25,7 +25,6 @@
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
@@ -54,6 +53,8 @@ namespace seqan3
 /*!\name Requirements for seqan3::sequence_file_input_traits
  * \brief You can expect these **member types** of all types that satisfy seqan3::sequence_file_input_traits.
  * \memberof seqan3::sequence_file_input_traits
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  *
  * \details
  *
@@ -94,7 +95,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_input_traits = requires (t v)
+concept sequence_file_input_traits = requires (t v)
 {
     requires writable_alphabet<typename t::sequence_alphabet>;
     requires writable_alphabet<typename t::sequence_legal_alphabet>;
@@ -125,6 +126,8 @@ SEQAN3_CONCEPT sequence_file_input_traits = requires (t v)
  * This example will make the file read into a smaller alphabet and a compressed container:
  *
  * \include test/snippet/io/sequence_file/sequence_file_input_trait_overwrite.cpp
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 struct sequence_file_input_default_traits_dna
 {
@@ -185,6 +188,7 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \ingroup io_sequence_file
  * \tparam traits_type          An auxiliary type that defines certain member types and constants, must satisfy
  *                              seqan3::sequence_file_input_traits.
+ *                              (Default: seqan3::sequence_file_input_default_traits_dna)
  * \tparam selected_field_ids   A seqan3::fields type with the list and order of desired record entries; all fields
  *                              must be in seqan3::sequence_file_input::field_ids.
  * \tparam valid_formats        A seqan3::type_list of the selectable formats (each must meet
@@ -192,109 +196,9 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  *
  * \details
  *
- * ### Introduction
+ * \include{doc} doc/fragments/sequence_file_input.md
  *
- * Sequence files are the most generic and common biological files. Well-known formats include
- * FastA and FastQ, but some may also be interested in treating SAM or BAM files as sequence
- * files, discarding the alignment.
- *
- * The Sequence file abstraction supports reading three different fields:
- *
- *   1. seqan3::field::seq
- *   2. seqan3::field::id
- *   3. seqan3::field::qual
- *
- * The first three fields are retrieved by default (and in that order). The last field may be selected to have
- * sequence and qualities directly stored in a more memory-efficient combined container. If you select the last
- * field you may not select seqan3::field::seq or seqan3::field::qual.
- *
- * ### Construction and specialisation
- *
- * This class comes with two constructors, one for construction from a file name and one for construction from
- * an existing stream and a known format. The first one automatically picks the format based on the extension
- * of the file name. The second can be used if you have a non-file stream, like std::cin or std::istringstream,
- * that you want to read from and/or if you cannot use file-extension based detection, but know that your input
- * file has a certain format.
- *
- * In most cases the template parameters are deduced completely automatically:
- *
- * \snippet test/snippet/io/sequence_file/sequence_file_input_template_deduction.cpp main
- * Reading from an std::istringstream:
- * \include test/snippet/io/sequence_file/sequence_file_input_istringstream.cpp
- *
- * Note that this is not the same as writing `sequence_file_input<>` (with angle brackets). In the latter case they are
- * explicitly set to their default values, in the former case
- * [automatic deduction](https://en.cppreference.com/w/cpp/language/class_template_argument_deduction) happens which
- * chooses different parameters depending on the constructor arguments. For opening from file, `sequence_file_input<>`
- * would have also worked, but for opening from stream it would not have.
- *
- * In some cases, you do need to specify the arguments, e.g. if you want to read amino acids:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_aminoacid.cpp
- *
- * You can define your own traits type to further customise the types used by and returned by this class, see
- * seqan3::sequence_file_input_default_traits_dna for more details. As mentioned above, specifying at least one
- * template parameter yourself means that you loose automatic deduction so if you want to read amino acids **and**
- * want to read from a string stream you need to give all types yourself:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_template_specification.cpp
- *
- * ### Reading record-wise
- *
- * You can iterate over this file record-wise:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_record_iter.cpp
- *
- * In the above example, `record` has the type \ref record_type which is seqan3::sequence_record.
- *
- * *Note:* It is important to write `auto &` and not just `auto`, otherwise you will copy the record on every iteration.
- * Since the buffer gets "refilled" on every iteration, you can also move the data out of the record if you want
- * to store it somewhere without copying:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_auto_ref.cpp
- *
- * ### Reading record-wise (decomposed records)
- *
- * Instead of using member accessor on the record, you can also use
- * [structured bindings](https://en.cppreference.com/w/cpp/language/structured_binding)
- * to decompose the record into its elements:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_decomposed.cpp
- *
- * In this case you immediately get the two elements of the tuple: `sequence` of \ref sequence_type and `id` of
- * \ref id_type. **But beware: with structured bindings you do need to get the order of elements correctly!**
- *
- * ### Reading record-wise (custom fields)
- *
- * If you want to skip specific fields from the record you can pass a non-empty fields trait object to the
- * sequence_file_input constructor to select the fields that should be read from the input. For example to choose a
- * combined field for SEQ and QUAL (see above). Or to never actually read the QUAL, if you don't need it.
- * The following snippets demonstrate the usage of such a fields trait object.
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_custom_fields.cpp
- *
- * When reading a file, all fields not present in the file (but requested implicitly or via the `selected_field_ids`
- * parameter) are ignored.
- *
- * ### Views on files
- *
- * Since SeqAn files are ranges, you can also create views over files. A useful example is to filter the records
- * based on certain criteria, e.g. minimum length of the sequence field:
- *
- * \include test/snippet/io/sequence_file/sequence_file_input_file_view.cpp
- *
- * ### End of file
- *
- * You can check whether a file is at end by comparing begin() and end() (if they are the same, the file is at end).
- *
- * ### Formats
- *
- * We currently support reading the following formats:
- *   * seqan3::format_fasta
- *   * seqan3::format_fastq
- *   * seqan3::format_embl
- *   * seqan3::format_genbank
- *   * seqan3::format_sam
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 
 template <
@@ -591,6 +495,8 @@ protected:
     record_type record_buffer;
     //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
     std::vector<char> stream_buffer{std::vector<char>(1'000'000)};
+    //!\brief Buffer for the previous record position.
+    std::streampos position_buffer{};
     //!\}
 
     /*!\name Stream / file access
@@ -630,7 +536,7 @@ private:
             return;
         }
 
-        format->read_sequence_record(*secondary_stream, record_buffer, options);
+        format->read_sequence_record(*secondary_stream, record_buffer, position_buffer, options);
     }
 
     /*!\brief An abstract base class to store the selected input format.
@@ -660,6 +566,7 @@ private:
          *
          * \param[in, out] instream The input stream to extract the next record from.
          * \param[in, out] record_buffer The record buffer to fill.
+         * \param[in, out] position_buffer The buffer to store the position of the current record.
          * \param[in] options User specific format options set from outside.
          *
          * \details
@@ -668,6 +575,7 @@ private:
          */
         virtual void read_sequence_record(std::istream & instream,
                                           record_type & record_buffer,
+                                          std::streampos & position_buffer,
                                           sequence_file_input_options_type const & options) = 0;
     };
 
@@ -699,12 +607,14 @@ private:
         //!\copydoc sequence_format_base::read_sequence_record
         void read_sequence_record(std::istream & instream,
                                   record_type & record_buffer,
+                                  std::streampos & position_buffer,
                                   sequence_file_input_options_type const & options) override
         {
             // read new record
             {
                 _format.read_sequence_record(instream,
                                              options,
+                                             position_buffer,
                                              detail::get_or_ignore<field::seq>(record_buffer),
                                              detail::get_or_ignore<field::id>(record_buffer),
                                              detail::get_or_ignore<field::qual>(record_buffer));

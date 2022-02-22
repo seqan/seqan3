@@ -1111,7 +1111,10 @@ public:
     }
 };
 
-template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
+template <std::ranges::viewable_range database_t,
+          std::ranges::viewable_range query_t,
+          typename align_config_t,
+          typename traits_t>
 bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::small_patterns()
 {
     bool abort_computation = false;
@@ -1142,7 +1145,10 @@ bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::smal
     return false;
 }
 
-template <typename database_t, typename query_t, typename align_config_t, typename traits_t>
+template <std::ranges::viewable_range database_t,
+          std::ranges::viewable_range query_t,
+          typename align_config_t,
+          typename traits_t>
 bool edit_distance_unbanded<database_t, query_t, align_config_t, traits_t>::large_patterns()
 {
     bool abort_computation = false;

@@ -12,14 +12,14 @@
 
 #pragma once
 
+#include <seqan3/std/algorithm>
+#include <filesystem>
+#include <seqan3/std/iterator>
 #include <variant>
 
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/filesystem>
-#include <seqan3/std/iterator>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 
 namespace seqan3::detail
 {
@@ -124,7 +124,8 @@ inline constexpr bool has_type_valid_formats<query_t> = true;
 
 /*!\brief Returns a list of valid file extensions.
  * \ingroup io
- * \tparam formats_t The list of formats to parse; seqan3::detail::all_formats_have_file_extensions must return `true`.
+ * \tparam formats_t The list of formats to parse, i.e. a seqan3::type_list;
+ *                   seqan3::detail::all_formats_have_file_extensions must return `true`.
  * \returns `std::vector<std::string>` with all valid file extensions specified by `valid_formats`.
  *
  * \details

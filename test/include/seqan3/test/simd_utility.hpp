@@ -20,7 +20,7 @@
 /*!\brief #SIMD_EQ checks if the sizes and the content of two given
  * seqan3::simd::simd_type variables matches. It is like  #EXPECT_EQ, but for seqan3::simd::simd_type
  * types.
- * \ingroup simd
+ * \ingroup utility_simd
  * \param[in] left_simd_argument Left hand side operand of type seqan3::simd::simd_type.
  * \param[in] right_simd_argument Right hand side operand of type seqan3::simd::simd_type.
  *

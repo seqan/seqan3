@@ -191,11 +191,11 @@ constexpr auto align_pairwise(sequence_t && sequences,
                                                            execution_handler_t>;
 
     // Select the execution handler for the alignment configuration.
-    auto select_execution_handler = [&] ()
+    auto select_execution_handler = [parallel = complete_config.get_or(align_cfg::parallel{})] ()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
         {
-            auto thread_count = get<align_cfg::parallel>(complete_config).thread_count;
+            auto thread_count = parallel.thread_count;
             if (!thread_count)
                 throw std::runtime_error{"You must configure the number of threads in seqan3::align_cfg::parallel."};
 

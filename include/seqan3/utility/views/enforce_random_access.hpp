@@ -29,7 +29,7 @@ namespace seqan3::detail
 
 /*!\brief View to force random access range iterator for seqan3::pseudo_random_access_range.
  * \tparam urng_t The underlying range type; must model std::ranges::view and seqan3::pseudo_random_access_range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -296,17 +296,12 @@ private:
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief            A view adaptor that converts a pseudo random access range to a std::ranges::random_access_range.
  * \tparam urng_t    The type of the range being processed. See below for requirements. [template parameter is
  *                   omitted in pipe notation]
  * \param[in] urange The range being processed. [parameter is omitted in pipe notation]
  * \returns          A std::ranges::random_access_range over the given range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -370,5 +365,5 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.1.}
  */
 inline constexpr auto enforce_random_access = detail::pseudo_random_access_fn{};
-//!\}
+
 } // namespace seqan3::views

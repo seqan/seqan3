@@ -19,7 +19,7 @@
 namespace seqan3
 {
 /*!\interface seqan3::const_iterable_range <>
- * \ingroup range
+ * \ingroup utility_range
  * \extends std::input_range
  * \brief Specifies requirements of an input range type for which the `const` version of that type satisfies the
  * same strength input range concept as the non-const version.
@@ -41,7 +41,7 @@ namespace seqan3
  */
 //!\cond
 template <typename type>
-SEQAN3_CONCEPT const_iterable_range =
+concept const_iterable_range =
     std::ranges::input_range<std::remove_const_t<type>> &&
     std::ranges::input_range<type const> &&
     (std::ranges::forward_range<std::remove_const_t<type>>       == std::ranges::forward_range<type const>) &&
@@ -50,7 +50,7 @@ SEQAN3_CONCEPT const_iterable_range =
 //!\endcond
 
 /*!\interface seqan3::pseudo_random_access_iterator <>
- * \ingroup range
+ * \ingroup utility_range
  * \extends   std::forward_iterator
  * \brief     This concept checks if an iterator type models pseudo random access.
  *
@@ -76,14 +76,13 @@ SEQAN3_CONCEPT const_iterable_range =
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  *
  * \noapi{Exposition only.}
  */
 //!\cond
 template <typename iterator_t>
-SEQAN3_CONCEPT pseudo_random_access_iterator =
+concept pseudo_random_access_iterator =
     std::forward_iterator<iterator_t> &&
     !std::is_base_of_v<std::random_access_iterator_tag,
                        typename std::iterator_traits<iterator_t>::iterator_category> &&
@@ -91,19 +90,19 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
     std::sized_sentinel_for<iterator_t, iterator_t> &&
     requires (iterator_t i, iterator_t const j, std::iter_difference_t<iterator_t> const n)
 {
-    std::same_as<decltype( i += n ), iterator_t &>;
-    std::same_as<decltype( j +  n ), iterator_t>;
-    std::same_as<decltype( n +  j ), iterator_t>;
-    std::same_as<decltype(   --i  ), iterator_t &>;
-    std::same_as<decltype(   i--  ), iterator_t>;
-    std::same_as<decltype( i -= n ), iterator_t &>;
-    std::same_as<decltype( j -  n ), iterator_t>;
-    std::same_as<decltype(  j[n]  ), std::iter_reference_t<iterator_t>>;
+    requires std::same_as<decltype( i += n ), iterator_t &>;
+    requires std::same_as<decltype( j +  n ), iterator_t>;
+    requires std::same_as<decltype( n +  j ), iterator_t>;
+    requires std::same_as<decltype(   --i  ), iterator_t &>;
+    requires std::same_as<decltype(   i--  ), iterator_t>;
+    requires std::same_as<decltype( i -= n ), iterator_t &>;
+    requires std::same_as<decltype( j -  n ), iterator_t>;
+    requires std::same_as<decltype(  j[n]  ), std::iter_reference_t<iterator_t>>;
 };
 //!\endcond
 
 /*!\interface seqan3::pseudo_random_access_range <>
- * \ingroup range
+ * \ingroup utility_range
  * \extends   std::ranges::forward_range
  * \brief     This concept checks if a type models a pseudo random access range.
  *
@@ -113,14 +112,13 @@ SEQAN3_CONCEPT pseudo_random_access_iterator =
  *
  * ### Concepts and doxygen
  *
- * The requirements for this concept are given as related functions and type traits.
  * Types that model this concept are shown as "implementing this interface".
  *
  * \noapi{Exposition only.}
  */
 //!\cond
 template <typename rng_t>
-SEQAN3_CONCEPT pseudo_random_access_range =
+concept pseudo_random_access_range =
     std::ranges::forward_range<rng_t> &&
     pseudo_random_access_iterator<std::ranges::iterator_t<rng_t>>;
 //!\endcond

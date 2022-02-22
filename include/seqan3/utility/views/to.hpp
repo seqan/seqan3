@@ -22,7 +22,7 @@ namespace seqan3::views
 {
 
 /*!\brief A to view
- * \ingroup views
+ * \ingroup utility_views
  * \details
  * \noapi{This is currently range-v3's to implementation.}
  */

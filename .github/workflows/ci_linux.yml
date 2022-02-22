@@ -8,9 +8,15 @@ on:
       # Push events to branches matching refs/heads/release*
       - 'release*'
   pull_request:
+  # Enables a manual trigger, may run on any branch
+  workflow_dispatch:
+
+concurrency:
+  group: linux-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
@@ -23,58 +29,35 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-20.04
     timeout-minutes: 120
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: true
       matrix:
         include:
-          - name: "Coverage gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
+          - name: "Coverage gcc11"
+            cxx: "g++-11"
+            cc: "gcc-11"
             build: coverage
             build_type: Debug
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc11"
             cxx: "g++-11"
             cc: "gcc-11"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc10"
             cxx: "g++-10"
             cc: "gcc-10"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
 
           - name: "Unit gcc9 (c++2a)"
             cxx: "g++-9"
             cc: "gcc-9"
             build: unit
             build_type: Release
-            build_threads: 2
-            test_threads: 2
             cxx_flags: "-std=c++2a"
-
-          - name: "Unit gcc8"
-            cxx: "g++-8"
-            cc: "gcc-8"
-            build: unit
-            build_type: Release
-            build_threads: 2
-            test_threads: 2
-
-          - name: "Unit gcc7"
-            cxx: "g++-7"
-            cc: "gcc-7"
-            build: unit
-            build_type: Release
-            build_threads: 2
-            test_threads: 2
 
     steps:
       - name: Checkout SeqAn3
@@ -90,6 +73,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure APT
         continue-on-error: true
@@ -99,16 +83,20 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_cmake.sh
 
       - name: Install ccache
-        run: sudo apt-get install --yes ccache
+        run: |
+          conda install --yes --override-channels --channel conda-forge ccache
+          sudo ln -s $CONDA/bin/ccache /usr/bin/ccache
 
       - name: Install compiler ${{ matrix.cxx }}
         run: sudo apt-get install --yes ${{ matrix.cxx }}
 
-      - name: Install lcov
+      - name: Install gcovr
         if: matrix.build == 'coverage'
+        env:
+          CC: ${{ matrix.cc }}
         run: |
-          sudo apt-get install --yes lcov
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-7 100
+          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
+          pip install gcovr
 
       - name: Load ccache
         uses: actions/cache@v2
@@ -133,31 +121,37 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          make gtest_build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
+                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
+                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01 \
+                                                   -DSEQAN3_COVERAGE_PARALLEL_LEVEL=2
+          make -j2 gtest_build
 
       - name: Build tests
         env:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_COMPRESSLEVEL: 12
+          CCACHE_MAXSIZE: ${{ matrix.build == 'coverage' && '525M' || '75M' }}
+          CCACHE_IGNOREOPTIONS: "-fprofile-abs-path"
+          GCOV: ${{ github.workspace }}/seqan3/.github/workflows/scripts/gcov.sh
         run: |
-          ccache -p || true
+          ccache -z
           cd seqan3-build
-          make -k -j${{ matrix.build_threads }}
-          ccache -s || true
+          make -k -j2
+          ccache -sv
 
       - name: Run tests
         if: matrix.build != 'coverage'
         run: |
           cd seqan3-build
-          ctest . -j${{ matrix.test_threads }} --output-on-failure
+          ctest . -j2 --output-on-failure
 
       - name: Submit coverage build
         if: matrix.build == 'coverage'
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
-          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage
+          files: ${{ github.workspace }}/seqan3-build/seqan3_coverage.xml
           root_dir: ${{ github.workspace }}/seqan3

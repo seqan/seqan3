@@ -22,7 +22,7 @@ namespace seqan3
 // ----------------------------------------------------------------------------
 
 /*!\brief Type that contains multiple types.
- * \ingroup type_list
+ * \ingroup utility_type_list
  */
 template <typename ...types>
 struct type_list

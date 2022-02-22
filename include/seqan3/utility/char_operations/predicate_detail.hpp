@@ -30,7 +30,7 @@ namespace seqan3::detail
 // ----------------------------------------------------------------------------
 
 /*!\brief A data structure that implements a subset of std::bitset as constexpr.
- * \ingroup stream
+ * \ingroup utility_char_operations
  * \tparam N                The number of bits.
  */
 template <size_t N>
@@ -67,7 +67,7 @@ public:
 // ----------------------------------------------------------------------------
 
 /*!\brief Defines a compound std::string consisting of all given conditions separated by the operator-name `op`.
- * \ingroup stream
+ * \ingroup utility_char_operations
  *
  * \tparam op               non-type template parameter specifying the separator character, e.g. '|'.
  * \tparam condition_head_t The first condition type in the message. Ensures that there is at least one type.
@@ -94,7 +94,7 @@ struct char_predicate_base;
 
 /*!\interface seqan3::detail::char_predicate <>
  * \brief An internal concept to check if an object fulfills the requirements of a seqan3::detail::char_predicate.
- * \ingroup stream
+ * \ingroup utility_char_operations
  *
  * \details
  *
@@ -103,7 +103,7 @@ struct char_predicate_base;
  */
 //!\cond
 template <typename condition_t>
-SEQAN3_CONCEPT char_predicate = requires
+concept char_predicate = requires
 {
     requires std::predicate<std::remove_reference_t<condition_t>, char>;
     requires std::is_base_of_v<char_predicate_base<std::remove_cvref_t<condition_t>>,
@@ -152,7 +152,7 @@ struct char_predicate_negator;
 
 /*!\brief An abstract [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) base class for
  *        parse conditions to add logical disjunction and negation operator.
- * \ingroup stream
+ * \ingroup utility_char_operations
  * \tparam derived_t The parse condition type to be extended with the logical operators.
  *                   Must model seqan3::detail::char_predicate.
  */
@@ -225,7 +225,7 @@ struct char_predicate_base
  * \implements seqan3::detail::char_predicate
  * \tparam condition_ts Template parameter pack over all parse condition types. Must contain at least 2 template parameters.
  *                      Must model seqan3::detail::char_predicate.
- * \ingroup stream
+ * \ingroup utility_char_operations
  */
 template <char_predicate... condition_ts>
 //!\cond
@@ -249,7 +249,7 @@ struct char_predicate_disjunction : public char_predicate_base<char_predicate_di
  * \implements seqan3::detail::char_predicate
  * \tparam condition_t Template parameter to apply the not-operator for.
  *                     Must model seqan3::detail::char_predicate.
- * \ingroup stream
+ * \ingroup utility_char_operations
  */
 template <char_predicate condition_t>
 struct char_predicate_negator : public char_predicate_base<char_predicate_negator<condition_t>>
@@ -271,7 +271,7 @@ struct char_predicate_negator : public char_predicate_base<char_predicate_negato
 // ----------------------------------------------------------------------------
 
 /*!\brief Parse condition that checks if a given value is in the range of `rng_beg` and `interval_last`.
- * \ingroup stream
+ * \ingroup utility_char_operations
  * \implements seqan3::detail::char_predicate
  * \tparam interval_first non-type template parameter denoting the begin of the allowed range.
  *                        Must be less than or equal to `interval_last`.
@@ -313,7 +313,7 @@ struct is_in_interval_type : public char_predicate_base<is_in_interval_type<inte
 // ----------------------------------------------------------------------------
 
 /*!\brief Parse condition that checks if a given value is equal to `char_v`.
- * \ingroup stream
+ * \ingroup utility_char_operations
  * \implements seqan3::detail::char_predicate
  * \tparam char_v non-type template parameter with the value that should be checked against.
  */

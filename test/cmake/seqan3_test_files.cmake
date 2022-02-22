@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 # Finds all files relative to the `test_base_path_` which satisfy the given file pattern.
 #
 # Example:
@@ -20,15 +22,16 @@
 #   ....
 macro (seqan3_test_files VAR test_base_path_ extension_wildcards)
     # test_base_path is /home/.../seqan3/test/
-    get_filename_component(test_base_path "${test_base_path_}" ABSOLUTE)
-    file (RELATIVE_PATH test_base_path_relative "${CMAKE_SOURCE_DIR}" "${test_base_path}")
+    get_filename_component (test_base_path "${test_base_path_}" ABSOLUTE)
+    file (RELATIVE_PATH test_base_path_relative "${CMAKE_CURRENT_SOURCE_DIR}" "${test_base_path}")
     # ./ is a hack to deal with empty test_base_path_relative
     set (test_base_path_relative "./${test_base_path_relative}")
     # collect all cpp files
     set (${VAR} "")
     foreach (extension_wildcard ${extension_wildcards})
-        file (GLOB_RECURSE test_files RELATIVE "${test_base_path}"
-        "${test_base_path_relative}/${extension_wildcard}")
+        file (GLOB_RECURSE test_files
+              RELATIVE "${test_base_path}"
+              "${test_base_path_relative}/${extension_wildcard}")
         list (APPEND ${VAR} ${test_files})
     endforeach ()
 

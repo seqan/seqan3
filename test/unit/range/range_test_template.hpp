@@ -18,10 +18,14 @@
 
 struct range_test_fixture
 {
-    // The value type the std::ranges::range_value_t accepts.
+    // The value type the std::ranges::range_value_t<range> accepts.
     using range_value_t = void;
-    // The value type the std::ranges::range_reference_t accepts.
+    // The value type the std::ranges::range_reference_t<range> accepts.
     using range_reference_t = void;
+    // The value type the std::ranges::range_value_t<range const> accepts.
+    using range_const_value_t = void;
+    // The value type the std::ranges::range_reference_t<range const> accepts.
+    using range_const_reference_t = void;
 
     // Whether the range is a std::ranges::input_range
     static constexpr bool input_range = false;
@@ -50,8 +54,10 @@ struct range_test_fixture
     // Whether the range is a seqan3::const_iterable_range
     static constexpr bool const_iterable_range = false;
 
-    // Whether the range has a size() member (const version will be checked if range is const_iterable_range).
+    // Whether the range has a size() member.
     static constexpr bool size_member = false;
+    // Whether the const range has a size() member.
+    static constexpr bool const_size_member = false;
     // Whether the range has a operator[]() member (const version will be checked if range is const_iterable_range).
     static constexpr bool subscript_member = false;
 
@@ -112,8 +118,14 @@ struct iterator_fixture<range_test_fixture_t> : public ::testing::Test
                                                        std::forward<expected_iter_value_t>(expected_iter_value));
     }
 
+    virtual void SetUp() override
+    {
+        // re-initialise iterator_fixture after each TestCase in case this is an input iterator
+        test_range = range_test_fixture_t{}.range();
+    }
+
     using test_range_t = decltype(range_test_fixture_t{}.range());
-    test_range_t test_range = range_test_fixture_t{}.range();
+    test_range_t test_range;
 
     using expected_range_t = decltype(range_test_fixture_t{}.expected_range());
     expected_range_t expected_range = range_test_fixture_t{}.expected_range();
@@ -124,13 +136,13 @@ struct iterator_fixture<range_test_fixture_t> : public ::testing::Test
 TYPED_TEST_SUITE_P(range_test);
 
 template <typename range_t>
-SEQAN3_CONCEPT has_size_member = requires(range_t range)
+concept has_size_member = requires(range_t range)
 {
     { range.size() };
 };
 
 template <typename range_t>
-SEQAN3_CONCEPT has_subscript_member = requires(range_t range)
+concept has_subscript_member = requires(range_t range)
 {
     { range[0] };
 };
@@ -187,7 +199,7 @@ TYPED_TEST_P(range_test, concept_check)
 
     // member properties
     EXPECT_EQ(TestFixture::size_member, has_size_member<range_t>);
-    EXPECT_EQ(TestFixture::size_member && TestFixture::const_iterable_range, has_size_member<range_t const>);
+    EXPECT_EQ(TestFixture::const_size_member, has_size_member<range_t const>);
 
     EXPECT_EQ(TestFixture::subscript_member, has_subscript_member<range_t>);
     EXPECT_EQ(TestFixture::subscript_member && TestFixture::const_iterable_range, has_subscript_member<range_t const>);
@@ -197,8 +209,8 @@ TYPED_TEST_P(range_test, concept_check)
 
     if constexpr(TestFixture::const_iterable_range)
     {
-        EXPECT_SAME_TYPE(std::ranges::range_value_t<range_t const>, typename TestFixture::range_value_t);
-        EXPECT_SAME_TYPE(std::ranges::range_reference_t<range_t const>, typename TestFixture::range_reference_t);
+        EXPECT_SAME_TYPE(std::ranges::range_value_t<range_t const>, typename TestFixture::range_const_value_t);
+        EXPECT_SAME_TYPE(std::ranges::range_reference_t<range_t const>, typename TestFixture::range_const_reference_t);
     }
 }
 

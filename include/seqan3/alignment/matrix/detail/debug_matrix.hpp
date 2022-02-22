@@ -48,14 +48,14 @@ namespace seqan3::detail
  * \include test/snippet/alignment/matrix/detail/debug_matrix_score.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/detail/debug_matrix_score.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_score.err
  *
  * # Trace matrix example
  *
  * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.cpp
  *
  * ### Output
- * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.out
+ * \include test/snippet/alignment/matrix/detail/debug_matrix_trace.err
  */
 template <matrix matrix_t, typename first_sequence_t = std::nullopt_t, typename second_sequence_t = std::nullopt_t>
 class debug_matrix

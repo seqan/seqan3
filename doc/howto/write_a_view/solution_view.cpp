@@ -178,6 +178,7 @@ int main()
     // now you can use operator[] on the iterator
     for (size_t i = 0; i < 7; ++i)
         std::cout << seqan3::to_char(it[i]) << ' ';
+    std::cout << '\n';
 //![main_it]
 
 //![main_range]

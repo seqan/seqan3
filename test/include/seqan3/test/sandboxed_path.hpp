@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/algorithm>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <numeric>
 
 #include <seqan3/core/platform.hpp>
@@ -113,41 +113,6 @@ public:
     //!\}
 
 private:
-#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
-    /*!\brief Splits a string into string_views
-     * \param str String that is going to be split
-     * \param delim Delimiter at which point the string should be split.
-     */
-    static std::vector<std::string_view> split_string(std::string const & str, char const delim)
-    {
-        std::vector<std::string_view> result{};
-        // If string is empty, nothing to split
-        if (str.empty())
-        {
-            return result;
-        }
-
-        size_t current_pos = str.find(delim, 0);
-
-        // If string doesn't contain any `delim` return view to the string
-        if (current_pos == std::string::npos)
-        {
-            result.emplace_back(str);
-            return result;
-        }
-
-        while (current_pos < str.size())
-        {
-            auto end_pos = std::min(str.find(delim, current_pos + 1), str.size());
-            auto begin   = str.data() + current_pos + 1;
-            auto length  = end_pos - current_pos - 1;
-            result.emplace_back(begin, length);
-            current_pos = end_pos;
-        }
-        return result;
-    }
-#endif
-
     /*!\brief Normalises the path.
      *
      * Normalisation means that the path is converted to an absolute path and
@@ -157,73 +122,8 @@ private:
      */
     void normalise()
     {
-#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
-        // convert into an absolute path
-        auto const path_string = [this]()
-        {
-            if (is_relative())
-            {
-                return (sandbox_directory / *this).string();
-            }
-            else
-            {
-                return string();
-            }
-        }();
-        // Manually collapse any "." and "..". This is being done by
-        // splitting the string at every the '/' and looking at every path element.
-        std::vector<std::string> path_parts;
-        for (auto word : split_string(path_string, '/'))
-        {
-            // If the path element is "." or empty ("") it means
-            // that we are in a situation like "abc/./xyz" or abc//xyz"
-            // In this case we ignore the path element.
-            if (word == "." || word == "")
-            {
-                // Special case, add empty path element to force a trailing '/' in the result
-                if (!path_parts.empty() and path_parts.back() != "")
-                {
-                    path_parts.emplace_back("");
-                }
-            }
-            // If the path element is ".." we have to remove the last added
-            // path element.
-            else if (word == "..")
-            {
-                if (path_parts.empty())
-                {
-                    throw std::filesystem::filesystem_error("Path can not be normalised",
-                                                            *this,
-                                                            std::make_error_code(std::errc::invalid_argument));
-                }
-                path_parts.pop_back();
-            }
-            else
-            {
-                // Special case, ignore empty path elements
-                if (!path_parts.empty() and path_parts.back() == "")
-                {
-                    path_parts.back() = word;
-                }
-                else
-                {
-                    path_parts.emplace_back(word);
-                }
-            }
-        }
-
-        // Joining the path elements to a path.
-        std::string normalised_path;
-        for (auto const& p : path_parts)
-        {
-            normalised_path += '/' + p;
-        }
-
-        std::filesystem::path::operator=(normalised_path);
-#else
         auto normalised_path = (sandbox_directory / *this).lexically_normal();
         std::filesystem::path::operator=(normalised_path);
-#endif
     }
 
     /*!\brief Checks the invariant.
@@ -251,32 +151,6 @@ private:
                                                     std::make_error_code(std::errc::invalid_argument));
         }
 
-#if SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
-        auto current_dir = string();
-        auto sandbox_dir = sandbox_directory.string();
-
-        // add trailing '/'
-        if (sandbox_dir.back() != '/')
-        {
-            sandbox_dir += '/';
-        }
-        if (current_dir.back() != '/')
-        {
-            current_dir += '/';
-        }
-
-
-        // Checks sandbox_dir is a prefix of current_dir
-        bool starts_with_sandbox_dir = (current_dir.rfind(sandbox_dir, 0) == 0);
-        if (!starts_with_sandbox_dir)
-        {
-            throw std::filesystem::filesystem_error("Leaving temporary directory is not allowed!",
-                                                    sandbox_directory,
-                                                    *this,
-                                                    std::make_error_code(std::errc::invalid_argument));
-        }
-
-#else
         auto rel_path = lexically_relative(sandbox_directory);
 
         // Leaving the temporary directory is not allowed.
@@ -287,7 +161,6 @@ private:
                                                     *this,
                                                     std::make_error_code(std::errc::invalid_argument));
         }
-#endif
     }
 
 public:

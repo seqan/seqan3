@@ -13,5 +13,5 @@ int main()
     my_stream << "ACGT"_dna5;
 
     o.flush();
-    seqan3::debug_stream << o.str(); // prints the string stream's buffer: "ACGT"
+    seqan3::debug_stream << o.str() << '\n'; // prints the string stream's buffer: "ACGT"
 }

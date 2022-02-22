@@ -10,17 +10,6 @@
  * \brief Meta-header for the \link alphabet_nucleotide Alphabet / Nucleotide submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/nucleotide/dna3bs.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
-
 /*!\defgroup alphabet_nucleotide Nucleotide
  * \brief Provides the different DNA and RNA alphabet types.
  * \ingroup alphabet
@@ -148,3 +137,16 @@
  * individual complements.
  *
  */
+
+#pragma once
+
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna16sam.hpp>
+#include <seqan3/alphabet/nucleotide/dna3bs.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/nucleotide_base.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>

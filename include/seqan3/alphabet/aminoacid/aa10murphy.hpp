@@ -178,7 +178,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::aa10murphy.
+/*!\brief Alias for a std::vector of seqan3::aa10murphy.
  * \relates aa10murphy
  *
  * \stableapi{Since version 3.1.}

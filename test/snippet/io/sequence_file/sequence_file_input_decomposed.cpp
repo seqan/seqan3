@@ -1,11 +1,11 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
 
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 ACGT
-> Test2
+>Test2
 AGGCTGA
-> Test3
+>Test3
 GGAGTATAATATATATATATATAT)";
 
 int main()
@@ -16,6 +16,6 @@ int main()
     {
         seqan3::debug_stream << "ID: "        << id       << '\n';
         seqan3::debug_stream << "SEQ: "       << sequence << '\n';
-        seqan3::debug_stream << "EMPTY QUAL." << quality  << '\n'; // quality is empty for FastA files
+        seqan3::debug_stream << "EMPTY QUAL." << quality  << '\n'; // quality is empty for FASTA files
     }
 }

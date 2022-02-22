@@ -47,7 +47,7 @@ namespace seqan3
 /*!\brief       The Vienna format (dot bracket notation) for RNA sequences with secondary structure.
  * \implements  seqan3::structure_file_input_format
  * \implements  seqan3::structure_file_output_format
- * \ingroup     structure_file
+ * \ingroup     io_structure_file
  *
  * \details
  *
@@ -56,7 +56,7 @@ namespace seqan3
  * Dot Bracket or Vienna Notation is widely used for secondary structure annotation. Is is a very simple format,
  * containing one or more sequences. Each sequence must appear as a single line in the file.
  * A sequence may be preceded by a special line starting with the '>' character followed by a sequence name
- * (like FastA). After each sequence line there is usually a line containing
+ * (like FASTA). After each sequence line there is usually a line containing
  * secondary structure, using brackets to denote interacting nucleotides or amino acids, and dots for unpaired sites.
  * The length of the struture must equal the length of the sequence.
  * Optionally, the structure may be followed by a space character and the minimum free energy value enclosed
@@ -79,6 +79,8 @@ namespace seqan3
  * When reading the ID-line the identifier (`>`) and any blank characters before the actual ID are
  * stripped. Each field is read/written as a single line (except ENERGY, which goes right after the structure).
  * Numbers and spaces within the sequence are simply ignored, but not within the structure.
+ *
+ * \remark For a complete overview, take a look at \ref io_structure_file
  */
 class format_vienna
 {

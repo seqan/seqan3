@@ -56,12 +56,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    kmer_hash_view()                                       = default; //!< Defaulted.
-    kmer_hash_view(kmer_hash_view const & rhs)             = default; //!< Defaulted.
-    kmer_hash_view(kmer_hash_view && rhs)                  = default; //!< Defaulted.
+    kmer_hash_view() requires std::default_initializable<urng_t> = default; //!< Defaulted.
+    kmer_hash_view(kmer_hash_view const & rhs) = default; //!< Defaulted.
+    kmer_hash_view(kmer_hash_view && rhs) = default; //!< Defaulted.
     kmer_hash_view & operator=(kmer_hash_view const & rhs) = default; //!< Defaulted.
-    kmer_hash_view & operator=(kmer_hash_view && rhs)      = default; //!< Defaulted.
-    ~kmer_hash_view()                                      = default; //!< Defaulted.
+    kmer_hash_view & operator=(kmer_hash_view && rhs) = default; //!< Defaulted.
+    ~kmer_hash_view() = default; //!< Defaulted.
 
     /*!\brief Construct from a view and a given shape.
      * \throws std::invalid_argument if hashes resulting from the shape/alphabet combination cannot be represented in
@@ -526,7 +526,7 @@ public:
      */
     friend difference_type operator-(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
     //!\cond
-        requires std::random_access_iterator<it_t>
+        requires std::sized_sentinel_for<it_t, it_t>
     //!\endcond
     {
         return static_cast<difference_type>(lhs.text_right - rhs.text_right);

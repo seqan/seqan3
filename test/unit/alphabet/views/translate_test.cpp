@@ -34,7 +34,10 @@ template <seqan3::nucleotide_alphabet nucleotide_alphabet_t, seqan3::translation
 struct translate_single_view_test_fixture : public range_test_fixture
 {
     using range_value_t = seqan3::aa27;
-    using range_reference_t = seqan3::aa27;
+    using range_reference_t = range_value_t;
+
+    using range_const_value_t = range_value_t;
+    using range_const_reference_t = range_value_t;
 
     static constexpr bool input_range = true;
     static constexpr bool forward_range = true;
@@ -49,6 +52,7 @@ struct translate_single_view_test_fixture : public range_test_fixture
     static constexpr bool sized_range = true;
     static constexpr bool const_iterable_range = true;
     static constexpr bool size_member = true;
+    static constexpr bool const_size_member = true;
     static constexpr bool subscript_member = true;
 
     seqan3::aa27_vector expected_range()
@@ -102,6 +106,9 @@ struct translate_view_test_fixture : public range_test_fixture
     using range_value_t = decltype(seqan3::views::translate_single(_underlying_range_t{}, translation_frames));
     using range_reference_t = range_value_t;
 
+    using range_const_value_t = range_value_t;
+    using range_const_reference_t = range_value_t;
+
     static constexpr bool input_range = true;
     static constexpr bool forward_range = true;
     static constexpr bool bidirectional_range = true;
@@ -115,6 +122,7 @@ struct translate_view_test_fixture : public range_test_fixture
     static constexpr bool sized_range = true;
     static constexpr bool const_iterable_range = true;
     static constexpr bool size_member = true;
+    static constexpr bool const_size_member = true;
     static constexpr bool subscript_member = true;
 
     template <typename range_value_t, typename expected_range_value_t>

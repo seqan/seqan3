@@ -19,7 +19,7 @@ namespace seqan3::detail
 
 /*!\brief seqan3::detail::default_simd_backend is the default used implementation of
  * seqan3::simd::simd_type.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam length The number of packed values in a simd vector
  */

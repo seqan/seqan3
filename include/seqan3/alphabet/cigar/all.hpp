@@ -10,10 +10,6 @@
  * \brief Meta-header for the \link alphabet_cigar Alphabet / CIGAR submodule \endlink.
  */
 
- #pragma once
-
- #include <seqan3/alphabet/cigar/cigar.hpp>
-
  /*!\defgroup alphabet_cigar CIGAR
   * \brief Provides (semi-)alphabets for representing elements in CIGAR strings.
   * \ingroup alphabet
@@ -32,5 +28,9 @@
   *
   * The following table outlines the valid characters in the seqan3::cigar::operation alphabet.
   *
-  * \copydoc seqan3::doxygen::cigar_operation_table
+  * \include{doc} doc/fragments/cigar_operation_table.md
   */
+
+#pragma once
+
+#include <seqan3/alphabet/cigar/cigar.hpp>

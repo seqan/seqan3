@@ -174,6 +174,14 @@ TEST(list_traits, replace_at)
                      (seqan3::type_list<int, float, double>));
 }
 
+TEST(list_traits, repeat)
+{
+    EXPECT_SAME_TYPE((seqan3::list_traits::repeat<0, int>), (seqan3::type_list<>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::repeat<1, int>), (seqan3::type_list<int>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::repeat<5, int>), (seqan3::type_list<int, int, int, int, int>));
+    EXPECT_SAME_TYPE((seqan3::list_traits::repeat<7, int>), (seqan3::type_list<int, int, int, int, int, int, int>));
+}
+
 TEST(list_traits_detail, reverse)
 {
     auto reverse = [] (auto && type_list)

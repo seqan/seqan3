@@ -17,12 +17,11 @@ void read_reference(std::filesystem::path const & reference_path,
 //! [read_reference]
 {
     seqan3::sequence_file_input reference_in{reference_path};
-    for (auto & [seq, id, qual] : reference_in)
+    for (auto && record : reference_in)
     {
-        storage.ids.push_back(std::move(id));
-        storage.seqs.push_back(std::move(seq));
+        storage.ids.push_back(record.id());
+        storage.seqs.push_back(record.sequence());
     }
-    seqan3::debug_stream << "Reference IDs: " << storage.ids << '\n';
 }
 
 void run_program(std::filesystem::path const & reference_path,

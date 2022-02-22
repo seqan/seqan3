@@ -136,7 +136,7 @@ TYPED_TEST(affine_gap_fixture, compute_cell)
     EXPECT_EQ(score_cell.up, -5);
     EXPECT_EQ(score_cell.w_left, -5);
 
-    if constexpr (this->with_trace)
+    if constexpr (TestFixture::with_trace)
     {
         EXPECT_EQ(trace_cell.current,
                   seqan3::detail::trace_directions::diagonal | seqan3::detail::trace_directions::up_open

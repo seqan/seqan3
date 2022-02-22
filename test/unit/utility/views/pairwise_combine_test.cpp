@@ -372,7 +372,9 @@ TYPED_TEST(pairwise_combine_test, basic_construction)
 {
     using view_t = typename TestFixture::view_t;
 
-    EXPECT_TRUE(std::is_default_constructible_v<view_t>);
+    // the underlying range wrapped in std::views::all
+    EXPECT_EQ(std::is_default_constructible_v<view_t>,
+              std::is_default_constructible_v<std::views::all_t<TypeParam &>>);
     EXPECT_TRUE(std::is_copy_constructible_v<view_t>);
     EXPECT_TRUE(std::is_move_constructible_v<view_t>);
     EXPECT_TRUE(std::is_copy_assignable_v<view_t>);

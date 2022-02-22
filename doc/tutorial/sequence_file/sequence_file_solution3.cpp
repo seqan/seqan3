@@ -27,7 +27,7 @@ IIIIIHIIJJIIIII
 }; // std::filesystem::current_path() / "my.fastq" will be deleted after the execution
 
 //![solution]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 //![include_ranges]
 #include <seqan3/std/ranges>
 //![include_ranges]

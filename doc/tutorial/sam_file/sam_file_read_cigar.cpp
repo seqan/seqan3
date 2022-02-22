@@ -14,7 +14,7 @@ r001	147	ref	37	30	9M	=	7	-39	CAGCGGCAT	*	NM:i:1
 }; // std::filesystem::current_path() / "my.sam" will be deleted after the execution
 
 //![main]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/io/sam_file/all.hpp>

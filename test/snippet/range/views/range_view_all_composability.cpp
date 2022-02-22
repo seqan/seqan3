@@ -2,6 +2,7 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
+#include <seqan3/core/debug_stream.hpp>
 
 int main()
 {
@@ -16,4 +17,6 @@ int main()
     auto vec_view5 = vec | seqan3::views::complement | std::views::reverse;
 
     // vec_view4 and vec_view5 are the reverse complement of "ACGGTC": "GACCGT"
+    seqan3::debug_stream << vec_view4 << '\n'; // GACCGT
+    seqan3::debug_stream << vec_view5 << '\n'; // GACCGT
 }

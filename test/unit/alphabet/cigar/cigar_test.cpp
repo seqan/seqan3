@@ -56,3 +56,10 @@ TEST(cigar, assign_string)
     EXPECT_EQ(uint32_t{223}, seqan3::to_rank(get<0>(c1)));
     EXPECT_EQ('M',           get<1>(c1).to_char());
 }
+
+TEST(cigar, constexpr_char_literal)
+{
+    using seqan3::operator""_cigar_operation;
+    constexpr seqan3::cigar::operation op = 'D'_cigar_operation;
+    EXPECT_EQ(op.to_rank(), 1u);
+}

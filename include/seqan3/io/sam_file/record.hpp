@@ -16,11 +16,13 @@
 
 namespace seqan3
 {
-/*!\brief The record type of seqan3::alignment_file_input.
- * \ingroup alignment_file
+/*!\brief The record type of seqan3::sam_file_input.
+ * \ingroup io_sam_file
  * \implements seqan3::detail::record_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids A seqan3::fields type with seqan3::field IDs corresponding to field_types.
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <typename field_types, typename field_ids>
 class sam_record : public record<field_types, field_ids>

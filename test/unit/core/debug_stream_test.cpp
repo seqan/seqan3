@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <string>
 

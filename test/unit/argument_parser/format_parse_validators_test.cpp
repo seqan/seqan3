@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <seqan3/std/ranges>
 
@@ -481,7 +481,7 @@ TEST(validator_test, output_directory)
         seqan3::test::tmp_filename tmp_child_name{"dir/child_dir"};
         std::filesystem::path tmp_child_dir{tmp_child_name.get_path()};
         std::filesystem::path tmp_parent_path{tmp_child_dir.parent_path()};
-        
+
         std::filesystem::create_directory(tmp_parent_path);
 
         EXPECT_TRUE(std::filesystem::exists(tmp_parent_path));
@@ -542,7 +542,7 @@ TEST(validator_test, inputfile_not_regular)
 {
     seqan3::test::tmp_filename tmp{"my_file.test"};
     std::filesystem::path filename = tmp.get_path();
-    mkfifo(filename.c_str(), 0644); 
+    mkfifo(filename.c_str(), 0644);
 
     EXPECT_THROW(seqan3::input_file_validator{}(filename), seqan3::validation_error);
 }

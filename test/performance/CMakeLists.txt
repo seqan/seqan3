@@ -5,12 +5,14 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.10...3.22)
 project (seqan3_test_performance CXX)
 
 include (../seqan3-test.cmake)
 
-set (SEQAN3_BENCHMARK_MIN_TIME "1" CACHE STRING "Set --benchmark_min_time= for each bechmark. Timings are unreliable in CI.")
+set (SEQAN3_BENCHMARK_MIN_TIME
+     "1"
+     CACHE STRING "Set --benchmark_min_time= for each bechmark. Timings are unreliable in CI.")
 
 macro (seqan3_benchmark benchmark_cpp)
     file (RELATIVE_PATH benchmark "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_LIST_DIR}/${benchmark_cpp}")

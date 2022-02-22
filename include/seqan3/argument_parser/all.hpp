@@ -10,16 +10,9 @@
  * \brief Meta-header for the \link argument_parser Argument Parser module \endlink.
  */
 
-#pragma once
-
-#include <seqan3/argument_parser/argument_parser.hpp>
-#include <seqan3/argument_parser/auxiliary.hpp>
-#include <seqan3/argument_parser/exceptions.hpp>
-#include <seqan3/argument_parser/validators.hpp>
-
-
-/*!\defgroup argument_parser Argument Parser
+/*!\file
  * \brief The Argument Parser Module
+ * \defgroup argument_parser Argument Parser
  *
  * # The Argument Parser Class
  *
@@ -44,3 +37,10 @@
  * - seqan3::input_directory_validator
  * - seqan3::output_directory_validator
  */
+
+#pragma once
+
+#include <seqan3/argument_parser/argument_parser.hpp>
+#include <seqan3/argument_parser/auxiliary.hpp>
+#include <seqan3/argument_parser/exceptions.hpp>
+#include <seqan3/argument_parser/validators.hpp>

@@ -82,8 +82,6 @@ public:
      * \param[in] callback The callback function to be invoked with the alignment result; must model
      *                     std::invocable with the respective seqan3::alignment_result type.
      *
-     * \returns A std::vector over seqan3::alignment_result.
-     *
      * \details
      *
      * Computes for each contained sequence pair the respective alignment and invokes the given callback for each

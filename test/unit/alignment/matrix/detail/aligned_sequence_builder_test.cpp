@@ -70,9 +70,9 @@ struct aligned_sequence_builder_fixture : ::testing::Test
         };
     }
 
-    std::remove_reference_t<fst_seq_t> fst;
-    std::remove_reference_t<sec_seq_t> sec;
-    type_param builder;
+    std::remove_reference_t<fst_seq_t> fst{};
+    std::remove_reference_t<sec_seq_t> sec{};
+    type_param builder{fst, sec};
 };
 
 using test_types = ::testing::Types<std::pair<seqan3::dna4_vector &, seqan3::dna4_vector &>,
@@ -84,7 +84,12 @@ TYPED_TEST_SUITE(aligned_sequence_builder_fixture, test_types, );
 
 TYPED_TEST(aligned_sequence_builder_fixture, construction)
 {
-    EXPECT_TRUE(std::is_default_constructible_v<typename TestFixture::type_param>);
+    using sequence1_type_reduce_t = seqan3::type_reduce_t<typename TestFixture::fst_seq_t>;
+    using sequence2_type_reduce_t = seqan3::type_reduce_t<typename TestFixture::sec_seq_t>;
+
+    EXPECT_EQ(std::is_default_constructible_v<typename TestFixture::type_param>,
+              std::is_default_constructible_v<sequence1_type_reduce_t> &&
+              std::is_default_constructible_v<sequence2_type_reduce_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<typename TestFixture::type_param>);
     EXPECT_TRUE(std::is_move_constructible_v<typename TestFixture::type_param>);
     EXPECT_TRUE(std::is_copy_assignable_v<typename TestFixture::type_param>);

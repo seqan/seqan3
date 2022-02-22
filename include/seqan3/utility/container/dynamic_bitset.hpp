@@ -27,7 +27,7 @@ namespace seqan3
 /*!\brief A constexpr bitset implementation with dynamic size at compile time.
  * \implements seqan3::reservible_container
  * \implements seqan3::cerealisable
- * \ingroup container
+ * \ingroup utility_container
  * \tparam bit_capacity The capacity of the dynamic bitset
  *
  * \details
@@ -2001,7 +2001,7 @@ namespace std
 {
 
 /*!\brief Struct for hashing a `seqan3::dynamic_bitset`.
- * \ingroup container
+ * \ingroup utility_container
  * \tparam cap Capacity of the `seqan3::dynamic_bitset`.
  *
  * \experimentalapi{Experimental since version 3.1.}

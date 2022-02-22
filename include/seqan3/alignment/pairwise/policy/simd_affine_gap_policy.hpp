@@ -20,7 +20,7 @@
 #include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/pairwise/detail/alignment_algorithm_state.hpp>
 #include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
@@ -149,7 +149,6 @@ private:
     /*!\brief Initialise the alignment state for affine gap computation.
      * \tparam alignment_configuration_t The type of alignment configuration.
      * \param[in] config The alignment configuration.
-     * \returns The initialised seqan3::detail::alignment_algorithm_state.
      *
      * \details
      *

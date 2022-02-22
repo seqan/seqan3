@@ -87,7 +87,9 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    minimiser_view() = default; //!< Defaulted.
+    minimiser_view()
+        requires std::default_initializable<urng1_t> && std::default_initializable<urng2_t>
+        = default; //!< Defaulted.
     minimiser_view(minimiser_view const & rhs) = default; //!< Defaulted.
     minimiser_view(minimiser_view && rhs) = default; //!< Defaulted.
     minimiser_view & operator=(minimiser_view const & rhs) = default; //!< Defaulted.
@@ -375,6 +377,18 @@ public:
     value_type operator*() const noexcept
     {
         return minimiser_value;
+    }
+
+    //!\brief Return the underlying iterator. It will point to the last element in the current window.
+    constexpr urng1_iterator_t const & base() const & noexcept
+    {
+        return urng1_iterator;
+    }
+
+    //!\brief Return the underlying iterator. It will point to the last element in the current window.
+    constexpr urng1_iterator_t base() &&
+    {
+        return std::move(urng1_iterator);
     }
 
 private:

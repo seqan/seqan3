@@ -30,8 +30,6 @@
 #include <seqan3/argument_parser/detail/version_check.hpp>
 #include <seqan3/core/debug_stream/detail/to_string.hpp>
 #include <seqan3/core/detail/test_accessor.hpp>
-#include <seqan3/io/stream/concept.hpp>
-#include <seqan3/utility/char_operations/predicate.hpp>
 
 namespace seqan3
 {
@@ -172,8 +170,8 @@ public:
      *
      * \throws seqan3::design_error if the application name contains illegal characters.
      *
-     * The application name must only contain alpha-numeric characters, '_' or '-',
-     * i.e. the following regex must evaluate to true: `\"^[a-zA-Z0-9_-]+$\"`.
+     * The application name must only contain alpha-numeric characters, `_` or `-`,
+     * i.e. the following regex must evaluate to true: `"^[a-zA-Z0-9_-]+$"`.
      *
      * See the [argument parser tutorial](https://docs.seqan.de/seqan/3-master-dev/tutorial_argument_parser.html)
      * for more information about the version check functionality.
@@ -200,7 +198,6 @@ public:
                                    "(regex: \"^[a-zA-Z0-9_-]+$\")."};
             }
         }
-
 
         info.app_name = std::move(app_name);
 
@@ -325,7 +322,7 @@ public:
             throw design_error{"You added a positional option with a list value before so you cannot add "
                                       "any other positional options."};
 
-        if constexpr (sequence_container<option_type> && !std::same_as<option_type, std::string>)
+        if constexpr (detail::is_container_option<option_type>)
             has_positional_list_option = true; // keep track of a list option because there must be only one!
 
         // copy variables into the lambda because the calls are pushed to a stack
@@ -337,7 +334,7 @@ public:
     /*!\brief Initiates the actual command line parsing.
      *
      * \attention The function must be called at the very end of all parser
-     * related code and should be enclosed in a try catch block.
+     * related code and should be enclosed in a try catch block as the argument parser may throw.
      *
      * \throws seqan3::design_error if this function was already called before.
      *
@@ -364,8 +361,6 @@ public:
      * - <b>\--version-check false/0/true/1</b> Disable/enable update notifications.
      *
      * Example:
-     *
-     * \note Since the argument parser may throw, you should always wrap `parse()` into a try-catch block.
      *
      * \include test/snippet/argument_parser/argument_parser_2.cpp
      *

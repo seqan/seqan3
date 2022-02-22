@@ -146,7 +146,7 @@ inline constexpr auto complement = detail::adl_only::complement_cpo{};
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT nucleotide_alphabet = alphabet<t> && requires (t val)
+concept nucleotide_alphabet = alphabet<t> && requires (t val)
 {
     { seqan3::complement(val) };
 };

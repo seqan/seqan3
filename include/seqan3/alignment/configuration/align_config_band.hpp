@@ -51,24 +51,13 @@ struct upper_diagonal : public seqan3::detail::strong_type<int32_t, upper_diagon
  *
  * \details
  *
- * Configures the banded alignment algorithm. Currently only a fixed size band is allowed.
- * The band is given in form of a seqan3::align_cfg::lower_diagonal and a seqan3::align_cfg::upper_diagonal.
- * A diagonal represents the cells in the alignment matrix that are not crossed by the alignment either downwards by
- * the lower diagonal or rightwards by the upper diagonal. Thus any computed alignment will be inside the area defined
- * by the lower and the upper diagonal.
- *
- * If this configuration is default constructed or not set during the algorithm configuration the full alignment
- * matrix will be computed.
- *
- * Before the execution of the alignment algorithm the
- * band configuration is validated. If the user provided an invalid band, e.g. the upper diagonal is smaller than
- * the lower diagonal, the alignment matrix would be ill configured such that the requested alignment method cannot
- * be computed (because the global alignment requires the first cell and the last cell of the matrix to be reachable),
- * then a seqan3::invalid_alignment_configuration will be thrown.
+ * \include{doc} doc/fragments/alignment_configuration_align_config_band.md
  *
  * ### Example
  *
  * \include test/snippet/alignment/configuration/align_cfg_band_example.cpp
+ *
+ * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
 class band_fixed_size : private pipeable_config_element
 {

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -69,15 +70,18 @@ namespace seqan3
  * The details of this concept are only relevant to developers who wish to implement their own format.
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sam_file_input_format =
+concept sam_file_input_format =
     requires (detail::sam_file_input_format_exposer<t>                            & v,
               std::ifstream                                                       & stream,
               sam_file_input_options<dna5>                                        & options,
               std::vector<dna5_vector>                                            & ref_sequences,
               sam_file_header<>                                                   & header,
+              std::streampos                                                      & position_buffer,
               dna5_vector                                                         & seq,
               std::vector<phred42>                                                & qual,
               std::string                                                         & id,
@@ -101,6 +105,7 @@ SEQAN3_CONCEPT sam_file_input_format =
                               options,
                               ref_sequences,
                               header,
+                              position_buffer,
                               seq,
                               qual,
                               id,
@@ -121,6 +126,7 @@ SEQAN3_CONCEPT sam_file_input_format =
                               options,
                               std::ignore,
                               header,
+                              position_buffer,
                               std::ignore,
                               std::ignore,
                               std::ignore,
@@ -149,6 +155,7 @@ SEQAN3_CONCEPT sam_file_input_format =
  *                                sam_file_input_options<seq_legal_alph_type> const & options,
  *                                ref_seqs_type & ref_seqs,
  *                                header_type & header,
+ *                                stream_pos_type & position_buffer,
  *                                seq_type & seq,
  *                                qual_type & qual,
  *                                id_type & id,
@@ -166,6 +173,7 @@ SEQAN3_CONCEPT sam_file_input_format =
  *                                bit_score_type & bit_score)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type        The input stream type; Must be derived from std::ostream.
+ * \tparam stream_pos_type    Type of the position buffer, aka, the std::streampos of the current record.
  * \tparam ref_seqs_type      e.g. std::deque<ref_sequence_type> or decltype(std::ignore).
  * \tparam seq_type           Type of the seqan3::field::seq input (see seqan3::sam_file_input_traits).
  * \tparam qual_type          Type of the seqan3::field::qual input (see seqan3::sam_file_input_traits).
@@ -184,6 +192,7 @@ SEQAN3_CONCEPT sam_file_input_format =
  * \tparam bit_score_type     Type of the seqan3::field::bit_score input (see seqan3::sam_file_input_traits).
  *
  * \param[in,out] stream      The input stream to read from.
+ * \param[in,out] position_buffer The buffer to store the current record's position.
  * \param[in]     options     File specific options passed to the format.
  * \param[out]    ref_seqs    The reference sequences to the corresponding alignments.
  * \param[out]    header      A pointer to the seqan3::sam_file_header object.
@@ -243,6 +252,6 @@ constexpr bool is_type_list_of_sam_file_input_formats_v<type_list<ts...>> = (sam
  * \see seqan3::is_type_list_of_sam_file_input_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sam_file_input_formats = is_type_list_of_sam_file_input_formats_v<t>;
+concept type_list_of_sam_file_input_formats = is_type_list_of_sam_file_input_formats_v<t>;
 
 } // namespace seqan3::detail

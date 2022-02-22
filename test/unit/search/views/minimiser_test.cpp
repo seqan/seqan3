@@ -75,7 +75,9 @@ struct iterator_fixture<two_ranges_iterator_type> : public ::testing::Test
 
     using reverse_kmer_hash_view_t = decltype(rev_kmer_view(text));
 
-    using test_range_t = decltype(seqan3::detail::minimiser_view{kmer_hash_view_t{}, reverse_kmer_hash_view_t{}, 5});
+    using test_range_t = decltype(seqan3::detail::minimiser_view{std::declval<kmer_hash_view_t &>(),
+                                                                 std::declval<reverse_kmer_hash_view_t &>(),
+                                                                 5});
     test_range_t test_range = seqan3::detail::minimiser_view{vec, rev_kmer_view(text), 5};
 };
 
@@ -239,4 +241,48 @@ TEST_F(minimiser_test, non_arithmetic_value)
 TEST_F(minimiser_test, two_ranges_unequal_size)
 {
     EXPECT_THROW((seqan3::detail::minimiser_view{text1 | kmer_view, text3 | rev_kmer_view, 5}), std::invalid_argument);
+}
+
+TEST_F(minimiser_test, iterator_base)
+{
+    std::vector<size_t> hashes{3, 6, 5, 4, 8, 4, 4, 2, 5, 4};
+    using hash_iterator_t = typename std::vector<size_t>::iterator;
+
+    hash_iterator_t const hash_begin = hashes.begin();
+    hash_iterator_t const hash_end = hashes.end();
+
+    size_t const window_size = 5;
+    auto const minimiser = seqan3::views::minimiser(hashes, window_size);
+    auto minimiser_it = minimiser.begin();
+
+    hash_iterator_t const hash_first_window_end = minimiser_it.base();
+
+    // hash iterator is at position window_size - 1 and
+    // points to the last element in the window
+    // index:   0, 1, 2, 3, 4,  5, 6, 7, 8, 9
+    // hashes: [3, 6, 5, 4, 8], 4, 4, 2, 5, 4
+    //                      ^
+    EXPECT_EQ(minimiser_it.base() - hash_first_window_end, 0u); // window start position
+    EXPECT_EQ(minimiser_it.base() - hash_begin, window_size - 1u); // window end position
+
+    // After incrementing, points to the last element in the new window
+    // index:  0,  1, 2, 3, 4, 5,  6, 7, 8, 9
+    // hashes: 3, [6, 5, 4, 8, 4], 4, 2, 5, 4
+    //                         ^
+    ++minimiser_it;
+    EXPECT_EQ(minimiser_it.base() - hash_first_window_end, 1u); // window start position
+    EXPECT_EQ(minimiser_it.base() - hash_begin, 5u); // window end position
+
+    // After incrementing, points to the last element in the new window
+    // index:  0, 1, 2,  3, 4, 5, 6, 7,  8, 9
+    // hashes: 3, 6, 5, [4, 8, 4, 4, 2], 5, 4
+    //                               ^
+    ++minimiser_it;
+    EXPECT_EQ(minimiser_it.base() - hash_first_window_end, 3u); // window start position
+    EXPECT_EQ(minimiser_it.base() - hash_begin, 7u); // window end position
+
+    // if minimiser reached end, underlying iterator reached end too
+    ++minimiser_it;
+    EXPECT_EQ(minimiser_it, minimiser.end());
+    EXPECT_EQ(minimiser_it.base(), hash_end);
 }

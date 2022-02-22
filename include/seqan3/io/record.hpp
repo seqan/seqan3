@@ -166,13 +166,13 @@ struct fields
 // record
 // ----------------------------------------------------------------------------
 
-/*!\brief The class template that file records are based on; behaves like an std::tuple.
+/*!\brief The class template that file records are based on; behaves like a std::tuple.
  * \ingroup io
  * \implements seqan3::tuple_like
  * \tparam field_types The types of the fields in this record as a seqan3::type_list.
  * \tparam field_ids   A seqan3::fields type with seqan3::field IDs corresponding to field_types.
  *
- * This class template behaves just like an std::tuple, with the exception that it provides an additional
+ * This class template behaves just like a std::tuple, with the exception that it provides an additional
  * get-interface that takes a seqan3::field identifier. The traditional get interfaces (via index and
  * via type) are also supported, but discouraged, because accessing via seqan3::field is unambiguous and
  * better readable.
@@ -249,22 +249,7 @@ protected:
     static decltype(auto) get_impl(field_constant<f>, tuple_t && record_as_tuple)
     {
         static_assert(field_ids::contains(f), "The record does not contain the field you wish to retrieve.");
-#if SEQAN3_WORKAROUND_GCC_94967
-        // is_rvalue_reference_v can't be used, because tuple_t won't contain `&&` in the type due to reference
-        // collapsing
-        if constexpr (!std::is_lvalue_reference_v<tuple_t> && std::is_const_v<tuple_t>)
-        {
-            // A simple std::move(...) does not work, because it would mess up tuple_element types like `int const &`
-            using return_t = std::tuple_element_t<field_ids::index_of(f), tuple_t>;
-            return static_cast<return_t const &&>(std::get<field_ids::index_of(f)>(std::move(record_as_tuple)));
-        }
-        else
-        {
-            return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
-        }
-#else // ^^^ workaround / no workaround vvv
         return std::get<field_ids::index_of(f)>(std::forward<tuple_t>(record_as_tuple));
-#endif // SEQAN3_WORKAROUND_GCC_94967
     }
 };
 

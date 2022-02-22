@@ -14,7 +14,7 @@
 
 #include <seqan3/std/algorithm>
 #include <seqan3/std/concepts>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <fstream>
 #include <seqan3/std/ranges>
 #include <regex>
@@ -25,7 +25,7 @@
 #include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
@@ -88,13 +88,15 @@ namespace seqan3
  * \details
  * \attention This is a concept requirement, not an actual function (however types satisfying this concept
  * will provide an implementation).
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 //!\}
 //!\cond
 template <typename validator_type>
-SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
-                           requires(validator_type validator,
-                                    typename std::remove_reference_t<validator_type>::option_value_type value)
+concept validator = std::copyable<std::remove_cvref_t<validator_type>> &&
+                    requires(validator_type validator,
+                             typename std::remove_reference_t<validator_type>::option_value_type value)
 {
     typename std::remove_reference_t<validator_type>::option_value_type;
 
@@ -115,6 +117,8 @@ SEQAN3_CONCEPT validator = std::copyable<std::remove_cvref_t<validator_type>> &&
  * exception whenever a given value does not lie inside the given min/max range.
  *
  * \include test/snippet/argument_parser/validators_1.cpp
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <arithmetic option_value_t>
 class arithmetic_range_validator
@@ -186,6 +190,8 @@ private:
  *       range.
  *
  * \include test/snippet/argument_parser/validators_2.cpp
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename option_value_t>
 class value_list_validator
@@ -313,6 +319,8 @@ value_list_validator(range_type && rng) -> value_list_validator<std::ranges::ran
  *
  * The type can be further specialised for the seqan3::input_file_validator and the seqan3::output_file_validator
  * using the template argument to determine the valid extensions from the given file type.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class file_validator_base
 {
@@ -400,7 +408,6 @@ protected:
 
     /*!\brief Checks if the given path is readable.
      * \param path The path to check.
-     * \returns `true` if readable, otherwise `false`.
      * \throws seqan3::validation_error if the path is not readable, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
@@ -428,7 +435,6 @@ protected:
 
     /*!\brief Checks if the given path is writable.
      * \param path The path to check.
-     * \returns `true` if writable, otherwise `false`.
      * \throws seqan3::validation_error if the file could not be opened for writing, or
      *         std::filesystem::filesystem_error on underlying OS API errors.
      */
@@ -498,6 +504,8 @@ protected:
  * \include test/snippet/argument_parser/validators_input_file_ext_from_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename file_t = void>
 class input_file_validator : public file_validator_base
@@ -630,6 +638,8 @@ enum class output_file_open_options
  * \include test/snippet/argument_parser/validators_output_file_ext_from_file.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename file_t = void>
 class output_file_validator : public file_validator_base
@@ -747,6 +757,8 @@ private:
  * \include test/snippet/argument_parser/validators_input_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class input_directory_validator : public file_validator_base
 {
@@ -821,6 +833,8 @@ public:
  * \include test/snippet/argument_parser/validators_output_directory.cpp
  *
  * \note The validator works on every type that can be implicitly converted to std::filesystem::path.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class output_directory_validator : public file_validator_base
 {
@@ -899,7 +913,7 @@ public:
  * \details
  *
  * On construction, the validator must receive a pattern for a regular expression.
- * The pattern variable will be used for constructing an std::regex and the
+ * The pattern variable will be used for constructing a std::regex and the
  * validator will call std::regex_match on the command line argument.
  * Note: A regex_match will only return true if the strings matches the pattern
  * completely (in contrast to regex_search which also matches substrings).
@@ -908,6 +922,8 @@ public:
  * exception whenever string does not match the pattern.
  *
  * \include test/snippet/argument_parser/validators_4.cpp
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class regex_validator
 {
@@ -975,6 +991,8 @@ namespace detail
  *
  * The default validator is needed to make the validator parameter of
  * argument_parser::add_option and argument_parser::add_option optional.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename option_value_t>
 struct default_validator
@@ -1003,6 +1021,8 @@ struct default_validator
  * avoid unexpected behaviour and ensure that the seqan3::argument_parser::add_option
  * call is well-formed. (add_option(val, ...., validator) requires
  * that val is of same type as validator::option_value_type).
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond
@@ -1095,6 +1115,8 @@ private:
  *
  * You can chain as many validators as you want which will be evaluated one after
  * the other from left to right (first to last).
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <validator validator1_type, validator validator2_type>
 //!\cond

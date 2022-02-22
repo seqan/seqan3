@@ -11,26 +11,14 @@
  * \author Lydia Buntrock <lydia.buntrock AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/core/configuration/configuration.hpp>
-#include <seqan3/search/configuration/default_configuration.hpp>
-#include <seqan3/search/configuration/detail.hpp>
-#include <seqan3/search/configuration/hit.hpp>
-#include <seqan3/search/configuration/max_error.hpp>
-#include <seqan3/search/configuration/on_result.hpp>
-#include <seqan3/search/configuration/output.hpp>
-#include <seqan3/search/configuration/parallel.hpp>
-#include <seqan3/search/configuration/result_type.hpp>
-
 /*!\namespace seqan3::search_cfg
  * \brief A special sub namespace for the search configurations.
  */
 
 /*!\defgroup search_configuration Configuration
  * \ingroup search
- * \brief Data structures and utility functions for configuring search algorithm.
  * \see search
+ * \brief Data structures and utility functions for configuring search algorithm.
  *
  * \details
  *
@@ -188,3 +176,14 @@
  *
  * \include test/snippet/search/search_with_user_callback.cpp
  */
+
+#pragma once
+
+#include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/configuration/hit.hpp>
+#include <seqan3/search/configuration/max_error.hpp>
+#include <seqan3/search/configuration/max_error_common.hpp>
+#include <seqan3/search/configuration/on_result.hpp>
+#include <seqan3/search/configuration/output.hpp>
+#include <seqan3/search/configuration/parallel.hpp>
+#include <seqan3/search/configuration/result_type.hpp>

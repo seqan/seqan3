@@ -15,21 +15,16 @@
 #include <seqan3/std/concepts>
 #include <seqan3/std/ranges>
 
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 
 namespace seqan3::views
 {
-
-/*!\name General purpose views
- * \{
- */
-
 /*!\brief               A view that converts each element in the input range (implicitly or via `static_cast`).
  * \tparam urng_t       The type of the range being processed. See below for requirements. [template parameter is
  *                      omitted in pipe notation]
  * \param[in] urange    The range being processed. [parameter is omitted in pipe notation]
  * \returns             A range of converted elements. See below for the properties of the returned range.
- * \ingroup views
+ * \ingroup utility_views
  *
  * \details
  *
@@ -81,7 +76,5 @@ inline auto constexpr convert = std::views::transform([] (auto && in) -> out_t
     else
         return static_cast<out_t>(std::forward<decltype(in)>(in));
 });
-
-//!\}
 
 } // namespace seqan3::views

@@ -10,17 +10,28 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
-
 /*!\defgroup io_sequence_file Sequence File
  * \brief Provides files and formats for handling sequence data.
  * \ingroup io
+ *
+ * \include{doc} doc/fragments/sequence_file_input.md
+ *
+ * \include{doc} doc/fragments/sequence_file_output.md
+ *
  * \see io
  * \see \ref tutorial_sequence_file
  */
 
+#pragma once
+
+#include <seqan3/io/sequence_file/format_embl.hpp>
 #include <seqan3/io/sequence_file/format_fasta.hpp>
-#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/format_fastq.hpp>
+#include <seqan3/io/sequence_file/format_genbank.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/input_format_concept.hpp>
+#include <seqan3/io/sequence_file/input_options.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
+#include <seqan3/io/sequence_file/output_format_concept.hpp>
+#include <seqan3/io/sequence_file/output_options.hpp>
+#include <seqan3/io/sequence_file/record.hpp>

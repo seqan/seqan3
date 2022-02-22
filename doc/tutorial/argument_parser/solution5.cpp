@@ -4,7 +4,7 @@
 #include <seqan3/argument_parser/all.hpp> // includes all necessary headers
 #include <seqan3/core/debug_stream.hpp>   // our custom output stream
 #include <seqan3/std/charconv>            // includes std::from_chars
-#include <seqan3/std/filesystem>          // use std::filesystem::path
+#include <filesystem>                     // use std::filesystem::path
 
 // This is the program!
 // Take a look at it if you are interested in an example of parsing a data file.

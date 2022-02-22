@@ -16,9 +16,18 @@ $(document).ready(function()
     var add_labels = function(api_type, entry_type)
     {
         if (entry_type == "member")
+        {
             $(this).find('span.mlabels').prepend('<span class="mlabel ' + api_type + '">' + api_type + '</span>');
+
+            // get header above the item, append the api_type tag to the header and change the style class
+            var header = $(this).prev('h2.memtitle')[0];
+            header.append(' [' + api_type + '] ');
+            header.className += ' ' + api_type;
+        }
         else if (entry_type == "header")
+        {
             $('h2.groupheader:contains("Detailed Description")').append('<span class="mlabel ' + api_type + ' header">' + api_type + '</span>');
+        }
     }
 
     var select_and_add_label = function(entry_obj, entry_type)

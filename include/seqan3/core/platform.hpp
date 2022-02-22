@@ -23,30 +23,50 @@
 //!\endcond
 
 // ============================================================================
+//  Documentation
+// ============================================================================
+
+// Doxygen related
+// this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
+#ifndef SEQAN3_DOXYGEN_ONLY
+#   define SEQAN3_DOXYGEN_ONLY(x)
+#endif
+
+// ============================================================================
+//  Compiler support
+// ============================================================================
+
+#if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8)
+#   error "SeqAn 3.1.x is the last version that supports GCC 7 and 8. Please upgrade your compiler or use 3.1.x."
+#endif // defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8)
+
+// ============================================================================
 //  C++ standard and features
 // ============================================================================
 
+#if SEQAN3_DOXYGEN_ONLY(1)0
+//!\brief This disables the warning you would get if you compile with `-std=c++17`.
+#define SEQAN3_DISABLE_CPP17_DIAGNOSTIC
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+
 // C++ standard [required]
 #ifdef __cplusplus
-    static_assert(__cplusplus >= 201703, "SeqAn3 requires C++17, make sure that you have set -std=c++17.");
+#   if (__cplusplus < 201703)
+#       error "SeqAn3 requires C++20, make sure that you have set -std=c++2a (gcc9) or -std=c++20 (gcc10 and higher)."
+#   elif not defined(SEQAN3_DISABLE_CPP17_DIAGNOSTIC) && (__cplusplus >= 201703) && (__cplusplus < 201709)
+#      pragma GCC warning "SeqAn 3.1.x is the last version that supports C++17. Newer SeqAn versions, including this one, might not compile with -std=c++17. To disable this warning, use -std=c++2a (gcc9), -std=c++20 (gcc10 and higher), or -DSEQAN3_DISABLE_CPP17_DIAGNOSTIC."
+#   endif
 #else
 #   error "This is not a C++ compiler."
 #endif
 
-#if __has_include(<version>)
-#   include <version>
+// C++ Concepts [required]
+#ifndef __cpp_concepts
+#   error "SeqAn3 requires C++ Concepts, either via -fconcepts (gcc9), or -std=c++20 (gcc10 and higher)."
 #endif
 
-// C++ Concepts [required]
-#ifdef __cpp_concepts
-#   if __cpp_concepts == 201507 // GCC and Concepts TS
-#       define SEQAN3_CONCEPT concept bool
-#   else
-        static_assert(__cpp_concepts >= 201507, "Your compiler supports Concepts, but the support is not recent enough.");
-#       define SEQAN3_CONCEPT concept
-#   endif
-#else
-#   error "SeqAn3 requires C++ Concepts, either via the TS (flag: -fconcepts) or via C++20 (flag: -std=c++2a / -std=c++20)."
+#if __has_include(<version>)
+#   include <version>
 #endif
 
 //!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
@@ -56,13 +76,6 @@
 #else
 #   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
        {expression} -> concept_name<__VA_ARGS__>
-#endif
-
-// filesystem [required]
-#if !__has_include(<filesystem>)
-#   if !__has_include(<experimental/filesystem>)
-#      error SeqAn3 requires C++17 filesystem support, but it was not found.
-#   endif
 #endif
 
 // ============================================================================
@@ -178,16 +191,6 @@
 // TODO (doesn't have a version.hpp, yet)
 
 // ============================================================================
-//  Documentation
-// ============================================================================
-
-// Doxygen related
-// this macro is a NO-OP unless doxygen parses it, in which case it resolves to the argument
-#ifndef SEQAN3_DOXYGEN_ONLY
-#   define SEQAN3_DOXYGEN_ONLY(x)
-#endif
-
-// ============================================================================
 //  Deprecation Messages
 // ============================================================================
 
@@ -233,24 +236,6 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83328
-#ifndef SEQAN3_WORKAROUND_GCC_83328
-#   if defined(__GNUC__) && (__GNUC__ <= 8)
-#       define SEQAN3_WORKAROUND_GCC_83328 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_83328 0
-#   endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87113
-#ifndef SEQAN3_WORKAROUND_GCC_87113
-#   if defined(__GNUC_MINOR__) && ((__GNUC__ == 7) || ((__GNUC__ == 8) && (__GNUC_MINOR__ < 3)))
-#       define SEQAN3_WORKAROUND_GCC_87113 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_87113 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
 #ifndef SEQAN3_WORKAROUND_GCC_89953
 #   if defined(__GNUC_MINOR__) && (__GNUC__ == 9 && __GNUC_MINOR__ < 3)
@@ -260,40 +245,12 @@
 #   endif
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=90897
-#ifndef SEQAN3_WORKAROUND_GCC_90897 // fixed since gcc8.4
-#   if defined(__GNUC__) && (__GNUC__ == 8 && __GNUC_MINOR__ < 4)
-#       define SEQAN3_WORKAROUND_GCC_90897 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_90897 0
-#   endif
-#endif
-
-//!\brief Various concept problems only present in GCC7 and GCC8.
-#ifndef SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES
-#   if defined(__GNUC__) && ((__GNUC__ == 7) || (__GNUC__ == 8))
-#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC7_AND_8_CONCEPT_ISSUES 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
 #ifndef SEQAN3_WORKAROUND_GCC_93467 // fixed since gcc10.2
 #   if defined(__GNUC__) && ((__GNUC__ <= 9) || (__GNUC__ == 10 && __GNUC_MINOR__ < 2))
 #       define SEQAN3_WORKAROUND_GCC_93467 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_93467 0
-#   endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=94967
-//!       gcc7 does not preserve the const && type using std::get
-#ifndef SEQAN3_WORKAROUND_GCC_94967 // fixed since gcc8
-#   if defined(__GNUC__) && (__GNUC__ <= 7)
-#       define SEQAN3_WORKAROUND_GCC_94967 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_94967 0
 #   endif
 #endif
 
@@ -322,6 +279,16 @@
 #       define SEQAN3_WORKAROUND_GCC_100139 1
 #   else
 #       define SEQAN3_WORKAROUND_GCC_100139 0
+#   endif
+#endif
+
+//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100252
+//!       ICE in template instantiation.
+#ifndef SEQAN3_WORKAROUND_GCC_100252 // not yet fixed
+#   if defined(__GNUC__) && (__GNUC__ >= 12)
+#       define SEQAN3_WORKAROUND_GCC_100252 1
+#   else
+#       define SEQAN3_WORKAROUND_GCC_100252 0
 #   endif
 #endif
 
@@ -354,7 +321,7 @@
 #   endif // SEQAN3_DISABLE_LEGACY_STD_DIAGNOSTIC
 #endif // _GLIBCXX_USE_CXX11_ABI == 0
 
-/*!\brief https://eel.is/c++draft/range.take#view defines e.g. `constexpr auto size() requires sized_­range<V>` without
+/*!\brief https://eel.is/c++draft/range.take#view defines e.g. `constexpr auto size() requires sized_range<V>` without
  *        any template. This syntax works since gcc-10, before that a dummy `template <typename = ...>` must be used.
  */
 #ifndef SEQAN3_WORKAROUND_GCC_NON_TEMPLATE_REQUIRES
@@ -375,15 +342,32 @@
 #   endif
 #endif
 
-//!\brief GCC 7 only offers an experimental filesystems implementation.
-#ifndef SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM
-#   if defined(__GNUC__) && (__GNUC__ == 7)
-#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 1
+/*!\brief gcc only: Constrain friend declarations to limit access to internals.
+ *
+ * \details
+ *
+ * We have some instances where we constrain friend declarations to limit which class instance can
+ * access private information. For example
+ *
+ * ```
+ * template <typename type_t>
+ *     requires std::same_as<type_t, int>
+ * friend class std::tuple;
+ * ```
+ *
+ * would only allow `std::tuple<int>` to access the internals.
+ *
+ * It seems that this is not standard behaviour and more like a gcc-only extension, as neither clang nor msvc supports
+ * it. For now we will keep this code, but it should be removed if it turns out that this is non-standard. (i.e. a newer
+ * gcc release does not support it any more)
+ */
+#ifndef SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
+#   if defined(__clang__)
+#       define SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION 1
 #   else
-#       define SEQAN3_WORKAROUND_GCC_INCOMPLETE_FILESYSTEM 0
+#       define SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION 0
 #   endif
 #endif
-
 
 // ============================================================================
 //  Backmatter

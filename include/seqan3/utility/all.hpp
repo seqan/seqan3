@@ -12,14 +12,6 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
-
-#include <seqan3/utility/math.hpp>
-#include <seqan3/utility/tuple/all.hpp>
-#include <seqan3/utility/type_list/all.hpp>
-#include <seqan3/utility/type_pack/all.hpp>
-#include <seqan3/utility/type_traits/all.hpp>
-
 /*!\defgroup utility Utility
  * \brief Provides additional utility functionality used by multiple modules.
  *
@@ -33,6 +25,17 @@
  * module.
  */
 
-/*!\defgroup utility_concept Concept
- * \ingroup utility
- */
+#pragma once
+
+#include <seqan3/utility/char_operations/all.hpp>
+#include <seqan3/utility/concept/all.hpp>
+#include <seqan3/utility/container/all.hpp>
+#include <seqan3/utility/math.hpp>
+#include <seqan3/utility/parallel/all.hpp>
+#include <seqan3/utility/range/all.hpp>
+#include <seqan3/utility/simd/all.hpp>
+#include <seqan3/utility/tuple/all.hpp>
+#include <seqan3/utility/type_list/all.hpp>
+#include <seqan3/utility/type_pack/all.hpp>
+#include <seqan3/utility/type_traits/all.hpp>
+#include <seqan3/utility/views/all.hpp>

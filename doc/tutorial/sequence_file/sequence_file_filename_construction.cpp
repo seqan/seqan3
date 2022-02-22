@@ -3,7 +3,7 @@
 #define main sequence_file_filename_construction
 
 //![main]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/io/sequence_file/all.hpp>
 

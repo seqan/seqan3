@@ -21,7 +21,7 @@ namespace seqan3::views
 {
 
 /*!\brief   A wrapper type around an existing view adaptor that enables "deep view" behaviour for that view.
- * \ingroup views
+ * \ingroup utility_views
  * \tparam  underlying_adaptor_t The type of the adaptor being wrapped.
  *
  * \details

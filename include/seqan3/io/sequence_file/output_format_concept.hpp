@@ -34,6 +34,8 @@ namespace seqan3::detail
  *
  * Exposes the protected member function `write_sequence_record` from the given `format_type`, such that the file can
  * call the proper function for the selected format.
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 template <typename format_type>
 struct sequence_file_output_format_exposer : public format_type
@@ -67,13 +69,13 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_output_format_exposer<t> & v,
-                                                       std::ofstream                                  & f,
-                                                       sequence_file_output_options                   & options,
-                                                       dna5_vector                                    & seq,
-                                                       std::string                                    & id,
-                                                       std::vector<phred42>                           & qual,
-                                                       std::vector<dna5q>                             & seq_qual)
+concept sequence_file_output_format = requires (detail::sequence_file_output_format_exposer<t> & v,
+                                                std::ofstream                                  & f,
+                                                sequence_file_output_options                   & options,
+                                                dna5_vector                                    & seq,
+                                                std::string                                    & id,
+                                                std::vector<phred42>                           & qual,
+                                                std::vector<dna5q>                             & seq_qual)
 {
     t::file_extensions;
 
@@ -105,7 +107,7 @@ SEQAN3_CONCEPT sequence_file_output_format = requires (detail::sequence_file_out
  * \param[in,out] stream    The output stream to write into.
  * \param[in]     options   File specific options passed to the format.
  * \param[in]     sequence  The data for seqan3::field::seq, i.e. the "sequence".
- * \param[in]     id        The data for seqan3::field::id, e.g. the header line in FastA.
+ * \param[in]     id        The data for seqan3::field::id, e.g. the header line in FASTA.
  * \param[in]     qualities The data for seqan3::field::qual.
  *
  * \details
@@ -149,5 +151,5 @@ constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> 
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sequence_file_output_formats = is_type_list_of_sequence_file_output_formats_v<t>;
+concept type_list_of_sequence_file_output_formats = is_type_list_of_sequence_file_output_formats_v<t>;
 } // namespace seqan3::detail

@@ -10,6 +10,12 @@
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
 
+/*!\defgroup core_debug_stream Debug Stream
+ * \ingroup core
+ * \see core
+ * \brief Provides core functionality used to print seqan3 and std types.
+ */
+
 #pragma once
 
 #include <seqan3/core/debug_stream/byte.hpp>
@@ -18,9 +24,3 @@
 #include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/core/debug_stream/tuple.hpp>
 #include <seqan3/core/debug_stream/variant.hpp>
-
-/*!\defgroup core_debug_stream Debug Stream
- * \ingroup core
- * \see core
- * \brief Provides core functionality used to print seqan3 and std types.
- */

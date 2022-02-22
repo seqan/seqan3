@@ -22,7 +22,7 @@ inline namespace simd
 
 /*!\brief seqan3::simd::simd_type encapsulates simd vector types, which can be manipulated
  * by simd operations.
- * \ingroup simd
+ * \ingroup utility_simd
  * \tparam scalar_t The underlying type of a simd vector
  * \tparam length The number of packed values in a simd vector
  * \tparam simd_backend The simd backend to use, e.g.
@@ -40,7 +40,7 @@ inline namespace simd
  * \sa https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions Which SIMD architectures exist?
  * \sa https://gcc.gnu.org/onlinedocs/gcc/Vector-Extensions.html Underlying technique of *seqan3::detail::builtin_simd types*.
  * \sa https://github.com/edanor/umesimd Underlying library of *seqan3::detail::ume_simd* types.
- * \sa https://software.intel.com/sites/landingpage/IntrinsicsGuide Instruction sets and their low-level intrinsics.
+ * \sa https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html Instruction sets and their low-level intrinsics.
  */
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
@@ -52,7 +52,7 @@ struct simd_type : simd_backend<scalar_t, length>
 };
 
 //!\brief Helper type of seqan3::simd::simd_type
-//!\ingroup simd
+//!\ingroup utility_simd
 template <typename scalar_t,
           size_t length = detail::default_simd_length<scalar_t, detail::default_simd_backend>,
           template <typename scalar_t_, size_t length_> typename simd_backend = detail::default_simd_backend>

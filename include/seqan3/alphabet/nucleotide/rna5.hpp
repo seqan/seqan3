@@ -73,15 +73,12 @@ public:
     /*!\brief Allow implicit construction from seqan3::dna5 of the same size.
      * \details
      *
-     * \copydetails seqan3::doxygen::rna5_implicit_conversion_from_dna5
+     * \include{doc} doc/fragments/rna5_implicit_conversion_from_dna5.md
      *
      * \stableapi{Since version 3.1.}
      */
     template <std::same_as<dna5> t>
     constexpr rna5(t const & r) noexcept
-#if SEQAN3_WORKAROUND_GCC_90897
-        requires true
-#endif
     {
         assign_rank(r.to_rank());
     }
@@ -121,7 +118,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::rna5.
+/*!\brief Alias for a std::vector of seqan3::rna5.
  * \relates rna5
  * \details
  * \stableapi{Since version 3.1.}

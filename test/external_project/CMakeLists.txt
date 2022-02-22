@@ -18,8 +18,7 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to in
 endif ()
 
 option (SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE
-        "Enable this option if you want to get a detailed list which paths were considered for find_package(...)"
-        false)
+        "Enable this option if you want to get a detailed list which paths were considered for find_package(...)" false)
 
 if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to install cmake 3.4.
     set (SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND "${CMAKE_COMMAND}")
@@ -55,11 +54,9 @@ ExternalProject_Add (
     PREFIX seqan3_submodule_add_subdirectory
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_add_subdirectory"
     CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
-    CMAKE_ARGS
-        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-        "-DSEQAN3_ROOT=${SEQAN3_ROOT}"
-        "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-)
+    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}" #
+               "-DSEQAN3_ROOT=${SEQAN3_ROOT}")
 
 # 2) This tests test/external_project/seqan3_submodule_find_package/CMakeLists.txt
 #    We have a seqan3 checkout somewhere and we point CMAKE_PREFIX_PATH to <checkout>/seqan3/build_system
@@ -71,11 +68,9 @@ ExternalProject_Add (
     PREFIX seqan3_submodule_find_package
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_submodule_find_package"
     CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
-    CMAKE_ARGS
-        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-        "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/build_system"
-        "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-)
+    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+               "-DCMAKE_PREFIX_PATH=${SEQAN3_ROOT}/build_system")
 
 # 3) This tests test/external_project/seqan3_installed/CMakeLists.txt
 #    This test assumes that seqan3 was installed by make install (e.g. system-wide).
@@ -94,12 +89,10 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to in
         PREFIX seqan3_installed
         SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_installed"
         CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
-        CMAKE_ARGS
-            ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-            "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}"
-            "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-    )
-    add_dependencies(seqan3_installed seqan3_test_prerequisite)
+        CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+                   "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+                   "-DCMAKE_SYSTEM_PREFIX_PATH=${SEQAN3_SYSTEM_PREFIX}")
+    add_dependencies (seqan3_installed seqan3_test_prerequisite)
 endif ()
 
 # 4) This tests test/external_project/seqan3_fetch_content_zip/CMakeLists.txt
@@ -114,12 +107,10 @@ if (NOT ${CMAKE_VERSION} VERSION_LESS 3.14) # cmake 3.14 version is needed to us
         seqan3_fetch_content_zip
         PREFIX seqan3_fetch_content_zip
         SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_fetch_content_zip"
-        CMAKE_ARGS
-            ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-            "-DSEQAN3_PACKAGE_ZIP_URL=${SEQAN3_PACKAGE_ZIP_URL}"
-            "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-    )
-    add_dependencies(seqan3_fetch_content_zip seqan3_test_prerequisite)
+        CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+                   "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
+                   "-DSEQAN3_PACKAGE_ZIP_URL=${SEQAN3_PACKAGE_ZIP_URL}")
+    add_dependencies (seqan3_fetch_content_zip seqan3_test_prerequisite)
 endif ()
 
 # 5) This test is the same as 2) but emulates the settings within the setup tutorial.
@@ -129,7 +120,5 @@ ExternalProject_Add (
     PREFIX seqan3_setup_tutorial
     SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/seqan3_setup_tutorial"
     CMAKE_COMMAND "${SEQAN3_EXTERNAL_PROJECT_CMAKE_COMMAND}"
-    CMAKE_ARGS
-        ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
-        "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}"
-)
+    CMAKE_ARGS ${SEQAN3_EXTERNAL_PROJECT_CMAKE_ARGS}
+               "-DCMAKE_FIND_DEBUG_MODE=${SEQAN3_EXTERNAL_PROJECT_FIND_DEBUG_MODE}")

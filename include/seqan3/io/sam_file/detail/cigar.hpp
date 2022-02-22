@@ -113,7 +113,7 @@ inline void update_alignment_lengths(int32_t & ref_length,
     {
         case 'M': case '=': case 'X': ref_length += cigar_count, seq_length += cigar_count; break;
         case 'D': case 'N':           ref_length += cigar_count; break;
-        case 'I' :                    seq_length += cigar_count; break;
+        case 'I':                     seq_length += cigar_count; break;
         case 'S': case 'H': case 'P': break; // no op (soft-clipping or padding does not increase either length)
         default: throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
     }
@@ -151,7 +151,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_
     {
         auto buff_end = (std::ranges::copy(cigar_view | detail::take_until_or_throw(!is_digit), buffer.data())).out;
         cigar_operation = *std::ranges::begin(cigar_view);
-        std::ranges::next(std::ranges::begin(cigar_view));
+        ++std::ranges::begin(cigar_view);
 
         if (std::from_chars(buffer.begin(), buff_end, cigar_count).ec != std::errc{})
             throw format_error{"Corrupted cigar string encountered"};
@@ -176,7 +176,7 @@ inline std::tuple<std::vector<cigar>, int32_t, int32_t> parse_cigar(cigar_input_
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::vector\<seqan3::cigar\> representing the alignment.
+ * \returns A std::vector\<seqan3::cigar\> representing the alignment.
  *
  * \details
  *
@@ -282,7 +282,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::string representing the alignment as a cigar string.
+ * \returns A std::string representing the alignment as a cigar string.
  *
  * \details
  *
@@ -324,7 +324,7 @@ template <seqan3::detail::pairwise_alignment alignment_type>
  * \param  query_end_pos   The end position of the alignment in the query
  *                         sequence indicating soft-clipping.
  * \param  extended_cigar  Whether to print the extended cigar alphabet or not. See cigar operation.
- * \returns An std::string representing the alignment as a cigar string.
+ * \returns A std::string representing the alignment as a cigar string.
  *
  * \details
  *

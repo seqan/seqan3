@@ -45,11 +45,11 @@ std::vector<std::string> ids
 
 std::string const output_comp
 {
-    "> TEST 1\n"
+    ">TEST 1\n"
     "ACGT\n"
-    "> Test2\n"
+    ">Test2\n"
     "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
-    "> Test3\n"
+    ">Test3\n"
     "GGAGTATAATATATATATATATAT\n"
 };
 
@@ -347,7 +347,7 @@ TEST(row, different_fields_in_record_and_file)
 
     std::string const expected_out
     {
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGG\n"
         "CTGNAGGCTGN\n"
     };
@@ -420,6 +420,7 @@ std::string compression_by_filename_impl([[maybe_unused]]seqan3::test::tmp_filen
 {
     {
         seqan3::sequence_file_output fout{filename.get_path()};
+        fout.options.fasta_blank_before_id = true;
         fout.options.fasta_letters_per_line = 0;
 
         for (size_t i = 0; i < 3; ++i)
@@ -446,6 +447,7 @@ template <typename comp_stream_t>
 void compression_by_stream_impl(comp_stream_t & stream)
 {
     seqan3::sequence_file_output fout{stream, seqan3::format_fasta{}};
+    fout.options.fasta_blank_before_id = true;
     fout.options.fasta_letters_per_line = 0;
 
     for (size_t i = 0; i < 3; ++i)

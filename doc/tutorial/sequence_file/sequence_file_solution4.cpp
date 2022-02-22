@@ -31,7 +31,7 @@ seqan3::test::create_temporary_snippet_file output{"output.fastq", ""};
 
 //![solution]
 #include <seqan3/io/sequence_file/all.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <seqan3/std/ranges>
 
 int main()

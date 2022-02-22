@@ -41,7 +41,7 @@ class async_input_buffer_view : public std::ranges::view_interface<async_input_b
 {
 private:
     static_assert(std::ranges::input_range<urng_t>,
-        "The range parameter to async_input_buffer_view must be at least an std::ranges::input_range.");
+        "The range parameter to async_input_buffer_view must be at least a std::ranges::input_range.");
     static_assert(std::ranges::view<urng_t>,
         "The range parameter to async_input_buffer_view must model std::ranges::view.");
     static_assert(std::movable<std::ranges::range_value_t<urng_t>>,
@@ -161,7 +161,7 @@ public:
 };
 
 //!\brief The iterator of the seqan3::detail::async_input_buffer_view.
-template <typename urng_t>
+template <std::ranges::range urng_t>
 class async_input_buffer_view<urng_t>::iterator
 {
     //!\brief The sentinel type to compare to.
@@ -316,7 +316,7 @@ struct async_input_buffer_fn
     constexpr auto operator()(urng_t && urange, size_t const buffer_size) const
     {
         static_assert(std::ranges::input_range<urng_t>,
-            "The range parameter to views::async_input_buffer must be at least an std::ranges::input_range.");
+            "The range parameter to views::async_input_buffer must be at least a std::ranges::input_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
             "The range parameter to views::async_input_buffer cannot be a temporary of a non-view range.");
         static_assert(std::movable<std::ranges::range_value_t<urng_t>>,

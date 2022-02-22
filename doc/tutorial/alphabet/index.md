@@ -2,7 +2,7 @@
 
 ***Learning Objective:***
 
-In this tutorial we look at alphabets and you will learn how to work with nucleotides and amino acids in SeqAn.
+In this tutorial, we look at alphabets and you will learn how to work with nucleotides and amino acids in SeqAn.
 We guide you through the most important properties of SeqAn's alphabets and show you the different implemented types.
 After completion, you will be able to use the alphabets inside of STL containers and to compare alphabet values.
 
@@ -30,13 +30,13 @@ This is a detailed introduction to the alphabet module and demonstrates its main
 Nucleotides are the components of (Deoxy)Ribonucleic acid (DNA/RNA) and contain one of the nucleobases
 Adenine (A), Cytosine (C), Guanine (G), Thymine (T, only DNA) and Uracil (U, only RNA).
 In SeqAn the alphabets seqan3::dna4 and seqan3::rna4 contain exactly the four respective nucleotides.
-The trailed number in the alphabets' name represents the number of entities the alphabet holds –
+The trailing number in the alphabet's name represents the number of entities the alphabet holds –
 we denote this number as *alphabet size*.
 For instance, the alphabet seqan3::dna5 represents five entities as it contains the additional symbol 'N'
 to refer to an unknown nucleotide.
 
 ## Construction and assignment of alphabet symbols
-Let's look at some example code which demonstrates how objects of the seqan3::dna4 alphabet are assigned
+Let's look at some example code that demonstrates how objects of the seqan3::dna4 alphabet are assigned
 from characters.
 
 \snippet alphabet_main.cpp create
@@ -161,7 +161,7 @@ We distinguish between three types:
    that a nucleobase was recorded incorrectly. The characters are most commonly found in FASTQ files.
    See \ref alphabet_quality for details.
 2. **RNA structure alphabets**. They describe RNA nucleobases as unpaired or up-/downstream paired and can be found
-   in annotated RNA sequence and alignment files (e.g. Stockholm format). Currently we provide the
+   in annotated RNA sequence and alignment files (e.g. Stockholm format). Currently, we provide the
    [Dot Bracket](\ref seqan3::dot_bracket3) and [WUSS](\ref seqan3::wuss) formats.
 3. **Protein structure alphabet**. The [DSSP](\ref seqan3::dssp9) format represents secondary structure elements like
    alpha helices and turns.
@@ -186,7 +186,7 @@ The following combinations still fit into a single byte (which can hold up-to 25
  - `seqan3::qualified<seqan3::dna4, seqan3::phred63>` (alphabet size: 4 x 63 = 252)
  - `seqan3::qualified<seqan3::dna5, seqan3::phred42>` (alphabet size: 4 x 42 = 210)
 
-Using seqan3::qualified can half the storage usage compared to storing qualities and nucleotides separately.
+Using seqan3::qualified can halve the storage usage compared to storing qualities and nucleotides separately.
 
 While we use DNA alphabets in this example, the same properties hold true for RNA alphabets.
 

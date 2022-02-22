@@ -17,8 +17,11 @@
 namespace seqan3
 {
 
-//!\brief The options type defines various option members that influence the behaviour of all or some formats.
-//!\ingroup io_sam_file
+/*!\brief The options type defines various option members that influence the behaviour of all or some formats.
+ * \ingroup io_sam_file
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
+ */
 template <typename sequence_legal_alphabet>
 struct sam_file_input_options
 {

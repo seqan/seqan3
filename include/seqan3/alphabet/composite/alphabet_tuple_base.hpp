@@ -20,10 +20,10 @@
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
+#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
@@ -671,6 +671,10 @@ private:
  * \noapi
  */
 template <typename derived_type, typename ...component_types>
+//!\cond
+    requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
+             (std::regular<component_types> && ...)
+//!\endcond
 template <typename alphabet_type, size_t index>
 class alphabet_tuple_base<derived_type, component_types...>::component_proxy : public alphabet_proxy<component_proxy<alphabet_type, index>, alphabet_type>
 {
@@ -686,7 +690,7 @@ private:
     //!\brief The implementation updates the rank in the parent object.
     constexpr void on_update() noexcept
     {
-        parent->assign_component_rank<index>(to_rank());
+        parent->assign_component_rank<index>(this->to_rank());
     }
 
 public:

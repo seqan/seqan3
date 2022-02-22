@@ -101,7 +101,7 @@ class strong_type;
  */
 //!\cond
 template <typename strong_type_t>
-SEQAN3_CONCEPT derived_from_strong_type = requires (strong_type_t && obj)
+concept derived_from_strong_type = requires (strong_type_t && obj)
 {
     typename std::remove_reference_t<strong_type_t>::value_type;
 

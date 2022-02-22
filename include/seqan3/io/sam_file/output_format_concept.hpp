@@ -13,6 +13,7 @@
 #pragma once
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -39,6 +40,8 @@ namespace seqan3::detail
  *
  * Exposes the protected member function `write_alignment_record` from the given `format_type`, such that the file can
  * call the proper function for the selected format.
+ *
+ * \remark For a complete overview, take a look at \ref io_sam_file
  */
 template <typename format_type>
 struct sam_file_output_format_exposer : public format_type
@@ -72,7 +75,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sam_file_output_format =
+concept sam_file_output_format =
     requires (detail::sam_file_output_format_exposer<t>                            & v,
               std::ofstream                                                        & stream,
               sam_file_output_options                                              & options,
@@ -211,5 +214,5 @@ constexpr bool is_type_list_of_sam_file_output_formats_v<type_list<ts...>> = (sa
  * \see seqan3::is_type_list_of_sam_file_output_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sam_file_output_formats = is_type_list_of_sam_file_output_formats_v<t>;
+concept type_list_of_sam_file_output_formats = is_type_list_of_sam_file_output_formats_v<t>;
 } // namespace seqan3::detail

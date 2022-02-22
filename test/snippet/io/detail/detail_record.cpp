@@ -13,5 +13,6 @@ int main()
     using selected_ids  = seqan3::fields<seqan3::field::qual, seqan3::field::id>;
 
     using selected_types = seqan3::detail::select_types_with_ids_t<types, types_as_ids, selected_ids>;
-    // resolves to type_list<std::vector<phred42>, std::string>>
+    // resolves to type_list<std::vector<phred42>, std::string>
+    static_assert(std::same_as<selected_types, seqan3::type_list<std::vector<seqan3::phred42>, std::string>>);
 }

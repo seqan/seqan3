@@ -75,15 +75,12 @@ public:
     /*!\brief Allow implicit construction from seqan3::dna15 of the same size.
      * \details
      *
-     * \copydetails seqan3::doxygen::rna15_implicit_conversion_from_dna15
+     * \include{doc} doc/fragments/rna15_implicit_conversion_from_dna15.md
      *
      * \stableapi{Since version 3.1.}
      */
     template <std::same_as<dna15> t>
     constexpr rna15(t const & r) noexcept
-#if SEQAN3_WORKAROUND_GCC_90897
-        requires true
-#endif
     {
         assign_rank(r.to_rank());
     }
@@ -133,7 +130,7 @@ private:
 // containers
 // ------------------------------------------------------------------
 
-/*!\brief Alias for an std::vector of seqan3::rna15.
+/*!\brief Alias for a std::vector of seqan3::rna15.
  * \relates rna15
  * \details
  * \stableapi{Since version 3.1.}

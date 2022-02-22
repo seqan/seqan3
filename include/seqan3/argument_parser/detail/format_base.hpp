@@ -13,18 +13,17 @@
 
 #pragma once
 
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <limits>
 #include <sstream>
 #include <string>
 
 #include <seqan3/argument_parser/auxiliary.hpp>
+#include <seqan3/argument_parser/detail/concept.hpp>
 #include <seqan3/argument_parser/exceptions.hpp>
 #include <seqan3/argument_parser/validators.hpp>
-#include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/detail/type_name_as_string.hpp>
-#include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/version.hpp>
 
 namespace seqan3::detail
@@ -32,6 +31,7 @@ namespace seqan3::detail
 
 /*!\brief The format that contains all helper functions needed in all formats.
  * \ingroup argument_parser
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_base
 {
@@ -83,10 +83,7 @@ protected:
      * \tparam container_type The container type for which to query it's value_type.
      * \returns The type of the container value_type as a string.
      */
-    template <sequence_container container_type>
-    //!\cond
-        requires (!std::is_same_v<container_type, std::string>)
-    //!\endcond
+    template <detail::is_container_option container_type>
     static std::string get_type_name_as_string(container_type const & /**/)
     {
         typename container_type::value_type tmp{};
@@ -105,15 +102,12 @@ protected:
     }
 
     /*!\brief Formats the container and its value_type for the help page printing.
-     * \tparam container_type A type that must satisfy the seqan3::sequence_container.
+     * \tparam container_type A type that must satisfy the seqan3::detail::is_container_option.
      * \param[in] container The container to deduct the type from.
      *
      * \returns The type of the container value type as a string, encapsulated in "List of".
      */
-    template <typename container_type>
-    //!\cond
-        requires sequence_container<container_type> && (!std::is_same_v<container_type, std::string>)
-    //!\endcond
+    template <detail::is_container_option container_type>
     static std::string option_type_and_list_info(container_type const & container)
     {
         return ("(\\fIList\\fP of \\fI" + get_type_name_as_string(container) + "\\fP)");
@@ -199,6 +193,7 @@ protected:
 /*!\brief The format that contains all helper functions needed in all formats for
  *        printing the interface description of the application (to std::cout).
  * \ingroup argument_parser
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename derived_type>
 class format_help_base : public format_base
@@ -272,7 +267,7 @@ public:
                                                           option_type_and_list_info(value)),
                                         desc +
                                         // a list at the end may be empty and thus have a default value
-                                        ((sequence_container<option_type> && !std::same_as<option_type, std::string>)
+                                        ((detail::is_container_option<option_type>)
                                             ? detail::to_string(" Default: ", value, ". ")
                                             : std::string{" "}) +
                                         msg);

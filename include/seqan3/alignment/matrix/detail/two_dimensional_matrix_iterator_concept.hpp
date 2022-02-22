@@ -91,7 +91,7 @@ namespace seqan3::detail
 //!\}
 //!\cond
 template <typename iter_t>
-SEQAN3_CONCEPT two_dimensional_matrix_iterator =
+concept two_dimensional_matrix_iterator =
     std::random_access_iterator<iter_t> &&
     requires(std::remove_reference_t<iter_t> it, std::remove_reference_t<iter_t> const cit, matrix_offset offset)
     {

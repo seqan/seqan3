@@ -21,19 +21,19 @@ TEST(rows, assign_sequence_files)
     {
         ">TEST 1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN AGGCTGN\n\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
     std::string const output_comp
     {
-        "> TEST 1\n"
+        ">TEST 1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
@@ -51,11 +51,11 @@ TEST(integration, assign_sequence_file_pipes)
 {
     std::string const input
     {
-        "> TEST1\n"
+        ">TEST1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
@@ -75,19 +75,19 @@ TEST(integration, view)
 {
     std::string const input
     {
-        "> TEST1\n"
+        ">TEST1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
-        "> Test3\n"
+        ">Test3\n"
         "GGAGTATAATATATATATATATAT\n"
     };
 
     std::string const output
     {
-        "> TEST1\n"
+        ">TEST1\n"
         "ACGT\n"
-        "> Test2\n"
+        ">Test2\n"
         "AGGCTGNAGGCTGAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
     };
 
@@ -124,9 +124,9 @@ TEST(integration, convert_fastq_to_fasta)
 
     std::string const fasta_out
     {
-        "> ID1\n"
+        ">ID1\n"
         "ACGTT\n"
-        "> ID2\n"
+        ">ID2\n"
         "TATTA\n"
     };
 

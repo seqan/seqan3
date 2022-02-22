@@ -3,7 +3,7 @@
 seqan3::test::create_temporary_snippet_file my_fasta{"my.fasta", ""};
 
 //![main]
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/io/sequence_file/input.hpp>
@@ -23,7 +23,7 @@ int main()
         fout.emplace_back("GGAGTATAATATATATATATATAT"_dna4, "Test3");
     }
 
-    // FastA with DNA sequences assumed, regular std::ifstream taken as stream
+    // FASTA with DNA sequences assumed, regular std::ifstream taken as stream
     seqan3::sequence_file_input fin{fasta_file};
 }
 //![main]

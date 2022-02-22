@@ -20,7 +20,6 @@
 
 #include <seqan3/argument_parser/detail/format_base.hpp>
 #include <seqan3/utility/char_operations/predicate.hpp>
-#include <seqan3/utility/detail/type_name_as_string.hpp>
 
 namespace seqan3::detail
 {
@@ -48,6 +47,8 @@ namespace seqan3::detail
  * When parsing flags and options, the identifiers (and values) are removed from
  * the vector format_parse::argv. That way, options that are specified multiple times,
  * but are no container type, can be identified and an error is reported.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_parse : public format_base
 {
@@ -354,18 +355,25 @@ private:
     //!\endcond
 
     /*!\brief Parses the given option value and appends it to the target container.
-     * \tparam container_option_t Must model the seqan3::sequence_container and
+     * \tparam container_option_t Must model seqan3::detail::is_container_option and
      *                            its value_type must be parseable via parse_option_value
+     * \tparam format_parse_t Needed to make the function "dependent" (i.e. do instantiation in the second phase of
+     *                        two-phase lookup) as the requires clause needs to be able to access the other
+     *                        parse_option_value overloads.
      *
      * \param[out] value The container that stores the parsed value.
      * \param[in] in The input argument to be parsed.
      * \returns A seqan3::option_parse_result whether parsing was successful or not.
      */
-    template <sequence_container container_option_t>
+    template <detail::is_container_option container_option_t, typename format_parse_t = format_parse>
     //!\cond
-        requires requires (format_parse fp, typename container_option_t::value_type & container_value, std::string const & in)
+        requires requires (format_parse_t fp,
+                           typename container_option_t::value_type & container_value,
+                           std::string const & in)
         {
-            SEQAN3_RETURN_TYPE_CONSTRAINT(fp.parse_option_value(container_value, in), std::same_as, option_parse_result);
+            SEQAN3_RETURN_TYPE_CONSTRAINT(fp.parse_option_value(container_value, in),
+                                          std::same_as,
+                                          option_parse_result);
         }
     //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
@@ -451,7 +459,7 @@ private:
         if (res == option_parse_result::error)
         {
             throw user_input_error{msg + "Argument " + input_value + " could not be parsed as type " +
-                                   get_type_name_as_string(input_value) + "."};
+                                   get_type_name_as_string(option_type{}) + "."};
         }
 
         if constexpr (arithmetic<option_type>)
@@ -467,7 +475,7 @@ private:
         assert(res == option_parse_result::success); // if nothing was thrown, the result must have been a success
     }
 
-    /*!\brief Handles value retrieval for options based on different kev value pairs.
+    /*!\brief Handles value retrieval for options based on different key-value pairs.
      *
      * \param[out] value     Stores the value found in argv, parsed by parse_option_value.
      * \param[in]  option_it The iterator where the option identifier was found.
@@ -570,10 +578,7 @@ private:
      * multiple times.
      *
      */
-    template <sequence_container option_type, typename id_type>
-    //!\cond
-        requires (!std::is_same_v<option_type, std::string>)
-    //!\endcond
+    template <detail::is_container_option option_type, typename id_type>
     bool get_option_by_id(option_type & value, id_type const & id)
     {
         auto it = find_option_id(argv.begin(), end_of_options_it, id);
@@ -681,8 +686,7 @@ private:
         bool long_id_is_set{get_option_by_id(value, long_id)};
 
         // if value is no container we need to check for multiple declarations
-        if (short_id_is_set && long_id_is_set &&
-            !(sequence_container<option_type> && !std::is_same_v<option_type, std::string>))
+        if (short_id_is_set && long_id_is_set && !detail::is_container_option<option_type>)
             throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
                                                  " is no list/container but specified multiple times");
 
@@ -755,7 +759,7 @@ private:
                                     std::to_string(positional_option_calls.size()) +
                                     "). See -h/--help for more information.");
 
-        if constexpr (sequence_container<option_type> && !std::is_same_v<option_type, std::string>) // vector/list will be filled with all remaining arguments
+        if constexpr (detail::is_container_option<option_type>) // vector/list will be filled with all remaining arguments
         {
             assert(positional_option_count == positional_option_calls.size()); // checked on set up.
 

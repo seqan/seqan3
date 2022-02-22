@@ -44,7 +44,7 @@
 namespace seqan3
 {
 
-/*!\brief The FastQ format.
+/*!\brief The FASTQ format.
  * \implements SequenceFileFormat
  * \ingroup io_sequence_file
  *
@@ -52,12 +52,12 @@ namespace seqan3
  *
  * ### Introduction
  *
- * FastQ is the de-facto-standard for storing sequences together with quality information. See the
+ * FASTQ is the de-facto-standard for storing sequences together with quality information. See the
  * [article on wikipedia](https://en.wikipedia.org/wiki/FASTQ_format) for a an in-depth description of the format.
  *
  * ### fields_specialisation
  *
- * The FastQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual. All three fields
+ * The FASTQ format provides the fields seqan3::field::seq, seqan3::field::id and seqan3::field::qual. All three fields
  * are required when writing and the sequence and qualities are required to be of the same length.
  *
  * ### Encodings
@@ -73,6 +73,7 @@ namespace seqan3
  *   * line breaks and/or other whitespace characters in any part of the sequence and/or qualities (only when reading!)
  *   * writing the ID to the `+`-line also (line is always ignored when reading)
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_fastq
 {
@@ -100,14 +101,16 @@ protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
+              typename stream_pos_type,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void read_sequence_record(stream_type                                                               & stream,
+    void read_sequence_record(stream_type & stream,
                               sequence_file_input_options<seq_legal_alph_type> const & options,
-                              seq_type                                                                  & sequence,
-                              id_type                                                                   & id,
-                              qual_type                                                                 & qualities)
+                              stream_pos_type & position_buffer,
+                              seq_type & sequence,
+                              id_type & id,
+                              qual_type & qualities)
     {
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = begin(stream_view);
@@ -117,6 +120,7 @@ protected:
         size_t sequence_size_after = 0;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
             sequence_size_before = size(sequence);
+        position_buffer = stream.tellg();
 
         /* ID */
         if (*stream_it != '@') // [[unlikely]]

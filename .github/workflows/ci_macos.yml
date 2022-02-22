@@ -1,4 +1,5 @@
 name: SeqAn3 CI on macOS
+
 on:
   push:
     branches:
@@ -7,9 +8,15 @@ on:
       # Push events to branches matching refs/heads/release*
       - 'release*'
   pull_request:
+  # Enables a manual trigger, may run on any branch
+  workflow_dispatch:
+
+concurrency:
+  group: macos-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 env:
-  CMAKE_VERSION: 3.8.2
+  CMAKE_VERSION: 3.10.3
   SEQAN3_NO_VERSION_CHECK: 1
   TZ: Europe/Berlin
 
@@ -22,18 +29,24 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: macos-10.15
     timeout-minutes: 120
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: true
       matrix:
         include:
+          - name: "Unit gcc11"
+            os: macos-10.15
+            cxx: "g++-11"
+            cc: "gcc-11"
+            build: unit
+            build_type: Release
+
           - name: "Unit gcc10"
             os: macos-10.15
             cxx: "g++-10"
             cc: "gcc-10"
             build: unit
             build_type: Release
-            build_threads: 3
-            test_threads: 3
 
           - name: "Unit gcc9 (c++2a)"
             os: macos-10.15
@@ -41,27 +54,7 @@ jobs:
             cc: "gcc-9"
             build: unit
             build_type: Release
-            build_threads: 3
-            test_threads: 3
             cxx_flags: "-std=c++2a"
-
-          - name: "Unit gcc8"
-            os: macos-10.15
-            cxx: "g++-8"
-            cc: "gcc-8"
-            build: unit
-            build_type: Release
-            build_threads: 3
-            test_threads: 3
-
-          - name: "Unit gcc7"
-            os: macos-10.15
-            cxx: "g++-7"
-            cc: "gcc-7"
-            build: unit
-            build_type: Release
-            build_threads: 3
-            test_threads: 3
 
     steps:
       - name: Checkout SeqAn3
@@ -77,6 +70,7 @@ jobs:
           repository: seqan/seqan
           ref: develop
           path: seqan3/submodules/seqan
+          fetch-depth: 2
 
       - name: Configure Homebrew
         uses: Homebrew/actions/setup-homebrew@master
@@ -88,7 +82,9 @@ jobs:
         run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh ccache
 
       - name: Install compiler ${{ matrix.cxx }}
-        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh gcc $(echo "${{ matrix.cxx }}" | sed "s/g++-//g")
+        env:
+          CC: ${{ matrix.cc }}
+        run: bash ./seqan3/.github/workflows/scripts/install_via_brew.sh $(echo ${CC/clang/llvm} | awk -F '-' '{print $1, $2}')
 
       - name: Load ccache
         uses: actions/cache@v2
@@ -113,23 +109,26 @@ jobs:
         run: |
           mkdir seqan3-build
           cd seqan3-build
-          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" -DSEQAN3_VERBOSE_TESTS=OFF -DSEQAN3_BENCHMARK_MIN_TIME=0.01
-          make gtest_build
+          cmake ../seqan3/test/${{ matrix.build }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                                                   -DCMAKE_CXX_FLAGS="${{ matrix.cxx_flags }}" \
+                                                   -DSEQAN3_VERBOSE_TESTS=OFF \
+                                                   -DSEQAN3_BENCHMARK_MIN_TIME=0.01
+          make -j3 gtest_build
 
       - name: Build tests
         env:
           CCACHE_BASEDIR: ${{ github.workspace }}
           CCACHE_DIR: ${{ github.workspace }}/.ccache
           CCACHE_COMPRESS: true
-          CCACHE_COMPRESSLEVEL: 6
-          CCACHE_MAXSIZE: 1G
+          CCACHE_COMPRESSLEVEL: 12
+          CCACHE_MAXSIZE: 75M
         run: |
-          ccache -p || true
+          ccache -z
           cd seqan3-build
-          make -k -j${{ matrix.build_threads }}
-          ccache -s || true
+          make -k -j3
+          ccache -sv
 
       - name: Run tests
         run: |
           cd seqan3-build
-          ctest . -j${{ matrix.test_threads }} --output-on-failure
+          ctest . -j3 --output-on-failure

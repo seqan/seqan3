@@ -68,6 +68,7 @@ namespace seqan3
  *
  * Passed qualities to either the read or write function are ignored.
  *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 class format_embl
 {
@@ -94,17 +95,22 @@ protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
     template <typename stream_type,     // constraints checked by file
               typename seq_legal_alph_type,
+              typename stream_pos_type,
               typename seq_type,        // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void read_sequence_record(stream_type & stream,
                               sequence_file_input_options<seq_legal_alph_type> const & options,
+                              stream_pos_type & position_buffer,
                               seq_type    & sequence,
                               id_type     & id,
                               qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
+
+        // Store current position in buffer.
+        position_buffer = stream.tellg();
 
         std::string idbuffer;
         std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank),

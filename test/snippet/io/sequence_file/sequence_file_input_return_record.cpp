@@ -1,13 +1,12 @@
 #include <sstream>
 
 #include <seqan3/io/sequence_file/input.hpp>
-#include <seqan3/std/ranges>
 
-auto input = R"(> TEST1
+auto input = R"(>TEST1
 ACGT
-> Test2
+>Test2
 AGGCTGA
-> Test3
+>Test3
 GGAGTATAATATATATATATATAT)";
 
 int main()
@@ -18,6 +17,6 @@ int main()
     // the following are equivalent:
     auto & rec0 = *it;
     auto & rec1 = fin.front();
-
+    std::cout << std::boolalpha << (rec0.id() == rec1.id()) << '\n'; // true
     // Note: rec0 and rec1 are references and become invalid after incrementing "it"!
 }

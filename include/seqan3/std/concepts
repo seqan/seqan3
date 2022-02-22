@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief The Concepts library.
+ * \brief The [\<concepts\> header](https://en.cppreference.com/w/cpp/header/concepts) from C++20's standard library.
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
@@ -37,7 +37,7 @@
  * In particular:
  *
  *   * We do not provide all C++20 library features, only those that are used by SeqAn.
- *   * All of these might change or be removed until C++20 is published.
+ *   * All of these might change or be removed once C++20 is published.
  *   * The documentation of this module will likely be removed entirely in favour of links to
  *     https://en.cppreference.com
  *
@@ -47,16 +47,13 @@
  *
  */
 
-/*!\defgroup concepts concepts
+/*!\defgroup std_concepts concepts
  * \ingroup std
- * \brief The \<concepts\> header from C++20's standard library.
+ * \brief The [\<concepts\> header](https://en.cppreference.com/w/cpp/header/concepts) from C++20's standard library.
  */
 
 namespace std
 {
-
-//!\addtogroup concepts
-//!\{
 
 // ==========================================
 // [concepts.lang], language-related concepts
@@ -71,7 +68,7 @@ using ::concepts::derived_from;
 // [concept.convertible], concept convertible_to
 using ::concepts::convertible_to;
 
-// [concept.commonref], concept common_­reference_­with
+// [concept.commonref], concept common_reference_with
 using ::concepts::common_reference_with;
 
 // [concept.common], concept common_with

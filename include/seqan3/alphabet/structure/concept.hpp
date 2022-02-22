@@ -484,7 +484,7 @@ namespace seqan3
 /*!\brief Retrieve an id for the level of a pseudoknotted interaction (also known as 'page number').
  * \tparam your_type Type of the argument.
  * \param  chr       The RNA structure character whose property is checked.
- * \returns An std::optional containing the pseudoknot identifier if `alph` represents an interaction.
+ * \returns A std::optional containing the pseudoknot identifier if `alph` represents an interaction.
  * The returned value is std::nullopt for unpaired sites. For non-nested interactions the identifier is always 0.
  * It is guaranteed to be smaller than seqan3::max_pseudoknot_depth.
  * \ingroup alphabet_structure
@@ -558,7 +558,7 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
+concept rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
 {
     { seqan3::is_pair_open(val) };
     { seqan3::is_pair_close(val) };

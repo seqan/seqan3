@@ -17,8 +17,8 @@
 
 #include <seqan3/alignment/matrix/detail/affine_cell_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
+#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
-#include <seqan3/utility/detail/exposition_only_concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/zip.hpp>
@@ -158,6 +158,9 @@ public:
  * tuple layout returned by the seqan3::views::zip view.
  */
 template <typename score_t>
+//!\cond
+    requires (arithmetic<score_t> || simd_concept<score_t>)
+//!\endcond
 class score_matrix_single_column<score_t>::matrix_iterator
 {
 private:

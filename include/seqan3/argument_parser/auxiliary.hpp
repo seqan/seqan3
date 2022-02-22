@@ -21,7 +21,6 @@
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3::custom
 {
@@ -45,6 +44,8 @@ namespace seqan3::custom
  *
  * \note Only use this if you cannot provide respective functions in your namespace. See the tutorial
  * \ref tutorial_argument_parser for an example of customising a type within your own namespace.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 template <typename t>
 struct argument_parsing
@@ -74,7 +75,8 @@ template <typename t>
 std::unordered_map<std::string_view, t> enumeration_names(t) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enumeration_names.
-//!\ingroup alphabet
+//!\ingroup argument_parser
+//!\remark For a complete overview, take a look at \ref argument_parser
 template <typename option_t>
 struct enumeration_names_cpo : public detail::customisation_point_object<enumeration_names_cpo<option_t>, 1>
 {
@@ -83,13 +85,12 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
     //!\brief Only this class is allowed to import the constructors from #base_t. (CRTP safety idiom)
     using base_t::base_t;
 
-    /*!\brief If `alphabet_type` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
+    /*!\brief If `option_t` isn't std::is_nothrow_default_constructible, enumeration_names will be called with
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename option_type>
     using option_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>> &&
-                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<option_type>>,
+        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>>,
                              std::remove_cvref_t<option_type>,
                              std::type_identity<option_type>>;
 
@@ -109,7 +110,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      * \details
      *
      * If the option_type isn't std::is_nothrow_default_constructible,
-     * `enumeration_names(std::type_identity<alphabet_type>{})` will be called.
+     * `enumeration_names(std::type_identity<option_t>{})` will be called.
      */
     template <typename option_type = option_t>
     static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
@@ -154,6 +155,8 @@ namespace seqan3
  *
  * \include test/snippet/argument_parser/custom_argument_parsing_enumeration.cpp
  *
+ * \remark For a complete overview, take a look at \ref argument_parser
+ *
  * ### Customisation point
  *
  * This is a customisation point (see \ref about_customisation). To specify the behaviour for your own type,
@@ -175,10 +178,12 @@ inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<op
  *
  * * A instance of seqan3::enumeration_names<option_type> must exist and be of type
  *   `std::unordered_map<std::string, option_type>`.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 //!\cond
 template <typename option_type>
-SEQAN3_CONCEPT named_enumeration = requires
+concept named_enumeration = requires
 {
     { seqan3::enumeration_names<option_type> };
 };
@@ -193,11 +198,13 @@ SEQAN3_CONCEPT named_enumeration = requires
  *
  * In order to model this concept, the type must either be streamable to std::istringstream or
  * model seqan3::named_enumeration<option_type>.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 //!\cond
 template <typename option_type>
-SEQAN3_CONCEPT argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
-                                                   named_enumeration<option_type>;
+concept argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
+                                            named_enumeration<option_type>;
 //!\endcond
 
 /*!\name Formatted output overloads
@@ -239,6 +246,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, opt
  * otherwise by the developer, e.g. when calling argument_parser::add_option().
  *
  * \include test/snippet/argument_parser/auxiliary.cpp
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 enum option_spec
 {
@@ -275,6 +284,8 @@ enum class update_notifications
  *
  * The meta information is assembled in a struct to provide a central access
  * point that can be easily extended.
+ *
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 struct argument_parser_meta_data // holds all meta information
 {

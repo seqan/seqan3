@@ -86,7 +86,7 @@ private:
          */
         auto operator()(index_t const row_index) noexcept
         {
-            return matrix_index{row_index_type{row_index}, column_index_type{column_index}};
+            return matrix_index<index_t>{row_index_type{row_index}, column_index_type{column_index}};
         }
     };
 
@@ -259,7 +259,12 @@ public:
     //!\brief Increments the iterator to the next column.
     iterator & operator++()
     {
-        ++column_id;
+        // clang: pre-increment of a SIMD vector does not work
+        if constexpr (simd_index<index_t>)
+            column_id = column_id + simd::fill<index_t>(1);
+        else
+            ++column_id;
+
         return *this;
     }
 

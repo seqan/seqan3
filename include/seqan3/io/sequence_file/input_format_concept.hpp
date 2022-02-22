@@ -65,22 +65,32 @@ namespace seqan3
  * The details of this concept are only relevant to developers who wish to implement their own format.
  * The requirements for this concept are given as related functions and type traits.
  * Types that satisfy this concept are shown as "implementing this interface".
+ *
+ * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 //!\cond
 template <typename t>
-SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
-                                                      std::ifstream                                 & f,
-                                                      sequence_file_input_options<dna5>             & options,
-                                                      std::vector<dna5>                             & seq,
-                                                      std::string                                   & id,
-                                                      std::vector<phred42>                          & qual,
-                                                      std::vector<qualified<dna5, phred42>>         & seq_qual)
+concept sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
+                                               std::ifstream                                 & f,
+                                               sequence_file_input_options<dna5>             & options,
+                                               std::streampos                                & position_buffer,
+                                               std::vector<dna5>                             & seq,
+                                               std::string                                   & id,
+                                               std::vector<phred42>                          & qual,
+                                               std::vector<qualified<dna5, phred42>>         & seq_qual)
 {
     t::file_extensions;
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, seq, id, qual), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, seq_qual, id, seq_qual), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, std::ignore, std::ignore, std::ignore),
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, position_buffer, seq, id, qual),
+                                  std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual),
+                                  std::same_as, void);
+    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f,
+                                                         options,
+                                                         position_buffer,
+                                                         std::ignore,
+                                                         std::ignore,
+                                                         std::ignore),
                                   std::same_as, void);
 };
 //!\endcond
@@ -91,10 +101,15 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  * \{
  */
 
-/*!\fn void read_sequence_record(stream_type & stream, seqan3::sequence_file_input_options const & options, seq_type & sequence,
- *               id_type & id, qual_type & qualities)
+/*!\fn void read_sequence_record(stream_type & stream,
+                                 seqan3::sequence_file_input_options const & options,
+                                 stream_pos_type & position_buffer,
+                                 seq_type & sequence,
+                                 id_type & id,
+                                 qual_type & qualities)
  * \brief Read from the specified stream and back-insert into the given field buffers.
  * \tparam stream_type      Input stream, must satisfy seqan3::input_stream_over with `char`.
+ * \tparam stream_pos_type  Buffer for storing the current record's file position.
  * \tparam seq_type         Type of the seqan3::field::seq input; must satisfy std::ranges::output_range
  * over a seqan3::alphabet.
  * \tparam id_type          Type of the seqan3::field::id input; must satisfy std::ranges::output_range
@@ -102,9 +117,10 @@ SEQAN3_CONCEPT sequence_file_input_format = requires (detail::sequence_file_inpu
  * \tparam qual_type        Type of the seqan3::field::qual input; must satisfy std::ranges::output_range
  * over a seqan3::writable_quality_alphabet.
  * \param[in,out] stream    The input stream to read from.
+ * \param[in,out] position_buffer The buffer to store the current record's file position.
  * \param[in]     options   File specific options passed to the format.
  * \param[out]    sequence  The buffer for seqan3::field::seq input, i.e. the "sequence".
- * \param[out]    id        The buffer for seqan3::field::id input, e.g. the header line in FastA.
+ * \param[out]    id        The buffer for seqan3::field::id input, e.g. the header line in FASTA .
  * \param[out]    qualities The buffer for seqan3::field::qual input.
  *
  * \details
@@ -148,5 +164,5 @@ constexpr bool is_type_list_of_sequence_file_input_formats_v<type_list<ts...>> =
  * \see seqan3::is_type_list_of_sequence_file_formats_v
  */
 template <typename t>
-SEQAN3_CONCEPT type_list_of_sequence_file_input_formats = is_type_list_of_sequence_file_input_formats_v<t>;
+concept type_list_of_sequence_file_input_formats = is_type_list_of_sequence_file_input_formats_v<t>;
 } // namespace seqan3::detail

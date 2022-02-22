@@ -9,11 +9,10 @@
 # SeqAn3. To build tests, run cmake on one of the sub-folders in this directory
 # which contain a CMakeLists.txt.
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.10)
 
 # require SeqAn3 package
-find_package (SeqAn3 REQUIRED
-              HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
+find_package (SeqAn3 REQUIRED HINTS ${CMAKE_CURRENT_LIST_DIR}/../build_system)
 
 include (CheckCXXSourceCompiles)
 include (FindPackageHandleStandardArgs)
@@ -38,23 +37,21 @@ option (SEQAN3_BENCHMARK_ALIGN_LOOPS "Pass -falign-loops=32 to the benchmark bui
 #   set -mtune=native
 #   and -fcf-protection=check
 # See https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/rawhide/f/buildflags.md for an overview
-set (CMAKE_CXX_FLAGS_FEDORA "-O2 -flto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -mtune=native -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection=check")
+set (CMAKE_CXX_FLAGS_FEDORA
+     "-O2 -flto -ffat-lto-objects -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -m64 -mtune=native -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection=check"
+)
 
 # ----------------------------------------------------------------------------
 # Paths to folders.
 # ----------------------------------------------------------------------------
 
-find_path (SEQAN3_TEST_INCLUDE_DIR NAMES seqan3/test/tmp_filename.hpp HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
-find_path (SEQAN3_TEST_CMAKE_MODULE_DIR NAMES seqan3_test_component.cmake HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
-list(APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
-
-set (SEQAN3_BENCHMARK_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/benchmark")
-set (SEQAN3_TEST_CLONE_DIR "${PROJECT_BINARY_DIR}/vendor/googletest")
-
-# needed for add_library (seqan3::test::* INTERFACE IMPORTED)
-# see cmake bug https://gitlab.kitware.com/cmake/cmake/issues/15052
-file(MAKE_DIRECTORY ${SEQAN3_BENCHMARK_CLONE_DIR}/include/)
-file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
+find_path (SEQAN3_TEST_INCLUDE_DIR
+           NAMES seqan3/test/tmp_filename.hpp
+           HINTS "${CMAKE_CURRENT_LIST_DIR}/include/")
+find_path (SEQAN3_TEST_CMAKE_MODULE_DIR
+           NAMES seqan3_test_component.cmake
+           HINTS "${CMAKE_CURRENT_LIST_DIR}/cmake/")
+list (APPEND CMAKE_MODULE_PATH "${SEQAN3_TEST_CMAKE_MODULE_DIR}")
 
 # ----------------------------------------------------------------------------
 # Interface targets for the different test modules in seqan3.
@@ -62,46 +59,71 @@ file(MAKE_DIRECTORY ${SEQAN3_TEST_CLONE_DIR}/googletest/include/)
 
 # seqan3::test exposes a base set of required flags, includes, definitions and
 # libraries which are in common for **all** seqan3 tests
-add_library (seqan3_test INTERFACE)
-target_compile_options (seqan3_test INTERFACE "-pedantic"  "-Wall" "-Wextra" "-Werror")
-target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
-target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
-add_library (seqan3::test ALIAS seqan3_test)
+if (NOT TARGET seqan3::test)
+    add_library (seqan3_test INTERFACE)
+    target_compile_options (seqan3_test INTERFACE "-pedantic" "-Wall" "-Wextra" "-Werror")
+
+    # GCC12 and above: Disable warning about std::hardware_destructive_interference_size not being ABI-stable.
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12)
+            target_compile_options (seqan3_test INTERFACE "-Wno-interference-size")
+        endif ()
+    endif ()
+
+    target_link_libraries (seqan3_test INTERFACE "seqan3::seqan3" "pthread")
+    target_include_directories (seqan3_test INTERFACE "${SEQAN3_TEST_INCLUDE_DIR}")
+    add_library (seqan3::test ALIAS seqan3_test)
+endif ()
 
 # seqan3::test::performance specifies required flags, includes and libraries
 # needed for performance test cases in seqan3/test/performance
-add_library (seqan3_test_performance INTERFACE)
-target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
+if (NOT TARGET seqan3::test::performance)
+    add_library (seqan3_test_performance INTERFACE)
+    target_link_libraries (seqan3_test_performance INTERFACE "seqan3::test" "gbenchmark")
 
-if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
-    target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
+    if (SEQAN3_BENCHMARK_ALIGN_LOOPS)
+        target_compile_options (seqan3_test_performance INTERFACE "-falign-loops=32")
+    endif ()
+
+    add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 endif ()
-
-target_include_directories (seqan3_test_performance INTERFACE "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
-add_library (seqan3::test::performance ALIAS seqan3_test_performance)
 
 # seqan3::test::unit specifies required flags, includes and libraries
 # needed for unit test cases in seqan3/test/unit
-add_library (seqan3_test_unit INTERFACE)
-target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
-target_include_directories (seqan3_test_unit INTERFACE "${SEQAN3_TEST_CLONE_DIR}/googletest/include/")
-add_library (seqan3::test::unit ALIAS seqan3_test_unit)
+if (NOT TARGET seqan3::test::unit)
+    add_library (seqan3_test_unit INTERFACE)
+    target_link_libraries (seqan3_test_unit INTERFACE "seqan3::test" "gtest_main" "gtest")
+    add_library (seqan3::test::unit ALIAS seqan3_test_unit)
+endif ()
 
 # seqan3::test::coverage specifies required flags, includes and libraries
 # needed for coverage test cases in seqan3/test/coverage
-add_library (seqan3_test_coverage INTERFACE)
-target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
-target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
-add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
+if (NOT TARGET seqan3::test::coverage)
+    add_library (seqan3_test_coverage INTERFACE)
+    target_compile_options (seqan3_test_coverage INTERFACE "--coverage" "-fprofile-arcs" "-ftest-coverage")
+    # -fprofile-abs-path requires at least gcc8, it forces gcov to report absolute instead of relative paths.
+    # gcovr has trouble detecting the headers otherwise.
+    # ccache is not aware of this option, so it needs to be skipped with `--ccache-skip`.
+    find_program (CCACHE_PROGRAM ccache)
+    if (CCACHE_PROGRAM)
+        target_compile_options (seqan3_test_coverage INTERFACE "--ccache-skip" "-fprofile-abs-path")
+    else ()
+        target_compile_options (seqan3_test_coverage INTERFACE "-fprofile-abs-path")
+    endif ()
+    target_link_libraries (seqan3_test_coverage INTERFACE "seqan3::test::unit" "gcov")
+    add_library (seqan3::test::coverage ALIAS seqan3_test_coverage)
+endif ()
 
 # seqan3::test::header specifies required flags, includes and libraries
 # needed for header test cases in seqan3/test/header
-add_library (seqan3_test_header INTERFACE)
-target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
-target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
-target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
-target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_HEADER_TEST)
-add_library (seqan3::test::header ALIAS seqan3_test_header)
+if (NOT TARGET seqan3::test::header)
+    add_library (seqan3_test_header INTERFACE)
+    target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::unit")
+    target_link_libraries (seqan3_test_header INTERFACE "seqan3::test::performance")
+    target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_DISABLE_DEPRECATED_WARNINGS)
+    target_compile_definitions (seqan3_test_header INTERFACE -DSEQAN3_HEADER_TEST)
+    add_library (seqan3::test::header ALIAS seqan3_test_header)
+endif ()
 
 # ----------------------------------------------------------------------------
 # Commonly shared options for external projects.

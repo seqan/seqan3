@@ -24,9 +24,10 @@
 #endif
 
 #include <cassert>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <iostream>
 #include <optional>
+#include <utility>
 
 #include <seqan3/core/platform.hpp>
 #include <seqan3/test/sandboxed_path.hpp>

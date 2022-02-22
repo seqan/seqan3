@@ -5,6 +5,8 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
+cmake_minimum_required (VERSION 3.10)
+
 # Adds a macro benchmark target and a test which executes that macro benchmark
 #
 # Example:
@@ -39,13 +41,12 @@
 #
 #   Adds the meta data to the generated json file.
 function (seqan3_macro_benchmark macro_benchmark_cpp)
-    cmake_parse_arguments(
-        "MACRO_BENCHMARK"
-        ""
-        "REPETITIONS"
-        "META_DATA"
-        ${ARGN}
-    )
+    cmake_parse_arguments (
+        "MACRO_BENCHMARK" #
+        "" #
+        "REPETITIONS" #
+        "META_DATA" #
+        ${ARGN})
 
     if (NOT MACRO_BENCHMARK_REPETITIONS)
         set (MACRO_BENCHMARK_REPETITIONS "3")
@@ -60,9 +61,9 @@ function (seqan3_macro_benchmark macro_benchmark_cpp)
     add_executable (${target} ${macro_benchmark_cpp})
     target_link_libraries (${target} seqan3::test::performance)
     add_test (NAME "${test_name}"
-              COMMAND ${target}
-                      --benchmark_repetitions=${MACRO_BENCHMARK_REPETITIONS}
-                      --benchmark_min_time=0
-                      --benchmark_out=$<TARGET_FILE_NAME:${target}>.json
+              COMMAND ${target} #
+                      --benchmark_repetitions=${MACRO_BENCHMARK_REPETITIONS} #
+                      --benchmark_min_time=0 #
+                      --benchmark_out=$<TARGET_FILE_NAME:${target}>.json #
                       --benchmark_out_format=json)
 endfunction ()

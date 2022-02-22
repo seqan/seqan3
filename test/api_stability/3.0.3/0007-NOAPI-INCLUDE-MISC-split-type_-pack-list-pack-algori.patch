@@ -1,0 +1,260 @@
+From 08673ed41ee153133f0578039862f5cad5a11dcd Mon Sep 17 00:00:00 2001
+From: marehr <marehr-github@marehr.dialup.fu-berlin.de>
+Date: Fri, 3 Sep 2021 12:20:18 +0200
+Subject: [PATCH 7/7] [NOAPI] [INCLUDE] [MISC] split type_(pack|list) pack
+ algorithm
+
+[DOC] update and move snippets
+[MISC] use new split header
+---
+ test/snippet/core/detail/all_of_in_pack.cpp                    | 3 +--
+ test/snippet/core/detail/all_of_in_type_list.cpp               | 3 +--
+ test/snippet/core/detail/for_each_in_pack.cpp                  | 2 +-
+ test/snippet/core/detail/for_each_in_type_list.cpp             | 2 +-
+ test/unit/alignment/configuration/align_config_common_test.cpp | 1 -
+ test/unit/alignment/scoring/scoring_scheme_test.cpp            | 2 +-
+ .../aminoacid/aminoacid_conversion_integration_test.cpp        | 2 +-
+ test/unit/alphabet/composite/alphabet_variant_test.cpp         | 2 +-
+ .../nucleotide/nucleotide_conversion_integration_test.cpp      | 2 +-
+ .../alphabet/quality/quality_conversion_integration_test.cpp   | 3 ++-
+ .../configuration/pipeable_config_element_test_template.hpp    | 2 +-
+ test/unit/core/detail/pack_algorithm_test.cpp                  | 2 +-
+ test/unit/search/configuration/hit_test.cpp                    | 1 -
+ test/unit/search/configuration/search_config_common_test.cpp   | 1 -
+ .../utility/char_operations/char_operations_predicate_test.cpp | 2 +-
+ test/unit/utility/simd/detail/builtin_simd_test.cpp            | 2 +-
+ test/unit/utility/simd/simd_algorithm_test.cpp                 | 2 +-
+ 17 files changed, 15 insertions(+), 19 deletions(-)
+
+diff --git a/test/snippet/core/detail/all_of_in_pack.cpp b/test/snippet/core/detail/all_of_in_pack.cpp
+index 657de7aea..c31765137 100644
+--- a/test/snippet/core/detail/all_of_in_pack.cpp
++++ b/test/snippet/core/detail/all_of_in_pack.cpp
+@@ -1,7 +1,6 @@
+ #include <type_traits>
+ 
+-#include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_pack/detail/type_pack_algorithm.hpp>
+ 
+ // With c++20 you could also write it like this
+ // auto fn = []<typename value_t>(value_t && value)
+diff --git a/test/snippet/core/detail/all_of_in_type_list.cpp b/test/snippet/core/detail/all_of_in_type_list.cpp
+index f52b8d61d..32b89e0b5 100644
+--- a/test/snippet/core/detail/all_of_in_type_list.cpp
++++ b/test/snippet/core/detail/all_of_in_type_list.cpp
+@@ -1,7 +1,6 @@
+ #include <type_traits>
+ 
+-#include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ namespace incomplete
+diff --git a/test/snippet/core/detail/for_each_in_pack.cpp b/test/snippet/core/detail/for_each_in_pack.cpp
+index 3cc3ece3c..db139c28e 100644
+--- a/test/snippet/core/detail/for_each_in_pack.cpp
++++ b/test/snippet/core/detail/for_each_in_pack.cpp
+@@ -1,7 +1,7 @@
+ #include <string>
+ 
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/core/debug_stream.hpp>
++#include <seqan3/utility/type_pack/detail/type_pack_algorithm.hpp>
+ 
+ int main()
+ {
+diff --git a/test/snippet/core/detail/for_each_in_type_list.cpp b/test/snippet/core/detail/for_each_in_type_list.cpp
+index e3bb87573..992d81671 100644
+--- a/test/snippet/core/detail/for_each_in_type_list.cpp
++++ b/test/snippet/core/detail/for_each_in_type_list.cpp
+@@ -1,7 +1,7 @@
+ #include <string>
+ 
+ #include <seqan3/core/debug_stream.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ namespace incomplete
+diff --git a/test/unit/alignment/configuration/align_config_common_test.cpp b/test/unit/alignment/configuration/align_config_common_test.cpp
+index 5933d699b..c6a7d5546 100644
+--- a/test/unit/alignment/configuration/align_config_common_test.cpp
++++ b/test/unit/alignment/configuration/align_config_common_test.cpp
+@@ -22,7 +22,6 @@
+ #include <seqan3/alignment/configuration/align_config_scoring_scheme.hpp>
+ #include <seqan3/alignment/configuration/align_config_vectorised.hpp>
+ #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/utility/type_list/traits.hpp>
+ 
+ #include "../../core/configuration/pipeable_config_element_test_template.hpp"
+diff --git a/test/unit/alignment/scoring/scoring_scheme_test.cpp b/test/unit/alignment/scoring/scoring_scheme_test.cpp
+index 82ea0efca..bc33f421e 100644
+--- a/test/unit/alignment/scoring/scoring_scheme_test.cpp
++++ b/test/unit/alignment/scoring/scoring_scheme_test.cpp
+@@ -20,8 +20,8 @@
+ #include <seqan3/alphabet/nucleotide/rna4.hpp>
+ #include <seqan3/alphabet/nucleotide/rna5.hpp>
+ #include <seqan3/alphabet/nucleotide/rna15.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/test/cereal.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ using seqan3::operator""_aa27;
+diff --git a/test/unit/alphabet/aminoacid/aminoacid_conversion_integration_test.cpp b/test/unit/alphabet/aminoacid/aminoacid_conversion_integration_test.cpp
+index 21e127f26..6cfd04bf2 100644
+--- a/test/unit/alphabet/aminoacid/aminoacid_conversion_integration_test.cpp
++++ b/test/unit/alphabet/aminoacid/aminoacid_conversion_integration_test.cpp
+@@ -11,7 +11,7 @@
+ #include <seqan3/alphabet/aminoacid/aa10murphy.hpp>
+ #include <seqan3/alphabet/aminoacid/aa20.hpp>
+ #include <seqan3/alphabet/aminoacid/aa27.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ template <typename T>
+diff --git a/test/unit/alphabet/composite/alphabet_variant_test.cpp b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+index 7e1a2e7e0..d0b3bf8bc 100644
+--- a/test/unit/alphabet/composite/alphabet_variant_test.cpp
++++ b/test/unit/alphabet/composite/alphabet_variant_test.cpp
+@@ -16,7 +16,7 @@
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+ #include <seqan3/alphabet/nucleotide/rna4.hpp>
+ #include <seqan3/alphabet/nucleotide/rna5.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ 
+ #include "../alphabet_constexpr_test_template.hpp"
+ #include "../alphabet_test_template.hpp"
+diff --git a/test/unit/alphabet/nucleotide/nucleotide_conversion_integration_test.cpp b/test/unit/alphabet/nucleotide/nucleotide_conversion_integration_test.cpp
+index 8de6a307c..1c355a747 100644
+--- a/test/unit/alphabet/nucleotide/nucleotide_conversion_integration_test.cpp
++++ b/test/unit/alphabet/nucleotide/nucleotide_conversion_integration_test.cpp
+@@ -13,7 +13,7 @@
+ #include <seqan3/alphabet/nucleotide/rna4.hpp>
+ #include <seqan3/alphabet/nucleotide/rna5.hpp>
+ #include <seqan3/alphabet/nucleotide/rna15.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ template <typename T>
+diff --git a/test/unit/alphabet/quality/quality_conversion_integration_test.cpp b/test/unit/alphabet/quality/quality_conversion_integration_test.cpp
+index 9078fc464..340a3d29a 100644
+--- a/test/unit/alphabet/quality/quality_conversion_integration_test.cpp
++++ b/test/unit/alphabet/quality/quality_conversion_integration_test.cpp
+@@ -12,11 +12,12 @@
+ 
+ #include <gtest/gtest.h>
+ 
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/alphabet/quality/phred42.hpp>
+ #include <seqan3/alphabet/quality/phred63.hpp>
+ #include <seqan3/alphabet/quality/phred68solexa.hpp>
+ #include <seqan3/alphabet/quality/phred94.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
++#include <seqan3/utility/type_list/type_list.hpp>
+ 
+ template <typename T>
+ using quality_conversion = ::testing::Test;
+diff --git a/test/unit/core/configuration/pipeable_config_element_test_template.hpp b/test/unit/core/configuration/pipeable_config_element_test_template.hpp
+index 1d5e2e28e..837fecb00 100644
+--- a/test/unit/core/configuration/pipeable_config_element_test_template.hpp
++++ b/test/unit/core/configuration/pipeable_config_element_test_template.hpp
+@@ -13,8 +13,8 @@
+ 
+ #include <seqan3/core/configuration/configuration.hpp>
+ #include <seqan3/core/configuration/pipeable_config_element.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ 
+ #include "../configuration/configuration_mock.hpp"
+ 
+diff --git a/test/unit/core/detail/pack_algorithm_test.cpp b/test/unit/core/detail/pack_algorithm_test.cpp
+index 56032be9f..e5a62d7a9 100644
+--- a/test/unit/core/detail/pack_algorithm_test.cpp
++++ b/test/unit/core/detail/pack_algorithm_test.cpp
+@@ -10,7 +10,7 @@
+ #include <sstream>
+ 
+ #include <seqan3/alphabet/nucleotide/dna4.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ //-----------------------------------------------------------------------------
+diff --git a/test/unit/search/configuration/hit_test.cpp b/test/unit/search/configuration/hit_test.cpp
+index d0fe7af8a..05f34442a 100644
+--- a/test/unit/search/configuration/hit_test.cpp
++++ b/test/unit/search/configuration/hit_test.cpp
+@@ -8,7 +8,6 @@
+ #include <gtest/gtest.h>
+ 
+ #include <seqan3/core/configuration/configuration.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/search/configuration/hit.hpp>
+ #include <seqan3/test/expect_same_type.hpp>
+ 
+diff --git a/test/unit/search/configuration/search_config_common_test.cpp b/test/unit/search/configuration/search_config_common_test.cpp
+index 9dfbc89a1..8ae934a1b 100644
+--- a/test/unit/search/configuration/search_config_common_test.cpp
++++ b/test/unit/search/configuration/search_config_common_test.cpp
+@@ -11,7 +11,6 @@
+ 
+ #include <seqan3/search/configuration/all.hpp>
+ #include <seqan3/search/search_result.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/utility/type_list/traits.hpp>
+ 
+ #include "../../core/configuration/pipeable_config_element_test_template.hpp"
+diff --git a/test/unit/utility/char_operations/char_operations_predicate_test.cpp b/test/unit/utility/char_operations/char_operations_predicate_test.cpp
+index a66f852f0..3432d250d 100644
+--- a/test/unit/utility/char_operations/char_operations_predicate_test.cpp
++++ b/test/unit/utility/char_operations/char_operations_predicate_test.cpp
+@@ -18,7 +18,7 @@
+ 
+ #ifdef SEQAN3_DEPRECATED_310
+ #include <seqan3/alphabet/nucleotide/dna5.hpp>
+-#include <seqan3/core/detail/pack_algorithm.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #endif // SEQAN3_DEPRECATED_310
+ 
+ using namespace std::literals;
+diff --git a/test/unit/utility/simd/detail/builtin_simd_test.cpp b/test/unit/utility/simd/detail/builtin_simd_test.cpp
+index 342f8ac1f..0ad1cc06a 100644
+--- a/test/unit/utility/simd/detail/builtin_simd_test.cpp
++++ b/test/unit/utility/simd/detail/builtin_simd_test.cpp
+@@ -10,9 +10,9 @@
+ #include <iostream>
+ #include <seqan3/std/type_traits>
+ 
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/utility/simd/concept.hpp>
+ #include <seqan3/utility/simd/detail/builtin_simd.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ #include <seqan3/utility/type_list/type_list.hpp>
+ 
+ #ifdef __clang__
+diff --git a/test/unit/utility/simd/simd_algorithm_test.cpp b/test/unit/utility/simd/simd_algorithm_test.cpp
+index fdc8f2863..16d740dc7 100644
+--- a/test/unit/utility/simd/simd_algorithm_test.cpp
++++ b/test/unit/utility/simd/simd_algorithm_test.cpp
+@@ -10,9 +10,9 @@
+ #include <iostream>
+ #include <numeric>
+ 
+-#include <seqan3/core/detail/pack_algorithm.hpp>
+ #include <seqan3/utility/simd/algorithm.hpp>
+ #include <seqan3/utility/simd/simd.hpp>
++#include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
+ 
+ #include <seqan3/test/simd_utility.hpp>
+ 
+-- 
+2.33.0
+

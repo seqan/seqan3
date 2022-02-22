@@ -1,2 +1,1 @@
-
-seqan3_benchmark(example_benchmark.cpp)
+seqan3_benchmark (example_benchmark.cpp)

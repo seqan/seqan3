@@ -6,30 +6,29 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Meta-header for the parallel module.
+ * \brief Meta-header for the \cond DEV \link utility_parallel Utility / Parallel submodule \endlink \endcond.
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
+//!\cond DEV
 
-/*!\defgroup parallel Parallel
+/*!\defgroup utility_parallel Parallel
  * \brief This module contains types and utilities for concurrent execution of algorithms in SeqAn.
  * \ingroup utility
+ * \see utility
  *
  * \details
  *
  * ### Execution policies
  *
- * Here are currently only implementations which are part of detail and therefore not of interest for the common user. 
+ * Here are currently only implementations which are part of detail and therefore not of interest for the common user.
  *
- * \if DEV
  * ### Concurrency support
  *
  * This module contains helper classes to synchronise threads in concurrent environments.
- *
- * \endif
  */
+//!\endcond
 
- #include <seqan3/utility/parallel/detail/latch.hpp>
- #include <seqan3/utility/parallel/detail/reader_writer_manager.hpp>
- #include <seqan3/utility/parallel/detail/spin_delay.hpp>
+#pragma once
+
+#include <seqan3/core/platform.hpp>

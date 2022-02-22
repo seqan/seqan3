@@ -1,4 +1,4 @@
-#include <seqan3/std/filesystem>
+#include <filesystem>
 #include <sstream>
 
 #include <seqan3/io/sam_file/all.hpp>

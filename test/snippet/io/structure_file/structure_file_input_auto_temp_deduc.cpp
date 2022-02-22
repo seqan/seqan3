@@ -4,7 +4,7 @@
 #include <seqan3/alphabet/structure/wuss.hpp>
 #include <seqan3/io/structure_file/input.hpp>
 #include <seqan3/io/structure_file/output.hpp>
-#include <seqan3/std/filesystem>
+#include <filesystem>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA

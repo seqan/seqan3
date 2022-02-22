@@ -5,16 +5,15 @@
 # shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 # -----------------------------------------------------------------------------------------------------
 
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.10)
 
 function (generate_include_dependencies_impl)
-    cmake_parse_arguments(
-        ""
-        ""
-        "TARGET;TARGET_INTERNAL_DEPENDENCY_MAKE_FILE;SEQAN3_INCLUDE_DIR;TARGET_DEPENDENCIES_FILE"
-        "TARGET_CYCLIC_DEPENDING_INCLUDES"
-        ${ARGN}
-    )
+    cmake_parse_arguments (
+        "" #
+        "" #
+        "TARGET;TARGET_INTERNAL_DEPENDENCY_MAKE_FILE;SEQAN3_INCLUDE_DIR;TARGET_DEPENDENCIES_FILE" #
+        "TARGET_CYCLIC_DEPENDING_INCLUDES" #
+        ${ARGN})
 
     if (NOT EXISTS "${_TARGET_INTERNAL_DEPENDENCY_MAKE_FILE}")
         return ()
@@ -41,7 +40,7 @@ function (generate_include_dependencies_impl)
     set (header_files_raw "${header_files}")
 
     # filter out "\;" as they would escape semicolons which are the separators for cmake list elements
-    string(REPLACE "\;" ";" header_files "${header_files}")
+    string (REPLACE "\;" ";" header_files "${header_files}")
 
     # only use lines that contain a seqan3 include
     list (FILTER header_files INCLUDE REGEX "${_SEQAN3_INCLUDE_DIR}/seqan3")
@@ -52,7 +51,7 @@ function (generate_include_dependencies_impl)
         set (_header_files "${header_files}")
         set (header_files "")
         foreach (header_file ${_header_files})
-            string(REGEX REPLACE "^.+: " "" header_file "${header_file}")
+            string (REGEX REPLACE "^.+: " "" header_file "${header_file}")
             list (APPEND header_files "${header_file}")
         endforeach ()
     else () # ^^^ workaround / no workaround vvv
@@ -110,6 +109,5 @@ if (CMAKE_SCRIPT_MODE_FILE)
         SEQAN3_INCLUDE_DIR "${SEQAN3_INCLUDE_DIR}"
         # e.g. alphabet/nucleotide/dna4_test_dependencies.cmake (will be generated)
         TARGET_DEPENDENCIES_FILE "${TARGET_DEPENDENCIES_FILE}"
-        TARGET_CYCLIC_DEPENDING_INCLUDES "${TARGET_CYCLIC_DEPENDING_INCLUDES}"
-    )
+        TARGET_CYCLIC_DEPENDING_INCLUDES "${TARGET_CYCLIC_DEPENDING_INCLUDES}")
 endif ()

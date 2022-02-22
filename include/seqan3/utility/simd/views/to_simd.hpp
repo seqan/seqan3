@@ -17,7 +17,6 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/core/detail/pack_algorithm.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/type_traits.hpp>
@@ -35,7 +34,7 @@ namespace seqan3::detail
  * \implements std::ranges::input_range
  * \tparam urng_t The underlying range type; must model std::ranges::forward_range.
  * \tparam simd_t The simd type to convert to.
- * \ingroup simd
+ * \ingroup utility_simd_views
  *
  * \details
  *
@@ -65,8 +64,10 @@ private:
                   "The underlying range must model forward_range.");
     static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
                   "Expects the value type of the underlying range to be an input_range.");
-    static_assert(std::default_initializable<std::ranges::range_value_t<urng_t>>,
-                  "Expects the inner range to be default constructible.");
+    static_assert(std::default_initializable<std::ranges::iterator_t<std::ranges::range_value_t<urng_t>>>,
+                  "Expects the inner range iterator to be default initializable.");
+    static_assert(std::default_initializable<std::ranges::sentinel_t<std::ranges::range_value_t<urng_t>>>,
+                  "Expects the inner range sentinel to be default initializable.");
     static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
                   "Expects semi-alphabet as value type of the inner range.");
 
@@ -96,7 +97,7 @@ private:
     //!\brief The total number of chunks that can be cached.
     static constexpr uint8_t total_chunks = fast_load ? (chunks_per_load * chunks_per_load) : 1;
     //!\brief The alphabet size.
-    static constexpr auto alphabet_size = alphabet_size<std::ranges::range_value_t<inner_range_type>>;
+    static constexpr auto alphabet_size = seqan3::alphabet_size<std::ranges::range_value_t<inner_range_type>>;
     //!\}
 
     // Forward declare class' iterator type. See definition below.
@@ -107,7 +108,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr view_to_simd() = default; //!< Defaulted.
+    constexpr view_to_simd() requires std::default_initializable<urng_t> = default; //!< Defaulted.
     constexpr view_to_simd(view_to_simd const &) = default; //!< Defaulted.
     constexpr view_to_simd(view_to_simd &&) = default; //!< Defaulted.
     constexpr view_to_simd & operator=(view_to_simd const &) = default; //!< Defaulted.
@@ -608,8 +609,8 @@ private:
 // ============================================================================
 
 /*!\brief views::to_simd's range adaptor closure object type.
+ * \ingroup utility_simd_views
  * \tparam simd_t The target simd type.
- * \ingroup simd
  *
  * \details
  *
@@ -688,12 +689,12 @@ namespace seqan3::views
 {
 
 /*!\brief A view that transforms a range of ranges into chunks of seqan3::simd vectors.
+ * \ingroup utility_simd_views
  * \tparam urng_t The type of the range being processed.
  * \tparam simd_t The target simd vector type.
  * \param[in] urange The range being processed.
  * \param[in] padding An optional padding value.
  * \returns A range of ranges with the original sequences transformed into simd vectors.
- * \ingroup simd
  *
  * \details
  *

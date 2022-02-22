@@ -10,13 +10,13 @@
  * \brief Meta-header for the \link alphabet_adaptation Alphabet / Adaptation submodule \endlink.
  */
 
-#pragma once
-
-#include <seqan3/alphabet/adaptation/char.hpp>
-#include <seqan3/alphabet/adaptation/uint.hpp>
-
 /*!\defgroup alphabet_adaptation Adaptation
  * \brief Provides alphabet adaptions of some standard char and uint types.
  * \ingroup alphabet
  * \see alphabet
  */
+
+#pragma once
+
+#include <seqan3/alphabet/adaptation/char.hpp>
+#include <seqan3/alphabet/adaptation/uint.hpp>

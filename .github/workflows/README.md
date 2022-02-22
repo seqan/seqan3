@@ -6,6 +6,14 @@ Runs the [API-Stability](https://github.com/seqan/seqan3/blob/master/test/api_st
 
 In case of failure, creates an issue containing error logs.
 
+## avx2.yml
+
+Will run all test suites on all compiler with AVX2 enabled:
+  * Every Sunday on master
+  * Manually on any branch
+
+In case of failure, creates an issue containing error logs.
+
 ## cancel.yml
 
 Cancels ongoing and queued runs for a branch if a new push is made:

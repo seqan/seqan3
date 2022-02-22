@@ -11,5 +11,5 @@ int main()
 
     seqan3::debug_stream << my_gap.to_char(); // outputs '-'
     if (my_gap.to_char() == another_gap.to_char())
-        seqan3::debug_stream << "Both gaps are the same!";
+        seqan3::debug_stream << "Both gaps are the same!\n";
 }

@@ -7,7 +7,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 /*!\file
- * \brief Provides the C++20 \<bit\> header if it is not already available.
+ * \brief The [\<bit\> header](https://en.cppreference.com/w/cpp/header/bit) from C++20's standard library.
  * \author Enrico Seiler <enrico.seiler AT fu-berlin.de>
  * \author Marcel Ehrhardt <marcel.ehrhardt AT fu-berlin.de>
  */
@@ -20,35 +20,69 @@
 #include <climits>
 #include <type_traits>
 
-//!\brief A workaround for __cpp_lib_bitops for gcc version 9.x (in C++20 mode).
-//!       Those versions implemented std::countl_zero, etc, but did not define that feature detection macro.
+/*!\defgroup std_bit bit
+ * \ingroup std
+ * \brief The [\<bit\> header](https://en.cppreference.com/w/cpp/header/bit) from C++20's standard library.
+ */
+
+/*!\brief A workaround for __cpp_lib_bitops for gcc version 9.x (in C++20 mode).
+ *        Those versions implemented std::countl_zero, etc, but did not define that feature detection macro.
+ * \ingroup std_bit
+ */
+#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
+#if SEQAN3_DOXYGEN_ONLY(1)0
+// documentation-only
+#define SEQAN3_CPP_LIB_BITOPS IMPLEMENTATION_DEFINED
+#undef SEQAN3_CPP_LIB_BITOPS
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+#endif // SEQAN3_DOXYGEN_ONLY
+
 #ifndef SEQAN3_CPP_LIB_BITOPS
 #   if defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L
 #       define SEQAN3_CPP_LIB_BITOPS 1
-#   elif defined(__GNUC__) && (__GNUC__ == 9) && __cplusplus > 201703L
+#   elif defined(_GLIBCXX_RELEASE) && (_GLIBCXX_RELEASE == 9) && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_BITOPS 1
 #   endif
 #endif
 
 /*!\brief This defines __cpp_lib_int_pow2.
+ * \ingroup std_bit
  * Note: g++-9.3 -std=c++2a on ubuntu 20.04 did `#define __cpp_lib_int_pow2 201806L`, which is an older implementation
  * of the __cpp_lib_int_pow2 proposal.
  *
  * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0556r3.html (__cpp_lib_int_pow2 >= 201806L)
  * \sa http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1956r1.pdf (__cpp_lib_int_pow2 >= 202002L)
  */
+#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
+#if SEQAN3_DOXYGEN_ONLY(1)0
+// documentation-only
+#define SEQAN3_CPP_LIB_INT_POW2 IMPLEMENTATION_DEFINED
+#undef SEQAN3_CPP_LIB_INT_POW2
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+#endif // SEQAN3_DOXYGEN_ONLY
+
 #ifndef SEQAN3_CPP_LIB_INT_POW2
 #   if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
 #       define SEQAN3_CPP_LIB_INT_POW2 1
 #   endif
 #endif
 
-//!\brief A workaround for __cpp_lib_endian for gcc version 8.x (in C++20 mode).
-//!       Those versions implemented std::endian, but did not define that feature detection macro.
+/*!\brief A workaround for __cpp_lib_endian for gcc version 8.x (in C++20 mode).
+ *        Those versions implemented std::endian, but did not define that feature detection macro.
+ * \ingroup std_bit
+ */
+#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
+#if SEQAN3_DOXYGEN_ONLY(1)0
+// documentation-only
+#define SEQAN3_CPP_LIB_ENDIAN IMPLEMENTATION_DEFINED
+#undef SEQAN3_CPP_LIB_ENDIAN
+#endif // SEQAN3_DOXYGEN_ONLY(1)0
+#endif // SEQAN3_DOXYGEN_ONLY
+
 #ifndef SEQAN3_CPP_LIB_ENDIAN
 #   if defined(__cpp_lib_endian)
 #       define SEQAN3_CPP_LIB_ENDIAN 1
-#   elif defined(__GNUC__) && __GNUC__ == 8 && __cplusplus > 201703L
+#   elif defined(_GLIBCXX_RELEASE) && _GLIBCXX_RELEASE == 8 && __cplusplus > 201703L
 #       define SEQAN3_CPP_LIB_ENDIAN 1
 #   endif
 #endif
@@ -57,17 +91,12 @@
 
 #include <cstddef>
 
-/*!\defgroup bit bit
- * \ingroup std
- * \brief The \<bit\> header from C++20's standard library.
- */
-
 namespace std
 {
 
 /*!\brief Indicates the endianness of all scalar types.
  * \sa https://en.cppreference.com/w/cpp/types/endian
- * \ingroup bit
+ * \ingroup std_bit
  */
 enum class endian
 {
@@ -91,7 +120,7 @@ enum class endian
 namespace std::detail
 {
 /*!\brief How many bits has a type?
- * \ingroup bit
+ * \ingroup std_bit
  * \tparam type_t The type to determine the number of bits.
  */
 template <typename type_t>
@@ -110,14 +139,14 @@ namespace std
 template<class T> constexpr int countl_zero(T x) noexcept;
 #endif // SEQAN3_CPP_LIB_BITOPS
 
-// // bit_­cast
+// // bit_cast
 // template<class To, class From> constexpr To bit_cast(const From& from) noexcept;
 //
 // // integral powers of 2
 
 /*!\brief Checks if x is an integral power of two.
  * \sa https://en.cppreference.com/w/cpp/numeric/has_single_bit
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr bool has_single_bit(T x) noexcept
 {
@@ -128,7 +157,7 @@ template<class T> constexpr bool has_single_bit(T x) noexcept
 
 /*!\brief Calculates the smallest integral power of two that is not smaller than x.
  * \sa https://en.cppreference.com/w/cpp/numeric/bit_ceil
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr T bit_ceil(T x) noexcept
 {
@@ -149,7 +178,7 @@ template<class T> constexpr T bit_ceil(T x) noexcept
 /*!\brief If x is not zero, calculates the number of bits needed to store the value x, that is,
  *        1 + floor(log2(x)). If x is zero, returns zero.
  * \sa https://en.cppreference.com/w/cpp/numeric/bit_width
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr T bit_width(T x) noexcept
 {
@@ -176,7 +205,7 @@ namespace std
 
 /*!\brief Returns the number of consecutive 0 bits in the value of x, starting from the most significant bit ("left").
  * \sa https://en.cppreference.com/w/cpp/numeric/countl_zero
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr int countl_zero(T x) noexcept
 {
@@ -194,7 +223,7 @@ template<class T> constexpr int countl_zero(T x) noexcept
 
 /*!\brief Returns the number of consecutive 0 bits in the value of x, starting from the least significant bit ("right").
  * \sa https://en.cppreference.com/w/cpp/numeric/countr_zero
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr int countr_zero(T x) noexcept
 {
@@ -211,7 +240,7 @@ template<class T> constexpr int countr_zero(T x) noexcept
 
 /*!\brief Returns the number of 1 bits in the value of x.
  * \sa https://en.cppreference.com/w/cpp/numeric/popcount
- * \ingroup bit
+ * \ingroup std_bit
  */
 template<class T> constexpr int popcount(T x) noexcept
 {
