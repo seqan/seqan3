@@ -26,9 +26,6 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
     # force that libraries are installed to `lib/`, because GNUInstallDirs might install it into `lib64/`
     list (APPEND gbenchmark_project_args "-DCMAKE_INSTALL_LIBDIR=${PROJECT_BINARY_DIR}/lib/")
 
-    set (gbenchmark_path
-         "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}benchmark${CMAKE_STATIC_LIBRARY_SUFFIX}")
-
     include (ExternalProject)
     ExternalProject_Add (
         gbenchmark_project
@@ -41,15 +38,18 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
         UPDATE_DISCONNECTED ${SEQAN3_TEST_BUILD_OFFLINE})
     unset (gbenchmark_project_args)
 
-    add_library (gbenchmark STATIC IMPORTED)
+    foreach (lname "benchmark" "benchmark_main")
+        add_library (lib${lname} STATIC IMPORTED)
+        set_target_properties (
+            lib${lname}
+            PROPERTIES IMPORTED_LOCATION
+                       "${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}${lname}${CMAKE_STATIC_LIBRARY_SUFFIX}")
+    endforeach ()
+
+    add_library (gbenchmark INTERFACE)
     add_dependencies (gbenchmark gbenchmark_project)
-    set_target_properties (gbenchmark PROPERTIES IMPORTED_LOCATION "${gbenchmark_path}")
-    set_property (TARGET gbenchmark
-                  APPEND
-                  PROPERTY INTERFACE_LINK_LIBRARIES "pthread")
-    set_property (TARGET gbenchmark
-                  APPEND
-                  PROPERTY INTERFACE_INCLUDE_DIRECTORIES "${SEQAN3_BENCHMARK_CLONE_DIR}/include/")
+    target_link_libraries (gbenchmark INTERFACE "libbenchmark" "libbenchmark_main" "pthread")
+    include_directories (gbenchmark INTERFACE "${PROJECT_BINARY_DIR}/include/")
 
     # NOTE: google benchmarks needs Shlwapi (Shell Lightweight Utility Functions) on windows
     # see https://msdn.microsoft.com/en-us/library/windows/desktop/bb759844(v=vs.85).aspx
@@ -58,7 +58,6 @@ macro (seqan3_require_benchmark_old gbenchmark_git_tag)
         target_link_libraries (gbenchmark INTERFACE "Shlwapi")
     endif ()
 
-    unset (gbenchmark_path)
 endmacro ()
 
 macro (seqan3_require_benchmark)
