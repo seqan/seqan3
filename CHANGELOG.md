@@ -53,8 +53,9 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
    ([\#2769](https://github.com/seqan/seqan3/pull/2769)).
  * Changed the default of `bgzf_thread_count` to `4`. Previously, all available threads on the machine were utilised
    ([\#2911](https://github.com/seqan/seqan3/pull/2911)).
- * The behaviour of `bgzf_thread_count` has been adapted to affect the runtime of a program. Formerly, this variable was
-   specific to each translation unit ([\#2752](https://github.com/seqan/seqan3/pull/2752)).
+ * The global variable `bgzf_thread_count` is not static anymore. Modifying the variable now affects the runtime of the
+   entire program. Formerly, this variable was specific to each translation unit
+   ([\#2752](https://github.com/seqan/seqan3/pull/2752)).
 
 # 3.1.0
 
