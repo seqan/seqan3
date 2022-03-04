@@ -261,13 +261,13 @@ public:
 
     /*!\brief Adds a flag to the seqan3::argument_parser.
      *
-     * \param[in, out] value     The variable which shows if the flag is turned off (default) or on.
+     * \param[in, out] value     The variable which shows whether the flag is turned off (default) or on.
      * \param[in]      short_id  The short identifier for the flag (e.g. 'i').
      * \param[in]      long_id   The long identifier for the flag (e.g. "integer").
      * \param[in]      desc      The description of the flag to be shown in the help page.
      * \param[in]      spec      Advanced flag specification, see seqan3::option_spec.
      *
-     * \throws seqan3::design_error
+     * \throws seqan3::design_error if `value` is true.
      *
      */
     void add_flag(bool & value,

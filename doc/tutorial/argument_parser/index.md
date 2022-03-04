@@ -79,13 +79,13 @@ screen.
 The argument parser checks the following restrictions and throws a seqan3::design_error if they are not satisfied:
 
 * **Long identifiers**: must be unique, more than one character long, may only contain alphanumeric characters, as well
-as `_`, `-`, or `@`, but never start with `-`.
+  as `_`, `-`, or `@`, but never start with `-`.
 * **Short identifiers**: must be unique and consist of only a single letter that is alphanumeric characters, `_` or `@`.
-* Either the short or long id may be empty but not both at the same time.
+* Either the short or long id may be empty, but not both at the same time.
 * Only the last positional option may be a list (see [lists](#section_list_positional_options)).
-* **Flags**: value must be false by default. Passing the flag identifier on the command line marks it as true.
+* **Flags**: The default value must be false. Passing the flag identifier on the command line sets it to true.
 * The flag identifiers `-h`, `--help`, `--advanced-help`, `--advanced-help`, `--export-help`, `--version`, `--copyright`
-are predefined and cannot be specified manually or used otherwise.
+  are predefined and cannot be specified manually or used otherwise.
 * The seqan3::argument_parser::parse function may only be called once (per parser).
 
 ## Input restrictions
@@ -197,9 +197,10 @@ respective variables.
 We personally recommend to always use regular options (id-value pairs) because they are more expressive and it is easier
 to spot errors.
 
-\note Unlike regular options which take id-value pairs, flags are passed as an identifier only. The variable associated to a flag 
-must be false by default and is switched to true when the flag is present on the command line.
+\note Unlike regular options which take id-value pairs, flags are passed as an identifier only. The flag's default value
+must be false and is set to true when the flag is present on the command line.
 
+``
 You can add an option like this:
 
 \snippet doc/tutorial/argument_parser/small_snippets.cpp add_option
