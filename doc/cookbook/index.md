@@ -194,7 +194,7 @@ If you are interested in custom alphabets, also take a look at our tutorial \ref
 
 When \ref io_compression "reading or writing compressed files", parallelisation is automatically applied when
 using BGZF-compressed files, e.g., BAM files.
-This will use all available threads by default and can be adjusted by setting `seqan3::contrib::bgzf_thread_count` to
+This will use `4` threads by default and can be adjusted by setting `seqan3::contrib::bgzf_thread_count` to
 the desired value:
 
 \snippet doc/cookbook/compression_threads.cpp example
