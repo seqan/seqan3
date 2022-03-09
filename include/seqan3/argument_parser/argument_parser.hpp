@@ -261,11 +261,14 @@ public:
 
     /*!\brief Adds a flag to the seqan3::argument_parser.
      *
-     * \param[in, out] value     The variable in which to store the given command line argument.
+     * \param[in, out] value     The variable which shows whether the flag is turned off (default) or on.
      * \param[in]      short_id  The short identifier for the flag (e.g. 'i').
      * \param[in]      long_id   The long identifier for the flag (e.g. "integer").
      * \param[in]      desc      The description of the flag to be shown in the help page.
      * \param[in]      spec      Advanced flag specification, see seqan3::option_spec.
+     *
+     * \throws seqan3::design_error if `value` is true.
+     *
      */
     void add_flag(bool & value,
                   char const short_id,
@@ -273,6 +276,9 @@ public:
                   std::string const & desc,
                   option_spec const spec = option_spec::standard)
     {
+        if (value)
+            throw design_error("A flag's default value must be false.");
+
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.

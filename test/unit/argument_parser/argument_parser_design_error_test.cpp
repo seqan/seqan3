@@ -44,57 +44,64 @@ TEST(parse_test, design_error)
     EXPECT_THROW(parser3.add_option(option_value, '\0', "", "oh oh all is empty."),
                  seqan3::design_error);
 
-    bool flag_value;
+    bool true_value{true};
+
+    // default true
+    seqan3::argument_parser parser4{"test_parser", 1, argv};
+    EXPECT_THROW(parser4.add_flag(true_value, 'i', "int", "oh oh default is true."),
+                 seqan3::design_error);
+
+    bool flag_value{false};
 
     // short flag
-    seqan3::argument_parser parser4{"test_parser", 1, argv};
-    parser4.add_flag(flag_value, 'i', "int1", "this is an int option.");
-    EXPECT_THROW(parser4.add_flag(flag_value, 'i', "int2", "oh oh another id."),
+    seqan3::argument_parser parser5{"test_parser", 1, argv};
+    parser5.add_flag(flag_value, 'i', "int1", "this is an int option.");
+    EXPECT_THROW(parser5.add_flag(flag_value, 'i', "int2", "oh oh another id."),
                  seqan3::design_error);
 
     // long flag
-    seqan3::argument_parser parser5{"test_parser", 1, argv};
-    parser5.add_flag(flag_value, 'i', "int", "this is an int option.");
-    EXPECT_THROW(parser5.add_flag(flag_value, 'a', "int", "oh oh another id."),
+    seqan3::argument_parser parser6{"test_parser", 1, argv};
+    parser6.add_flag(flag_value, 'i', "int", "this is an int option.");
+    EXPECT_THROW(parser6.add_flag(flag_value, 'a', "int", "oh oh another id."),
                  seqan3::design_error);
 
     // empty identifier
-    seqan3::argument_parser parser6{"test_parser", 1, argv};
-    EXPECT_THROW(parser6.add_flag(flag_value, '\0', "", "oh oh another id."),
+    seqan3::argument_parser parser7{"test_parser", 1, argv};
+    EXPECT_THROW(parser7.add_flag(flag_value, '\0', "", "oh oh another id."),
                  seqan3::design_error);
 
     // positional option not at the end
     const char * argv2[] = {"./argument_parser_test", "arg1", "arg2", "arg3"};
     std::vector<int> vec;
-    seqan3::argument_parser parser7{"test_parser", 4, argv2};
-    parser7.add_positional_option(vec, "oh oh list not at the end.");
-    EXPECT_THROW(parser7.add_positional_option(option_value, "desc."), seqan3::design_error);
+    seqan3::argument_parser parser8{"test_parser", 4, argv2};
+    parser8.add_positional_option(vec, "oh oh list not at the end.");
+    EXPECT_THROW(parser8.add_positional_option(option_value, "desc."), seqan3::design_error);
 
     // using h, help, advanced-help, and export-help
-    seqan3::argument_parser parser8{"test_parser", 1, argv};
-    EXPECT_THROW(parser8.add_option(option_value, 'h', "", "-h is bad."),
+    seqan3::argument_parser parser9{"test_parser", 1, argv};
+    EXPECT_THROW(parser9.add_option(option_value, 'h', "", "-h is bad."),
                  seqan3::design_error);
-    EXPECT_THROW(parser8.add_option(option_value, '\0', "help", "help is bad."),
+    EXPECT_THROW(parser9.add_option(option_value, '\0', "help", "help is bad."),
                  seqan3::design_error);
-    EXPECT_THROW(parser8.add_option(option_value, '\0', "advanced-help",
+    EXPECT_THROW(parser9.add_option(option_value, '\0', "advanced-help",
                  "advanced-help is bad"), seqan3::design_error);
-    EXPECT_THROW(parser8.add_option(option_value, '\0', "export-help",
+    EXPECT_THROW(parser9.add_option(option_value, '\0', "export-help",
                  "export-help is bad"), seqan3::design_error);
 
     // using one-letter long identifiers.
-    seqan3::argument_parser parser9{"test_parser", 1, argv};
-    EXPECT_THROW(parser9.add_option(option_value, 'y', "z", "long identifier is one letter"),
+    seqan3::argument_parser parser10{"test_parser", 1, argv};
+    EXPECT_THROW(parser10.add_option(option_value, 'y', "z", "long identifier is one letter"),
                  seqan3::design_error);
-    EXPECT_THROW(parser9.add_flag(flag_value, 'y', "z", "long identifier is one letter"),
+    EXPECT_THROW(parser10.add_flag(flag_value, 'y', "z", "long identifier is one letter"),
                  seqan3::design_error);
 
     // using non-printable characters
-    seqan3::argument_parser parser10{"test_parser", 1, argv};
-    EXPECT_THROW(parser10.add_option(option_value, '\t', "no\n", "tab and newline don't work!"),
+    seqan3::argument_parser parser11{"test_parser", 1, argv};
+    EXPECT_THROW(parser11.add_option(option_value, '\t', "no\n", "tab and newline don't work!"),
                  seqan3::design_error);
-    EXPECT_THROW(parser10.add_flag(flag_value, 'i', "no\n", "tab and newline don't work!"),
+    EXPECT_THROW(parser11.add_flag(flag_value, 'i', "no\n", "tab and newline don't work!"),
                  seqan3::design_error);
-    EXPECT_THROW(parser10.add_flag(flag_value, 'a', "-no", "can't start long_id with a hyphen"),
+    EXPECT_THROW(parser11.add_flag(flag_value, 'a', "-no", "can't start long_id with a hyphen"),
                  seqan3::design_error);
 }
 

@@ -73,33 +73,33 @@ TEST(parse_type_test, add_option_long_id)
 TEST(parse_type_test, add_flag_short_id_single)
 {
     bool option_value1{false};
-    bool option_value2{true};
+    bool option_value2{false};
 
-    const char * argv[] = {"./argument_parser_test", "-t"};
+    const char * argv[] = {"./argument_parser_test", "-a"};
     seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
-    parser.add_flag(option_value1, 't', "true-flag", "this is a flag.");
-    parser.add_flag(option_value2, 'f', "false-flag", "this is a flag.");
+    parser.add_flag(option_value1, 'f', "flag", "this is a flag.");
+    parser.add_flag(option_value2, 'a', "another-flag", "this is a flag.");
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value1, true);
-    EXPECT_EQ(option_value2, false);
+    EXPECT_EQ(option_value1, false);
+    EXPECT_EQ(option_value2, true);
 }
 
 TEST(parse_type_test, add_flag_short_id_multiple)
 {
     bool option_value1{false};
-    bool option_value2{true};
+    bool option_value2{false};
     bool option_value3{false};
     bool option_value4{false};
 
-    const char * argv[] = {"./argument_parser_test", "-tab"};
+    const char * argv[] = {"./argument_parser_test", "-acd"};
     seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
-    parser.add_flag(option_value1, 't', "true-flag", "this is a flag.");
-    parser.add_flag(option_value2, 'f', "false-flag", "this is a flag.");
-    parser.add_flag(option_value3, 'a', "additional-flag", "this is a flag.");
-    parser.add_flag(option_value4, 'b', "another-flag", "this is a flag.");
+    parser.add_flag(option_value1, 'a', "flag", "this is a flag.");
+    parser.add_flag(option_value2, 'b', "also-flag", "this is a flag.");
+    parser.add_flag(option_value3, 'c', "additional-flag", "this is a flag.");
+    parser.add_flag(option_value4, 'd', "another-flag", "this is a flag.");
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
@@ -113,18 +113,18 @@ TEST(parse_type_test, add_flag_short_id_multiple)
 TEST(parse_type_test, add_flag_long_id)
 {
     bool option_value1{false};
-    bool option_value2{true};
+    bool option_value2{false};
 
-    const char * argv[] = {"./argument_parser_test", "--true-flag"};
+    const char * argv[] = {"./argument_parser_test", "--another-flag"};
     seqan3::argument_parser parser{"test_parser", 2, argv, seqan3::update_notifications::off};
-    parser.add_flag(option_value1, 't', "true-flag", "this is a flag.");
-    parser.add_flag(option_value2, 'f', "false-flag", "this is a flag.");
+    parser.add_flag(option_value1, 't', "flag", "this is a flag.");
+    parser.add_flag(option_value2, 'f', "another-flag", "this is a flag.");
 
     testing::internal::CaptureStderr();
     EXPECT_NO_THROW(parser.parse());
     EXPECT_TRUE((testing::internal::GetCapturedStderr()).empty());
-    EXPECT_EQ(option_value1, true);
-    EXPECT_EQ(option_value2, false);
+    EXPECT_EQ(option_value1, false);
+    EXPECT_EQ(option_value2, true);
 }
 
 TEST(parse_type_test, add_positional_option)
@@ -146,7 +146,7 @@ TEST(parse_type_test, independent_add_order)
     // testing same command line input different add_* order
 
     std::string positional_value;
-    bool flag_value;
+    bool flag_value{false};
     int option_value;
 
     // Order 1: option, flag, positional
@@ -163,6 +163,8 @@ TEST(parse_type_test, independent_add_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;    // reinstate to default value
+
     // Order 1: flag, option, positional
     seqan3::argument_parser parser2{"test_parser", 5, argv, seqan3::update_notifications::off};
     parser2.add_flag(flag_value, 'b', "flag", "this is a flag.");
@@ -175,6 +177,8 @@ TEST(parse_type_test, independent_add_order)
     EXPECT_EQ(positional_value, "arg");
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
+
+    flag_value = false;
 
     // Order 1: option, positional, flag
     seqan3::argument_parser parser3{"test_parser", 5, argv, seqan3::update_notifications::off};
@@ -189,6 +193,8 @@ TEST(parse_type_test, independent_add_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;
+
     // Order 1: flag, positional, option
     seqan3::argument_parser parser4{"test_parser", 5, argv, seqan3::update_notifications::off};
     parser4.add_flag(flag_value, 'b', "flag", "this is a flag.");
@@ -202,6 +208,8 @@ TEST(parse_type_test, independent_add_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;
+
     // Order 1: positional, flag, option
     seqan3::argument_parser parser5{"test_parser", 5, argv, seqan3::update_notifications::off};
     parser5.add_positional_option(positional_value, "this is a string positional.");
@@ -214,6 +222,8 @@ TEST(parse_type_test, independent_add_order)
     EXPECT_EQ(positional_value, "arg");
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
+
+    flag_value = false;
 
     // Order 1: positional, option, flag
     seqan3::argument_parser parser6{"test_parser", 5, argv, seqan3::update_notifications::off};
@@ -234,7 +244,7 @@ TEST(parse_type_test, independent_cmd_order)
     // testing different command line order
 
     std::string positional_value;
-    bool flag_value;
+    bool flag_value{false};
     int option_value;
 
     // Order 1: option, flag, positional (POSIX conform)
@@ -251,6 +261,8 @@ TEST(parse_type_test, independent_cmd_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;    // reinstate to default value
+
     // Order 1: flag, option, positional (POSIX conform)
     const char * argv2[] = {"./argument_parser_test", "-b", "-i", "2", "arg"};
     seqan3::argument_parser parser2{"test_parser", 5, argv2, seqan3::update_notifications::off};
@@ -264,6 +276,8 @@ TEST(parse_type_test, independent_cmd_order)
     EXPECT_EQ(positional_value, "arg");
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
+
+    flag_value = false;
 
     // Order 1: option, positional, flag
     const char * argv3[] = {"./argument_parser_test", "-i", "2", "arg", "-b"};
@@ -279,6 +293,8 @@ TEST(parse_type_test, independent_cmd_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;
+
     // Order 1: flag, positional, option
     const char * argv4[] = {"./argument_parser_test", "-b", "arg", "-i", "2"};
     seqan3::argument_parser parser4{"test_parser", 5, argv4, seqan3::update_notifications::off};
@@ -293,6 +309,8 @@ TEST(parse_type_test, independent_cmd_order)
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
 
+    flag_value = false;
+
     // Order 1: positional, flag, option
     const char * argv5[] = {"./argument_parser_test", "arg", "-b", "-i", "2"};
     seqan3::argument_parser parser5{"test_parser", 5, argv5, seqan3::update_notifications::off};
@@ -306,6 +324,8 @@ TEST(parse_type_test, independent_cmd_order)
     EXPECT_EQ(positional_value, "arg");
     EXPECT_EQ(option_value, 2);
     EXPECT_EQ(flag_value, true);
+
+    flag_value = false;
 
     // Order 1: positional, option, flag
     const char * argv6[] = {"./argument_parser_test", "arg", "-i", "2", "-b"};
@@ -794,7 +814,7 @@ TEST(parse_test, version_check_option_error)
 
 TEST(parse_test, subcommand_argument_parser_success)
 {
-    bool flag_value{};
+    bool flag_value{false};
     std::string option_value{};
 
     // parsing
@@ -820,6 +840,8 @@ TEST(parse_test, subcommand_argument_parser_success)
         EXPECT_EQ("foo", option_value);
     }
 
+    flag_value = false; // reinstate to default value
+
     // top-level help page
     {
         const char * argv[]{"./top_level", "-h", "-f", "sub1", "foo"};
@@ -834,6 +856,8 @@ TEST(parse_test, subcommand_argument_parser_success)
         EXPECT_EXIT(top_level_parser.parse(), ::testing::ExitedWithCode(EXIT_SUCCESS), "");
         EXPECT_FALSE(std::string{testing::internal::GetCapturedStdout()}.empty());
     }
+
+    flag_value = false; // reinstate to default value
 
     // sub-parser help page
     {
