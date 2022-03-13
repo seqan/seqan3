@@ -31,8 +31,8 @@ namespace seqan3
 
 /*!\brief Container that stores sequences concatenated internally.
  * \tparam underlying_container_type Type of the underlying container. Must satisfy seqan3::reservible_container.
- * \tparam data_delimiters_type A container that stores the begin/end positions in the underlying_container_type. Must be
- * seqan3::reservible_container and have underlying_container_type's size_type as value_type.
+ * \tparam data_delimiters_type A container that stores the begin/end positions in the underlying_container_type. Must 
+ * satifsy seqan3::reservible_container and have underlying_container_type's size_type as value_type.
  * \implements seqan3::cerealisable
  * \implements seqan3::reservible_container
  * \ingroup alphabet_container
@@ -57,7 +57,7 @@ namespace seqan3
  * * Modifying elements is limited to operations on elements of that element, i.e. you can change a character,
  * but you can't assign a new member sequence to an existing position.
  *
- * Note that the "value type" of seqan3::concatenated_sequences<T> is not `T`, it is a view––typically
+ * Note that the "value type" of `seqan3::concatenated_sequences<T>` is **not** `T`. It is a view –– typically
  * a std::span or a std::string_view. This view becomes invalid when the container is destroyed or any
  * operation is performed on the container that invalidates its iterators, e.g. #push_back().
  *
@@ -68,8 +68,8 @@ namespace seqan3
  * ### Exceptions
  *
  * Whenever a strong exception guarantee is given for this class, it presumes that
- * `std::is_nothrow_move_constructible<typename underlying_container_type::value_type>` otherwise only basic exception safety can
- * be assumed.
+ * `std::is_nothrow_move_constructible<typename underlying_container_type::value_type>` otherwise only basic exception
+ * safety can be assumed.
  *
  * ### Thread safety
  *
@@ -84,7 +84,8 @@ template <typename underlying_container_type,
 //!\cond
     requires reservible_container<std::remove_reference_t<underlying_container_type>> &&
              reservible_container<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<std::ranges::range_size_t<underlying_container_type>, std::ranges::range_value_t<data_delimiters_type>>
+             std::is_same_v<std::ranges::range_size_t<underlying_container_type>, 
+                            std::ranges::range_value_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
 {
@@ -120,7 +121,8 @@ public:
      * \details
      * \experimentalapi{Experimental since version 3.1.}
      */
-    using const_reference = decltype(std::declval<std::decay_t<underlying_container_type> const &>() | views::slice(0, 1));
+    using const_reference = decltype(std::declval<std::decay_t<underlying_container_type> const &>() |
+                                     views::slice(0, 1));
 
     /*!\brief The iterator type of this container (a random access iterator).
      * \hideinitializer
@@ -1231,8 +1233,8 @@ public:
      * This conceptionally adds another element to the container with the specified content,
      * i.e. the "outer container" grows by 1.
      *
-     * If the new concat_size() is greater than concat_capacity() then all iterators and references (including the past-the-end
-     * iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
      *
@@ -1257,7 +1259,7 @@ public:
 
     /*!\brief Appends an empty element to the end of the container.
      *
-     * This conceptionally adds an element to the container,
+     * This conceptionally adds an empty element to the container,
      * i.e. the "outer container" grows by 1 and the new back() will be empty.
      *
      * No iterators are invalidated.
@@ -1268,8 +1270,8 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
-     * thrown.
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
@@ -1284,8 +1286,8 @@ public:
      * This conceptionally performs a `push_back()` on the `back()` of this container,
      * i.e. that last inner container grows by 1.
      *
-     * If the new concat_size() is greater than concat_capacity() then all iterators and references (including the past-the-end
-     * iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
      *
@@ -1293,8 +1295,8 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
-     * thrown.
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
@@ -1311,8 +1313,8 @@ public:
      * This conceptionally performs an `insert()` on the `back()` of this container,
      * i.e. the last inner container grows by value.size().
      *
-     * If the new concat_size() is greater than concat_capacity() then all iterators and references (including the past-the-end
-     * iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
      *
@@ -1320,8 +1322,8 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak, but container my contain invalid data after exceptions is
-     * thrown.
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
