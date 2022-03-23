@@ -34,6 +34,11 @@ If possible, provide tooling that performs the changes, e.g. a shell-script.
 
 ## Notable Bug-fixes
 
+#### IO
+
+* Fixed an issue parsing FASTA files containing sequence IDs that start with `>`
+ ([\#2869](https://github.com/seqan/seqan3/pull/2869)).
+
 #### Utility
 
 * `seqan3::views::single_pass_input` cannot propagate the `std::ranges::output_range` property, because it cannot

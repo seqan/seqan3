@@ -135,3 +135,28 @@ TEST(integration, convert_fastq_to_fasta)
     fout.get_stream().flush();
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), fasta_out);
 }
+
+TEST(integration, sequence_name_contains_id_tag)
+{
+    // The sequence id is '>TEST 1'.
+    std::string const input
+    {
+        "> >TEST 1\n"
+        "ACGT\n"
+    };
+
+    std::string const expected_output
+    {
+        ">>TEST 1\n"
+        "ACGT\n"
+    };
+
+    seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
+    seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
+    fout = fin;
+
+    fout.get_stream().flush();
+
+    std::string const output = static_cast<std::ostringstream&>(fout.get_stream()).str();
+    EXPECT_EQ(output, expected_output);
+}

@@ -194,7 +194,9 @@ private:
             #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
                 auto it = stream_view.begin();
                 auto e = stream_view.end();
-                for (; (it != e) && (is_id || is_blank)(*it); ++it)
+                ++it; // already checked `is_id`
+
+                for (; (it != e) && (is_blank)(*it); ++it)
                 {}
 
                 bool at_delimiter = false;
@@ -216,10 +218,11 @@ private:
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
-                std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank)        // skip leading >
+                std::ranges::copy(stream_view | std::views::drop(1)                               // skip leading '>' or ';'
+                                              | std::views::drop_while(is_blank)                  // skip leading ' '
                                               | detail::take_until_or_throw(is_cntrl || is_blank) // read ID until delimiter…
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
-                                  std::cpp20::back_inserter(id));                               // … ^A is old delimiter
+                                  std::cpp20::back_inserter(id));                                 // … ^A is old delimiter
 
                 // consume rest of line
                 detail::consume(stream_view | detail::take_line_or_throw);
@@ -231,7 +234,9 @@ private:
             #if SEQAN3_WORKAROUND_VIEW_PERFORMANCE
                 auto it = stream_view.begin();
                 auto e = stream_view.end();
-                for (; (it != e) && (is_id || is_blank)(*it); ++it)
+                ++it; // skip leading '>' or ';'
+
+                for (; (it != e) && (is_blank)(*it); ++it) // skip leading ' '
                 {}
 
                 bool at_delimiter = false;
@@ -250,8 +255,9 @@ private:
 
             #else // ↑↑↑ WORKAROUND | ORIGINAL ↓↓↓
 
-                std::ranges::copy(stream_view | detail::take_line_or_throw                   // read line
-                                              | std::views::drop_while(is_id || is_blank)    // skip leading >
+                std::ranges::copy(stream_view | detail::take_line_or_throw          // read line
+                                              | std::views::drop(1)                 // skip leading '>' or ';'
+                                              | std::views::drop_while(is_blank)    // skip leading ' '
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::cpp20::back_inserter(id));
             #endif // SEQAN3_WORKAROUND_VIEW_PERFORMANCE
