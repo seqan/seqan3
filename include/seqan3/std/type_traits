@@ -12,12 +12,6 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-/*!\defgroup std_type_traits type_traits
- * \ingroup std
- * \brief The [\<type_traits\> header](https://en.cppreference.com/w/cpp/header/type_traits) from C++20's standard
- *        library.
- */
-
 #pragma once
 
 #include <type_traits>

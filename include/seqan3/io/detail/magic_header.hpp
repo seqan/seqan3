@@ -15,7 +15,7 @@
 #include <array>
 #include <seqan3/std/span>
 #include <string>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 #include <vector>
 
 #include <seqan3/core/detail/template_inspection.hpp>

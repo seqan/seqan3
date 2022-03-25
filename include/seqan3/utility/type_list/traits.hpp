@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>

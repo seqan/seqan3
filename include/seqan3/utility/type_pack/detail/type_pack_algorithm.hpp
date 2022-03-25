@@ -13,7 +13,7 @@
 #pragma once
 
 #include <concepts>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 #include <utility>
 
 #include <seqan3/core/platform.hpp>

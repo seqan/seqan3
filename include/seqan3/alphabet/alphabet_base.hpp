@@ -14,7 +14,7 @@
 
 #include <cassert>
 #include <concepts>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>

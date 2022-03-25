@@ -12,7 +12,7 @@
 //![my_alph]
 #include <cstddef>                      // for size_t
 #include <seqan3/alphabet/concept.hpp>  // for seqan3::alphabet
-#include <seqan3/std/type_traits>       // for std::type_identity
+#include <type_traits>       // for std::type_identity
 
 namespace my_namespace
 {

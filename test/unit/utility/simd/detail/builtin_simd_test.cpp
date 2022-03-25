@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>

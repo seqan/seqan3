@@ -15,7 +15,7 @@
 #include <cstddef>      // for ptrdiff_t
 #include <iterator>       // for iterator concepts
 #include <seqan3/std/ranges>         // for range concepts
-#include <seqan3/std/type_traits>    // for remove_cvref_t, etc
+#include <type_traits>    // for remove_cvref_t, etc
 
 namespace std
 {

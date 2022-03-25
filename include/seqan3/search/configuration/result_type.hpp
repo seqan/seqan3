@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/core/configuration/pipeable_config_element.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>

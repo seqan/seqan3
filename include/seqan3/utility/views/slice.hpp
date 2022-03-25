@@ -17,7 +17,7 @@
 #include <seqan3/std/ranges>
 #include <seqan3/std/span>
 #include <stdexcept>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/io/exception.hpp>

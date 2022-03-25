@@ -17,7 +17,7 @@
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
 #include <concepts>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 // ============================================================================
 // is_pair_open()
