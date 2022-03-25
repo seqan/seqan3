@@ -152,7 +152,7 @@ inline std::vector<std::string> valid_file_extensions()
     detail::for_each<formats_t>([&extensions] (auto t_identity)
     {
         using format_t = typename decltype(t_identity)::type;
-        std::ranges::copy(format_t::file_extensions, std::cpp20::back_inserter(extensions));
+        std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
     });
 
     return extensions;

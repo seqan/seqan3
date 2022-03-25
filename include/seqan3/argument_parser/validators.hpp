@@ -222,7 +222,7 @@ public:
     value_list_validator(range_type rng)
     {
         values.clear();
-        std::ranges::move(std::move(rng), std::cpp20::back_inserter(values));
+        std::ranges::move(std::move(rng), std::back_inserter(values));
     }
 
     /*!\brief Constructing from a parameter pack.

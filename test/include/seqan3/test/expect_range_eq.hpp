@@ -33,7 +33,7 @@ struct expect_range_eq
     {
         using value_t = std::ranges::range_value_t<rng_t>;
         std::vector<value_t> rng_copy{};
-        std::ranges::copy(rng, std::cpp20::back_inserter(rng_copy));
+        std::ranges::copy(rng, std::back_inserter(rng_copy));
         return rng_copy;
     }
 

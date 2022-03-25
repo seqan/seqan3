@@ -136,14 +136,14 @@ protected:
             {
                 std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank)
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
-                                  std::cpp20::back_inserter(id));
+                                  std::back_inserter(id));
                 detail::consume(stream_view | detail::take_line_or_throw);
             }
             else
             {
                 std::ranges::copy(stream_view | detail::take_line_or_throw
                                               | views::char_to<std::ranges::range_value_t<id_type>>,
-                                  std::cpp20::back_inserter(id));
+                                  std::back_inserter(id));
             }
         }
         else
@@ -170,7 +170,7 @@ protected:
                                         return c;
                                     })
                                         | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
-                              std::cpp20::back_inserter(sequence));
+                              std::back_inserter(sequence));
             sequence_size_after = size(sequence);
         }
         else // consume, but count
@@ -192,7 +192,7 @@ protected:
         if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             std::ranges::copy(qview | views::char_to<std::ranges::range_value_t<qual_type>>,
-                              std::cpp20::back_inserter(qualities));
+                              std::back_inserter(qualities));
         }
         else
         {

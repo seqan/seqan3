@@ -235,7 +235,7 @@ protected:
 
         simd_sequence.clear();
         for (auto && simd_vector_chunk : sequences | views::to_simd<score_type>(padding_symbol))
-            std::ranges::move(simd_vector_chunk, std::cpp20::back_inserter(simd_sequence));
+            std::ranges::move(simd_vector_chunk, std::back_inserter(simd_sequence));
     }
 
     /*!\brief Compute the actual alignment.

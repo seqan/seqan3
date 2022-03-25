@@ -87,7 +87,7 @@ TEST(maybe_iterator_category, output_iterator_tag)
     }
 
     {
-        using iterator_t = std::cpp20::ostream_iterator<int>;
+        using iterator_t = std::ostream_iterator<int>;
         EXPECT_SAME_TYPE(std::iterator_traits<iterator_t>::iterator_category, std::output_iterator_tag);
 #if defined(__cpp_lib_ranges)
         EXPECT_SAME_TYPE(iterator_t::iterator_category, std::output_iterator_tag);
@@ -188,7 +188,7 @@ concept has_iterator_concept = requires()
 
 TEST(iterator_concept_tag_t, output_iterator_tag)
 {
-    using iterator_t = std::cpp20::ostream_iterator<int>;
+    using iterator_t = std::ostream_iterator<int>;
     EXPECT_SAME_TYPE(seqan3::detail::iterator_concept_tag_t<iterator_t>, std::output_iterator_tag);
     EXPECT_FALSE(has_iterator_concept<iterator_t>);
 }

@@ -309,7 +309,7 @@ inline void format_sam_base::read_forward_range_field(stream_view_type && stream
             target.push_back(seqan3::assign_char_to(c, target_range_value_t{}));
             std::ranges::copy(std::ranges::subrange<begin_iterator_t, end_iterator_t>{it, std::ranges::end(stream_view)}
                               | views::char_to<target_range_value_t>,
-                              std::cpp20::back_inserter(target));
+                              std::back_inserter(target));
         }
     }
 }
@@ -732,7 +732,7 @@ inline void format_sam_base::write_header(stream_t & stream,
     // -----------------------------------------------------------------
     // Write Header
     // -----------------------------------------------------------------
-    std::cpp20::ostreambuf_iterator stream_it{stream};
+    std::ostreambuf_iterator stream_it{stream};
 
     // (@HD) Write header line [required].
     stream << "@HD\tVN:";

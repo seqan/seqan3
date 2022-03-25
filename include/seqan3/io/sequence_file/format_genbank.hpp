@@ -121,13 +121,13 @@ protected:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(std::string_view{"LOCUS"}, std::cpp20::back_inserter(id));
+                std::ranges::copy(std::string_view{"LOCUS"}, std::back_inserter(id));
 
                 while (!is_char<'O'>(*std::ranges::begin(stream_view)))
                 {
                         std::ranges::copy(stream_view | detail::take_line_or_throw
                                                       | views::char_to<std::ranges::range_value_t<id_type>>,
-                                                        std::cpp20::back_inserter(id));
+                                                        std::back_inserter(id));
                         id.push_back('\n');
                 }
             }
@@ -139,7 +139,7 @@ protected:
                 {
                     std::ranges::copy(stream_view | detail::take_until_or_throw(predicate)
                                                   | views::char_to<std::ranges::range_value_t<id_type>>,
-                                      std::cpp20::back_inserter(id));
+                                      std::back_inserter(id));
                 };
 
                 if (options.truncate_ids)
@@ -176,7 +176,7 @@ protected:
                                                 return c;
                                             })
                                           | views::char_to<std::ranges::range_value_t<seq_type>>,    // convert to actual target alphabet
-                                            std::cpp20::back_inserter(sequence));
+                                            std::back_inserter(sequence));
         }
         else
         {
@@ -196,7 +196,7 @@ protected:
                                id_type                            && id,
                                qual_type                          && SEQAN3_DOXYGEN_ONLY(qualities))
     {
-        std::cpp20::ostreambuf_iterator stream_it{stream};
+        std::ostreambuf_iterator stream_it{stream};
         size_t sequence_size{0};
         [[maybe_unused]] char buffer[50];
         if constexpr (!detail::decays_to_ignore_v<seq_type>)

@@ -13,7 +13,7 @@
 #include <vector>
 
 using input_iterator = std::istream_iterator<char>;
-using output_iterator = std::cpp20::ostream_iterator<char>;
+using output_iterator = std::ostream_iterator<char>;
 using forward_iterator = std::forward_list<char>::iterator;
 using bidirectional_iterator = std::list<char>::iterator;
 using random_access_iterator = std::vector<char>::iterator;
@@ -67,7 +67,7 @@ struct input_or_output_iter_value
 
 // ostream has std::iter_value_t void, but we want the output value type here.
 template <typename value_t, typename char_t, typename char_traits_t>
-struct input_or_output_iter_value<std::cpp20::ostream_iterator<value_t, char_t, char_traits_t>>
+struct input_or_output_iter_value<std::ostream_iterator<value_t, char_t, char_traits_t>>
 {
     using type = value_t;
 };
