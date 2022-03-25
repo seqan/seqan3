@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/bit>
+#include <bit>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>

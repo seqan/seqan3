@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/bit>
+#include <bit>
 #include <type_traits>
 
 #include <seqan3/utility/detail/integer_traits.hpp>

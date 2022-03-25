@@ -13,7 +13,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/bit>
+#include <bit>
 
 #include <sdsl/bit_vectors.hpp>
 

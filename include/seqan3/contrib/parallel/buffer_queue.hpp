@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <atomic>
-#include <seqan3/std/bit>
+#include <bit>
 #include <cmath>
 #include <concepts>
 #include <mutex>

@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/bit>
+#include <bit>
 #include <deque>
 #include <list>
 #include <map>

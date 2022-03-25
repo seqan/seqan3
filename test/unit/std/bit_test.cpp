@@ -5,7 +5,7 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <seqan3/std/bit>
+#include <bit>
 #include <concepts>
 
 #include <gtest/gtest.h>
