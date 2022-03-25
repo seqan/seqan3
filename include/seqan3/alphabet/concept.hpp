@@ -736,9 +736,8 @@ struct assign_char_strictly_to_fn
     //!\cond
         requires requires ()
         {
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::assign_char_to(chr, std::forward<alphabet_t>(alphabet)),
-                                          std::convertible_to, alphabet_t);
-            SEQAN3_RETURN_TYPE_CONSTRAINT(seqan3::char_is_valid_for<alphabet_t>(chr), std::same_as, bool);
+            {seqan3::assign_char_to(chr, std::forward<alphabet_t>(alphabet))} -> std::convertible_to<alphabet_t>;
+            {seqan3::char_is_valid_for<alphabet_t>(chr)} -> std::same_as<bool>;
         }
     //!\endcond
     {

@@ -59,22 +59,21 @@ concept matrix = requires(std::remove_cvref_t<matrix_t> m)
      * \brief The number of columns in the matrix.
      */
     //!\cond
-    SEQAN3_RETURN_TYPE_CONSTRAINT(m.cols(), std::same_as, typename std::remove_cvref_t<matrix_t>::size_type);
+    {m.cols()} -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
     //!\endcond
 
     /*!\fn size_type rows() const noexcept;
      * \brief The number of rows in the matrix.
      */
     //!\cond
-    SEQAN3_RETURN_TYPE_CONSTRAINT(m.rows(), std::same_as, typename std::remove_cvref_t<matrix_t>::size_type);
+    {m.rows()} -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
     //!\endcond
 
     /*!\fn reference at(matrix_coordinate coordinate) noexcept;
      * \brief A reference to the entry of the matrix at the given coordinate.
      */
     //!\cond
-    SEQAN3_RETURN_TYPE_CONSTRAINT(m.at(matrix_coordinate{}),
-                                  std::same_as, typename std::remove_cvref_t<matrix_t>::reference);
+    {m.at(matrix_coordinate{})} -> std::same_as<typename std::remove_cvref_t<matrix_t>::reference>;
     //!\endcond
 
 //!\cond

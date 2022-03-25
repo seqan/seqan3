@@ -69,15 +69,6 @@
 #   include <version>
 #endif
 
-//!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
-#if defined(__GNUC__) && (__GNUC__ < 10)
-#   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
-       {expression}; requires concept_name<decltype(expression), __VA_ARGS__>
-#else
-#   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
-       {expression} -> concept_name<__VA_ARGS__>
-#endif
-
 // ============================================================================
 //  Dependencies
 // ============================================================================
