@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <iterator>
-#include <seqan3/std/memory>
+#include <memory>
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/platform.hpp>
