@@ -13,7 +13,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>
 #include <seqan3/std/type_traits>

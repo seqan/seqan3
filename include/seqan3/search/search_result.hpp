@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <exception>
 
 #include <seqan3/core/configuration/configuration.hpp>

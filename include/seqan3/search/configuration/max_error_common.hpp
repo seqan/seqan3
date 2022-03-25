@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <seqan3/core/detail/strong_type.hpp>
 #include <seqan3/utility/concept/exposition_only/core_language.hpp>

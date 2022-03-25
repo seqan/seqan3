@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/bit>
-#include <seqan3/std/concepts>
+#include <concepts>
 
 // Find correct header for byte-order conversion functions.
 #if __has_include(<endian.h>) // unix GLIBC

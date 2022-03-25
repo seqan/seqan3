@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/type_traits>
 
 #include <seqan3/alphabet/concept.hpp>

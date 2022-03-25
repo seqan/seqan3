@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>

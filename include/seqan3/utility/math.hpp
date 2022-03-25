@@ -15,7 +15,7 @@
 #include <seqan3/std/bit>
 #include <cassert>
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <stdexcept>
 
 #include <seqan3/core/platform.hpp>

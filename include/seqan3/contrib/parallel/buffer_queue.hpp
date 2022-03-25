@@ -16,7 +16,7 @@
 #include <atomic>
 #include <seqan3/std/bit>
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <mutex>
 #include <seqan3/std/new>
 #include <seqan3/std/ranges>

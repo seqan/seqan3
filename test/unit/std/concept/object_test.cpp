@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <random>
 
 #include <seqan3/utility/concept/exposition_only/core_language.hpp>

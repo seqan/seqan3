@@ -105,7 +105,7 @@ using ::seqan3::contrib::charconv::from_chars;
 
 #if !defined(SEQAN3_CPP_LIB_TO_CHARS) || SEQAN3_CPP_LIB_TO_CHARS == 100000
 #include <cassert>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <sstream>
 
 namespace seqan3::contrib::charconv_float

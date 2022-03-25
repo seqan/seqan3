@@ -14,7 +14,7 @@
 
 #include <array>
 #include <cassert>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <utility>
 
 #include <seqan3/utility/simd/concept.hpp>

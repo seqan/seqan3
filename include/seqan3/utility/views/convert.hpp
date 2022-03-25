@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/ranges>
 
 #include <seqan3/utility/concept/exposition_only/core_language.hpp>

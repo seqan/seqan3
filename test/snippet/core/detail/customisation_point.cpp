@@ -1,4 +1,4 @@
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <vector>
 
 #include <seqan3/core/detail/customisation_point.hpp>

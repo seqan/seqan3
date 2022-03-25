@@ -14,7 +14,7 @@
 #endif // __has_include(<charconv>)
 #include <seqan3/std/charconv>
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <iostream>
 #include <limits>
 

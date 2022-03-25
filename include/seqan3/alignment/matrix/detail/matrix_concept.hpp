@@ -16,7 +16,7 @@
 #include <limits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/std/concepts>
+#include <concepts>
 
 namespace seqan3::detail
 {

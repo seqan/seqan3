@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <deque>
 #include <seqan3/std/ranges>
 #include <string>

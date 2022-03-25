@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/charconv>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <sstream>
 #include <string>
 #include <vector>

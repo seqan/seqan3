@@ -12,7 +12,7 @@
 #include <string>
 
 #include <seqan3/io/stream/concept.hpp>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/test/tmp_filename.hpp>
 
 template <typename T>

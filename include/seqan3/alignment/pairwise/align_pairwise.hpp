@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <functional>
 #include <iostream>
 #include <seqan3/std/ranges>

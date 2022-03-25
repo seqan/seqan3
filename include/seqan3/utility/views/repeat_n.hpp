@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <seqan3/io/views/detail/take_exactly_view.hpp>
 #include <seqan3/utility/views/repeat.hpp>

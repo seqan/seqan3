@@ -9,7 +9,7 @@
 
 #include <random>
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include "auxiliary.hpp"
 

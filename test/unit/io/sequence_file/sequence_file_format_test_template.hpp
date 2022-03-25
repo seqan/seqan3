@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/ranges>
 #include <sstream>
 #include <stdexcept>

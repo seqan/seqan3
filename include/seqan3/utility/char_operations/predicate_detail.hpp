@@ -15,7 +15,7 @@
 
 #include <array>
 #include <cctype>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <stdexcept>
 #include <string>
 

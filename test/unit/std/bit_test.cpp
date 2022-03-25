@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <seqan3/std/bit>
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <gtest/gtest.h>
 

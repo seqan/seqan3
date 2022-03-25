@@ -15,7 +15,7 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/iterator>
 
 namespace seqan3::detail

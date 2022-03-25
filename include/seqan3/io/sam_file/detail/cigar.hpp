@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <seqan3/std/charconv>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/ranges>
 #include <sstream>
 

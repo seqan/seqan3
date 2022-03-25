@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/persist_view.hpp>

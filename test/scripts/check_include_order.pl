@@ -18,7 +18,7 @@
 # This is a script checking for blocks of include statements:
 #
 #  #include <cassert>
-#  #include <seqan3/std/concepts>
+#  #include <concepts>
 #  #include <utility>
 #
 #  It will extract the include paths to

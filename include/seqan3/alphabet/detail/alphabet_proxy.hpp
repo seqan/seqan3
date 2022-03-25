@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/nucleotide/concept.hpp>
