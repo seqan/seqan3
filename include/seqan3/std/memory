@@ -49,15 +49,6 @@
 namespace std
 {
 
-// prior to gcc-10; requires statements weren't allowed within constexpr if's
-#if defined(__GNUC__) && (__GNUC__ < 10)
-template <typename T>
-concept bool _pointer_traits_has_to_address = requires(T const & p)
-{
-    { std::pointer_traits<T>::to_address(p) };
-};
-#endif // defined(__GNUC__) && (__GNUC__ < 10)
-
 /*!\brief Obtain the address represented by p without forming a reference to the object pointed to by p.
  * \sa https://en.cppreference.com/w/cpp/memory/to_address
  * \ingroup std_memory
@@ -76,11 +67,7 @@ constexpr T * to_address(T * p) noexcept
 template <typename T>
 constexpr auto to_address(const T & p) noexcept
 {
-#if defined(__GNUC__) && (__GNUC__ < 10)
-    if constexpr (_pointer_traits_has_to_address<T>)
-#else // ^^^ workaround / no workaround vvv
     if constexpr (requires { std::pointer_traits<T>::to_address(p); })
-#endif // defined(__GNUC__) && (__GNUC__ < 10)
         return std::pointer_traits<T>::to_address(p);
     else
         return std::to_address(p.operator->());
