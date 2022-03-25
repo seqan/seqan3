@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <memory>
 #include <seqan3/std/ranges>
 #include <vector>

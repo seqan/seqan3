@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>

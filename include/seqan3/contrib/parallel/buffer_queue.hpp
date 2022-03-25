@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <atomic>
 #include <seqan3/std/bit>
 #include <cmath>

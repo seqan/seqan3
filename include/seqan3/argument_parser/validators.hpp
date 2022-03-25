@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/concepts>
 #include <filesystem>
 #include <fstream>

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/concept/cereal.hpp>

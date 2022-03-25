@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 
 TEST(general, move)
 {

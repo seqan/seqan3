@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/charconv>
 #include <seqan3/std/iterator>
 #include <seqan3/std/ranges>

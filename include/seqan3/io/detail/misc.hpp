@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <filesystem>
 #include <seqan3/std/iterator>
 #include <variant>
