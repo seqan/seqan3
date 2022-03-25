@@ -48,14 +48,6 @@ jobs:
             build: unit
             build_type: Release
 
-          - name: "Unit gcc9 (c++2a)"
-            os: macos-10.15
-            cxx: "g++-9"
-            cc: "gcc-9"
-            build: unit
-            build_type: Release
-            cxx_flags: "-std=c++2a"
-
     steps:
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
