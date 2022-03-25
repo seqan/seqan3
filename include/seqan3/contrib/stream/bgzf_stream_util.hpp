@@ -16,7 +16,7 @@
 #include <array>
 #include <cstring>
 #include <memory>
-#include <seqan3/std/span>
+#include <span>
 #include <thread>
 
 #include <seqan3/core/range/type_traits.hpp>

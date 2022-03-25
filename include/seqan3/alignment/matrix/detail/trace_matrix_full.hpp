@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>

@@ -2,7 +2,7 @@
 
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <seqan3/std/span>
+#include <span>
 
 class my_matrix : public seqan3::detail::alignment_matrix_column_major_range_base<my_matrix>
 {

@@ -21,7 +21,7 @@
 #include <seqan3/std/new>
 #include <seqan3/std/ranges>
 #include <shared_mutex>
-#include <seqan3/std/span>
+#include <span>
 #include <type_traits>
 #include <vector>
 

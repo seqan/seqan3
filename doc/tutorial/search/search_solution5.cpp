@@ -4,7 +4,7 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/search/search.hpp>
 #include <seqan3/search/fm_index/fm_index.hpp>
-#include <seqan3/std/span>
+#include <span>
 
 using namespace seqan3::literals;
 

@@ -11,29 +11,11 @@
 // \see https://en.cppreference.com/w/cpp/container/span
 */
 
-//!\cond
 #pragma once
 
-#if __has_include(<span>)
 #include <span>
-#endif // __has_include(<span>)
 
-#if !defined(__cpp_lib_span)
+#include <seqan3/core/platform.hpp>
 
-#include <seqan3/contrib/span/span>
-
-#if RANGE_V3_VERSION >= 1000
-namespace ranges
-{
-template<typename span_tp, std::size_t span_sz>
-inline constexpr bool enable_borrowed_range<std::span<span_tp, span_sz>> = true;
-
-// we follow the definition of the ranges library for enable_view:
-// https://github.com/ericniebler/range-v3/blob/6103268542c27210dbc3f99f1fa0c1e348b52184/include/range/v3/range/concepts.hpp#L201
-template<typename span_tp, std::size_t span_sz>
-inline constexpr bool enable_view<std::span<span_tp, span_sz>> = span_sz + 1 < 2;
-} // namespace ranges
-#endif // RANGE_V3_VERSION >= 1000
-
-#endif // !defined(__cpp_lib_span)
-//!\endcond
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.3.0; Please #include <span> instead.")

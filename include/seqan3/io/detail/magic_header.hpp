@@ -13,7 +13,7 @@
 #pragma once
 
 #include <array>
-#include <seqan3/std/span>
+#include <span>
 #include <string>
 #include <type_traits>
 #include <vector>

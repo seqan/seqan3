@@ -18,7 +18,7 @@
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_proxy.hpp>
 #include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 
 namespace seqan3::detail
 {

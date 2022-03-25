@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 
 namespace seqan3::contrib
 {

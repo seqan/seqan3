@@ -15,7 +15,7 @@
 #include <concepts>
 #include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 #include <stdexcept>
 #include <type_traits>
 
