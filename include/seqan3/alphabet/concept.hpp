@@ -849,12 +849,6 @@ struct alphabet_size_cpo : public detail::customisation_point_object<alphabet_si
     );
 };
 
-#if SEQAN3_WORKAROUND_GCC_89953
-template <typename alph_t>
-    requires requires { { alphabet_size_cpo<alph_t>{} }; }
-inline constexpr auto alphabet_size_obj = alphabet_size_cpo<alph_t>{};
-#endif // SEQAN3_WORKAROUND_GCC_89953
-
 } // namespace seqan3::detail::adl_only
 
 namespace seqan3
@@ -903,20 +897,11 @@ namespace seqan3
  * \stableapi{Since version 3.1. The name seqan3::alphabet_size, Implementation 1,
  *            and Implementation 3 are stable and will not change.}
  */
-#if SEQAN3_WORKAROUND_GCC_89953
-template <typename alph_t>
-//!\cond
-    requires requires { { detail::adl_only::alphabet_size_cpo<alph_t>{} }; } &&
-             requires { { detail::adl_only::alphabet_size_obj<alph_t>() }; } // ICE workarounds
-//!\endcond
-inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_obj<alph_t>();
-#else // ^^^ workaround / no workaround vvv
 template <typename alph_t>
 //!\cond
     requires requires { { detail::adl_only::alphabet_size_cpo<alph_t>{}() }; }
 //!\endcond
 inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_cpo<alph_t>{}();
-#endif // SEQAN3_WORKAROUND_GCC_89953
 
 // ============================================================================
 // semialphabet

@@ -227,15 +227,6 @@
 #   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
 #endif
 
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
-#ifndef SEQAN3_WORKAROUND_GCC_89953
-#   if defined(__GNUC_MINOR__) && (__GNUC__ == 9 && __GNUC_MINOR__ < 3)
-#       define SEQAN3_WORKAROUND_GCC_89953 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_89953 0
-#   endif
-#endif
-
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467
 #ifndef SEQAN3_WORKAROUND_GCC_93467 // fixed since gcc10.2
 #   if defined(__GNUC__) && ((__GNUC__ <= 9) || (__GNUC__ == 10 && __GNUC_MINOR__ < 2))
