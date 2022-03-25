@@ -14,7 +14,7 @@
 
 #include <concepts>
 #include <initializer_list>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <type_traits>
 
 #include <seqan3/core/platform.hpp>

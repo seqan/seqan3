@@ -9,7 +9,7 @@
 
 #include <vector>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 
 #include <seqan3/io/detail/out_file_iterator.hpp>
 

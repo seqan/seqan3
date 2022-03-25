@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <filesystem>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <variant>
 
 #include <seqan3/core/detail/template_inspection.hpp>

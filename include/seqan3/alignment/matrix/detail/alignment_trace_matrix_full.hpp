@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>

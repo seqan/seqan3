@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <type_traits>
 #include <vector>
 

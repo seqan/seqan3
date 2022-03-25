@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <type_traits>
 #include <vector>
@@ -31,7 +31,7 @@ namespace seqan3
 
 /*!\brief Container that stores sequences concatenated internally.
  * \tparam underlying_container_type Type of the underlying container. Must satisfy seqan3::reservible_container.
- * \tparam data_delimiters_type A container that stores the begin/end positions in the underlying_container_type. Must 
+ * \tparam data_delimiters_type A container that stores the begin/end positions in the underlying_container_type. Must
  * satifsy seqan3::reservible_container and have underlying_container_type's size_type as value_type.
  * \implements seqan3::cerealisable
  * \implements seqan3::reservible_container
@@ -84,7 +84,7 @@ template <typename underlying_container_type,
 //!\cond
     requires reservible_container<std::remove_reference_t<underlying_container_type>> &&
              reservible_container<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<std::ranges::range_size_t<underlying_container_type>, 
+             std::is_same_v<std::ranges::range_size_t<underlying_container_type>,
                             std::ranges::range_value_t<data_delimiters_type>>
 //!\endcond
 class concatenated_sequences
@@ -1233,7 +1233,7 @@ public:
      * This conceptionally adds another element to the container with the specified content,
      * i.e. the "outer container" grows by 1.
      *
-     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the
      * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
@@ -1270,7 +1270,7 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after
      * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}
@@ -1286,7 +1286,7 @@ public:
      * This conceptionally performs a `push_back()` on the `back()` of this container,
      * i.e. that last inner container grows by 1.
      *
-     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the
      * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
@@ -1295,7 +1295,7 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after
      * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}
@@ -1313,7 +1313,7 @@ public:
      * This conceptionally performs an `insert()` on the `back()` of this container,
      * i.e. the last inner container grows by value.size().
      *
-     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the 
+     * If the new concat_size() is greater than concat_capacity(), all iterators and references (including the
      * past-the-end iterator) are invalidated. Otherwise, only the past-the-end iterator is invalidated.
      *
      * ### Complexity
@@ -1322,7 +1322,7 @@ public:
      *
      * ### Exceptions
      *
-     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after 
+     * Basic exception guarantee, i.e. guaranteed not to leak. However, the container may contain invalid data after
      * an exception is thrown.
      *
      * \experimentalapi{Experimental since version 3.1.}

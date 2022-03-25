@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <seqan3/std/type_traits>
 

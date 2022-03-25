@@ -2,7 +2,7 @@
 
 #if !SEQAN3_WORKAROUND_GCC_96070
 //![snippet]
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <sstream>
 

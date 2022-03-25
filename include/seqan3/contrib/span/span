@@ -13,7 +13,7 @@
 
 #include <array>        // for array
 #include <cstddef>      // for ptrdiff_t
-#include <seqan3/std/iterator>       // for iterator concepts
+#include <iterator>       // for iterator concepts
 #include <seqan3/std/ranges>         // for range concepts
 #include <seqan3/std/type_traits>    // for remove_cvref_t, etc
 

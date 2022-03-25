@@ -14,7 +14,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/iterator>
+#include <iterator>
 
 #include <seqan3/io/stream/detail/stream_buffer_exposer.hpp>
 

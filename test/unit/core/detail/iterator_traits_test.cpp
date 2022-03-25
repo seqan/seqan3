@@ -9,7 +9,7 @@
 
 #include <concepts>
 #include <forward_list>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <list>
 #include <seqan3/std/ranges>
 #include <vector>

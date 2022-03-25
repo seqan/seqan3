@@ -8,7 +8,7 @@
 #pragma once
 
 #include <forward_list>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <list>
 #include <vector>
 

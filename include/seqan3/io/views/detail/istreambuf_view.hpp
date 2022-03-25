@@ -14,7 +14,7 @@
 
 #include <iosfwd>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 
 #include <seqan3/io/stream/concept.hpp>
