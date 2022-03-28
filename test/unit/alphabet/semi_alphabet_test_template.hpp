@@ -11,7 +11,7 @@
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/exception.hpp>
 #include <seqan3/test/pretty_printing.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 template <typename T>
 using semi_alphabet_test = ::testing::Test;

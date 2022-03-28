@@ -16,7 +16,7 @@
 #include <concepts>
 
 #include <seqan3/core/detail/strong_type.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 namespace seqan3::search_cfg
 {

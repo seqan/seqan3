@@ -13,7 +13,8 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/alphabet/detail/concept.hpp>
+#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/utility/type_traits/lazy_conditional.hpp>
 
@@ -131,6 +132,7 @@ using recursive_required_types_t = typename recursive_required_types<t>::type;
 // ------------------------------------------------------------------
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+ * \ingroup alphabet_composite
  * Returns a std::true_type if the `type` is constructable from `T`.
  */
 template <typename T>
@@ -142,6 +144,7 @@ struct constructible_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+ * \ingroup alphabet_composite
  * Returns a std::true_type if the `T` is implicitly convertible to `type`.
  */
 template <typename T>
@@ -153,6 +156,7 @@ struct implicitly_convertible_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+ * \ingroup alphabet_composite
  * Returns a std::true_type if the `type` is assignable from `T`.
  */
 template <typename T>
@@ -164,6 +168,7 @@ struct assignable_from
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+ * \ingroup alphabet_composite
  * Returns a std::true_type if the `type` is weakly equality comparable to `T`.
  */
 template <typename T>
@@ -175,6 +180,7 @@ struct weakly_equality_comparable_with_
 };
 
 /*!\brief 'Callable' helper class that is invokable by meta::invoke.
+ * \ingroup alphabet_composite
  * Returns a std::true_type if the `type` is comparable via <,<=,>,>= to `T`.
  */
 template <typename T>
@@ -184,6 +190,25 @@ struct weakly_ordered_with_
     template <typename type>
     using invoke = std::integral_constant<bool, weakly_ordered_with<type, T>>;
 };
+
+// ------------------------------------------------------------------
+// Concept traits helper
+// ------------------------------------------------------------------
+
+/*!\brief Binary type trait that behaves like the seqan3::detail::weakly_equality_comparable_with concept.
+ * \ingroup alphabet_composite
+ */
+template <typename lhs_t, typename rhs_t>
+struct weakly_equality_comparable_with_trait :
+    std::integral_constant<bool, weakly_equality_comparable_with<lhs_t, rhs_t>>
+{};
+
+/*!\brief Binary type trait that behaves like the seqan3::detail::weakly_ordered_with concept.
+ * \ingroup alphabet_composite
+ */
+template <typename lhs_t, typename rhs_t>
+struct weakly_ordered_with_trait : std::integral_constant<bool, weakly_ordered_with<lhs_t, rhs_t>>
+{};
 
 } // namespace seqan3::detail
 

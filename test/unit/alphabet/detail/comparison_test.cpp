@@ -7,12 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <concepts>
-#include <random>
+#include <seqan3/alphabet/detail/concept.hpp>
 
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
-
-#include "auxiliary.hpp"
+#include "../../std/concept/auxiliary.hpp"
 
 TEST(comparison_concepts, weakly_equality_comparable_with)
 {

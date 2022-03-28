@@ -14,7 +14,7 @@
 
 #include <seqan3/alignment/configuration/detail.hpp>
 #include <seqan3/core/configuration/pipeable_config_element.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 namespace seqan3::align_cfg
 {

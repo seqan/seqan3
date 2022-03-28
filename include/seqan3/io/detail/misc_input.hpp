@@ -31,7 +31,7 @@
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 namespace seqan3::detail
 {

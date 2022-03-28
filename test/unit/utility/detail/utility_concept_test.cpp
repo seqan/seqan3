@@ -10,7 +10,7 @@
 #include <iterator>
 #include <random>
 
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 #include "../../std/concept/auxiliary.hpp"
 
