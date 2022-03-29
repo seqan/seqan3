@@ -40,25 +40,6 @@ jobs:
             build: coverage
             build_type: Debug
 
-          - name: "Unit gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc10"
-            cxx: "g++-10"
-            cc: "gcc-10"
-            build: unit
-            build_type: Release
-
-          - name: "Unit gcc9 (c++2a)"
-            cxx: "g++-9"
-            cc: "gcc-9"
-            build: unit
-            build_type: Release
-            cxx_flags: "-std=c++2a"
-
     steps:
       - name: Checkout SeqAn3
         uses: actions/checkout@v2
@@ -95,8 +76,11 @@ jobs:
         env:
           CC: ${{ matrix.cc }}
         run: |
-          sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/${CC/gcc/gcov} 100
+          sudo apt-get install gcovr
           pip install gcovr
+          which gcovr
+          where gcovr
+          exit 1
 
       - name: Load ccache
         uses: actions/cache@v2
@@ -140,7 +124,7 @@ jobs:
         run: |
           ccache -z
           cd seqan3-build
-          make -k -j2
+          make -k -j2 VERBOSE=1
           ccache -sv
 
       - name: Run tests
