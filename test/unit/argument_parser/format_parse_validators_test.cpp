@@ -924,6 +924,11 @@ enum class foo
     three
 };
 
+auto enumeration_names(foo)
+{
+    return std::unordered_map<std::string_view, foo>{{"one", foo::one}, {"two", foo::two}, {"three", foo::three}};
+}
+
 TEST(validator_test, value_list_validator_success)
 {
     // type deduction
