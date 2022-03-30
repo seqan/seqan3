@@ -309,8 +309,17 @@ else ()
 endif ()
 
 # ----------------------------------------------------------------------------
-# Require Ranges and SDSL
+# Require Sharg, Ranges and SDSL
 # ----------------------------------------------------------------------------
+
+check_include_file_cxx (sharg/version.hpp _SEQAN3_HAVE_SHARG)
+
+if (_SEQAN3_HAVE_SHARG)
+    seqan3_config_print ("Required dependency:        Sharg found.")
+else ()
+    seqan3_config_error (
+        "The sharg library is required, but wasn't found. Get it from https://github.com/seqan/sharg-parser/")
+endif ()
 
 check_include_file_cxx (range/v3/version.hpp _SEQAN3_HAVE_RANGEV3)
 
