@@ -7,3 +7,6 @@
 [submodule "cereal"]
 	path = submodules/cereal
 	url = https://github.com/USCiLab/cereal
+[submodule "submodules/sharg-parser"]
+	path = submodules/sharg-parser
+	url = https://github.com/seqan/sharg-parser.git
