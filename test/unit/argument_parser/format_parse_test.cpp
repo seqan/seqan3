@@ -999,17 +999,14 @@ enum class bar
 };
 } // namespace Other
 
-namespace seqan3::custom
-{
 template <>
-struct argument_parsing<Other::bar>
+struct seqan3::custom::argument_parsing<Other::bar>
 {
     static inline std::unordered_map<std::string_view, Other::bar> const enumeration_names{{"one", Other::bar::one},
                                                                                            {"1", Other::bar::one},
                                                                                            {"two", Other::bar::two},
                                                                                            {"2", Other::bar::two}};
 };
-} // namespace seqan3::custom
 
 TEST(parse_type_test, parse_success_enum_option)
 {
