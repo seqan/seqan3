@@ -16,11 +16,11 @@
  *
  * # The Argument Parser Class
  *
- * \copydetails seqan3::argument_parser
+ * todo copydetails sharg::argument_parser
  *
  * # Parsing Command Line Arguments
  *
- * \copydetails seqan3::argument_parser::parse
+ * todo copydetails sharg::argument_parser::parse
  *
  * # Argument Validation
  *

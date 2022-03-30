@@ -6,18 +6,25 @@ LAYOUT_FILE            = ${CMAKE_BINARY_DIR}/DoxygenLayout.xml
 
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include               \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                   \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md            \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md          \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md    \
+INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/include                         \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                             \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md                      \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md                    \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md              \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
-STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
+STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include
+STRIP_FROM_INC_PATH    = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include
 EXAMPLE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}
 IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
+
+# Replace namespace sharg with seqan3 when including the API documentation of sharg
+INPUT_FILTER = "sed 's/sharg/seqan3/g'"
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}

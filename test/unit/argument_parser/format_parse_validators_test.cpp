@@ -11,6 +11,7 @@
 #include <fstream>
 #include <seqan3/std/ranges>
 
+#include <seqan3/utility/type_list/type_list.hpp>
 #include <seqan3/argument_parser/argument_parser.hpp>
 #include <seqan3/test/file_access.hpp>
 #include <seqan3/test/tmp_filename.hpp>
@@ -18,7 +19,6 @@
 
 struct dummy_file
 {
-
     struct format1
     {
         static inline std::vector<std::string> file_extensions{{"fa"}, {"fasta"}};
@@ -51,8 +51,7 @@ std::string const basic_options_str = "OPTIONS\n"
 std::string const basic_version_str = "VERSION\n"
                                       "    Last update:\n"
                                       "    test_parser version:\n"
-                                      "    SeqAn version: "
-                                    + std::string{seqan3::seqan3_version_cstring} + "\n";
+                                      "    Sharg version: " + std::string{sharg::sharg_version_cstring} + "\n"; // todo
 
 using seqan3::detail::test_accessor;
 
@@ -60,11 +59,11 @@ TEST(validator_test, fullfill_concept)
 {
     EXPECT_FALSE(seqan3::validator<int>);
 
-    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int>>);
-    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> const>);
-    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<int> &>);
+    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int>>);
+    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int> const>);
+    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<int> &>);
 
-    EXPECT_TRUE(seqan3::validator<seqan3::detail::default_validator<std::vector<int>>>);
+    EXPECT_TRUE(seqan3::validator<sharg::detail::default_validator<std::vector<int>>>);
     EXPECT_TRUE(seqan3::validator<seqan3::arithmetic_range_validator<int>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<double>>);
     EXPECT_TRUE(seqan3::validator<seqan3::value_list_validator<std::string>>);
