@@ -218,6 +218,17 @@ TYPED_TEST(interleaved_bloom_filter_test, counting)
     std::vector<size_t> expected2(128, 256);
     counting += counting;
     EXPECT_EQ(counting, expected2);
+
+    // minus binning_bitvector
+    for (size_t hash : std::views::iota(0, 128)) // test correct resize for each bin individually
+    {
+        counting -= agent.bulk_contains(hash);
+    }
+    EXPECT_EQ(counting, std::vector<size_t>(128, 128));
+
+    // minus other counting vector
+    counting -= seqan3::counting_vector<size_t>(128, 128 - 42);
+    EXPECT_EQ(counting, std::vector<size_t>(128, 42));
 }
 
 TYPED_TEST(interleaved_bloom_filter_test, counting_agent)
@@ -348,4 +359,3 @@ TYPED_TEST(interleaved_bloom_filter_test, serialisation)
     TypeParam ibf{TestFixture::make_ibf(seqan3::bin_count{73u}, seqan3::bin_size{1024u})};
     seqan3::test::do_serialisation(ibf);
 }
-

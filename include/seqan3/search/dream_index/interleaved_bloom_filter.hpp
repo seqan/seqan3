@@ -802,6 +802,14 @@ class counting_vector : public std::vector<value_t>
 private:
     //!\brief The base type.
     using base_t = std::vector<value_t>;
+
+    //!\brief Is binning_bitvector_t a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector?
+    template <typename binning_bitvector_t>
+    static constexpr bool is_binning_bitvector =
+        std::same_as<binning_bitvector_t,
+                     interleaved_bloom_filter<data_layout::uncompressed>::membership_agent_type::binning_bitvector> ||
+        std::same_as<binning_bitvector_t,
+                     interleaved_bloom_filter<data_layout::compressed>::membership_agent_type::binning_bitvector>;
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -817,10 +825,10 @@ public:
     //!\}
 
     /*!\brief Bin-wise adds the bits of a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
-     * \tparam rhs_t The type of the right-hand side.
+     * \tparam binning_bitvector_t The type of the right-hand side.
      *         Must be seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
-     * \param rhs The seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
-     * \attention The counting_vector must be at least as big as `rhs`.
+     * \param binning_bitvector The seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+     * \attention The counting_vector must be at least as big as `binning_bitvector`.
      *
      * \details
      *
@@ -828,44 +836,37 @@ public:
      *
      * \include test/snippet/search/dream_index/counting_vector.cpp
      */
-    template <typename rhs_t>
+    template <typename binning_bitvector_t>
     //!\cond
-        requires std::same_as<rhs_t,
-                              interleaved_bloom_filter<data_layout::uncompressed>::membership_agent_type
-                              ::binning_bitvector>
-                 ||
-                 std::same_as<rhs_t,
-                              interleaved_bloom_filter<data_layout::compressed>::membership_agent_type
-                              ::binning_bitvector>
+        requires is_binning_bitvector<binning_bitvector_t>
     //!\endcond
-    counting_vector & operator+=(rhs_t const & rhs)
+    counting_vector & operator+=(binning_bitvector_t const & binning_bitvector)
     {
-        assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
-
-        // Jump to the next 1 and return the number of places jumped in the bit_sequence
-        auto jump_to_next_1bit = [] (size_t & x)
+        for_each_set_bin(binning_bitvector, [this](size_t const bin)
         {
-            auto const zeros = std::countr_zero(x);
-            x >>= zeros; // skip number of zeros
-            return zeros;
-        };
+            ++(*this)[bin];
+        });
+        return *this;
+    }
 
-        // Each iteration can handle 64 bits
-        for (size_t bit_pos = 0; bit_pos < rhs.size(); bit_pos += 64)
+    /*!\brief Bin-wise subtracts the bits of a
+     *        seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+     * \tparam binning_bitvector_t The type of the right-hand side.
+     *         Must be seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+     * \param binning_bitvector The seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+     * \attention The counting_vector must be at least as big as `binning_bitvector`.
+     */
+    template <typename binning_bitvector_t>
+    //!\cond
+        requires is_binning_bitvector<binning_bitvector_t>
+    //!\endcond
+    counting_vector & operator-=(binning_bitvector_t const & binning_bitvector)
+    {
+        for_each_set_bin(binning_bitvector, [this](size_t const bin)
         {
-            // get 64 bits starting at position `bit_pos`
-            size_t bit_sequence = rhs.raw_data().get_int(bit_pos);
-
-            // process each relative bin inside the bit_sequence
-            for (size_t bin = bit_pos; bit_sequence != 0u; ++bin, bit_sequence >>= 1)
-            {
-                // Jump to the next 1 and
-                bin += jump_to_next_1bit(bit_sequence);
-
-                // increment the corresponding vector entry.
-                ++(*this)[bin];
-            }
-        }
+            assert((*this)[bin] > 0);
+            --(*this)[bin];
+        });
         return *this;
     }
 
@@ -886,6 +887,56 @@ public:
         std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), std::plus<value_t>());
 
         return *this;
+    }
+
+    /*!\brief Bin-wise substraction of two `seqan3::counting_vector`s.
+     * \param rhs The other seqan3::counting_vector.
+     * \attention The seqan3::counting_vector must be at least as big as `rhs`.
+     */
+    counting_vector & operator-=(counting_vector const & rhs)
+    {
+        assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
+
+        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), [](auto a, auto b)
+        {
+            assert(a >= b);
+            return a - b;
+        });
+
+        return *this;
+    }
+
+private:
+
+    //!\brief Enumerates all bins of a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
+    template <typename binning_bitvector_t, typename on_bin_fn_t>
+    void for_each_set_bin(binning_bitvector_t && binning_bitvector, on_bin_fn_t && on_bin_fn)
+    {
+        assert(this->size() >= binning_bitvector.size()); // The counting vector may be bigger than what we need.
+
+        // Jump to the next 1 and return the number of places jumped in the bit_sequence
+        auto jump_to_next_1bit = [] (size_t & x)
+        {
+            auto const zeros = std::countr_zero(x);
+            x >>= zeros; // skip number of zeros
+            return zeros;
+        };
+
+        // Each iteration can handle 64 bits
+        for (size_t bit_pos = 0; bit_pos < binning_bitvector.size(); bit_pos += 64)
+        {
+            // get 64 bits starting at position `bit_pos`
+            size_t bit_sequence = binning_bitvector.raw_data().get_int(bit_pos);
+
+            // process each relative bin inside the bit_sequence
+            for (size_t bin = bit_pos; bit_sequence != 0u; ++bin, bit_sequence >>= 1)
+            {
+                // Jump to the next 1 and
+                bin += jump_to_next_1bit(bit_sequence);
+
+                on_bin_fn(bin);
+            }
+        }
     }
 };
 
