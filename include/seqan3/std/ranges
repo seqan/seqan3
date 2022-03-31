@@ -67,6 +67,11 @@ inline constexpr bool enable_borrowed_range<::std::ranges::iota_view<W, Bound>> 
 template <class T>
 inline constexpr bool enable_borrowed_range<::std::ranges::ref_view<T>> = true;
 
+#if __cpp_lib_ranges >= 202110L
+template <class T>
+inline constexpr bool enable_borrowed_range<::std::ranges::owning_view<T>> = enable_borrowed_range<T>;
+#endif
+
 // Note: in gcc-10 enable_borrowed_range wasn't defined for the take_view and the other following views. (gcc-10.3 fixed this)
 // Explictly defining this here will have the side-effect that we override the definition of
 // std::ranges::enable_borrowed_range for all those views.
