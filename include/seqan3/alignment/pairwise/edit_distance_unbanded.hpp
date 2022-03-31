@@ -13,7 +13,7 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <bitset>
 #include <seqan3/std/ranges>
 #include <utility>

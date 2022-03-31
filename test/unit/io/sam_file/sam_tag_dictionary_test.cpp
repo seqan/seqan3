@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <type_traits>
 
 #include <seqan3/io/sam_file/sam_tag_dictionary.hpp>

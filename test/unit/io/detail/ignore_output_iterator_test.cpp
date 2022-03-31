@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 
 #include <seqan3/io/detail/ignore_output_iterator.hpp>
 

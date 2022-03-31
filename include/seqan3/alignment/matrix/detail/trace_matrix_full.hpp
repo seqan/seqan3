@@ -13,7 +13,7 @@
 #pragma once
 
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
@@ -21,7 +21,7 @@
 #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/views/repeat_n.hpp>
 #include <seqan3/utility/views/zip.hpp>
@@ -344,7 +344,7 @@ public:
     constexpr operator matrix_column_value_t() const
     {
         matrix_column_value_t target{};
-        std::ranges::copy(column, std::cpp20::back_inserter(target));
+        std::ranges::copy(column, std::back_inserter(target));
         return target;
     }
 };

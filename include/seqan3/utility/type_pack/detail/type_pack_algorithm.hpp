@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
-#include <seqan3/std/type_traits>
+#include <concepts>
+#include <type_traits>
 #include <utility>
 
 #include <seqan3/core/platform.hpp>

@@ -14,7 +14,7 @@
 #include <seqan3/io/sequence_file/output.hpp>
 #include <seqan3/io/sequence_file/output_format_concept.hpp>
 #include <seqan3/io/sequence_file/format_embl.hpp>
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/test/pretty_printing.hpp>
 
 #include "sequence_file_format_test_template.hpp"

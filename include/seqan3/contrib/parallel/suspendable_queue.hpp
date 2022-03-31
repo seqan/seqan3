@@ -19,10 +19,10 @@
 #include <vector>
 
 #include <seqan3/core/platform.hpp>
-#include <seqan3/std/algorithm>
-#include <seqan3/std/iterator>
+#include <algorithm>
+#include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 
 namespace seqan3::contrib
 {

@@ -81,17 +81,9 @@ concept sequence_file_input_format = requires (detail::sequence_file_input_forma
 {
     t::file_extensions;
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, position_buffer, seq, id, qual),
-                                  std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual),
-                                  std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.read_sequence_record(f,
-                                                         options,
-                                                         position_buffer,
-                                                         std::ignore,
-                                                         std::ignore,
-                                                         std::ignore),
-                                  std::same_as, void);
+    {v.read_sequence_record(f, options, position_buffer, seq, id, qual)} -> std::same_as<void>;
+    {v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual)} -> std::same_as<void>;
+    {v.read_sequence_record(f, options, position_buffer, std::ignore, std::ignore, std::ignore)} -> std::same_as<void>;
 };
 //!\endcond
 

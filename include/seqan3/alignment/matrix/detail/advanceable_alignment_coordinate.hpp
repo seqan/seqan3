@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <concepts>
+#include <iterator>
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>

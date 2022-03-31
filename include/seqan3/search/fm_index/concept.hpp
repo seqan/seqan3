@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <type_traits>
 
 #include <sdsl/suffix_arrays.hpp>
@@ -36,10 +36,10 @@ concept sdsl_index = requires (t sdsl_index)
 {
     typename t::size_type;
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(sdsl_index.size(), std::same_as, typename t::size_type);
+    {sdsl_index.size()} -> std::same_as<typename t::size_type>;
     { sdsl_index[0] }; // suffix array access
-    SEQAN3_RETURN_TYPE_CONSTRAINT(sdsl_index.comp2char[0], std::same_as, uint8_t);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(sdsl_index.char2comp[0], std::same_as, uint8_t);
+    {sdsl_index.comp2char[0]} -> std::same_as<uint8_t>;
+    {sdsl_index.char2comp[0]} -> std::same_as<uint8_t>;
     { sdsl_index.sigma };
     { sdsl_index.C[0] };
 

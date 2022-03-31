@@ -91,8 +91,8 @@ TYPED_TEST(seqan2_container, std_iterator)
 template <typename range_t>
 concept SeqAn2Range = requires(range_t range)
 {
-    SEQAN3_RETURN_TYPE_CONSTRAINT(seqan::begin(range), std::same_as, std::ranges::iterator_t<range_t>);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(seqan::end(range), std::same_as, std::ranges::iterator_t<range_t>);
+    {seqan::begin(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
+    {seqan::end(range)} -> std::same_as<std::ranges::iterator_t<range_t>>;
 };
 
 TYPED_TEST(seqan2_container, seqan_range_concept)

@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <deque>
 
 #include <seqan3/core/detail/empty_type.hpp>

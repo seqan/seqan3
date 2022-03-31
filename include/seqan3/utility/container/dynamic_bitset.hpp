@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <seqan3/std/bit>
+#include <bit>
 
 #include <seqan3/core/concept/cereal.hpp>
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>

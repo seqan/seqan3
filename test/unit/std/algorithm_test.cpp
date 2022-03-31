@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/iterator>
+#include <algorithm>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <vector>
 
@@ -21,5 +21,5 @@ TEST(algorithm_test, gcc95578)
     auto && rng = v | std::views::take_while([](auto &&){return true;});
 
     std::vector<int> rng_copy{};
-    std::ranges::copy(rng, std::cpp20::back_inserter(rng_copy));
+    std::ranges::copy(rng, std::back_inserter(rng_copy));
 }

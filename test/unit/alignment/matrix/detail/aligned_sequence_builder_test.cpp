@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <list>
 #include <vector>
 

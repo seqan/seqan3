@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <string>
 
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>

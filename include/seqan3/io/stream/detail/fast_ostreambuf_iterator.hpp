@@ -13,9 +13,9 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/charconv>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 
 #include <seqan3/io/stream/detail/stream_buffer_exposer.hpp>

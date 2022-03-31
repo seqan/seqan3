@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <gtest/gtest-spi.h> // provides test utility to test google test itself
 
-#include <seqan3/std/span>
+#include <span>
 #include <string_view>
 
 #include <seqan3/test/expect_range_eq.hpp>

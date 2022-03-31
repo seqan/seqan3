@@ -12,10 +12,10 @@
 
 #pragma once
 
-#include <seqan3/std/bit>
+#include <bit>
 #include <cassert>
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <stdexcept>
 
 #include <seqan3/core/platform.hpp>

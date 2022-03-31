@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 #include <string_view>
 
 #include <seqan3/core/detail/template_inspection.hpp>

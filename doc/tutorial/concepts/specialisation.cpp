@@ -1,5 +1,5 @@
-#include <utility>                          // for std::pair
-#include <seqan3/std/concepts>
+#include <concepts>
+#include <utility> // for std::pair
 
 template <typename t>
 struct square_root_type;

@@ -15,8 +15,8 @@
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <concepts>
+#include <iterator>
 
 namespace seqan3::detail
 {
@@ -106,14 +106,14 @@ concept two_dimensional_matrix_iterator =
         { it.coordinate() };
         { cit.coordinate() };
 
-        SEQAN3_RETURN_TYPE_CONSTRAINT(it += offset, std::same_as, std::remove_reference_t<iter_t> &);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(it + offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(offset + it, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(it -= offset, std::same_as, std::remove_reference_t<iter_t> &);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(it - offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(cit - offset, std::same_as, std::remove_reference_t<iter_t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(it.coordinate(), std::same_as, matrix_coordinate);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(cit.coordinate(), std::same_as, matrix_coordinate);
+        {it += offset} -> std::same_as<std::remove_reference_t<iter_t> &>;
+        {it + offset} -> std::same_as<std::remove_reference_t<iter_t>>;
+        {offset + it} -> std::same_as<std::remove_reference_t<iter_t>>;
+        {it -= offset} -> std::same_as<std::remove_reference_t<iter_t> &>;
+        {it - offset} -> std::same_as<std::remove_reference_t<iter_t>>;
+        {cit - offset} -> std::same_as<std::remove_reference_t<iter_t>>;
+        {it.coordinate()} -> std::same_as<matrix_coordinate>;
+        {cit.coordinate()} -> std::same_as<matrix_coordinate>;
     };
 //!\endcond
 } // namespace seqan3::detail

@@ -13,14 +13,13 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <utility>
 
 #include <seqan3/alphabet/alphabet_base.hpp>
 #include <seqan3/alphabet/composite/detail.hpp>
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/detail/alphabet_proxy.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
 #include <seqan3/utility/detail/integer_traits.hpp>
 #include <seqan3/utility/tuple/concept.hpp>
 #include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>

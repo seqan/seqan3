@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>

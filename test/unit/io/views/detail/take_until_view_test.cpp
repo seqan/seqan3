@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 
 #include <seqan3/io/views/detail/take_until_view.hpp>
 #include <seqan3/test/expect_range_eq.hpp>

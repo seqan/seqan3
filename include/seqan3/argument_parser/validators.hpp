@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
+#include <algorithm>
+#include <concepts>
 #include <filesystem>
 #include <fstream>
 #include <seqan3/std/ranges>
@@ -25,7 +25,7 @@
 #include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
 #include <seqan3/utility/type_pack/traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
@@ -100,8 +100,8 @@ concept validator = std::copyable<std::remove_cvref_t<validator_type>> &&
 {
     typename std::remove_reference_t<validator_type>::option_value_type;
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(validator(value), std::same_as, void);
-    SEQAN3_RETURN_TYPE_CONSTRAINT(validator.get_help_page_message(), std::same_as, std::string);
+    {validator(value)} -> std::same_as<void>;
+    {validator.get_help_page_message()} -> std::same_as<std::string>;
 };
 //!\endcond
 
@@ -222,7 +222,7 @@ public:
     value_list_validator(range_type rng)
     {
         values.clear();
-        std::ranges::move(std::move(rng), std::cpp20::back_inserter(values));
+        std::ranges::move(std::move(rng), std::back_inserter(values));
     }
 
     /*!\brief Constructing from a parameter pack.

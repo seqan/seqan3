@@ -118,8 +118,6 @@ auto add(std::integral auto const v1, std::integral auto const v2)  // one const
 }
 ```
 
-\attention The terse syntax in this form is not yet available in GCC7, GCC8 and GCC9.
-
 Different constraints can be applied to different template parameters and a single template parameter can be constrained
 by multiple concepts.
 Syntaxes can also be combined:

@@ -30,7 +30,7 @@ IIIIIHIIJJIIIII
 seqan3::test::create_temporary_snippet_file output{"output.fastq", ""};
 
 //![solution]
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <filesystem>
 #include <seqan3/std/ranges>
 

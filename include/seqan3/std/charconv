@@ -13,99 +13,32 @@
 
 #pragma once
 
-#if __has_include(<version>)
-#include <version> // from C++20 all feature macros should be defined here
-#endif
-
-#include <utility> // __cpp_lib_to_chars may be defined here as currently documented
+#include <charconv>
+#include <utility> // __cpp_lib_to_chars may be defined here as currently documented.
+#include <version> // From C++20 onwards, all feature macros should be defined here.
 
 /*!\defgroup std_charconv charconv
  * \ingroup std
  * \brief The [\<charconv\> header](https://en.cppreference.com/w/cpp/header/charconv) from C++17's standard library.
- */
-
-// =========================================================================
-// Determine charconv implementation state (full, int only or no implementation)
-// =========================================================================
-
-/*!\brief A workaround for __cpp_lib_to_chars.
- * \ingroup std_charconv
- *
  * \details
  *
  * The following table describes what implementation of std::to_chars and std::from_chars will be used
  *
- * | stdlib version | __cpp_lib_to_chars                   | SEQAN3_CPP_LIB_TO_CHARS   | chars_format   | to_chars_result | from_chars_result | to_chars (int) | from_chars (int) | to_chars (float)     | from_chars (float)   |
- * | -------------- | ------------------------------------ | ------------------------- | -------------- | --------------- | ----------------- | -------------- | ---------------- | -------------------- | -------------------- |
- * | gcc 7          | undefined and NO `<charconv>` header | undefined                 | contrib (llvm) | contrib (llvm)  | contrib (llvm)    | contrib (llvm) | contrib (llvm)   | shim (ostringstream) | shim (strto[f/d/ld]) |
- * | gcc 8          | undefined and `<charconv>` header    | 100000                    | contrib (llvm) | stdlib          | stdlib            | stdlib         | stdlib           | shim (ostringstream) | shim (strto[f/d/ld]) |
- * | gcc 9          | undefined and `<charconv>` header    | 100000                    | contrib (llvm) | stdlib          | stdlib            | stdlib         | stdlib           | shim (ostringstream) | shim (strto[f/d/ld]) |
- * | gcc 10         | undefined and `<charconv>` header    | 100000                    | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | shim (ostringstream) | shim (strto[f/d/ld]) |
- * | gcc 11         | undefined and `<charconv>` header    | 100000* (could be 201611) | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | stdlib               | stdlib               |
+ * | stdlib version | __cpp_lib_to_chars                               | chars_format   | to_chars_result | from_chars_result | to_chars (int) | from_chars (int) | to_chars (float)     | from_chars (float)   |
+ * | -------------- | ------------------------------------------------ | -------------- | --------------- | ----------------- | -------------- | ---------------- | -------------------- | -------------------- |
+ * | gcc 10         | undefined and `<charconv>` header                | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | shim (ostringstream) | shim (strto[f/d/ld]) |
+ * | gcc 11         | undefined (or 201611) and `<charconv>` header    | stdlib         | stdlib          | stdlib            | stdlib         | stdlib           | stdlib               | stdlib               |
  *
  * Note: gcc 11 implements float too, but does not define __cpp_lib_to_chars
  */
-#ifdef SEQAN3_DOXYGEN_ONLY // needed as seqan3/core/platform.hpp might not be included
-#if SEQAN3_DOXYGEN_ONLY(1)0
-// documentation-only
-#define SEQAN3_CPP_LIB_TO_CHARS IMPLEMENTATION_DEFINED
-#endif // SEQAN3_DOXYGEN_ONLY(1)0
-#endif // SEQAN3_DOXYGEN_ONLY
-
-#if __cpp_lib_to_chars >= 201611 // iff complete (int AND float) charconv implementation
-#  define SEQAN3_CPP_LIB_TO_CHARS __cpp_lib_to_chars
-#elif __has_include(<charconv>) // iff incomplete (only int) charconv implementation
-#  define SEQAN3_CPP_LIB_TO_CHARS 100000
-#endif // __cpp_lib_to_chars >= 201611
 
 // =========================================================================
-// If any std implementation is present use that as basis (>= gcc8)
+// If float implementation is missing, add our own shim-implementation
 // =========================================================================
 
-#if SEQAN3_CPP_LIB_TO_CHARS >= 100000
-#include <charconv>
-
-namespace std
-{
-namespace
-{
-// define in a way that works for any gcc >= 8 whether chars_format is defined or not
-enum class chars_format // gcc 8 and 9 did not define std::chars_format
-{
-    scientific = 0x1,
-    fixed = 0x2,
-    hex = 0x4,
-    general = fixed | scientific
-};
-} // anonymous namespace
-} // namespace std
-#endif // SEQAN3_CPP_LIB_TO_CHARS >= 100000
-
-// =========================================================================
-// If no std implementation is present use llvm's int implementation (for gcc 7)
-// =========================================================================
-
-#ifndef SEQAN3_CPP_LIB_TO_CHARS
-#include <seqan3/contrib/charconv/charconv>
-#include <seqan3/contrib/charconv/charconv.cpp>
-
-namespace std
-{
-using ::seqan3::contrib::charconv::chars_format;
-using ::seqan3::contrib::charconv::to_chars_result;
-using ::seqan3::contrib::charconv::to_chars;
-using ::seqan3::contrib::charconv::from_chars_result;
-using ::seqan3::contrib::charconv::from_chars;
-} // namespace std
-#endif // SEQAN3_CPP_LIB_TO_CHARS
-
-// =========================================================================
-// if float implementation is missing add our own shim-implementation
-// =========================================================================
-
-#if !defined(SEQAN3_CPP_LIB_TO_CHARS) || SEQAN3_CPP_LIB_TO_CHARS == 100000
+#if __cpp_lib_to_chars < 201611
 #include <cassert>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <sstream>
 
 namespace seqan3::contrib::charconv_float
@@ -176,7 +109,6 @@ inline from_chars_result from_chars_floating_point(char const * first,
         if (fmt == chars_format::fixed && exponent_is_present)
             return {last, std::errc::invalid_argument};
     }
-
 
     // In contrast to std::from_chars, std::strto[f/d/ld] does not treat the second
     // parameter (str_end) as "end of the sequence to parse" but merely as an out
@@ -266,7 +198,7 @@ inline to_chars_result to_chars(char * first, char * last, floating_point_type v
 
 /*!\brief Parse a char sequence into an floating point value.
  * \ingroup std_charconv
- * \tparam value_type The type to parse the string into; Must model std::integral.
+ * \tparam floating_point_type The type to parse the string into; Must model std::floating_point.
  * \param[in]      first The start of the string to parse.
  * \param[in]      last  The end of the string to parse.
  * \param[in, out] value The value to store the parsed result in.
@@ -337,4 +269,4 @@ using ::seqan3::contrib::charconv_float::to_chars; // import our shim-float vers
 using ::seqan3::contrib::charconv_float::from_chars; // import our shim-float version
 } // namespace std
 
-#endif // !defined(SEQAN3_CPP_LIB_TO_CHARS) || SEQAN3_CPP_LIB_TO_CHARS == 100000
+#endif // __cpp_lib_to_chars < 201611

@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <filesystem>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <variant>
 
 #include <seqan3/core/detail/template_inspection.hpp>
@@ -152,7 +152,7 @@ inline std::vector<std::string> valid_file_extensions()
     detail::for_each<formats_t>([&extensions] (auto t_identity)
     {
         using format_t = typename decltype(t_identity)::type;
-        std::ranges::copy(format_t::file_extensions, std::cpp20::back_inserter(extensions));
+        std::ranges::copy(format_t::file_extensions, std::back_inserter(extensions));
     });
 
     return extensions;

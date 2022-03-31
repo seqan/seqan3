@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <sstream>
 
 #include <seqan3/io/sam_file/input.hpp>

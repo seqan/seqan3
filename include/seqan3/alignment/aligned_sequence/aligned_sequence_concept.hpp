@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/exception.hpp>
@@ -228,13 +228,11 @@ concept writable_aligned_sequence =
     requires (t v, detail::unaligned_seq_t<t> unaligned)
     {
         // global functions for generic usability
-        SEQAN3_RETURN_TYPE_CONSTRAINT(insert_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(insert_gap(v, std::ranges::begin(v), 2),
-                                      std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(erase_gap(v, std::ranges::begin(v)), std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(erase_gap(v, std::ranges::begin(v), std::ranges::end(v)),
-                                      std::same_as, std::ranges::iterator_t<t>);
-        SEQAN3_RETURN_TYPE_CONSTRAINT(assign_unaligned(v, unaligned), std::same_as, void);
+        {insert_gap(v, std::ranges::begin(v))} -> std::same_as<std::ranges::iterator_t<t>>;
+        {insert_gap(v, std::ranges::begin(v), 2)} -> std::same_as<std::ranges::iterator_t<t>>;
+        {erase_gap(v, std::ranges::begin(v))} -> std::same_as<std::ranges::iterator_t<t>>;
+        {erase_gap(v, std::ranges::begin(v), std::ranges::end(v))} -> std::same_as<std::ranges::iterator_t<t>>;
+        {assign_unaligned(v, unaligned)} -> std::same_as<void>;
     };
 //!\endcond
 

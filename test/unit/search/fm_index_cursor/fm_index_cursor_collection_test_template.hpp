@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <type_traits>
 
 #include <seqan3/search/fm_index/concept.hpp>

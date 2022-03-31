@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
 

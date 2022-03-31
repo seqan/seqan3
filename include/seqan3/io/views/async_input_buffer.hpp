@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <concepts>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <thread>
 

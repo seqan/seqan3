@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <limits>
 #include <seqan3/std/ranges>
 #include <set>

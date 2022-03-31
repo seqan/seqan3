@@ -12,10 +12,10 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <concepts>
+#include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/range/detail/adaptor_for_view_without_args.hpp>

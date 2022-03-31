@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
+#include <algorithm>
+#include <concepts>
 #include <filesystem>
 #include <iostream>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
+#include <span>
 #include <string>
 #include <tuple>
 
@@ -31,7 +31,7 @@
 #endif
 #include <seqan3/io/detail/magic_header.hpp>
 #include <seqan3/io/exception.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 namespace seqan3::detail
 {

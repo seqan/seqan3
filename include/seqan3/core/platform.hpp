@@ -36,46 +36,25 @@
 //  Compiler support
 // ============================================================================
 
-#if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8)
-#   error "SeqAn 3.1.x is the last version that supports GCC 7 and 8. Please upgrade your compiler or use 3.1.x."
+#if defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8 || __GNUC__ == 9)
+#   error "SeqAn 3.1.x is the last version that supports GCC 7, 8, and 9. Please upgrade your compiler or use 3.1.x."
 #endif // defined(__GNUC__) && (__GNUC__ == 7 || __GNUC__ == 8)
 
 // ============================================================================
 //  C++ standard and features
 // ============================================================================
 
-#if SEQAN3_DOXYGEN_ONLY(1)0
-//!\brief This disables the warning you would get if you compile with `-std=c++17`.
-#define SEQAN3_DISABLE_CPP17_DIAGNOSTIC
-#endif // SEQAN3_DOXYGEN_ONLY(1)0
-
 // C++ standard [required]
 #ifdef __cplusplus
-#   if (__cplusplus < 201703)
-#       error "SeqAn3 requires C++20, make sure that you have set -std=c++2a (gcc9) or -std=c++20 (gcc10 and higher)."
-#   elif not defined(SEQAN3_DISABLE_CPP17_DIAGNOSTIC) && (__cplusplus >= 201703) && (__cplusplus < 201709)
-#      pragma GCC warning "SeqAn 3.1.x is the last version that supports C++17. Newer SeqAn versions, including this one, might not compile with -std=c++17. To disable this warning, use -std=c++2a (gcc9), -std=c++20 (gcc10 and higher), or -DSEQAN3_DISABLE_CPP17_DIAGNOSTIC."
+#   if (__cplusplus < 201709)
+#       error "SeqAn3 requires C++20, make sure that you have set -std=c++20."
 #   endif
 #else
 #   error "This is not a C++ compiler."
 #endif
 
-// C++ Concepts [required]
-#ifndef __cpp_concepts
-#   error "SeqAn3 requires C++ Concepts, either via -fconcepts (gcc9), or -std=c++20 (gcc10 and higher)."
-#endif
-
 #if __has_include(<version>)
 #   include <version>
-#endif
-
-//!\brief Same as writing `{expression} -> concept_name<type1[, ...]>` in a concept definition.
-#if defined(__GNUC__) && (__GNUC__ < 10)
-#   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
-       {expression}; requires concept_name<decltype(expression), __VA_ARGS__>
-#else
-#   define SEQAN3_RETURN_TYPE_CONSTRAINT(expression, concept_name, ...) \
-       {expression} -> concept_name<__VA_ARGS__>
 #endif
 
 // ============================================================================
@@ -208,6 +187,17 @@
 #   endif
 #endif
 
+//!\brief Deprecation message for SeqAn 3.3.0 release.
+#ifndef SEQAN3_REMOVE_DEPRECATED_330
+#    ifndef SEQAN3_DEPRECATED_330
+#       ifndef SEQAN3_DISABLE_DEPRECATED_WARNINGS
+#           define SEQAN3_DEPRECATED_330 [[deprecated("This will be removed in SeqAn-3.3.0; please see the documentation.")]]
+#       else
+#           define SEQAN3_DEPRECATED_330 /**/
+#       endif
+#    endif
+#endif
+
 // ============================================================================
 //  Workarounds
 // ============================================================================
@@ -225,24 +215,6 @@
 #ifndef SEQAN3_WORKAROUND_VIEW_PERFORMANCE
 //!\brief Performance of views, especially filter and join is currently bad, especially in I/O.
 #   define SEQAN3_WORKAROUND_VIEW_PERFORMANCE 1
-#endif
-
-//!\brief See https://github.com/seqan/product_backlog/issues/286
-#ifndef SEQAN3_WORKAROUND_ISSUE_286
-#   if defined(__GNUC__) && (__GNUC__ <= 9)
-#       define SEQAN3_WORKAROUND_ISSUE_286 1
-#   else
-#       define SEQAN3_WORKAROUND_ISSUE_286 0
-#   endif
-#endif
-
-//!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=89953
-#ifndef SEQAN3_WORKAROUND_GCC_89953
-#   if defined(__GNUC_MINOR__) && (__GNUC__ == 9 && __GNUC_MINOR__ < 3)
-#       define SEQAN3_WORKAROUND_GCC_89953 1
-#   else
-#       define SEQAN3_WORKAROUND_GCC_89953 0
-#   endif
 #endif
 
 //!\brief See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93467

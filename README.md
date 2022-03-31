@@ -66,7 +66,7 @@ Please see the [online documentation](https://docs.seqan.de/seqan/3-master-user/
 
 |                   | requirement                                          | version  | comment                                     |
 |-------------------|------------------------------------------------------|----------|---------------------------------------------|
-|**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 7      | no other compiler is currently supported!   |
+|**compiler**       | [GCC](https://gcc.gnu.org)                           | ≥ 10     | no other compiler is currently supported!   |
 |**build system**   | [CMake](https://cmake.org)                           | ≥ 3.4    | optional, but recommended                   |
 |**required libs**  | [SDSL](https://github.com/xxsds/sdsl-lite)           | ≥ 3      |                                             |
 |                   | [Range-V3](https://github.com/ericniebler/range-v3)  | ≥ 0.11.0 |                                             |
@@ -86,18 +86,18 @@ Quick-Setup without CMake:
   * Clone the repository with submodules: `git clone --recurse-submodules https://github.com/seqan/seqan3.git`
   * Add the following to your compiler invocation:
     * the include directories of SeqAn and its dependencies
-    * C++17 mode with concepts support
+    * C++20 mode
     * Macros indicating the presence of zlib and bzip2 (set only if actually available in your paths!)
   * The command could look like this:
 ```sh
-g++-7 -O3 -DNDEBUG -Wall -Wextra                                \
-    -std=c++17 -fconcepts                                       \
+g++-11 -O3 -DNDEBUG -Wall -Wextra                               \
+    -std=c++20                                                  \
     -I       /path/to/seqan3/include                            \
     -isystem /path/to/seqan3/submodules/range-v3/include        \
     -isystem /path/to/seqan3/submodules/sdsl-lite/include       \
     -isystem /path/to/seqan3/submodules/cereal/include          \
     -DSEQAN3_HAS_ZLIB=1 -DSEQAN3_HAS_BZIP2=1                    \
-    -lz -lbz2 -lstdc++fs -pthread                               \
+    -lz -lbz2 -pthread                                          \
   your_file.cpp
 ```
 

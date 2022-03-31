@@ -322,7 +322,7 @@ protected:
         std::istringstream iss(text.c_str());
         std::vector<std::string> tokens;
         std::ranges::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(),
-                          std::cpp20::back_inserter(tokens));
+                          std::back_inserter(tokens));
 
         // Print the text.
         assert(pos <= tab);
@@ -453,7 +453,7 @@ public:
  * meta information (e.g. long_copyright) on construction of the parser. Thus the meta information is collected
  * and only evaluated when calling seqan3::detail::format_version::parse.
  *
- * \remark For a complete overview, take a look at \ref argument_parser 
+ * \remark For a complete overview, take a look at \ref argument_parser
  */
 class format_copyright : public format_help
 {

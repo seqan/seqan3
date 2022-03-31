@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <sstream>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 #include <unordered_map>
 #include <vector>
 

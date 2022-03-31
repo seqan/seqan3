@@ -5,8 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/iterator>
+#include <algorithm>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <thread>
 #include <utility>

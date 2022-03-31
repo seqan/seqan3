@@ -15,7 +15,7 @@
 
 #include <array>
 #include <cctype>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <stdexcept>
 #include <string>
 
@@ -112,8 +112,8 @@ concept char_predicate = requires
     std::remove_reference_t<condition_t>::msg;
 
     //The msg type can be added with a std::string.
-    SEQAN3_RETURN_TYPE_CONSTRAINT(std::string{} + std::remove_reference_t<condition_t>::msg,
-                                  std::convertible_to, decltype(std::remove_reference_t<condition_t>::msg));
+    {std::string{} + std::remove_reference_t<condition_t>::msg}
+        -> std::convertible_to<decltype(std::remove_reference_t<condition_t>::msg)>;
 };
 //!\endcond
 

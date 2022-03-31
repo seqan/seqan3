@@ -33,9 +33,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Snippet gcc9"
-            cxx: "g++-9"
-            cc: "gcc-9"
+          - name: "Snippet gcc10"
+            cxx: "g++-10"
+            cc: "gcc-10"
             build: snippet
             build_type: Release
             build_threads: 2
@@ -48,9 +48,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          - name: "Performance gcc9"
-            cxx: "g++-9"
-            cc: "gcc-9"
+          - name: "Performance gcc10"
+            cxx: "g++-10"
+            cc: "gcc-10"
             build: performance
             build_type: Release
             build_threads: 2
@@ -77,9 +77,9 @@ jobs:
             skip_run_tests: false
             use_include_dependencies: "OFF"
 
-          - name: "Header gcc9"
-            cxx: "g++-9"
-            cc: "gcc-9"
+          - name: "Header gcc10"
+            cxx: "g++-10"
+            cc: "gcc-10"
             build: header
             build_type: Release
             build_threads: 2
@@ -93,8 +93,8 @@ jobs:
             use_include_dependencies: "OFF"
 
           - name: "Non-cyclic tests"
-            cxx: "g++-9"
-            cc: "gcc-9"
+            cxx: "g++-10"
+            cc: "gcc-10"
             build: unit
             build_type: Debug
             build_threads: 2
@@ -108,8 +108,8 @@ jobs:
             use_include_dependencies: "ON"
 
           - name: "CMake external project"
-            cxx: "g++-9"
-            cc: "gcc-9"
+            cxx: "g++-10"
+            cc: "gcc-10"
             build: external_project
             build_type: Debug
             build_threads: 1 # output is important to be in sequential order

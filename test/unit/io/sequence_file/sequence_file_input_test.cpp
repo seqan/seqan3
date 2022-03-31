@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/iterator>
+#include <algorithm>
+#include <iterator>
 #include <seqan3/std/ranges>
 #include <sstream>
 

@@ -17,7 +17,7 @@
 #include <vector>
 
 #include <seqan3/utility/container/aligned_allocator.hpp>
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail

@@ -13,7 +13,7 @@
 #pragma once
 
 #include <cassert>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <type_traits>
 
 #include <seqan3/core/detail/empty_type.hpp>
@@ -230,7 +230,7 @@ public:
     constexpr derived_t operator++(int) noexcept(noexcept(std::declval<base_t &>()++) &&
                                                  noexcept(derived_t(std::declval<base_t &>())))
     //!\cond
-        requires requires (base_t_ i) { i++; SEQAN3_RETURN_TYPE_CONSTRAINT(i++, std::same_as, base_t_); } &&
+        requires requires (base_t_ i) { i++; {i++} -> std::same_as<base_t_>; } &&
                  std::constructible_from<derived_t, base_t_>
     //!\endcond
     {

@@ -7,8 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
+#include <algorithm>
+#include <concepts>
 #include <deque>
 #include <iostream>
 #include <list>

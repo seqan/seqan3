@@ -9,7 +9,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>

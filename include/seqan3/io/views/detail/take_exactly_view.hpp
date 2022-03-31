@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
-#include <seqan3/std/iterator>
+#include <algorithm>
+#include <concepts>
+#include <iterator>
 #include <seqan3/std/ranges>
-#include <seqan3/std/span>
-#include <seqan3/std/type_traits>
+#include <span>
+#include <type_traits>
 
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>

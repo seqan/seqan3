@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/concepts>
+#include <algorithm>
+#include <concepts>
 #include <seqan3/std/ranges>
 
 #include <seqan3/core/detail/iterator_traits.hpp>

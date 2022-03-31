@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <memory>
 
 #include <seqan3/io/detail/in_file_iterator.hpp>

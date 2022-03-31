@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <seqan3/std/iterator>
+#include <iterator>
 #include <seqan3/std/ranges>
 
 #include <seqan3/test/expect_same_type.hpp>

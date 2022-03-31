@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 
 template <typename t>
 struct simulated_alignment_test : public ::testing::Test

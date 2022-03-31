@@ -15,8 +15,5 @@
 
 #include <seqan3/core/platform.hpp>
 
-/*!\defgroup utility_concept Concept
- * \brief Provides various general purpose concepts.
- * \ingroup utility
- * \see utility
- */
+SEQAN3_DEPRECATED_HEADER(
+    "This header is deprecated and will be removed in SeqAn-3.3.0.")

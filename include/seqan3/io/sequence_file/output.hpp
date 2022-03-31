@@ -426,12 +426,7 @@ public:
         requires tuple_like<std::ranges::range_reference_t<rng_t>>
     //!\endcond
     {
-    #if defined(__GNUC__) && (__GNUC__ == 9) // an unreported build problem of GCC9
-        for (auto && record : range)
-            f.push_back(std::forward<decltype(record)>(record));
-    #else // ^^^ workaround | regular solution ↓↓↓
         f = range;
-    #endif
         return std::move(f);
     }
     //!\}

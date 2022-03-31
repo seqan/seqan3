@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
-#include <seqan3/std/bit>
+#include <algorithm>
+#include <bit>
 
 #include <sdsl/bit_vectors.hpp>
 

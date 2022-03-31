@@ -28,7 +28,7 @@ using test_matrix_t = seqan3::detail::two_dimensional_matrix<score_t, allocator_
 template <typename score_type, seqan3::detail::matrix_major_order order = seqan3::detail::matrix_major_order::row>
 std::vector<score_type, std::allocator<score_type>> create_matrix_storage()
 {
-    // this is a small hack to allow simd types in an initialiser list on gcc 7 and gcc 10;
+    // this is a small hack to allow simd types in an initialiser list on gcc 10;
     using storage_t = std::array<score_type, 12>;
 
     // note: we represent the same matrix in one case with a row-wise data layout and in the other case with a

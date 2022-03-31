@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <string>
-#include <seqan3/std/type_traits>
+#include <type_traits>
 
 #include <seqan3/core/platform.hpp>
 

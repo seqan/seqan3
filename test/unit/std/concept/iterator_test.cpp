@@ -71,7 +71,7 @@ TEST(iterator_concepts, Iterator)
 
 TEST(iterator_concepts, sentinel_for)
 {
-    EXPECT_TRUE((std::is_same_v<char, input_or_output_iter_value_t<std::cpp20::ostream_iterator<char>>>));
+    EXPECT_TRUE((std::is_same_v<char, input_or_output_iter_value_t<std::ostream_iterator<char>>>));
 
     EXPECT_TRUE((std::sentinel_for<test_sentinel<char>,
                                           input_iterator>));

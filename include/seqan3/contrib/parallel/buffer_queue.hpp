@@ -12,16 +12,16 @@
 
 #pragma once
 
-#include <seqan3/std/algorithm>
+#include <algorithm>
 #include <atomic>
-#include <seqan3/std/bit>
+#include <bit>
 #include <cmath>
-#include <seqan3/std/concepts>
+#include <concepts>
 #include <mutex>
 #include <seqan3/std/new>
 #include <seqan3/std/ranges>
 #include <shared_mutex>
-#include <seqan3/std/span>
+#include <span>
 #include <type_traits>
 #include <vector>
 

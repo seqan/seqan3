@@ -98,25 +98,24 @@ concept sam_file_output_format =
 {
     t::file_extensions;
 
-    SEQAN3_RETURN_TYPE_CONSTRAINT(v.write_alignment_record(stream,
-                                                           options,
-                                                           header,
-                                                           seq,
-                                                           qual,
-                                                           id,
-                                                           offset,
-                                                           ref_seq,
-                                                           ref_id,
-                                                           ref_offset,
-                                                           align,
-                                                           cigar,
-                                                           flag,
-                                                           mapq,
-                                                           mate,
-                                                           tag_dict,
-                                                           e_value,
-                                                           bit_score),
-                                  std::same_as, void);
+    {v.write_alignment_record(stream,
+                              options,
+                              header,
+                              seq,
+                              qual,
+                              id,
+                              offset,
+                              ref_seq,
+                              ref_id,
+                              ref_offset,
+                              align,
+                              cigar,
+                              flag,
+                              mapq,
+                              mate,
+                              tag_dict,
+                              e_value,
+                              bit_score)} -> std::same_as<void>;
 };
 //!\endcond
 

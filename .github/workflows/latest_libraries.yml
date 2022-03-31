@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [9, 10, 11]
+        compiler: [10, 11]
         build: [unit, snippet, performance, header]
 
     steps:

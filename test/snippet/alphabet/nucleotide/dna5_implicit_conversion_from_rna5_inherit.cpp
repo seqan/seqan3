@@ -21,7 +21,7 @@ int main()
 }
 //![main]
 
-#include <seqan3/utility/concept/exposition_only/core_language.hpp>
+#include <seqan3/utility/concept.hpp>
 
 static_assert(seqan3::implicitly_convertible_to<seqan3::rna5, seqan3::dna5>);
 static_assert(!seqan3::implicitly_convertible_to<seqan3::rna5, my_dna5>);
