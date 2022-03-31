@@ -103,7 +103,7 @@ public:
      * \param[in] _inserted_range The range to be inserted.
      */
     view_interleave(urng_t && _urange, size_t const _step_size, inserted_rng_t && _inserted_range) :
-        urange{_urange}, step_size{_step_size}, inserted_range{_inserted_range}
+        urange{_urange}, step_size{_step_size}, inserted_range{std::forward<inserted_rng_t>(_inserted_range)}
     {}
 
     /*!\brief Construct from a viewable_range urange and inserted_range by wrapping in a views::type_reduce.

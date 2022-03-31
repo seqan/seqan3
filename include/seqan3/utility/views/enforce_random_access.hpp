@@ -63,7 +63,7 @@ public:
     ~view_enforce_random_access() = default; //!< Defaulted.
 
     //!\brief Construction from the underlying view.
-    explicit constexpr view_enforce_random_access(urng_t range) : urng{std::move(range)}
+    explicit constexpr view_enforce_random_access(urng_t && range) : urng{std::move(range)}
     {}
 
     //!\brief Construction from the underlying viewable range.
@@ -73,8 +73,8 @@ public:
               std::ranges::viewable_range<viewable_rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
     //!\endcond
-    explicit constexpr view_enforce_random_access(viewable_rng_t range) :
-        view_enforce_random_access{std::views::all(range)}
+    explicit constexpr view_enforce_random_access(viewable_rng_t && range) :
+        view_enforce_random_access{std::views::all(std::forward<viewable_rng_t>(range))}
     {}
     //!\}
 
