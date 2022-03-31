@@ -842,7 +842,7 @@ public:
     //!\endcond
     counting_vector & operator+=(binning_bitvector_t const & binning_bitvector)
     {
-        enumerate_bins(binning_bitvector, [this](size_t const bin)
+        for_each_set_bin(binning_bitvector, [this](size_t const bin)
         {
             ++(*this)[bin];
         });
@@ -862,8 +862,9 @@ public:
     //!\endcond
     counting_vector & operator-=(binning_bitvector_t const & binning_bitvector)
     {
-        enumerate_bins(binning_bitvector, [this](size_t const bin)
+        for_each_set_bin(binning_bitvector, [this](size_t const bin)
         {
+            assert((*this)[bin] > 0);
             --(*this)[bin];
         });
         return *this;
@@ -905,7 +906,7 @@ private:
 
     //!\brief Enumerates all bins of a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
     template <typename binning_bitvector_t, typename on_bin_fn_t>
-    void enumerate_bins(binning_bitvector_t && binning_bitvector, on_bin_fn_t && on_bin_fn)
+    void for_each_set_bin(binning_bitvector_t && binning_bitvector, on_bin_fn_t && on_bin_fn)
     {
         assert(this->size() >= binning_bitvector.size()); // The counting vector may be bigger than what we need.
 
