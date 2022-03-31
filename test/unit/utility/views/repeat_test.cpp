@@ -154,7 +154,8 @@ TEST(view, factory)
 
     // view
     {
-        auto view = std::string{"foobar"} | seqan3::detail::persist | std::views::take(3);
+        std::string const input{"foobar"};
+        auto view = std::views::take(input, 3);
         auto v = seqan3::views::repeat(view);
         EXPECT_RANGE_EQ(*v.begin(), view);
     }

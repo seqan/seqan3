@@ -98,7 +98,8 @@ TYPED_TEST(single_pass_input, deduction_guide_lvalue)
 
 TYPED_TEST(single_pass_input, deduction_guide_view)
 {
-    auto data_view = TypeParam{this->data} | seqan3::detail::persist;
+    TypeParam data_container{this->data};
+    auto data_view = std::views::transform(data_container, [] (auto const & in) { return in; });
 
     using uview_t = decltype(data_view);
     EXPECT_TRUE((std::ranges::viewable_range<uview_t>));

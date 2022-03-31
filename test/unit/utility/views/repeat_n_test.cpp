@@ -77,7 +77,8 @@ TEST(view, factory)
 
     // view
     {
-        auto view = std::string{"foobar"} | seqan3::detail::persist | std::views::take(3);
+        std::string str{"foobar"};
+        auto view = str | std::views::take(3);
         auto v = seqan3::views::repeat_n(view, 5);
         EXPECT_RANGE_EQ(*v.begin(), std::string{"foo"});
     }
