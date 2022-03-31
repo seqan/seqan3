@@ -897,7 +897,11 @@ public:
     {
         assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
 
-        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), std::minus<value_t>());
+        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), [](auto a, auto b)
+        {
+            assert(a >= b);
+            return a - b;
+        });
 
         return *this;
     }
