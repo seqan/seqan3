@@ -162,7 +162,7 @@ public:
                                 algorithm_result_t const SEQAN3_DOXYGEN_ONLY(result) = algorithm_result_t{},
                                 execution_handler_t && exec_handler = execution_handler_t{}) :
         exec_handler{std::move(exec_handler)},
-        resource{std::views::all(resource)},
+        resource{std::forward<resource_t>(resource)},
         resource_it{std::ranges::begin(this->resource)},
         algorithm{std::move(algorithm)}
     {

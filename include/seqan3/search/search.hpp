@@ -110,7 +110,7 @@ inline auto search(queries_t && queries,
     detail::search_configuration_validator::validate_query_type<queries_t>();
 
     size_t queries_size = std::ranges::distance(queries);
-    auto indexed_queries = views::zip(std::views::iota(size_t{0}, queries_size), queries);
+    auto indexed_queries = views::zip(std::views::iota(size_t{0}, queries_size), std::forward<queries_t>(queries));
 
     using indexed_queries_t = decltype(indexed_queries);
 

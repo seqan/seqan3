@@ -41,8 +41,8 @@ struct expect_range_eq
     ::testing::AssertionResult operator()(char const * lhs_expression, char const * rhs_expression,
                                           lhs_t && lhs, rhs_t && rhs)
     {
-        std::vector lhs_copy = copy_range(lhs);
-        std::vector rhs_copy = copy_range(rhs);
+        std::vector lhs_copy = copy_range(std::forward<lhs_t>(lhs));
+        std::vector rhs_copy = copy_range(std::forward<rhs_t>(rhs));
 
         if (std::ranges::equal(lhs_copy, rhs_copy))
             return ::testing::AssertionSuccess();
