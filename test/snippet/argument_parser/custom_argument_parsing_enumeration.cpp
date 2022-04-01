@@ -3,11 +3,9 @@
 
 #include <seqan3/argument_parser/all.hpp>
 
-namespace seqan3::custom
-{
 // Specialise the seqan3::custom::argument_parsing data structure to enable parsing of std::errc.
 template <>
-struct argument_parsing<std::errc>
+struct seqan3::custom::argument_parsing<std::errc>
 {
     // Specialise a mapping from an identifying string to the respective value of your type Foo.
     static inline std::unordered_map<std::string_view, std::errc> const enumeration_names{
@@ -16,8 +14,6 @@ struct argument_parsing<std::errc>
         {"invalid_argument", std::errc::invalid_argument},
         {"io_error", std::errc::io_error}};
 };
-
-} // namespace seqan3::custom
 
 int main(int argc, char const * argv[])
 {
