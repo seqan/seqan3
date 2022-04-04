@@ -21,7 +21,7 @@
 template <typename alphabet_t, bool is_seqan2>
 std::array<alphabet_t, 256> create_alphabet_array(size_t const alphabet_size)
 {
-    std::array<alphabet_t, 256> alphabet_array{};
+    std::array<alphabet_t, 256> alphabet_array;
 
     auto convert_to_alphabet = [] (auto const rank, auto & a)
     {

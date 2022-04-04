@@ -51,10 +51,11 @@ struct sequence_store_seqan3
 {
     std::vector<seqan3::dna4> const dna4_rng{seqan3::test::generate_sequence<seqan3::dna4>(max_length, 0, seed)};
     std::vector<seqan3::aa27> const aa27_rng{seqan3::test::generate_sequence<seqan3::aa27>(max_length, 0, seed)};
-    std::string const char_rng{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)
-                               | seqan3::detail::persist
-                               | seqan3::views::rank_to<char>
-                               | seqan3::views::to<std::string>};
+    std::string const char_rng{[] ()
+    {
+        std::vector<uint8_t> const ranks{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
+        return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+    }()};
 };
 
 sequence_store_seqan3 store{};
@@ -100,10 +101,11 @@ struct sequence_store_seqan2
     seqan::String<seqan::AminoAcid> const aa27_rng{seqan3::test::generate_sequence_seqan2<seqan::AminoAcid>(max_length,
                                                                                                             0,
                                                                                                             seed)};
-    seqan::String<char> const char_rng{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)
-                                       | seqan3::detail::persist
-                                       | seqan3::views::rank_to<char>
-                                       | seqan3::views::to<std::string>};
+    seqan::String<char> const char_rng{[] ()
+    {
+        std::vector<uint8_t> const ranks{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
+        return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+    }()};
 };
 
 sequence_store_seqan2 store2{};
