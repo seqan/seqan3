@@ -14,6 +14,7 @@
 
 #include <sys/stat.h>
 
+#include <array>
 #include <chrono>
 #include <fstream>
 #include <future>

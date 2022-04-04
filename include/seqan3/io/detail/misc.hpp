@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <iterator>
 #include <variant>
+#include <vector>
 
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/io/exception.hpp>
