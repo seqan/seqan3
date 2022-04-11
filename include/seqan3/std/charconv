@@ -11,7 +11,9 @@
  * \author Svenja Mehringer <svenja.mehringer AT fu-berlin.de>
  */
 
-#pragma once
+// File might be included from multiple libraries.
+#ifndef SEQAN_STD_CHARCONV_SHIM
+#define SEQAN_STD_CHARCONV_SHIM
 
 #include <charconv>
 #include <utility> // __cpp_lib_to_chars may be defined here as currently documented.
@@ -270,3 +272,5 @@ using ::seqan3::contrib::charconv_float::from_chars; // import our shim-float ve
 } // namespace std
 
 #endif // __cpp_lib_to_chars < 201611
+
+#endif // SEQAN_STD_CHARCONV_SHIM

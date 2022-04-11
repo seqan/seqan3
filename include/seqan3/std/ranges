@@ -11,7 +11,9 @@
  * \author Hannes Hauswedell <hannes.hauswedell AT fu-berlin.de>
  */
 
-#pragma once
+// File might be included from multiple libraries.
+#ifndef SEQAN_STD_RANGES_SHIM
+#define SEQAN_STD_RANGES_SHIM
 
 #include <iterator>
 #include <ranges>
@@ -112,3 +114,5 @@ template<class T>
 //!\endcond
 inline constexpr bool enable_borrowed_range<T> = true;
 } // namespace std::ranges
+
+#endif // SEQAN_STD_RANGES_SHIM

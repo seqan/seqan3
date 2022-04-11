@@ -11,7 +11,9 @@
  * \author Rene Rahn <rene.rahn AT fu-berlin.de>
  */
 
-#pragma once
+// File might be included from multiple libraries.
+#ifndef SEQAN_STD_NEW_SHIM
+#define SEQAN_STD_NEW_SHIM
 
 #include <new>
 
@@ -40,3 +42,5 @@ inline constexpr std::size_t hardware_constructive_interference_size = 64;
 } // namespace std
 
 #endif // __cpp_lib_hardware_interference_size
+
+#endif // SEQAN_STD_NEW_SHIM
