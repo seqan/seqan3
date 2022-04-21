@@ -11,8 +11,6 @@
 #include <type_traits>
 #include <vector>
 
-#include <range/v3/view/slice.hpp>
-
 #include <seqan3/core/detail/persist_view.hpp>
 #include <seqan3/test/expect_same_type.hpp>
 #include <seqan3/utility/views/single_pass_input.hpp>
