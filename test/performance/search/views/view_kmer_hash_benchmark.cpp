@@ -10,7 +10,6 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/views/kmer_hash.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
-#include <seqan3/test/performance/naive_kmer_hash.hpp>
 #include <seqan3/test/performance/units.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
@@ -104,8 +103,20 @@ static void naive_kmer_hash(benchmark::State & state)
 
     for (auto _ : state)
     {
-        for (auto h : seq | seqan3::views::naive_kmer_hash(k))
+        // creates a initial subrange covering exactly 'k-1' characters
+        auto subrange_begin = begin(seq);
+        auto subrange_end   = std::ranges::next(subrange_begin, k - 1, end(seq));
+
+        // slide over the range
+        while (subrange_end != end(seq))
+        {
+            ++subrange_end; // extend to 'k' characters
+            auto r = std::ranges::subrange{subrange_begin, subrange_end};
+            auto h = std::hash<decltype(r)>{}(r);
+            ++subrange_begin; // move front forward, back to 'k-1' characters range
+
             benchmark::DoNotOptimize(sum += h);
+        }
     }
 
     // prevent complete optimisation
