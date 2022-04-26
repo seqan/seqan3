@@ -9,8 +9,6 @@
 
 #include <seqan3/std/ranges>
 
-#include <range/v3/view/single.hpp>
-
 #include <seqan3/alignment/configuration/align_config_score_type.hpp>
 #include <seqan3/alignment/pairwise/alignment_configurator.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
