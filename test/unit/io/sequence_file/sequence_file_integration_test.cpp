@@ -47,6 +47,33 @@ TEST(rows, assign_sequence_files)
     EXPECT_EQ(reinterpret_cast<std::ostringstream&>(fout.get_stream()).str(), output_comp);
 }
 
+TEST(rows, assign_sequence_files_read_blanks)
+{
+    std::string const input
+    {
+        ">TEST 1\n"
+        "ACGT\n"
+        "> Test2\n"
+        "AGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGNAGGCTGN\n"
+        ">  Test3\n"
+        "GGAGTATAATATATATATATATAT\n"
+    };
+
+    std::string const expected_output = input;
+
+    seqan3::sequence_file_input fin{std::istringstream{input}, seqan3::format_fasta{}};
+    fin.options.fasta_ignore_blanks_before_id = false;
+
+    seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
+    fout.options.fasta_letters_per_line = 0;
+
+    fout = fin;
+
+    fout.get_stream().flush();
+    std::string const output = reinterpret_cast<std::ostringstream&>(fout.get_stream()).str();
+    EXPECT_EQ(output, expected_output);
+}
+
 TEST(integration, assign_sequence_file_pipes)
 {
     std::string const input
