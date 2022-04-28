@@ -26,7 +26,7 @@ using namespace sharg;
 /*!\brief The SeqAn command line parser.
  * \ingroup argument_parser
  */
-class argument_parser : public sharg::argument_parser
+class argument_parser /* \cond */: public sharg::argument_parser /* \endcond */
 {
 //!\cond
 // the documentation is included by the sharg parser.

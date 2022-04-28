@@ -35,7 +35,7 @@ using namespace sharg;
  * \include test/snippet/argument_parser/validators_input_file_ext_from_file.cpp
  */
 template <typename file_t = void>
-class input_file_validator : public sharg::input_file_validator
+class input_file_validator /* \cond */ : public sharg::input_file_validator /* \endcond */
 {
 public:
     static_assert(std::same_as<file_t, void> || detail::has_type_valid_formats<file_t>,
@@ -127,7 +127,7 @@ input_file_validator() -> input_file_validator<file_t>;
  * \include test/snippet/argument_parser/validators_output_file_ext_from_file.cpp
  */
 template <typename file_t = void>
-class output_file_validator : public sharg::output_file_validator
+class output_file_validator /* \cond */ : public sharg::output_file_validator /* \endcond */
 {
 public:
     static_assert(std::same_as<file_t, void> || detail::has_type_valid_formats<file_t>,

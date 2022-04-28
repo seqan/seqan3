@@ -6,14 +6,15 @@ LAYOUT_FILE            = ${CMAKE_BINARY_DIR}/DoxygenLayout.xml
 
 ## PATHS
 OUTPUT_DIRECTORY       = ${SEQAN3_DOXYGEN_OUTPUT_DIR}
-INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include \
+INCLUDE_PATH           = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include   \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/include
-INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/include                         \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                             \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md                      \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md                    \
-                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md              \
+INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include   \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/doc/howto \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/include                           \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc                               \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md                        \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md                      \
+                         ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md                \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
 STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include
