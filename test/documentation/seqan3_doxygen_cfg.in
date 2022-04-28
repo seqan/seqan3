@@ -25,7 +25,7 @@ IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
 
 # Replace namespace sharg with seqan3 when including the API documentation of sharg
-INPUT_FILTER = "sed 's/sharg/seqan3/g'"
+INPUT_FILTER = "sed -e 's/sharg/seqan3/g' -e 's/SHARG/SEQAN3/g'"
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
