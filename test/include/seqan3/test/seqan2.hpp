@@ -34,8 +34,6 @@
 
 #include <seqan3/std/ranges>
 
-#include <range/v3/range_fwd.hpp>
-
 #include <seqan/basic.h>
 
 namespace ranges

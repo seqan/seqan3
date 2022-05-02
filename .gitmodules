@@ -3,7 +3,7 @@
 	url = https://github.com/xxsds/sdsl-lite
 [submodule "range-v3"]
 	path = submodules/range-v3
-	url = https://github.com/ericniebler/range-v3
+	url = https://github.com/seqan/range-v3
 [submodule "cereal"]
 	path = submodules/cereal
 	url = https://github.com/USCiLab/cereal

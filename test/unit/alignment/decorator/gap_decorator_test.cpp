@@ -10,8 +10,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/filter.hpp>
-
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>

@@ -10,8 +10,6 @@
 
 #include <gtest/gtest.h>
 
-#include <range/v3/view/zip.hpp>
-
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/mask/masked.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
