@@ -68,9 +68,8 @@ ExternalProject_Add (
 
 # doxygen does not show any warnings (doxygen prints warnings / errors to cerr)
 set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS
-     "${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr;
-      cat \"doxygen.cerr\";
-      test ! -s \"doxygen.cerr\"")
+     "${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr; cat \"doxygen.cerr\"; test ! -s \"doxygen.cerr\""
+     CACHE INTERNAL "The doxygen test command")
 
 # We search the HTML output to ensure that no `requires` clauses are at wrong places.
 set (SEQAN3_TEST_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
