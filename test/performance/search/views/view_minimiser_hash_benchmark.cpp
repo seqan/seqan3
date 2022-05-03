@@ -9,9 +9,9 @@
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/search/views/minimiser_hash.hpp>
-#include <seqan3/test/performance/naive_minimiser_hash.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/test/performance/units.hpp>
+#include <seqan3/utility/views/zip.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
 #include <seqan/index.h>
@@ -91,8 +91,41 @@ void compute_minimisers(benchmark::State & state)
     {
         if constexpr (tag == method_tag::naive)
         {
-            for (auto h : seq | seqan3::views::naive_minimiser_hash(seqan3::ungapped{static_cast<uint8_t>(k)}, w))
+            seqan3::shape shape = seqan3::ungapped{static_cast<uint8_t>(k)};
+            uint64_t const seed = 0x8F3F73B5CF1C9ADE;
+
+            // Use random seed to randomise order on forward strand.
+            auto forward = seq | seqan3::views::kmer_hash(shape)
+                               | std::views::transform([seed] (uint64_t const i)
+                                                       { return i ^ seed; });
+            // Create reverse complement strand and use random seed to randomise order on reverse complement strand.
+            auto reverse = seq | seqan3::views::complement // Create complement.
+                               | std::views::reverse       // Reverse order.
+                               | seqan3::views::kmer_hash(shape) // Get hash values.
+                               | std::views::transform([seed] (uint64_t const i)
+                                                       { return i ^ seed; }) // Randomise.
+                               | std::views::reverse; // Reverse again, so that the first hash value
+                                                      // is the reverse complement of the first
+                                                      // hash value in the forward strand.
+            // Get minimum between forward and reverse strand for each value.
+            auto both = seqan3::views::zip(forward, reverse)
+                      | std::views::transform([] (auto && fwd_rev_hash_pair) {return std::min(std::get<0>(fwd_rev_hash_pair),
+                                                                                              std::get<1>(fwd_rev_hash_pair)); });
+
+            // Setup to slide over a range with `w - shape.size()+1` window size.
+            // Initialize a sub range of size ` w - shape.size()`
+            auto subrange_begin = begin(both);
+            auto subrange_end   = std::ranges::next(subrange_begin, w - shape.size(), end(both));
+
+            // Slide over the range
+            while (subrange_end != end(both))
+            {
+                ++subrange_end; // Extends the subrange to `w - shape.size()+1`
+                auto h = *std::min_element(subrange_begin, subrange_end);
+
+                ++subrange_begin; // Move the beginning one forward
                 benchmark::DoNotOptimize(sum += h);
+            }
         }
         else if constexpr (tag == method_tag::seqan3_ungapped)
         {
