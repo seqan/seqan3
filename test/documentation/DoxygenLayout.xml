@@ -4,39 +4,18 @@
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
     <tab type="pages" visible="no" title="" intro=""/>
+    <!-- Setup pages are added in seqan3-doxygen-layout.cmake automatically for each doc/tutorial/*/index.md file -->
     <tab type="usergroup" visible="yes" title="Setup" intro="">
-      <tab type="user" visible="yes" title="Quick-Setup (CMake)" url="\ref setup" intro=""/>
-      <tab type="user" visible="yes" title="Library tests" url="\ref setup_tests" intro=""/>
     </tab>
+    <!-- Tutorials are added in seqan3-doxygen-layout.cmake automatically for each doc/tutorial/*/index.md file -->
     <tab type="usergroup" visible="yes" title="Tutorial" intro="">
-      <tab type="user" visible="yes" title="First steps"  url="@ref tutorial_first_example" intro=""/>
-      <tab type="user" visible="yes" title="Parsing command line arguments" url="@ref tutorial_argument_parser" intro=""/>
-      <tab type="user" visible="yes" title="C++ Concepts" url="@ref tutorial_concepts" intro=""/>
-      <tab type="user" visible="yes" title="Alphabets" url="@ref tutorial_alphabets" intro=""/>
-      <tab type="user" visible="yes" title="Ranges" url="@ref tutorial_ranges" intro=""/>
-      <tab type="user" visible="yes" title="Minimiser" url="@ref tutorial_minimiser" intro=""/>
-      <tab type="user" visible="yes" title="Sequence file I/O" url="@ref tutorial_sequence_file" intro=""/>
-      <tab type="user" visible="yes" title="Computing pairwise alignments" url="@ref tutorial_pairwise_alignment" intro=""/>
-      <tab type="user" visible="yes" title="Index and Search" url="@ref tutorial_index_search" intro=""/>
-      <tab type="user" visible="yes" title="SAM file I/O" url="@ref tutorial_sam_file" intro=""/>
-      <tab type="user" visible="yes" title="Implement your own read mapper" url="@ref tutorial_read_mapper" intro=""/>
     </tab>
-      <tab type="usergroup" visible="yes" title="How-To" intro="">
-      <tab type="user" visible="yes" title="Subcommand argument parsing" url="\ref subcommand_arg_parse" intro=""/>
-      <tab type="user" visible="yes" title="Serialize SeqAn data structures" url="\ref howto_use_cereal" intro=""/>
-      <tab type="user" visible="yes" title="Write your own view" url="\ref howto_write_a_view" intro=""/>
-      <tab type="user" visible="yes" title="Write your own alphabet" url="\ref howto_write_an_alphabet" intro=""/>
-      <tab type="user" visible="yes" title="Port from SeqAn2" url="\ref howto_porting" intro=""/>
+    <!-- How-To pages are added in seqan3-doxygen-layout.cmake automatically for each doc/howto/*/index.md file -->
+    <tab type="usergroup" visible="yes" title="How-To" intro="">
     </tab>
     <tab type="user" visible="yes" title="Cookbook" url="\ref cookbook" intro=""/>
+    <!-- About pages are added in seqan3-doxygen-layout.cmake automatically for each doc/about/*/index.md file -->
     <tab type="usergroup" visible="yes" title="About" intro="">
-      <tab type="user" visible="yes" title="API/ABI stability" url="\ref about_api" intro=""/>
-      <tab type="user" visible="yes" title="Changelog" url="\ref about_changelog" intro=""/>
-      <tab type="user" visible="yes" title="Citing" url="\ref about_citing" intro=""/>
-      <tab type="user" visible="yes" title="Copyright" url="\ref about_copyright" intro=""/>
-      <tab type="user" visible="yes" title="Code of Conduct" url="\ref about_code_of_conduct" intro=""/>
-      <tab type="user" visible="yes" title="Contributing" url="\ref about_contributing" intro=""/>
-      <tab type="user" visible="yes" title="Customisation" url="\ref about_customisation" intro=""/>
     </tab>
     <tab type="modules" visible="yes" title="API Reference (Modules)" intro=""/>
     <tab type="usergroup" visible="yes" title="API Reference (details)" intro="">

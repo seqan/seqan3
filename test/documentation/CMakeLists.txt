@@ -25,6 +25,8 @@ set (SEQAN3_DOXYGEN_INPUT_DIR "${CMAKE_SOURCE_DIR}")
 
 include (seqan3-doxygen.cmake)
 
+include (seqan3-doxygen-layout.cmake)
+
 enable_testing ()
 
 if (SEQAN3_USER_DOC)
