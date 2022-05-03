@@ -14,8 +14,6 @@
 
 #include <seqan3/test/expect_same_type.hpp>
 
-#include <range/v3/view/take.hpp>
-
 TEST(ranges_test, take_view)
 {
     std::string s{};
@@ -54,13 +52,6 @@ TEST(ranges_test, drop_view)
     EXPECT_TRUE(std::ranges::view<decltype(std::views::drop(s, 0))>);
 }
 
-TEST(ranges_test, combine_std_with_range_v3)
-{
-    std::string str{"foo"};
-    auto take_first = str | std::views::take(5) | ranges::view::take(1);
-
-    EXPECT_EQ(*std::ranges::begin(take_first), 'f');
-}
 
 // https://github.com/ericniebler/range-v3/issues/1514
 TEST(ranges_test, gcc10bug_rangev3_1514)
