@@ -25,7 +25,6 @@ include(${SEQAN3_INCLUDE_DIR}/../test/cmake/seqan3_test_files.cmake)
 #         and append it to a list
 # (3) Replace the doxygen html layout entry list from (2) in the ${DOXYGEN_LAYOUT} input variable
 #
-``
 function (replace_in_doxygen_layout doc_path doxygen_layout_tag)
     set(DOXYGEN_LAYOUT_TAG_LINE "<tab type=\"usergroup\" visible=\"yes\" title=\"${doxygen_layout_tag}\" intro=\"\">\n")
     set(DOXYGEN_LAYOUT_DOC_PAGES ${DOXYGEN_LAYOUT_TAG_LINE}) # append header line
