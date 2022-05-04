@@ -7,7 +7,7 @@
 
 cmake_minimum_required (VERSION 3.10)
 
-include(${SEQAN3_INCLUDE_DIR}/../test/cmake/seqan3_test_files.cmake)
+include (${SEQAN3_INCLUDE_DIR}/../test/cmake/seqan3_test_files.cmake)
 
 # Replaces documentation entries in variable `DOXYGEN_LAYOUT`
 #
@@ -26,41 +26,48 @@ include(${SEQAN3_INCLUDE_DIR}/../test/cmake/seqan3_test_files.cmake)
 # (3) Replace the doxygen html layout entry list from (2) in the ${DOXYGEN_LAYOUT} input variable
 #
 function (replace_in_doxygen_layout doc_path doxygen_layout_tag)
-    set(DOXYGEN_LAYOUT_TAG_LINE "<tab type=\"usergroup\" visible=\"yes\" title=\"${doxygen_layout_tag}\" intro=\"\">\n")
-    set(DOXYGEN_LAYOUT_DOC_PAGES ${DOXYGEN_LAYOUT_TAG_LINE}) # append header line
+    set (DOXYGEN_LAYOUT_TAG_LINE
+         "<tab type=\"usergroup\" visible=\"yes\" title=\"${doxygen_layout_tag}\" intro=\"\">\n")
+    set (DOXYGEN_LAYOUT_DOC_PAGES ${DOXYGEN_LAYOUT_TAG_LINE}) # append header line
 
     # iterate over all index.md
     seqan3_test_files (doc_how_to_filenames "${doc_path}" "index.md")
     foreach (doc_how_to_filename ${doc_how_to_filenames})
-        set(doc_howto_filepath "${doc_path}/${doc_how_to_filename}")
-        execute_process(COMMAND head -n 1 ${doc_howto_filepath} OUTPUT_VARIABLE DOC_HEADER_LINE)
-        string(REGEX MATCH "^# \(.*\) {#\(.*\)}" DUMMY ${DOC_HEADER_LINE})
-        set(doc_title ${CMAKE_MATCH_1})
-        set(doc_ref_name ${CMAKE_MATCH_2})
-        string(APPEND DOXYGEN_LAYOUT_DOC_PAGES "      <tab type=\"user\" visible=\"yes\" title=\"${doc_title}\" url=\"\\\\ref ${doc_ref_name}\" intro=\"\"/>\n")
+        set (doc_howto_filepath "${doc_path}/${doc_how_to_filename}")
+        execute_process (COMMAND head -n 1 ${doc_howto_filepath} OUTPUT_VARIABLE DOC_HEADER_LINE)
+        string (REGEX MATCH "^# \(.*\) {#\(.*\)}" DUMMY ${DOC_HEADER_LINE})
+        set (doc_title ${CMAKE_MATCH_1})
+        set (doc_ref_name ${CMAKE_MATCH_2})
+        string (APPEND
+                DOXYGEN_LAYOUT_DOC_PAGES
+                "      <tab type=\"user\" visible=\"yes\" title=\"${doc_title}\" url=\"\\\\ref ${doc_ref_name}\" intro=\"\"/>\n"
+        )
 
-        unset(doc_howto_filepath)
-        unset(doc_title)
-        unset(doc_ref_name)
+        unset (doc_howto_filepath)
+        unset (doc_title)
+        unset (doc_ref_name)
     endforeach ()
 
     # Replace header line and appended list of doc entries with header line
-    string(REGEX REPLACE "${DOXYGEN_LAYOUT_TAG_LINE}" "${DOXYGEN_LAYOUT_DOC_PAGES}" NEW_DOXYGEN_LAYOUT ${DOXYGEN_LAYOUT})
+    string (REGEX REPLACE "${DOXYGEN_LAYOUT_TAG_LINE}" "${DOXYGEN_LAYOUT_DOC_PAGES}" NEW_DOXYGEN_LAYOUT
+                          ${DOXYGEN_LAYOUT})
 
-    set(DOXYGEN_LAYOUT ${NEW_DOXYGEN_LAYOUT} PARENT_SCOPE) # replace new Doxygen layout
+    set (DOXYGEN_LAYOUT
+         ${NEW_DOXYGEN_LAYOUT}
+         PARENT_SCOPE) # replace new Doxygen layout
 
-    unset(DOXYGEN_LAYOUT_TAG_LINE)
-    unset(DOXYGEN_LAYOUT_DOC_PAGES)
+    unset (DOXYGEN_LAYOUT_TAG_LINE)
+    unset (DOXYGEN_LAYOUT_DOC_PAGES)
 endfunction ()
 
 ### Add all documentation pages to DoxygenLayout.xml
 ### ------------------------------------------------
 # Note: variable name DOXYGEN_LAYOUT must not be changed because it is directly used within `replace_in_doxygen_layout`
-file(READ "${CMAKE_SOURCE_DIR}/DoxygenLayout.xml" DOXYGEN_LAYOUT)
+file (READ "${CMAKE_SOURCE_DIR}/DoxygenLayout.xml" DOXYGEN_LAYOUT)
 
-replace_in_doxygen_layout("${SEQAN3_INCLUDE_DIR}/../doc/about/" "About")
-replace_in_doxygen_layout("${SEQAN3_INCLUDE_DIR}/../doc/setup/" "Setup")
-replace_in_doxygen_layout("${SEQAN3_INCLUDE_DIR}/../doc/tutorial/" "Tutorial")
-replace_in_doxygen_layout("${SEQAN3_INCLUDE_DIR}/../doc/howto/" "How-To")
+replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/about/" "About")
+replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/setup/" "Setup")
+replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/tutorial/" "Tutorial")
+replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/howto/" "How-To")
 
-file(WRITE "${CMAKE_BINARY_DIR}/DoxygenLayout.xml" ${DOXYGEN_LAYOUT})
+file (WRITE "${CMAKE_BINARY_DIR}/DoxygenLayout.xml" ${DOXYGEN_LAYOUT})
