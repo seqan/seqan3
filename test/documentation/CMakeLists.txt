@@ -29,21 +29,16 @@ include (seqan3-doxygen-layout.cmake)
 
 enable_testing ()
 
-### Copy over snippets from sharg
-### -----------------------------
-### This is needed to replace sharg with seqan3 in all snippets for correct documentation.
-set (SHARG_SNIPPET_OUTPUT_DIR "${CMAKE_BINARY_DIR}/sharg_snippets")
-file(MAKE_DIRECTORY ${SHARG_SNIPPET_OUTPUT_DIR})
-message(STATUS "Created sharg snippet directory: ${SHARG_SNIPPET_OUTPUT_DIR}")
+include ("${CMAKE_SOURCE_DIR}/seqan3-doxygen-copy-and-replace.cmake")
 
-include (${CMAKE_SOURCE_DIR}/../cmake/seqan3_test_files.cmake)
-seqan3_test_files (sharg_snippet_files "${SEQAN3_INCLUDE_DIR}/../submodules/sharg-parser/test/snippet/" "*.cpp")
+file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/additional_doc)
 
-foreach (sharg_snippet_filename ${sharg_snippet_files})
-    file(READ "${SEQAN3_INCLUDE_DIR}/../submodules/sharg-parser/test/snippet/${sharg_snippet_filename}" SNIPPET_INPUT_CONTENT)
-    string(REGEX REPLACE "sharg" "seqan3" SNIPPET_OUTPUT_CONTENT ${SNIPPET_INPUT_CONTENT})
-    file(WRITE "${SHARG_SNIPPET_OUTPUT_DIR}/${sharg_snippet_filename}" ${SNIPPET_OUTPUT_CONTENT})
-endforeach ()
+# Copy over snippets from sharg into ${CMAKE_SOURCE_DIR}/sharg_snippets
+# This is needed to replace sharg with seqan3 in all snippets for correct documentation.
+copy_files_and_replace_seqan3 ("${SEQAN3_INCLUDE_DIR}/../submodules/sharg-parser/test/snippet/"
+                               "*.cpp"
+                               "sharg_snippets"
+                               "sharg")
 
 ### Add subdirectories
 if (SEQAN3_USER_DOC)

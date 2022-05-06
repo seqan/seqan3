@@ -8,6 +8,7 @@
 cmake_minimum_required (VERSION 3.10)
 
 include (${SEQAN3_INCLUDE_DIR}/../test/cmake/seqan3_test_files.cmake)
+include ("${CMAKE_SOURCE_DIR}/seqan3-doxygen-copy-and-replace.cmake")
 
 # Replaces documentation entries in variable `DOXYGEN_LAYOUT`
 #
@@ -69,5 +70,11 @@ replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/about/" "About")
 replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/setup/" "Setup")
 replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/tutorial/" "Tutorial")
 replace_in_doxygen_layout ("${SEQAN3_INCLUDE_DIR}/../doc/howto/" "How-To")
+# add sharg doc
+copy_tutorial_and_replace_seqan3 ("${SEQAN3_INCLUDE_DIR}/../submodules/sharg-parser/doc/tutorial/" "sharg_tut" "sharg")
+replace_in_doxygen_layout ("${CMAKE_BINARY_DIR}/additional_doc/index_files" "Tutorial")
+
+copy_tutorial_and_replace_seqan3 ("${SEQAN3_INCLUDE_DIR}/../submodules/sharg-parser/doc/howto/" "sharg_howto" "sharg")
+replace_in_doxygen_layout ("${CMAKE_BINARY_DIR}/additional_doc/index_files" "How-To")
 
 file (WRITE "${CMAKE_BINARY_DIR}/DoxygenLayout.xml" ${DOXYGEN_LAYOUT})

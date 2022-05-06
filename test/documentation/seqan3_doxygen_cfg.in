@@ -15,6 +15,7 @@ INPUT                  = ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/in
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/LICENSE.md                        \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CHANGELOG.md                      \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CODE_OF_CONDUCT.md                \
+                         ${CMAKE_BINARY_DIR}/additional_doc/index_files                 \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/CONTRIBUTING.md
 STRIP_FROM_PATH        = ${SEQAN3_DOXYGEN_SOURCE_DIR}/include \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/submodules/sharg-parser/include
@@ -25,7 +26,7 @@ IMAGE_PATH             = ${SEQAN3_DOXYGEN_SOURCE_DIR}/doc \
                          ${SEQAN3_DOXYGEN_SOURCE_DIR}/test/documentation
 
 # Replace namespace sharg with seqan3 when including the API documentation of sharg
-FILTER_PATTERNS= *sharg*.hpp="sed -e 's/sharg/seqan3/g' -e 's/SHARG/SEQAN3/g' -e 's;\\include .*/;\\include ${CMAKE_BINARY_DIR}/sharg_snippets/;g'"
+FILTER_PATTERNS= *sharg*.hpp="sed -e 's/sharg/seqan3/g' -e 's/SHARG/SEQAN3/g' -e 's;\\include .*/;\\include ${CMAKE_BINARY_DIR}/additional_doc/sharg_snippets/;g'"
 
 ## DOT SUPPORT
 HAVE_DOT               = ${SEQAN3_DOXYGEN_HAVE_DOT}
