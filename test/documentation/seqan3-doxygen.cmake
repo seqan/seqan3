@@ -15,7 +15,7 @@ if (NOT ${DOXYGEN_FOUND})
     message (FATAL_ERROR "Could not find doxygen. Not building documentation.")
 endif ()
 
-if (NOT ${DOXYGEN_DOT_FOUND})
+if (NOT ${DOXYGEN_HAVE_DOT})
     message (STATUS "Could not find dot tool. Disabling dot support.")
     set (SEQAN3_DOXYGEN_HAVE_DOT "NO")
 else ()
@@ -24,7 +24,13 @@ else ()
 endif ()
 
 ### Use mathjax instead of latex to render formulas.
-set (SEQAN3_DOXYGEN_USE_MATHJAX "NO")
+find_package (LATEX QUIET)
+
+if (${LATEX_FOUND})
+    set (SEQAN3_DOXYGEN_USE_MATHJAX "NO")
+else ()
+    set (SEQAN3_DOXYGEN_USE_MATHJAX "YES")
+endif ()
 
 ### Number of threads to use for dot. Doxygen's default is 0 (all threads).
 set (SEQAN3_DOXYGEN_DOT_NUM_THREADS "0")
