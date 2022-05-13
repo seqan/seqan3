@@ -58,6 +58,7 @@ TEST(view_char_to, concepts)
     EXPECT_TRUE(std::ranges::common_range<decltype(vec)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(vec)>);
     EXPECT_TRUE((std::ranges::output_range<decltype(vec), char>));
+    EXPECT_TRUE(std::semiregular<decltype(vec)>);
 
     auto v1 = vec | seqan3::views::char_to<seqan3::dna5>;
     EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
@@ -70,4 +71,23 @@ TEST(view_char_to, concepts)
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5>));
     EXPECT_FALSE((std::ranges::output_range<decltype(v1), char>));
+    EXPECT_TRUE(std::semiregular<decltype(v1)>);
+}
+
+TEST(view_char_to, deep_view_concepts)
+{
+    std::vector<std::string> foo{"ACGTA", "TGCAT"};
+    auto v1 = foo | seqan3::views::char_to<seqan3::dna5>;
+
+    EXPECT_TRUE(std::ranges::input_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::forward_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::bidirectional_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::random_access_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::view<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
+    EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
+    EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(v1), char>));
+    EXPECT_TRUE(std::semiregular<decltype(v1)>);
 }
