@@ -64,12 +64,12 @@ namespace seqan3::views
  * \stableapi{Since version 3.1.}
  */
 template <alphabet alphabet_type>
-inline auto const char_to = deep{std::views::transform([] (auto && in)
+inline auto const char_to = deep{detail::semiregular_functor_wrapper{std::bind(std::views::transform, std::placeholders::_1, [] (auto && in)
 {
     static_assert(std::common_reference_with<decltype(in), alphabet_char_t<alphabet_type>>,
                   "The innermost value type must have a common reference to underlying char type of alphabet_type.");
     // call element-wise assign_char from the alphabet
     return assign_char_to(in, alphabet_type{});
-})};
+})}};
 
 } // namespace seqan3::views

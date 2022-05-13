@@ -17,6 +17,27 @@
 #include <seqan3/core/range/detail/adaptor_base.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 
+namespace seqan3::detail
+{
+
+template <typename func_t>
+struct semiregular_functor_wrapper
+{
+    std::optional<func_t> func;
+
+    template <std::ranges::range rng_t>
+    decltype(auto) operator()(rng_t && rng) const
+    {
+        assert(func.has_value());
+        return (*func)(std::forward<rng_t>(rng));
+    }
+};
+
+template <typename func_t>
+semiregular_functor_wrapper(func_t) -> semiregular_functor_wrapper<std::remove_cvref_t<func_t>>;
+
+} // namespace seqan3::detail
+
 namespace seqan3::views
 {
 
@@ -175,15 +196,10 @@ public:
     {
         if constexpr (range_dimension > 1u)
         {
-            auto transform
-                = [adaptor = recursive_adaptor<range_dimension - 1u>(std::forward<underlying_adaptor_t>(deep_adaptor))]
-                  (auto && inner_range)
-            {
-                // We don't want to move a stateful adaptor here, as this adaptor will be called on any element of this
-                // std::views::transform range.
-                return adaptor(std::forward<decltype(inner_range)>(inner_range));
-            };
-            return std::views::transform(std::move(transform));
+            return detail::semiregular_functor_wrapper{
+                std::bind(std::views::transform,
+                          std::placeholders::_1,
+                          recursive_adaptor<range_dimension - 1u>(std::forward<underlying_adaptor_t>(deep_adaptor)))};
         }
         else
         {
