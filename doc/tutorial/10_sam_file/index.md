@@ -28,7 +28,7 @@ section, which is optional, and an alignment section
 
 Here is an example of a SAM file:
 
-\include doc/tutorial/sam_file/example.sam
+\include doc/tutorial/10_sam_file/example.sam
 
 The following table summarises the columns of a SAM file:
 
@@ -89,7 +89,7 @@ The formerly introduced formats can be identified by the following file name ext
 
 You can access and modify the valid file extensions via the `file_extension` member variable in a format tag:
 
-\snippet doc/tutorial/sam_file/sam_file_file_extensions.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_file_extensions.cpp main
 
 # Reading SAM files
 
@@ -104,13 +104,13 @@ The construction works analogously to sequence files by passing a file name,
 in which case, all template parameters are automatically deduced (by the file name extension).
 Or you can pass a stream (e.g. std::cin or std::stringstream), but then you need to know your format beforehand:
 
-\snippet doc/tutorial/sam_file/sam_file_filename_construction.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_filename_construction.cpp main
 
 ## Accessing individual record members
 
 You can access a record member like this:
 
-\snippet doc/tutorial/sam_file/sam_file_sam_record.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_sam_record.cpp main
 
 See seqan3::sam_record for all data accessors.
 
@@ -124,7 +124,7 @@ For this purpose, write a small program that
 
 Use the following file to test your program:
 
-\snippet doc/tutorial/sam_file/sam_file_solution1.cpp sam_file
+\snippet doc/tutorial/10_sam_file/sam_file_solution1.cpp sam_file
 
 It should output:
 ```
@@ -134,7 +134,7 @@ Average: 27.4
 \endassignment
 \solution
 
-\snippet doc/tutorial/sam_file/sam_file_solution1.cpp solution
+\snippet doc/tutorial/10_sam_file/sam_file_solution1.cpp solution
 
 \endsolution
 
@@ -181,14 +181,14 @@ or the [SAMtools paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2723002/).
 By default, the seqan3::sam_file_input will always read the seqan3::sam_record::cigar_sequence and store it
 into a std::vector\<seqan3::cigar\>:
 
-\snippet doc/tutorial/sam_file/sam_file_read_cigar.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_read_cigar.cpp main
 
 ## Reading the CIGAR information into an actual alignment
 
 In SeqAn, the conversion from a CIGAR string to an alignment (two seqan3::aligned_sequence's) is done automatically for you.
 You can access it by accessing seqan3::sam_record::alignment from the record:
 
-\snippet doc/tutorial/sam_file/sam_file_alignments_without_ref.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp main
 
 In the example above, you can only safely access the aligned read.
 
@@ -199,20 +199,20 @@ Although the SAM format does not handle reference sequence information,
 you can provide these information to the seqan3::sam_file_input which automatically fills the alignment object.
 You can pass reference ids and reference sequences as additional constructor parameters:
 
-\snippet doc/tutorial/sam_file/sam_file_alignments_with_ref.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_alignments_with_ref.cpp main
 
 The code will print the following:
-\include doc/tutorial/sam_file/sam_file_sam_record.err
+\include doc/tutorial/10_sam_file/sam_file_sam_record.err
 
 \assignment{Assignment 2: Combining sequence and alignment files}
 
 Read the following reference sequence FASTA file (see the sequence file tutorial if you need a reminder):
 
-\snippet doc/tutorial/sam_file/sam_file_solution2.cpp ref_file
+\snippet doc/tutorial/10_sam_file/sam_file_solution2.cpp ref_file
 
 Then read the following SAM file while providing the reference sequence information.
 
-\snippet doc/tutorial/sam_file/sam_file_solution2.cpp sam_file
+\snippet doc/tutorial/10_sam_file/sam_file_solution2.cpp sam_file
 
 Only use
 * seqan3::sam_record::id,
@@ -238,7 +238,7 @@ r004 mapped against 1 with 14 gaps in the read sequence and 0 gaps in the refere
 
 \solution
 
-\snippet doc/tutorial/sam_file/sam_file_solution2.cpp solution
+\snippet doc/tutorial/10_sam_file/sam_file_solution2.cpp solution
 
 \endsolution
 
@@ -251,7 +251,7 @@ Since those are quite a lot for alignment files, we usually want to write only a
 
 For this purpose, you can use the seqan3::sam_record to write out a partial record.
 
-\snippet doc/tutorial/sam_file/sam_file_writing.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_writing.cpp main
 
 Note that this only works because in the SAM format **all fields are optional**.
 If we provide fewer fields when writing, default values are written.
@@ -277,6 +277,6 @@ read2   4       *       0       0       *       *       0       0       AGAAAGAG
 \endassignment
 \solution
 
-\snippet doc/tutorial/sam_file/sam_file_solution3.cpp solution
+\snippet doc/tutorial/10_sam_file/sam_file_solution3.cpp solution
 
 \endsolution

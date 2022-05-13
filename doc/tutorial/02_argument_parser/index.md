@@ -52,7 +52,7 @@ We will get to know the wide functionality of the argument parser by writing a l
 by step.  Let's say we have a tab separated file `data.tsv` with information on the Game of Thrones
 Seasons ([by Wikipedia](https://en.wikipedia.org/wiki/List_of_Game_of_Thrones_episodes)):
 
-\include doc/tutorial/argument_parser/data.tsv
+\include doc/tutorial/02_argument_parser/data.tsv
 
 We want to build an application that is able to read the file with or without a header line, select certain seasons and
 compute the average or median from the "Avg. U.S. viewers (millions)" of the selected seasons.
@@ -66,7 +66,7 @@ After adding all desired information, the parsing is triggered by calling the se
 function. Since the function throws in case any errors occur, we need to wrap it into a try-catch block. Here is a
 first working example:
 
-\include doc/tutorial/argument_parser/basic_parser_setup.cpp
+\include doc/tutorial/02_argument_parser/basic_parser_setup.cpp
 
 There are two types of exceptions: The seqan3::design_error which indicates that the parser setup was wrong
 (directed to the developer of the program, not the user!) and any other exception derived from
@@ -159,7 +159,7 @@ seqan3::argument_parser_meta_data and contains the following members that can be
 \endassignment
 \solution
 
-\include doc/tutorial/argument_parser/solution1.cpp
+\include doc/tutorial/02_argument_parser/solution1.cpp
 
 \endsolution
 
@@ -185,7 +185,7 @@ throw a seqan3::type_conversion_error exception.
 
 So how does this look like? The following code snippet adds a positional option to `parser`.
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp add_positional_option
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp add_positional_option
 
 In addition to the variable that will store the value, you need to pass a description. This description will help users
 of your application to understand how the option is affecting your program.
@@ -203,7 +203,7 @@ must be false and is set to true when the flag is present on the command line.
 ``
 You can add an option like this:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp add_option
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp add_option
 
 Additionally to the variable that will store the value and the description, you need to specify a short and long
 identifier. The example above will recognize an option `-n` or `--my-number` given on the command line and expect it to
@@ -211,7 +211,7 @@ be followed by a value separated only by `=` or space or by nothing at all.
 
 Finally, you can add a flag with the following call:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp add_flag
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp add_flag
 
 Note that you can omit either the short identifier by passing <code>'\0'</code> or the long identifier by passing `""`
 but you can never omit both at the same time.
@@ -232,7 +232,7 @@ a struct and pass this struct to your parser initialisation function. You can us
 the code of `run_program()`, it is only so that we have a working program.
 
 \htmlonly <details> <summary>Copy and paste this code into the beginning of your application: </summary>  \endhtmlonly
-\snippet doc/tutorial/argument_parser/solution3.cpp program
+\snippet doc/tutorial/02_argument_parser/solution3.cpp program
 \htmlonly </details> \endhtmlonly
 
 Your task is now to extend the initialisation function by the following:
@@ -263,11 +263,11 @@ correctly by trying the following few calls:
 ```
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution3.cpp solution
+\snippet doc/tutorial/02_argument_parser/solution3.cpp solution
 
 \htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks
 like this:</summary> \endhtmlonly
-\include doc/tutorial/argument_parser/solution3.cpp
+\include doc/tutorial/02_argument_parser/solution3.cpp
 \htmlonly </details> </div> \endhtmlonly
 
 \endsolution
@@ -281,7 +281,7 @@ parsing of command line arguments accordingly.
 
 Example:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp option_list
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp option_list
 
 Adding this option to a parser will allow you to call the program like this:
 
@@ -299,7 +299,7 @@ list option which is not the last positional option, a seqan3::design_error will
 
 Example:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp positional_option_list
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp positional_option_list
 
 Adding these positional options to a parser will allow you to call the program like this:
 
@@ -323,7 +323,7 @@ We extend the solution from assignment 3:
 
 5. [BONUS] If you have some spare time, try to adjust the program code to aggregate by season. Hint: Use std::find.
 \htmlonly <details> <summary>Otherwise just replace the while loop with the following: </summary>  \endhtmlonly
-\snippet doc/tutorial/argument_parser/solution4.cpp altered_while
+\snippet doc/tutorial/02_argument_parser/solution4.cpp altered_while
 \htmlonly </details> \endhtmlonly
 
 Take a look at the help page again after you've done all of the above. You will notice that your option `-s/--season`
@@ -341,11 +341,11 @@ the following few calls:
 ```
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution4.cpp solution
+\snippet doc/tutorial/02_argument_parser/solution4.cpp solution
 
 \htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks like
 this:</summary> \endhtmlonly
-\include doc/tutorial/argument_parser/solution4.cpp
+\include doc/tutorial/02_argument_parser/solution4.cpp
 \htmlonly </details> </div> \endhtmlonly
 
 \endsolution
@@ -363,7 +363,7 @@ option as required**.
 For this purpose we need to use the seqan3::option_spec enum interface that is accepted as an additional argument by all
 of the `add_[positional_option/option/flag]` calls:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp required_option
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp required_option
 
 If the user does **not** supply the required option via the command line, they will now get the following error:
 
@@ -407,10 +407,10 @@ Check if your options are set correctly by trying the following call:
 ```
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution5.cpp solution
+\snippet doc/tutorial/02_argument_parser/solution5.cpp solution
 
 \htmlonly <div class=\"assignment\"> <details><summary>In case you are stuck, the complete program now looks like this:</summary> \endhtmlonly
-\include doc/tutorial/argument_parser/solution5.cpp
+\include doc/tutorial/02_argument_parser/solution5.cpp
 \htmlonly </details> </div> \endhtmlonly
 \endsolution
 
@@ -432,7 +432,7 @@ seqan3::option_spec parameter. Pass the seqan3::option_spec::standard tag if the
 
 The following validators are provided in the SeqAn library and can be included with the following header:
 
-\snippet doc/tutorial/argument_parser/small_snippets.cpp validator_include
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp validator_include
 
 All the validators below work on single values or a container of values. In case the variable is a container,
 the validator is called **on each element** separately.
@@ -455,7 +455,7 @@ file, the program will again misbehave. Instead of fixing the program, let's res
 Add a seqan3::arithmetic_range_validator to the `-s/--season` option that sets the range to `[1,7]`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution6.cpp arithmetic_range_validator
+\snippet doc/tutorial/02_argument_parser/solution6.cpp arithmetic_range_validator
 \endsolution
 
 ### The seqan3::value_list_validator
@@ -469,7 +469,7 @@ The validator throws a seqan3::validation_error exception whenever a given value
 Add a seqan3::value_list_validator to the `-a/--aggregate-by` option that sets the list of valid values to `["median", "mean"]`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution6.cpp value_list_validator
+\snippet doc/tutorial/02_argument_parser/solution6.cpp value_list_validator
 \endsolution
 
 ### The file validator
@@ -517,7 +517,7 @@ Add a validator to the first positional option that expects a file formatted wit
 Store the result in `file_path`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/small_snippets.cpp input_file_validator
+\snippet doc/tutorial/02_argument_parser/small_snippets.cpp input_file_validator
 \endsolution
 
 ### The seqan3::regex_validator
@@ -550,7 +550,7 @@ Add a seqan3::regex_validator to the first positional option that expects the `f
 present seqan3::input_file_validator. The parsed file name should have a suffix called `seasons`.
 \endassignment
 \solution
-\snippet doc/tutorial/argument_parser/solution6.cpp file_validator
+\snippet doc/tutorial/02_argument_parser/solution6.cpp file_validator
 \endsolution
 
 # Full solution
@@ -559,7 +559,7 @@ The following solution shows the complete code including all the little assignme
 that can serve as a copy'n'paste source for your application.
 
 \solution
-\include doc/tutorial/argument_parser/solution6.cpp
+\include doc/tutorial/02_argument_parser/solution6.cpp
 \endsolution
 
 # Subcommand argument parsing

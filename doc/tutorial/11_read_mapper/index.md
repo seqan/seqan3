@@ -61,11 +61,11 @@ Use validators where applicable!
 
 Your `main` may look like this:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step1.cpp main
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step1.cpp main
 \endhint
 \endassignment
 \solution
-\include doc/tutorial/read_mapper/read_mapper_indexer_step1.cpp
+\include doc/tutorial/11_read_mapper/read_mapper_indexer_step1.cpp
 \endsolution
 
 ## Step 2 - Reading the input
@@ -88,19 +88,19 @@ You should also perform the following changes in `run_program`:
 
 This is the signature of `read_reference`:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step2.cpp read_reference
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step2.cpp read_reference
 \endhint
 
 This is the `reference_storage_t`:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step2.cpp reference_storage_t
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step2.cpp reference_storage_t
 \endhint
 \endassignment
 \solution
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step2.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step2.cpp solution
 Here is the complete program:
 \hint
-\include doc/tutorial/read_mapper/read_mapper_indexer_step2.cpp
+\include doc/tutorial/11_read_mapper/read_mapper_indexer_step2.cpp
 \endhint
 \endsolution
 
@@ -120,14 +120,14 @@ We also need to change:
 
 This is the signature of `create_index`:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp create_index
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step3.cpp create_index
 \endhint
 \endassignment
 \solution
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step3.cpp solution
 Here is the complete program:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_indexer_step3.cpp complete
+\snippet doc/tutorial/11_read_mapper/read_mapper_indexer_step3.cpp complete
 \endhint
 \endsolution
 
@@ -156,11 +156,11 @@ Use validators where applicable!
 
 Your `main` may look like this:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step1.cpp main
+\snippet doc/tutorial/11_read_mapper/read_mapper_step1.cpp main
 \endhint
 \endassignment
 \solution
-\include doc/tutorial/read_mapper/read_mapper_step1.cpp
+\include doc/tutorial/11_read_mapper/read_mapper_step1.cpp
 \endsolution
 
 ## Step 2 - Reading the input and searching
@@ -184,14 +184,14 @@ You should also perform the following changes in `run_program`:
 
 This is the signature of `map_reads`:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step2.cpp map_reads
+\snippet doc/tutorial/11_read_mapper/read_mapper_step2.cpp map_reads
 \endhint
 \endassignment
 \solution
-\snippet doc/tutorial/read_mapper/read_mapper_step2.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_step2.cpp solution
 Here is the complete program:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step2.cpp complete
+\snippet doc/tutorial/11_read_mapper/read_mapper_step2.cpp complete
 \endhint
 \endsolution
 
@@ -206,14 +206,14 @@ We want to extend `map_reads` to:
 
 This is the alignment config:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step3.cpp alignment_config
+\snippet doc/tutorial/11_read_mapper/read_mapper_step3.cpp alignment_config
 \endhint
 \endassignment
 \solution
-\snippet doc/tutorial/read_mapper/read_mapper_step3.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_step3.cpp solution
 Here is the complete program:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step3.cpp complete
+\snippet doc/tutorial/11_read_mapper/read_mapper_step3.cpp complete
 \endhint
 \endsolution
 
@@ -229,13 +229,13 @@ Try to write all available information into the SAM file. We can introduce a nai
 
 This is the sam_file_output construction:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp sam_file_output
+\snippet doc/tutorial/11_read_mapper/read_mapper_step4.cpp sam_file_output
 \endhint
 \endassignment
 \solution
-\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_step4.cpp solution
 Here is the complete program:
 \hint
-\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp complete
+\snippet doc/tutorial/11_read_mapper/read_mapper_step4.cpp complete
 \endhint
 \endsolution

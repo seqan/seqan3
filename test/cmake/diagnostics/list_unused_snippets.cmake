@@ -28,7 +28,7 @@ function (list_unused_snippets snippet_base_path)
 
     # get the source location of each "used" test target and collect it.
     foreach (test_target ${seqan3_test_snippets})
-        # e.g. /seqan3/test/snippet/../../doc/tutorial/pairwise_alignment/configurations.cpp
+        # e.g. /seqan3/test/snippet/../../doc/tutorial/08_pairwise_alignment/configurations.cpp
         get_target_property (source "${test_target}" SOURCES)
         # e.g. configurations
         seqan3_path_longest_stem (source_wle "${source}")

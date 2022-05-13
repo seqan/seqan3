@@ -32,7 +32,7 @@ thus, with all possible configurations, is a very versatile and powerful tool to
 
 Let us first have a look at an example of computing a global alignment in SeqAn.
 
-\includelineno doc/tutorial/pairwise_alignment/pairwise_alignment_first_global.cpp
+\includelineno doc/tutorial/08_pairwise_alignment/pairwise_alignment_first_global.cpp
 
 In the above example, we want to compute the similarity of two seqan3::dna4 sequences using a global alignment.
 For this, we need to import the dna4 alphabet, the seqan3::nucleotide_scoring_scheme and the seqan3::align_pairwise in
@@ -71,7 +71,7 @@ You can use the seqan3::views::pairwise_combine to generate all pairwise combina
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_1.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_1.cpp
 
 First, we create the vector of seqan3::dna4 sequences. We keep the configuration as is and then modify the initial code
 to a range-based for loop looping over the alignment results. Since the seqan3::alignment_result is a class template and the
@@ -95,7 +95,7 @@ configuration elements together using the logical or-operator ('|'-operator).
 You can find an overview over the available configurations \ref configuration "here".
 The configurations for the alignment module are available in:
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include
 
 The configuration elements are all classes that wrap the actual information necessary for the configuration of the
 alignment algorithm. Depending on the configuration specification certain features of the algorithm are enabled or
@@ -127,8 +127,8 @@ sequence. seqan3::align_cfg::method_global is constructed with 4 free end-gap sp
 
 The following code snippet demonstrates the different use cases:
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_method
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp method_global_free_end_gaps
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_method
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp method_global_free_end_gaps
 
 The order of arguments is fixed and must always be as shown in the example.
 
@@ -141,7 +141,7 @@ would be aligned as an infix of the second sequence.
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_2.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_2.cpp
 
 To accomplish our goal we initialise the `method_global` option with the free end specifiers
 for sequence 1 set to `true`, and those for sequence 2 with `false`.
@@ -154,7 +154,7 @@ A scoring scheme can be queried to get the score for substituting two alphabet v
 Currently, SeqAn supports two scoring schemes: seqan3::nucleotide_scoring_scheme and
 seqan3::aminoacid_scoring_scheme. You can import them with the following includes:
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_scoring_scheme
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_scoring_scheme
 
 As the names suggests, you need to use the former when scoring \ref alphabet_nucleotide "nucleotides" and the latter
 when working with \ref alphabet_aminoacid "aminoacids". You have already used the seqan3::nucleotide_scoring_scheme in
@@ -167,7 +167,7 @@ The amino acid scoring scheme can additionally be \ref seqan3::aminoacid_scoring
 "initialised" with a predefined substitution matrix that can be accessed via the seqan3::aminoacid_similarity_matrix
 enumeration class.
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp scoring_scheme
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp scoring_scheme
 
 \note You can also provide your own scoring scheme implementation if it models seqan3::scoring_scheme.
 
@@ -182,8 +182,8 @@ with custom gap penalties. The penalties can be changed later by using the respe
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
 positive value and the score for mismatch and gaps must be negative in order to maximise over the matching letters.
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_gap_cost_affine
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp gap_cost_affine
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_gap_cost_affine
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp gap_cost_affine
 
 To configure the scoring scheme and the gap scheme for the alignment algorithm you need to use the
 seqan3::align_cfg::scoring_scheme and the seqan3::align_cfg::gap_cost_affine configurations. The
@@ -200,7 +200,7 @@ gap open costs of `-9`. Use the BLOSUM62 similarity matrix.
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_3.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_3.cpp
 
 Only a few parts of our algorithm need to be adapted. First, we use an amino acid scoring scheme and initialise it with
 the respective similarity matrix. Second, we initialise the gap scheme to represent the affine gap model as given in
@@ -214,8 +214,8 @@ mapping reads and the user wishes to write the alignment to the final SAM/BAM fi
 In SeqAn you can simply configure what is going to be computed by the alignment algorithm using the
 different \ref seqan3_align_cfg_output_configurations "output configurations".
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_output
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp output
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_output
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp output
 
 Accordingly, the alignment algorithm is configured to use the best implementation to obtain the desired result.
 The following table shows the different outcomes that can be configured:
@@ -252,7 +252,7 @@ overlaps between two sequences can be computed which is a common use case during
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_4.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_4.cpp
 
 \endsolution
 
@@ -265,8 +265,8 @@ However, in many cases, we can give a rough bound on how similar the sequences w
 To do so, you can configure the alignment using the seqan3::align_cfg::band_fixed_size option. This configuration
 element will be initialised with a seqan3::align_cfg::lower_diagonal and seqan3::align_cfg::upper_diagonal parameter.
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_band
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp band
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_band
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp band
 
 \assignment{Assignment 5}
 Use the example from assignment 4 and compute it in a band with lower diagonal set to `-3` and upper diagonal set to `8`.
@@ -275,7 +275,7 @@ How does the result change?
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_5.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_5.cpp
 
 \endsolution
 
@@ -291,8 +291,8 @@ seqan3::nucleotide_scoring_scheme supports this) and a gap scheme initialised wi
 for a gap open score and computing a seqan3::global_alignment.
 To make the configuration easier, we added a shortcut called seqan3::align_cfg::edit_scheme.
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_edit
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp edit
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_edit
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp edit
 
 The `edit_scheme` still has to be combined with an alignment method. When combining it
 with the seqan3::align_cfg::method_global configuration element, the edit distance algorithm
@@ -326,7 +326,7 @@ You can use the std::views::filter to get only those alignments that fit the req
 \endassignment
 \solution
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_6.cpp
 
 \endsolution
 

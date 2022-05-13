@@ -157,11 +157,11 @@ of types.
 When a function is overloaded and multiple overloads are valid for a given/deduced template argument, the
 *most-refined* overload is chosen:
 
-\include doc/tutorial/concepts/overloading1.cpp
+\include doc/tutorial/03_concepts/overloading1.cpp
 
 But as soon as we introduce another overload, the compiler will pick the "best" match:
 
-\include doc/tutorial/concepts/overloading2.cpp
+\include doc/tutorial/03_concepts/overloading2.cpp
 
 \assignment{Assignment 1: Static polymorphism with alphabets I}
 Write a small program, similar to the one above with the following "skeleton":
@@ -189,14 +189,14 @@ be constrained to only accepts types that model seqan3::alphabet.
 Try calling `print` with a different type, e.g. `int` to make sure that it does.
 \endassignment
 \solution
-\include doc/tutorial/concepts/overloading_solution1.cpp
+\include doc/tutorial/03_concepts/overloading_solution1.cpp
 \endsolution
 
 \assignment{Assignment 2: Static polymorphism with alphabets II}
 Adapt your previous solution to handle nucleotides differently from the rest. For nucleotides, it should print both the value and its complement.
 \endassignment
 \solution
-\include doc/tutorial/concepts/overloading_solution2.cpp
+\include doc/tutorial/03_concepts/overloading_solution2.cpp
 \endsolution
 
 ## Partial template specialisation
@@ -204,7 +204,7 @@ Adapt your previous solution to handle nucleotides differently from the rest. Fo
 Similar to function template overloading it is possible to use concepts for partially specialising class and variable
 templates.
 
-\include doc/tutorial/concepts/specialisation.cpp
+\include doc/tutorial/03_concepts/specialisation.cpp
 
 This is a typical example of a "type transformation trait".
 It maps one type to another type; in this case, it returns a type that is able to represent the square root of the
@@ -283,7 +283,7 @@ Implement enough of the above mentioned `struct custom_validator` for it to mode
 the check. You can use an empty `main()`-function for now.
 \endassignment
 \solution
-\include doc/tutorial/concepts/custom_validator_solution1.cpp
+\include doc/tutorial/03_concepts/custom_validator_solution1.cpp
 \endsolution
 
 ### Implementing the functionality
@@ -291,7 +291,7 @@ the check. You can use an empty `main()`-function for now.
 The above implementation is of course not yet useful.
 It should be usable with this main function:
 
-\snippet doc/tutorial/concepts/custom_validator_solution2.cpp main
+\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp main
 
 Try to think of the correct behaviour of this program.
 
@@ -306,7 +306,7 @@ Also, give a nice description for the help page.
 
 \endassignment
 \solution
-\snippet doc/tutorial/concepts/custom_validator_solution2.cpp validator
+\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp validator
 \endsolution
 
 You have now written your own type that is compatible with our constrained interfaces!
