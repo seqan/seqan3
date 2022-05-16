@@ -27,18 +27,24 @@ defaults:
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 120
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: true
       matrix:
         include:
-          - name: "Coverage gcc11"
-            cxx: "g++-11"
-            cc: "gcc-11"
+          - name: "Coverage gcc12"
+            cxx: "g++-12"
+            cc: "gcc-12"
             build: coverage
             build_type: Debug
+
+          - name: "Unit gcc12"
+            cxx: "g++-12"
+            cc: "gcc-12"
+            build: unit
+            build_type: Release
 
           - name: "Unit gcc11"
             cxx: "g++-11"
