@@ -774,7 +774,7 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \attention The Shape is defined is from right to left. The mask 0b1101 applied to ACGT will return
+ * \attention The Shape is defined from right to left. The mask 0b1101 applied to ACGT will return
  * the sequence AGT.
  *
  * ### Example

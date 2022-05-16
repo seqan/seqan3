@@ -15,7 +15,7 @@ int main()
 
     seqan3::debug_stream << (text | seqan3::views::kmer_hash(0b101_shape)) << '\n'; // [2,7,8,14,1]
 
-    // Note: the Shape is defined is from right to left. The mask 0b1101 applied to ACGT will give
+    // Note: the Shape is defined from right to left. The mask 0b1101 applied to ACGT will yield
     // the same result as mask 0b111 applied to AGT.
     {
         auto text1 = "ACGT"_dna4;
