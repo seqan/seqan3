@@ -27,7 +27,7 @@
  * it is recommended to read through the \ref tutorial_ranges "ranges tutorial".
  * The following code snippet demonstrates a simple use of the pairwise alignment interface.
  *
- * \include doc/tutorial/pairwise_alignment/pairwise_alignment_first_global.cpp
+ * \include doc/tutorial/08_pairwise_alignment/pairwise_alignment_first_global.cpp
  *
  * In this snippet a global alignment over two nucleotide sequences is computed. Here the helper function std::tie
  * is used to pass the two sequences as a tuple to the alignment algorithm. The special interface of std::tie allows

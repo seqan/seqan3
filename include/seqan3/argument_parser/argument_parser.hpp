@@ -137,7 +137,7 @@ namespace seqan3
  *
  * Developers that wish to disable this feature permanently can pass an extra constructor argument:
  *
- * \include doc/tutorial/argument_parser/disable_version_check.cpp
+ * \include doc/tutorial/02_argument_parser/disable_version_check.cpp
  *
  * Users of applications that have this feature activated can opt-out, by either:
  *

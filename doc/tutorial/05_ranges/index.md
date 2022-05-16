@@ -98,12 +98,12 @@ They are incredibly useful and you will find them throughout the library.
 A key feature of views is that whatever transformation they apply, they do so at the moment you request an
 element, not when the view is created.
 
-\snippet doc/tutorial/ranges/range_snippets.cpp def
+\snippet doc/tutorial/05_ranges/range_snippets.cpp def
 
 Here `v` is a view; creating it neither changes `vec`, nor does `v` store any elements.
 The time it takes to construct `v` and its size in memory is independent of the size of `vec`.
 
-\snippet doc/tutorial/ranges/range_snippets.cpp all
+\snippet doc/tutorial/05_ranges/range_snippets.cpp all
 
 This will print "6", but the important thing is that resolving the first element of `v` to the last element of `vec`
 happens **on-demand**.
@@ -115,7 +115,7 @@ expensive transformation, it will have to do so repeatedly if the same element i
 
 You may have wondered why we wrote
 
-\snippet doc/tutorial/ranges/range_snippets.cpp rev_def
+\snippet doc/tutorial/05_ranges/range_snippets.cpp rev_def
 
 and not
 ```cpp
@@ -128,7 +128,7 @@ The exact type of this view is hidden behind the `auto` statement.
 This has the advantage that we don't need to worry about the template arguments of the view type.
 The adaptor has another, very useful feature: it can be *chained* with other adaptors!
 
-\snippet doc/tutorial/ranges/range_snippets.cpp piped
+\snippet doc/tutorial/05_ranges/range_snippets.cpp piped
 
 What will this print?
 \hint
@@ -163,7 +163,7 @@ std::cout << *v.begin() << '\n'; // should print 4
 ```
 \endassignment
 \solution
-\include doc/tutorial/ranges/range_solution1.cpp
+\include doc/tutorial/05_ranges/range_solution1.cpp
 \endsolution
 
 ## View concepts
@@ -182,7 +182,7 @@ the second in memory (but instead before the second).
 Perhaps surprising to some, many views also model std::ranges::output_range if the underlying range does, i.e. **views
 are not read-only**:
 
-\snippet doc/tutorial/ranges/range_snippets.cpp assign_through
+\snippet doc/tutorial/05_ranges/range_snippets.cpp assign_through
 
 \assignment{Assignment 2: Fun with views II}
 Have a look at the solution to the previous assignment (filter+transform).
@@ -252,7 +252,7 @@ Create a small program that
 Use views to implement steps 2.-4.
 \endassignment
 \solution
-\include doc/tutorial/ranges/range_solution3.cpp
+\include doc/tutorial/05_ranges/range_solution3.cpp
 \endsolution
 
 # Containers
@@ -291,5 +291,5 @@ On macOS and BSD use `/usr/bin/time -l <program> <args>` and look for "maximum r
 consumption.
 \endassignment
 \solution
-\include doc/tutorial/ranges/range_solution4.cpp
+\include doc/tutorial/05_ranges/range_solution4.cpp
 \endsolution

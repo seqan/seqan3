@@ -65,17 +65,17 @@ more information on Bi-FM-Indicies [here](https://doi.org/10.1109/BIBM.2009.42).
 
 Constructing a (Bi-)FM-Index is very simple:
 
-\include doc/tutorial/search/search_basic_index.cpp
+\include doc/tutorial/09_search/search_basic_index.cpp
 
 You can also index text collections (e.g. genomes with multiple chromosomes or protein databases):
 
-\snippet doc/tutorial/search/search_small_snippets.cpp text_collection
+\snippet doc/tutorial/09_search/search_small_snippets.cpp text_collection
 
 The indices can also be stored and loaded from disk by using cereal.
 
-\snippet doc/tutorial/search/search_small_snippets.cpp store
+\snippet doc/tutorial/09_search/search_small_snippets.cpp store
 
-\snippet doc/tutorial/search/search_small_snippets.cpp load
+\snippet doc/tutorial/09_search/search_small_snippets.cpp load
 
 Note that in contrast to the construction via a given `text`, the template cannot be deduced by the compiler when
 using the default constructor so you have to provide template arguments.
@@ -90,7 +90,7 @@ Print whether the indices are identical or differ.
 \endassignment
 
 \solution
-\snippet doc/tutorial/search/search_solution1.cpp solution
+\snippet doc/tutorial/09_search/search_solution1.cpp solution
 **Expected output:**
 ```console
 The indices are identical!
@@ -115,11 +115,11 @@ the best result.
 
 We can search for all exact hits using seqan3::search:
 
-\include doc/tutorial/search/search_basic_search.cpp
+\include doc/tutorial/09_search/search_basic_search.cpp
 
 You can also pass multiple queries at the same time:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp multiple_queries
+\snippet doc/tutorial/09_search/search_small_snippets.cpp multiple_queries
 
 The returned result is a lazy range over individual results, where each entry represents a specific location
 within the reference sequence for a particular query.
@@ -137,7 +137,7 @@ std::vector<dna4_vector> text{"CGCTGTCTGAAGGATGAGTGTCAGCCAGTGTA"_dna4,
 \endassignment
 
 \solution
-\include doc/tutorial/search/search_solution2.cpp
+\include doc/tutorial/09_search/search_solution2.cpp
 **Expected output:**
 ```console
 =====   Running on a single text   =====
@@ -190,13 +190,13 @@ allowed errors for substitutions, insertions, or deletions.
 
 For example, to search for either 1 insertion or 1 deletion you can write:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp error_search
+\snippet doc/tutorial/09_search/search_small_snippets.cpp error_search
 
 Here, we restrict the approximate search to only allow one error. This can be then either an insertion or a deletion
 but not both, since that would exceed the total error limit.
 This basically means that the error counts/rates do not have to sum up to the total of errors allowed:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp error_sum
+\snippet doc/tutorial/09_search/search_small_snippets.cpp error_sum
 
 In the above example, we allow 2 errors, which can be any combination of 2 substitutions, 1 insertion and 1 deletion.
 Defining only the total will set all error types to this value, i.e. if the total error is set to an error count of 2, any
@@ -213,7 +213,7 @@ Allow up to 1 substitution and print all occurrences.
 \endassignment
 
 \solution
-\include doc/tutorial/search/search_solution3.cpp
+\include doc/tutorial/09_search/search_solution3.cpp
 **Expected output:**
 ```console
 [<query_id:0, reference_id:0, reference_pos:1>,
@@ -254,7 +254,7 @@ program argument at runtime. To handle such cases you can also use the dynamic c
 This configuration object represents one of the four hit configurations mentioned previously and can be modified at
 runtime. The following snippet gives an example for this scenario:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp hit_dynamic
+\snippet doc/tutorial/09_search/search_small_snippets.cpp hit_dynamic
 
 Note that the same rules apply to both the dynamic and static hit configuration. That is, it can be added via the
 `|`-operator to the search configuration but cannot be combined with any other hit configuration.
@@ -263,7 +263,7 @@ A closer look at the strata configuration reveals that it is initialised with an
 `stratum`. The `stratum` can be modified even after it was added to the search configuration like the following example
 demonstrates:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp hit_strata
+\snippet doc/tutorial/09_search/search_small_snippets.cpp hit_strata
 
 Here we introduced a new concept when working with the seqan3::configuration object, which is much like the access
 interface of a std::tuple. Concretely, it is possible to access the stored
@@ -293,7 +293,7 @@ Allow up to 1 error of any type and print the number of hits for each hit strate
 \endassignment
 
 \solution
-\include doc/tutorial/search/search_solution4.cpp
+\include doc/tutorial/09_search/search_solution4.cpp
 **Expected output:**
 ```console
 Searching all hits
@@ -354,12 +354,12 @@ Do the same for the text collection from [assignment 2](#assignment_exact_search
 \hint
 The search will give you positions in the text. To access the corresponding subrange of the text you can use
 std::span:
-\include doc/tutorial/search/search_span.cpp
+\include doc/tutorial/09_search/search_span.cpp
 \endhint
 \endassignment
 
 \solution
-\include doc/tutorial/search/search_solution5.cpp
+\include doc/tutorial/09_search/search_solution5.cpp
 **Expected output:**
 ```console
 Searching all best hits allowing for 1 error in a single text

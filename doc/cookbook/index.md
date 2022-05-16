@@ -11,19 +11,19 @@ If you have suggestions for how to improve the Cookbook and/or examples you woul
 please feel free to contact us.
 
 # Read sequence files
-\snippet doc/tutorial/introduction/introduction_file_input.cpp fileinput
+\snippet doc/tutorial/01_introduction/introduction_file_input.cpp fileinput
 
 # Write a custom validator {#cookbook_custom_validator}
 This recipe implements a validator that checks if a numeric argument is an integral square (i.e. 0, 1, 4, 9...).
 Invalid values throw a seqan3::validation_error.
 
-\snippet doc/tutorial/concepts/custom_validator_solution2.cpp validator
+\snippet doc/tutorial/03_concepts/custom_validator_solution2.cpp validator
 
 # Construction and assignment of alphabet symbols
 
-\snippet doc/tutorial/alphabet/alphabet_main.cpp create
-\snippet doc/tutorial/alphabet/alphabet_main.cpp closing
-\snippet doc/tutorial/alphabet/alphabet_main.cpp rank
+\snippet doc/tutorial/04_alphabet/alphabet_main.cpp create
+\snippet doc/tutorial/04_alphabet/alphabet_main.cpp closing
+\snippet doc/tutorial/04_alphabet/alphabet_main.cpp rank
 
 # Reverse complement and the six-frame translation of a string using views
 This recipe creates a small program that
@@ -32,7 +32,7 @@ This recipe creates a small program that
   3. prints the string and its reverse complement
   4. prints the six-frame translation of the string
 
-\include doc/tutorial/ranges/range_solution3.cpp
+\include doc/tutorial/05_ranges/range_solution3.cpp
 
 # Reading records
 After construction, you can now read the sequence records.
@@ -51,7 +51,7 @@ You can also read a file in chunks:
 
 # Reading records in chunks
 
-\snippet doc/tutorial/sequence_file/sequence_file_read_in_batches.cpp main
+\snippet doc/tutorial/07_sequence_file/sequence_file_read_in_batches.cpp main
 
 The example above will iterate over the file by reading 10 records at a time.
 If no 10 records are available anymore, it will just print the remaining records.
@@ -62,7 +62,7 @@ e.g. having a minimum sequence length or a minimum average quality.
 
 This recipe can be used to filter the sequences in your file by a custom criterion.
 
-\snippet doc/tutorial/sequence_file/sequence_file_quality_filter.cpp main
+\snippet doc/tutorial/07_sequence_file/sequence_file_quality_filter.cpp main
 
 # Reading paired-end reads
 In modern Next Generation Sequencing experiments you often have paired-end read data which is split into two files.
@@ -70,16 +70,16 @@ The read pairs are identified by their identical name/id and position in the two
 
 This recipe can be used to handle one pair of reads at a time.
 
-\snippet doc/tutorial/sequence_file/sequence_file_paired_reads.cpp main
+\snippet doc/tutorial/07_sequence_file/sequence_file_paired_reads.cpp main
 
 # Storing records in a std::vector
 This recipe creates a small program that reads in a FASTA file and stores all the records in a std::vector.
 
-\snippet doc/tutorial/sequence_file/sequence_file_solution2.cpp solution
+\snippet doc/tutorial/07_sequence_file/sequence_file_solution2.cpp solution
 
 Note that you can move the record out of the file if you want to store it somewhere without copying.
 
-\snippet doc/tutorial/sequence_file/sequence_file_move_record.cpp main
+\snippet doc/tutorial/07_sequence_file/sequence_file_move_record.cpp main
 
 # Writing records
 
@@ -87,7 +87,7 @@ The easiest way to write to a sequence file is to use the seqan3::sequence_file_
 or seqan3::sequence_file_output::emplace_back() member functions.
 These work similarly to how they work on a std::vector.
 
-\include doc/tutorial/sequence_file//sequence_file_output_record.cpp
+\include doc/tutorial/07_sequence_file//sequence_file_output_record.cpp
 
 \cond DEV
 The class seqan3::sequence_file_output takes an extra parameter allowing to custom select the
@@ -98,13 +98,13 @@ fields and their order.
 
 # File conversion
 
-\snippet doc/tutorial/sequence_file/sequence_file_file_conversion.cpp main
+\snippet doc/tutorial/07_sequence_file/sequence_file_file_conversion.cpp main
 
 # Define a custom scoring scheme
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp include_scoring_scheme
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp include_scoring_scheme
 
-\snippet doc/tutorial/pairwise_alignment/configurations.cpp scoring_scheme
+\snippet doc/tutorial/08_pairwise_alignment/configurations.cpp scoring_scheme
 
 \attention SeqAn's alignment algorithm computes the maximal similarity score, thus the match score must be set to a
 positive value and the scores for mismatch and gap must be negative in order to maximize over the matching letters.
@@ -114,14 +114,14 @@ positive value and the scores for mismatch and gap must be negative in order to 
 This recipe can be used to calculate the edit distance for all six pairwise combinations. Here we only allow at most 7
 errors and filter all alignments with 6 or fewer errors.
 
-\include doc/tutorial/pairwise_alignment/pairwise_alignment_solution_6.cpp
+\include doc/tutorial/08_pairwise_alignment/pairwise_alignment_solution_6.cpp
 
 # Searching for matches
 
 This recipe can be used to search for all occurrences of a substring and print the number of hits and the
 positions in an ascending ordering.
 
-\include doc/tutorial/search/search_solution2.cpp
+\include doc/tutorial/09_search/search_solution2.cpp
 
 If you want to allow errors in your query, you need to configure the approximate search with the following search
 configuration objects:
@@ -135,14 +135,14 @@ These are constructed with absolute numbers or rates:
 
 To search for either 1 insertion or 1 deletion you can use the seqan3::search_cfg::error_count:
 
-\snippet doc/tutorial/search/search_small_snippets.cpp error_search
+\snippet doc/tutorial/09_search/search_small_snippets.cpp error_search
 
 # Reading the CIGAR information into an actual alignment
 
 In SeqAn, the conversion from a CIGAR string to an alignment (two `seqan3::aligned_sequence`s) is done automatically for
 you. You can access the resulting alignment via seqan3::sam_record::alignment:
 
-\snippet doc/tutorial/sam_file/sam_file_alignments_without_ref.cpp main
+\snippet doc/tutorial/10_sam_file/sam_file_alignments_without_ref.cpp main
 
 # Combining sequence and alignment files
 
@@ -152,16 +152,16 @@ This recipe can be used to:
 3. For the resulting alignments, print which read was mapped against with reference id and the number of seqan3::gap's
    involved in the alignment (either in aligned reference or in read sequence).
 
-\snippet doc/tutorial/sam_file/sam_file_solution2.cpp solution
+\snippet doc/tutorial/10_sam_file/sam_file_solution2.cpp solution
 
 # Map reads and write output to SAM file
 For a full recipe on creating your own readmapper, see the very end of the tutorial \ref tutorial_read_mapper.
 
-\snippet doc/tutorial/read_mapper/read_mapper_step4.cpp solution
+\snippet doc/tutorial/11_read_mapper/read_mapper_step4.cpp solution
 
 # Constructing a basic argument parser
 
-\include doc/tutorial/read_mapper/read_mapper_indexer_step1.cpp
+\include doc/tutorial/11_read_mapper/read_mapper_indexer_step1.cpp
 
 # Constructing a subcommand argument parser
 
