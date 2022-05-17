@@ -774,8 +774,8 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \attention The Shape is defined from right to left. The mask 0b1101 applied to ACGT will return
- * the sequence AGT.
+ * \attention The Shape is defined from right to left! The mask 0b11111101 applied to "AGAAAATA" is 
+ * interpreted as "A.AAAATA" (and not "AGAAAA.A") and will return the hash value for "AAAAATA".
  *
  * ### Example
  *
