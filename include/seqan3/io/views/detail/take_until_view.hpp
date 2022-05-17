@@ -18,11 +18,11 @@
 #include <seqan3/std/ranges>
 #include <type_traits>
 
+#include <seqan3/core/detail/copyable_wrapper.hpp>
 #include <seqan3/core/detail/iterator_traits.hpp>
 #include <seqan3/core/range/detail/adaptor_from_functor.hpp>
 #include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/core/semiregular_box.hpp>
 #include <seqan3/io/exception.hpp>
 #include <seqan3/utility/range/concept.hpp>
 #include <seqan3/utility/type_traits/detail/transformation_trait_or.hpp>
@@ -62,7 +62,7 @@ private:
     urng_t urange;
 
     //!\brief The functor.
-    ranges::semiregular_t<fun_t> fun;
+    copyable_wrapper_t<fun_t> fun;
 
     //!\brief Whether this view is const_iterable or not.
     static constexpr bool const_iterable = const_iterable_range<urng_t> &&
@@ -103,8 +103,8 @@ public:
      * \param[in] _urange The underlying range.
      * \param[in] _fun    The functor that acts as termination criterium.
      */
-    view_take_until(urng_t _urange, fun_t _fun)
-        : urange{std::move(_urange)}, fun{std::forward<fun_t>(_fun)}
+    view_take_until(urng_t && _urange, fun_t && _fun)
+        : urange{std::forward<urng_t>(_urange)}, fun{std::forward<fun_t>(_fun)}
     {}
 
     /*!\brief Construct from another viewable_range.
@@ -114,10 +114,10 @@ public:
      */
     template <std::ranges::viewable_range rng_t>
     //!\cond
-        requires std::constructible_from<rng_t, std::views::all_t<rng_t>>
+        requires std::constructible_from<urng_t, std::views::all_t<rng_t>>
     //!\endcond
-    view_take_until(rng_t && _urange, fun_t _fun)
-        : view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::move(_fun)}
+    view_take_until(rng_t && _urange, fun_t && _fun)
+        : view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::forward<fun_t>(_fun)}
     {}
     //!\}
 
@@ -141,7 +141,7 @@ public:
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
             return basic_consume_iterator<false>{std::ranges::begin(urange),
-                                                 static_cast<fun_t &>(fun),
+                                                 fun,
                                                  std::ranges::end(urange)};
         else
             return basic_iterator<false>{std::ranges::begin(urange)};
@@ -153,7 +153,7 @@ public:
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_iterator<true>{std::ranges::cbegin(urange),
-                                                static_cast<fun_t const &>(fun),
+                                                fun,
                                                 std::ranges::cend(urange)};
         else
             return basic_iterator<true>{std::ranges::cbegin(urange)};
@@ -187,7 +187,7 @@ public:
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
             return basic_consume_sentinel<true>{};
         else
-            return basic_sentinel<true>{std::ranges::cend(urange), static_cast<fun_t const &>(fun)};
+            return basic_sentinel<true>{std::ranges::cend(urange), fun};
     }
     //!\}
 };
@@ -195,7 +195,7 @@ public:
 //!\brief Type deduction guide that strips references.
 //!\relates seqan3::detail::view_take_until
 template <typename urng_t, typename fun_t, bool or_throw = false, bool and_consume = false>
-view_take_until(urng_t &&, fun_t) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
+view_take_until(urng_t &&, fun_t &&) -> view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>;
 
 template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_consume>
 template <bool const_range>
@@ -209,12 +209,8 @@ private:
     //!\brief The CRTP wrapper type.
     using base_t = inherited_iterator_base<basic_consume_iterator, underlying_iterator_t>;
 
-    //!\brief Auxiliary type.
-    using predicate_ref_t = std::conditional_t<const_range,
-                                               std::remove_reference_t<fun_t> const &,
-                                               std::remove_reference_t<fun_t> &>;
-    //!\brief Reference to the functor stored in the view.
-    seqan3::semiregular_box_t<predicate_ref_t> fun;
+    //!\brief Pointer to the functor stored in the view.
+    copyable_wrapper_t<fun_t> const * fun{nullptr};
 
     //!\brief The sentinel type is identical to that of the underlying range.
     using underlying_sentinel_t = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
@@ -239,11 +235,11 @@ public:
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
     basic_consume_iterator(underlying_iterator_t it,
-                           predicate_ref_t _fun,
+                           copyable_wrapper_t<fun_t> const & _fun,
                            underlying_sentinel_t sen) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}, fun{_fun}, underlying_sentinel{std::move(sen)}
+        base_t{std::move(it)}, fun{std::addressof(_fun)}, underlying_sentinel{std::move(sen)}
     {
-        if ((this->base() != underlying_sentinel) && fun(**this))
+        if ((this->base() != underlying_sentinel) && fun->operator()(**this))
         {
             at_end_gracefully = true;
             ++(*this);
@@ -270,11 +266,11 @@ public:
     basic_consume_iterator & operator++()
         noexcept(noexcept(++std::declval<base_t &>()) &&
                  noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
-                 noexcept(fun(std::declval<reference>())))
+                 noexcept(fun->operator()(std::declval<reference>())))
     {
         base_t::operator++();
 
-        while ((this->base() != underlying_sentinel) && fun(**this))
+        while ((this->base() != underlying_sentinel) && fun->operator()(**this))
         {
             at_end_gracefully = true;
             base_t::operator++();
@@ -310,7 +306,7 @@ public:
     bool operator==(basic_consume_sentinel<const_range> const &) const
         noexcept(!or_throw &&
                  noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
-                 noexcept(fun(std::declval<reference>())))
+                 noexcept(fun->operator()(std::declval<reference>())))
     {
         if (at_end_gracefully)
             return true;
@@ -323,7 +319,7 @@ public:
                 return true;
         }
 
-        return fun(**this);
+        return fun->operator()(**this);
     }
 
     //!\brief Return the saved at_end state.
@@ -356,16 +352,12 @@ class view_take_until<urng_t, fun_t, or_throw, and_consume>::basic_sentinel
 private:
     //!\brief The sentinel type of the underlying range.
     using underlying_sentinel_t = seqan3::detail::maybe_const_sentinel_t<const_range, urng_t>;
-    //!\brief Auxiliary type.
-    using predicate_ref_t = std::conditional_t<const_range,
-                                               std::remove_reference_t<fun_t> const &,
-                                               std::remove_reference_t<fun_t> &>;
 
     //!\brief The actual end of the underlying range.
     underlying_sentinel_t underlying_sentinel{};
 
-    //!\brief Reference to the predicate stored in the view.
-    seqan3::semiregular_box_t<predicate_ref_t> predicate{};
+    //!\brief Pointer to the functor stored in the view.
+    copyable_wrapper_t<fun_t> const * fun{nullptr};
 
 public:
     /*!\name Constructors, destructor and assignment
@@ -378,20 +370,20 @@ public:
     basic_sentinel & operator=(basic_sentinel &&) = default; //!< Defaulted.
     ~basic_sentinel() = default; //!< Defaulted.
 
-    /*!\brief Construct from a sentinel and a predicate.
+    /*!\brief Construct from a sentinel and a functor.
      * \param[in] underlying_sentinel  The actual end of the underlying range.
-     * \param[in] predicate      Reference to the predicate stored in the view.
+     * \param[in] _fun                 Reference to the functor stored in the view.
      */
-    explicit basic_sentinel(underlying_sentinel_t underlying_sentinel, predicate_ref_t predicate) :
+    explicit basic_sentinel(underlying_sentinel_t underlying_sentinel, copyable_wrapper_t<fun_t> const & _fun) :
         underlying_sentinel{std::move(underlying_sentinel)},
-        predicate{predicate}
+        fun{std::addressof(_fun)}
     {}
 
     //!\brief Construct from a not const range a const range.
     basic_sentinel(basic_sentinel<!const_range> other)
         requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, underlying_sentinel_t>
         : underlying_sentinel{std::move(other.underlying_sentinel)},
-          predicate{other.predicate}
+          fun{other.fun}
     {}
     //!\}
 
@@ -411,7 +403,7 @@ public:
                 return true;
         }
 
-        return rhs.predicate(*lhs);
+        return rhs.fun->operator()(*lhs);
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
@@ -446,7 +438,7 @@ public:
                 return true;
         }
 
-        return rhs.predicate(*lhs);
+        return rhs.fun->operator()(*lhs);
     }
 
     //!\brief Compares `lhs` with `rhs` for equality.
