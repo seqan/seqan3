@@ -78,4 +78,3 @@
 #include <seqan3/core/debug_stream.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/range/all.hpp>
-#include <seqan3/core/semiregular_box.hpp>

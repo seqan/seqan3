@@ -121,7 +121,7 @@ public:
  * \brief Concept for an algorithm configuration element.
  * \ingroup core_configuration
  *
- * \extends std::semiregular
+ * \extends std::copyable
  * \implements seqan3::pipeable_config_element
  */
 
@@ -139,7 +139,7 @@ template <typename config_t>
 concept config_element = requires
 {
     requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
-    requires std::semiregular<config_t>;
+    requires std::copyable<config_t>;
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
     requires config_id_accessor::has_id<config_t>;
 #else // ^^^ workaround / no workaround vvv

@@ -314,6 +314,15 @@
 #   endif
 #endif
 
+//!\brief A view does not need to be default constructible. This change is first implemented in gcc12.
+#ifndef SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW
+#   if defined(__GNUC__) && (__GNUC__ < 12)
+#       define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 1
+#   else
+#       define SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW 0
+#   endif
+#endif
+
 /*!\brief gcc only: Constrain friend declarations to limit access to internals.
  *
  * \details
