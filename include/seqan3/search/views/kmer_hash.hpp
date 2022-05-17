@@ -774,6 +774,9 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
+ * \attention The Shape is defined from right to left! The mask 0b11111101 applied to "AGAAAATA" is 
+ * interpreted as "A.AAAATA" (and not "AGAAAA.A") and will return the hash value for "AAAAATA".
+ *
  * ### Example
  *
  * \include test/snippet/search/views/kmer_hash.cpp
