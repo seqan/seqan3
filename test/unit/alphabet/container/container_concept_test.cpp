@@ -67,6 +67,10 @@ TEST(container, sequence_container_former_travis_bug)
     s.insert(0, 1, 'E');
     EXPECT_EQ("Exmplr", s);
 
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wrestrict"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     // insert(size_type index, const char* s)
     s.insert(2, "e");
     EXPECT_EQ("Exemplr", s);
@@ -74,6 +78,9 @@ TEST(container, sequence_container_former_travis_bug)
     // insert(size_type index, string const& str)
     s.insert(6, "a"s);
     EXPECT_EQ("Exemplar", s);
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 
     // insert(size_type index, string const& str, size_type index_str, size_type count)
     s.insert(8, " is an example string."s, 0, 14);
@@ -96,9 +103,16 @@ TEST(container, sequence_container_former_travis_bug)
         EXPECT_EQ("Exemplar is an:== example string", s);
     }
 
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wrestrict"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     // insert(const_iterator pos, std::initializer_list<char>)
     s.insert(s.begin() + s.find_first_of('g') + 1, { '.' });
     EXPECT_EQ("Exemplar is an:== example string.", s);
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 #else // ^^^ workaround / no workaround vvv
     // insert(const_iterator pos, char ch)
     s.insert(s.cbegin() + s.find_first_of('n') + 1, ':');
@@ -117,8 +131,15 @@ TEST(container, sequence_container_former_travis_bug)
     }
 
     // insert(const_iterator pos, std::initializer_list<char>)
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wrestrict"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     s.insert(s.cbegin() + s.find_first_of('g') + 1, { '.' });
     EXPECT_EQ("Exemplar is an:== example string.", s);
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 #endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 }
 

@@ -756,7 +756,14 @@ public:
         for (size_type i = sz + length - 1; i > pos_as_num + length - 1; --i)
             data_[i] = data_[i - length];
 
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
         std::ranges::copy(begin_it, end_it, &data_[pos_as_num]);
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#pragma GCC diagnostic pop
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
         sz += length;
         return begin() + pos_as_num;
     }

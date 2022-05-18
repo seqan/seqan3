@@ -43,11 +43,12 @@ inline void get_ordered_search(auto const & search, auto const & blocks_length,
 }
 
 // Helper function for search_error_distribution(res, search).
-inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, auto l, auto u, uint8_t const e)
+template <typename t>
+void search_error_distribution(std::vector<std::vector<t>> & res, auto l, auto u, uint8_t const e)
 {
     if (l.size() == 0)
     {
-        res.emplace_back(std::forward<std::vector<uint8_t>>(std::vector<uint8_t>{}));
+        res.emplace_back(std::forward<std::vector<t>>(std::vector<t>{}));
         return;
     }
 
@@ -58,7 +59,7 @@ inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, 
 
     for (uint8_t i = std::max(e, l0); i <= u0; ++i)
     {
-        std::vector<std::vector<uint8_t> > res_recursive;
+        std::vector<std::vector<t>> res_recursive;
         search_error_distribution(res_recursive, l, u, i);
         for (auto & res_elem : res_recursive)
         {
@@ -70,21 +71,23 @@ inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, 
 
 // Compute all possible error distributions given a search.
 // The result is in the same order as the search (i.e. search.pi).
-inline void search_error_distribution(std::vector<std::vector<uint8_t> > & res, auto const & search)
+template <typename t>
+void search_error_distribution(std::vector<std::vector<t>> & res, auto const & search)
 {
     res.clear();
-    std::vector<uint8_t> l(search.l.begin(), search.l.end());
-    std::vector<uint8_t> u(search.u.begin(), search.u.end());
+    std::vector<t> l(search.l.begin(), search.l.end());
+    std::vector<t> u(search.u.begin(), search.u.end());
     search_error_distribution(res, l, u, 0u);
 }
 
 // Compute all possible error distributions for each search given a search scheme.
-inline void search_scheme_error_distribution(std::vector<std::vector<uint8_t> > & res, auto const & search_scheme)
+template <typename t>
+void search_scheme_error_distribution(std::vector<std::vector<t>> & res, auto const & search_scheme)
 {
     res.clear();
     for (auto && search : search_scheme)
     {
-        std::vector<std::vector<uint8_t> > res_search;
+        std::vector<std::vector<t>> res_search;
         search_error_distribution(res_search, search);
         for (auto & single_error_distribution : res_search)
             order_search_vector(single_error_distribution, search);

@@ -231,7 +231,7 @@ private:
     */
     static std::string prepend_dash(char const short_id)
     {
-        return {"-" + std::string{short_id}};
+        return {'-', short_id};
     }
 
     /*!\brief Returns "-[short_id]/--[long_id]" if both are non-empty or just one of them if the other is empty.

@@ -14,6 +14,12 @@
 
 #include <gtest/gtest.h>
 
+#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+using integral_t = uint16_t;
+#else
+using integral_t = uint8_t;
+#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+
 template <uint8_t min_error, uint8_t max_error, bool precomputed_scheme>
 void error_distributions(auto & expected, auto & actual)
 {
@@ -39,7 +45,7 @@ void error_distributions(auto & expected, auto & actual)
 
 TEST(search_scheme_test, error_distribution_coverage_optimum_search_schemes)
 {
-    std::vector<std::vector<uint8_t> > expected, actual;
+    std::vector<std::vector<integral_t>> expected, actual;
 
     error_distributions<0, 0, true>(expected, actual);
     EXPECT_EQ(actual, expected);
@@ -74,7 +80,7 @@ TEST(search_scheme_test, error_distribution_coverage_optimum_search_schemes)
 
 TEST(search_scheme_test, error_distribution_coverage_computed_search_schemes)
 {
-    std::vector<std::vector<uint8_t> > expected, actual;
+    std::vector<std::vector<integral_t>> expected, actual;
 
     error_distributions<0, 0, false>(expected, actual);
     EXPECT_EQ(actual, expected);
@@ -117,7 +123,7 @@ TEST(search_scheme_test, error_distribution_coverage_computed_search_schemes)
 template <uint8_t min_error, uint8_t max_error, bool precomputed_scheme>
 bool check_disjoint_search_scheme()
 {
-    std::vector<std::vector<uint8_t> > error_distributions;
+    std::vector<std::vector<integral_t> > error_distributions;
 
     auto const & oss{seqan3::detail::optimum_search_scheme<min_error, max_error>};
     seqan3::search_scheme_error_distribution(error_distributions, oss);

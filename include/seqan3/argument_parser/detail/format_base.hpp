@@ -181,10 +181,10 @@ protected:
             ++it;
 
         for (; it != flag_cluster.end() - 1; ++it)
-            tmp.append("-" + std::string(1, *it) + ", ");
+            tmp.append({'-', *it, ',', ' '});
 
         tmp.erase(tmp.find_last_of(',')); // remove last ', '
-        tmp.append(" and -" + std::string(1, flag_cluster[flag_cluster.size() - 1]));
+        tmp.append({'a', 'n', 'd', ' ', '-', flag_cluster[flag_cluster.size() - 1]});
 
         return tmp;
     }

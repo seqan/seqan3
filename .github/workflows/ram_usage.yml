@@ -7,7 +7,7 @@ on:
       compiler:
         description: 'GCC version'
         required: true
-        default: '11'
+        default: '12'
       cxx_flags:
         descriptions: 'CXXFLAGS to pass to compiler'
 
@@ -27,7 +27,7 @@ defaults:
 jobs:
   build:
     name: RAM-Usage gcc${{ github.event.inputs.compiler }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     steps:

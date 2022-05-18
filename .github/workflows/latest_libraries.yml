@@ -24,13 +24,13 @@ defaults:
 jobs:
   build:
     name: ${{ matrix.build }} gcc${{ matrix.compiler }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     timeout-minutes: 300
     if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
     strategy:
       fail-fast: false
       matrix:
-        compiler: [10, 11]
+        compiler: [10, 11, 12]
         build: [unit, snippet, performance, header]
 
     steps:
