@@ -76,7 +76,7 @@ TYPED_TEST(chunk_view_test, concepts)
     // it looses contiguous range, common_range and output range
     EXPECT_FALSE((std::ranges::common_range<decltype(this->v)>));
     EXPECT_FALSE((std::ranges::contiguous_range<decltype(this->v)>));
-    EXPECT_FALSE((std::ranges::output_range<decltype(this->v), std::ranges::range_value_t<TypeParam>>));
+    EXPECT_FALSE((std::ranges::output_range<decltype(this->v), std::ranges::range_value_t<TypeParam> &>));
 }
 
 TYPED_TEST(chunk_view_test, construction)
