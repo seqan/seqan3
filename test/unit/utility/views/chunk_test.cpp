@@ -79,8 +79,15 @@ TYPED_TEST(chunk_view_test, concepts)
     EXPECT_FALSE((std::ranges::output_range<decltype(this->v), std::ranges::range_value_t<TypeParam> &>));
 }
 
+template <typename t>
+ requires std::default_initializable<t>
+void foo()
+{}
+
 TYPED_TEST(chunk_view_test, construction)
 {
+
+    foo<decltype(this->v)>(); // why is this not default initialisable in gcc 12?
     EXPECT_TRUE((std::default_initializable<decltype(this->v)>) == std::default_initializable<decltype(this->text)>);
     EXPECT_TRUE((std::is_copy_constructible_v<decltype(this->v)>));
     EXPECT_TRUE((std::is_move_constructible_v<decltype(this->v)>));
