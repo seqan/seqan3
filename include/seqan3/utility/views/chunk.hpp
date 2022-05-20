@@ -75,7 +75,7 @@ public:
      * \param[in] underlying_range The underlying range to divide into chunks.
      * \param[in] size_of_chunk The size of the chunks, e.g. the length of the subrange returned at each position.
      */
-    chunk_view(urng_t && underlying_range, uint16_t const size_of_chunk) : urange{std::forward<urng_t>(underlying_range)}, chunk_size{size_of_chunk}
+    chunk_view(urng_t underlying_range, uint16_t const size_of_chunk) : urange{std::move(underlying_range)}, chunk_size{size_of_chunk}
     {}
 
     /*!\brief Construct from a non-view that can be view-wrapped and the chunk size.
