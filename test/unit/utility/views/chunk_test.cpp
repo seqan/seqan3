@@ -81,7 +81,7 @@ TYPED_TEST(chunk_view_test, concepts)
 
 TYPED_TEST(chunk_view_test, construction)
 {
-    EXPECT_TRUE((std::is_default_constructible_v<decltype(this->v)>) == std::default_initializable<decltype(this->text)>);
+    EXPECT_TRUE((std::default_initializable<decltype(this->v)>) == std::default_initializable<decltype(this->text)>);
     EXPECT_TRUE((std::is_copy_constructible_v<decltype(this->v)>));
     EXPECT_TRUE((std::is_move_constructible_v<decltype(this->v)>));
     EXPECT_TRUE((std::is_copy_assignable_v<decltype(this->v)>));
