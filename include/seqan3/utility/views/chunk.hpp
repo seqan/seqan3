@@ -88,7 +88,8 @@ public:
                   && std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     //!\endcond
     chunk_view(rng_t && underlying_range, uint16_t const size_of_chunk) :
-        urange{std::views::all(std::forward<rng_t>(underlying_range))}, chunk_size{size_of_chunk}
+        urange{std::views::all(std::forward<rng_t>(underlying_range))},
+        chunk_size{size_of_chunk}
     {}
     //!\}
 
@@ -763,7 +764,7 @@ private:
 struct chunk_fn
 {
     //!\brief Store the `chunk_size` and return a range adaptor closure object.
-    constexpr auto operator()(uint16_t const & chunk_size) const
+    constexpr auto operator()(uint16_t const chunk_size) const
     {
         return adaptor_from_functor{*this, chunk_size};
     }
@@ -774,7 +775,7 @@ struct chunk_fn
      * \returns A range of subranges.
      */
     template <std::ranges::range underlying_range_t>
-    constexpr auto operator()(underlying_range_t && urange, uint16_t const & chunk_size) const
+    constexpr auto operator()(underlying_range_t && urange, uint16_t const chunk_size) const
     {
         static_assert(std::ranges::viewable_range<underlying_range_t>,
                       "The range parameter to views::chunk cannot be a temporary of a non-view range.");
