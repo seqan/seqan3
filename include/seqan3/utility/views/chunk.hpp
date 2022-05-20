@@ -43,8 +43,6 @@ template <std::ranges::input_range urng_t>
 class chunk_view : public std::ranges::view_interface<chunk_view<urng_t>>
 {
 private:
-    static_assert(std::ranges::input_range<urng_t>, "The chunk_view only works on input_ranges");
-
     //!\brief The underlying range.
     urng_t urange;
 
@@ -58,6 +56,7 @@ private:
     // The iterator type if `urng_t` is at least a forward range. See class definition for details.
     template <bool const_range>
     class basic_iterator;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
@@ -75,7 +74,9 @@ public:
      * \param[in] underlying_range The underlying range to divide into chunks.
      * \param[in] size_of_chunk The size of the chunks, e.g. the length of the subrange returned at each position.
      */
-    chunk_view(urng_t underlying_range, uint16_t const size_of_chunk) : urange{std::move(underlying_range)}, chunk_size{size_of_chunk}
+    chunk_view(urng_t underlying_range, uint16_t const size_of_chunk) :
+        urange{std::move(underlying_range)},
+        chunk_size{size_of_chunk}
     {}
 
     /*!\brief Construct from a non-view that can be view-wrapped and the chunk size.
