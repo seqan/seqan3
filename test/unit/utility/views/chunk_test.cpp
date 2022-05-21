@@ -73,7 +73,7 @@ TYPED_TEST(chunk_view_test, concepts)
     // it always ensures view
     EXPECT_TRUE((std::ranges::view<decltype(this->v)>));
 
-    // it looses contiguous range, common_range and output range
+    // it loses contiguous range, common_range and output range
     EXPECT_FALSE((std::ranges::common_range<decltype(this->v)>));
     EXPECT_FALSE((std::ranges::contiguous_range<decltype(this->v)>));
     EXPECT_FALSE((std::ranges::output_range<decltype(this->v), std::ranges::range_value_t<TypeParam> &>));
@@ -82,7 +82,7 @@ TYPED_TEST(chunk_view_test, concepts)
 TYPED_TEST(chunk_view_test, construction)
 {
     EXPECT_EQ(std::default_initializable<decltype(this->v)>,
-              std::default_initializable<std::views::all_t<decltype(this->text)>>);
+              std::default_initializable<std::views::all_t<decltype(this->text) &>>);
     EXPECT_TRUE((std::is_copy_constructible_v<decltype(this->v)>));
     EXPECT_TRUE((std::is_move_constructible_v<decltype(this->v)>));
     EXPECT_TRUE((std::is_copy_assignable_v<decltype(this->v)>));
