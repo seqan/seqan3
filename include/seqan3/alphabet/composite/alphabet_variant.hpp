@@ -109,11 +109,9 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <typename ...alternative_types>
-//!\cond
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
-//!\endcond
 class alphabet_variant : public alphabet_base<alphabet_variant<alternative_types...>,
                                               (static_cast<size_t>(alphabet_size<alternative_types>) + ...),
                                               char>
@@ -193,13 +191,11 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <typename alternative_t>
-    //!\cond
         requires (!std::same_as<alternative_t, alphabet_variant>) &&
                  (!std::is_base_of_v<alphabet_variant, alternative_t>) &&
                  (!list_traits::contains<alphabet_variant,
                   detail::transformation_trait_or_t<detail::recursive_required_types<alternative_t>, type_list<>>>) &&
                  (is_alternative<alternative_t>())
-    //!\endcond
     constexpr alphabet_variant(alternative_t const alternative) noexcept
     {
         assign_rank(rank_by_type_(alternative));
@@ -224,11 +220,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
-    //!\cond
         requires ((detail::instantiate_if_v<
                         detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
                         detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...))
-    //!\endcond
     constexpr alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
         using alternative_predicate = detail::implicitly_convertible_from<indirect_alternative_t>;
@@ -255,14 +249,12 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
-    //!\cond
         requires ((!(detail::instantiate_if_v<
                         detail::lazy<std::is_convertible, indirect_alternative_t, alternative_types>,
                         detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...)) &&
                     (detail::instantiate_if_v<
                         detail::lazy<std::is_constructible, alternative_types, indirect_alternative_t>,
                         detail::variant_general_guard<indirect_alternative_t, alternative_types...>> || ...))
-    //!\endcond
     constexpr explicit alphabet_variant(indirect_alternative_t const rhs) noexcept
     {
         using alternative_predicate = detail::constructible_from<indirect_alternative_t>;
@@ -284,10 +276,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_alternative_t>
-    //!\cond
         requires (detail::variant_general_guard<indirect_alternative_t, alternative_types...> &&
                   (weakly_assignable_from<alternative_types, indirect_alternative_t> || ...))
-    //!\endcond
     constexpr alphabet_variant & operator=(indirect_alternative_t const & rhs) noexcept
     {
         using alternative_predicate = detail::assignable_from<indirect_alternative_t>;
@@ -351,9 +341,7 @@ public:
      */
     template <typename alternative_t>
     constexpr bool holds_alternative() const noexcept
-    //!\cond
         requires (is_alternative<alternative_t>())
-    //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return holds_alternative<index>();
@@ -367,9 +355,7 @@ public:
      */
     template <typename alternative_t>
     constexpr alternative_t convert_to() const
-    //!\cond
         requires (is_alternative<alternative_t>())
-    //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, true>();
@@ -382,9 +368,7 @@ public:
      */
     template <typename alternative_t>
     constexpr alternative_t convert_unsafely_to() const noexcept
-    //!\cond
         requires (is_alternative<alternative_t>())
-    //!\endcond
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;
         return convert_impl<index, false>();
@@ -552,9 +536,7 @@ protected:
     //!\tparam alternative_t One of the alternative types.
     //!\param alternative The value of a alternative.
     template <size_t index, typename alternative_t>
-    //!\cond
         requires (is_alternative<alternative_t>())
-    //!\endcond
     static constexpr rank_type rank_by_index_(alternative_t const & alternative) noexcept
     {
         return partial_sum_sizes[index] + static_cast<rank_type>(seqan3::to_rank(alternative));
@@ -565,9 +547,7 @@ protected:
     //!\tparam alternative_t One of the alternative types.
     //!\param alternative The value of a alternative.
     template <typename alternative_t>
-    //!\cond
         requires (is_alternative<alternative_t>())
-    //!\endcond
     static constexpr rank_type rank_by_type_(alternative_t const & alternative) noexcept
     {
         constexpr size_t index = seqan3::list_traits::find<alternative_t, alternatives>;

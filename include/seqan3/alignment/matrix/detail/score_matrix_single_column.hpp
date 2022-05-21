@@ -49,9 +49,7 @@ namespace seqan3::detail
  * optimal, horizontal and vertical value of the underlying matrices.
  */
 template <typename score_t>
-//!\cond
     requires (arithmetic<score_t> || simd_concept<score_t>)
-//!\endcond
 class score_matrix_single_column
 {
 private:
@@ -158,9 +156,7 @@ public:
  * tuple layout returned by the seqan3::views::zip view.
  */
 template <typename score_t>
-//!\cond
     requires (arithmetic<score_t> || simd_concept<score_t>)
-//!\endcond
 class score_matrix_single_column<score_t>::matrix_iterator
 {
 private:

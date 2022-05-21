@@ -29,10 +29,8 @@ namespace seqan3::test
 {
 
 template <typename sequence_t>
-//!\cond
     requires (std::ranges::output_range<sequence_t, std::ranges::range_value_t<sequence_t>> &&
               requires (sequence_t & s) { {s.resize(1)}; })
-//!\endcond
 class random_sequence_generator
 {
 public:

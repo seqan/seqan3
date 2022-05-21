@@ -207,9 +207,7 @@ public:
      * \returns A views::deep specialisation of a closure object, i.e. with stored arguments.
      */
     template <typename first_arg_t, typename ...stored_arg_types>
-    //!\cond
         requires (!std::ranges::input_range<first_arg_t>)
-    //!\endcond
     constexpr auto operator()(first_arg_t && first, stored_arg_types && ...args) const
     {
         // The adaptor currently wrapped is a proto-adaptor and this function has the arguments to "complete" it.
@@ -245,9 +243,7 @@ public:
      * Recurses and calls std::views::transform if the underlying range is a range-of-ranges.
      */
     template <std::ranges::input_range urng_t, typename ...stored_arg_types>
-    //!\cond
         requires (sizeof...(stored_arg_types) > 0)
-    //!\endcond
     constexpr auto operator()(urng_t && urange, stored_arg_types && ...args) const
     {
         auto adaptor_closure = std::get<0>(this->arguments)(std::forward<stored_arg_types>(args)...);

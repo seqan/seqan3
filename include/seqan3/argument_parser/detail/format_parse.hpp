@@ -296,9 +296,7 @@ private:
      *          operator and otherwise seqan3::option_parse_result::success.
      */
     template <typename option_t>
-    //!\cond
         requires input_stream_over<std::istringstream, option_t>
-    //!\endcond
     option_parse_result parse_option_value(option_t & value, std::string const & in)
     {
         std::istringstream stream{in};
@@ -366,14 +364,12 @@ private:
      * \returns A seqan3::option_parse_result whether parsing was successful or not.
      */
     template <detail::is_container_option container_option_t, typename format_parse_t = format_parse>
-    //!\cond
         requires requires (format_parse_t fp,
                            typename container_option_t::value_type & container_value,
                            std::string const & in)
         {
             {fp.parse_option_value(container_value, in)} -> std::same_as<option_parse_result>;
         }
-    //!\endcond
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {
         typename container_option_t::value_type tmp{};
@@ -399,9 +395,7 @@ private:
      * This function delegates to std::from_chars.
      */
     template <arithmetic option_t>
-    //!\cond
         requires input_stream_over<std::istringstream, option_t>
-    //!\endcond
     option_parse_result parse_option_value(option_t & value, std::string const & in)
     {
         auto res = std::from_chars(&in[0], &in[in.size()], value);

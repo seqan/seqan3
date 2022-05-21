@@ -170,17 +170,13 @@ public:
      * seqan3::search_cfg::hit_all_best, seqan3::search_cfg::hit_single_best and seqan3::search_cfg::hit_strata.
      */
     template <typename hit_config_t>
-    //!\cond
         requires pack_traits::contains<hit_config_t, hit_all, hit_all_best, hit_single_best, hit_strata>
-    //!\endcond
     explicit hit(hit_config_t hit_config) noexcept : hit_variant{std::move(hit_config)}
     {}
 
     //!\copydoc seqan3::search_cfg::hit::hit(hit_config_t hit_config)
     template <typename hit_config_t>
-    //!\cond
         requires pack_traits::contains<hit_config_t, hit_all, hit_all_best, hit_single_best, hit_strata>
-    //!\endcond
     hit & operator=(hit_config_t hit_config) noexcept
     {
         hit_variant = std::move(hit_config);

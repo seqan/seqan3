@@ -42,9 +42,7 @@ namespace test
  * \param value The object to cerealise.
  */
 template <cereal_input_archive in_archive_t, cereal_output_archive out_archive_t, typename value_t>
-//!\cond
     requires cerealisable<value_t, in_archive_t, out_archive_t>
-//!\endcond
 void do_cerealisation(value_t && value)
 {
     tmp_filename filename{"cereal_test"};

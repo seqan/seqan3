@@ -56,9 +56,7 @@ namespace seqan3::detail
  * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
  */
 template <typename unary_predicate_t, typename ...pack_t>
-//!\cond
     requires (std::predicate<unary_predicate_t, pack_t> && ...)
-//!\endcond
 constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
 {
     return (fn(std::forward<pack_t>(args)) && ...);
@@ -96,9 +94,7 @@ constexpr bool all_of(unary_predicate_t && fn, pack_t && ...args)
  * \sa https://en.cppreference.com/w/cpp/language/parameter_pack
  */
 template <typename unary_function_t, typename ...pack_t>
-//!\cond
     requires (std::invocable<unary_function_t, pack_t> && ...)
-//!\endcond
 constexpr void for_each(unary_function_t && fn, pack_t && ...args)
 {
     (fn(std::forward<pack_t>(args)), ...);

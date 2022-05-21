@@ -271,10 +271,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-    //!\cond
         requires std::sentinel_for<end_it_type, begin_it_type> &&
                  std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
-    //!\endcond
     constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept:
         dynamic_bitset{}
     {
@@ -299,9 +297,7 @@ public:
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
-    //!\cond
         requires (!std::same_as<std::remove_cvref_t<other_range_t>, dynamic_bitset>)
-    //!\endcond
     explicit constexpr dynamic_bitset(other_range_t && range) noexcept :
         dynamic_bitset{std::ranges::begin(range), std::ranges::end(range)}
     {}
@@ -514,9 +510,7 @@ public:
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <std::ranges::input_range other_range_t>
-    //!\cond
         requires std::constructible_from<value_type, std::ranges::range_reference_t<other_range_t>>
-    //!\endcond
     constexpr void assign(other_range_t && range) noexcept
     {
         assign(std::ranges::begin(range), std::ranges::end(range));
@@ -542,10 +536,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-    //!\cond
         requires std::sentinel_for<end_it_type, begin_it_type> &&
                  std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
-    //!\endcond
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
         clear();
@@ -1414,10 +1406,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-    //!\cond
         requires std::sentinel_for<end_it_type, begin_it_type> &&
                  std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
-    //!\endcond
     constexpr iterator insert(const_iterator pos, begin_it_type begin_it, end_it_type end_it) noexcept
     {
         auto const pos_as_num = std::ranges::distance(cbegin(), pos);
@@ -1678,9 +1668,7 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
-    //!\cond
         requires (cap <= bit_capacity)
-    //!\endcond
     friend constexpr dynamic_bitset operator&(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
@@ -1700,9 +1688,7 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
-    //!\cond
         requires (cap <= bit_capacity)
-    //!\endcond
     friend constexpr dynamic_bitset operator^(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());
@@ -1722,9 +1708,7 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <size_t cap>
-    //!\cond
         requires (cap <= bit_capacity)
-    //!\endcond
     friend constexpr dynamic_bitset operator|(dynamic_bitset const & lhs, dynamic_bitset<cap> const & rhs) noexcept
     {
         assert(lhs.size() == rhs.size());

@@ -55,11 +55,9 @@ template <std::ranges::viewable_range resource_t,
           std::semiregular algorithm_t,
           std::semiregular algorithm_result_t,
           typename execution_handler_t = execution_handler_sequential>
-//!\cond
     requires std::ranges::forward_range<resource_t> &&
              std::invocable<algorithm_t, std::ranges::range_reference_t<resource_t>,
                                          std::function<void(algorithm_result_t)>>
-//!\endcond
 class algorithm_executor_blocking
 {
 private:

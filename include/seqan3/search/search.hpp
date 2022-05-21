@@ -97,10 +97,8 @@ namespace seqan3
 template <typename index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-//!\cond
     requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
              std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>
-//!\endcond
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)

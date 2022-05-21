@@ -75,10 +75,8 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <std::ranges::viewable_range inner_type>
-//!\cond
     requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
              (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
-//!\endcond
 class gap_decorator
 {
 private:
@@ -159,11 +157,9 @@ public:
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <typename other_range_t>
-    //!\cond
          requires (!std::same_as<other_range_t, gap_decorator>) &&
                   std::same_as<std::remove_cvref_t<other_range_t>, std::remove_cvref_t<inner_type>> &&
                   std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
-    //!\endcond
     gap_decorator(other_range_t && range) : ungapped_view{views::type_reduce(std::forward<inner_type>(range))}
     {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
@@ -327,9 +323,7 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename unaligned_sequence_t> // generic template to use forwarding reference
-    //!\cond
         requires std::assignable_from<gap_decorator &, unaligned_sequence_t>
-    //!\endcond
     friend void assign_unaligned(gap_decorator & dec, unaligned_sequence_t && unaligned)
     {
         dec = unaligned;
@@ -634,9 +628,7 @@ private:
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <std::ranges::viewable_range urng_t>
-//!\cond
     requires (!std::ranges::view<std::remove_reference_t<urng_t>>)
-//!\endcond
 gap_decorator(urng_t && range) -> gap_decorator<std::remove_reference_t<urng_t> const &>;
 
 /*!\brief Views always deduce to their respective type because they are copied.
@@ -664,10 +656,8 @@ gap_decorator(urng_t range) -> gap_decorator<urng_t>;
  * std::random_access_iterator albeit its non-conforming runtime complexity.
  */
 template <std::ranges::viewable_range inner_type>
-//!\cond
     requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
              (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
-//!\endcond
 template <bool>
 class gap_decorator<inner_type>::basic_iterator
 {

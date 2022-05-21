@@ -139,9 +139,7 @@ public:
      * \include test/snippet/io/detail/iterator_write_range.cpp
      */
     template <std::ranges::forward_range range_type>
-    //!\cond
         requires std::ranges::borrowed_range<range_type>
-    //!\endcond
     auto write_range(range_type && rng)
     {
         using sen_t = std::ranges::sentinel_t<range_type>;
@@ -200,9 +198,7 @@ public:
      * \param[in] num The number to write.
      */
     template <typename number_type>
-    //!\cond
         requires std::is_arithmetic_v<number_type>
-    //!\endcond
     auto write_number(number_type num)
     {
         if (stream_buf->epptr() - stream_buf->pptr() > 300) // enough space for any number, should be likely

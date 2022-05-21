@@ -163,9 +163,7 @@ namespace seqan3
  * simply provide one of the two functions specified above.
  */
 template <typename option_type>
-//!\cond
     requires requires { { detail::adl_only::enumeration_names_cpo<option_type>{}() }; }
-//!\endcond
 inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<option_type>{}();
 //!\}
 
@@ -222,9 +220,7 @@ concept argument_parser_compatible_option = input_stream_over<std::istringstream
  * respective string if found or '\<UNKNOWN_VALUE\>' if the value cannot be found in the map.
  */
 template <typename char_t, typename option_type>
-//!\cond
     requires named_enumeration<std::remove_cvref_t<option_type>>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, option_type && op)
 {
     for (auto & [key, value] : enumeration_names<option_type>)

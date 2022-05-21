@@ -61,9 +61,7 @@ struct type_list_expander<type_list_t<args_t...>>
      * Invokes `fn` by passing the expanded types wrapped in std::type_identity.
      */
     template <typename fn_t>
-    //!\cond
         requires std::invocable<fn_t, std::type_identity<args_t>...>
-    //!\endcond
     static constexpr std::invoke_result_t<fn_t, std::type_identity<args_t>...> invoke_on_type_identities(fn_t && fn)
     {
         return fn(std::type_identity<args_t>{}...);
@@ -110,9 +108,7 @@ struct type_list_expander<type_list_t<args_t...>>
  */
 template <typename type_list_t, typename unary_predicate_t>
 [[nodiscard]] constexpr bool all_of(unary_predicate_t && fn)
-//!\cond
     requires template_specialisation_of<type_list_t, seqan3::type_list>
-//!\endcond
 {
     return type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
     {
@@ -159,9 +155,7 @@ template <typename type_list_t, typename unary_predicate_t>
  * \sa seqan3::detail::for_each
  */
 template <typename type_list_t, typename unary_function_t>
-//!\cond
     requires template_specialisation_of<type_list_t, seqan3::type_list>
-//!\endcond
 constexpr void for_each(unary_function_t && fn)
 {
     type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)

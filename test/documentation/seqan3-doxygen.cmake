@@ -77,10 +77,6 @@ set (SEQAN3_TEST_DOXYGEN_FAIL_ON_WARNINGS
      "${DOXYGEN_EXECUTABLE} > doxygen.cout 2> doxygen.cerr; cat \"doxygen.cerr\"; test ! -s \"doxygen.cerr\""
      CACHE INTERNAL "The doxygen test command")
 
-# We search the HTML output to ensure that no `requires` clauses are at wrong places.
-set (SEQAN3_TEST_DOXYGEN_FAIL_ON_UNCOND_REQUIRES
-     "! find . -not -name \"*_source.html\" -name \"*.html\" -print0 | xargs -0 grep \"requires\" | grep \"memname\"")
-
 ### install helper
 
 # make sure that prefix path is /usr/local/share/doc/seqan3/

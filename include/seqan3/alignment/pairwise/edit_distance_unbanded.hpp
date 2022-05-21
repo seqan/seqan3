@@ -645,9 +645,7 @@ public:
 
     //!\brief Assign a value to the stored reference.
     template <typename other_value_t>
-    //!\cond
         requires std::convertible_to<other_value_t, value_t>
-    //!\endcond
     proxy_reference & operator=(other_value_t && u) noexcept
     {
         get() = std::forward<other_value_t>(u);

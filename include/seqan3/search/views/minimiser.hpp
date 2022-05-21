@@ -113,10 +113,8 @@ public:
     * \param[in] window_size The number of values in one window.
     */
     template <typename other_urng1_t>
-    //!\cond
         requires (std::ranges::viewable_range<other_urng1_t> &&
                   std::constructible_from<urng1_t, ranges::ref_view<std::remove_reference_t<other_urng1_t>>>)
-    //!\endcond
     minimiser_view(other_urng1_t && urange1, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{default_urng2_t{}},
@@ -154,12 +152,10 @@ public:
     * \param[in] window_size The number of values in one window.
     */
     template <typename other_urng1_t, typename other_urng2_t>
-    //!\cond
         requires (std::ranges::viewable_range<other_urng1_t> &&
                   std::constructible_from<urng1_t, std::views::all_t<other_urng1_t>> &&
                   std::ranges::viewable_range<other_urng2_t> &&
                   std::constructible_from<urng2_t, std::views::all_t<other_urng2_t>>)
-    //!\endcond
     minimiser_view(other_urng1_t && urange1, other_urng2_t && urange2, size_t const window_size) :
         urange1{std::views::all(std::forward<other_urng1_t>(urange1))},
         urange2{std::views::all(std::forward<other_urng2_t>(urange2))},
@@ -199,9 +195,7 @@ public:
 
     //!\copydoc begin()
     basic_iterator<true> begin() const
-    //!\cond
         requires const_iterable
-    //!\endcond
     {
         return {std::ranges::cbegin(urange1),
                 std::ranges::cend(urange1),
@@ -277,9 +271,7 @@ public:
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     basic_iterator(basic_iterator<!const_range> const & it)
-    //!\cond
         requires const_range
-    //!\endcond
         : minimiser_value{std::move(it.minimiser_value)},
           urng1_iterator{std::move(it.urng1_iterator)},
           urng1_sentinel{std::move(it.urng1_sentinel)},

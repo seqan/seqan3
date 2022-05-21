@@ -37,9 +37,7 @@ template <size_t beg,
           template <typename ...> typename tuple_t,
           size_t ... Is,
           typename ...ts>
-//!\cond
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
-//!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::get<beg + Is>(t)...};
@@ -50,9 +48,7 @@ template <size_t beg,
           template <typename ...> typename tuple_t,
           size_t ... Is,
           typename ...ts>
-//!\cond
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
-//!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
     return tuple_t<std::tuple_element_t<beg + Is, tuple_t<ts...>>...>{std::move(std::get<beg + Is>(t))...};
@@ -90,9 +86,7 @@ namespace seqan3
  * Concurrent invocations of this functions are thread safe.
  */
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
-//!\cond
     requires tuple_like<tuple_t<ts...>>
-//!\endcond
 constexpr auto tuple_split(tuple_t<ts...> const & t)
 {
     static_assert(pivot_c <= sizeof...(ts));
@@ -103,9 +97,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 
 //!\copydoc seqan3::tuple_split
 template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
-//!\cond
     requires tuple_like<tuple_t<ts...>>
-//!\endcond
 constexpr auto tuple_split(tuple_t<ts...> && t)
 {
     static_assert(pivot_c <= sizeof...(ts));

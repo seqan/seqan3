@@ -67,9 +67,7 @@ namespace seqan3
  * \relates seqan3::debug_stream_type
  */
 template <typename char_t, typename tuple_t>
-//!\cond
     requires (detail::debug_streamable_tuple<tuple_t>)
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
 {
     detail::print_tuple(s, std::forward<tuple_t>(t),

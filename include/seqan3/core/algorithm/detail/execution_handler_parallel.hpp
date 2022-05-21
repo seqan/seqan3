@@ -135,10 +135,8 @@ public:
     template <std::copy_constructible algorithm_t,
               typename algorithm_input_t,
               std::copy_constructible callback_t>
-    //!\cond
         requires std::invocable<algorithm_t, algorithm_input_t, callback_t> &&
                  (std::is_lvalue_reference_v<algorithm_input_t> || std::move_constructible<algorithm_input_t>)
-    //!\endcond
     void execute(algorithm_t && algorithm, algorithm_input_t && input, callback_t && callback)
     {
         assert(state != nullptr);
@@ -186,9 +184,7 @@ public:
     template <std::copy_constructible algorithm_t,
               std::ranges::input_range algorithm_input_range_t,
               std::copy_constructible callback_t>
-    //!\cond
         requires std::invocable<algorithm_t, std::ranges::range_reference_t<algorithm_input_range_t>, callback_t>
-    //!\endcond
     void bulk_execute(algorithm_t && algorithm, algorithm_input_range_t && input_range, callback_t && callback)
     {
         for (auto && input : input_range)

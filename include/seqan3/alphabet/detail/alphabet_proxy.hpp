@@ -55,9 +55,7 @@ namespace seqan3
  * \noapi{Exposition only}
  */
 template <typename derived_type, writable_semialphabet alphabet_type>
-//!\cond
     requires std::regular<alphabet_type>
-//!\endcond
 class alphabet_proxy : public
     std::conditional_t<std::is_class_v<alphabet_type>,
                        alphabet_type,
@@ -96,17 +94,13 @@ private:
 
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
-    //!\cond
         requires std::is_class_v<alphabet_type>
-    //!\endcond
         : base_t{a}
     {}
 
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
-    //!\cond
         requires (!std::is_class_v<alphabet_type>)
-    //!\endcond
         : base_t{}
     {
         base_t::assign_rank(seqan3::to_rank(a));
@@ -127,9 +121,7 @@ private:
     //!\brief Assignment from any type that the emulated type is assignable from.
     template <typename indirect_assignable_type>
     constexpr derived_type & operator=(indirect_assignable_type const & c) noexcept
-    //!\cond
         requires weakly_assignable_from<alphabet_type, indirect_assignable_type>
-    //!\endcond
     {
         alphabet_type a{};
         a = c;
@@ -159,9 +151,7 @@ public:
 
     //!\brief Assigns a character.
     constexpr derived_type & assign_char(char_type const c) noexcept
-    //!\cond
         requires writable_alphabet<alphabet_type>
-    //!\endcond
     {
         alphabet_type tmp{};
         assign_char_to(c, tmp);
@@ -170,9 +160,7 @@ public:
 
     //!\brief Assigns a Phred score.
     constexpr derived_type & assign_phred(phred_type const c) noexcept
-    //!\cond
         requires writable_quality_alphabet<alphabet_type>
-    //!\endcond
     {
         alphabet_type tmp{};
         assign_phred_to(c, tmp);
@@ -209,9 +197,7 @@ public:
 
     //!\brief Implicit conversion to types that the emulated type is convertible to.
     template <typename other_t>
-    //!\cond
         requires (!std::is_class_v<alphabet_type>) && std::convertible_to<alphabet_type, other_t>
-    //!\endcond
     constexpr operator other_t() const noexcept
     {
         return operator alphabet_type();
@@ -225,36 +211,28 @@ public:
 
     //!\brief Returns the character.
     constexpr auto to_char() const noexcept
-    //!\cond
         requires alphabet<alphabet_type>
-    //!\endcond
     {
         return seqan3::to_char(operator alphabet_type());
     }
 
     //!\brief Returns the Phred score.
     constexpr auto to_phred() const noexcept
-    //!\cond
         requires quality_alphabet<alphabet_type>
-    //!\endcond
     {
         return seqan3::to_phred(operator alphabet_type());
     }
 
     //!\brief Returns the complement.
     constexpr alphabet_type complement() const noexcept
-    //!\cond
         requires nucleotide_alphabet<alphabet_type>
-    //!\endcond
     {
         return seqan3::complement(operator alphabet_type());
     }
 
     //!\brief Delegate to the emulated type's validator.
     static constexpr bool char_is_valid(char_type const c) noexcept
-    //!\cond
         requires writable_alphabet<alphabet_type>
-    //!\endcond
     {
         return char_is_valid_for<alphabet_type>(c);
     }

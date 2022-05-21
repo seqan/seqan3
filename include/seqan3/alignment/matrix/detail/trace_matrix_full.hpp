@@ -48,9 +48,7 @@ namespace seqan3::detail
  * trace column.
  */
 template <typename trace_t>
-//!\cond
     requires std::same_as<trace_t, trace_directions>
-//!\endcond
 class trace_matrix_full
 {
 private:
@@ -173,9 +171,7 @@ public:
  * the three columns into a single range.
  */
 template <typename trace_t>
-//!\cond
     requires std::same_as<trace_t, trace_directions>
-//!\endcond
 class trace_matrix_full<trace_t>::iterator
 {
 private:
@@ -291,9 +287,7 @@ public:
  * assign it to the value type of the iterator.
  */
 template <typename trace_t>
-//!\cond
     requires std::same_as<trace_t, trace_directions>
-//!\endcond
 class trace_matrix_full<trace_t>::iterator::column_proxy : public std::ranges::view_interface<column_proxy>
 {
 private:

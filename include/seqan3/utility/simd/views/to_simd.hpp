@@ -132,11 +132,9 @@ public:
 
     //!\overload
     template <typename other_urng_t>
-    //!\cond
     requires (!std::same_as<std::remove_cvref_t<other_urng_t>, view_to_simd>) &&
              (!std::same_as<other_urng_t, urng_t>) &&
              std::ranges::viewable_range<other_urng_t>
-    //!\endcond
     constexpr view_to_simd(other_urng_t && urng, scalar_type const padding_value = alphabet_size) :
         view_to_simd{views::type_reduce(std::forward<other_urng_t>(urng)), padding_value}
     {}
@@ -166,9 +164,7 @@ public:
 
     //!\brief Checks whether the range is empty.
     constexpr bool empty() const noexcept
-    //!\cond
         requires std::ranges::forward_range<inner_range_type>
-    //!\endcond
     {
         return std::ranges::all_of(urng, [] (auto & rng)
         {
@@ -183,9 +179,7 @@ public:
      * Only available if the inner range types model std::ranges::sized_range.
      */
     constexpr size_t size() const noexcept
-    //!\cond
         requires std::ranges::sized_range<inner_range_type>
-    //!\endcond
     {
         auto it = std::ranges::max_element(urng, [] (auto & lhs, auto & rhs)
         {
@@ -502,9 +496,7 @@ private:
 
     //!\brief Fetches the next available chunk(s).
     constexpr void underflow()
-    //!\cond
         requires fast_load
-    //!\endcond
     {
         at_end = final_chunk;
         if (at_end)  // reached end of stream.
@@ -568,9 +560,7 @@ private:
 
     //!\overload
     constexpr void underflow()
-    //!\cond
         requires (!fast_load)
-    //!\endcond
     {
         at_end = final_chunk;
         if (at_end)  // reached end of stream.

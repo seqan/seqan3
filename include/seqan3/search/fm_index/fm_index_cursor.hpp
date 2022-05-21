@@ -297,9 +297,7 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-    //!\cond
         requires std::convertible_to<char_t, index_alphabet_type>
-    //!\endcond
     bool extend_right(char_t const c) noexcept
     {
         assert(index != nullptr);
@@ -324,9 +322,7 @@ public:
 
     //!\overload
     template <typename char_type>
-    //!\cond
         requires detail::is_char_adaptation_v<char_type>
-    //!\endcond
     bool extend_right(char_type const * cstring) noexcept
     {
         return extend_right(std::basic_string_view<char_type>{cstring});
@@ -522,9 +518,7 @@ public:
      */
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
@@ -539,9 +533,7 @@ public:
     //!\overload
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
@@ -597,9 +589,7 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     locate_result_type locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -615,9 +605,7 @@ public:
 
     //!\overload
     locate_result_type locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -646,9 +634,7 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     auto lazy_locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -661,9 +647,7 @@ public:
 
     //!\overload
     auto lazy_locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         assert(index != nullptr);
 

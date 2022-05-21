@@ -259,9 +259,7 @@ private:
      * No guarantee. \if DEV \todo Ensure strong exception guarantee. \endif
      */
     template <std::ranges::range text_t>
-    //!\cond
         requires (text_layout_mode_ == text_layout::single)
-    //!\endcond
     void construct(text_t && text)
     {
         detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);
@@ -286,9 +284,7 @@ private:
 
     //!\overload
     template <std::ranges::range text_t>
-    //!\cond
         requires (text_layout_mode_ == text_layout::collection)
-    //!\endcond
     void construct(text_t && text, bool reverse = false)
     {
         detail::fm_index_validator::validate<alphabet_t, text_layout_mode_>(text);

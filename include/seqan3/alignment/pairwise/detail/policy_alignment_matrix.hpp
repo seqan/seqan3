@@ -38,13 +38,11 @@ namespace seqan3::detail
  * additional parameter to initialise the allocated matrix memory.
  */
 template <typename traits_t, typename alignment_matrix_t>
-//!\cond
     requires (is_type_specialisation_of_v<traits_t, alignment_configuration_traits> &&
               requires (alignment_matrix_t & matrix, typename traits_t::score_type const initial_score)
               {
                   { matrix.resize(column_index_type{size_t{}}, row_index_type{size_t{}}, initial_score) };
               })
-//!\endcond
 class policy_alignment_matrix
 {
 protected:
@@ -86,9 +84,7 @@ protected:
      * \throws seqan3::invalid_alignment_configuration if the given band settings are invalid.
      */
     template <typename alignment_configuration_t>
-    //!\cond
         requires (is_type_specialisation_of_v<alignment_configuration_t, configuration>)
-    //!\endcond
     policy_alignment_matrix(alignment_configuration_t const & config)
     {
         using seqan3::get;

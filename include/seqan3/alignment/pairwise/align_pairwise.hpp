@@ -128,11 +128,9 @@ namespace seqan3
  * when being iterated over.
  */
 template <typename sequence_t, typename alignment_config_t>
-//!\cond
     requires detail::align_pairwise_single_input<sequence_t> &&
              std::copy_constructible<std::remove_reference_t<sequence_t>> &&
              detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-//!\endcond
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
     using std::get;

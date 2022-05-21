@@ -500,9 +500,7 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, ali
 
 //!\overload
 template <typename char_t, std::ranges::input_range alignment_matrix_t>
-//!\cond
     requires detail::debug_stream_range_guard<alignment_matrix_t> && detail::matrix<alignment_matrix_t>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alignment_matrix_t && matrix)
 {
     return s << detail::debug_matrix{std::forward<alignment_matrix_t>(matrix)};

@@ -72,9 +72,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <semialphabet other_alph_t>
-    //!\cond
         requires (alphabet_size<other_alph_t> == size)
-    //!\endcond
     explicit semialphabet_any(other_alph_t const other)
     {
         assign_rank(seqan3::to_rank(other));
@@ -86,9 +84,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <semialphabet other_alph_t>
-    //!\cond
         requires ((alphabet_size<other_alph_t> == size) && std::regular<other_alph_t>)
-    //!\endcond
     explicit operator other_alph_t() const
     {
         other_alph_t other{};

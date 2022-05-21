@@ -214,9 +214,7 @@ public:
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
     template <output_stream stream_type, sam_file_output_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
-    //!\endcond
     sam_file_output(stream_type & stream,
                     file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                     selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -230,9 +228,7 @@ public:
 
     //!\overload
     template <output_stream stream_type, sam_file_output_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_type>::char_type, stream_char_type>
-    //!\endcond
     sam_file_output(stream_type && stream,
                     file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                     selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -275,9 +271,7 @@ public:
      * \include test/snippet/io/sam_file/sam_file_output_format_construction.cpp
      */
     template <typename ref_ids_type_, std::ranges::forward_range ref_lengths_type>
-    //!\cond
         requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
-    //!\endcond
     sam_file_output(std::filesystem::path const & filename,
                     ref_ids_type_ && ref_ids,
                     ref_lengths_type && ref_lengths,
@@ -313,9 +307,7 @@ public:
               sam_file_output_format file_format,
               typename ref_ids_type_, // generic type to capture lvalue references
               std::ranges::forward_range ref_lengths_type>
-    //!\cond
         requires std::same_as<std::remove_reference_t<ref_ids_type_>, ref_ids_type>
-    //!\endcond
     sam_file_output(stream_type && stream,
                     ref_ids_type_ && ref_ids,
                     ref_lengths_type && ref_lengths,
@@ -392,9 +384,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-    //!\cond
         requires detail::record_like<record_t>
-    //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
@@ -440,9 +430,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-    //!\cond
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
-    //!\endcond
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
         using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
@@ -490,9 +478,7 @@ public:
      * \include test/snippet/io/sam_file/emplace_back.cpp
      */
     template <typename arg_t, typename ...arg_types>
-    //!\cond
         requires (sizeof...(arg_types) + 1 <= selected_field_ids::size)
-    //!\endcond
     void emplace_back(arg_t && arg, arg_types && ... args)
     {
         push_back(std::tie(arg, args...));
@@ -521,9 +507,7 @@ public:
      */
     template <typename rng_t>
     sam_file_output & operator=(rng_t && range)
-    //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -560,9 +544,7 @@ public:
      */
     template <typename rng_t>
     friend sam_file_output & operator|(rng_t && range, sam_file_output & f)
-    //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         f = range;
         return f;
@@ -571,9 +553,7 @@ public:
     //!\overload
     template <typename rng_t>
     friend sam_file_output operator|(rng_t && range, sam_file_output && f)
-    //!\cond
         requires std::ranges::input_range<rng_t> && tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         f = range;
         return std::move(f);

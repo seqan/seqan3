@@ -42,10 +42,8 @@ namespace seqan3::detail
  * its reference type is a seqan3::detail::affine_cell_proxy.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-//!\cond
     requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
               std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
-//!\endcond
 class combined_score_and_trace_matrix
 {
 private:
@@ -156,10 +154,8 @@ public:
  * is a seqan3::detail::affine_cell_proxy holding the score and trace values of the respective alignment matrix cells.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-//!\cond
     requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
               std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
-//!\endcond
 class combined_score_and_trace_matrix<score_matrix_t, trace_matrix_t>::iterator
 {
 private:
@@ -181,10 +177,8 @@ private:
 
     // Befriend the base class.
     template <std::ranges::input_range other_score_matrix_t, std::ranges::input_range other_trace_matrix_t>
-    //!\cond
         requires (std::ranges::input_range<std::ranges::range_reference_t<other_score_matrix_t>> &&
                   std::ranges::input_range<std::ranges::range_reference_t<other_trace_matrix_t>>)
-    //!\endcond
     friend class combined_score_and_trace_matrix;
 
     //!\brief The transform adaptor to convert the tuple from the zip view into a seqan3::detail::affine_cell_type.
@@ -275,10 +269,8 @@ public:
  * since the invariant of the matrix requires that both submatrices have the same number of columns.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-//!\cond
     requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
               std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
-//!\endcond
 class combined_score_and_trace_matrix<score_matrix_t, trace_matrix_t>::sentinel
 {
 private:

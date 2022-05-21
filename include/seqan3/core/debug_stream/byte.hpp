@@ -29,9 +29,7 @@ namespace seqan3
  * \relates seqan3::debug_stream_type
  */
 template <typename char_t, typename byte_type>
-//!\cond
     requires std::same_as<std::remove_cvref_t<byte_type>, std::byte>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, byte_type && arg)
 {
     s << std::to_integer<uint8_t>(arg);

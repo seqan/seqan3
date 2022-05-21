@@ -30,9 +30,7 @@ namespace seqan3::detail
  * the underlying two-dimensional matrix.
  */
 template <typename score_type>
-//!\cond
     requires arithmetic<score_type> || simd_concept<score_type>
-//!\endcond
 struct alignment_algorithm_state
 {
     //!\brief The cached gap extension score.

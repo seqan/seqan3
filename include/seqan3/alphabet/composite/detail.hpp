@@ -72,9 +72,7 @@ struct required_types
  * Exposes for seqan3::alphabet_tuple_base its components and for seqan3::alphabet_variant its alternatives.
  */
 template <typename t>
-//!\cond
     requires requires { typename t::seqan3_required_types; }
-//!\endcond
 struct required_types<t>
 {
     //!\brief The returned type.
@@ -109,12 +107,10 @@ struct recursive_required_types
  * \ingroup alphabet_composite
  */
 template <typename t>
-//!\cond
     requires requires
     {
         typename t::seqan3_recursive_required_types;
     }
-//!\endcond
 struct recursive_required_types<t>
 {
     //!\brief The returned type.
@@ -221,19 +217,15 @@ namespace seqan3
 
 // forward
 template <typename ...alternative_types>
-//!\cond
     requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
              (std::regular<alternative_types> && ...) &&
              (sizeof...(alternative_types) >= 2)
-//!\endcond
 class alphabet_variant;
 
 template <typename derived_type,
           typename ...component_types>
-//!\cond
     requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
              (std::regular<component_types> && ...)
-//!\endcond
 class alphabet_tuple_base;
 
 } // namespace seqan3

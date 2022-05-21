@@ -113,9 +113,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     constexpr char_type to_char() const noexcept
-    //!\cond
         requires (!std::same_as<char_t, void>)
-    //!\endcond
     {
         return derived_type::rank_to_char(rank);
     }
@@ -163,9 +161,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     constexpr derived_type & assign_char(char_type const chr) noexcept
-    //!\cond
         requires (!std::same_as<char_t, void>)
-    //!\endcond
     {
         rank = derived_type::char_to_rank(chr);
         return static_cast<derived_type &>(*this);

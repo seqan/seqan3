@@ -404,9 +404,7 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename alph_t>
-//!\cond
     requires requires { { detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}() }; }
-//!\endcond
 inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}();
 
 } // namespace seqan3

@@ -103,10 +103,8 @@ public:
 
     //!\brief Constructor for const version from non-const version.
     template <typename range_type2>
-    //!\cond
         requires std::is_const_v<range_type> && (!std::is_const_v<range_type2>) &&
                  std::is_same_v<std::remove_const_t<range_type>, range_type2>
-    //!\endcond
     constexpr random_access_iterator_base(random_access_iterator_base<range_type2, derived_t_template> const & rhs) noexcept :
         host{rhs.host}, pos{rhs.pos}
     {}
@@ -120,9 +118,7 @@ public:
 
     //!\brief Checks whether `*this` is equal to `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator==(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos == rhs.pos;
@@ -130,9 +126,7 @@ public:
 
     //!\brief Checks whether `*this` is not equal to `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator!=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -140,9 +134,7 @@ public:
 
     //!\brief Checks whether `*this` is less than `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator<(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return static_cast<bool>(pos < rhs.pos);
@@ -150,9 +142,7 @@ public:
 
     //!\brief Checks whether `*this` is greater than `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator>(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos > rhs.pos;
@@ -160,9 +150,7 @@ public:
 
     //!\brief Checks whether `*this` is less than or equal to `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator<=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos <= rhs.pos;
@@ -170,9 +158,7 @@ public:
 
     //!\brief Checks whether `*this` is greater than or equal to `rhs`.
     template <typename range_type2>
-    //!\cond
         requires std::is_same_v<std::remove_const_t<range_type>, std::remove_const_t<range_type2>>
-    //!\endcond
     constexpr bool operator>=(random_access_iterator_base<range_type2, derived_t_template> const & rhs) const noexcept
     {
         return pos >= rhs.pos;

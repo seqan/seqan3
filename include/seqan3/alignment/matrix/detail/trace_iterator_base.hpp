@@ -107,9 +107,7 @@ private:
      * Allows the conversion of non-const to const iterator.
      */
     template <typename other_derived_t, two_dimensional_matrix_iterator other_matrix_iter_t>
-    //!\cond
         requires std::constructible_from<matrix_iter_t, other_matrix_iter_t>
-    //!\endcond
     constexpr trace_iterator_base(trace_iterator_base<other_derived_t, other_matrix_iter_t> const & other) noexcept :
         trace_iterator_base{other.matrix_iter}
     {}

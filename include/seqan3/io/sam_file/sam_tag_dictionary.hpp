@@ -359,9 +359,7 @@ public:
 
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
-    //!\cond
         requires (!std::same_as<sam_tag_type_t<tag>, variant_type>)
-    //!\endcond
     auto & get() &
     {
         if ((*this).count(tag) == 0)
@@ -372,9 +370,7 @@ public:
 
     //!\brief Uses std::map::operator[] for access and default initializes new keys.
     template <uint16_t tag>
-    //!\cond
         requires (!std::same_as<sam_tag_type_t<tag>, variant_type>)
-    //!\endcond
     auto && get() &&
     {
         if ((*this).count(tag) == 0)
@@ -386,9 +382,7 @@ public:
     //!\brief Uses std::map::at() for access and throws when the key is unknown.
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
-    //!\cond
         requires (!std::same_as<sam_tag_type_t<tag>, variant_type>)
-    //!\endcond
     auto const & get() const &
     {
         return std::get<sam_tag_type_t<tag>>((*this).at(tag));
@@ -397,9 +391,7 @@ public:
     //!\brief Uses std::map::at() for access and throws when the key is unknown.
     //!\throws std::out_of_range if map has no key `tag`.
     template <uint16_t tag>
-    //!\cond
         requires (!std::same_as<sam_tag_type_t<tag>, variant_type>)
-    //!\endcond
     auto const && get() const &&
     {
         return std::get<sam_tag_type_t<tag>>(std::move((*this).at(tag)));

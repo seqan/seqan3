@@ -237,11 +237,9 @@ public:
      * \throws seqan3::design_error
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
-    //!\cond
         requires (argument_parser_compatible_option<option_type> ||
                   argument_parser_compatible_option<std::ranges::range_value_t<option_type>>) &&
                   std::invocable<validator_type, option_type>
-    //!\endcond
     void add_option(option_type & value,
                     char const short_id,
                     std::string const & long_id,
@@ -306,11 +304,9 @@ public:
      * The validator must be applicable to the given output variable (\p value).
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
-    //!\cond
         requires (argument_parser_compatible_option<option_type> ||
                   argument_parser_compatible_option<std::ranges::range_value_t<option_type>>) &&
                   std::invocable<validator_type, option_type>
-    //!\endcond
     void add_positional_option(option_type & value,
                                std::string const & desc,
                                validator_type option_validator = validator_type{}) // copy to bind rvalues
@@ -461,9 +457,7 @@ public:
      *   via `seqan3::argument_parser::add_option()` calls beforehand.
      */
     template <typename id_type>
-    //!\cond
         requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type>
-    //!\endcond
     bool is_option_set(id_type const & id) const
     {
         if (!parse_was_called)

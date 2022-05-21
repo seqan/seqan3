@@ -50,9 +50,7 @@ namespace seqan3::custom
  * \stableapi{Since version 3.1.}
  */
 template <typename char_type>
-//!\cond
     requires detail::is_char_adaptation_v<char_type>
-//!\endcond
 struct alphabet<char_type>
 {
     /*!\brief The number of values the char type can take (e.g. 256 for `char`).

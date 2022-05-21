@@ -118,9 +118,7 @@ public:
      * \param[in] entries A range used to fill the underlying matrix.
      */
     template <std::ranges::forward_range entries_t>
-    //!\cond
         requires (std::convertible_to<std::ranges::range_value_t<entries_t>, value_type>)
-    //!\endcond
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim, entries_t entries) :
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
@@ -167,9 +165,7 @@ public:
      * It only changes the matrix major order, i.e. data stored row wise is now stored column wise and vice versa.
      */
     template <typename other_value_t, typename other_allocator_t, matrix_major_order other_order>
-    //!\cond
         requires std::assignable_from<other_value_t &, value_t &>
-    //!\endcond
     explicit constexpr two_dimensional_matrix(two_dimensional_matrix<other_value_t,
                                                                      other_allocator_t,
                                                                      other_order> const & matrix) :
@@ -387,9 +383,7 @@ public:
 
     //!\brief Construction of cons-iterator from non-const-iterator.
     constexpr basic_iterator(basic_iterator<!const_range> const & other) noexcept
-    //!\cond
         requires const_range
-    //!\endcond
         : matrix_ptr{other.matrix_ptr},
           host_iter{other.host_iter}
     {}

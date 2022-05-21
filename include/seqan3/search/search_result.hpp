@@ -70,7 +70,6 @@ template <typename query_id_type,
           typename cursor_type,
           typename reference_id_type,
           typename reference_begin_position_type>
-//!\cond
     requires (std::integral<query_id_type> || std::same_as<query_id_type, detail::empty_type>) &&
              (detail::template_specialisation_of<cursor_type, fm_index_cursor> ||
                      detail::template_specialisation_of<cursor_type, bi_fm_index_cursor> ||
@@ -78,7 +77,6 @@ template <typename query_id_type,
              (std::integral<reference_id_type> || std::same_as<reference_id_type, detail::empty_type>) &&
              (std::integral<reference_begin_position_type> || std::same_as<reference_begin_position_type,
                                                                            detail::empty_type>)
-//!\endcond
 class search_result
 {
 private:
@@ -94,9 +92,7 @@ private:
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
     #if !SEQAN3_WORKAROUND_GCC_93467
-    //!\cond
         requires detail::is_type_specialisation_of_v<search_configuration_t, configuration>
-    //!\endcond
     #endif // !SEQAN3_WORKAROUND_GCC_93467
     friend struct detail::policy_search_result_builder;
 
@@ -200,9 +196,7 @@ public:
  * \relates seqan3::debug_stream_type
  */
 template <typename char_t, typename search_result_t>
-//!\cond
     requires detail::is_type_specialisation_of_v<std::remove_cvref_t<search_result_t>, search_result>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, search_result_t && result)
 {
     using result_type_list = detail::transfer_template_args_onto_t<std::remove_cvref_t<search_result_t>, type_list>;

@@ -59,9 +59,7 @@ namespace seqan3::detail
  * The returned type models seqan3::detail::indexed_sequence_pair_range.
  */
 template <typename sequence_pairs_t>
-//!\cond
     requires sequence_pair_range<std::remove_reference_t<sequence_pairs_t>>
-//!\endcond
 struct chunked_indexed_sequence_pairs
 {
     //!\brief The transformed type that models seqan3::detail::indexed_sequence_pair_range.
@@ -80,9 +78,7 @@ struct chunked_indexed_sequence_pairs
  *         seqan3::configuration.
  */
 template <typename configuration_t>
-//!\cond
     requires is_type_specialisation_of_v<std::remove_cv_t<configuration_t>, configuration>
-//!\endcond
 struct alignment_configuration_traits
 {
 private:

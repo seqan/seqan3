@@ -199,9 +199,7 @@ protected:
      * \param vn \copydoc score_matrix_state::vn
      */
     void add_column(std::vector<word_type> vp, std::vector<word_type> vn)
-    //!\cond
         requires (!use_max_errors)
-    //!\endcond
     {
         column_type column{};
         column.vp = std::move(vp);
@@ -216,9 +214,7 @@ protected:
      * \param max_rows \copydoc max_errors_state::max_rows
      */
     void add_column(std::vector<word_type> vp, std::vector<word_type> vn, size_t const max_rows)
-    //!\cond
         requires use_max_errors
-    //!\endcond
     {
         column_type column{};
         column.vp = std::move(vp);

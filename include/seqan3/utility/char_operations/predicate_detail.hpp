@@ -186,9 +186,7 @@ struct char_predicate_base
     //!\brief Invokes the condition on `val`.
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
-    //!\cond
         requires (sizeof(value_t) == 1)
-    //!\endcond
     {
         return derived_t::data[static_cast<unsigned char>(val)];
     }
@@ -196,9 +194,7 @@ struct char_predicate_base
     //!\overload
     template <std::integral value_t>
     constexpr bool operator()(value_t const val) const noexcept
-    //!\cond
         requires (sizeof(value_t) != 1)
-    //!\endcond
     {
         using char_trait = std::char_traits<value_t>;
         return (static_cast<std::make_unsigned_t<value_t>>(val) < 256) ? operator()(static_cast<uint8_t>(val)) :
@@ -228,9 +224,7 @@ struct char_predicate_base
  * \ingroup utility_char_operations
  */
 template <char_predicate... condition_ts>
-//!\cond
     requires (sizeof...(condition_ts) >= 2)
-//!\endcond
 struct char_predicate_disjunction : public char_predicate_base<char_predicate_disjunction<condition_ts...>>
 {
     //!\brief The message representing the disjunction of the associated conditions.
@@ -279,9 +273,7 @@ struct char_predicate_negator : public char_predicate_base<char_predicate_negato
  *                       Must be greater than or equal to `interval_first`.
  */
 template <uint8_t interval_first, uint8_t interval_last>
-//!\cond
     requires (interval_first <= interval_last)
-//!\endcond
 struct is_in_interval_type : public char_predicate_base<is_in_interval_type<interval_first, interval_last>>
 {
     //!\brief The message representing this condition.

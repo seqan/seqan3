@@ -192,9 +192,7 @@ struct record : detail::transfer_template_args_onto_t<field_types, std::tuple>
 private:
     //!\brief Auxiliary functions for clear().
     template <typename t>
-    //!\cond
         requires requires (t & v) { v.clear(); }
-    //!\endcond
     static constexpr void clear_element(t & v) noexcept(noexcept(v.clear()))
     {
         v.clear();

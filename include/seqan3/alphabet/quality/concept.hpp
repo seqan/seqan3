@@ -115,9 +115,7 @@ inline constexpr auto to_phred = detail::adl_only::to_phred_cpo{};
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_type>
-//!\cond
     requires requires { { seqan3::to_phred(std::declval<alphabet_type>()) }; }
-//!\endcond
 using alphabet_phred_t = decltype(seqan3::to_phred(std::declval<alphabet_type>()));
 
 } // namespace seqan3

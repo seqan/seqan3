@@ -54,9 +54,7 @@ namespace seqan3::detail
  * only the ranks of the alphabet are used.
  */
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t>
-//!\cond
     requires (std::same_as<alignment_t, align_cfg::method_local> || std::same_as<alignment_t, align_cfg::method_global>)
-//!\endcond
 class simd_matrix_scoring_scheme
 {
 private:
@@ -183,9 +181,7 @@ private:
      *         selected simd vector type.
      */
     template <typename scoring_scheme_t>
-    //!\cond
         requires scoring_scheme_for<scoring_scheme_t, alphabet_t>
-    //!\endcond
     constexpr void initialise_from_scalar_scoring_scheme(scoring_scheme_t const & scoring_scheme)
     {
         using score_t = decltype(std::declval<scoring_scheme_t const &>().score(alphabet_t{}, alphabet_t{}));

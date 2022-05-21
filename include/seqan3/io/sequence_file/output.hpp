@@ -182,9 +182,7 @@ public:
      */
     template <output_stream stream_t,
               sequence_file_output_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    //!\endcond
     sequence_file_output(stream_t                 & stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -199,9 +197,7 @@ public:
     //!\overload
     template <output_stream stream_t,
               sequence_file_output_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    //!\endcond
     sequence_file_output(stream_t                && stream,
                          file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -279,9 +275,7 @@ public:
      */
     template <typename record_t>
     void push_back(record_t && r)
-    //!\cond
         requires detail::record_like<record_t>
-    //!\endcond
     {
         write_record(detail::get_or_ignore<field::seq>(r),
                      detail::get_or_ignore<field::id>(r),
@@ -311,9 +305,7 @@ public:
      */
     template <typename tuple_t>
     void push_back(tuple_t && t)
-    //!\cond
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
-    //!\endcond
     {
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or_ignore<selected_field_ids::index_of(field::seq)>(t),
@@ -373,9 +365,7 @@ public:
      */
     template <std::ranges::input_range rng_t>
     sequence_file_output & operator=(rng_t && range)
-    //!\cond
         requires tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         for (auto && record : range)
             push_back(std::forward<decltype(record)>(record));
@@ -411,9 +401,7 @@ public:
      */
     template <std::ranges::input_range rng_t>
     friend sequence_file_output & operator|(rng_t && range, sequence_file_output & f)
-    //!\cond
         requires tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         f = range;
         return f;
@@ -422,9 +410,7 @@ public:
     //!\overload
     template <std::ranges::input_range rng_t>
     friend sequence_file_output operator|(rng_t && range, sequence_file_output && f)
-    //!\cond
         requires tuple_like<std::ranges::range_reference_t<rng_t>>
-    //!\endcond
     {
         f = range;
         return std::move(f);

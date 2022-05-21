@@ -63,11 +63,9 @@ namespace seqan3::detail
  * during the computation of the vectorised alignment.
  */
 template <simd_concept simd_score_t, semialphabet alphabet_t, typename alignment_t>
-//!\cond
     requires (seqan3::alphabet_size<alphabet_t> > 1) &&
              (std::same_as<alignment_t, align_cfg::method_local> ||
               std::same_as<alignment_t, align_cfg::method_global>)
-//!\endcond
 class simd_match_mismatch_scoring_scheme
 {
 private:
@@ -98,9 +96,7 @@ public:
 
     //!\copydoc seqan3::detail::simd_match_mismatch_scoring_scheme::initialise_from_scalar_scoring_scheme
     template <typename scoring_scheme_t>
-    //!\cond
         requires scoring_scheme_for<scoring_scheme_t, alphabet_t>
-    //!\endcond
     constexpr explicit simd_match_mismatch_scoring_scheme(scoring_scheme_t const & scoring_scheme)
     {
         initialise_from_scalar_scoring_scheme(scoring_scheme);
@@ -108,9 +104,7 @@ public:
 
     //!\copydoc seqan3::detail::simd_match_mismatch_scoring_scheme::initialise_from_scalar_scoring_scheme
     template <typename scoring_scheme_t>
-    //!\cond
         requires scoring_scheme_for<scoring_scheme_t, alphabet_t>
-    //!\endcond
     constexpr simd_match_mismatch_scoring_scheme & operator=(scoring_scheme_t const & scoring_scheme)
     {
         initialise_from_scalar_scoring_scheme(scoring_scheme);
@@ -170,9 +164,7 @@ public:
 
     //!\brief Returns the given simd vector without changing it (no-op).
     template <typename alphabet_ranks_t>
-    //!\cond
         requires std::same_as<std::remove_cvref_t<alphabet_ranks_t>, alphabet_ranks_type>
-    //!\endcond
     constexpr alphabet_ranks_t make_score_profile(alphabet_ranks_t && ranks) const noexcept
     {
         return std::forward<alphabet_ranks_t>(ranks);

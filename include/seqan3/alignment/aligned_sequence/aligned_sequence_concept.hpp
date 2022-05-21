@@ -30,9 +30,7 @@ namespace seqan3::detail
 
 //!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
 template <template <typename ...> typename container_type, typename seq_alph_t, typename ...rest_t>
-//!\cond
     requires container<container_type<gapped<seq_alph_t>, rest_t...>>
-//!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
     -> container_type<seq_alph_t, rest_t...>;
 
@@ -40,9 +38,7 @@ constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, res
 template <template <typename ...> typename container_type,
           template <typename ...> typename allocator_type,
           typename seq_alph_t, typename ...rest_t>
-//!\cond
     requires container<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
-//!\endcond
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
     -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;
 
@@ -53,10 +49,8 @@ struct unaligned_seq
 
 //!\brief Exposes the unaligned sequence type given an aligned sequence container type.
 template <typename t>
-//!\cond
     requires (!requires { typename std::remove_reference_t<t>::unaligned_sequence_type; }) &&
               requires { remove_gap_from_value_type(std::declval<t>()); }
-//!\endcond
 struct unaligned_seq<t>
 {
     //!\brief The unaligned sequence type of t
@@ -66,9 +60,7 @@ struct unaligned_seq<t>
 // customisation point for our gap decorators.
 //!\brief Exposes the unaligned sequence type if *t* exposes the type member `unaligned_sequence_type`.
 template <typename t>
-//!\cond
     requires requires { typename std::remove_reference_t<t>::unaligned_sequence_type; }
-//!\endcond
 struct unaligned_seq<t>
 {
     using type = typename std::remove_reference_t<t>::unaligned_sequence_type; //!< The unaligned sequence type of t
@@ -261,9 +253,7 @@ concept writable_aligned_sequence =
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
-//!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
-//!\endcond
 inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
                                                    typename aligned_seq_t::const_iterator pos_it)
 {
@@ -287,9 +277,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
-//!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
-//!\endcond
 inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
                                                    typename aligned_seq_t::const_iterator pos_it,
                                                    typename aligned_seq_t::size_type size)
@@ -317,9 +305,7 @@ inline typename aligned_seq_t::iterator insert_gap(aligned_seq_t & aligned_seq,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
-//!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
-//!\endcond
 inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
                                                   typename aligned_seq_t::const_iterator pos_it)
 {
@@ -350,9 +336,7 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <sequence_container aligned_seq_t>
-//!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
-//!\endcond
 inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
                                                   typename aligned_seq_t::const_iterator first,
                                                   typename aligned_seq_t::const_iterator last)
@@ -387,11 +371,9 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  *
  */
 template <sequence_container aligned_seq_t, std::ranges::forward_range unaligned_sequence_type>
-//!\cond
     requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>> &&
              weakly_assignable_from<std::ranges::range_reference_t<aligned_seq_t>,
                                     std::ranges::range_reference_t<unaligned_sequence_type>>
-//!\endcond
 inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)
 {
     using std::swap;
@@ -423,13 +405,11 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
-//!\cond
     requires requires (range_type v)
         {
             v.insert_gap(std::ranges::iterator_t<range_type>{});
             v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
         }
-//!\endcond
 std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
                                                std::ranges::iterator_t<range_type> const pos_it,
                                                typename range_type::size_type const size = 1)
@@ -454,9 +434,7 @@ std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
-//!\cond
     requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}); }
-//!\endcond
 std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
                                               std::ranges::iterator_t<range_type> const pos_it)
 {
@@ -482,9 +460,7 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
-//!\cond
     requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{}); }
-//!\endcond
 std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
                                               std::ranges::iterator_t<range_type> const first,
                                               std::ranges::iterator_t<range_type> const last)

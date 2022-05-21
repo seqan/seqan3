@@ -77,11 +77,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename other_qual_type>
-    //!\cond
         requires (!std::same_as<phred_base, other_qual_type>) &&
                  (!std::same_as<derived_type, other_qual_type>) &&
                  quality_alphabet<other_qual_type>
-    //!\endcond
     explicit constexpr phred_base(other_qual_type const & other) noexcept
     {
         assign_phred_to(seqan3::to_phred(other), static_cast<derived_type &>(*this));

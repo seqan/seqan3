@@ -162,9 +162,7 @@ public:
      * Throws std::invalid_argument if reader count or writer count is less than 1.
      */
     template <typename concurrent_t>
-    //!\cond
         requires requires { std::declval<concurrent_t>().close(); }  // requires closable concurrent data structure.
-    //!\endcond
     reader_writer_manager(reader_count const rcount, writer_count const wcount, concurrent_t & ds) :
         reader_latch{static_cast<ptrdiff_t>(rcount.get())},
         writer_latch{static_cast<ptrdiff_t>(wcount.get())},

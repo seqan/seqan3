@@ -105,12 +105,10 @@ inline constexpr auto all_elements_model_totally_ordered(seqan3::type_list<eleme
  * \ingroup utility_tuple
  */
 template <typename tuple_t>
-//!\cond
     requires requires()
     {
         { detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}) };
     }
-//!\endcond
 static constexpr bool all_elements_model_totally_ordered_v =
     decltype(detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}))::value;
 } // namespace seqan3::detail

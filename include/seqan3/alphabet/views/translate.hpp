@@ -34,19 +34,15 @@ namespace seqan3::detail
 {
 
 template <std::ranges::view urng_t>
-//!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 class view_translate;
 
 template <std::ranges::view urng_t>
-//!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 class view_translate_single;
 
 } // namespace seqan3::detail
@@ -155,11 +151,9 @@ struct translate_fn
  * \ingroup alphabet_views
  */
 template <std::ranges::view urng_t>
-//!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 class view_translate_single : public std::ranges::view_base
 {
 private:
@@ -228,11 +222,9 @@ public:
      * Throws if multiple frames are given as _tf input argument.
      */
     template <typename rng_t>
-    //!\cond
      requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate_single>) &&
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    //!\endcond
     view_translate_single(rng_t && _urange, translation_frames const _tf = translation_frames::forward_frame0)
      : view_translate_single{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
@@ -541,11 +533,9 @@ namespace seqan3::detail
  * \ingroup alphabet_views
  */
 template <std::ranges::view urng_t>
-//!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 class view_translate : public std::ranges::view_base
 {
 private:
@@ -630,11 +620,9 @@ public:
      * \param[in] _tf The frames that should be used for translation.
      */
     template <typename rng_t>
-    //!\cond
         requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate>) &&
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    //!\endcond
     view_translate(rng_t && _urange, translation_frames const _tf)
      : view_translate{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}
@@ -748,11 +736,9 @@ public:
 
 //!\brief Class template argument deduction for view_translate.
 template <typename urng_t>
-//!\cond
     requires std::ranges::sized_range<urng_t> &&
              std::ranges::random_access_range<urng_t> &&
              nucleotide_alphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 view_translate(urng_t &&, translation_frames const) -> view_translate<std::views::all_t<urng_t>>;
 } // namespace seqan3::detail
 

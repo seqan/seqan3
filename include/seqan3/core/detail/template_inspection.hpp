@@ -57,12 +57,10 @@ struct transfer_template_args_onto
 template <template <typename ...> typename source_template,
           template <typename ...> typename target_template,
           typename ...source_arg_types>
-//!\cond
     requires requires ()
     {
         typename target_template<source_arg_types...>;
     }
-//!\endcond
 struct transfer_template_args_onto<source_template<source_arg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
@@ -106,12 +104,10 @@ struct transfer_template_vargs_onto
 template <template <auto ...> typename source_template,
           template <auto ...> typename target_template,
           auto ... source_varg_types>
-//!\cond
     requires requires ()
     {
         typename target_template<source_varg_types...>;
     }
-//!\endcond
 struct transfer_template_vargs_onto<source_template<source_varg_types...>, target_template>
 {
     //!\brief The return type: the target type specialised by the unpacked types in the list.
@@ -147,10 +143,8 @@ struct is_type_specialisation_of : public std::false_type
 
 //!\overload
 template <typename source_t, template <typename ...> typename target_template>
-//!\cond
     requires (!std::same_as<transformation_trait_or_t<transfer_template_args_onto<source_t, target_template>, void>,
                             void>)
-//!\endcond
 struct is_type_specialisation_of<source_t, target_template> :
         std::is_same<source_t, transfer_template_args_onto_t<source_t, target_template>>
 {};
@@ -183,10 +177,8 @@ struct is_value_specialisation_of : std::false_type
  * \see seqan3::detail::is_value_specialisation_of_v
  */
 template <typename source_t, template <auto ...> typename target_template>
-//!\cond
     requires (!std::same_as<transformation_trait_or_t<transfer_template_vargs_onto<source_t, target_template>, void>,
                             void>)
-//!\endcond
 struct is_value_specialisation_of<source_t, target_template> :
     std::is_same<source_t, transfer_template_vargs_onto_t<source_t, target_template>>
 {};
@@ -216,9 +208,7 @@ struct valid_template_spec_or
 
 //!\overload
 template <typename fallback_t, template <typename ...> typename templ_t, typename ...spec_t>
-//!\cond
     requires requires { typename templ_t<spec_t...>; }
-//!\endcond
 struct valid_template_spec_or<fallback_t, templ_t, spec_t...>
 {
     //!\brief The resulting type.

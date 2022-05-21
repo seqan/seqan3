@@ -102,16 +102,12 @@ namespace std::ranges
 {
 //!\brief range-v3 views are valid std::ranges::views
 template<class T>
-//!\cond
     requires ::std::derived_from<T, ::ranges::view_base>
-//!\endcond
 inline constexpr bool enable_view<T> = true;
 
 //!\brief std::ranges::borrowed_range's are valid range-v3 borrowed_range's
 template<class T>
-//!\cond
     requires ::ranges::enable_borrowed_range<T>
-//!\endcond
 inline constexpr bool enable_borrowed_range<T> = true;
 } // namespace std::ranges
 
