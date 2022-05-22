@@ -368,9 +368,7 @@ public:
      */
     template <input_stream stream_t,
               sequence_file_input_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    //!\endcond
     sequence_file_input(stream_t                 & stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
@@ -387,9 +385,7 @@ public:
     //!\overload
     template <input_stream stream_t,
               sequence_file_input_format file_format>
-    //!\cond
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    //!\endcond
     sequence_file_input(stream_t                && stream,
                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :

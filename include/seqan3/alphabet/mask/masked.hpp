@@ -40,9 +40,7 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <writable_alphabet sequence_alphabet_t>
-//!\cond
     requires std::regular<sequence_alphabet_t>
-//!\endcond
 class masked : public alphabet_tuple_base<masked<sequence_alphabet_t>, sequence_alphabet_t, mask>
 {
 private:

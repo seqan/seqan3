@@ -27,9 +27,7 @@ namespace std
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <ranges::input_range urng_t>
-//!\cond
     requires seqan3::semialphabet<std::ranges::range_reference_t<urng_t>>
-//!\endcond
 struct hash<urng_t>
 {
     /*!\brief Compute the hash for a range of characters.
@@ -41,9 +39,7 @@ struct hash<urng_t>
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <ranges::input_range urng2_t>
-    //!\cond
         requires seqan3::semialphabet<std::ranges::range_reference_t<urng2_t>>
-    //!\endcond
     size_t operator()(urng2_t && range) const noexcept
     {
         using alphabet_t = std::ranges::range_reference_t<urng_t>;

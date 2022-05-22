@@ -192,9 +192,7 @@ public:
      * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      */
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
         requires (!traits_t::is_vectorised) && std::invocable<callback_t, alignment_result_t>
-    //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         using std::get;
@@ -205,9 +203,7 @@ public:
 
     //!\overload
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
         requires traits_t::is_vectorised && std::invocable<callback_t, alignment_result_t>
-    //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         assert(cfg_ptr != nullptr);
@@ -394,9 +390,7 @@ private:
      */
     template <typename sequence1_t, typename sequence2_t>
     void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2)
-    //!\cond
         requires (!traits_t::is_banded)
-    //!\endcond
     {
         // ----------------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
@@ -425,9 +419,7 @@ private:
     //!\overload
     template <typename sequence1_t, typename sequence2_t>
     void compute_matrix(sequence1_t & sequence1, sequence2_t & sequence2, align_cfg::band_fixed_size const & band)
-    //!\cond
-        requires traits_t::is_banded
-    //!\endcond
+        requires (traits_t::is_banded)
     {
         // ----------------------------------------------------------------------------
         // Initialisation phase: allocate memory and initialise first column.
@@ -605,9 +597,7 @@ private:
      * Finally, the callback is invoked with the computed alignment result.
      */
     template <typename index_t, typename sequence1_t, typename sequence2_t, typename callback_t>
-    //!\cond
         requires (!traits_t::is_vectorised)
-    //!\endcond
     constexpr void make_alignment_result([[maybe_unused]] index_t const idx,
                                          [[maybe_unused]] sequence1_t & sequence1,
                                          [[maybe_unused]] sequence2_t & sequence2,
@@ -699,9 +689,7 @@ private:
      * Finally, the callback is invoked with each computed alignment result iteratively.
      */
     template <typename indexed_sequence_pair_range_t, typename callback_t>
-    //!\cond
         requires traits_t::is_vectorised
-    //!\endcond
     constexpr auto make_alignment_result(indexed_sequence_pair_range_t && index_sequence_pairs,
                                          callback_t & callback)
     {

@@ -170,9 +170,7 @@ inline constexpr auto to_rank = detail::adl_only::to_rank_cpo{};
  * \stableapi{Since version 3.1.}
  */
 template <typename semi_alphabet_type>
-//!\cond
     requires requires { { seqan3::to_rank(std::declval<semi_alphabet_type>()) }; }
-//!\endcond
 using alphabet_rank_t = decltype(seqan3::to_rank(std::declval<semi_alphabet_type>()));
 
 } // namespace seqan3
@@ -420,9 +418,7 @@ inline constexpr auto to_char = detail::adl_only::to_char_cpo{};
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_type>
-//!\cond
     requires requires (alphabet_type const a) { { seqan3::to_char(a) }; }
-//!\endcond
 using alphabet_char_t = decltype(seqan3::to_char(std::declval<alphabet_type const>()));
 
 } // namespace seqan3
@@ -712,9 +708,7 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename alph_t>
-//!\cond
     requires requires { { to_char(std::declval<alph_t>()) }; } // to_char() is required by some defs
-//!\endcond
 inline constexpr auto char_is_valid_for = detail::adl_only::char_is_valid_for_cpo<alph_t>{};
 //!\}
 } // namespace seqan3
@@ -733,13 +727,11 @@ struct assign_char_strictly_to_fn
     //!\brief Operator overload for rvalues.
     template <typename alphabet_t>
     constexpr decltype(auto) operator()(seqan3::alphabet_char_t<alphabet_t> const chr, alphabet_t && alphabet) const
-    //!\cond
         requires requires ()
         {
             {seqan3::assign_char_to(chr, std::forward<alphabet_t>(alphabet))} -> std::convertible_to<alphabet_t>;
             {seqan3::char_is_valid_for<alphabet_t>(chr)} -> std::same_as<bool>;
         }
-    //!\endcond
     {
         if (!seqan3::char_is_valid_for<alphabet_t>(chr))
             throw seqan3::invalid_char_assignment{detail::type_name_as_string<alphabet_t>, chr};
@@ -897,9 +889,7 @@ namespace seqan3
  *            and Implementation 3 are stable and will not change.}
  */
 template <typename alph_t>
-//!\cond
     requires requires { { detail::adl_only::alphabet_size_cpo<alph_t>{}() }; }
-//!\endcond
 inline constexpr auto alphabet_size = detail::adl_only::alphabet_size_cpo<alph_t>{}();
 
 // ============================================================================

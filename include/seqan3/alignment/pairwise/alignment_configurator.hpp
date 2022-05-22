@@ -262,9 +262,7 @@ public:
      * const-iterable), they are not modified within the alignment algorithm.
      */
     template <align_pairwise_range_input sequences_t, typename config_t>
-    //!\cond
         requires is_type_specialisation_of_v<config_t, configuration>
-    //!\endcond
     static constexpr auto configure(config_t const & cfg)
     {
         auto config_with_output = maybe_default_output(cfg);

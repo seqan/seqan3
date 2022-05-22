@@ -54,9 +54,7 @@ struct function_traits<std::function<return_t(args_t...)>>
      * \tparam index The position of the argument to get the type for; must be smaller than `argument_count`.
      */
     template <size_t index>
-    //!\cond
         requires (index < argument_count)
-    //!\endcond
     using argument_type_at = pack_traits::at<index, args_t...>;
 };
 

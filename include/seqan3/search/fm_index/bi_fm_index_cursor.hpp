@@ -144,10 +144,8 @@ private:
 
     //!\brief Optimized bidirectional search without alphabet mapping
     template <typename csa_t>
-    //!\cond
         requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
                   std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
-    //!\endcond
     bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
                               size_type & l_fwd, size_type & r_fwd,
                               size_type & l_bwd, size_type & r_bwd) const noexcept
@@ -202,10 +200,8 @@ private:
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
     template <typename csa_t>
-    //!\cond
         requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
                   std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
-    //!\endcond
     bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
                                     size_type const l_parent, size_type const r_parent,
                                     size_type & l_fwd, size_type & r_fwd,
@@ -419,9 +415,7 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-    //!\cond
         requires std::convertible_to<char_t, index_alphabet_type>
-    //!\endcond
     bool extend_right(char_t const c) noexcept
     {
     #ifndef NDEBUG
@@ -452,9 +446,7 @@ public:
 
     //!\overload
     template <typename char_type>
-    //!\cond
         requires seqan3::detail::is_char_adaptation_v<char_type>
-    //!\endcond
     bool extend_right(char_type const * cstring) noexcept
     {
         return extend_right(std::basic_string_view<char_type>{cstring});
@@ -474,9 +466,7 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-    //!\cond
         requires std::convertible_to<char_t, index_alphabet_type>
-    //!\endcond
     bool extend_left(char_t const c) noexcept
     {
     #ifndef NDEBUG
@@ -507,9 +497,7 @@ public:
 
     //!\overload
     template <typename char_type>
-    //!\cond
         requires seqan3::detail::is_char_adaptation_v<char_type>
-    //!\endcond
     bool extend_left(char_type const * cstring) noexcept
     {
         return extend_left(std::basic_string_view<char_type>{cstring});
@@ -864,9 +852,7 @@ public:
      */
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text must model input_range.");
         static_assert(range_dimension_v<text_t> == 1, "The input cannot be a text collection.");
@@ -881,9 +867,7 @@ public:
     //!\overload
     template <std::ranges::range text_t>
     auto path_label(text_t && text) const noexcept
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         static_assert(std::ranges::input_range<text_t>, "The text collection must model input_range.");
         static_assert(range_dimension_v<text_t> == 2, "The input must be a text collection.");
@@ -939,9 +923,7 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     locate_result_type locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -956,9 +938,7 @@ public:
 
     //!\overload
     std::vector<std::pair<size_type, size_type>> locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -987,9 +967,7 @@ public:
      * Strong exception guarantee (no data is modified in case an exception is thrown).
      */
     auto lazy_locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::single)
-    //!\endcond
     {
         assert(index != nullptr);
 
@@ -1002,9 +980,7 @@ public:
 
     //!\overload
     auto lazy_locate() const
-    //!\cond
         requires (index_t::text_layout_mode == text_layout::collection)
-    //!\endcond
     {
         assert(index != nullptr);
 

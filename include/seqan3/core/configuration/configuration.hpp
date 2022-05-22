@@ -69,10 +69,8 @@ public:
      * \param[in] config_element The configuration element to construct the configuration from.
      */
     template <typename config_element_t>
-    //!\cond
         requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>) &&
                  detail::config_element<std::remove_cvref_t<config_element_t>>
-    //!\endcond
     constexpr configuration(config_element_t && config_element) :
         base_type{std::forward<config_element_t>(config_element)}
     {}
@@ -179,9 +177,7 @@ public:
      * configuration will not be modified.
      */
     template <typename other_configuration_t>
-    //!\cond
         requires (is_config_element_combineable_v<configs_t, std::remove_cvref_t<other_configuration_t>> && ...)
-    //!\endcond
     constexpr auto append(other_configuration_t && other_config) const
     {
         if constexpr (detail::config_element<std::remove_cvref_t<other_configuration_t>>)
@@ -226,9 +222,7 @@ public:
      */
     template <typename query_t>
     [[nodiscard]] constexpr auto remove() const
-    //!\cond
         requires (exists<query_t>())
-    //!\endcond
     {
         constexpr int index = pack_traits::find<query_t, configs_t...>;
         return remove_at<index>();
@@ -237,9 +231,7 @@ public:
     //!\overload
     template <template <typename ...> typename query_t>
     [[nodiscard]] constexpr auto remove() const
-    //!\cond
         requires (exists<query_t>())
-    //!\endcond
     {
         constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
                                                    configs_t...>;
@@ -373,9 +365,7 @@ configuration(config_t) -> configuration<config_t>;
  * seqan3::configuration object. Neither `lhs` nor `rhs` will be modified.
  */
 template <typename lhs_config_t, typename rhs_config_t>
-//!\cond
     requires (is_config_element_combineable_v<std::remove_cvref_t<lhs_config_t>, std::remove_cvref_t<rhs_config_t>>)
-//!\endcond
 constexpr auto operator|(lhs_config_t && lhs, rhs_config_t && rhs)
 {
     if constexpr (detail::config_element<std::remove_cvref_t<lhs_config_t>>)

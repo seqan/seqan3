@@ -90,9 +90,7 @@ namespace seqan3
  */
 template <typename char_t, std::ranges::input_range rng_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng_t && r)
-//!\cond
     requires detail::debug_stream_range_guard<rng_t>
-//!\endcond
 {
     static_assert(detail::reference_type_is_streamable_v<rng_t, char_t>,
                   "The reference type of the passed range cannot be streamed into the debug_stream.");
@@ -134,10 +132,8 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, rng
  */
 template <typename char_t, sequence sequence_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, sequence_t && sequence)
-//!\cond
     requires detail::debug_stream_range_guard<sequence_t> &&
              (!detail::is_uint_adaptation_v<std::remove_cvref_t<std::ranges::range_reference_t<sequence_t>>>)
-//!\endcond
 {
     for (auto && chr : sequence)
         s << chr;

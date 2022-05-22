@@ -40,9 +40,7 @@ namespace seqan3::search_cfg::detail
  *       public use.
  */
 template <typename search_result_t>
-//!\cond
     requires seqan3::detail::is_type_specialisation_of_v<search_result_t, search_result>
-//!\endcond
 class result_type : private pipeable_config_element
 {
 public:

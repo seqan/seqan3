@@ -115,9 +115,7 @@ concept affine_score_and_trace_cell = tuple_like<t> &&
  * value.
  */
 template <typename tuple_t>
-//!\cond
     requires (affine_score_cell<tuple_t> || affine_score_and_trace_cell<tuple_t>)
-//!\endcond
 class affine_cell_proxy : public tuple_t
 {
 private:
@@ -144,36 +142,28 @@ public:
 
     //!\brief Converting constructor. Initialises from another tuple type.
     template <typename other_tuple_t>
-    //!\cond
         requires std::constructible_from<tuple_t, other_tuple_t &&>
-    //!\endcond
     explicit affine_cell_proxy(other_tuple_t && other) :
         tuple_t{std::forward<other_tuple_t>(other)}
     {}
 
     //!\brief Converting copy-constructor.
     template <typename other_tuple_t>
-    //!\cond
         requires std::constructible_from<tuple_t, other_tuple_t const &>
-    //!\endcond
     explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> const & other) :
         tuple_t{static_cast<other_tuple_t const &>(other)}
     {}
 
     //!\brief Converting move-constructor.
     template <typename other_tuple_t>
-    //!\cond
         requires std::constructible_from<tuple_t, other_tuple_t>
-    //!\endcond
     explicit affine_cell_proxy(affine_cell_proxy<other_tuple_t> && other) :
         tuple_t{static_cast<other_tuple_t &&>(std::move(other))}
     {}
 
     //!\brief Converting assignment. Initialises from another tuple type.
     template <typename other_tuple_t>
-    //!\cond
         requires std::assignable_from<tuple_t &, other_tuple_t &&>
-    //!\endcond
     affine_cell_proxy & operator=(other_tuple_t && other)
     {
         as_base() = std::forward<other_tuple_t>(other);
@@ -182,9 +172,7 @@ public:
 
     //!\brief Converting copy-assignment.
     template <typename other_tuple_t>
-    //!\cond
         requires std::assignable_from<tuple_t &, other_tuple_t const &>
-    //!\endcond
     affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> const & other)
     {
         as_base() = static_cast<other_tuple_t const &>(other);
@@ -193,9 +181,7 @@ public:
 
     //!\brief Converting move-assignment.
     template <typename other_tuple_t>
-    //!\cond
         requires std::assignable_from<tuple_t &, other_tuple_t>
-    //!\endcond
     affine_cell_proxy & operator=(affine_cell_proxy<other_tuple_t> && other)
     {
         as_base() = static_cast<other_tuple_t &&>(std::move(other));
@@ -241,99 +227,75 @@ public:
      */
     //!\brief Access the optimal score of the wrapped score matrix cell.
     decltype(auto) best_trace() & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<0>(*this);
     }
     //!\overload
     decltype(auto) best_trace() const & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<0>(*this);
     }
     //!\overload
     decltype(auto) best_trace() && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<0>(std::move(*this));
     }
     //!\overload
     decltype(auto) best_trace() const && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<0>(std::move(*this));
     }
 
     //!\brief Access the horizontal score of the wrapped score matrix cell.
     decltype(auto) horizontal_trace() & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<1>(*this);
     }
     //!\overload
     decltype(auto) horizontal_trace() const & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<1>(*this);
     }
     //!\overload
     decltype(auto) horizontal_trace() && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<1>(std::move(*this));
     }
     //!\overload
     decltype(auto) horizontal_trace() const && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<1>(std::move(*this));
     }
 
     //!\brief Access the vertical score of the wrapped score matrix cell.
     decltype(auto) vertical_trace() & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<2>(*this);
     }
     //!\overload
     decltype(auto) vertical_trace() const & noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<2>(*this);
     }
     //!\overload
     decltype(auto) vertical_trace() && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<2>(std::move(*this));
     }
     //!\overload
     decltype(auto) vertical_trace() const && noexcept
-    //!\cond
         requires affine_score_and_trace_cell<tuple_t>
-    //!\endcond
     {
         return get_trace_impl<2>(std::move(*this));
     }
@@ -349,9 +311,7 @@ private:
      * \returns The score value from the given tuple index.
      */
     template <size_t index, typename this_t>
-    //!\cond
         requires (index < 3)
-    //!\endcond
     static constexpr decltype(auto) get_score_impl(this_t && me) noexcept
     {
         using std::get;
@@ -371,9 +331,7 @@ private:
      * \returns The trace value from the given tuple index.
      */
     template <size_t index, typename this_t>
-    //!\cond
         requires (index < 3 && affine_score_and_trace_cell<tuple_t>)
-    //!\endcond
     static constexpr decltype(auto) get_trace_impl(this_t && me) noexcept
     {
         using std::get;

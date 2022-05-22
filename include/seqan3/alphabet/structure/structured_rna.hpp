@@ -48,9 +48,7 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <nucleotide_alphabet sequence_alphabet_t, rna_structure_alphabet structure_alphabet_t>
-//!\cond
     requires writable_alphabet<sequence_alphabet_t> && writable_alphabet<structure_alphabet_t>
-//!\endcond
 class structured_rna :
     public alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
                                  sequence_alphabet_t, structure_alphabet_t>

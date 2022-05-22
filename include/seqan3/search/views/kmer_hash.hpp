@@ -81,11 +81,9 @@ public:
      *         `uint64_t`, i.e. \f$s>\frac{64}{\log_2\sigma}\f$ with shape size \f$s\f$ and alphabet size \f$\sigma\f$.
      */
     template <typename rng_t>
-    //!\cond
      requires (!std::same_as<std::remove_cvref_t<rng_t>, kmer_hash_view>) &&
               std::ranges::viewable_range<rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    //!\endcond
     kmer_hash_view(rng_t && urange_, shape const & s_) :
         urange{std::views::all(std::forward<rng_t>(urange_))}, shape_{s_}
     {
@@ -120,9 +118,7 @@ public:
 
     //!\copydoc begin()
     auto begin() const noexcept
-    //!\cond
         requires const_iterable_range<urng_t>
-    //!\endcond
     {
         return basic_iterator<true>{std::ranges::cbegin(urange), std::ranges::cend(urange), shape_};
     }
@@ -153,9 +149,7 @@ public:
 
     //!\copydoc end()
     auto end() const noexcept
-    //!\cond
         requires const_iterable_range<urng_t>
-    //!\endcond
     {
         // Assigning the end iterator to the text_right iterator of the basic_iterator only works for common ranges.
         if constexpr (std::ranges::common_range<urng_t const>)
@@ -169,9 +163,7 @@ public:
      * \returns Size of range.
      */
     auto size()
-    //!\cond
         requires std::ranges::sized_range<urng_t>
-     //!\endcond
     {
         using size_type = std::ranges::range_size_t<urng_t>;
         return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
@@ -179,9 +171,7 @@ public:
 
     //!\copydoc size()
     auto size() const
-    //!\cond
         requires std::ranges::sized_range<urng_t const>
-    //!\endcond
     {
         using size_type = std::ranges::range_size_t<urng_t const>;
         return std::max<size_type>(std::ranges::size(urange) + 1, shape_.size()) - shape_.size();
@@ -259,9 +249,7 @@ public:
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
-    //!\cond
         requires const_range
-    //!\endcond
         : hash_value{std::move(it.hash_value)},
           roll_factor{std::move(it.roll_factor)},
           shape_{std::move(it.shape_)},
@@ -428,9 +416,7 @@ public:
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     basic_iterator & operator--() noexcept
-    //!\cond
         requires std::bidirectional_iterator<it_t>
-    //!\endcond
     {
         hash_backward();
         return *this;
@@ -440,9 +426,7 @@ public:
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     basic_iterator operator--(int) noexcept
-    //!\cond
         requires std::bidirectional_iterator<it_t>
-    //!\endcond
     {
         basic_iterator tmp{*this};
         hash_backward();
@@ -453,9 +437,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     basic_iterator & operator+=(difference_type const skip) noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         hash_forward(skip);
         return *this;
@@ -465,9 +447,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     basic_iterator operator+(difference_type const skip) const noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         basic_iterator tmp{*this};
         return tmp += skip;
@@ -477,9 +457,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     friend basic_iterator operator+(difference_type const skip, basic_iterator const & it) noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         return it + skip;
     }
@@ -488,9 +466,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     basic_iterator & operator-=(difference_type const skip) noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         hash_backward(skip);
         return *this;
@@ -501,9 +477,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     basic_iterator operator-(difference_type const skip) const noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         basic_iterator tmp{*this};
         return tmp -= skip;
@@ -513,9 +487,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     friend basic_iterator operator-(difference_type const skip, basic_iterator const & it) noexcept
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         return it - skip;
     }
@@ -525,9 +497,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     friend difference_type operator-(basic_iterator const & lhs, basic_iterator const & rhs) noexcept
-    //!\cond
         requires std::sized_sentinel_for<it_t, it_t>
-    //!\endcond
     {
         return static_cast<difference_type>(lhs.text_right - rhs.text_right);
     }
@@ -536,9 +506,7 @@ public:
      * \attention This function is only available if sentinel_t and it_t model std::sized_sentinel_for.
      */
     friend difference_type operator-(sentinel_t const & lhs, basic_iterator const & rhs) noexcept
-    //!\cond
         requires std::sized_sentinel_for<sentinel_t, it_t>
-    //!\endcond
     {
         return static_cast<difference_type>(lhs - rhs.text_right);
     }
@@ -547,9 +515,7 @@ public:
      * \attention This function is only available if it_t and sentinel_t model std::sized_sentinel_for.
      */
     friend difference_type operator-(basic_iterator const & lhs, sentinel_t const & rhs) noexcept
-    //!\cond
         requires std::sized_sentinel_for<it_t, sentinel_t>
-    //!\endcond
     {
         return static_cast<difference_type>(lhs.text_right - rhs);
     }
@@ -558,9 +524,7 @@ public:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     reference operator[](difference_type const n) const
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         return *(*this + n);
     }
@@ -612,9 +576,7 @@ private:
      * \attention This function is only available if `it_t` models std::random_access_iterator.
      */
     void hash_forward(difference_type const skip)
-    //!\cond
         requires std::random_access_iterator<it_t>
-    //!\endcond
     {
         std::ranges::advance(text_left, skip);
         hash_full();
@@ -624,9 +586,7 @@ private:
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     void hash_backward()
-    //!\cond
         requires std::bidirectional_iterator<it_t>
-    //!\endcond
     {
         if (shape_.all())
         {
@@ -679,9 +639,7 @@ private:
      * \attention This function is only available if `it_t` models std::bidirectional_iterator.
      */
     void hash_roll_backward()
-        //!\cond
         requires std::bidirectional_iterator<it_t>
-        //!\endcond
     {
         std::ranges::advance(text_left,  -1);
         std::ranges::advance(text_right, -1);
@@ -774,7 +732,7 @@ namespace seqan3::views
  *
  * See the \link views views submodule documentation \endlink for detailed descriptions of the view properties.
  *
- * \attention The Shape is defined from right to left! The mask 0b11111101 applied to "AGAAAATA" is 
+ * \attention The Shape is defined from right to left! The mask 0b11111101 applied to "AGAAAATA" is
  * interpreted as "A.AAAATA" (and not "AGAAAA.A") and will return the hash value for "AAAAATA".
  *
  * ### Example

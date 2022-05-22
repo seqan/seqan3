@@ -60,9 +60,7 @@ protected:
      * Initialises the maximal errors for the respective edit operations from the given configuration.
      */
     template <typename configuration_t>
-    //!\cond
         requires is_type_specialisation_of_v<configuration_t, seqan3::configuration>
-    //!\endcond
     explicit policy_max_error(configuration_t const & config)
     {
         using search_traits_t = search_traits<configuration_t>;

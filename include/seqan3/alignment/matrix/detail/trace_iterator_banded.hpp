@@ -74,9 +74,7 @@ public:
      * Allows the conversion of non-const to const iterator.
      */
     template <two_dimensional_matrix_iterator other_matrix_iter_t>
-    //!\cond
         requires std::constructible_from<matrix_iter_t, other_matrix_iter_t>
-    //!\endcond
     constexpr trace_iterator_banded(trace_iterator_banded<other_matrix_iter_t> const other) noexcept : base_t{other}
     {}
     //!\}

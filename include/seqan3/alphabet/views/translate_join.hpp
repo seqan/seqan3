@@ -130,11 +130,9 @@ public:
      * \param[in] _tf The frames that should be used for translation.
      */
     template <typename rng_t>
-    //!\cond
         requires (!std::same_as<std::remove_cvref_t<rng_t>, view_translate_join>) &&
                  std::ranges::viewable_range<rng_t> &&
                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
-    //!\endcond
     view_translate_join(rng_t && _urange, translation_frames const _tf = translation_frames::six_frames)
      : view_translate_join{std::views::all(std::forward<rng_t>(_urange)), _tf}
     {}

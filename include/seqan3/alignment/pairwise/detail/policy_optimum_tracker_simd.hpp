@@ -61,14 +61,12 @@ struct max_score_updater_simd_global
      * will be set for the optimal score.
      */
     template <typename score_t, typename coordinate_t>
-    //!\cond
         requires (std::assignable_from<score_t &, score_t const &> &&
                   requires (coordinate_t coordinate)
                   {
                       requires simd_concept<decltype(coordinate.col)>;
                       requires simd_concept<decltype(coordinate.row)>;
                   })
-    //!\endcond
     void operator()(score_t & optimal_score,
                     coordinate_t const & optimal_coordinate,
                     score_t current_score,
@@ -85,14 +83,12 @@ struct max_score_updater_simd_global
  * \copydetails seqan3::detail::policy_optimum_tracker
  */
 template <typename alignment_configuration_t, std::semiregular optimum_updater_t>
-//!\cond
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration> &&
              std::invocable<optimum_updater_t,
                             typename alignment_configuration_traits<alignment_configuration_t>::score_type &,
                             typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type &,
                             typename alignment_configuration_traits<alignment_configuration_t>::score_type,
                             typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type>
-//!\endcond
 class policy_optimum_tracker_simd :
     protected policy_optimum_tracker<alignment_configuration_t, optimum_updater_t>
 {

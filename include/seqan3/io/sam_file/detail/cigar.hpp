@@ -84,10 +84,8 @@ template <typename reference_char_type, typename query_char_type>
 [[nodiscard]] constexpr cigar::operation map_aligned_values_to_cigar_op(reference_char_type const reference_char,
                                                                         query_char_type const query_char,
                                                                         bool const extended_cigar)
-//!\cond
     requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
              seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
-//!\endcond
 {
     constexpr std::array<char, 6> operators{'M', 'D', 'I', 'P', 'X', '='};  // contains the possible cigar operators.
     uint8_t key = (static_cast<uint8_t>(reference_char == gap{}) << 1) | static_cast<uint8_t>(query_char == gap{});

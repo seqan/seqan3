@@ -28,9 +28,7 @@ namespace seqan3
  * SEQAN3_DOXYGEN_EXCLUDE_SYMBOLS in `seqan3-doxygen.cmake`.
  */
 template <typename char_t, typename simd_t>
-//!\cond
     requires simd::simd_concept<std::remove_cvref_t<simd_t>>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, simd_t && simd)
 {
     using simd_type = std::remove_cvref_t<simd_t>;

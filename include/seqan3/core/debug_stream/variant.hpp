@@ -34,9 +34,7 @@ namespace seqan3
  * Note that in case the variant is valueless(_by_exception), nothing is printed.
  */
 template <typename char_t, typename variant_type>
-//!\cond
     requires detail::is_type_specialisation_of_v<std::remove_cvref_t<variant_type>, std::variant>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, variant_type && v)
 {
     if (!v.valueless_by_exception())

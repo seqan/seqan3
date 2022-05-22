@@ -75,9 +75,7 @@ namespace seqan3
  * \see core_range
  */
 template <typename t>
-//!\cond
     requires detail::has_range_value_type<t>
-//!\endcond
 struct range_innermost_value
 {
     //!\brief The return type (recursion not shown).
@@ -113,9 +111,7 @@ using range_innermost_value_t = typename range_innermost_value<t>::type;
  * returns.
  */
 template <typename t>
-//!\cond
     requires detail::has_range_value_type<t>
-//!\endcond
 constexpr size_t range_dimension_v = 1;
 
 //!\cond

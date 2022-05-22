@@ -61,9 +61,7 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <writable_semialphabet alphabet_type>
-//!\cond
     requires std::regular<alphabet_type>
-//!\endcond
 class bitpacked_sequence
 {
 private:
@@ -201,11 +199,9 @@ public:
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <typename other_range_t>
-    //!\cond
         requires (!std::same_as<bitpacked_sequence, std::remove_cvref_t<other_range_t>>) &&
                  std::ranges::input_range<other_range_t> &&
                  has_same_value_type_v<other_range_t>
-    //!\endcond
     explicit bitpacked_sequence(other_range_t && range) :
         bitpacked_sequence{std::ranges::begin(range), std::ranges::end(range)}
     {}
@@ -247,10 +243,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     bitpacked_sequence(begin_iterator_type begin_it, end_iterator_type end_it)
-    //!\cond
         requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
                  std::common_reference_with<std::iter_value_t<begin_iterator_type>, value_type>
-    //!\endcond
     {
         insert(cend(), begin_it, end_it);
     }
@@ -308,9 +302,7 @@ public:
      */
     template <std::ranges::input_range other_range_t>
     void assign(other_range_t && range)
-    //!\cond
         requires std::common_reference_with<std::ranges::range_value_t<other_range_t>, value_type>
-    //!\endcond
     {
         bitpacked_sequence rhs{std::forward<other_range_t>(range)};
         swap(rhs);
@@ -355,10 +347,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
-    //!\cond
         requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
                  std::common_reference_with<std::iter_value_t<begin_iterator_type>, value_type>
-    //!\endcond
     {
         bitpacked_sequence rhs{begin_it, end_it};
         swap(rhs);
@@ -829,10 +819,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type begin_it, end_iterator_type end_it)
-    //!\cond
         requires std::sentinel_for<end_iterator_type, begin_iterator_type> &&
                  std::common_reference_with<std::iter_value_t<begin_iterator_type>, value_type>
-    //!\endcond
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
 

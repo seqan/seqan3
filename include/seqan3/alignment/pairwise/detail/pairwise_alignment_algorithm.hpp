@@ -42,9 +42,7 @@ namespace seqan3::detail
  * After the computation a user defined callback function is invoked with the computed seqan3::alignment_result.
  */
 template <typename alignment_configuration_t, typename ...policies_t>
-//!\cond
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
-//!\endcond
 class pairwise_alignment_algorithm : protected policies_t...
 {
 protected:
@@ -125,9 +123,7 @@ public:
      * |space (alignment)       |\f$ O(n*m) \f$    |\f$ O(n*k) \f$     |
      */
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
         requires std::invocable<callback_t, alignment_result_type>
-    //!\endcond
     void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         using std::get;
@@ -152,9 +148,7 @@ public:
 
     //!\overload
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
         requires traits_type::is_vectorised && std::invocable<callback_t, alignment_result_type>
-    //!\endcond
     auto operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         using simd_collection_t = std::vector<score_type, aligned_allocator<score_type, alignof(score_type)>>;
@@ -224,9 +218,7 @@ protected:
     template <typename simd_sequence_t,
               std::ranges::forward_range sequence_collection_t,
               arithmetic padding_symbol_t>
-    //!\cond
         requires std::ranges::output_range<simd_sequence_t, score_type>
-    //!\endcond
     void convert_batch_of_sequences_to_simd_vector(simd_sequence_t & simd_sequence,
                                                    sequence_collection_t & sequences,
                                                    padding_symbol_t const & padding_symbol)
@@ -255,10 +247,8 @@ protected:
               std::ranges::forward_range sequence2_t,
               std::ranges::input_range alignment_matrix_t,
               std::ranges::input_range index_matrix_t>
-    //!\cond
         requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>> &&
                  std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
-    //!\endcond
     void compute_matrix(sequence1_t && sequence1,
                         sequence2_t && sequence2,
                         alignment_matrix_t && alignment_matrix,
@@ -376,9 +366,7 @@ protected:
               std::ranges::input_range cell_index_column_t,
               typename alphabet1_t,
               std::ranges::input_range sequence2_t>
-    //!\cond
         requires semialphabet<alphabet1_t> || simd_concept<alphabet1_t>
-    //!\endcond
     void compute_column(alignment_column_t && alignment_column,
                         cell_index_column_t && cell_index_column,
                         alphabet1_t const & alphabet1,

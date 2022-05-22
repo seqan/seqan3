@@ -78,11 +78,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename other_nucl_type>
-    //!\cond
         requires (!std::same_as<nucleotide_base, other_nucl_type>) &&
                  (!std::same_as<derived_type, other_nucl_type>) &&
                  nucleotide_alphabet<other_nucl_type>
-    //!\endcond
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
         static_cast<derived_type &>(*this) =

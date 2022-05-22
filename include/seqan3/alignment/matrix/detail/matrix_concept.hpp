@@ -93,9 +93,7 @@ concept matrix = requires(std::remove_cvref_t<matrix_t> m)
  * \param[in] rhs       with the right hand side matrix.
  */
 template <matrix matrix1_t, matrix matrix2_t>
-//!\cond
     requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
-//!\endcond
 inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     if (lhs.rows() != rhs.rows())
@@ -119,9 +117,7 @@ inline bool operator==(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
  * \param[in] rhs       with the right hand side matrix.
  */
 template <matrix matrix1_t, matrix matrix2_t>
-//!\cond
     requires std::equality_comparable_with<typename matrix1_t::reference, typename matrix2_t::reference>
-//!\endcond
 inline bool operator!=(matrix1_t const & lhs, matrix2_t const & rhs) noexcept
 {
     return !(lhs == rhs);

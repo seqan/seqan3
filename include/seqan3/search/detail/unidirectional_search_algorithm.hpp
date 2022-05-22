@@ -100,11 +100,9 @@ public:
      * \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
      */
     template <typename indexed_query_t, typename callback_t>
-    //!\cond
         requires (std::tuple_size_v<indexed_query_t> == 2) &&
                  std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>> &&
                  std::invocable<callback_t, search_result_type>
-    //!\endcond
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;

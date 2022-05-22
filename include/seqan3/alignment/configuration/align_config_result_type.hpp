@@ -40,9 +40,7 @@ namespace seqan3::align_cfg::detail
  *       public use.
  */
 template <typename alignment_result_t>
-//!\cond
     requires seqan3::detail::is_type_specialisation_of_v<alignment_result_t, seqan3::alignment_result>
-//!\endcond
 class result_type : private pipeable_config_element
 {
 public:

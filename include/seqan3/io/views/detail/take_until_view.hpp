@@ -113,9 +113,7 @@ public:
      * \param[in] _fun    The functor that acts as termination criterium.
      */
     template <std::ranges::viewable_range rng_t>
-    //!\cond
         requires std::constructible_from<urng_t, std::views::all_t<rng_t>>
-    //!\endcond
     view_take_until(rng_t && _urange, fun_t && _fun)
         : view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::forward<fun_t>(_fun)}
     {}

@@ -23,9 +23,7 @@ namespace std
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_t>
-//!\cond
     requires seqan3::semialphabet<alphabet_t>
-//!\endcond
 struct hash<alphabet_t>
 {
     /*!\brief Compute the hash for a character.

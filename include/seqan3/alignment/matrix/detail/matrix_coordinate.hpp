@@ -27,9 +27,7 @@ namespace seqan3::detail
  * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_index.
  */
 template <typename index_type>
-//!\cond
     requires (std::integral<index_type> || simd_index<index_type>)
-//!\endcond
 struct column_index_type : detail::strong_type<index_type, column_index_type<index_type>>
 {
     //!!\brief Import base class constructor.
@@ -58,9 +56,7 @@ column_index_type(index_type) -> column_index_type<index_type>;
  * \tparam index_type The type of the index to store; must model seqan3::arithmetic or seqan3::simd::simd_index
  */
 template <typename index_type>
-//!\cond
     requires (std::integral<index_type> || simd_index<index_type>)
-//!\endcond
 struct row_index_type : detail::strong_type<index_type, row_index_type<index_type>>
 {
     //!!\brief Import base class constructor.
@@ -89,9 +85,7 @@ row_index_type(index_type) -> row_index_type<index_type>;
  * \tparam index_t The underlying index type; must model seqan3::arithmetic or seqan3::simd::simd_index.
  */
 template <typename index_t>
-//!\cond
     requires (std::integral<index_t> || simd_index<index_t>)
-//!\endcond
 struct matrix_index
 {
     /*!\name Constructors, destructor and assignment
@@ -132,9 +126,7 @@ struct matrix_index
     template <seqan3::arithmetic scalar_index_t>
     constexpr matrix_index(row_index_type<scalar_index_t> const row_idx,
                            column_index_type<scalar_index_t> const col_idx) noexcept
-    //!\cond
         requires simd_index<index_t>
-    //!\endcond
     // Note the explicit type conversion is necessary since the scalar type might be of smaller bit size.
         : row{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(row_idx.get()))},
           col{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(col_idx.get()))}
@@ -144,9 +136,7 @@ struct matrix_index
      * \param[in] other The other matrix_index to construct from.
      */
     template <std::integral other_index_t>
-    //!\cond
         requires (!std::same_as<other_index_t, index_t>)
-    //!\endcond
     explicit constexpr matrix_index(matrix_index<other_index_t> other) noexcept
         : row{static_cast<index_t>(other.row)}, col{static_cast<index_t>(other.col)}
     {}
@@ -172,9 +162,7 @@ matrix_index() -> matrix_index<std::ptrdiff_t>;
 
 //!\brief Deduces the index type from the common type of both index types.
 template <std::integral row_index_t, std::integral col_index_t>
-//!\cond
     requires std::common_with<row_index_t, col_index_t>
-//!\endcond
 matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>) ->
     matrix_index<std::common_type_t<row_index_t, col_index_t>>;
 

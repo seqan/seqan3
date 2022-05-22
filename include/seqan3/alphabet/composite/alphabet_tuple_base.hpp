@@ -112,10 +112,8 @@ decltype(auto) get();
  */
 template <typename derived_type,
           typename ...component_types>
-//!\cond
     requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
              (std::regular<component_types> && ...)
-//!\endcond
 class alphabet_tuple_base :
     public alphabet_base<derived_type,
                          (1 * ... * alphabet_size<component_types>),
@@ -205,10 +203,8 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <typename component_type>
-    //!\cond
         requires (!std::is_base_of_v<alphabet_tuple_base, component_type>) &&
                  is_unique_component<component_type>
-    //!\endcond
     constexpr explicit alphabet_tuple_base(component_type const alph) noexcept : alphabet_tuple_base{}
     {
         get<component_type>(*this) = alph;
@@ -230,11 +226,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_component_type>
-    //!\cond
         requires ((detail::instantiate_if_v<
                     detail::lazy<std::is_convertible, indirect_component_type, component_types>,
                     detail::tuple_general_guard<derived_type, indirect_component_type, component_types...>> || ...))
-    //!\endcond
     constexpr explicit alphabet_tuple_base(indirect_component_type const alph) noexcept : alphabet_tuple_base{}
     {
         using component_predicate = detail::implicitly_convertible_from<indirect_component_type>;
@@ -275,10 +269,8 @@ public:
      * \stableapi{Since version 3.1.}
      */
     template <typename component_type>
-    //!\cond
         requires (!std::derived_from<component_type, alphabet_tuple_base>) &&
                  is_unique_component<component_type>
-    //!\endcond
     constexpr derived_type & operator=(component_type const alph) noexcept
     {
         get<component_type>(*this) = alph;
@@ -297,11 +289,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename indirect_component_type>
-    //!\cond
         requires ((!std::derived_from<indirect_component_type, alphabet_tuple_base>) &&
                   (!is_unique_component<indirect_component_type>) &&
                   (std::assignable_from<component_types, indirect_component_type> || ...))
-    //!\endcond
     constexpr derived_type & operator=(indirect_component_type const alph) noexcept
     {
         using component_predicate = detail::assignable_from<indirect_component_type>;
@@ -379,9 +369,7 @@ public:
      */
     template <typename type>
     friend constexpr auto get(alphabet_tuple_base & l) noexcept
-    //!\cond
         requires is_unique_component<type>
-    //!\endcond
     {
         return get<seqan3::list_traits::find<type, component_list>>(l);
     }
@@ -410,9 +398,7 @@ public:
      */
     template <typename type>
     friend constexpr type get(alphabet_tuple_base const & l) noexcept
-    //!\cond
         requires is_unique_component<type>
-    //!\endcond
     {
         return get<seqan3::list_traits::find<type, component_list>>(l);
     }
@@ -423,9 +409,7 @@ public:
      */
     template <typename type>
     constexpr operator type() const noexcept
-    //!\cond
         requires is_unique_component<type>
-    //!\endcond
     {
         return get<type>(*this);
     }
@@ -670,10 +654,8 @@ private:
  * \noapi
  */
 template <typename derived_type, typename ...component_types>
-//!\cond
     requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
              (std::regular<component_types> && ...)
-//!\endcond
 template <typename alphabet_type, size_t index>
 class alphabet_tuple_base<derived_type, component_types...>::component_proxy : public alphabet_proxy<component_proxy<alphabet_type, index>, alphabet_type>
 {

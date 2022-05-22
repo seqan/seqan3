@@ -49,9 +49,7 @@ namespace seqan3::custom
  * \stableapi{Since version 3.1.}
  */
 template <typename uint_type>
-//!\cond
     requires seqan3::detail::is_uint_adaptation_v<uint_type>
-//!\endcond
 struct alphabet<uint_type>
 {
     /*!\brief Return the number of values the uint type can take (e.g. 256 for `uint8_t`).

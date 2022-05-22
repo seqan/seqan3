@@ -110,9 +110,7 @@ struct maybe_inherited_iterator_category<underling_iterator_t>
  * \tparam it_t The type to operate on.
  */
 template <typename it_t>
-//!\cond
     requires std::input_or_output_iterator<it_t>
-//!\endcond
 using iterator_concept_tag_t =
     std::conditional_t<
         std::contiguous_iterator<it_t>,

@@ -71,9 +71,7 @@ protected:
      * unmodified value.
      */
     template <typename alphabet_t>
-    //!\cond
         requires simd_concept<std::remove_cvref_t<alphabet_t>>
-    //!\endcond
     auto scoring_scheme_profile_column(alphabet_t && alphabet) const noexcept
     {
         return scoring_scheme.make_score_profile(std::forward<alphabet_t>(alphabet));

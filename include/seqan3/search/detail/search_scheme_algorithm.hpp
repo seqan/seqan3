@@ -32,9 +32,7 @@ namespace seqan3::detail
  *                 a seqan3::bi_fm_index_cursor.
  */
 template <typename configuration_t, typename index_t, typename ...policies_t>
-//!\cond
     requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
-//!\endcond
 class search_scheme_algorithm : protected policies_t...
 {
 private:
@@ -95,11 +93,9 @@ public:
      * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
      */
     template <tuple_like indexed_query_t, typename callback_t>
-    //!\cond
         requires (std::tuple_size_v<indexed_query_t> == 2) &&
                  std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>> &&
                  std::invocable<callback_t, search_result_type>
-    //!\endcond
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;
@@ -660,9 +656,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <typename configuration_t, typename index_t, typename ...policies_t>
-//!\cond
     requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
-//!\endcond
 template <bool abort_on_hit, typename query_t, typename delegate_t>
 inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(
     query_t & query,

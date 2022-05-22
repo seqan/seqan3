@@ -194,9 +194,7 @@ protected:
      * \param up       \copydoc trace_matrix_state::up
      */
     void add_column(std::vector<word_type> left, std::vector<word_type> diagonal, std::vector<word_type> up)
-    //!\cond
         requires (!use_max_errors)
-    //!\endcond
     {
         column_type column{};
         column.left = std::move(left);
@@ -214,9 +212,7 @@ protected:
      */
     void add_column(std::vector<word_type> left, std::vector<word_type> diagonal, std::vector<word_type> up,
                     size_t const max_rows)
-    //!\cond
         requires use_max_errors
-    //!\endcond
     {
         column_type column{};
         column.left = std::move(left);

@@ -25,9 +25,7 @@ namespace seqan3::detail
 // forward declaration for friend declaration in alignment_result.
 template <typename configuration_t>
 #if !SEQAN3_WORKAROUND_GCC_93467
-//!\cond
     requires is_type_specialisation_of_v<configuration_t, configuration>
-//!\endcond
 #endif // !SEQAN3_WORKAROUND_GCC_93467
 class policy_alignment_result_builder;
 
@@ -148,9 +146,7 @@ namespace seqan3
  * \endif
  */
 template <typename alignment_result_value_t>
-//!\cond
     requires detail::is_type_specialisation_of_v<alignment_result_value_t, detail::alignment_result_value_type>
-//!\endcond
 class alignment_result
 {
 private:
@@ -178,9 +174,7 @@ private:
     //!\brief Befriend alignment result builder.
     template <typename configuration_t>
     #if !SEQAN3_WORKAROUND_GCC_93467
-    //!\cond
         requires detail::is_type_specialisation_of_v<configuration_t, configuration>
-    //!\endcond
     #endif // !SEQAN3_WORKAROUND_GCC_93467
     friend class detail::policy_alignment_result_builder;
 
@@ -394,9 +388,7 @@ namespace seqan3
  * \relates seqan3::debug_stream_type
  */
 template <typename char_t, typename alignment_result_t>
-//!\cond
     requires detail::is_type_specialisation_of_v<std::remove_cvref_t<alignment_result_t>, alignment_result>
-//!\endcond
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_result_t && result)
 {
     using disabled_t = std::nullopt_t *;

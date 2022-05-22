@@ -158,9 +158,7 @@ public:
      */
     bloom_filter(seqan3::bin_size size,
                  seqan3::hash_function_count funs = seqan3::hash_function_count{2u})
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         size_in_bits = size.get();
         hash_funs = funs.get();
@@ -186,9 +184,7 @@ public:
      * \include test/snippet/utility/bloom_filter/bloom_filter_constructor_compressed.cpp
      */
     bloom_filter(bloom_filter<data_layout::uncompressed> const & bf)
-    //!\cond
         requires (data_layout_mode == data_layout::compressed)
-    //!\endcond
     {
         std::tie(size_in_bits, hash_shift, hash_funs) =
             std::tie(bf.size_in_bits, bf.hash_shift, bf.hash_funs);
@@ -212,9 +208,7 @@ public:
      * \include test/snippet/utility/bloom_filter/bloom_filter_emplace.cpp
      */
     void emplace(size_t const value) noexcept
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         for (size_t i = 0; i < hash_funs; ++i)
         {
@@ -237,9 +231,7 @@ public:
      * \include test/snippet/utility/bloom_filter/bloom_filter_reset.cpp
      */
     void reset() noexcept
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         sdsl::util::_set_zero_bits(data);
     }

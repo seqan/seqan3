@@ -24,9 +24,7 @@ namespace seqan3::detail
 //!\ingroup search
 template <typename search_configuration_t>
 #if !SEQAN3_WORKAROUND_GCC_93467
-//!\cond
     requires is_type_specialisation_of_v<search_configuration_t, configuration>
-//!\endcond
 #endif // !SEQAN3_WORKAROUND_GCC_93467
 struct policy_search_result_builder
 {
@@ -91,10 +89,8 @@ protected:
      * The text positions are sorted and made unique by position before invoking the callback on them.
      */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
-    //!\cond
         requires search_traits_type::output_requires_locate_call &&
                  (!search_traits_type::search_single_best_hit)
-    //!\endcond
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
         std::vector<search_result_type> results{};

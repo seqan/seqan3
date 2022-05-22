@@ -60,9 +60,7 @@ namespace seqan3::detail
  */
 
 template <typename index_t>
-//!\cond
     requires (std::integral<index_t> || simd_index<index_t>)
-//!\endcond
 class coordinate_matrix
 {
 private:
@@ -174,9 +172,7 @@ public:
  * seqan3::detail::matrix_coordinate using the seqan3::detail::convert_to_matrix_coordinate function object.
  */
 template <typename index_t>
-//!\cond
     requires (std::integral<index_t> || simd_index<index_t>)
-//!\endcond
 class coordinate_matrix<index_t>::iterator
 {
 private:

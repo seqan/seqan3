@@ -118,9 +118,7 @@ namespace seqan3
  * \include test/snippet/utility/pow.cpp
  */
 template <typename base_t, std::unsigned_integral exp_t>
-//!\cond
     requires (std::same_as<base_t, uint64_t> || std::same_as<base_t, int64_t>)
-//!\endcond
 base_t pow(base_t base, exp_t exp)
 {
     base_t result{1};

@@ -39,9 +39,7 @@ namespace seqan3::detail
  * be constant.
  */
 template <std::ranges::view urng_t>
-//!\cond
     requires pseudo_random_access_range<urng_t>
-//!\endcond
 class view_enforce_random_access : public std::ranges::view_interface<view_enforce_random_access<urng_t>>
 {
 private:
@@ -68,11 +66,9 @@ public:
 
     //!\brief Construction from the underlying viewable range.
     template <typename viewable_rng_t>
-    //!\cond
      requires (!std::same_as<std::remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
               std::ranges::viewable_range<viewable_rng_t> &&
               std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
-    //!\endcond
     explicit constexpr view_enforce_random_access(viewable_rng_t && range) :
         view_enforce_random_access{std::views::all(std::forward<viewable_rng_t>(range))}
     {}
@@ -89,9 +85,7 @@ public:
 
     //!\copydoc seqan3::detail::view_enforce_random_access::begin
     constexpr auto begin() const noexcept
-    //!\cond
         requires const_iterable_range<urng_t>
-    //!\endcond
     {
         return basic_iterator<decltype(std::ranges::cbegin(urng))>{std::ranges::cbegin(urng)};
     }
@@ -114,9 +108,7 @@ public:
 
     //!\copydoc seqan3::detail::view_enforce_random_access::end
     constexpr auto end() const noexcept
-    //!\cond
         requires const_iterable_range<urng_t>
-    //!\endcond
     {
         if constexpr (std::ranges::common_range<urng_t>)
             return basic_iterator<decltype(std::ranges::cend(urng))>{std::ranges::cend(urng)};
@@ -137,9 +129,7 @@ public:
  * std::random_access_range_tag.
  */
 template <std::ranges::view urng_t>
-//!\cond
     requires pseudo_random_access_range<urng_t>
-//!\endcond
 template <typename underlying_iter_t>
 class view_enforce_random_access<urng_t>::basic_iterator :
     public inherited_iterator_base<basic_iterator<underlying_iter_t>, underlying_iter_t>

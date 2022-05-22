@@ -47,9 +47,7 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <writable_alphabet sequence_alphabet_t = aa27, writable_alphabet structure_alphabet_t = dssp9>
-//!\cond
     requires (!std::is_reference_v<sequence_alphabet_t>) && (!std::is_reference_v<structure_alphabet_t>)
-//!\endcond
 class structured_aa :
     public alphabet_tuple_base<structured_aa<sequence_alphabet_t, structure_alphabet_t>,
                                sequence_alphabet_t, structure_alphabet_t>

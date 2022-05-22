@@ -29,9 +29,7 @@ namespace seqan3
  */
 template <typename char_t, alphabet alphabet_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-//!\cond
     requires (!output_stream_over<std::basic_ostream<char_t>, alphabet_t>)
-//!\endcond
 {
     return s << to_char(l);
 }
@@ -47,9 +45,7 @@ class mask;
  */
 template <typename char_t, seqan3::semialphabet alphabet_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, alphabet_t && l)
-//!\cond
     requires std::same_as<std::remove_cvref_t<alphabet_t>, mask>
-//!\endcond
 {
     return s << (l == alphabet_t{} ? "UNMASKED" : "MASKED");
 }

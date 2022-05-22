@@ -62,9 +62,7 @@ namespace seqan3::views
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_type>
-//!\cond
     requires writable_semialphabet<alphabet_type>
-//!\endcond
 inline auto const rank_to = deep{std::views::transform([] (alphabet_rank_t<alphabet_type> const in) -> alphabet_type
 {
     return assign_rank_to(in, alphabet_type{});

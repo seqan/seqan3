@@ -231,9 +231,7 @@ protected:
      * \returns The score converted to the target simd vector or the unmodified value if in scalar mode.
      */
     template <typename score_t>
-    //!\cond
         requires arithmetic<std::remove_cvref_t<score_t>>
-    //!\endcond
     constexpr auto maybe_convert_to_simd(score_t && score) const noexcept
     {
         if constexpr (simd_concept<score_type>)

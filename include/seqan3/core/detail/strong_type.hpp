@@ -230,18 +230,14 @@ public:
      */
     //!\brief Adds addition operator to the strong type.
     constexpr derived_t operator+(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::add) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() + other.get()};
     }
 
     //!\brief Adds subtraction operator to the strong type.
     constexpr derived_t operator-(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::subtract) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() - other.get()};
     }
@@ -254,27 +250,21 @@ public:
      */
     //!\brief Adds multiplication operator to the strong type.
     constexpr derived_t operator*(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::multiply) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() * other.get()};
     }
 
     //!\brief Adds division operator to the strong type.
     constexpr derived_t operator/(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::divide) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() / other.get()};
     }
 
     //!\brief Adds modulo operator to the strong type.
     constexpr derived_t operator%(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::modulo) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() % other.get()};
     }
@@ -288,36 +278,28 @@ public:
 
     //!\brief Adds bitwise and operator to the strong type.
     constexpr derived_t operator&(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_and) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() & other.get()};
     }
 
     //!\brief Adds bitwise or operator to the strong type.
     constexpr derived_t operator|(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_or) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() | other.get()};
     }
 
     //!\brief Adds bitwise xor operator to the strong type.
     constexpr derived_t operator^(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_xor) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() ^ other.get()};
     }
 
     //!\brief Adds bitwise not operator to the strong type.
     constexpr derived_t operator~()
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_not) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{~get()};
     }
@@ -331,9 +313,7 @@ public:
 
     //!\brief Adds bitwise left shift operator to the strong type.
     constexpr derived_t operator<<(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() << other.get()};
     }
@@ -341,18 +321,14 @@ public:
     //!\brief Adds bitwise left shift operator to the strong type.
     template <std::integral integral_t>
     constexpr derived_t operator<<(integral_t const shift)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_lshift) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() << shift};
     }
 
     //!\brief Adds bitwise right shift operator to the strong type.
     constexpr derived_t operator>>(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() >> other.get()};
     }
@@ -360,9 +336,7 @@ public:
     //!\brief Adds bitwise right shift operator to the strong type.
     template <std::integral integral_t>
     constexpr derived_t operator>>(integral_t const shift)
-        //!\cond
         requires ((skills & strong_type_skill::bitwise_rshift) != strong_type_skill::none)
-        //!\endcond
     {
         return derived_t{get() >> shift};
     }
@@ -376,27 +350,21 @@ public:
 
     //!\brief Adds logical and operator to the strong type.
     constexpr bool operator&&(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::logical_and) != strong_type_skill::none)
-        //!\endcond
     {
         return get() && other.get();
     }
 
     //!\brief Adds logical or operator to the strong type.
     constexpr bool operator||(strong_type const & other)
-        //!\cond
         requires ((skills & strong_type_skill::logical_or) != strong_type_skill::none)
-        //!\endcond
     {
         return get() || other.get();
     }
 
     //!\brief Adds logical not operator to the strong type.
     constexpr bool operator!()
-        //!\cond
         requires ((skills & strong_type_skill::logical_not) != strong_type_skill::none)
-        //!\endcond
     {
         return !get();
     }
@@ -409,9 +377,7 @@ public:
      */
     //!\brief Adds pre-increment operator to the strong type.
     constexpr derived_t & operator++()
-        //!\cond
         requires ((skills & strong_type_skill::increment) != strong_type_skill::none)
-        //!\endcond
     {
         ++get();
         return static_cast<derived_t &>(*this);
@@ -419,9 +385,7 @@ public:
 
     //!\brief Adds post-increment operator to the strong type.
     constexpr derived_t operator++(int)
-        //!\cond
         requires ((skills & strong_type_skill::increment) != strong_type_skill::none)
-        //!\endcond
     {
         derived_t tmp{get()};
         ++get();
@@ -430,9 +394,7 @@ public:
 
     //!\brief Adds pre-decrement operator to the strong type.
     constexpr derived_t & operator--()
-        //!\cond
         requires ((skills & strong_type_skill::decrement) != strong_type_skill::none)
-        //!\endcond
     {
         --get();
         return static_cast<derived_t &>(*this);
@@ -440,9 +402,7 @@ public:
 
     //!\brief Adds post-decrement operator to the strong type.
     constexpr derived_t operator--(int)
-        //!\cond
         requires ((skills & strong_type_skill::decrement) != strong_type_skill::none)
-        //!\endcond
     {
         derived_t tmp{get()};
         --get();
@@ -460,18 +420,14 @@ public:
      */
     //!\brief Return whether this instance is equal to `rhs`.
     constexpr bool operator==(strong_type const & rhs) const
-    //!\cond
         requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
-    //!\endcond
     {
         return get() == rhs.get();
     }
 
     //!\brief Return whether this instance is not equal to `rhs`.
     constexpr bool operator!=(strong_type const & rhs) const
-    //!\cond
         requires ((skills & strong_type_skill::comparable) != strong_type_skill::none)
-    //!\endcond
     {
         return !(*this == rhs);
     }
@@ -484,9 +440,7 @@ public:
 
     //!\brief Adds explicit conversion to it's underlying type.
     explicit constexpr operator value_t() const
-        //!\cond
         requires ((skills & strong_type_skill::convert) != strong_type_skill::none)
-        //!\endcond
     {
         return get();
     }

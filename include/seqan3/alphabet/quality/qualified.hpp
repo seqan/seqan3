@@ -172,9 +172,7 @@ public:
      * \stableapi{Since version 3.1.}
      */
     constexpr qualified complement() const noexcept
-    //!\cond
         requires nucleotide_alphabet<sequence_alphabet_t>
-    //!\endcond
     {
         return qualified{seqan3::complement(get<0>(*this)), get<1>(*this)};
     }

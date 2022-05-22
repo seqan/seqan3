@@ -222,9 +222,7 @@ public:
     interleaved_bloom_filter(seqan3::bin_count bins_,
                              seqan3::bin_size size,
                              seqan3::hash_function_count funs = seqan3::hash_function_count{2u})
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         bins = bins_.get();
         bin_size_ = size.get();
@@ -255,9 +253,7 @@ public:
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_constructor_compressed.cpp
      */
     interleaved_bloom_filter(interleaved_bloom_filter<data_layout::uncompressed> const & ibf)
-    //!\cond
         requires (data_layout_mode == data_layout::compressed)
-    //!\endcond
     {
         std::tie(bins, technical_bins, bin_size_, hash_shift, bin_words, hash_funs) =
             std::tie(ibf.bins, ibf.technical_bins, ibf.bin_size_, ibf.hash_shift, ibf.bin_words, ibf.hash_funs);
@@ -282,9 +278,7 @@ public:
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_emplace.cpp
      */
     void emplace(size_t const value, bin_index const bin) noexcept
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         assert(bin.get() < bins);
         for (size_t i = 0; i < hash_funs; ++i)
@@ -308,9 +302,7 @@ public:
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_clear.cpp
      */
     void clear(bin_index const bin) noexcept
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         assert(bin.get() < bins);
         for (size_t idx = bin.get(), i = 0; i < bin_size_; idx += technical_bins, ++i)
@@ -331,9 +323,7 @@ public:
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_clear.cpp
      */
     template <typename rng_t>
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     void clear(rng_t && bin_range) noexcept
     {
         static_assert(std::ranges::forward_range<rng_t>, "The range of bins to clear must model a forward_range.");
@@ -373,9 +363,7 @@ public:
      * \include test/snippet/search/dream_index/interleaved_bloom_filter_increase_bin_number_to.cpp
      */
     void increase_bin_number_to(bin_count const new_bins_)
-    //!\cond
         requires (data_layout_mode == data_layout::uncompressed)
-    //!\endcond
     {
         size_t new_bins = new_bins_.get();
 
@@ -837,9 +825,7 @@ public:
      * \include test/snippet/search/dream_index/counting_vector.cpp
      */
     template <typename binning_bitvector_t>
-    //!\cond
         requires is_binning_bitvector<binning_bitvector_t>
-    //!\endcond
     counting_vector & operator+=(binning_bitvector_t const & binning_bitvector)
     {
         for_each_set_bin(binning_bitvector, [this](size_t const bin)
@@ -857,9 +843,7 @@ public:
      * \attention The counting_vector must be at least as big as `binning_bitvector`.
      */
     template <typename binning_bitvector_t>
-    //!\cond
         requires is_binning_bitvector<binning_bitvector_t>
-    //!\endcond
     counting_vector & operator-=(binning_bitvector_t const & binning_bitvector)
     {
         for_each_set_bin(binning_bitvector, [this](size_t const bin)

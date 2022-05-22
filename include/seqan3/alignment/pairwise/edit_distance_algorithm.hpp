@@ -88,9 +88,7 @@ public:
      * alignment result.
      */
     template <indexed_sequence_pair_range indexed_sequence_pairs_t, typename callback_t>
-    //!\cond
         requires std::invocable<callback_t, alignment_result_type>
-    //!\endcond
     constexpr void operator()(indexed_sequence_pairs_t && indexed_sequence_pairs, callback_t && callback)
     {
         using std::get;

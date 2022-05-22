@@ -33,9 +33,7 @@ namespace seqan3::detail
  */
 template <typename alignment_configuration_t>
 #if !SEQAN3_WORKAROUND_GCC_93467
-//!\cond
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
-//!\endcond
 #endif // !SEQAN3_WORKAROUND_GCC_93467
 class policy_alignment_result_builder
 {
@@ -94,9 +92,7 @@ protected:
               typename matrix_coordinate_t,
               typename alignment_matrix_t,
               typename callback_t>
-    //!\cond
         requires std::invocable<callback_t, result_type>
-    //!\endcond
     void make_result_and_invoke([[maybe_unused]] sequence_pair_t && sequence_pair,
                                 [[maybe_unused]] index_t && id,
                                 [[maybe_unused]] score_t score,

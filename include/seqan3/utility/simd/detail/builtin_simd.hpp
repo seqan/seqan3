@@ -55,9 +55,7 @@ struct builtin_simd;
 //!\copydoc seqan3::detail::builtin_simd
 //!\ingroup utility_simd
 template <typename scalar_t, size_t length>
-//!\cond
     requires (std::has_single_bit(length))
-//!\endcond
 struct builtin_simd<scalar_t, length>
 {
     //!\brief The type of the builtin simd.

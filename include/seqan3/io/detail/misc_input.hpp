@@ -43,10 +43,8 @@ namespace seqan3::detail
  */
 template <std::ranges::forward_range ref_t, std::ranges::forward_range query_t>
 inline bool starts_with(ref_t && reference, query_t && query)
-//!\cond
     requires std::equality_comparable_with<std::ranges::range_reference_t<ref_t>,
                                            std::ranges::range_reference_t<query_t>>
-//!\endcond
 {
     auto rit  = std::ranges::begin(reference);
     auto rend = std::ranges::end(reference);

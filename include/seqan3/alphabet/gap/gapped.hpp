@@ -38,9 +38,7 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_t>
-//!\cond
     requires writable_alphabet<alphabet_t>
-//!\endcond
 using gapped = alphabet_variant<alphabet_t, gap>;
 
 } // namespace seqan3
