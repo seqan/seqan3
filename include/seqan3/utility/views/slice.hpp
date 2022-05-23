@@ -100,7 +100,7 @@ struct slice_fn
             // urange | drop | take
             return std::views::take(std::views::drop(std::forward<urng_t>(urange), begin_pos), target_size);
         }
-#else // ^^^ workaround / no workaround vvv
+#else /*^^^ workaround / no workaround vvv*/
         // urange | type_reduce | drop | take
         return std::views::take(std::views::drop(seqan3::views::type_reduce(std::forward<urng_t>(urange)),
                                                  begin_pos),
