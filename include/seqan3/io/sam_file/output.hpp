@@ -57,20 +57,19 @@ namespace seqan3
  *
  * \remark For a complete overview, take a look at \ref io_sam_file
  */
-template <detail::fields_specialisation selected_field_ids_ =
-              fields<field::seq,
-                     field::id,
-                     field::offset,
-                     field::ref_id,
-                     field::ref_offset,
-                     field::alignment,
-                     field::cigar,
-                     field::mapq,
-                     field::qual,
-                     field::flag,
-                     field::mate,
-                     field::tags,
-                     field::header_ptr>,
+template <detail::fields_specialisation selected_field_ids_ = fields<field::seq,
+                                                                     field::id,
+                                                                     field::offset,
+                                                                     field::ref_id,
+                                                                     field::ref_offset,
+                                                                     field::alignment,
+                                                                     field::cigar,
+                                                                     field::mapq,
+                                                                     field::qual,
+                                                                     field::flag,
+                                                                     field::mate,
+                                                                     field::tags,
+                                                                     field::header_ptr>,
           detail::type_list_of_sam_file_output_formats valid_formats_ = type_list<format_sam, format_bam>,
           typename ref_ids_type = ref_info_not_given>
 class sam_file_output
@@ -81,38 +80,38 @@ public:
      * \{
      */
     //!\brief A seqan3::fields list with the fields selected for the record.
-    using selected_field_ids    = selected_field_ids_;
+    using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
-    using valid_formats         = valid_formats_;
+    using valid_formats = valid_formats_;
     //!\brief Character type of the stream(s).
-    using stream_char_type      = char;
+    using stream_char_type = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids             = fields<field::seq,
-                                         field::id,
-                                         field::offset,
-                                         field::ref_id,
-                                         field::ref_offset,
-                                         field::alignment,
-                                         field::cigar,
-                                         field::mapq,
-                                         field::flag,
-                                         field::qual,
-                                         field::mate,
-                                         field::tags,
-                                         field::header_ptr>;
+    using field_ids = fields<field::seq,
+                             field::id,
+                             field::offset,
+                             field::ref_id,
+                             field::ref_offset,
+                             field::alignment,
+                             field::cigar,
+                             field::mapq,
+                             field::flag,
+                             field::qual,
+                             field::mate,
+                             field::tags,
+                             field::header_ptr>;
 
-    static_assert([] () constexpr
-                  {
-                      for (field f : selected_field_ids::as_array)
-                          if (!field_ids::contains(f))
-                              return false;
-                      return true;
-                  }(),
-                  "You selected a field that is not valid for alignment files, "
-                  "please refer to the documentation of "
-                  "seqan3::sam_file_output::field_ids for the accepted values.");
+    static_assert(
+        []() constexpr {
+            for (field f : selected_field_ids::as_array)
+                if (!field_ids::contains(f))
+                    return false;
+            return true;
+        }(),
+        "You selected a field that is not valid for alignment files, "
+        "please refer to the documentation of "
+        "seqan3::sam_file_output::field_ids for the accepted values.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -120,21 +119,21 @@ public:
      */
 
     //!\brief The value type (void).
-    using value_type        = void;
+    using value_type = void;
     //!\brief The reference type (void).
-    using reference         = void;
+    using reference = void;
     //!\brief The const reference type (void).
-    using const_reference   = void;
+    using const_reference = void;
     //!\brief The size type (void).
-    using size_type         = void;
+    using size_type = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::ptrdiff_t;
+    using difference_type = std::ptrdiff_t;
     //!\brief The iterator type of this view (an output iterator).
-    using iterator          = detail::out_file_iterator<sam_file_output>;
+    using iterator = detail::out_file_iterator<sam_file_output>;
     //!\brief The const iterator type is void, because files are not const-iterable.
-    using const_iterator    = void;
+    using const_iterator = void;
     //!\brief The type returned by end().
-    using sentinel          = std::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -183,8 +182,8 @@ public:
         primary_stream{new std::ofstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
-        static_cast<std::basic_ofstream<char> *>(primary_stream.get())->open(filename,
-                                                                             std::ios_base::out | std::ios::binary);
+        static_cast<std::basic_ofstream<char> *>(primary_stream.get())
+            ->open(filename, std::ios_base::out | std::ios::binary);
 
         // open stream
         if (!primary_stream->good())
@@ -387,7 +386,7 @@ public:
         requires detail::record_like<record_t>
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
-        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+        using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         write_record(detail::get_or<field::header_ptr>(r, nullptr),
                      detail::get_or<field::seq>(r, std::string_view{}),
@@ -433,7 +432,7 @@ public:
         requires tuple_like<tuple_t> && (!detail::record_like<tuple_t>)
     {
         using default_align_t = std::pair<std::span<gapped<char>>, std::span<gapped<char>>>;
-        using default_mate_t  = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
+        using default_mate_t = std::tuple<std::string_view, std::optional<int32_t>, int32_t>;
 
         // index_of might return npos, but this will be handled well by get_or_ignore (and just return ignore)
         write_record(detail::get_or<selected_field_ids::index_of(field::header_ptr)>(t, nullptr),
@@ -477,9 +476,9 @@ public:
      *
      * \include test/snippet/io/sam_file/emplace_back.cpp
      */
-    template <typename arg_t, typename ...arg_types>
+    template <typename arg_t, typename... arg_types>
         requires (sizeof...(arg_types) + 1 <= selected_field_ids::size)
-    void emplace_back(arg_t && arg, arg_types && ... args)
+    void emplace_back(arg_t && arg, arg_types &&... args)
     {
         push_back(std::tie(arg, args...));
     }
@@ -601,11 +600,15 @@ protected:
      */
     //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
     using stream_ptr_t = std::unique_ptr<std::basic_ostream<stream_char_type>,
-                                         std::function<void(std::basic_ostream<stream_char_type>*)>>;
+                                         std::function<void(std::basic_ostream<stream_char_type> *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *) {}
+    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr) { delete ptr; }
+    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr)
+    {
+        delete ptr;
+    }
 
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
     stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
@@ -613,17 +616,15 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, a std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::sam_file_output_format_exposer>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sam_file_output_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
 
     //!\brief The header type, which specialised with ref_ids_type if reference information are given.
-    using header_type = sam_file_header<std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>,
-                                        std::vector<std::string>,
-                                        ref_ids_type>>;
+    using header_type = sam_file_header<
+        std::conditional_t<std::same_as<ref_ids_type, ref_info_not_given>, std::vector<std::string>, ref_ids_type>>;
 
     //!\brief The file header object (will be set on construction).
     std::unique_ptr<header_type> header_ptr;
@@ -640,9 +641,9 @@ protected:
         {
             header_ptr->ref_id_info.emplace_back(ref_lengths[idx], "");
 
-            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type_>> &&
-                          std::ranges::sized_range<std::ranges::range_reference_t<ref_ids_type_>> &&
-                          std::ranges::borrowed_range<std::ranges::range_reference_t<ref_ids_type_>>)
+            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type_>>
+                          && std::ranges::sized_range<std::ranges::range_reference_t<ref_ids_type_>>
+                          && std::ranges::borrowed_range<std::ranges::range_reference_t<ref_ids_type_>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
@@ -655,38 +656,40 @@ protected:
     }
 
     //!\brief Write record to format.
-    template <typename record_header_ptr_t, typename ...pack_type>
-    void write_record(record_header_ptr_t && record_header_ptr, pack_type && ...remainder)
+    template <typename record_header_ptr_t, typename... pack_type>
+    void write_record(record_header_ptr_t && record_header_ptr, pack_type &&... remainder)
     {
         static_assert((sizeof...(pack_type) == 15), "Wrong parameter list passed to write_record.");
 
         assert(!format.valueless_by_exception());
 
-        std::visit([&] (auto & f)
-        {
-            // use header from record if explicitly given, e.g. file_output = file_input
-            if constexpr (!std::same_as<record_header_ptr_t, std::nullptr_t>)
+        std::visit(
+            [&](auto & f)
             {
-                f.write_alignment_record(*secondary_stream,
-                                         options,
-                                         *record_header_ptr,
-                                         std::forward<pack_type>(remainder)...);
-            }
-            else if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
-            {
-                f.write_alignment_record(*secondary_stream,
-                                         options,
-                                         std::ignore,
-                                         std::forward<pack_type>(remainder)...);
-            }
-            else
-            {
-                f.write_alignment_record(*secondary_stream,
-                                         options,
-                                         *header_ptr,
-                                         std::forward<pack_type>(remainder)...);
-            }
-        }, format);
+                // use header from record if explicitly given, e.g. file_output = file_input
+                if constexpr (!std::same_as<record_header_ptr_t, std::nullptr_t>)
+                {
+                    f.write_alignment_record(*secondary_stream,
+                                             options,
+                                             *record_header_ptr,
+                                             std::forward<pack_type>(remainder)...);
+                }
+                else if constexpr (std::same_as<ref_ids_type, ref_info_not_given>)
+                {
+                    f.write_alignment_record(*secondary_stream,
+                                             options,
+                                             std::ignore,
+                                             std::forward<pack_type>(remainder)...);
+                }
+                else
+                {
+                    f.write_alignment_record(*secondary_stream,
+                                             options,
+                                             *header_ptr,
+                                             std::forward<pack_type>(remainder)...);
+                }
+            },
+            format);
     }
 
     //!\brief Befriend iterator so it can access the buffers.
@@ -726,16 +729,14 @@ sam_file_output(stream_type &, file_format const &, selected_field_ids const &)
 /*!\brief Deduces the valid format from input and sets sam_file_output::ref_ids_type to
  *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
-template <output_stream stream_type,
-          sam_file_output_format file_format>
+template <output_stream stream_type, sam_file_output_format file_format>
 sam_file_output(stream_type &&, file_format const &)
     -> sam_file_output<typename sam_file_output<>::selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
 /*!\brief Deduces the valid format from input and sets sam_file_output::ref_ids_type to
  *        seqan3::detail::ref_info_not_given. selected_field_ids is set to the default.
  */
-template <output_stream stream_type,
-          sam_file_output_format file_format>
+template <output_stream stream_type, sam_file_output_format file_format>
 sam_file_output(stream_type &, file_format const &)
     -> sam_file_output<typename sam_file_output<>::selected_field_ids, type_list<file_format>, ref_info_not_given>;
 
@@ -749,8 +750,7 @@ sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type
                        std::remove_reference_t<ref_ids_type>>;
 
 //!\brief Deduces ref_ids_type from input. Valid formats, and selected_field_ids are set to the default.
-template <std::ranges::forward_range ref_ids_type,
-          std::ranges::forward_range ref_lengths_type>
+template <std::ranges::forward_range ref_ids_type, std::ranges::forward_range ref_lengths_type>
 sam_file_output(std::filesystem::path const &, ref_ids_type &&, ref_lengths_type &&)
     -> sam_file_output<typename sam_file_output<>::selected_field_ids,
                        typename sam_file_output<>::valid_formats,

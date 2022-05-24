@@ -70,16 +70,18 @@ namespace seqan3::views
  * \experimentalapi{Experimental since version 3.2.}
  */
 template <alphabet alphabet_type>
-inline auto const validate_char_for = deep{std::views::transform([] <typename char_t> (char_t && in) -> char_t
-{
-    static_assert(std::common_reference_with<char_t, alphabet_char_t<alphabet_type>>,
-                  "The innermost value type must have a common reference to underlying char type of alphabet_type.");
-
-    if (!char_is_valid_for<alphabet_type>(in))
+inline auto const validate_char_for = deep{std::views::transform(
+    []<typename char_t>(char_t && in) -> char_t
     {
-        throw seqan3::invalid_char_assignment{"alphabet_type", in};
-    }
-    return std::forward<char_t>(in);
-})};
+        static_assert(
+            std::common_reference_with<char_t, alphabet_char_t<alphabet_type>>,
+            "The innermost value type must have a common reference to underlying char type of alphabet_type.");
+
+        if (!char_is_valid_for<alphabet_type>(in))
+        {
+            throw seqan3::invalid_char_assignment{"alphabet_type", in};
+        }
+        return std::forward<char_t>(in);
+    })};
 
 } // namespace seqan3::views

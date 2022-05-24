@@ -12,11 +12,12 @@
 
 #pragma once
 
-#include <seqan3/alphabet/nucleotide/concept.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
+#include <seqan3/alphabet/nucleotide/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 
+// clang-format off
 namespace seqan3::detail
 {
 /*!\brief Generic translation table for canonical genetic code.
@@ -320,4 +321,5 @@ struct translation_table<dna15, seqan3::genetic_code::canonical, void_type>
     };
 };
 
-}
+} // namespace seqan3::detail
+// clang-format on

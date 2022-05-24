@@ -23,8 +23,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void to_phred(args_t ...) = delete;
+template <typename... args_t>
+void to_phred(args_t...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::to_phred.
 //!\ingroup alphabet_quality
@@ -40,8 +40,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
      * \param alphabet The alphabet the Phred is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)(
         /*return*/ seqan3::custom::alphabet<alphabet_t>::to_phred(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
@@ -50,8 +49,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
      * \param alphabet The alphabet the Phred is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)(
         /*return*/ to_phred(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
@@ -60,8 +58,7 @@ struct to_phred_cpo : public detail::customisation_point_object<to_phred_cpo, 2>
      * \param alphabet The alphabet the Phred is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)(
         /*return*/ std::forward<alphabet_t>(alphabet).to_phred() /*;*/
     );
 };
@@ -115,7 +112,11 @@ inline constexpr auto to_phred = detail::adl_only::to_phred_cpo{};
  * \stableapi{Since version 3.1.}
  */
 template <typename alphabet_type>
-    requires requires { { seqan3::to_phred(std::declval<alphabet_type>()) }; }
+    requires requires {
+                 {
+                     seqan3::to_phred(std::declval<alphabet_type>())
+                 };
+             }
 using alphabet_phred_t = decltype(seqan3::to_phred(std::declval<alphabet_type>()));
 
 } // namespace seqan3
@@ -128,8 +129,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void assign_phred_to(args_t ...) = delete;
+template <typename... args_t>
+void assign_phred_to(args_t...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::assign_phred_to.
 //!\ingroup alphabet_quality
@@ -154,10 +155,8 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
      * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>,
-                                              seqan3::alphabet_phred_t<alphabet_t> const phred,
-                                              alphabet_t && alphabet)
-    (
+    static constexpr auto
+    SEQAN3_CPO_OVERLOAD(priority_tag<2>, seqan3::alphabet_phred_t<alphabet_t> const phred, alphabet_t && alphabet)(
         /*return*/ static_cast<alphabet_t>(seqan3::custom::alphabet<alphabet_t>::assign_phred_to(phred, alphabet)) /*;*/
     );
 
@@ -176,10 +175,8 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
      * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>,
-                                              seqan3::alphabet_phred_t<alphabet_t> const phred,
-                                              alphabet_t && alphabet)
-    (
+    static constexpr auto
+    SEQAN3_CPO_OVERLOAD(priority_tag<1>, seqan3::alphabet_phred_t<alphabet_t> const phred, alphabet_t && alphabet)(
         /*return*/ static_cast<alphabet_t>(assign_phred_to(phred, alphabet)) /*;*/
     );
 
@@ -194,10 +191,8 @@ struct assign_phred_to_cpo : public detail::customisation_point_object<assign_ph
      * return an explicit copy of it if the forwarding reference of the alphabet is a rvalue-reference.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>,
-                                              seqan3::alphabet_phred_t<alphabet_t> const phred,
-                                              alphabet_t && alphabet)
-    (
+    static constexpr auto
+    SEQAN3_CPO_OVERLOAD(priority_tag<0>, seqan3::alphabet_phred_t<alphabet_t> const phred, alphabet_t && alphabet)(
         /*return*/ static_cast<alphabet_t>(alphabet.assign_phred(phred)) /*;*/
     );
 };
@@ -287,10 +282,11 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept quality_alphabet = alphabet<t> && requires(t qual)
-{
-    { seqan3::to_phred(qual) };
-};
+concept quality_alphabet = alphabet<t> && requires (t qual) {
+                                              {
+                                                  seqan3::to_phred(qual)
+                                              };
+                                          };
 //!\endcond
 
 // ============================================================================
@@ -327,12 +323,12 @@ concept quality_alphabet = alphabet<t> && requires(t qual)
  */
 //!\cond
 template <typename t>
-concept writable_quality_alphabet = writable_alphabet<t> &&
-                                    quality_alphabet<t> &&
-                                    requires(t v, alphabet_phred_t<t> c)
-{
-    { seqan3::assign_phred_to(c, v) };
-};
+concept writable_quality_alphabet =
+    writable_alphabet<t> && quality_alphabet<t> && requires (t v, alphabet_phred_t<t> c) {
+                                                       {
+                                                           seqan3::assign_phred_to(c, v)
+                                                       };
+                                                   };
 //!\endcond
 
 } // namespace seqan3

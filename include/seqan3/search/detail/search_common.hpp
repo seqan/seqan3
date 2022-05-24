@@ -35,8 +35,8 @@ struct search_param
     //!\brief Returns `true` if all member variables of `lhs` and `rhs` are equal, `false` otherwise.
     constexpr friend bool operator==(search_param const & lhs, search_param const & rhs) noexcept
     {
-        return std::tie(lhs.total, lhs.substitution, lhs.insertion, lhs.deletion) ==
-               std::tie(rhs.total, rhs.substitution, rhs.insertion, rhs.deletion);
+        return std::tie(lhs.total, lhs.substitution, lhs.insertion, lhs.deletion)
+            == std::tie(rhs.total, rhs.substitution, rhs.insertion, rhs.deletion);
     }
 
     //!\brief Returns `true` if any member variable of `lhs` and `rhs` are not equal, `false` otherwise.

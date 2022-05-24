@@ -44,8 +44,7 @@ namespace seqan3
 template <typename algorithm_executor_type>
 class algorithm_result_generator_range
 {
-    static_assert(!std::is_const_v<algorithm_executor_type>,
-                  "Cannot create an algorithm stream over a const buffer.");
+    static_assert(!std::is_const_v<algorithm_executor_type>, "Cannot create an algorithm stream over a const buffer.");
 
     //!\brief The optional type returned by the seqan3::detail::algorithm_executor_blocking
     using optional_type = decltype(std::declval<algorithm_executor_type>().next_result());
@@ -61,12 +60,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    algorithm_result_generator_range() = default; //!< Defaulted.
+    algorithm_result_generator_range() = default;                                        //!< Defaulted.
     algorithm_result_generator_range(algorithm_result_generator_range const &) = delete; //!< This is a move-only type.
-    algorithm_result_generator_range(algorithm_result_generator_range &&) = default; //!< Defaulted.
-    algorithm_result_generator_range & operator=(algorithm_result_generator_range const &) = delete; //!< This is a move-only type.
+    algorithm_result_generator_range(algorithm_result_generator_range &&) = default;     //!< Defaulted.
+    algorithm_result_generator_range &
+    operator=(algorithm_result_generator_range const &) = delete; //!< This is a move-only type.
     algorithm_result_generator_range & operator=(algorithm_result_generator_range &&) = default; //!< Defaulted.
-    ~algorithm_result_generator_range() = default; //!< Defaulted.
+    ~algorithm_result_generator_range() = default;                                               //!< Defaulted.
 
     //!\brief Explicit deletion to forbid copy construction of the underlying executor.
     explicit algorithm_result_generator_range(algorithm_executor_type const & algorithm_executor) = delete;
@@ -186,15 +186,16 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr algorithm_range_iterator() noexcept = default; //!< Defaulted.
-    constexpr algorithm_range_iterator(algorithm_range_iterator const &) noexcept = default; //!< Defaulted.
-    constexpr algorithm_range_iterator(algorithm_range_iterator &&) noexcept = default; //!< Defaulted.
+    constexpr algorithm_range_iterator() noexcept = default;                                             //!< Defaulted.
+    constexpr algorithm_range_iterator(algorithm_range_iterator const &) noexcept = default;             //!< Defaulted.
+    constexpr algorithm_range_iterator(algorithm_range_iterator &&) noexcept = default;                  //!< Defaulted.
     constexpr algorithm_range_iterator & operator=(algorithm_range_iterator const &) noexcept = default; //!< Defaulted.
-    constexpr algorithm_range_iterator & operator=(algorithm_range_iterator &&) noexcept = default; //!< Defaulted.
-    ~algorithm_range_iterator() = default; //!< Defaulted.
+    constexpr algorithm_range_iterator & operator=(algorithm_range_iterator &&) noexcept = default;      //!< Defaulted.
+    ~algorithm_range_iterator() = default;                                                               //!< Defaulted.
 
     //!\brief Construct from alignment stream.
-    explicit constexpr algorithm_range_iterator(algorithm_result_generator_range & range) : range_ptr(std::addressof(range))
+    explicit constexpr algorithm_range_iterator(algorithm_result_generator_range & range) :
+        range_ptr(std::addressof(range))
     {
         ++(*this); // Fetch the next element.
     }
@@ -243,29 +244,25 @@ public:
      * \{
      */
     //!\brief Checks whether lhs is equal to the sentinel.
-    friend constexpr bool operator==(algorithm_range_iterator const & lhs,
-                                     std::default_sentinel_t const &) noexcept
+    friend constexpr bool operator==(algorithm_range_iterator const & lhs, std::default_sentinel_t const &) noexcept
     {
         return lhs.at_end;
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    friend constexpr bool operator==(std::default_sentinel_t const & lhs,
-                                     algorithm_range_iterator const & rhs) noexcept
+    friend constexpr bool operator==(std::default_sentinel_t const & lhs, algorithm_range_iterator const & rhs) noexcept
     {
         return rhs == lhs;
     }
 
     //!\brief Checks whether `*this` is not equal to the sentinel.
-    friend constexpr bool operator!=(algorithm_range_iterator const & lhs,
-                                     std::default_sentinel_t const & rhs) noexcept
+    friend constexpr bool operator!=(algorithm_range_iterator const & lhs, std::default_sentinel_t const & rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    friend constexpr bool operator!=(std::default_sentinel_t const & lhs,
-                                     algorithm_range_iterator const & rhs) noexcept
+    friend constexpr bool operator!=(std::default_sentinel_t const & lhs, algorithm_range_iterator const & rhs) noexcept
     {
         return rhs != lhs;
     }

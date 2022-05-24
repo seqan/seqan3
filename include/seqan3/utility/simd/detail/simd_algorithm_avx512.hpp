@@ -15,8 +15,8 @@
 #include <array>
 
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ constexpr simd_t extract_quarter_avx512(simd_t const & src);
 template <uint8_t index, simd::simd_concept simd_t>
 constexpr simd_t extract_eighth_avx512(simd_t const & src);
 
-}
+} // namespace seqan3::detail
 
 //-----------------------------------------------------------------------------
 // implementation
@@ -96,7 +96,7 @@ constexpr void store_avx512(void * mem_addr, simd_t const & simd_vec)
     _mm512_storeu_si512(mem_addr, reinterpret_cast<__m512i const &>(simd_vec));
 }
 
-#if defined(__AVX512BW__)
+#    if defined(__AVX512BW__)
 template <simd::simd_concept simd_t>
 inline void transpose_matrix_avx512(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
@@ -117,69 +117,66 @@ inline void transpose_matrix_avx512(std::array<simd_t, simd_traits<simd_t>::leng
     __m512i tmp1[64];
     for (int i = 0; i < 32; ++i)
     {
-        tmp1[i]    = _mm512_unpacklo_epi8(
-            reinterpret_cast<const __m512i &>(matrix[2*i]),
-            reinterpret_cast<const __m512i &>(matrix[2*i+1])
-        );
-        tmp1[i+32] = _mm512_unpackhi_epi8(
-            reinterpret_cast<const __m512i &>(matrix[2*i]),
-            reinterpret_cast<const __m512i &>(matrix[2*i+1])
-        );
+        tmp1[i] = _mm512_unpacklo_epi8(reinterpret_cast<__m512i const &>(matrix[2 * i]),
+                                       reinterpret_cast<__m512i const &>(matrix[2 * i + 1]));
+        tmp1[i + 32] = _mm512_unpackhi_epi8(reinterpret_cast<__m512i const &>(matrix[2 * i]),
+                                            reinterpret_cast<__m512i const &>(matrix[2 * i + 1]));
     }
 
     // Step 2: Unpack 16-bit operands.
     __m512i tmp2[64];
     for (int i = 0; i < 32; ++i)
     {
-        tmp2[i]    = _mm512_unpacklo_epi16(tmp1[2*i], tmp1[2*i+1]);
-        tmp2[i+32] = _mm512_unpackhi_epi16(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i] = _mm512_unpacklo_epi16(tmp1[2 * i], tmp1[2 * i + 1]);
+        tmp2[i + 32] = _mm512_unpackhi_epi16(tmp1[2 * i], tmp1[2 * i + 1]);
     }
     // Step 3: Unpack 32-bit operands.
     for (int i = 0; i < 32; ++i)
     {
-        tmp1[i]    = _mm512_unpacklo_epi32(tmp2[2*i], tmp2[2*i+1]);
-        tmp1[i+32] = _mm512_unpackhi_epi32(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i] = _mm512_unpacklo_epi32(tmp2[2 * i], tmp2[2 * i + 1]);
+        tmp1[i + 32] = _mm512_unpackhi_epi32(tmp2[2 * i], tmp2[2 * i + 1]);
     }
     // Step 4: Unpack 64-bit operands.
     for (int i = 0; i < 32; ++i)
     {
-        tmp2[i]    = _mm512_unpacklo_epi64(tmp1[2*i], tmp1[2*i+1]);
-        tmp2[i+32] = _mm512_unpackhi_epi64(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i] = _mm512_unpacklo_epi64(tmp1[2 * i], tmp1[2 * i + 1]);
+        tmp2[i + 32] = _mm512_unpackhi_epi64(tmp1[2 * i], tmp1[2 * i + 1]);
     }
 
     // Step 5: Unpack 128-bit operands.
     // Helper function to emulate unpack of 128-bit across lanes using _mm512_permutex2var_epi64.
-    auto _mm512_unpacklo_epi128 = [] (__m512i const & a, __m512i const & b)
+    auto _mm512_unpacklo_epi128 = [](__m512i const & a, __m512i const & b)
     {
-        constexpr std::array<uint64_t, 8> lo_mask{ 0, 1, 8, 9, 2, 3, 10, 11};
+        constexpr std::array<uint64_t, 8> lo_mask{0, 1, 8, 9, 2, 3, 10, 11};
         return _mm512_permutex2var_epi64(a, reinterpret_cast<__m512i const &>(*lo_mask.data()), b);
     };
 
-    auto _mm521_unpackhi_epi128 = [] (__m512i const & a, __m512i const & b)
+    auto _mm521_unpackhi_epi128 = [](__m512i const & a, __m512i const & b)
     {
-        constexpr std::array<uint64_t, 8> hi_mask{ 4, 5, 12, 13, 6, 7, 14, 15};
+        constexpr std::array<uint64_t, 8> hi_mask{4, 5, 12, 13, 6, 7, 14, 15};
         return _mm512_permutex2var_epi64(a, reinterpret_cast<__m512i const &>(*hi_mask.data()), b);
     };
 
     for (int i = 0; i < 32; ++i)
     {
-        tmp1[i]    = _mm512_unpacklo_epi128(tmp2[2*i], tmp2[2*i+1]);
-        tmp1[i+32] = _mm521_unpackhi_epi128(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i] = _mm512_unpacklo_epi128(tmp2[2 * i], tmp2[2 * i + 1]);
+        tmp1[i + 32] = _mm521_unpackhi_epi128(tmp2[2 * i], tmp2[2 * i + 1]);
     }
     // Step 6: Unpack 128-bit operands.
     // Helper function to emulate unpack of 256-bit across lanes using _mm512_shuffle_i64x2.
-    auto _mm512_unpacklo_epi256 = [] (__m512i const & a, __m512i const & b)
+    auto _mm512_unpacklo_epi256 = [](__m512i const & a, __m512i const & b)
     {
         return _mm512_shuffle_i64x2(a, b, 0b0100'0100);
     };
 
-    auto _mm521_unpackhi_epi256 = [] (__m512i const & a, __m512i const & b)
+    auto _mm521_unpackhi_epi256 = [](__m512i const & a, __m512i const & b)
     {
         return _mm512_shuffle_i64x2(a, b, 0b1110'1110);
     };
 
     // A look-up table to place the final transposed vector to the correct position in the
     // original matrix.
+    // clang-format off
     constexpr std::array<uint32_t, 64> reverse_idx_mask{
     // 00  01  02  03  04  05  06  07  08  09  10  11  12  13  14  15
         0, 16,  8, 24,  4, 20, 12, 28,  2, 18, 10, 26,  6, 22, 14, 30,
@@ -189,15 +186,16 @@ inline void transpose_matrix_avx512(std::array<simd_t, simd_traits<simd_t>::leng
        32, 48, 40, 56, 36, 52, 44, 60, 34, 50, 42, 58, 38, 54, 46, 62,
     // 48  49  50  51  52  53  54  55  56  57  58  59  60  61  62  63
        33, 49, 41, 57, 37, 53, 45, 61, 35, 51, 43, 59, 39, 55, 47, 63};
+    // clang-format on
 
     for (int i = 0; i < 32; ++i)
     {
         int const idx = i * 2;
-        matrix[reverse_idx_mask[idx]]   = reinterpret_cast<simd_t>(_mm512_unpacklo_epi256(tmp1[idx], tmp1[idx+1]));
-        matrix[reverse_idx_mask[idx+1]] = reinterpret_cast<simd_t>(_mm521_unpackhi_epi256(tmp1[idx], tmp1[idx+1]));
+        matrix[reverse_idx_mask[idx]] = reinterpret_cast<simd_t>(_mm512_unpacklo_epi256(tmp1[idx], tmp1[idx + 1]));
+        matrix[reverse_idx_mask[idx + 1]] = reinterpret_cast<simd_t>(_mm521_unpackhi_epi256(tmp1[idx], tmp1[idx + 1]));
     }
 }
-#endif // defined(__AVX512BW__)
+#    endif // defined(__AVX512BW__)
 
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast_signed_avx512(source_simd_t const & src)
@@ -256,16 +254,16 @@ constexpr target_simd_t upcast_unsigned_avx512(source_simd_t const & src)
 template <uint8_t index, simd::simd_concept simd_t>
 constexpr simd_t extract_half_avx512(simd_t const & src)
 {
-    return reinterpret_cast<simd_t>(_mm512_castsi256_si512(
-            _mm512_extracti64x4_epi64(reinterpret_cast<__m512i const &>(src), index)));
+    return reinterpret_cast<simd_t>(
+        _mm512_castsi256_si512(_mm512_extracti64x4_epi64(reinterpret_cast<__m512i const &>(src), index)));
 }
 
-#if defined(__AVX512DQ__)
+#    if defined(__AVX512DQ__)
 template <uint8_t index, simd::simd_concept simd_t>
 constexpr simd_t extract_quarter_avx512(simd_t const & src)
 {
-    return reinterpret_cast<simd_t>(_mm512_castsi128_si512(
-            _mm512_extracti64x2_epi64(reinterpret_cast<__m512i const &>(src), index)));
+    return reinterpret_cast<simd_t>(
+        _mm512_castsi128_si512(_mm512_extracti64x2_epi64(reinterpret_cast<__m512i const &>(src), index)));
 }
 
 template <uint8_t index, simd::simd_concept simd_t>
@@ -279,7 +277,7 @@ constexpr simd_t extract_eighth_avx512(simd_t const & src)
 
     return reinterpret_cast<simd_t>(_mm512_castsi128_si512(_mm512_extracti64x2_epi64(tmp, index / 2)));
 }
-#endif // defined(__AVX512DQ__)
+#    endif // defined(__AVX512DQ__)
 
 } // namespace seqan3::detail
 

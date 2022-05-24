@@ -61,12 +61,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna4()                          noexcept = default; //!< Defaulted.
-    constexpr rna4(rna4 const &)              noexcept = default; //!< Defaulted.
-    constexpr rna4(rna4 &&)                   noexcept = default; //!< Defaulted.
-    constexpr rna4 & operator=(rna4 const &)  noexcept = default; //!< Defaulted.
-    constexpr rna4 & operator=(rna4 &&)       noexcept = default; //!< Defaulted.
-    ~rna4()                                   noexcept = default; //!< Defaulted.
+    constexpr rna4() noexcept = default;                         //!< Defaulted.
+    constexpr rna4(rna4 const &) noexcept = default;             //!< Defaulted.
+    constexpr rna4(rna4 &&) noexcept = default;                  //!< Defaulted.
+    constexpr rna4 & operator=(rna4 const &) noexcept = default; //!< Defaulted.
+    constexpr rna4 & operator=(rna4 &&) noexcept = default;      //!< Defaulted.
+    ~rna4() noexcept = default;                                  //!< Defaulted.
 
     using base_t::base_t;
 
@@ -85,15 +85,8 @@ public:
     //!\}
 
 private:
-
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'C',
-        'G',
-        'U'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'A', 'C', 'G', 'U'};
 
     //!\copydoc seqan3::dna4::rank_complement
     static constexpr rank_type rank_complement(rank_type const rank)
@@ -171,6 +164,6 @@ inline rna4_vector operator""_rna4(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

@@ -58,31 +58,32 @@ private:
     //!\brief The base class for data storage.
     using matrix_base_t = alignment_trace_matrix_base<trace_t>;
     //!\brief The base class for iterating over the matrix.
-    using range_base_t = alignment_matrix_column_major_range_base<alignment_trace_matrix_full<trace_t, coordinate_only>>;
+    using range_base_t =
+        alignment_matrix_column_major_range_base<alignment_trace_matrix_full<trace_t, coordinate_only>>;
 
     //!\brief Befriend the range base class.
     friend range_base_t;
 
 protected:
-    using typename matrix_base_t::element_type;
     using typename matrix_base_t::coordinate_type;
+    using typename matrix_base_t::element_type;
     using typename range_base_t::alignment_column_type;
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::column_data_view_type
-    using column_data_view_type = std::conditional_t<coordinate_only,
-                                        decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
-                                        decltype(views::zip(std::declval<std::span<element_type>>(),
-                                                                std::declval<std::span<element_type>>(),
-                                                                std::views::iota(coordinate_type{}, coordinate_type{})))>;
+    using column_data_view_type =
+        std::conditional_t<coordinate_only,
+                           decltype(std::views::iota(coordinate_type{}, coordinate_type{})),
+                           decltype(views::zip(std::declval<std::span<element_type>>(),
+                                               std::declval<std::span<element_type>>(),
+                                               std::views::iota(coordinate_type{}, coordinate_type{})))>;
 
 public:
     /*!\name Associated types
      * \{
      */
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::value_type
-    using value_type = alignment_trace_matrix_proxy<coordinate_type,
-                                                    std::conditional_t<coordinate_only,
-                                                                       detail::ignore_t const,
-                                                                       trace_t>>;
+    using value_type =
+        alignment_trace_matrix_proxy<coordinate_type,
+                                     std::conditional_t<coordinate_only, detail::ignore_t const, trace_t>>;
     //!\brief Same as value type.
     using reference = value_type;
     //!\copydoc seqan3::detail::alignment_matrix_column_major_range_base::iterator
@@ -95,12 +96,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alignment_trace_matrix_full() = default; //!< Defaulted.
-    constexpr alignment_trace_matrix_full(alignment_trace_matrix_full const &) = default; //!< Defaulted.
-    constexpr alignment_trace_matrix_full(alignment_trace_matrix_full &&) = default; //!< Defaulted.
+    constexpr alignment_trace_matrix_full() = default;                                                //!< Defaulted.
+    constexpr alignment_trace_matrix_full(alignment_trace_matrix_full const &) = default;             //!< Defaulted.
+    constexpr alignment_trace_matrix_full(alignment_trace_matrix_full &&) = default;                  //!< Defaulted.
     constexpr alignment_trace_matrix_full & operator=(alignment_trace_matrix_full const &) = default; //!< Defaulted.
-    constexpr alignment_trace_matrix_full & operator=(alignment_trace_matrix_full &&) = default; //!< Defaulted.
-    ~alignment_trace_matrix_full() = default; //!< Defaulted.
+    constexpr alignment_trace_matrix_full & operator=(alignment_trace_matrix_full &&) = default;      //!< Defaulted.
+    ~alignment_trace_matrix_full() = default;                                                         //!< Defaulted.
 
     /*!\brief Construction from two ranges.
      * \tparam first_sequence_t  The first range type; must model std::ranges::forward_range.
@@ -162,17 +163,17 @@ private:
         coordinate_type row_end{column_index_type{column_index}, row_index_type{matrix_base_t::num_rows}};
         if constexpr (coordinate_only)
         {
-            return alignment_column_type{*this,
-                                         column_data_view_type{std::views::iota(std::move(row_begin),
-                                                                                std::move(row_end))}};
+            return alignment_column_type{
+                *this,
+                column_data_view_type{std::views::iota(std::move(row_begin), std::move(row_end))}};
         }
         else
         {
             matrix_coordinate current_position{row_index_type{0u}, column_index_type{column_index}};
-            auto col = views::zip(std::span<element_type>{std::addressof(matrix_base_t::data[current_position]),
-                                                               matrix_base_t::num_rows},
-                                  std::span<element_type>{matrix_base_t::cache_left},
-                                  std::views::iota(std::move(row_begin), std::move(row_end)));
+            auto col = views::zip(
+                std::span<element_type>{std::addressof(matrix_base_t::data[current_position]), matrix_base_t::num_rows},
+                std::span<element_type>{matrix_base_t::cache_left},
+                std::views::iota(std::move(row_begin), std::move(row_end)));
             return alignment_column_type{*this, column_data_view_type{col}};
         }
     }
@@ -187,12 +188,13 @@ private:
         }
         else
         {
-            return {std::get<2>(*host_iter),  // the coordinate.
-                    std::get<0>(*host_iter),  // the current entry.
-                    std::get<1>(*host_iter),  // the last left cell to read from.
-                    std::get<1>(*host_iter),  // the next left cell to write to.
-                    matrix_base_t::cache_up,  // the last up cell to read/write from/to.
-                    };
+            return {
+                std::get<2>(*host_iter), // the coordinate.
+                std::get<0>(*host_iter), // the current entry.
+                std::get<1>(*host_iter), // the last left cell to read from.
+                std::get<1>(*host_iter), // the next left cell to write to.
+                matrix_base_t::cache_up, // the last up cell to read/write from/to.
+            };
         }
     }
 };

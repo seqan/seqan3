@@ -28,7 +28,7 @@ namespace seqan3::detail
  *
  * This helper meta function is used to provide the `get` and `get_or` interface for template template types.
  */
-template <template <typename ...> typename query_t>
+template <template <typename...> typename query_t>
 struct is_same_configuration_f
 {
     /*!\brief A type template that evaluates to std::true_type if the given type is a specialization of `query_t`,

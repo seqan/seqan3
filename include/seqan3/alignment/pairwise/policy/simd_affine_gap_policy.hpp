@@ -62,12 +62,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr simd_affine_gap_policy() noexcept = default; //!< Defaulted.
-    constexpr simd_affine_gap_policy(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted.
-    constexpr simd_affine_gap_policy(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy() noexcept = default;                                           //!< Defaulted.
+    constexpr simd_affine_gap_policy(simd_affine_gap_policy const &) noexcept = default;             //!< Defaulted.
+    constexpr simd_affine_gap_policy(simd_affine_gap_policy &&) noexcept = default;                  //!< Defaulted.
     constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy const &) noexcept = default; //!< Defaulted.
-    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy &&) noexcept = default; //!< Defaulted.
-    ~simd_affine_gap_policy() noexcept = default; //!< Defaulted.
+    constexpr simd_affine_gap_policy & operator=(simd_affine_gap_policy &&) noexcept = default;      //!< Defaulted.
+    ~simd_affine_gap_policy() noexcept = default;                                                    //!< Defaulted.
 
     //!\brief Initialise the policy.
     template <typename configuration_t>
@@ -93,9 +93,8 @@ private:
      * the compare-and-blend approach for simd vector types.
      */
     template <typename cell_t>
-    constexpr void compute_cell(cell_t && current_cell,
-                                alignment_algorithm_state<score_t> & state,
-                                score_t const score) const noexcept
+    constexpr void
+    compute_cell(cell_t && current_cell, alignment_algorithm_state<score_t> & state, score_t const score) const noexcept
     {
         // score_cell = seqan3::detail::alignment_score_matrix_proxy
         // trace_cell = seqan3::detail::alignment_trace_matrix_proxy
@@ -123,8 +122,10 @@ private:
         if constexpr (align_local_t::value)
         {
             tmp = (tmp < simd::fill<score_t>(0))
-            /*then*/ ? (trace_cell.current = convert_to_simd(trace_directions::none), simd::fill<score_t>(0))
-            /*else*/ : tmp;
+                    /*then*/
+                    ? (trace_cell.current = convert_to_simd(trace_directions::none), simd::fill<score_t>(0))
+                    /*else*/
+                    : tmp;
         }
 
         // Store the current max score.
@@ -142,8 +143,8 @@ private:
         trace_cell.up = (mask) ? convert_to_simd(trace_directions::up_open) : convert_to_simd(trace_directions::up);
         mask = score_cell.w_left < tmp;
         score_cell.w_left = (mask) ? tmp : score_cell.w_left;
-        trace_cell.w_left = (mask) ? convert_to_simd(trace_directions::left_open)
-                                   : convert_to_simd(trace_directions::left);
+        trace_cell.w_left =
+            (mask) ? convert_to_simd(trace_directions::left_open) : convert_to_simd(trace_directions::left);
     }
 
     /*!\brief Initialise the alignment state for affine gap computation.
@@ -162,12 +163,12 @@ private:
     constexpr void initialise_alignment_state(alignment_configuration_t const & config) noexcept
     {
         using scalar_t = typename simd_traits<score_t>::scalar_type;
-        auto scheme = config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10},
-                                                               align_cfg::extension_score{-1}});
+        auto scheme =
+            config.get_or(align_cfg::gap_cost_affine{align_cfg::open_score{-10}, align_cfg::extension_score{-1}});
 
         alignment_state.gap_extension_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.extension_score));
-        alignment_state.gap_open_score = simd::fill<score_t>(static_cast<scalar_t>(scheme.extension_score +
-                                                                                   scheme.open_score));
+        alignment_state.gap_open_score =
+            simd::fill<score_t>(static_cast<scalar_t>(scheme.extension_score + scheme.open_score));
     }
 
     /*!\brief Converts a trace direction into a simd vector.

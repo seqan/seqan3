@@ -12,9 +12,9 @@
 
 #pragma once
 
-#include <range/v3/utility/common_tuple.hpp>
-
 #include <seqan3/core/platform.hpp>
+
+#include <range/v3/utility/common_tuple.hpp>
 
 namespace seqan3
 {
@@ -27,7 +27,7 @@ namespace seqan3
  *
  * Alias definition of the ranges::common_tuple.
  */
-using SEQAN3_DOXYGEN_ONLY(common_tuple =) ::ranges::common_tuple;
+using SEQAN3_DOXYGEN_ONLY(common_tuple =)::ranges::common_tuple;
 
 /*!\brief A common pair type that behaves like a regular std::pair, but can be used as a reference type proxy for
  *        output iterators.
@@ -37,6 +37,6 @@ using SEQAN3_DOXYGEN_ONLY(common_tuple =) ::ranges::common_tuple;
  *
  * Alias definition of the ranges::common_pair.
  */
-using SEQAN3_DOXYGEN_ONLY(common_pair =) ::ranges::common_pair;
+using SEQAN3_DOXYGEN_ONLY(common_pair =)::ranges::common_pair;
 
-}  // namespace seqan3
+} // namespace seqan3

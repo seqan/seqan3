@@ -26,34 +26,34 @@
 #include <seqan3/alignment/matrix/detail/combined_score_and_trace_matrix.hpp>
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>
 #include <seqan3/alignment/matrix/detail/trace_matrix_full.hpp>
+#include <seqan3/alignment/pairwise/align_result_selector.hpp>
+#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
+#include <seqan3/alignment/pairwise/alignment_result.hpp>
 #include <seqan3/alignment/pairwise/detail/concept.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm.hpp>
 #include <seqan3/alignment/pairwise/detail/pairwise_alignment_algorithm_banded.hpp>
-#include <seqan3/alignment/pairwise/detail/policy_alignment_matrix.hpp>
-#include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_recursion_banded.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_with_trace_recursion.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_affine_gap_with_trace_recursion_banded.hpp>
-#include <seqan3/alignment/pairwise/detail/policy_optimum_tracker_simd.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_matrix.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_alignment_result_builder.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_optimum_tracker.hpp>
+#include <seqan3/alignment/pairwise/detail/policy_optimum_tracker_simd.hpp>
 #include <seqan3/alignment/pairwise/detail/policy_scoring_scheme.hpp>
 #include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/edit_distance_algorithm.hpp>
-#include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/affine_gap_init_policy.hpp>
+#include <seqan3/alignment/pairwise/policy/affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/alignment_matrix_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/find_optimum_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/scoring_scheme_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/simd_affine_gap_policy.hpp>
 #include <seqan3/alignment/pairwise/policy/simd_find_optimum_policy.hpp>
-#include <seqan3/alignment/pairwise/alignment_algorithm.hpp>
-#include <seqan3/alignment/pairwise/align_result_selector.hpp>
-#include <seqan3/alignment/pairwise/alignment_result.hpp>
+#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/detail/simd_match_mismatch_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/detail/simd_matrix_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
-#include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
 #include <seqan3/utility/simd/simd.hpp>
@@ -74,8 +74,7 @@ namespace seqan3::detail
  *
  * This stateless helper class provides several contract testing functions for the alignment configuration.
  */
-template <typename range_type,
-          typename alignment_config_type>
+template <typename range_type, typename alignment_config_type>
 struct alignment_contract
 {
 private:
@@ -85,27 +84,26 @@ private:
     //!\brief Range type with removed references.
     using unref_range_type = std::remove_reference_t<range_type>;
     //!\brief The type of the first sequence.
-    using first_seq_t  = std::tuple_element_t<0, std::ranges::range_value_t<unref_range_type>>;
+    using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<unref_range_type>>;
     //!\brief The type of the second sequence.
     using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<unref_range_type>>;
     //!\}
 
 public:
     //!\brief Tests whether the value type of `range_type` is a tuple with exactly 2 members.
-    constexpr static bool expects_tuple_like_value_type()
+    static constexpr bool expects_tuple_like_value_type()
     {
-        return tuple_like<alignment_config_type> &&
-               std::tuple_size_v<std::ranges::range_value_t<unref_range_type>> == 2;
+        return tuple_like<alignment_config_type>
+            && std::tuple_size_v<std::ranges::range_value_t<unref_range_type>> == 2;
     }
 
     //!\brief Tests whether the scoring scheme is set and can be invoked with the sequences passed.
-    constexpr static bool expects_valid_scoring_scheme()
+    static constexpr bool expects_valid_scoring_scheme()
     {
         if constexpr (alignment_config_type::template exists<align_cfg::scoring_scheme>())
         {
-            using scoring_type =
-                std::remove_reference_t<
-                    decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).scheme)>;
+            using scoring_type = std::remove_reference_t<
+                decltype(get<align_cfg::scoring_scheme>(std::declval<alignment_config_type>()).scheme)>;
             return static_cast<bool>(scoring_scheme_for<scoring_type,
                                                         std::ranges::range_value_t<first_seq_t>,
                                                         std::ranges::range_value_t<second_seq_t>>);
@@ -117,10 +115,10 @@ public:
     }
 
     //!\brief Expects alignment configurations.
-    constexpr static bool expects_alignment_configuration()
+    static constexpr bool expects_alignment_configuration()
     {
-        const bool is_global = alignment_config_type::template exists<seqan3::align_cfg::method_global>();
-        const bool is_local = alignment_config_type::template exists<seqan3::align_cfg::method_local>();
+        bool const is_global = alignment_config_type::template exists<seqan3::align_cfg::method_global>();
+        bool const is_local = alignment_config_type::template exists<seqan3::align_cfg::method_local>();
 
         return (is_global || is_local);
     }
@@ -133,7 +131,6 @@ public:
 struct alignment_configurator
 {
 private:
-
     /*!\brief Transformation trait that chooses the correct matrix policy.
      * \tparam traits_t The alignment configuration traits type.
      */
@@ -142,19 +139,19 @@ private:
     {
     private:
         //!\brief Indicates whether only the coordinate is required to compute the alignment.
-        static constexpr bool only_coordinates = !(traits_t::compute_begin_positions ||
-                                                   traits_t::compute_sequence_alignment);
+        static constexpr bool only_coordinates =
+            !(traits_t::compute_begin_positions || traits_t::compute_sequence_alignment);
 
         //!\brief The selected score matrix for either banded or unbanded alignments.
-        using score_matrix_t = std::conditional_t<traits_t::is_banded,
-                                                  alignment_score_matrix_one_column_banded<typename traits_t::score_type>,
-                                                  alignment_score_matrix_one_column<typename traits_t::score_type>>;
+        using score_matrix_t =
+            std::conditional_t<traits_t::is_banded,
+                               alignment_score_matrix_one_column_banded<typename traits_t::score_type>,
+                               alignment_score_matrix_one_column<typename traits_t::score_type>>;
         //!\brief The selected trace matrix for either banded or unbanded alignments.
-        using trace_matrix_t = std::conditional_t<traits_t::is_banded,
-                                                  alignment_trace_matrix_full_banded<typename traits_t::trace_type,
-                                                                                     only_coordinates>,
-                                                  alignment_trace_matrix_full<typename traits_t::trace_type,
-                                                                              only_coordinates>>;
+        using trace_matrix_t =
+            std::conditional_t<traits_t::is_banded,
+                               alignment_trace_matrix_full_banded<typename traits_t::trace_type, only_coordinates>,
+                               alignment_trace_matrix_full<typename traits_t::trace_type, only_coordinates>>;
 
     public:
         //!\brief The matrix policy based on the configurations given by `config_type`.
@@ -201,7 +198,7 @@ private:
     };
 
     //!\brief Selects either the banded or the unbanded alignment algorithm based on the given traits type.
-    template <typename traits_t, typename ...args_t>
+    template <typename traits_t, typename... args_t>
     using select_alignment_algorithm_t = lazy_conditional_t<traits_t::is_banded,
                                                             lazy<pairwise_alignment_algorithm_banded, args_t...>,
                                                             lazy<pairwise_alignment_algorithm, args_t...>>;
@@ -224,14 +221,14 @@ private:
                                                              policy_affine_gap_recursion<config_t>>;
         //!\brief The banded gap recursion policy.
         using banded_gap_recursion_policy_type =
-                    std::conditional_t<with_trace,
-                                       policy_affine_gap_with_trace_recursion_banded<config_t>,
-                                       policy_affine_gap_recursion_banded<config_t>>;
+            std::conditional_t<with_trace,
+                               policy_affine_gap_with_trace_recursion_banded<config_t>,
+                               policy_affine_gap_recursion_banded<config_t>>;
+
     public:
         //!\brief The configured recursion policy.
-        using type = std::conditional_t<traits_type::is_banded,
-                                        banded_gap_recursion_policy_type,
-                                        gap_recursion_policy_type>;
+        using type =
+            std::conditional_t<traits_type::is_banded, banded_gap_recursion_policy_type, gap_recursion_policy_type>;
     };
 
 public:
@@ -275,7 +272,7 @@ public:
         using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequences_t>>;
         using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequences_t>>;
 
-        using wrapped_first_t  = type_reduce_t<first_seq_t &>;
+        using wrapped_first_t = type_reduce_t<first_seq_t &>;
         using wrapped_second_t = type_reduce_t<second_seq_t &>;
 
         // The alignment executor passes a chunk over an indexed sequence pair range to the alignment algorithm.
@@ -328,19 +325,21 @@ public:
             // Only use edit distance if ...
             auto method_global_cfg = get<seqan3::align_cfg::method_global>(config_with_result_type);
             // Only use edit distance if ...
-            if (gap_cost.open_score == 0 &&  // gap open score is not set,
-                !(method_global_cfg.free_end_gaps_sequence2_leading ||
-                  method_global_cfg.free_end_gaps_sequence2_trailing) && // none of the free end gaps are set for second seq,
-                (method_global_cfg.free_end_gaps_sequence1_leading ==
-                 method_global_cfg.free_end_gaps_sequence1_trailing)) // free ends for leading and trailing gaps are equal in first seq.
+            if (gap_cost.open_score == 0 && // gap open score is not set,
+                !(method_global_cfg.free_end_gaps_sequence2_leading
+                  || method_global_cfg.free_end_gaps_sequence2_trailing)
+                && // none of the free end gaps are set for second seq,
+                (method_global_cfg.free_end_gaps_sequence1_leading
+                 == method_global_cfg
+                        .free_end_gaps_sequence1_trailing)) // free ends for leading and trailing gaps are equal in first seq.
             {
                 // TODO: Instead of relying on nucleotide scoring schemes we need to be able to determine the edit distance
                 //       option via the scheme.
                 if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<decltype(scoring_scheme)>,
                                                           nucleotide_scoring_scheme>)
                 {
-                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0) &&
-                        (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
+                    if ((scoring_scheme.score('A'_dna15, 'A'_dna15) == 0)
+                        && (scoring_scheme.score('A'_dna15, 'C'_dna15)) == -1)
                     {
                         return std::pair{configure_edit_distance<function_wrapper_t>(config_with_result_type),
                                          config_with_result_type};
@@ -380,12 +379,9 @@ private:
         if constexpr (traits_t::has_output_configuration)
             return config;
         else
-            return config | align_cfg::output_score{} |
-                            align_cfg::output_begin_position{} |
-                            align_cfg::output_end_position{} |
-                            align_cfg::output_alignment{} |
-                            align_cfg::output_sequence1_id{} |
-                            align_cfg::output_sequence2_id{};
+            return config | align_cfg::output_score{} | align_cfg::output_begin_position{}
+                 | align_cfg::output_end_position{} | align_cfg::output_alignment{} | align_cfg::output_sequence1_id{}
+                 | align_cfg::output_sequence2_id{};
     }
 
     /*!\brief Configures the edit distance algorithm.
@@ -412,7 +408,7 @@ private:
         // Get the value for the sequence ends configuration.
         auto method_global_cfg = cfg.get_or(align_cfg::method_global{});
 
-        auto configure_edit_traits = [&] (auto is_semi_global)
+        auto configure_edit_traits = [&](auto is_semi_global)
         {
             struct edit_traits_type
             {
@@ -424,7 +420,7 @@ private:
         };
 
         // Check if it has free ends set for the first sequence trailing gaps.
-        auto has_free_ends_trailing = [&] (auto first) constexpr
+        auto has_free_ends_trailing = [&](auto first) constexpr
         {
             if constexpr (!decltype(first)::value)
             {
@@ -479,7 +475,7 @@ private:
      *
      * Configures the matrix and the gap policy and constructs the algorithm with the configured policies.
      */
-    template <typename function_wrapper_t, typename ...policies_t, typename config_t>
+    template <typename function_wrapper_t, typename... policies_t, typename config_t>
     static constexpr function_wrapper_t make_algorithm(config_t const & cfg)
     {
         using traits_t = alignment_configuration_traits<config_t>;
@@ -489,28 +485,33 @@ private:
         // macrobenchmarks to show that it maintains a high performance.
 
         // Use old alignment implementation if...
-        if constexpr (traits_t::is_local ||                                          // it is a local alignment,
-                      traits_t::is_debug ||                                          // it runs in debug mode,
-                      traits_t::compute_sequence_alignment ||                        // it computes more than the begin position.
-                     (traits_t::is_banded && traits_t::compute_begin_positions) ||   // banded && more than end positions.
-                     (traits_t::is_vectorised && traits_t::compute_end_positions))   // simd and more than the score.
+        if constexpr (traits_t::is_local ||                   // it is a local alignment,
+                      traits_t::is_debug ||                   // it runs in debug mode,
+                      traits_t::compute_sequence_alignment || // it computes more than the begin position.
+                      (traits_t::is_banded && traits_t::compute_begin_positions)
+                      || // banded && more than end positions.
+                      (traits_t::is_vectorised && traits_t::compute_end_positions)) // simd and more than the score.
         {
             using matrix_policy_t = typename select_matrix_policy<traits_t>::type;
             using gap_policy_t = typename select_gap_policy<traits_t>::type;
             using find_optimum_t = typename select_find_optimum_policy<traits_t>::type;
             using gap_init_policy_t = deferred_crtp_base<affine_gap_init_policy>;
 
-            return alignment_algorithm<config_t, matrix_policy_t, gap_policy_t, find_optimum_t, gap_init_policy_t, policies_t...>{cfg};
+            return alignment_algorithm<config_t,
+                                       matrix_policy_t,
+                                       gap_policy_t,
+                                       find_optimum_t,
+                                       gap_init_policy_t,
+                                       policies_t...>{cfg};
         }
-        else  // Use new alignment algorithm implementation.
+        else // Use new alignment algorithm implementation.
         {
             //----------------------------------------------------------------------------------------------------------
             // Configure the optimum tracker policy.
             //----------------------------------------------------------------------------------------------------------
 
-            using scalar_optimum_updater_t = std::conditional_t<traits_t::is_banded,
-                                                                max_score_banded_updater,
-                                                                max_score_updater>;
+            using scalar_optimum_updater_t =
+                std::conditional_t<traits_t::is_banded, max_score_banded_updater, max_score_updater>;
 
             using optimum_tracker_policy_t =
                 lazy_conditional_t<traits_t::is_vectorised,
@@ -533,13 +534,13 @@ private:
             // Configure the scoring scheme policy.
             //----------------------------------------------------------------------------------------------------------
 
-            using alignment_method_t = std::conditional_t<traits_t::is_global,
-                                                          seqan3::align_cfg::method_global,
-                                                          seqan3::align_cfg::method_local>;
+            using alignment_method_t = std::
+                conditional_t<traits_t::is_global, seqan3::align_cfg::method_global, seqan3::align_cfg::method_local>;
 
             using score_t = typename traits_t::score_type;
             using scoring_scheme_t = typename traits_t::scoring_scheme_type;
-            constexpr bool is_aminoacid_scheme = is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
+            constexpr bool is_aminoacid_scheme =
+                is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
 
             using simple_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
                                                             lazy<simd_match_mismatch_scoring_scheme,
@@ -554,11 +555,10 @@ private:
                                                                  alignment_method_t>,
                                                             void>;
 
-            using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,
-                                                                  std::conditional_t<is_aminoacid_scheme,
-                                                                                     matrix_simd_scheme_t,
-                                                                                     simple_simd_scheme_t>,
-                                                                  scoring_scheme_t>;
+            using alignment_scoring_scheme_t =
+                std::conditional_t<traits_t::is_vectorised,
+                                   std::conditional_t<is_aminoacid_scheme, matrix_simd_scheme_t, simple_simd_scheme_t>,
+                                   scoring_scheme_t>;
 
             using scoring_scheme_policy_t = policy_scoring_scheme<config_t, alignment_scoring_scheme_t>;
 
@@ -569,10 +569,10 @@ private:
             using score_matrix_t = score_matrix_single_column<score_t>;
             using trace_matrix_t = trace_matrix_full<trace_directions>;
 
-            using alignment_matrix_t = std::conditional_t<traits_t::requires_trace_information,
-                                                          combined_score_and_trace_matrix<score_matrix_t,
-                                                                                          trace_matrix_t>,
-                                                          score_matrix_t>;
+            using alignment_matrix_t =
+                std::conditional_t<traits_t::requires_trace_information,
+                                   combined_score_and_trace_matrix<score_matrix_t, trace_matrix_t>,
+                                   score_matrix_t>;
             using alignment_matrix_policy_t = policy_alignment_matrix<traits_t, alignment_matrix_t>;
 
             //----------------------------------------------------------------------------------------------------------
@@ -599,9 +599,8 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
 
     using scoring_scheme_t = typename traits_t::scoring_scheme_type;
     constexpr bool is_aminoacid_scheme = is_type_specialisation_of_v<scoring_scheme_t, aminoacid_scoring_scheme>;
-    using alignment_type_t = typename std::conditional_t<traits_t::is_global,
-                                                         seqan3::align_cfg::method_global,
-                                                         seqan3::align_cfg::method_local>;
+    using alignment_type_t = typename std::
+        conditional_t<traits_t::is_global, seqan3::align_cfg::method_global, seqan3::align_cfg::method_local>;
 
     using simple_simd_scheme_t = lazy_conditional_t<traits_t::is_vectorised,
                                                     lazy<simd_match_mismatch_scoring_scheme,
@@ -616,9 +615,10 @@ constexpr function_wrapper_t alignment_configurator::configure_scoring_scheme(co
                                                          alignment_type_t>,
                                                     void>;
 
-    using alignment_scoring_scheme_t = std::conditional_t<traits_t::is_vectorised,
-                                                          std::conditional_t<is_aminoacid_scheme, matrix_simd_scheme_t, simple_simd_scheme_t>,
-                                                          scoring_scheme_t>;
+    using alignment_scoring_scheme_t =
+        std::conditional_t<traits_t::is_vectorised,
+                           std::conditional_t<is_aminoacid_scheme, matrix_simd_scheme_t, simple_simd_scheme_t>,
+                           scoring_scheme_t>;
 
     using scoring_scheme_policy_t = deferred_crtp_base<scoring_scheme_policy, alignment_scoring_scheme_t>;
     return make_algorithm<function_wrapper_t, scoring_scheme_policy_t>(cfg);

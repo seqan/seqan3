@@ -70,12 +70,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr band_fixed_size() = default; //!< Defaulted.
-    constexpr band_fixed_size(band_fixed_size const &) = default; //!< Defaulted.
-    constexpr band_fixed_size(band_fixed_size &&) = default; //!< Defaulted.
+    constexpr band_fixed_size() = default;                                    //!< Defaulted.
+    constexpr band_fixed_size(band_fixed_size const &) = default;             //!< Defaulted.
+    constexpr band_fixed_size(band_fixed_size &&) = default;                  //!< Defaulted.
     constexpr band_fixed_size & operator=(band_fixed_size const &) = default; //!< Defaulted.
-    constexpr band_fixed_size & operator=(band_fixed_size &&) = default; //!< Defaulted.
-    ~band_fixed_size() = default; //!< Defaulted.
+    constexpr band_fixed_size & operator=(band_fixed_size &&) = default;      //!< Defaulted.
+    ~band_fixed_size() = default;                                             //!< Defaulted.
 
     /*!\brief Initialises the fixed size band by setting the lower and the upper matrix diagonal.
      *

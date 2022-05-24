@@ -35,7 +35,6 @@ template <arithmetic score_t>
 class score_type : private pipeable_config_element
 {
 public:
-
     static_assert(std::floating_point<score_t> || std::signed_integral<score_t>,
                   "The selected score type must be a signed integral type or floating point type.");
 
@@ -45,12 +44,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr score_type() = default; //!< Defaulted.
-    constexpr score_type(score_type const &) = default; //!< Defaulted.
-    constexpr score_type(score_type &&) = default; //!< Defaulted.
+    constexpr score_type() = default;                               //!< Defaulted.
+    constexpr score_type(score_type const &) = default;             //!< Defaulted.
+    constexpr score_type(score_type &&) = default;                  //!< Defaulted.
     constexpr score_type & operator=(score_type const &) = default; //!< Defaulted.
-    constexpr score_type & operator=(score_type &&) = default; //!< Defaulted.
-    ~score_type() = default; //!< Defaulted.
+    constexpr score_type & operator=(score_type &&) = default;      //!< Defaulted.
+    ~score_type() = default;                                        //!< Defaulted.
 
     //!\}
 

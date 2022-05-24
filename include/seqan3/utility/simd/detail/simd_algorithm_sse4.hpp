@@ -15,8 +15,8 @@
 #include <array>
 
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
+#include <seqan3/utility/simd/detail/builtin_simd_intrinsics.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 
 //-----------------------------------------------------------------------------
@@ -73,7 +73,7 @@ constexpr simd_t extract_quarter_sse4(simd_t const & src);
 template <uint8_t index, simd::simd_concept simd_t>
 constexpr simd_t extract_eighth_sse4(simd_t const & src);
 
-}
+} // namespace seqan3::detail
 
 //-----------------------------------------------------------------------------
 // implementation
@@ -117,10 +117,10 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     __m128i tmp1[16];
     for (int i = 0; i < 8; ++i)
     {
-        tmp1[i]   = _mm_unpacklo_epi8(reinterpret_cast<__m128i &>(matrix[2*i]),
-                                      reinterpret_cast<__m128i &>(matrix[2*i+1]));
-        tmp1[i+8] = _mm_unpackhi_epi8(reinterpret_cast<__m128i &>(matrix[2*i]),
-                                      reinterpret_cast<__m128i &>(matrix[2*i+1]));
+        tmp1[i] = _mm_unpacklo_epi8(reinterpret_cast<__m128i &>(matrix[2 * i]),
+                                    reinterpret_cast<__m128i &>(matrix[2 * i + 1]));
+        tmp1[i + 8] = _mm_unpackhi_epi8(reinterpret_cast<__m128i &>(matrix[2 * i]),
+                                        reinterpret_cast<__m128i &>(matrix[2 * i + 1]));
     }
     // tmp1[0]  = A0 B0 A1 B1 ... A7 B7
     // tmp1[1]  = C0 D0 C1 D1 ... C7 D7
@@ -132,8 +132,8 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     __m128i tmp2[16];
     for (int i = 0; i < 8; ++i)
     {
-        tmp2[i]   = _mm_unpacklo_epi16(tmp1[2*i], tmp1[2*i+1]);
-        tmp2[i+8] = _mm_unpackhi_epi16(tmp1[2*i], tmp1[2*i+1]);
+        tmp2[i] = _mm_unpacklo_epi16(tmp1[2 * i], tmp1[2 * i + 1]);
+        tmp2[i + 8] = _mm_unpackhi_epi16(tmp1[2 * i], tmp1[2 * i + 1]);
     }
     // tmp2[0]  = A0 B0 C0 D0 ... A3 B3 C3 D3
     // tmp2[1]  = E0 F0 G0 H0 ... E3 F3 G3 H3
@@ -149,8 +149,8 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // tmp2[15] = Mc Nc Oc Pc ... Mf Nf Of Pf
     for (int i = 0; i < 8; ++i)
     {
-        tmp1[i]   = _mm_unpacklo_epi32(tmp2[2*i], tmp2[2*i+1]);
-        tmp1[i+8] = _mm_unpackhi_epi32(tmp2[2*i], tmp2[2*i+1]);
+        tmp1[i] = _mm_unpacklo_epi32(tmp2[2 * i], tmp2[2 * i + 1]);
+        tmp1[i + 8] = _mm_unpackhi_epi32(tmp2[2 * i], tmp2[2 * i + 1]);
     }
     // tmp1[0]  = A0 B0 .... H0 A1 B1 .... H1
     // tmp1[1]  = I0 J0 .... P0 I1 J1 .... P1
@@ -159,8 +159,8 @@ inline void transpose_matrix_sse4(std::array<simd_t, simd_traits<simd_t>::length
     // tmp1[1]  = I0 J0 .... P0 I1 J1 .... P1
     for (int i = 0; i < 8; ++i)
     {
-        matrix[bit_reverse[i]]   = reinterpret_cast<simd_t>(_mm_unpacklo_epi64(tmp1[2*i], tmp1[2*i+1]));
-        matrix[bit_reverse[i+8]] = reinterpret_cast<simd_t>(_mm_unpackhi_epi64(tmp1[2*i], tmp1[2*i+1]));
+        matrix[bit_reverse[i]] = reinterpret_cast<simd_t>(_mm_unpacklo_epi64(tmp1[2 * i], tmp1[2 * i + 1]));
+        matrix[bit_reverse[i + 8]] = reinterpret_cast<simd_t>(_mm_unpackhi_epi64(tmp1[2 * i], tmp1[2 * i + 1]));
     }
 }
 
@@ -183,7 +183,7 @@ constexpr target_simd_t upcast_signed_sse4(source_simd_t const & src)
         if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
             return reinterpret_cast<target_simd_t>(_mm_cvtepi16_epi64(reinterpret_cast<__m128i const &>(src)));
     }
-    else  // cast from epi32 to epi64
+    else // cast from epi32 to epi64
     {
         static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
         return reinterpret_cast<target_simd_t>(_mm_cvtepi32_epi64(reinterpret_cast<__m128i const &>(src)));
@@ -209,7 +209,7 @@ constexpr target_simd_t upcast_unsigned_sse4(source_simd_t const & src)
         if constexpr (simd_traits<target_simd_t>::length == 2) // to epi64
             return reinterpret_cast<target_simd_t>(_mm_cvtepu16_epi64(reinterpret_cast<__m128i const &>(src)));
     }
-    else  // cast from epi32 to epi64
+    else // cast from epi32 to epi64
     {
         static_assert(simd_traits<source_simd_t>::length == 4, "Expected 32 bit scalar type.");
         return reinterpret_cast<target_simd_t>(_mm_cvtepu32_epi64(reinterpret_cast<__m128i const &>(src)));

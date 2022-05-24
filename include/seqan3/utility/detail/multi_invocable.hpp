@@ -23,7 +23,7 @@ namespace seqan3::detail
  * \ingroup utility
  * \tparam invocable_ts The types to inherit from.
  */
-template <typename ...invocable_ts>
+template <typename... invocable_ts>
 struct multi_invocable : invocable_ts...
 {
     //!\brief Inherit the function call operators.
@@ -31,7 +31,7 @@ struct multi_invocable : invocable_ts...
 };
 
 //!\brief Deduction guides for seqan3::detail::multi_invocable.
-template <typename ...invocable_ts>
+template <typename... invocable_ts>
 multi_invocable(invocable_ts...) -> multi_invocable<invocable_ts...>;
 
 } // namespace seqan3::detail

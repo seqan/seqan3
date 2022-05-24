@@ -39,17 +39,17 @@ struct stream_buffer_exposer : public std::basic_streambuf<char_t, traits_t>
     //!\cond
     // Expose protected members:
     using base_t::eback;
-    using base_t::gptr;
     using base_t::egptr;
-    using base_t::setg;
     using base_t::gbump;
+    using base_t::gptr;
+    using base_t::setg;
     using base_t::underflow;
 
-    using base_t::pbase;
-    using base_t::pptr;
     using base_t::epptr;
-    using base_t::pbump;
     using base_t::overflow;
+    using base_t::pbase;
+    using base_t::pbump;
+    using base_t::pptr;
     //!\endcond
 };
 } // namespace seqan3::detail

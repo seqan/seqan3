@@ -65,12 +65,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dna15()                           noexcept = default; //!< Defaulted.
-    constexpr dna15(dna15 const &)              noexcept = default; //!< Defaulted.
-    constexpr dna15(dna15 &&)                   noexcept = default; //!< Defaulted.
-    constexpr dna15 & operator=(dna15 const &)  noexcept = default; //!< Defaulted.
-    constexpr dna15 & operator=(dna15 &&)       noexcept = default; //!< Defaulted.
-    ~dna15()                                    noexcept = default; //!< Defaulted.
+    constexpr dna15() noexcept = default;                          //!< Defaulted.
+    constexpr dna15(dna15 const &) noexcept = default;             //!< Defaulted.
+    constexpr dna15(dna15 &&) noexcept = default;                  //!< Defaulted.
+    constexpr dna15 & operator=(dna15 const &) noexcept = default; //!< Defaulted.
+    constexpr dna15 & operator=(dna15 &&) noexcept = default;      //!< Defaulted.
+    ~dna15() noexcept = default;                                   //!< Defaulted.
 
     using base_t::base_t;
 
@@ -81,7 +81,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    template <std::same_as<rna15> t>    // Accept incomplete type
+    template <std::same_as<rna15> t> // Accept incomplete type
     constexpr dna15(t const & r) noexcept
     {
         assign_rank(r.to_rank());
@@ -90,89 +90,70 @@ public:
 
 private:
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'G',
-        'H',
-        'K',
-        'M',
-        'N',
-        'R',
-        'S',
-        'T',
-        'V',
-        'W',
-        'Y'
-    };
+    static constexpr char_type
+        rank_to_char_table[alphabet_size]{'A', 'B', 'C', 'D', 'G', 'H', 'K', 'M', 'N', 'R', 'S', 'T', 'V', 'W', 'Y'};
 
     //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr std::array<rank_type, 256> char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret)
+        c = 8; // rank of 'N'
+
+    // reverse mapping for characters and their lowercase
+    for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
     {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> ret{};
-
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = 8; // rank of 'N'
-
-            // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[rank_to_char_table[rnk]] = rnk;
-                ret[to_lower(rank_to_char_table[rnk])] = rnk;
-            }
-
-            // set U equal to T
-            ret['U'] = ret['T']; ret['u'] = ret['t'];
-
-            return ret;
-        }()
-    };
-
-    //!\copydoc seqan3::dna4::rank_complement_table
-    static constexpr rank_type rank_complement_table[alphabet_size]
-    {
-        11, // T is complement of 'A'_dna15
-        12, // V is complement of 'B'_dna15
-        4,  // G is complement of 'C'_dna15
-        5,  // H is complement of 'D'_dna15
-        2,  // C is complement of 'G'_dna15
-        3,  // D is complement of 'H'_dna15
-        7,  // M is complement of 'K'_dna15
-        6,  // K is complement of 'M'_dna15
-        8,  // N is complement of 'N'_dna15
-        14, // Y is complement of 'R'_dna15
-        10, // S is complement of 'S'_dna15
-        0,  // A is complement of 'T'_dna15
-        1,  // B is complement of 'V'_dna15
-        13, // W is complement of 'W'_dna15
-        9   // R is complement of 'Y'_dna15
-    };
-
-    //!\copydoc seqan3::dna4::rank_complement
-    static constexpr rank_type rank_complement(rank_type const rank)
-    {
-        return rank_complement_table[rank];
+        ret[rank_to_char_table[rnk]] = rnk;
+        ret[to_lower(rank_to_char_table[rnk])] = rnk;
     }
 
-    //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
-    }
+    // set U equal to T
+    ret['U'] = ret['T'];
+    ret['u'] = ret['t'];
 
-    //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
+    return ret;
+}()
+}; // namespace seqan3
+
+//!\copydoc seqan3::dna4::rank_complement_table
+static constexpr rank_type rank_complement_table[alphabet_size]{
+    11, // T is complement of 'A'_dna15
+    12, // V is complement of 'B'_dna15
+    4,  // G is complement of 'C'_dna15
+    5,  // H is complement of 'D'_dna15
+    2,  // C is complement of 'G'_dna15
+    3,  // D is complement of 'H'_dna15
+    7,  // M is complement of 'K'_dna15
+    6,  // K is complement of 'M'_dna15
+    8,  // N is complement of 'N'_dna15
+    14, // Y is complement of 'R'_dna15
+    10, // S is complement of 'S'_dna15
+    0,  // A is complement of 'T'_dna15
+    1,  // B is complement of 'V'_dna15
+    13, // W is complement of 'W'_dna15
+    9   // R is complement of 'Y'_dna15
 };
+
+//!\copydoc seqan3::dna4::rank_complement
+static constexpr rank_type rank_complement(rank_type const rank)
+{
+    return rank_complement_table[rank];
+}
+
+//!\copydoc seqan3::dna4::rank_to_char
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
+
+//!\copydoc seqan3::dna4::char_to_rank
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 // ------------------------------------------------------------------
 // containers
@@ -231,6 +212,6 @@ inline dna15_vector operator""_dna15(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

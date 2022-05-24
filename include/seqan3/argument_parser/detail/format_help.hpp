@@ -43,20 +43,20 @@ class format_help : public format_help_base<format_help>
 
     //!\brief Befriend the base class to give access to the private member functions.
     friend base_type;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_help() = default;                                   //!< Defaulted.
-    format_help(format_help const & pf) = default;             //!< Defaulted.
-    format_help & operator=(format_help const &) = default;    //!< Defaulted.
-    format_help(format_help &&) = default;                     //!< Defaulted.
-    format_help & operator=(format_help &&) = default;         //!< Defaulted.
-    ~format_help() = default;                                  //!< Defaulted.
+    format_help() = default;                                //!< Defaulted.
+    format_help(format_help const & pf) = default;          //!< Defaulted.
+    format_help & operator=(format_help const &) = default; //!< Defaulted.
+    format_help(format_help &&) = default;                  //!< Defaulted.
+    format_help & operator=(format_help &&) = default;      //!< Defaulted.
+    ~format_help() = default;                               //!< Defaulted.
 
     //!\copydoc format_help_base(std::vector<std::string> const &, bool const)
-    format_help(std::vector<std::string> const & names, bool const advanced = false) : base_type{names, advanced}
-    {};
+    format_help(std::vector<std::string> const & names, bool const advanced = false) : base_type{names, advanced} {};
     //!\}
 
 protected:
@@ -88,8 +88,15 @@ protected:
         //!\brief The constructor.
         //!\param[in] terminal_width The width of the terminal.
         console_layout_struct(uint32_t const terminal_width) :
-            screenWidth{0}, defaultScreenWidth{80}, maximalScreenWidth{120}, minimalScreenWidth{40},
-            leftPadding{4}, centerPadding{2}, rightPadding{2}, leftColumnWidth{4}, rightColumnWidth{0}
+            screenWidth{0},
+            defaultScreenWidth{80},
+            maximalScreenWidth{120},
+            minimalScreenWidth{40},
+            leftPadding{4},
+            centerPadding{2},
+            rightPadding{2},
+            leftColumnWidth{4},
+            rightColumnWidth{0}
         {
             // Guess terminal screen width and set into layout.
             screenWidth = (terminal_width > 0) ? terminal_width : defaultScreenWidth;
@@ -102,7 +109,8 @@ protected:
         }
 
         //!\brief The default constructor.
-        console_layout_struct() : console_layout_struct{get_terminal_width()} {}
+        console_layout_struct() : console_layout_struct{get_terminal_width()}
+        {}
     };
 
     //!\brief Prints a help page header to std::cout.
@@ -115,8 +123,8 @@ protected:
             std::cout << " - " << meta.short_description;
 
         std::cout << "\n";
-        unsigned len = text_width(meta.app_name) + (empty(meta.short_description) ? 0 : 3) +
-                       text_width(meta.short_description);
+        unsigned len =
+            text_width(meta.app_name) + (empty(meta.short_description) ? 0 : 3) + text_width(meta.short_description);
         std::fill_n(out, len, '=');
         std::cout << '\n';
     }
@@ -128,7 +136,13 @@ protected:
     {
         std::ostream_iterator<char> out(std::cout);
         std::cout << '\n' << to_text("\\fB");
-        std::transform(title.begin(), title.end(), out, [] (unsigned char c) { return std::toupper(c); });
+        std::transform(title.begin(),
+                       title.end(),
+                       out,
+                       [](unsigned char c)
+                       {
+                           return std::toupper(c);
+                       });
         std::cout << to_text("\\fP") << '\n';
         prev_was_paragraph = false;
     }
@@ -279,7 +293,7 @@ protected:
 
             if (i + 1 == text.size())
             {
-                result += 1;  // Will print "\\".
+                result += 1; // Will print "\\".
                 continue;
             }
 
@@ -287,20 +301,20 @@ protected:
             {
                 i += 1;
                 result += 1;
-                continue;  // Will print '\\' or '-'.
+                continue; // Will print '\\' or '-'.
             }
 
             if (i + 2 == text.size())
             {
                 i += 1;
-                result += 2;  // Will print two chars.
+                result += 2; // Will print two chars.
                 continue;
             }
 
             if (text[i + 1] == 'f')
             {
                 if (text[i + 2] == 'B' || text[i + 2] == 'I' || text[i + 2] == 'P')
-                    i += 2;  // Skip f and {B, I, P}.
+                    i += 2; // Skip f and {B, I, P}.
                 else
                     result += 1;
             }
@@ -321,12 +335,13 @@ protected:
         // Tokenize the text.
         std::istringstream iss(text.c_str());
         std::vector<std::string> tokens;
-        std::ranges::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(),
+        std::ranges::copy(std::istream_iterator<std::string>(iss),
+                          std::istream_iterator<std::string>(),
                           std::back_inserter(tokens));
 
         // Print the text.
         assert(pos <= tab);
-        std::fill_n(out, tab - pos, ' ');  // go to tab
+        std::fill_n(out, tab - pos, ' '); // go to tab
 
         pos = tab;
         typedef std::vector<std::string>::const_iterator TConstIter;
@@ -466,7 +481,7 @@ public:
         meta = parser_meta;
         debug_stream_type stream{std::cout};
         std::string seqan_license{
-R"(Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
+            R"(Copyright (c) 2006-2021, Knut Reinert & Freie Universität Berlin
 Copyright (c) 2016-2021, Knut Reinert & MPI für molekulare Genetik
 All rights reserved.
 
@@ -495,8 +510,7 @@ OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.)"};
 
         stream << std::string(80, '=') << "\n"
-               << in_bold("Copyright information for " + meta.app_name + ":\n")
-               << std::string(80, '-') << '\n';
+               << in_bold("Copyright information for " + meta.app_name + ":\n") << std::string(80, '-') << '\n';
 
         if (!empty(meta.long_copyright))
         {
@@ -504,8 +518,8 @@ DAMAGE.)"};
         }
         else if (!empty(meta.short_copyright))
         {
-            stream << in_bold(meta.app_name + " full copyright information not available. " +
-                              "Displaying short copyright information instead:\n" )
+            stream << in_bold(meta.app_name + " full copyright information not available. "
+                              + "Displaying short copyright information instead:\n")
                    << meta.short_copyright << "\n";
         }
         else
@@ -515,7 +529,8 @@ DAMAGE.)"};
 
         stream << std::string(80, '=') << '\n'
                << in_bold("This program contains SeqAn code licensed under the following terms:\n")
-               << std::string(80, '-') << '\n' << seqan_license << '\n';
+               << std::string(80, '-') << '\n'
+               << seqan_license << '\n';
 
         std::exit(EXIT_SUCCESS);
     }

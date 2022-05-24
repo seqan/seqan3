@@ -46,12 +46,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_sam_base() = default; //!< Defaulted.
-    format_sam_base(format_sam_base const &) = default; //!< Defaulted.
+    format_sam_base() = default;                                    //!< Defaulted.
+    format_sam_base(format_sam_base const &) = default;             //!< Defaulted.
     format_sam_base & operator=(format_sam_base const &) = default; //!< Defaulted.
-    format_sam_base(format_sam_base &&) = default; //!< Defaulted.
-    format_sam_base & operator=(format_sam_base &&) = default; //!< Defaulted.
-    ~format_sam_base() = default; //!< Defaulted.
+    format_sam_base(format_sam_base &&) = default;                  //!< Defaulted.
+    format_sam_base & operator=(format_sam_base &&) = default;      //!< Defaulted.
+    ~format_sam_base() = default;                                   //!< Defaulted.
 
     //!\}
 
@@ -67,22 +67,19 @@ protected:
     //!\brief Tracks whether reference information (\@SQ tag) were found in the SAM header
     bool ref_info_present_in_header{false};
 
-    template <typename ref_id_type,
-              typename ref_id_tmp_type,
-              typename header_type,
-              typename ref_seqs_type>
-    void check_and_assign_ref_id(ref_id_type      & ref_id,
-                                 ref_id_tmp_type  & ref_id_tmp,
-                                 header_type      & header,
-                                 ref_seqs_type    & /*tag*/);
+    template <typename ref_id_type, typename ref_id_tmp_type, typename header_type, typename ref_seqs_type>
+    void check_and_assign_ref_id(ref_id_type & ref_id,
+                                 ref_id_tmp_type & ref_id_tmp,
+                                 header_type & header,
+                                 ref_seqs_type & /*tag*/);
 
     template <typename align_type, typename ref_seqs_type>
-    void construct_alignment(align_type                           & align,
-                             std::vector<cigar>                   & cigar_vector,
-                             [[maybe_unused]] int32_t               rid,
-                             [[maybe_unused]] ref_seqs_type       & ref_seqs,
-                             [[maybe_unused]] int32_t               ref_start,
-                             size_t                                 ref_length);
+    void construct_alignment(align_type & align,
+                             std::vector<cigar> & cigar_vector,
+                             [[maybe_unused]] int32_t rid,
+                             [[maybe_unused]] ref_seqs_type & ref_seqs,
+                             [[maybe_unused]] int32_t ref_start,
+                             size_t ref_length);
 
     void transfer_soft_clipping_to(std::vector<cigar> const & cigar_vector, int32_t & sc_begin, int32_t & sc_end) const;
 
@@ -101,9 +98,8 @@ protected:
                      ref_seqs_type & /*ref_id_to_pos_map*/);
 
     template <typename stream_t, typename ref_ids_type>
-    void write_header(stream_t & stream,
-                      sam_file_output_options const & options,
-                      sam_file_header<ref_ids_type> & header);
+    void
+    write_header(stream_t & stream, sam_file_output_options const & options, sam_file_header<ref_ids_type> & header);
 };
 
 /*!\brief Checks for known reference ids or adds a new reference is and assigns a reference id to `ref_id`.
@@ -116,14 +112,11 @@ protected:
  * \param[in]      ref_id_tmp  The temporary of the parsed reference id.
  * \param[in, out] header      The header object that stores the reference id information.
  */
-template <typename ref_id_type,
-          typename ref_id_tmp_type,
-          typename header_type,
-          typename ref_seqs_type>
-inline void format_sam_base::check_and_assign_ref_id(ref_id_type      & ref_id,
-                                                     ref_id_tmp_type  & ref_id_tmp,
-                                                     header_type      & header,
-                                                     ref_seqs_type    & /*tag*/)
+template <typename ref_id_type, typename ref_id_tmp_type, typename header_type, typename ref_seqs_type>
+inline void format_sam_base::check_and_assign_ref_id(ref_id_type & ref_id,
+                                                     ref_id_tmp_type & ref_id_tmp,
+                                                     header_type & header,
+                                                     ref_seqs_type & /*tag*/)
 {
     if (!std::ranges::empty(ref_id_tmp)) // otherwise the std::optional will not be filled
     {
@@ -131,7 +124,7 @@ inline void format_sam_base::check_and_assign_ref_id(ref_id_type      & ref_id,
 
         if (search == header.ref_dict.end())
         {
-            if constexpr(detail::decays_to_ignore_v<ref_seqs_type>) // no reference information given
+            if constexpr (detail::decays_to_ignore_v<ref_seqs_type>) // no reference information given
             {
                 if (ref_info_present_in_header)
                 {
@@ -167,13 +160,25 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
                                                        int32_t & sc_end) const
 {
     // Checks if the given index in the cigar vector is a soft clip.
-    auto soft_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'S'_cigar_operation; };
+    auto soft_clipping_at = [&](size_t const index)
+    {
+        return cigar_vector[index] == 'S'_cigar_operation;
+    };
     // Checks if the given index in the cigar vector is a hard clip.
-    auto hard_clipping_at = [&] (size_t const index) { return cigar_vector[index] == 'H'_cigar_operation; };
+    auto hard_clipping_at = [&](size_t const index)
+    {
+        return cigar_vector[index] == 'H'_cigar_operation;
+    };
     // Checks if the given cigar vector as at least min_size many elements.
-    auto vector_size_at_least = [&] (size_t const min_size) { return cigar_vector.size() >= min_size; };
+    auto vector_size_at_least = [&](size_t const min_size)
+    {
+        return cigar_vector.size() >= min_size;
+    };
     // Returns the cigar count of the ith cigar element in the given cigar vector.
-    auto cigar_count_at = [&] (size_t const index) { return get<0>(cigar_vector[index]); };
+    auto cigar_count_at = [&](size_t const index)
+    {
+        return get<0>(cigar_vector[index]);
+    };
 
     // check for soft clipping at the first two positions
     if (vector_size_at_least(1) && soft_clipping_at(0))
@@ -204,15 +209,15 @@ inline void format_sam_base::transfer_soft_clipping_to(std::vector<cigar> const 
  * \param[in] ref_length   The length of the aligned reference sequence.
  */
 template <typename align_type, typename ref_seqs_type>
-inline void format_sam_base::construct_alignment(align_type                           & align,
-                                                 std::vector<cigar>                   & cigar_vector,
-                                                 [[maybe_unused]] int32_t               rid,
-                                                 [[maybe_unused]] ref_seqs_type       & ref_seqs,
-                                                 [[maybe_unused]] int32_t               ref_start,
-                                                 size_t                                 ref_length)
+inline void format_sam_base::construct_alignment(align_type & align,
+                                                 std::vector<cigar> & cigar_vector,
+                                                 [[maybe_unused]] int32_t rid,
+                                                 [[maybe_unused]] ref_seqs_type & ref_seqs,
+                                                 [[maybe_unused]] int32_t ref_start,
+                                                 size_t ref_length)
 {
     if (rid > -1 && ref_start > -1 &&       // read is mapped
-        !cigar_vector.empty() &&                   // alignment field was not empty
+        !cigar_vector.empty() &&            // alignment field was not empty
         !std::ranges::empty(get<1>(align))) // seq field was not empty
     {
         if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>)
@@ -224,8 +229,8 @@ inline void format_sam_base::construct_alignment(align_type                     
         else
         {
             using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            auto dummy_seq    = views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, ref_length)
-                              | std::views::transform(detail::access_restrictor_fn{});
+            auto dummy_seq = views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, ref_length)
+                           | std::views::transform(detail::access_restrictor_fn{});
             static_assert(std::same_as<unaligned_t, decltype(dummy_seq)>,
                           "No reference information was given so the type of the first alignment tuple position"
                           "must have an unaligned sequence type of a dummy sequence ("
@@ -248,8 +253,9 @@ inline void format_sam_base::construct_alignment(align_type                     
         else
         {
             using unaligned_t = std::remove_cvref_t<detail::unaligned_seq_t<decltype(get<0>(align))>>;
-            assign_unaligned(get<0>(align), views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, 0)
-                                            | std::views::transform(detail::access_restrictor_fn{}));
+            assign_unaligned(get<0>(align),
+                             views::repeat_n(std::ranges::range_value_t<unaligned_t>{}, 0)
+                                 | std::views::transform(detail::access_restrictor_fn{}));
         }
     }
 }
@@ -268,20 +274,19 @@ inline void format_sam_base::read_byte_field(stream_view_t && stream_view, std::
 {
     // unfortunately std::from_chars only accepts char const * so we need a buffer.
     auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
-    (void) ignore;
+    (void)ignore;
 
     uint8_t byte{};
     // std::from_chars cannot directly parse into a std::byte
     std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, byte, 16);
 
     if (res.ec == std::errc::invalid_argument || res.ptr != end)
-        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") +
-                                       std::string(arithmetic_buffer.begin(), end) +
-                                       "' could not be cast into type uint8_t."};
+        throw format_error{std::string("[CORRUPTED SAM FILE] The string '")
+                           + std::string(arithmetic_buffer.begin(), end) + "' could not be cast into type uint8_t."};
 
     if (res.ec == std::errc::result_out_of_range)
-        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
-                                       "' into type uint8_t would cause an overflow."};
+        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end)
+                           + "' into type uint8_t would cause an overflow."};
     byte_target = std::byte{byte};
 }
 
@@ -308,7 +313,7 @@ inline void format_sam_base::read_forward_range_field(stream_view_type && stream
         {
             target.push_back(seqan3::assign_char_to(c, target_range_value_t{}));
             std::ranges::copy(std::ranges::subrange<begin_iterator_t, end_iterator_t>{it, std::ranges::end(stream_view)}
-                              | views::char_to<target_range_value_t>,
+                                  | views::char_to<target_range_value_t>,
                               std::back_inserter(target));
         }
     }
@@ -325,23 +330,23 @@ inline void format_sam_base::read_forward_range_field(stream_view_type && stream
  *         of type arithmetic_target_type.
  */
 template <typename stream_view_t, arithmetic arithmetic_target_type>
-inline void format_sam_base::read_arithmetic_field(stream_view_t && stream_view, arithmetic_target_type & arithmetic_target)
+inline void format_sam_base::read_arithmetic_field(stream_view_t && stream_view,
+                                                   arithmetic_target_type & arithmetic_target)
 {
     // unfortunately std::from_chars only accepts char const * so we need a buffer.
     auto [ignore, end] = std::ranges::copy(stream_view, arithmetic_buffer.data());
-    (void) ignore;
+    (void)ignore;
     std::from_chars_result res = std::from_chars(arithmetic_buffer.begin(), end, arithmetic_target);
 
     if (res.ec == std::errc::invalid_argument || res.ptr != end)
-        throw format_error{std::string("[CORRUPTED SAM FILE] The string '") +
-                                       std::string(arithmetic_buffer.begin(), end) +
-                                       "' could not be cast into type " +
-                                       detail::type_name_as_string<arithmetic_target_type>};
+        throw format_error{std::string("[CORRUPTED SAM FILE] The string '")
+                           + std::string(arithmetic_buffer.begin(), end) + "' could not be cast into type "
+                           + detail::type_name_as_string<arithmetic_target_type>};
 
     if (res.ec == std::errc::result_out_of_range)
-        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end) +
-                                       "' into type " + detail::type_name_as_string<arithmetic_target_type> +
-                                       " would cause an overflow."};
+        throw format_error{std::string("[CORRUPTED SAM FILE] Casting '") + std::string(arithmetic_buffer.begin(), end)
+                           + "' into type " + detail::type_name_as_string<arithmetic_target_type>
+                           + " would cause an overflow."};
 }
 
 /*!\brief Reads the SAM header.
@@ -369,14 +374,14 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
     auto end = std::ranges::end(stream_view);
     std::vector<char> string_buffer{};
 
-    auto make_tag = [] (uint8_t char1, uint8_t char2) constexpr
+    auto make_tag = [](uint8_t char1, uint8_t char2) constexpr
     {
         return static_cast<uint16_t>(char1) | (static_cast<uint16_t>(char2) << CHAR_BIT);
     };
 
     std::array<char, 2> raw_tag{};
 
-    auto parse_and_make_tag = [&] ()
+    auto parse_and_make_tag = [&]()
     {
         raw_tag[0] = *it;
         ++it;
@@ -385,7 +390,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         return make_tag(raw_tag[0], raw_tag[1]);
     };
 
-    auto take_until_predicate = [&it, &string_buffer] (auto const & predicate)
+    auto take_until_predicate = [&it, &string_buffer](auto const & predicate)
     {
         string_buffer.clear();
         while (!predicate(*it))
@@ -395,13 +400,13 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         }
     };
 
-    auto skip_until_predicate = [&it] (auto const & predicate)
+    auto skip_until_predicate = [&it](auto const & predicate)
     {
         while (!predicate(*it))
             ++it;
     };
 
-    auto copy_next_tag_value_into_buffer = [&] ()
+    auto copy_next_tag_value_into_buffer = [&]()
     {
         skip_until_predicate(is_char<':'>);
         ++it; // skip :
@@ -415,7 +420,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
     // Unfortunately, we do not know when we are parsing the last tag (and in this case just not append a tab),
     // because even though we can check if the line ends in a `\n`, it is not guaranteed that the last tag of the
     // line is passed to this lambda. For example, the line might end with a tag that is properly parsed, such as `ID`.
-    auto parse_and_append_unhandled_tag_to_string = [&] (std::string & value, std::array<char, 2> raw_tag)
+    auto parse_and_append_unhandled_tag_to_string = [&](std::string & value, std::array<char, 2> raw_tag)
     {
         take_until_predicate(is_char<'\t'> || is_char<'\n'>);
         if (!value.empty())
@@ -425,7 +430,7 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
         read_forward_range_field(string_buffer, value);
     };
 
-    auto print_cerr_of_unspported_tag = [&it] (char const * const header_tag, std::array<char, 2> raw_tag)
+    auto print_cerr_of_unspported_tag = [&it](char const * const header_tag, std::array<char, 2> raw_tag)
     {
         std::cerr << "Unsupported SAM header tag in @" << header_tag << ": " << raw_tag[0] << raw_tag[1] << '\n';
     };
@@ -436,242 +441,246 @@ inline void format_sam_base::read_header(stream_view_type && stream_view,
 
         switch (parse_and_make_tag())
         {
-            case make_tag('H', 'D'): // HD (header) tag
-            {
-                // All tags can appear in any order, VN is the only required tag
-                while (is_char<'\t'>(*it))
-                {
-                    ++it; // skip tab
-                    std::string * header_entry{nullptr};
-
-                    switch (parse_and_make_tag())
-                    {
-                        case make_tag('V', 'N'): // parse required VN (version) tag
-                        {
-                            header_entry = std::addressof(hdr.format_version);
-                            break;
-                        }
-                        case make_tag('S', 'O'): // SO (sorting) tag
-                        {
-                            header_entry = std::addressof(hdr.sorting);
-                            break;
-                        }
-                        case make_tag('S', 'S'): // SS (sub-order) tag
-                        {
-                            header_entry = std::addressof(hdr.subsorting);
-                            break;
-                        }
-                        case make_tag('G', 'O'): // GO (grouping) tag
-                        {
-                            header_entry = std::addressof(hdr.grouping);
-                            break;
-                        }
-                        default: // unsupported header tag
-                        {
-                            print_cerr_of_unspported_tag("HD", raw_tag);
-                        }
-                    }
-
-                    if (header_entry != nullptr)
-                    {
-                        copy_next_tag_value_into_buffer();
-                        read_forward_range_field(string_buffer, *header_entry);
-                    }
-                    else
-                        skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
-                }
-                ++it; // skip newline
-
-                if (hdr.format_version.empty())
-                    throw format_error{std::string{"The required VN tag in @HD is missing."}};
-
-                break;
-            }
-
-            case make_tag('S', 'Q'): // SQ (sequence dictionary) tag
-            {
-                ref_info_present_in_header = true;
-                std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
-                std::optional<int32_t> sequence_length{};
-                std::tuple<int32_t, std::string> info{};
-
-                // All tags can appear in any order, SN and LN are required tags
-                while (is_char<'\t'>(*it))
-                {
-                    ++it; // skip tab
-
-                    switch (parse_and_make_tag())
-                    {
-                        case make_tag('S', 'N'): // parse required SN (sequence name) tag
-                        {
-                            copy_next_tag_value_into_buffer();
-                            read_forward_range_field(string_buffer, id);
-                            break;
-                        }
-                        case make_tag('L', 'N'): // parse required LN (length) tag
-                        {
-                            int32_t sequence_length_tmp{};
-                            copy_next_tag_value_into_buffer();
-                            read_arithmetic_field(string_buffer, sequence_length_tmp);
-                            sequence_length = sequence_length_tmp;
-                            break;
-                        }
-                        default: // Any other tag
-                        {
-                            parse_and_append_unhandled_tag_to_string(get<1>(info), raw_tag);
-                        }
-                    }
-                }
-                ++it; // skip newline
-
-                if (id.empty())
-                    throw format_error{std::string{"The required SN tag in @SQ is missing."}};
-                if (!sequence_length.has_value())
-                    throw format_error{std::string{"The required LN tag in @SQ is missing."}};
-                if (sequence_length.value() <= 0)
-                    throw format_error{std::string{"The value of LN in @SQ must be positive."}};
-
-                get<0>(info) = sequence_length.value();
-                // If reference information was given, the ids exist and we can fill ref_dict directly.
-                // If not, we need to update the ids first and fill the reference dictionary afterwards.
-                if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
-                {
-                    auto id_it = hdr.ref_dict.find(id);
-
-                    if (id_it == hdr.ref_dict.end())
-                        throw format_error{detail::to_string("Unknown reference name '", id, "' found in SAM header ",
-                                                             "(header.ref_ids(): ", hdr.ref_ids(), ").")};
-
-                    auto & given_ref_info = hdr.ref_id_info[id_it->second];
-
-                    if (std::get<0>(given_ref_info) != std::get<0>(info))
-                        throw format_error{"Provided and header-based reference length differ."};
-
-                    hdr.ref_id_info[id_it->second] = std::move(info);
-                }
-                else
-                {
-                    static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
-                                  "The range over reference ids must be of type std::deque such that pointers are not "
-                                  "invalidated.");
-
-                    hdr.ref_ids().push_back(id);
-                    hdr.ref_id_info.push_back(info);
-                    hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
-                }
-                break;
-            }
-
-            case make_tag('R', 'G'): // RG (read group) tag
-            {
-                std::pair<std::string, std::string> tmp{};
-
-                // All tags can appear in any order, SN and LN are required tags
-                while (is_char<'\t'>(*it))
-                {
-                    ++it; // skip tab
-
-                    switch (parse_and_make_tag())
-                    {
-                        case make_tag('I', 'D'): // parse required ID tag
-                        {
-                            copy_next_tag_value_into_buffer();
-                            read_forward_range_field(string_buffer, get<0>(tmp));
-                            break;
-                        }
-                        default: // Any other tag
-                        {
-                            parse_and_append_unhandled_tag_to_string(get<1>(tmp), raw_tag);
-                        }
-                    }
-                }
-                ++it; // skip newline
-
-                if (get<0>(tmp).empty())
-                    throw format_error{std::string{"The required ID tag in @RG is missing."}};
-
-                hdr.read_groups.emplace_back(std::move(tmp));
-                break;
-            }
-
-            case make_tag('P', 'G'): // PG (program) tag
-            {
-                typename sam_file_header<ref_ids_type>::program_info_t tmp{};
-
-                // All tags can appear in any order, ID is the only required tag
-                while (is_char<'\t'>(*it))
-                {
-                    ++it; // skip tab
-                    std::string * program_info_entry{nullptr};
-
-                    switch (parse_and_make_tag())
-                    {
-                        case make_tag('I', 'D'): // read required ID tag
-                        {
-                            program_info_entry = std::addressof(tmp.id);
-                            break;
-                        }
-                        case make_tag('P', 'N'): // PN (program name) tag
-                        {
-                            program_info_entry = std::addressof(tmp.name);
-                            break;
-                        }
-                        case make_tag('P', 'P'): // PP (previous program) tag
-                        {
-                            program_info_entry = std::addressof(tmp.previous);
-                            break;
-                        }
-                        case make_tag('C', 'L'): // CL (command line) tag
-                        {
-                            program_info_entry = std::addressof(tmp.command_line_call);
-                            break;
-                        }
-                        case make_tag('D', 'S'): // DS (description) tag
-                        {
-                            program_info_entry = std::addressof(tmp.description);
-                            break;
-                        }
-                        case make_tag('V', 'N'): // VN (version) tag
-                        {
-                            program_info_entry = std::addressof(tmp.version);
-                            break;
-                        }
-                        default: // unsupported header tag
-                        {
-                            print_cerr_of_unspported_tag("PG", raw_tag);
-                        }
-                    }
-
-                    if (program_info_entry != nullptr)
-                    {
-                        copy_next_tag_value_into_buffer();
-                        read_forward_range_field(string_buffer, *program_info_entry);
-                    }
-                    else
-                        skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
-                }
-                ++it; // skip newline
-
-                if (tmp.id.empty())
-                    throw format_error{std::string{"The required ID tag in @PG is missing."}};
-
-                hdr.program_infos.emplace_back(std::move(tmp));
-                break;
-            }
-
-            case make_tag('C', 'O'): // CO (comment) tag
+        case make_tag('H', 'D'): // HD (header) tag
+        {
+            // All tags can appear in any order, VN is the only required tag
+            while (is_char<'\t'>(*it))
             {
                 ++it; // skip tab
-                std::string tmp;
-                take_until_predicate(is_char<'\n'>);
-                read_forward_range_field(string_buffer, tmp);
-                ++it; // skip newline
-                hdr.comments.emplace_back(std::move(tmp));
-                break;
-            }
+                std::string * header_entry{nullptr};
 
-            default:
-                throw format_error{std::string{"Illegal SAM header tag starting with:"} + *it};
+                switch (parse_and_make_tag())
+                {
+                case make_tag('V', 'N'): // parse required VN (version) tag
+                {
+                    header_entry = std::addressof(hdr.format_version);
+                    break;
+                }
+                case make_tag('S', 'O'): // SO (sorting) tag
+                {
+                    header_entry = std::addressof(hdr.sorting);
+                    break;
+                }
+                case make_tag('S', 'S'): // SS (sub-order) tag
+                {
+                    header_entry = std::addressof(hdr.subsorting);
+                    break;
+                }
+                case make_tag('G', 'O'): // GO (grouping) tag
+                {
+                    header_entry = std::addressof(hdr.grouping);
+                    break;
+                }
+                default: // unsupported header tag
+                {
+                    print_cerr_of_unspported_tag("HD", raw_tag);
+                }
+                }
+
+                if (header_entry != nullptr)
+                {
+                    copy_next_tag_value_into_buffer();
+                    read_forward_range_field(string_buffer, *header_entry);
+                }
+                else
+                    skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
+            }
+            ++it; // skip newline
+
+            if (hdr.format_version.empty())
+                throw format_error{std::string{"The required VN tag in @HD is missing."}};
+
+            break;
+        }
+
+        case make_tag('S', 'Q'): // SQ (sequence dictionary) tag
+        {
+            ref_info_present_in_header = true;
+            std::ranges::range_value_t<decltype(hdr.ref_ids())> id;
+            std::optional<int32_t> sequence_length{};
+            std::tuple<int32_t, std::string> info{};
+
+            // All tags can appear in any order, SN and LN are required tags
+            while (is_char<'\t'>(*it))
+            {
+                ++it; // skip tab
+
+                switch (parse_and_make_tag())
+                {
+                case make_tag('S', 'N'): // parse required SN (sequence name) tag
+                {
+                    copy_next_tag_value_into_buffer();
+                    read_forward_range_field(string_buffer, id);
+                    break;
+                }
+                case make_tag('L', 'N'): // parse required LN (length) tag
+                {
+                    int32_t sequence_length_tmp{};
+                    copy_next_tag_value_into_buffer();
+                    read_arithmetic_field(string_buffer, sequence_length_tmp);
+                    sequence_length = sequence_length_tmp;
+                    break;
+                }
+                default: // Any other tag
+                {
+                    parse_and_append_unhandled_tag_to_string(get<1>(info), raw_tag);
+                }
+                }
+            }
+            ++it; // skip newline
+
+            if (id.empty())
+                throw format_error{std::string{"The required SN tag in @SQ is missing."}};
+            if (!sequence_length.has_value())
+                throw format_error{std::string{"The required LN tag in @SQ is missing."}};
+            if (sequence_length.value() <= 0)
+                throw format_error{std::string{"The value of LN in @SQ must be positive."}};
+
+            get<0>(info) = sequence_length.value();
+            // If reference information was given, the ids exist and we can fill ref_dict directly.
+            // If not, we need to update the ids first and fill the reference dictionary afterwards.
+            if constexpr (!detail::decays_to_ignore_v<ref_seqs_type>) // reference information given
+            {
+                auto id_it = hdr.ref_dict.find(id);
+
+                if (id_it == hdr.ref_dict.end())
+                    throw format_error{detail::to_string("Unknown reference name '",
+                                                         id,
+                                                         "' found in SAM header ",
+                                                         "(header.ref_ids(): ",
+                                                         hdr.ref_ids(),
+                                                         ").")};
+
+                auto & given_ref_info = hdr.ref_id_info[id_it->second];
+
+                if (std::get<0>(given_ref_info) != std::get<0>(info))
+                    throw format_error{"Provided and header-based reference length differ."};
+
+                hdr.ref_id_info[id_it->second] = std::move(info);
+            }
+            else
+            {
+                static_assert(!detail::is_type_specialisation_of_v<decltype(hdr.ref_ids()), std::deque>,
+                              "The range over reference ids must be of type std::deque such that pointers are not "
+                              "invalidated.");
+
+                hdr.ref_ids().push_back(id);
+                hdr.ref_id_info.push_back(info);
+                hdr.ref_dict[(hdr.ref_ids())[(hdr.ref_ids()).size() - 1]] = (hdr.ref_ids()).size() - 1;
+            }
+            break;
+        }
+
+        case make_tag('R', 'G'): // RG (read group) tag
+        {
+            std::pair<std::string, std::string> tmp{};
+
+            // All tags can appear in any order, SN and LN are required tags
+            while (is_char<'\t'>(*it))
+            {
+                ++it; // skip tab
+
+                switch (parse_and_make_tag())
+                {
+                case make_tag('I', 'D'): // parse required ID tag
+                {
+                    copy_next_tag_value_into_buffer();
+                    read_forward_range_field(string_buffer, get<0>(tmp));
+                    break;
+                }
+                default: // Any other tag
+                {
+                    parse_and_append_unhandled_tag_to_string(get<1>(tmp), raw_tag);
+                }
+                }
+            }
+            ++it; // skip newline
+
+            if (get<0>(tmp).empty())
+                throw format_error{std::string{"The required ID tag in @RG is missing."}};
+
+            hdr.read_groups.emplace_back(std::move(tmp));
+            break;
+        }
+
+        case make_tag('P', 'G'): // PG (program) tag
+        {
+            typename sam_file_header<ref_ids_type>::program_info_t tmp{};
+
+            // All tags can appear in any order, ID is the only required tag
+            while (is_char<'\t'>(*it))
+            {
+                ++it; // skip tab
+                std::string * program_info_entry{nullptr};
+
+                switch (parse_and_make_tag())
+                {
+                case make_tag('I', 'D'): // read required ID tag
+                {
+                    program_info_entry = std::addressof(tmp.id);
+                    break;
+                }
+                case make_tag('P', 'N'): // PN (program name) tag
+                {
+                    program_info_entry = std::addressof(tmp.name);
+                    break;
+                }
+                case make_tag('P', 'P'): // PP (previous program) tag
+                {
+                    program_info_entry = std::addressof(tmp.previous);
+                    break;
+                }
+                case make_tag('C', 'L'): // CL (command line) tag
+                {
+                    program_info_entry = std::addressof(tmp.command_line_call);
+                    break;
+                }
+                case make_tag('D', 'S'): // DS (description) tag
+                {
+                    program_info_entry = std::addressof(tmp.description);
+                    break;
+                }
+                case make_tag('V', 'N'): // VN (version) tag
+                {
+                    program_info_entry = std::addressof(tmp.version);
+                    break;
+                }
+                default: // unsupported header tag
+                {
+                    print_cerr_of_unspported_tag("PG", raw_tag);
+                }
+                }
+
+                if (program_info_entry != nullptr)
+                {
+                    copy_next_tag_value_into_buffer();
+                    read_forward_range_field(string_buffer, *program_info_entry);
+                }
+                else
+                    skip_until_predicate(is_char<'\t'> || is_char<'\n'>);
+            }
+            ++it; // skip newline
+
+            if (tmp.id.empty())
+                throw format_error{std::string{"The required ID tag in @PG is missing."}};
+
+            hdr.program_infos.emplace_back(std::move(tmp));
+            break;
+        }
+
+        case make_tag('C', 'O'): // CO (comment) tag
+        {
+            ++it; // skip tab
+            std::string tmp;
+            take_until_predicate(is_char<'\n'>);
+            read_forward_range_field(string_buffer, tmp);
+            ++it; // skip newline
+            hdr.comments.emplace_back(std::move(tmp));
+            break;
+        }
+
+        default:
+            throw format_error{std::string{"Illegal SAM header tag starting with:"} + *it};
         }
     }
 }
@@ -703,18 +712,14 @@ inline void format_sam_base::write_header(stream_t & stream,
 
     // (@HD) Check header line
     // The format version string will be taken from the local member variable
-    if (!header.sorting.empty() &&
-        !(header.sorting == "unknown"   ||
-          header.sorting == "unsorted"  ||
-          header.sorting == "queryname" ||
-          header.sorting == "coordinate" ))
+    if (!header.sorting.empty()
+        && !(header.sorting == "unknown" || header.sorting == "unsorted" || header.sorting == "queryname"
+             || header.sorting == "coordinate"))
         throw format_error{"SAM format error: The header.sorting member must be "
                            "one of [unknown, unsorted, queryname, coordinate]."};
 
-    if (!header.grouping.empty() &&
-        !(header.grouping == "none"   ||
-          header.grouping == "query"  ||
-          header.grouping == "reference"))
+    if (!header.grouping.empty()
+        && !(header.grouping == "none" || header.grouping == "query" || header.grouping == "reference"))
         throw format_error{"SAM format error: The header.grouping member must be "
                            "one of [none, query, reference]."};
 

@@ -74,19 +74,19 @@ struct ref_info_not_given
  */
 enum class sam_flag : uint16_t
 {
-   none                    = 0,     //!< None of the flags below are set.
-   paired                  = 0x1,   //!< The aligned read is paired (paired-end sequencing).
-   proper_pair             = 0x2,   //!< The two aligned reads in a pair have a proper distance between each other.
-   unmapped                = 0x4,   //!< The read is not mapped to a reference (unaligned).
-   mate_unmapped           = 0x8,   //!< The mate of this read is not mapped to a reference (unaligned).
-   on_reverse_strand       = 0x10,  //!< The read sequence has been reverse complemented before being mapped (aligned).
-   mate_on_reverse_strand  = 0x20,  //!< The mate sequence has been reverse complemented before being mapped (aligned).
-   first_in_pair           = 0x40,  //!< Indicates the ordering (see details in the seqan3::sam_flag description).
-   second_in_pair          = 0x80,  //!< Indicates the ordering (see details in the seqan3::sam_flag description).
-   secondary_alignment     = 0x100, //!< This read alignment is an alternative (possibly suboptimal) to the primary.
-   failed_filter           = 0x200, //!< The read alignment failed a filter, e.g. quality controls.
-   duplicate               = 0x400, //!< The read is marked as a PCR duplicate or optical duplicate.
-   supplementary_alignment = 0x800  //!< This sequence is part of a split alignment and is not the primary alignment.
+    none = 0,                       //!< None of the flags below are set.
+    paired = 0x1,                   //!< The aligned read is paired (paired-end sequencing).
+    proper_pair = 0x2,              //!< The two aligned reads in a pair have a proper distance between each other.
+    unmapped = 0x4,                 //!< The read is not mapped to a reference (unaligned).
+    mate_unmapped = 0x8,            //!< The mate of this read is not mapped to a reference (unaligned).
+    on_reverse_strand = 0x10,       //!< The read sequence has been reverse complemented before being mapped (aligned).
+    mate_on_reverse_strand = 0x20,  //!< The mate sequence has been reverse complemented before being mapped (aligned).
+    first_in_pair = 0x40,           //!< Indicates the ordering (see details in the seqan3::sam_flag description).
+    second_in_pair = 0x80,          //!< Indicates the ordering (see details in the seqan3::sam_flag description).
+    secondary_alignment = 0x100,    //!< This read alignment is an alternative (possibly suboptimal) to the primary.
+    failed_filter = 0x200,          //!< The read alignment failed a filter, e.g. quality controls.
+    duplicate = 0x400,              //!< The read is marked as a PCR duplicate or optical duplicate.
+    supplementary_alignment = 0x800 //!< This sequence is part of a split alignment and is not the primary alignment.
 };
 
 //!\cond DEV

@@ -55,9 +55,10 @@ template <std::ranges::viewable_range resource_t,
           std::semiregular algorithm_t,
           std::semiregular algorithm_result_t,
           typename execution_handler_t = execution_handler_sequential>
-    requires std::ranges::forward_range<resource_t> &&
-             std::invocable<algorithm_t, std::ranges::range_reference_t<resource_t>,
-                                         std::function<void(algorithm_result_t)>>
+    requires std::ranges::forward_range<resource_t>
+          && std::invocable<algorithm_t,
+                            std::ranges::range_reference_t<resource_t>,
+                            std::function<void(algorithm_result_t)>>
 class algorithm_executor_blocking
 {
 private:
@@ -89,8 +90,8 @@ private:
     enum fill_status
     {
         non_empty_buffer, //!< The buffer is not fully consumed yet and contains at least one element.
-        empty_buffer, //!< The buffer is empty after calling fill_buffer.
-        end_of_resource //!< The end of the resource was reached.
+        empty_buffer,     //!< The buffer is empty after calling fill_buffer.
+        end_of_resource   //!< The end of the resource was reached.
     };
 
 public:
@@ -193,7 +194,11 @@ public:
         fill_status status;
         // Each invocation of the algorithm might produce zero results (e.g. a search might not find a query)
         // this repeats the algorithm until it produces the first result or the input resource was consumed.
-        do { status = fill_buffer(); } while (status == fill_status::empty_buffer);
+        do
+        {
+            status = fill_buffer();
+        }
+        while (status == fill_status::empty_buffer);
 
         if (status == fill_status::end_of_resource)
             return {std::nullopt};
@@ -235,17 +240,17 @@ private:
     {
         // Get the old resource position.
         auto position = std::ranges::distance(std::ranges::begin(resource), resource_it);
-        assert (position >= 0);
+        assert(position >= 0);
         return position;
     }
 
     //!\brief Fills the buffer by storing the results of an algorithm invocation into a pre-assigned bucket.
     fill_status fill_buffer()
     {
-        if (!is_buffer_empty())  // Not everything consumed yet.
+        if (!is_buffer_empty()) // Not everything consumed yet.
             return fill_status::non_empty_buffer;
 
-        if (is_eof())  // Case: reached end of resource.
+        if (is_eof()) // Case: reached end of resource.
             return fill_status::end_of_resource;
 
         // Reset the buckets and the buffer iterator.
@@ -254,10 +259,12 @@ private:
         // Execute the algorithm (possibly asynchronous) and fill the buckets in this pre-assigned order.
         for (buffer_end_it = buffer_it; buffer_end_it != buffer.end() && !is_eof(); ++buffer_end_it, ++resource_it)
         {
-            exec_handler.execute(algorithm, *resource_it, [target_buffer_it = buffer_end_it] (auto && algorithm_result)
-            {
-                target_buffer_it->push_back(std::move(algorithm_result));
-            });
+            exec_handler.execute(algorithm,
+                                 *resource_it,
+                                 [target_buffer_it = buffer_end_it](auto && algorithm_result)
+                                 {
+                                     target_buffer_it->push_back(std::move(algorithm_result));
+                                 });
         }
 
         exec_handler.wait();
@@ -309,10 +316,12 @@ private:
     {
         assert(buffer_it <= buffer_end_it);
         // find first buffered bucket that contains at least one element
-        buffer_it = std::find_if(buffer_it, buffer_end_it, [] (auto const & buffer)
-        {
-            return !buffer.empty();
-        });
+        buffer_it = std::find_if(buffer_it,
+                                 buffer_end_it,
+                                 [](auto const & buffer)
+                                 {
+                                     return !buffer.empty();
+                                 });
 
         if (buffer_it != buffer_end_it)
             bucket_it = buffer_it->begin();
@@ -389,7 +398,7 @@ private:
 
 //!\brief Deduce the type from the provided arguments and set the sequential execution handler.
 template <typename resource_rng_t, std::semiregular algorithm_t, std::semiregular algorithm_result_t>
-algorithm_executor_blocking(resource_rng_t &&, algorithm_t, algorithm_result_t const &) ->
-    algorithm_executor_blocking<resource_rng_t, algorithm_t, algorithm_result_t, execution_handler_sequential>;
+algorithm_executor_blocking(resource_rng_t &&, algorithm_t, algorithm_result_t const &)
+    -> algorithm_executor_blocking<resource_rng_t, algorithm_t, algorithm_result_t, execution_handler_sequential>;
 //!\}
 } // namespace seqan3::detail

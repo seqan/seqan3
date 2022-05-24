@@ -100,7 +100,7 @@ namespace seqan3::detail
  * \tparam dependent_ts Any provided types are ignored.
  * \see seqan3::detail::deferred_type_t
  */
-template <typename t, typename ...dependent_ts>
+template <typename t, typename... dependent_ts>
 struct deferred_type
 {
     //!\brief The type identity.
@@ -114,7 +114,7 @@ struct deferred_type
  * \tparam dependent_ts Any provided types are ignored.
  * \see seqan3::detail::deferred_type
  */
-template <typename t, typename ...dependent_ts>
+template <typename t, typename... dependent_ts>
 using deferred_type_t = typename deferred_type<t, dependent_ts...>::type;
 
 // ----------------------------------------------------------------------------
@@ -145,10 +145,10 @@ constexpr bool decays_to_ignore_v = std::is_same_v<std::remove_cvref_t<t>, ignor
  * \ingroup utility_type_traits
  */
 #if defined(__clang__)
-#   define SEQAN3_IS_SAME(...)              __is_same(__VA_ARGS__)
+#    define SEQAN3_IS_SAME(...) __is_same(__VA_ARGS__)
 #elif defined(__GNUC__)
-#   define SEQAN3_IS_SAME(...)              __is_same_as(__VA_ARGS__)
+#    define SEQAN3_IS_SAME(...) __is_same_as(__VA_ARGS__)
 #else
-#   define SEQAN3_IS_SAME(...)              std::is_same_v<__VA_ARGS__>
+#    define SEQAN3_IS_SAME(...) std::is_same_v<__VA_ARGS__>
 #endif
 //!\endcond

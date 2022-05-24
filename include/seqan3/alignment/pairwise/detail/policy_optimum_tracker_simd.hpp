@@ -72,8 +72,8 @@ struct max_score_updater_simd_global
                     score_t current_score,
                     coordinate_t const & current_coordinate) const noexcept
     {
-        auto mask = (optimal_coordinate.col == current_coordinate.col) &&
-                    (optimal_coordinate.row == current_coordinate.row);
+        auto mask =
+            (optimal_coordinate.col == current_coordinate.col) && (optimal_coordinate.row == current_coordinate.row);
         optimal_score = (mask) ? std::move(current_score) : optimal_score;
     }
 };
@@ -83,22 +83,22 @@ struct max_score_updater_simd_global
  * \copydetails seqan3::detail::policy_optimum_tracker
  */
 template <typename alignment_configuration_t, std::semiregular optimum_updater_t>
-    requires is_type_specialisation_of_v<alignment_configuration_t, configuration> &&
-             std::invocable<optimum_updater_t,
-                            typename alignment_configuration_traits<alignment_configuration_t>::score_type &,
-                            typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type &,
-                            typename alignment_configuration_traits<alignment_configuration_t>::score_type,
-                            typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type>
-class policy_optimum_tracker_simd :
-    protected policy_optimum_tracker<alignment_configuration_t, optimum_updater_t>
+    requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
+          && std::invocable<
+                 optimum_updater_t,
+                 typename alignment_configuration_traits<alignment_configuration_t>::score_type &,
+                 typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type &,
+                 typename alignment_configuration_traits<alignment_configuration_t>::score_type,
+                 typename alignment_configuration_traits<alignment_configuration_t>::matrix_coordinate_type>
+class policy_optimum_tracker_simd : protected policy_optimum_tracker<alignment_configuration_t, optimum_updater_t>
 {
 protected:
     //!\brief The type of the base class.
     using base_policy_t = policy_optimum_tracker<alignment_configuration_t, optimum_updater_t>;
 
     // Import the configured score type.
-    using typename base_policy_t::traits_type;
     using typename base_policy_t::score_type;
+    using typename base_policy_t::traits_type;
 
     //!\brief The scalar type of the simd vector.
     using scalar_type = typename simd::simd_traits<score_type>::scalar_type;
@@ -109,20 +109,20 @@ protected:
 
     // Import base variables into class scope.
     using base_policy_t::compare_and_set_optimum;
-    using base_policy_t::optimal_score;
     using base_policy_t::optimal_coordinate;
+    using base_policy_t::optimal_score;
     //!\brief The individual offsets used for padding the sequences.
     std::array<original_score_type, simd_traits<score_type>::length> padding_offsets{};
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_optimum_tracker_simd() = default; //!< Defaulted.
-    policy_optimum_tracker_simd(policy_optimum_tracker_simd const &) = default; //!< Defaulted.
-    policy_optimum_tracker_simd(policy_optimum_tracker_simd &&) = default; //!< Defaulted.
+    policy_optimum_tracker_simd() = default;                                                //!< Defaulted.
+    policy_optimum_tracker_simd(policy_optimum_tracker_simd const &) = default;             //!< Defaulted.
+    policy_optimum_tracker_simd(policy_optimum_tracker_simd &&) = default;                  //!< Defaulted.
     policy_optimum_tracker_simd & operator=(policy_optimum_tracker_simd const &) = default; //!< Defaulted.
-    policy_optimum_tracker_simd & operator=(policy_optimum_tracker_simd &&) = default; //!< Defaulted.
-    ~policy_optimum_tracker_simd() = default; //!< Defaulted.
+    policy_optimum_tracker_simd & operator=(policy_optimum_tracker_simd &&) = default;      //!< Defaulted.
+    ~policy_optimum_tracker_simd() = default;                                               //!< Defaulted.
 
     /*!\brief Construction and initialisation using the alignment configuration.
      * \param[in] config The alignment configuration (not used in this context).

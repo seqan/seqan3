@@ -42,12 +42,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    max_error_total() = default; //!< Defaulted.
-    max_error_total(max_error_total const &) = default; //!< Defaulted.
-    max_error_total(max_error_total &&) = default; //!< Defaulted.
+    max_error_total() = default;                                    //!< Defaulted.
+    max_error_total(max_error_total const &) = default;             //!< Defaulted.
+    max_error_total(max_error_total &&) = default;                  //!< Defaulted.
     max_error_total & operator=(max_error_total const &) = default; //!< Defaulted.
-    max_error_total & operator=(max_error_total &&) = default; //!< Defaulted.
-    ~max_error_total() = default; //!< Defaulted.
+    max_error_total & operator=(max_error_total &&) = default;      //!< Defaulted.
+    ~max_error_total() = default;                                   //!< Defaulted.
 
     /*!\brief Initialises the total error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of total errors allowed in the search.
@@ -87,12 +87,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    max_error_substitution() = default; //!< Defaulted.
-    max_error_substitution(max_error_substitution const &) = default; //!< Defaulted.
-    max_error_substitution(max_error_substitution &&) = default; //!< Defaulted.
+    max_error_substitution() = default;                                           //!< Defaulted.
+    max_error_substitution(max_error_substitution const &) = default;             //!< Defaulted.
+    max_error_substitution(max_error_substitution &&) = default;                  //!< Defaulted.
     max_error_substitution & operator=(max_error_substitution const &) = default; //!< Defaulted.
-    max_error_substitution & operator=(max_error_substitution &&) = default; //!< Defaulted.
-    ~max_error_substitution() = default; //!< Defaulted.
+    max_error_substitution & operator=(max_error_substitution &&) = default;      //!< Defaulted.
+    ~max_error_substitution() = default;                                          //!< Defaulted.
 
     /*!\brief Initialises the substitution error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of substitution errors allowed in the search.
@@ -132,12 +132,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    max_error_insertion() = default; //!< Defaulted.
-    max_error_insertion(max_error_insertion const &) = default; //!< Defaulted.
-    max_error_insertion(max_error_insertion &&) = default; //!< Defaulted.
+    max_error_insertion() = default;                                        //!< Defaulted.
+    max_error_insertion(max_error_insertion const &) = default;             //!< Defaulted.
+    max_error_insertion(max_error_insertion &&) = default;                  //!< Defaulted.
     max_error_insertion & operator=(max_error_insertion const &) = default; //!< Defaulted.
-    max_error_insertion & operator=(max_error_insertion &&) = default; //!< Defaulted.
-    ~max_error_insertion() = default; //!< Defaulted.
+    max_error_insertion & operator=(max_error_insertion &&) = default;      //!< Defaulted.
+    ~max_error_insertion() = default;                                       //!< Defaulted.
 
     /*!\brief Initialises the insertion error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of insertion errors allowed in the search.
@@ -178,12 +178,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    max_error_deletion() = default; //!< Defaulted.
-    max_error_deletion(max_error_deletion const &) = default; //!< Defaulted.
-    max_error_deletion(max_error_deletion &&) = default; //!< Defaulted.
+    max_error_deletion() = default;                                       //!< Defaulted.
+    max_error_deletion(max_error_deletion const &) = default;             //!< Defaulted.
+    max_error_deletion(max_error_deletion &&) = default;                  //!< Defaulted.
     max_error_deletion & operator=(max_error_deletion const &) = default; //!< Defaulted.
-    max_error_deletion & operator=(max_error_deletion &&) = default; //!< Defaulted.
-    ~max_error_deletion() = default; //!< Defaulted.
+    max_error_deletion & operator=(max_error_deletion &&) = default;      //!< Defaulted.
+    ~max_error_deletion() = default;                                      //!< Defaulted.
 
     /*!\brief Initialises the deletion error with the given seqan3::search_cfg::error_count.
      * \param[in] error The maximal number of deletion errors allowed in the search.

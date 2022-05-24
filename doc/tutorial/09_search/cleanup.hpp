@@ -13,7 +13,7 @@ public:
     cleanup(cleanup &&) = default;
     cleanup & operator=(cleanup &&) = default;
 
-    cleanup(char const * const str) : file(str) {};
+    cleanup(char const * const str) : file(str){};
 
     ~cleanup()
     {

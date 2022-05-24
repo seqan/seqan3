@@ -25,9 +25,9 @@ namespace seqan3::detail
 //!\ingroup core
 template <size_t I>
 struct priority_tag
-//!\cond
-// Doxygen fail
-: priority_tag<I-1>
+    //!\cond
+    // Doxygen fail
+    : priority_tag<I - 1>
 //!\endcond
 {};
 
@@ -36,12 +36,12 @@ template <>
 struct priority_tag<0>
 {};
 
-} // seqan3::detail
+} // namespace seqan3::detail
 
 // ============================================================================
 // SEQAN3_CPO_OVERLOAD
 // ============================================================================
-#if SEQAN3_DOXYGEN_ONLY(1)0
+#if SEQAN3_DOXYGEN_ONLY(1) 0
 /*!\brief A macro helper for #SEQAN3_CPO_OVERLOAD.
  * \cond DEV
  * \ingroup core
@@ -59,13 +59,18 @@ struct priority_tag<0>
  * we need some expression at the end of the macro that can have a semicolon appended.
  * We chose `static_assert(true)` for that reason.
  */
-#define SEQAN3_CPO_OVERLOAD_BODY(...) noexcept(auto) { return __VA_ARGS__; }
+#    define SEQAN3_CPO_OVERLOAD_BODY(...)                                                                              \
+        noexcept(auto)                                                                                                 \
+        {                                                                                                              \
+            return __VA_ARGS__;                                                                                        \
+        }
 #else // ^^^ (simplified) doxygen version / normal definition vvv
-#define SEQAN3_CPO_OVERLOAD_BODY(...) \
-        noexcept(noexcept(__VA_ARGS__)) \
-        -> decltype(__VA_ARGS__) \
-    { return __VA_ARGS__; } \
-    static_assert(true)
+#    define SEQAN3_CPO_OVERLOAD_BODY(...)                                                                              \
+        noexcept(noexcept(__VA_ARGS__))->decltype(__VA_ARGS__)                                                         \
+        {                                                                                                              \
+            return __VA_ARGS__;                                                                                        \
+        }                                                                                                              \
+        static_assert(true)
 #endif
 
 /*!\brief A macro that helps to define a seqan3::detail::customisation_point_object.
@@ -99,9 +104,7 @@ struct priority_tag<0>
  * }
  * ```
  */
-#define SEQAN3_CPO_OVERLOAD(...) \
-    cpo_overload(__VA_ARGS__) \
-    SEQAN3_CPO_OVERLOAD_BODY
+#define SEQAN3_CPO_OVERLOAD(...) cpo_overload(__VA_ARGS__) SEQAN3_CPO_OVERLOAD_BODY
 
 namespace seqan3::detail
 {
@@ -140,10 +143,10 @@ private:
     //!\brief Allow `derived_t` to inherit the constructors of this CRTP-class.
     friend derived_t;
 
-    constexpr customisation_point_object() = default; //!< Defaulted.
-    constexpr customisation_point_object(customisation_point_object &&) = default; //!< Defaulted.
-    constexpr customisation_point_object(customisation_point_object const &) = default; //!< Defaulted.
-    constexpr customisation_point_object & operator=(customisation_point_object &&) = default; //!< Defaulted.
+    constexpr customisation_point_object() = default;                                               //!< Defaulted.
+    constexpr customisation_point_object(customisation_point_object &&) = default;                  //!< Defaulted.
+    constexpr customisation_point_object(customisation_point_object const &) = default;             //!< Defaulted.
+    constexpr customisation_point_object & operator=(customisation_point_object &&) = default;      //!< Defaulted.
     constexpr customisation_point_object & operator=(customisation_point_object const &) = default; //!< Defaulted.
 
 public:
@@ -157,10 +160,8 @@ public:
      *
      * It perfectly forwards the result and noexcept-property of the `derived_t::cpo_overload`.
      */
-    template <typename ...args_t, typename derived_type = derived_t /*circumvent incomplete types*/>
-    constexpr auto operator()(args_t && ...args) const
-    SEQAN3_CPO_OVERLOAD_BODY
-    (
+    template <typename... args_t, typename derived_type = derived_t /*circumvent incomplete types*/>
+    constexpr auto operator()(args_t &&... args) const SEQAN3_CPO_OVERLOAD_BODY(
         /*return*/ derived_type::cpo_overload(priority_tag<max_priority>{}, std::forward<args_t>(args)...) /*;*/
     );
 };

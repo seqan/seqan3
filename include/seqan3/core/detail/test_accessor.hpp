@@ -24,4 +24,4 @@ namespace seqan3::detail
  */
 struct test_accessor;
 
-} // seqan3::detail
+} // namespace seqan3::detail

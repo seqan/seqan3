@@ -52,8 +52,7 @@ public:
     /*!\brief Construct from a range of reference ids which redirects the `ref_ids_ptr` member (non-owning).
      * \param[in] ref_ids The range over reference ids to redirect the pointer at.
      */
-    sam_file_header(ref_ids_type & ref_ids) :
-        ref_ids_ptr{&ref_ids, ref_ids_deleter_noop}
+    sam_file_header(ref_ids_type & ref_ids) : ref_ids_ptr{&ref_ids, ref_ids_deleter_noop}
     {}
 
     /*!\brief Construct from a rvalue range of reference ids which is moved into the `ref_ids_ptr` (owning).
@@ -77,24 +76,29 @@ public:
 
     std::string format_version; //!< The file format version. Note: this is overwritten by our formats on output.
     std::string sorting;        //!< The sorting of the file. SAM: [unknown, unsorted, queryname, coordinate].
-    std::string subsorting;     //!< The sub-sorting of the file. SAM: [unknown, unsorted, queryname, coordinate](:[A-Za-z0-9_-]+)+.
-    std::string grouping;       //!< The grouping of the file. SAM: [none, query, reference].
+    std::string
+        subsorting; //!< The sub-sorting of the file. SAM: [unknown, unsorted, queryname, coordinate](:[A-Za-z0-9_-]+)+.
+    std::string grouping; //!< The grouping of the file. SAM: [none, query, reference].
 
     std::vector<program_info_t> program_infos; //!< The list of program information.
 
-    std::vector<std::string> comments;         //!< The list of comments.
+    std::vector<std::string> comments; //!< The list of comments.
 
 private:
     //!\brief The type of the internal ref_ids pointer. Allows dynamically setting ownership management.
-    using ref_ids_ptr_t = std::unique_ptr<ref_ids_type, std::function<void(ref_ids_type*)>>;
+    using ref_ids_ptr_t = std::unique_ptr<ref_ids_type, std::function<void(ref_ids_type *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void ref_ids_deleter_noop(ref_ids_type *) {}
+    static void ref_ids_deleter_noop(ref_ids_type *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void ref_ids_deleter_default(ref_ids_type * ptr) { delete ptr; }
+    static void ref_ids_deleter_default(ref_ids_type * ptr)
+    {
+        delete ptr;
+    }
     //!\brief The key's type of ref_dict.
     using key_type = std::conditional_t<std::ranges::contiguous_range<std::ranges::range_reference_t<ref_ids_type>>,
-                        std::span<range_innermost_value_t<ref_ids_type> const>,
-                        type_reduce_t<std::ranges::range_reference_t<ref_ids_type>>>;
+                                        std::span<range_innermost_value_t<ref_ids_type> const>,
+                                        type_reduce_t<std::ranges::range_reference_t<ref_ids_type>>>;
     //!\brief The pointer to reference ids information (non-owning if reference information is given).
     ref_ids_ptr_t ref_ids_ptr{new ref_ids_type{}, ref_ids_deleter_default};
 

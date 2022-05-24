@@ -34,12 +34,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    parallel_mode() = default; //!< Defaulted.
-    parallel_mode(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode(parallel_mode &&) = default; //!< Defaulted.
+    parallel_mode() = default;                                  //!< Defaulted.
+    parallel_mode(parallel_mode const &) = default;             //!< Defaulted.
+    parallel_mode(parallel_mode &&) = default;                  //!< Defaulted.
     parallel_mode & operator=(parallel_mode const &) = default; //!< Defaulted.
-    parallel_mode & operator=(parallel_mode &&) = default; //!< Defaulted.
-    ~parallel_mode() = default; //!< Defaulted.
+    parallel_mode & operator=(parallel_mode &&) = default;      //!< Defaulted.
+    ~parallel_mode() = default;                                 //!< Defaulted.
 
     /*!\brief Sets the number of threads for the parallel configuration element.
      * \param[in] thread_count_ The maximum number of threads to be used by the algorithm.

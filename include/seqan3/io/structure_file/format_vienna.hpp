@@ -88,29 +88,24 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_vienna() noexcept = default; //!< Defaulted.
-    format_vienna(format_vienna const &) noexcept = default; //!< Defaulted.
+    format_vienna() noexcept = default;                                  //!< Defaulted.
+    format_vienna(format_vienna const &) noexcept = default;             //!< Defaulted.
     format_vienna & operator=(format_vienna const &) noexcept = default; //!< Defaulted.
-    format_vienna(format_vienna &&) noexcept = default; //!< Defaulted.
-    format_vienna & operator=(format_vienna &&) noexcept = default; //!< Defaulted.
-    ~format_vienna() noexcept = default; //!< Defaulted.
+    format_vienna(format_vienna &&) noexcept = default;                  //!< Defaulted.
+    format_vienna & operator=(format_vienna &&) noexcept = default;      //!< Defaulted.
+    ~format_vienna() noexcept = default;                                 //!< Defaulted.
 
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
-    static inline std::vector<std::string> file_extensions
-    {
-        { "dbn" },
-        { "fasta" },
-        { "fa" }
-    };
+    static inline std::vector<std::string> file_extensions{{"dbn"}, {"fasta"}, {"fa"}};
 
 protected:
     //!\copydoc seqan3::structure_file_input_format::read_structure_record
-    template <typename stream_type,     // constraints checked by file
+    template <typename stream_type, // constraints checked by file
               typename seq_legal_alph_type,
-              bool     structured_seq_combined,
-              typename seq_type,        // other constraints checked inside function
+              bool structured_seq_combined,
+              typename seq_type, // other constraints checked inside function
               typename id_type,
               typename bpp_type,
               typename structure_type,
@@ -118,22 +113,23 @@ protected:
               typename react_type,
               typename comment_type,
               typename offset_type>
-    void read_structure_record(stream_type & stream,
-                               structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
-                               seq_type & seq,
-                               id_type & id,
-                               bpp_type & bpp,
-                               structure_type & structure,
-                               energy_type & energy,
-                               react_type & SEQAN3_DOXYGEN_ONLY(react),
-                               react_type & SEQAN3_DOXYGEN_ONLY(react_err),
-                               comment_type & SEQAN3_DOXYGEN_ONLY(comment),
-                               offset_type & SEQAN3_DOXYGEN_ONLY(offset))
+    void
+    read_structure_record(stream_type & stream,
+                          structure_file_input_options<seq_legal_alph_type, structured_seq_combined> const & options,
+                          seq_type & seq,
+                          id_type & id,
+                          bpp_type & bpp,
+                          structure_type & structure,
+                          energy_type & energy,
+                          react_type & SEQAN3_DOXYGEN_ONLY(react),
+                          react_type & SEQAN3_DOXYGEN_ONLY(react_err),
+                          comment_type & SEQAN3_DOXYGEN_ONLY(comment),
+                          offset_type & SEQAN3_DOXYGEN_ONLY(offset))
     {
         auto stream_view = detail::istreambuf(stream);
 
         // READ ID (if present)
-        auto constexpr is_id = is_char<'>'>;
+        constexpr auto is_id = is_char<'>'>;
         if (is_id(*begin(stream_view)))
         {
             if constexpr (!detail::decays_to_ignore_v<id_type>)
@@ -141,16 +137,16 @@ protected:
                 if (options.truncate_ids)
                 {
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
-                                                  | detail::take_until_or_throw(is_cntrl || is_blank)
-                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                          | detail::take_until_or_throw(is_cntrl || is_blank)
+                                          | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::back_inserter(id));
                     detail::consume(stream_view | detail::take_line_or_throw);
                 }
                 else
                 {
                     std::ranges::copy(stream_view | std::views::drop_while(is_id || is_blank) // skip leading >
-                                                  | detail::take_line_or_throw
-                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
+                                          | detail::take_line_or_throw
+                                          | views::char_to<std::ranges::range_value_t<id_type>>,
                                       std::back_inserter(id));
                 }
             }
@@ -161,36 +157,36 @@ protected:
         }
         else if constexpr (!detail::decays_to_ignore_v<id_type>)
         {
-            auto constexpr is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
+            constexpr auto is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
             if (!is_legal_seq(*begin(stream_view))) // if neither id nor seq found: throw
             {
-                throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} +
-                                  is_id.msg + " and char_is_valid_for<" +
-                                  detail::type_name_as_string<seq_legal_alph_type> + ">" +
-                                  " evaluated to false on " + detail::make_printable(*begin(stream_view))};
+                throw parse_error{std::string{"Expected to be on beginning of ID or sequence, but "} + is_id.msg
+                                  + " and char_is_valid_for<" + detail::type_name_as_string<seq_legal_alph_type>
+                                  + ">" + " evaluated to false on " + detail::make_printable(*begin(stream_view))};
             }
         }
 
         // READ SEQUENCE
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
-            std::ranges::copy(stream_view | detail::take_line_or_throw                  // until end of line
-                                          | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
-                                          | std::views::transform([is_legal_seq](char const c)
-                                            {
-                                                if (!is_legal_seq(c))                   // enforce legal alphabet
-                                                {
-                                                    throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                                      "char_is_valid_for<" +
-                                                                      detail::type_name_as_string<seq_legal_alph_type> +
-                                                                      "> evaluated to false on " +
-                                                                      detail::make_printable(c)};
-                                                }
-                                              return c;
-                                            })
-                                          | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
-                              std::back_inserter(seq));
+            constexpr auto is_legal_seq = char_is_valid_for<seq_legal_alph_type>;
+            std::ranges::copy(
+                stream_view | detail::take_line_or_throw          // until end of line
+                    | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
+                    | std::views::transform(
+                        [is_legal_seq](char const c)
+                        {
+                            if (!is_legal_seq(c)) // enforce legal alphabet
+                            {
+                                throw parse_error{std::string{"Encountered an unexpected letter: "}
+                                                  + "char_is_valid_for<"
+                                                  + detail::type_name_as_string<seq_legal_alph_type>
+                                                  + "> evaluated to false on " + detail::make_printable(c)};
+                            }
+                            return c;
+                        })
+                    | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
+                std::back_inserter(seq));
         }
         else
         {
@@ -233,8 +229,8 @@ protected:
             detail::consume(stream_view | detail::take_until(is_space)); // until whitespace
         }
 
-        if constexpr (!detail::decays_to_ignore_v<seq_type> &&
-                      !(detail::decays_to_ignore_v<structure_type> && detail::decays_to_ignore_v<bpp_type>))
+        if constexpr (!detail::decays_to_ignore_v<seq_type>
+                      && !(detail::decays_to_ignore_v<structure_type> && detail::decays_to_ignore_v<bpp_type>))
         {
             if (std::ranges::distance(seq) != structure_length)
                 throw parse_error{"Found sequence and associated structure of different length."};
@@ -244,8 +240,8 @@ protected:
         if constexpr (!detail::decays_to_ignore_v<energy_type>)
         {
             std::string e_str = stream_view | detail::take_line
-                                            | std::views::filter(!(is_space || is_char<'('> || is_char<')'>))
-                                            | views::to<std::string>;
+                              | std::views::filter(!(is_space || is_char<'('> || is_char<')'>))
+                              | views::to<std::string>;
             if (!e_str.empty())
             {
                 size_t num_processed;
@@ -264,8 +260,8 @@ protected:
     }
 
     //!\copydoc seqan3::structure_file_output_format::write_structure_record
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename stream_type, // constraints checked by file
+              typename seq_type,    // other constraints checked inside function
               typename id_type,
               typename bpp_type,
               typename structure_type,
@@ -325,16 +321,16 @@ protected:
             {
                 if (energy)
                 {
-// TODO(joergi-w) enable the following when std::to_chars is implemented for float types
-//                    auto [endptr, ec] = std::to_chars(str.data(),
-//                                                      str.data() + str.size(),
-//                                                      energy,
-//                                                      std::chars_format::fixed,
-//                                                      options.precision);
-//                    if (ec == std::errc())
-//                        std::ranges::copy(str.data(), endptr, stream_it);
-//                    else
-//                        throw std::runtime_error{"The energy could not be transformed into a string."};
+                    // TODO(joergi-w) enable the following when std::to_chars is implemented for float types
+                    //                    auto [endptr, ec] = std::to_chars(str.data(),
+                    //                                                      str.data() + str.size(),
+                    //                                                      energy,
+                    //                                                      std::chars_format::fixed,
+                    //                                                      options.precision);
+                    //                    if (ec == std::errc())
+                    //                        std::ranges::copy(str.data(), endptr, stream_it);
+                    //                    else
+                    //                        throw std::runtime_error{"The energy could not be transformed into a string."};
 
                     stream_it = ' ';
                     stream_it = '(';
@@ -366,21 +362,21 @@ private:
     template <typename alph_type, typename stream_view_type>
     auto read_structure(stream_view_type & stream_view)
     {
-        auto constexpr is_legal_structure = char_is_valid_for<alph_type>;
+        constexpr auto is_legal_structure = char_is_valid_for<alph_type>;
         return stream_view | detail::take_until(is_space) // until whitespace
-                           | std::views::transform([is_legal_structure](char const c)
-                             {
-                                 if (!is_legal_structure(c))
-                                 {
-                                     throw parse_error{
-                                         std::string{"Encountered an unexpected letter: char_is_valid_for<"} +
-                                                     detail::type_name_as_string<alph_type> +
-                                                     "> evaluated to false on " + detail::make_printable(c)};
-                                 }
-                                 return c;
-                             })                                  // enforce legal alphabet
-                           | views::char_to<alph_type>;           // convert to actual target alphabet
+             | std::views::transform(
+                   [is_legal_structure](char const c)
+                   {
+                       if (!is_legal_structure(c))
+                       {
+                           throw parse_error{std::string{"Encountered an unexpected letter: char_is_valid_for<"}
+                                             + detail::type_name_as_string<alph_type>
+                                             + "> evaluated to false on " + detail::make_printable(c)};
+                       }
+                       return c;
+                   })                     // enforce legal alphabet
+             | views::char_to<alph_type>; // convert to actual target alphabet
     }
 };
 
-} // namespace seqan3::detail
+} // namespace seqan3

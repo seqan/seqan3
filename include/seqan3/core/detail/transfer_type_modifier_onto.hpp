@@ -35,24 +35,24 @@ struct transfer_type_modifier_onto
 {
 private:
     //!\brief Transfers the `const` type modifier to the target type.
-    using maybe_const_target_t = std::conditional_t<std::is_const_v<std::remove_reference_t<source_t>> ||
-                                                    std::is_const_v<std::remove_reference_t<target_t>>,
+    using maybe_const_target_t = std::conditional_t<std::is_const_v<std::remove_reference_t<source_t>>
+                                                        || std::is_const_v<std::remove_reference_t<target_t>>,
                                                     std::add_const_t<std::remove_cvref_t<target_t>>,
                                                     std::remove_cvref_t<target_t>>;
 
     //!\brief Transfers the `&&` type modifier to the target type.
-    using maybe_rvalue_reference_t = std::conditional_t<std::is_rvalue_reference_v<source_t> ||
-                                                        std::is_rvalue_reference_v<target_t>,
-                                                        std::add_rvalue_reference_t<maybe_const_target_t>,
-                                                        maybe_const_target_t>;
+    using maybe_rvalue_reference_t =
+        std::conditional_t<std::is_rvalue_reference_v<source_t> || std::is_rvalue_reference_v<target_t>,
+                           std::add_rvalue_reference_t<maybe_const_target_t>,
+                           maybe_const_target_t>;
 
     //!\brief Transfers the `&` type modifier to the target type.
-    using maybe_lvalue_reference_target_t = std::conditional_t<std::is_lvalue_reference_v<source_t> ||
-                                                               std::is_lvalue_reference_v<target_t>,
-                                                               std::add_lvalue_reference_t<maybe_rvalue_reference_t>,
-                                                               maybe_rvalue_reference_t>;
-public:
+    using maybe_lvalue_reference_target_t =
+        std::conditional_t<std::is_lvalue_reference_v<source_t> || std::is_lvalue_reference_v<target_t>,
+                           std::add_lvalue_reference_t<maybe_rvalue_reference_t>,
+                           maybe_rvalue_reference_t>;
 
+public:
     //!\brief Transfers the type modifier `&`, `&&` and `const` (and any combination) to the target type.
     using type = maybe_lvalue_reference_target_t;
 };

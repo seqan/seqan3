@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <concepts>
+#include <iterator>
 #include <type_traits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <concepts>
-#include <iterator>
 
 namespace seqan3::detail
 {
@@ -92,28 +92,63 @@ namespace seqan3::detail
 //!\cond
 template <typename iter_t>
 concept two_dimensional_matrix_iterator =
-    std::random_access_iterator<iter_t> &&
-    requires(std::remove_reference_t<iter_t> it, std::remove_reference_t<iter_t> const cit, matrix_offset offset)
-    {
-        { it += offset };
-        { it + offset };
-        { offset + it };
-        { cit + offset };
-        { offset + cit };
-        { it -= offset };
-        { it - offset };
-        { cit - offset };
-        { it.coordinate() };
-        { cit.coordinate() };
+    std::random_access_iterator<iter_t>
+    && requires (std::remove_reference_t<iter_t> it, std::remove_reference_t<iter_t> const cit, matrix_offset offset) {
+           {
+               it += offset
+           };
+           {
+               it + offset
+           };
+           {
+               offset + it
+           };
+           {
+               cit + offset
+           };
+           {
+               offset + cit
+           };
+           {
+               it -= offset
+           };
+           {
+               it - offset
+           };
+           {
+               cit - offset
+           };
+           {
+               it.coordinate()
+           };
+           {
+               cit.coordinate()
+           };
 
-        {it += offset} -> std::same_as<std::remove_reference_t<iter_t> &>;
-        {it + offset} -> std::same_as<std::remove_reference_t<iter_t>>;
-        {offset + it} -> std::same_as<std::remove_reference_t<iter_t>>;
-        {it -= offset} -> std::same_as<std::remove_reference_t<iter_t> &>;
-        {it - offset} -> std::same_as<std::remove_reference_t<iter_t>>;
-        {cit - offset} -> std::same_as<std::remove_reference_t<iter_t>>;
-        {it.coordinate()} -> std::same_as<matrix_coordinate>;
-        {cit.coordinate()} -> std::same_as<matrix_coordinate>;
-    };
+           {
+               it += offset
+               } -> std::same_as<std::remove_reference_t<iter_t> &>;
+           {
+               it + offset
+               } -> std::same_as<std::remove_reference_t<iter_t>>;
+           {
+               offset + it
+               } -> std::same_as<std::remove_reference_t<iter_t>>;
+           {
+               it -= offset
+               } -> std::same_as<std::remove_reference_t<iter_t> &>;
+           {
+               it - offset
+               } -> std::same_as<std::remove_reference_t<iter_t>>;
+           {
+               cit - offset
+               } -> std::same_as<std::remove_reference_t<iter_t>>;
+           {
+               it.coordinate()
+               } -> std::same_as<matrix_coordinate>;
+           {
+               cit.coordinate()
+               } -> std::same_as<matrix_coordinate>;
+       };
 //!\endcond
 } // namespace seqan3::detail

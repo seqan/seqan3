@@ -33,7 +33,6 @@ namespace seqan3::detail
 struct execution_handler_sequential
 {
 public:
-
     /*!\brief Executes the algorithm with the given input and callback.
      * \tparam algorithm_t The type of the algorithm.
      * \tparam algorithm_input_t The input type to invoke the algorithm with.
@@ -83,4 +82,4 @@ public:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

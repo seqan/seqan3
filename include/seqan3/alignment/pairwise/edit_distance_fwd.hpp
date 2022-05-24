@@ -16,8 +16,8 @@
 #include <seqan3/std/ranges>
 
 #include <seqan3/alignment/configuration/align_config_min_score.hpp>
-#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/alignment/pairwise/align_result_selector.hpp>
+#include <seqan3/alignment/pairwise/detail/type_traits.hpp>
 #include <seqan3/core/detail/deferred_crtp_base.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/utility/detail/bits_of.hpp>
@@ -31,7 +31,7 @@ template <typename word_t, bool is_semi_global, bool use_max_errors>
 class edit_distance_trace_matrix_full; //forward declaration
 
 //!\brief Store no state for state_t.
-template <typename state_t, typename ...>
+template <typename state_t, typename...>
 struct empty_state
 {};
 
@@ -43,11 +43,11 @@ using enable_state_t = std::conditional_t<enabled, state_t, empty_state<state_t>
  * \details
  * If `B` is true, <tt>selector<B, T, F>::template select</tt> inherits `T`, otherwise `F`.
  */
-template <bool B, template <typename ...> typename T, template <typename ...> typename F>
+template <bool B, template <typename...> typename T, template <typename...> typename F>
 struct selector
 {
     //!\brief Depending on `B`, `select` is the template template parameter `T` or `F`.
-    template <typename ...args_t>
+    template <typename... args_t>
     struct select : public std::conditional_t<B, T<args_t...>, F<args_t...>>
     {};
 };
@@ -102,11 +102,11 @@ struct default_edit_distance_trait_type
     //!\brief Whether the alignment configuration indicates to compute and/or store the alignment of the sequences.
     static constexpr bool compute_sequence_alignment = alignment_traits_type::compute_sequence_alignment;
     //!\brief Whether the alignment configuration indicates to compute and/or store the begin positions.
-    static constexpr bool compute_begin_positions = alignment_traits_type::compute_begin_positions ||
-                                                    compute_sequence_alignment;
+    static constexpr bool compute_begin_positions =
+        alignment_traits_type::compute_begin_positions || compute_sequence_alignment;
     //!\brief Whether the alignment configuration indicates to compute and/or store the end positions.
-    static constexpr bool compute_end_positions = alignment_traits_type::compute_end_positions ||
-                                                  compute_begin_positions;
+    static constexpr bool compute_end_positions =
+        alignment_traits_type::compute_end_positions || compute_begin_positions;
     //!\brief Whether the alignment configuration indicates to compute and/or store the score matrix.
     static constexpr bool compute_score_matrix = false;
     //!\brief Whether the alignment configuration indicates to compute and/or store the trace matrix.
@@ -121,14 +121,10 @@ struct default_edit_distance_trait_type
 };
 
 //!\brief A base class for edit_distance_unbanded.
-template <bool enable_policy,
-          template <typename ...> typename policy_t,
-          typename edit_traits,
-          typename derived_t>
-using edit_distance_base =
-    invoke_deferred_crtp_base<deferred_crtp_base<selector<enable_policy, policy_t, empty_state>::template select,
-                                                 edit_traits>,
-                              derived_t>;
+template <bool enable_policy, template <typename...> typename policy_t, typename edit_traits, typename derived_t>
+using edit_distance_base = invoke_deferred_crtp_base<
+    deferred_crtp_base<selector<enable_policy, policy_t, empty_state>::template select, edit_traits>,
+    derived_t>;
 
 //!\cond
 template <std::ranges::viewable_range database_t,

@@ -56,4 +56,4 @@ struct alignment_algorithm_state
 template <typename score_type>
 alignment_algorithm_state(score_type, score_type) -> alignment_algorithm_state<score_type>;
 //!\}
-}  // namespace seqan3::detail
+} // namespace seqan3::detail

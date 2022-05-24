@@ -63,12 +63,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dot_bracket3()                                 noexcept = default; //!< Defaulted.
-    constexpr dot_bracket3(dot_bracket3 const &)             noexcept = default; //!< Defaulted.
-    constexpr dot_bracket3(dot_bracket3 &&)                  noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3() noexcept = default;                                 //!< Defaulted.
+    constexpr dot_bracket3(dot_bracket3 const &) noexcept = default;             //!< Defaulted.
+    constexpr dot_bracket3(dot_bracket3 &&) noexcept = default;                  //!< Defaulted.
     constexpr dot_bracket3 & operator=(dot_bracket3 const &) noexcept = default; //!< Defaulted.
-    constexpr dot_bracket3 & operator=(dot_bracket3 &&)      noexcept = default; //!< Defaulted.
-    ~dot_bracket3()                                          noexcept = default; //!< Defaulted.
+    constexpr dot_bracket3 & operator=(dot_bracket3 &&) noexcept = default;      //!< Defaulted.
+    ~dot_bracket3() noexcept = default;                                          //!< Defaulted.
 
     //!\}
 
@@ -130,46 +130,39 @@ public:
 
 private:
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        '.',
-        '(',
-        ')'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'.', '(', ')'};
 
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
-    {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> rank_table{};
+    static constexpr std::array<rank_type, 256> char_to_rank_table{
+        []() constexpr {std::array<rank_type, 256> rank_table{};
 
-            // initialize with unpaired (std::array::fill unfortunately not constexpr)
-            for (rank_type & rnk : rank_table)
-                rnk = 0u;
+    // initialize with unpaired (std::array::fill unfortunately not constexpr)
+    for (rank_type & rnk : rank_table)
+        rnk = 0u;
 
-            // canonical
-            rank_table['.'] = 0u;
-            rank_table['('] = 1u;
-            rank_table[')'] = 2u;
+    // canonical
+    rank_table['.'] = 0u;
+    rank_table['('] = 1u;
+    rank_table[')'] = 2u;
 
-            return rank_table;
-        } ()
-    };
+    return rank_table;
+}()
+}; // namespace seqan3
 
-    //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
-    }
+//!\copydoc seqan3::dna4::rank_to_char
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
 
-    //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
-};
+//!\copydoc seqan3::dna4::char_to_rank
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 inline namespace literals
 {
@@ -203,7 +196,7 @@ constexpr dot_bracket3 operator""_db3(char const ch) noexcept
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t len)
+inline std::vector<dot_bracket3> operator""_db3(char const * str, std::size_t len)
 {
     std::vector<dot_bracket3> vec;
     vec.resize(len);
@@ -215,6 +208,6 @@ inline std::vector<dot_bracket3> operator""_db3(const char * str, std::size_t le
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

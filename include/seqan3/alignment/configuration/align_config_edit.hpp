@@ -48,7 +48,7 @@ namespace seqan3::align_cfg
  * trigger the slower algorithm which can handle the case if the ends are free in the second sequence instead of the
  * first sequence.
  */
-inline constexpr configuration edit_scheme = scoring_scheme{nucleotide_scoring_scheme{}} |
-                                             gap_cost_affine{open_score{0}, extension_score{-1}};
+inline constexpr configuration edit_scheme =
+    scoring_scheme{nucleotide_scoring_scheme{}} | gap_cost_affine{open_score{0}, extension_score{-1}};
 
-} // namespace seqan3
+} // namespace seqan3::align_cfg

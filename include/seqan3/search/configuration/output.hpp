@@ -33,12 +33,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr output_query_id() = default; //!< Defaulted.
-    constexpr output_query_id(output_query_id const &) = default; //!< Defaulted.
-    constexpr output_query_id(output_query_id &&) = default; //!< Defaulted.
+    constexpr output_query_id() = default;                                    //!< Defaulted.
+    constexpr output_query_id(output_query_id const &) = default;             //!< Defaulted.
+    constexpr output_query_id(output_query_id &&) = default;                  //!< Defaulted.
     constexpr output_query_id & operator=(output_query_id const &) = default; //!< Defaulted.
-    constexpr output_query_id & operator=(output_query_id &&) = default; //!< Defaulted.
-    ~output_query_id() = default; //!< Defaulted.
+    constexpr output_query_id & operator=(output_query_id &&) = default;      //!< Defaulted.
+    ~output_query_id() = default;                                             //!< Defaulted.
 
     //!\}
 
@@ -58,12 +58,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr output_reference_id() = default; //!< Defaulted.
-    constexpr output_reference_id(output_reference_id const &) = default; //!< Defaulted.
-    constexpr output_reference_id(output_reference_id &&) = default; //!< Defaulted.
+    constexpr output_reference_id() = default;                                        //!< Defaulted.
+    constexpr output_reference_id(output_reference_id const &) = default;             //!< Defaulted.
+    constexpr output_reference_id(output_reference_id &&) = default;                  //!< Defaulted.
     constexpr output_reference_id & operator=(output_reference_id const &) = default; //!< Defaulted.
-    constexpr output_reference_id & operator=(output_reference_id &&) = default; //!< Defaulted.
-    ~output_reference_id() = default; //!< Defaulted.
+    constexpr output_reference_id & operator=(output_reference_id &&) = default;      //!< Defaulted.
+    ~output_reference_id() = default;                                                 //!< Defaulted.
 
     //!\}
 
@@ -83,12 +83,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr output_reference_begin_position() = default; //!< Defaulted.
+    constexpr output_reference_begin_position() = default;                                        //!< Defaulted.
     constexpr output_reference_begin_position(output_reference_begin_position const &) = default; //!< Defaulted.
-    constexpr output_reference_begin_position(output_reference_begin_position &&) = default; //!< Defaulted.
-    constexpr output_reference_begin_position & operator=(output_reference_begin_position const &) = default; //!< Defaulted.
+    constexpr output_reference_begin_position(output_reference_begin_position &&) = default;      //!< Defaulted.
+    constexpr output_reference_begin_position &
+    operator=(output_reference_begin_position const &) = default;                                        //!< Defaulted.
     constexpr output_reference_begin_position & operator=(output_reference_begin_position &&) = default; //!< Defaulted.
-    ~output_reference_begin_position() = default; //!< Defaulted.
+    ~output_reference_begin_position() = default;                                                        //!< Defaulted.
 
     //!\}
 
@@ -108,12 +109,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr output_index_cursor() = default; //!< Defaulted.
-    constexpr output_index_cursor(output_index_cursor const &) = default; //!< Defaulted.
-    constexpr output_index_cursor(output_index_cursor &&) = default; //!< Defaulted.
+    constexpr output_index_cursor() = default;                                        //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor const &) = default;             //!< Defaulted.
+    constexpr output_index_cursor(output_index_cursor &&) = default;                  //!< Defaulted.
     constexpr output_index_cursor & operator=(output_index_cursor const &) = default; //!< Defaulted.
-    constexpr output_index_cursor & operator=(output_index_cursor &&) = default; //!< Defaulted.
-    ~output_index_cursor() = default; //!< Defaulted.
+    constexpr output_index_cursor & operator=(output_index_cursor &&) = default;      //!< Defaulted.
+    ~output_index_cursor() = default;                                                 //!< Defaulted.
 
     //!\}
 

@@ -51,7 +51,7 @@ namespace seqan3::detail
  *
  * Note that the proto-adaptor does not provide `operator|`, this is only required of adaptor closure objects.
  */
-template <typename functor_type, typename ...stored_args_ts>
+template <typename functor_type, typename... stored_args_ts>
 class adaptor_from_functor :
     public adaptor_base<adaptor_from_functor<functor_type, stored_args_ts...>, stored_args_ts...>
 {
@@ -73,7 +73,7 @@ private:
      * \returns Whatever the wrapped functor returns, usually a view.
      */
     template <std::ranges::input_range urng_t>
-    constexpr auto impl(urng_t && urange, stored_args_ts ... args) const
+    constexpr auto impl(urng_t && urange, stored_args_ts... args) const
     {
         return fun(std::forward<urng_t>(urange), std::forward<stored_args_ts>(args)...);
     }
@@ -82,16 +82,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr adaptor_from_functor()                                                  = default; //!< Defaulted.
-    constexpr adaptor_from_functor(adaptor_from_functor const &)             noexcept = default; //!< Defaulted.
-    constexpr adaptor_from_functor(adaptor_from_functor &&)                  noexcept = default; //!< Defaulted.
+    constexpr adaptor_from_functor() = default;                                                  //!< Defaulted.
+    constexpr adaptor_from_functor(adaptor_from_functor const &) noexcept = default;             //!< Defaulted.
+    constexpr adaptor_from_functor(adaptor_from_functor &&) noexcept = default;                  //!< Defaulted.
     constexpr adaptor_from_functor & operator=(adaptor_from_functor const &) noexcept = default; //!< Defaulted.
-    constexpr adaptor_from_functor & operator=(adaptor_from_functor &&)      noexcept = default; //!< Defaulted.
-    ~adaptor_from_functor()                                                  noexcept = default; //!< Defaulted.
+    constexpr adaptor_from_functor & operator=(adaptor_from_functor &&) noexcept = default;      //!< Defaulted.
+    ~adaptor_from_functor() noexcept = default;                                                  //!< Defaulted.
 
     //!\brief Construct from functor and possibly arguments.
-    constexpr adaptor_from_functor(functor_type f, stored_args_ts ... args) :
-        base_type{std::forward<stored_args_ts>(args)...}, fun{std::move(f)}
+    constexpr adaptor_from_functor(functor_type f, stored_args_ts... args) :
+        base_type{std::forward<stored_args_ts>(args)...},
+        fun{std::move(f)}
     {}
     //!\}
 };

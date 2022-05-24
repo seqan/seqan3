@@ -40,12 +40,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_search_result_builder() = default; //!< Defaulted.
-    policy_search_result_builder(policy_search_result_builder &&) = default; //!< Defaulted.
-    policy_search_result_builder(policy_search_result_builder const &) = default; //!< Defaulted.
-    policy_search_result_builder & operator=(policy_search_result_builder &&) = default; //!< Defaulted.
+    policy_search_result_builder() = default;                                                 //!< Defaulted.
+    policy_search_result_builder(policy_search_result_builder &&) = default;                  //!< Defaulted.
+    policy_search_result_builder(policy_search_result_builder const &) = default;             //!< Defaulted.
+    policy_search_result_builder & operator=(policy_search_result_builder &&) = default;      //!< Defaulted.
     policy_search_result_builder & operator=(policy_search_result_builder const &) = default; //!< Defaulted.
-    ~policy_search_result_builder() = default; //!< Defaulted.
+    ~policy_search_result_builder() = default;                                                //!< Defaulted.
 
     //!\brief Construction from the configuration object.
     explicit policy_search_result_builder(search_configuration_t const &)
@@ -89,25 +89,28 @@ protected:
      * The text positions are sorted and made unique by position before invoking the callback on them.
      */
     template <typename index_cursor_t, typename query_index_t, typename callback_t>
-        requires search_traits_type::output_requires_locate_call &&
-                 (!search_traits_type::search_single_best_hit)
+        requires search_traits_type::output_requires_locate_call && (!search_traits_type::search_single_best_hit)
     void make_results(std::vector<index_cursor_t> internal_hits, query_index_t idx, callback_t && callback)
     {
         std::vector<search_result_type> results{};
         results.reserve(internal_hits.size()); // expect at least as many text positions as cursors, possibly more
 
-        make_results_impl(std::move(internal_hits), idx, [&results] (auto && search_result)
-        {
-            results.push_back(std::move(search_result));
-        });
+        make_results_impl(std::move(internal_hits),
+                          idx,
+                          [&results](auto && search_result)
+                          {
+                              results.push_back(std::move(search_result));
+                          });
 
         // sort by reference id or by reference position if both have the same reference id.
-        std::sort(results.begin(), results.end(), [] (auto const & r1, auto const & r2)
-        {
-            return (r1.reference_id() == r2.reference_id()) ? (r1.reference_begin_position() <
-                                                               r2.reference_begin_position())
-                                                            : (r1.reference_id() < r2.reference_id());
-        });
+        std::sort(results.begin(),
+                  results.end(),
+                  [](auto const & r1, auto const & r2)
+                  {
+                      return (r1.reference_id() == r2.reference_id())
+                               ? (r1.reference_begin_position() < r2.reference_begin_position())
+                               : (r1.reference_id() < r2.reference_id());
+                  });
 
         results.erase(std::unique(results.begin(), results.end()), results.end());
 
@@ -138,7 +141,7 @@ private:
                            [[maybe_unused]] query_index_t idx,
                            callback_t && callback)
     {
-        auto maybe_locate = [] (auto const & cursor)
+        auto maybe_locate = [](auto const & cursor)
         {
             if constexpr (search_traits_type::output_requires_locate_call)
                 return cursor.lazy_locate();

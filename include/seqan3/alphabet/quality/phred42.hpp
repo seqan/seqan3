@@ -59,12 +59,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred42()                             noexcept = default; //!< Defaulted.
-    constexpr phred42(phred42 const &)              noexcept = default; //!< Defaulted.
-    constexpr phred42(phred42 &&)                   noexcept = default; //!< Defaulted.
-    constexpr phred42 & operator=(phred42 const &)  noexcept = default; //!< Defaulted.
-    constexpr phred42 & operator=(phred42 &&)       noexcept = default; //!< Defaulted.
-    ~phred42()                                      noexcept = default; //!< Defaulted.
+    constexpr phred42() noexcept = default;                            //!< Defaulted.
+    constexpr phred42(phred42 const &) noexcept = default;             //!< Defaulted.
+    constexpr phred42(phred42 &&) noexcept = default;                  //!< Defaulted.
+    constexpr phred42 & operator=(phred42 const &) noexcept = default; //!< Defaulted.
+    constexpr phred42 & operator=(phred42 &&) noexcept = default;      //!< Defaulted.
+    ~phred42() noexcept = default;                                     //!< Defaulted.
 
     // Inherit converting constructor
     using base_t::base_t;
@@ -131,6 +131,6 @@ inline std::vector<phred42> operator""_phred42(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

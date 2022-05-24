@@ -32,32 +32,32 @@ namespace seqan3::detail
  */
 enum struct strong_type_skill
 {
-    none           = 0,
-    add            = 1 << 0,
-    subtract       = 1 << 1,
-    multiply       = 1 << 2,
-    divide         = 1 << 3,
-    modulo         = 1 << 4,
-    bitwise_and    = 1 << 5,
-    bitwise_or     = 1 << 6,
-    bitwise_xor    = 1 << 7,
-    bitwise_not    = 1 << 8,
+    none = 0,
+    add = 1 << 0,
+    subtract = 1 << 1,
+    multiply = 1 << 2,
+    divide = 1 << 3,
+    modulo = 1 << 4,
+    bitwise_and = 1 << 5,
+    bitwise_or = 1 << 6,
+    bitwise_xor = 1 << 7,
+    bitwise_not = 1 << 8,
     bitwise_lshift = 1 << 9,
     bitwise_rshift = 1 << 10,
-    logical_and    = 1 << 11,
-    logical_or     = 1 << 12,
-    logical_not    = 1 << 13,
-    increment      = 1 << 14,
-    decrement      = 1 << 15,
-    convert        = 1 << 16,
-    comparable     = 1 << 17,
-    additive       = add | subtract,
+    logical_and = 1 << 11,
+    logical_or = 1 << 12,
+    logical_not = 1 << 13,
+    increment = 1 << 14,
+    decrement = 1 << 15,
+    convert = 1 << 16,
+    comparable = 1 << 17,
+    additive = add | subtract,
     multiplicative = multiply | divide | modulo,
-    bitwise_logic  = bitwise_and | bitwise_or | bitwise_xor | bitwise_not,
-    bitwise_shift  = bitwise_lshift | bitwise_rshift,
-    logic          = logical_and | logical_or | logical_not
+    bitwise_logic = bitwise_and | bitwise_or | bitwise_xor | bitwise_not,
+    bitwise_shift = bitwise_lshift | bitwise_rshift,
+    logic = logical_and | logical_or | logical_not
 };
-}  //namespace seqan3::detail
+} //namespace seqan3::detail
 
 namespace seqan3
 {
@@ -68,7 +68,7 @@ namespace seqan3
 template <>
 constexpr bool add_enum_bitwise_operators<seqan3::detail::strong_type_skill> = true;
 //!\endcond
-}
+} // namespace seqan3
 
 namespace seqan3::detail
 {
@@ -101,19 +101,21 @@ class strong_type;
  */
 //!\cond
 template <typename strong_type_t>
-concept derived_from_strong_type = requires (strong_type_t && obj)
-{
-    typename std::remove_reference_t<strong_type_t>::value_type;
+concept derived_from_strong_type =
+    requires (strong_type_t && obj) {
+        typename std::remove_reference_t<strong_type_t>::value_type;
 
-    { std::remove_reference_t<strong_type_t>::skills };
+        {
+            std::remove_reference_t<strong_type_t>::skills
+        };
 
-    requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
+        requires std::same_as<decltype(std::remove_reference_t<strong_type_t>::skills), strong_type_skill const>;
 
-    requires std::derived_from<std::remove_cvref_t<strong_type_t>,
-                               strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
-                                           std::remove_cvref_t<strong_type_t>,
-                                           std::remove_reference_t<strong_type_t>::skills>>;
-};
+        requires std::derived_from<std::remove_cvref_t<strong_type_t>,
+                                   strong_type<typename std::remove_reference_t<strong_type_t>::value_type,
+                                               std::remove_cvref_t<strong_type_t>,
+                                               std::remove_reference_t<strong_type_t>::skills>>;
+    };
 //!\endcond
 
 //------------------------------------------------------------------------------
@@ -183,12 +185,12 @@ public:
      * \brief The standard functions are explicitly set to default.
      * \{
      */
-    constexpr strong_type()                                 noexcept = default; //!< Defaulted.
-    constexpr strong_type(strong_type const &)              noexcept = default; //!< Defaulted.
-    constexpr strong_type(strong_type &&)                   noexcept = default; //!< Defaulted.
-    constexpr strong_type & operator= (strong_type const &) noexcept = default; //!< Defaulted.
-    constexpr strong_type & operator= (strong_type &&)      noexcept = default; //!< Defaulted.
-    ~strong_type()                                          noexcept = default; //!< Defaulted.
+    constexpr strong_type() noexcept = default;                                //!< Defaulted.
+    constexpr strong_type(strong_type const &) noexcept = default;             //!< Defaulted.
+    constexpr strong_type(strong_type &&) noexcept = default;                  //!< Defaulted.
+    constexpr strong_type & operator=(strong_type const &) noexcept = default; //!< Defaulted.
+    constexpr strong_type & operator=(strong_type &&) noexcept = default;      //!< Defaulted.
+    ~strong_type() noexcept = default;                                         //!< Defaulted.
 
     //!\brief Construction from underlying value type.
     constexpr explicit strong_type(value_t _value) : value(std::move(_value))

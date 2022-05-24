@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <seqan3/std/charconv>
 #include <concepts>
+#include <seqan3/std/charconv>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -67,8 +67,7 @@ public:
      * \param[in] argc_ The number of command line arguments.
      * \param[in] argv_ The command line arguments to parse.
      */
-    format_parse(int const argc_, std::vector<std::string> argv_) :
-        argc{argc_ - 1}, argv{std::move(argv_)}
+    format_parse(int const argc_, std::vector<std::string> argv_) : argc{argc_ - 1}, argv{std::move(argv_)}
     {}
     //!\}
 
@@ -83,10 +82,11 @@ public:
                     option_spec const spec,
                     validator_type && option_validator)
     {
-        option_calls.push_back([this, &value, short_id, long_id, spec, option_validator]()
-        {
-            get_option(value, short_id, long_id, spec, option_validator);
-        });
+        option_calls.push_back(
+            [this, &value, short_id, long_id, spec, option_validator]()
+            {
+                get_option(value, short_id, long_id, spec, option_validator);
+            });
     }
 
     /*!\brief Adds a get_flag call to be evaluated later on.
@@ -98,10 +98,11 @@ public:
                   std::string const & SEQAN3_DOXYGEN_ONLY(desc),
                   option_spec const & SEQAN3_DOXYGEN_ONLY(spec))
     {
-        flag_calls.push_back([this, &value, short_id, long_id]()
-        {
-            get_flag(value, short_id, long_id);
-        });
+        flag_calls.push_back(
+            [this, &value, short_id, long_id]()
+            {
+                get_flag(value, short_id, long_id);
+            });
     }
 
     /*!\brief Adds a get_positional_option call to be evaluated later on.
@@ -112,10 +113,11 @@ public:
                                std::string const & SEQAN3_DOXYGEN_ONLY(desc),
                                validator_type && option_validator)
     {
-        positional_option_calls.push_back([this, &value, option_validator]()
-        {
-            get_positional_option(value, option_validator);
-        });
+        positional_option_calls.push_back(
+            [this, &value, option_validator]()
+            {
+                get_positional_option(value, option_validator);
+            });
     }
 
     //!\brief Initiates the actual command line parsing.
@@ -144,10 +146,14 @@ public:
 
     // functions are not needed for command line parsing but are part of the format interface.
     //!\cond
-    void add_section(std::string const &, option_spec const) {}
-    void add_subsection(std::string const &, option_spec const) {}
-    void add_line(std::string const &, bool, option_spec const) {}
-    void add_list_item(std::string const &, std::string const &, option_spec const) {}
+    void add_section(std::string const &, option_spec const)
+    {}
+    void add_subsection(std::string const &, option_spec const)
+    {}
+    void add_line(std::string const &, bool, option_spec const)
+    {}
+    void add_list_item(std::string const &, std::string const &, option_spec const)
+    {}
     //!\endcond
 
     //!\brief Checks whether `id` is empty.
@@ -187,32 +193,34 @@ public:
         if (is_empty_id(id))
             return end_it;
 
-        return (std::find_if(begin_it, end_it,
-            [&] (std::string const & current_arg)
-            {
-                std::string full_id = prepend_dash(id);
+        return (std::find_if(begin_it,
+                             end_it,
+                             [&](std::string const & current_arg)
+                             {
+                                 std::string full_id = prepend_dash(id);
 
-                if constexpr (std::same_as<id_type, char>) // short id
-                {
-                    // check if current_arg starts with "-o", i.e. it correctly identifies all short notations:
-                    // "-ovalue", "-o=value", and "-o value".
-                    return current_arg.substr(0, full_id.size()) == full_id;
-                }
-                else
-                {
-                    // only "--opt Value" or "--opt=Value" are valid
-                    return current_arg.substr(0, full_id.size()) == full_id && // prefix is the same
-                           (current_arg.size() == full_id.size() || current_arg[full_id.size()] == '='); // space or `=`
-                }
-            }));
+                                 if constexpr (std::same_as<id_type, char>) // short id
+                                 {
+                                     // check if current_arg starts with "-o", i.e. it correctly identifies all short notations:
+                                     // "-ovalue", "-o=value", and "-o value".
+                                     return current_arg.substr(0, full_id.size()) == full_id;
+                                 }
+                                 else
+                                 {
+                                     // only "--opt Value" or "--opt=Value" are valid
+                                     return current_arg.substr(0, full_id.size()) == full_id && // prefix is the same
+                                            (current_arg.size() == full_id.size()
+                                             || current_arg[full_id.size()] == '='); // space or `=`
+                                 }
+                             }));
     }
 
 private:
     //!\brief Describes the result of parsing the user input string given the respective option value type.
     enum class option_parse_result
     {
-        success, //!< Parsing of user input was successful.
-        error, //!< There was some error while trying to parse the user input.
+        success,       //!< Parsing of user input was successful.
+        error,         //!< There was some error while trying to parse the user input.
         overflow_error //!< Parsing was successful but the arithmetic value would cause an overflow.
     };
 
@@ -259,7 +267,7 @@ private:
         if (it != end_of_options_it)
             *it = ""; // remove seen flag
 
-        return(it != end_of_options_it);
+        return (it != end_of_options_it);
     }
 
     /*!\brief Returns true and removes the short identifier if it is in format_parse::argv.
@@ -323,18 +331,21 @@ private:
         if (auto it = map.find(in); it == map.end())
         {
             std::vector<std::pair<std::string_view, option_t>> key_value_pairs(map.begin(), map.end());
-            std::ranges::sort(key_value_pairs, [] (auto pair1, auto pair2)
-                {
-                    if constexpr (std::totally_ordered<option_t>)
-                    {
-                        if (pair1.second != pair2.second)
-                            return pair1.second < pair2.second;
-                    }
-                    return pair1.first < pair2.first;
-                });
+            std::ranges::sort(key_value_pairs,
+                              [](auto pair1, auto pair2)
+                              {
+                                  if constexpr (std::totally_ordered<option_t>)
+                                  {
+                                      if (pair1.second != pair2.second)
+                                          return pair1.second < pair2.second;
+                                  }
+                                  return pair1.first < pair2.first;
+                              });
 
-            throw user_input_error{detail::to_string("You have chosen an invalid input value: ", in,
-                                                     ". Please use one of: ", key_value_pairs | std::views::keys)};
+            throw user_input_error{detail::to_string("You have chosen an invalid input value: ",
+                                                     in,
+                                                     ". Please use one of: ",
+                                                     key_value_pairs | std::views::keys)};
         }
         else
         {
@@ -366,10 +377,11 @@ private:
     template <detail::is_container_option container_option_t, typename format_parse_t = format_parse>
         requires requires (format_parse_t fp,
                            typename container_option_t::value_type & container_value,
-                           std::string const & in)
-        {
-            {fp.parse_option_value(container_value, in)} -> std::same_as<option_parse_result>;
-        }
+                           std::string const & in) {
+                     {
+                         fp.parse_option_value(container_value, in)
+                         } -> std::same_as<option_parse_result>;
+                 }
     option_parse_result parse_option_value(container_option_t & value, std::string const & in)
     {
         typename container_option_t::value_type tmp{};
@@ -450,17 +462,17 @@ private:
 
         if (res == option_parse_result::error)
         {
-            throw user_input_error{msg + "Argument " + input_value + " could not be parsed as type " +
-                                   get_type_name_as_string(option_type{}) + "."};
+            throw user_input_error{msg + "Argument " + input_value + " could not be parsed as type "
+                                   + get_type_name_as_string(option_type{}) + "."};
         }
 
         if constexpr (arithmetic<option_type>)
         {
             if (res == option_parse_result::overflow_error)
             {
-                throw user_input_error{msg + "Numeric argument " + input_value + " is not in the valid range [" +
-                                       std::to_string(std::numeric_limits<option_type>::min()) + "," +
-                                       std::to_string(std::numeric_limits<option_type>::max()) + "]."};
+                throw user_input_error{msg + "Numeric argument " + input_value + " is not in the valid range ["
+                                       + std::to_string(std::numeric_limits<option_type>::min()) + ","
+                                       + std::to_string(std::numeric_limits<option_type>::max()) + "]."};
             }
         }
 
@@ -553,10 +565,10 @@ private:
             identify_and_retrieve_option_value(value, it, id);
 
         if (find_option_id(it, end_of_options_it, id) != end_of_options_it) // should not be found again
-           throw option_declared_multiple_times("Option " + prepend_dash(id) +
-                                                " is no list/container but declared multiple times.");
+            throw option_declared_multiple_times("Option " + prepend_dash(id)
+                                                 + " is no list/container but declared multiple times.");
 
-       return (it != end_of_options_it); // first search was successful or not
+        return (it != end_of_options_it); // first search was successful or not
     }
 
     /*!\brief Handles value retrieval (container type) options.
@@ -614,17 +626,17 @@ private:
                 }
                 else if (arg[1] != '-' && arg.size() > 2) // one dash, but more than one character (-> multiple flags)
                 {
-                    throw unknown_option("Unknown flags " + expand_multiple_flags(arg) +
-                                         ". In case this is meant to be a non-option/argument/parameter, " +
-                                         "please specify the start of arguments with '--'. " +
-                                         "See -h/--help for program information.");
+                    throw unknown_option("Unknown flags " + expand_multiple_flags(arg)
+                                         + ". In case this is meant to be a non-option/argument/parameter, "
+                                         + "please specify the start of arguments with '--'. "
+                                         + "See -h/--help for program information.");
                 }
                 else // unknown short or long option
                 {
-                    throw unknown_option("Unknown option " + arg +
-                                         ". In case this is meant to be a non-option/argument/parameter, " +
-                                         "please specify the start of non-options with '--'. " +
-                                         "See -h/--help for program information.");
+                    throw unknown_option("Unknown option " + arg
+                                         + ". In case this is meant to be a non-option/argument/parameter, "
+                                         + "please specify the start of non-options with '--'. "
+                                         + "See -h/--help for program information.");
                 }
             }
         }
@@ -643,7 +655,13 @@ private:
      */
     void check_for_left_over_args()
     {
-        if (std::find_if(argv.begin(), argv.end(), [](std::string const & s){return (s != "");}) != argv.end())
+        if (std::find_if(argv.begin(),
+                         argv.end(),
+                         [](std::string const & s)
+                         {
+                             return (s != "");
+                         })
+            != argv.end())
             throw too_many_arguments("Too many arguments provided. Please see -h/--help for more information.");
     }
 
@@ -669,18 +687,18 @@ private:
      */
     template <typename option_type, typename validator_type>
     void get_option(option_type & value,
-                     char const short_id,
-                     std::string const & long_id,
-                     option_spec const spec,
-                     validator_type && validator)
+                    char const short_id,
+                    std::string const & long_id,
+                    option_spec const spec,
+                    validator_type && validator)
     {
         bool short_id_is_set{get_option_by_id(value, short_id)};
         bool long_id_is_set{get_option_by_id(value, long_id)};
 
         // if value is no container we need to check for multiple declarations
         if (short_id_is_set && long_id_is_set && !detail::is_container_option<option_type>)
-            throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id) +
-                                                 " is no list/container but specified multiple times");
+            throw option_declared_multiple_times("Option " + combine_option_names(short_id, long_id)
+                                                 + " is no list/container but specified multiple times");
 
         if (short_id_is_set || long_id_is_set)
         {
@@ -690,16 +708,16 @@ private:
             }
             catch (std::exception & ex)
             {
-                throw validation_error(std::string("Validation failed for option ") +
-                                        combine_option_names(short_id, long_id) + ": " + ex.what());
+                throw validation_error(std::string("Validation failed for option ")
+                                       + combine_option_names(short_id, long_id) + ": " + ex.what());
             }
         }
         else // option is not set
         {
             // check if option is required
             if (spec & option_spec::required)
-                throw required_option_missing("Option " + combine_option_names(short_id, long_id) +
-                                              " is required but not set.");
+                throw required_option_missing("Option " + combine_option_names(short_id, long_id)
+                                              + " is required but not set.");
         }
     }
 
@@ -710,9 +728,7 @@ private:
      * \param[in]  long_id  The long identifier for the flag (e.g. "integer").
      *
      */
-    void get_flag(bool & value,
-                  char const short_id,
-                  std::string const & long_id)
+    void get_flag(bool & value, char const short_id, std::string const & long_id)
     {
         value = flag_is_set(short_id) || flag_is_set(long_id);
     }
@@ -740,18 +756,23 @@ private:
      * - retrieves the next (no container type) or all (container type) remaining non empty value/s in argv
      */
     template <typename option_type, typename validator_type>
-    void get_positional_option(option_type & value,
-                               validator_type && validator)
+    void get_positional_option(option_type & value, validator_type && validator)
     {
         ++positional_option_count;
-        auto it = std::find_if(argv.begin(), argv.end(), [](std::string const & s){return (s != "");});
+        auto it = std::find_if(argv.begin(),
+                               argv.end(),
+                               [](std::string const & s)
+                               {
+                                   return (s != "");
+                               });
 
         if (it == argv.end())
-            throw too_few_arguments("Not enough positional arguments provided (Need at least " +
-                                    std::to_string(positional_option_calls.size()) +
-                                    "). See -h/--help for more information.");
+            throw too_few_arguments("Not enough positional arguments provided (Need at least "
+                                    + std::to_string(positional_option_calls.size())
+                                    + "). See -h/--help for more information.");
 
-        if constexpr (detail::is_container_option<option_type>) // vector/list will be filled with all remaining arguments
+        if constexpr (detail::is_container_option<
+                          option_type>) // vector/list will be filled with all remaining arguments
         {
             assert(positional_option_count == positional_option_calls.size()); // checked on set up.
 
@@ -764,7 +785,12 @@ private:
                 throw_on_input_error<option_type>(res, id, *it);
 
                 *it = ""; // remove arg from argv
-                it = std::find_if(it, argv.end(), [](std::string const & s){return (s != "");});
+                it = std::find_if(it,
+                                  argv.end(),
+                                  [](std::string const & s)
+                                  {
+                                      return (s != "");
+                                  });
                 ++positional_option_count;
             }
         }
@@ -783,8 +809,8 @@ private:
         }
         catch (std::exception & ex)
         {
-            throw validation_error("Validation failed for positional option " +
-                                    std::to_string(positional_option_count) + ": " + ex.what());
+            throw validation_error("Validation failed for positional option " + std::to_string(positional_option_count)
+                                   + ": " + ex.what());
         }
     }
 
@@ -804,4 +830,4 @@ private:
     std::vector<std::string>::iterator end_of_options_it;
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

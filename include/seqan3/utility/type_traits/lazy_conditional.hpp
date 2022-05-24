@@ -28,7 +28,7 @@ namespace seqan3::detail
  * \tparam template_t The uninstantiated template.
  * \tparam spec_t     The arguments to template_t.
  */
-template <template <typename ...> typename template_t, typename ...spec_t>
+template <template <typename...> typename template_t, typename... spec_t>
 struct lazy
 {};
 
@@ -51,7 +51,7 @@ struct instantiate : std::type_identity<t>
  * \tparam spec_t     The arguments to template_t.
  * \implements seqan3::transformation_trait
  */
-template <template <typename ...> typename template_t, typename ...spec_t>
+template <template <typename...> typename template_t, typename... spec_t>
 struct instantiate<lazy<template_t, spec_t...>>
 {
     //!\brief Return type of the trait [instantiates the template arguments].
@@ -97,7 +97,7 @@ struct instantiate_if<t, true> : std::type_identity<t>
  * \tparam spec_t     The arguments to template_t.
  * \implements seqan3::transformation_trait
  */
-template <template <typename ...> typename template_t, typename ...spec_t>
+template <template <typename...> typename template_t, typename... spec_t>
 struct instantiate_if<lazy<template_t, spec_t...>, true>
 {
     //!\brief Return type of the trait [instantiates the template arguments].

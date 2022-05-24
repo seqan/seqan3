@@ -225,7 +225,6 @@ private:
             return value;
         }
     }
-
 };
 
 } // namespace seqan3::detail

@@ -58,9 +58,8 @@ private:
         //!\brief The reference_id type of the search_result.
         using reference_id_t = std::conditional_t<traits_type::output_reference_id, index_size_type, empty_type>;
         //!\brief The reference_begin_position type of the search_result.
-        using reference_begin_position_t = std::conditional_t<traits_type::output_reference_begin_position,
-                                                              index_size_type,
-                                                              empty_type>;
+        using reference_begin_position_t =
+            std::conditional_t<traits_type::output_reference_begin_position, index_size_type, empty_type>;
 
     public:
         //!\brief The result type depending on the output configuration.
@@ -73,14 +72,13 @@ private:
      * \tparam index_t The type of the index.
      * \tparam policies_t A template parameter pack over the policies to specify the behavior of the algorithm.
      */
-    template <typename configuration_t, typename index_t, typename ...policies_t>
+    template <typename configuration_t, typename index_t, typename... policies_t>
     struct select_search_algorithm
     {
         //!\brief The selected algorithm type based on the index.
-        using type =
-            lazy_conditional_t<template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>,
-                               lazy<search_scheme_algorithm, configuration_t, index_t, policies_t...>,
-                               lazy<unidirectional_search_algorithm, configuration_t, index_t, policies_t...>>;
+        using type = lazy_conditional_t<template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>,
+                                        lazy<search_scheme_algorithm, configuration_t, index_t, policies_t...>,
+                                        lazy<unidirectional_search_algorithm, configuration_t, index_t, policies_t...>>;
     };
 
 public:
@@ -116,10 +114,8 @@ public:
     static auto add_default_output_configuration(configuration_t const & cfg)
     {
         if constexpr (!seqan3::detail::search_traits<configuration_t>::has_output_configuration)
-            return cfg |
-                   search_cfg::output_query_id{} |
-                   search_cfg::output_reference_id{} |
-                   search_cfg::output_reference_begin_position{};
+            return cfg | search_cfg::output_query_id{} | search_cfg::output_reference_id{}
+                 | search_cfg::output_reference_begin_position{};
         else
             return cfg;
     }
@@ -229,7 +225,7 @@ template <typename algorithm_t, typename configuration_t, typename index_t>
 algorithm_t search_configurator::configure_hit_strategy(configuration_t const & cfg, index_t const & index)
 {
     // Delegate to the next config with the modified configuration.
-    auto next_config_step = [&] (auto new_cfg) -> algorithm_t
+    auto next_config_step = [&](auto new_cfg) -> algorithm_t
     {
         return select_and_return_algorithm<algorithm_t>(new_cfg, index);
     };
@@ -248,13 +244,23 @@ algorithm_t search_configurator::configure_hit_strategy(configuration_t const & 
         auto cfg_without_hit = cfg.template remove<search_cfg::hit>();
 
         // Apply the correct static configuration element.
-        return std::visit(multi_invocable
-        {
-            [&] (search_cfg::hit_all_best) { return next_config_step(cfg_without_hit | search_cfg::hit_all_best{}); },
-            [&] (search_cfg::hit_single_best) { return next_config_step(cfg_without_hit | search_cfg::hit_single_best{}); },
-            [&] (search_cfg::hit_strata const & strata) { return next_config_step(cfg_without_hit | strata); },
-            [&] (auto) { return next_config_step(cfg_without_hit | search_cfg::hit_all{}); }
-        }, hit_variant);
+        return std::visit(multi_invocable{[&](search_cfg::hit_all_best)
+                                          {
+                                              return next_config_step(cfg_without_hit | search_cfg::hit_all_best{});
+                                          },
+                                          [&](search_cfg::hit_single_best)
+                                          {
+                                              return next_config_step(cfg_without_hit | search_cfg::hit_single_best{});
+                                          },
+                                          [&](search_cfg::hit_strata const & strata)
+                                          {
+                                              return next_config_step(cfg_without_hit | strata);
+                                          },
+                                          [&](auto)
+                                          {
+                                              return next_config_step(cfg_without_hit | search_cfg::hit_all{});
+                                          }},
+                          hit_variant);
     }
     else // Already statically configured.
     {

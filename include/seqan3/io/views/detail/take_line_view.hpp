@@ -70,7 +70,7 @@ namespace seqan3::detail
  * On single pass std::ranges::input_range it can be used to tokenise the input stream line-wise:
  * \include test/snippet/io/views/detail/take_line_view_tokenise.cpp
  */
-inline auto constexpr take_line = detail::take_until_and_consume(is_char<'\r'> || is_char<'\n'>);
+inline constexpr auto take_line = detail::take_until_and_consume(is_char<'\r'> || is_char<'\n'>);
 
 // ============================================================================
 //  detail::take_line_or_throw (adaptor instance definition)
@@ -82,6 +82,6 @@ inline auto constexpr take_line = detail::take_until_and_consume(is_char<'\r'> |
  *
  * \copydetails seqan3::detail::take_line
  */
-inline auto constexpr take_line_or_throw = detail::take_until_or_throw_and_consume(is_char<'\r'> || is_char<'\n'>);
+inline constexpr auto take_line_or_throw = detail::take_until_or_throw_and_consume(is_char<'\r'> || is_char<'\n'>);
 
 } // namespace seqan3::detail

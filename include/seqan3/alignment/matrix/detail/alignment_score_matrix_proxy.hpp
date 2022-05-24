@@ -37,10 +37,10 @@ struct alignment_score_matrix_proxy
     static_assert(arithmetic<score_type> || simd_concept<score_type>,
                   "Value type must either be an arithmetic type or a simd vector type.");
 
-    score_type & current; //!< The current value.
+    score_type & current;  //!< The current value.
     score_type & diagonal; //!< The last diagonal value.
-    score_type & r_left; //!< The last value to the left.
-    score_type & w_left; //!< The next value to the left.
-    score_type & up; //!< The last value above.
+    score_type & r_left;   //!< The last value to the left.
+    score_type & w_left;   //!< The next value to the left.
+    score_type & up;       //!< The last value above.
 };
 } // namespace seqan3::detail

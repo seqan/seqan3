@@ -51,9 +51,8 @@ using maybe_const_sentinel_t = std::ranges::sentinel_t<maybe_const_range_t<const
 //!\cond
 //!\brief The same as std::indirect_unary_predicate but on a range type instead of an iterator type.
 template <typename unary_predicate_fn_t, typename urng_t>
-concept indirect_unary_predicate_on_range = std::ranges::range<urng_t> &&
-                                            std::indirect_unary_predicate<unary_predicate_fn_t,
-                                                                          std::ranges::iterator_t<urng_t>>;
+concept indirect_unary_predicate_on_range =
+    std::ranges::range<urng_t> && std::indirect_unary_predicate<unary_predicate_fn_t, std::ranges::iterator_t<urng_t>>;
 //!\endcond
 } // namespace seqan3::detail
 
@@ -84,7 +83,8 @@ struct range_innermost_value
 
 //!\cond
 template <typename t>
-    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
+    requires detail::has_range_value_type<t>
+          && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
 struct range_innermost_value<t>
 {
     using type = typename range_innermost_value<std::ranges::range_value_t<std::remove_cvref_t<t>>>::type;
@@ -116,7 +116,8 @@ constexpr size_t range_dimension_v = 1;
 
 //!\cond
 template <typename t>
-    requires detail::has_range_value_type<t> && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
+    requires detail::has_range_value_type<t>
+              && detail::has_range_value_type<std::ranges::range_value_t<std::remove_cvref_t<t>>>
 constexpr size_t range_dimension_v<t> = range_dimension_v<std::ranges::range_value_t<std::remove_cvref_t<t>>> + 1;
 //!\endcond
 

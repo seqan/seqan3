@@ -32,8 +32,10 @@ namespace seqan3::detail
  * \param[in] stream    The output stream that receives the formatted alignment.
  * \param[in] align     The alignment that shall be streamed.
  */
-template <typename char_t, tuple_like alignment_t, size_t ...idx>
-void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & align, std::index_sequence<idx...> const & /**/)
+template <typename char_t, tuple_like alignment_t, size_t... idx>
+void stream_alignment(debug_stream_type<char_t> & stream,
+                      alignment_t const & align,
+                      std::index_sequence<idx...> const & /**/)
 {
     using std::get;
     size_t const alignment_size = get<0>(align).size();
@@ -61,19 +63,28 @@ void stream_alignment(debug_stream_type<char_t> & stream, alignment_t const & al
         // write first sequence
         stream << '\n' << std::setw(8) << "";
         std::ranges::for_each(get<0>(align) | views::slice(begin_pos, end_pos) | views::to_char,
-                              [&stream] (char ch) { stream << ch; });
+                              [&stream](char ch)
+                              {
+                                  stream << ch;
+                              });
 
-        auto stream_f = [&] (auto const & previous_seq, auto const & aligned_seq)
+        auto stream_f = [&](auto const & previous_seq, auto const & aligned_seq)
         {
             // write alignment bars
             stream << '\n' << std::setw(8) << "";
             std::ranges::for_each(views::zip(previous_seq, aligned_seq) | views::slice(begin_pos, end_pos),
-                                  [&stream] (auto && ch) { stream << (get<0>(ch) == get<1>(ch) ? '|' : ' '); });
+                                  [&stream](auto && ch)
+                                  {
+                                      stream << (get<0>(ch) == get<1>(ch) ? '|' : ' ');
+                                  });
 
             // write next sequence
             stream << '\n' << std::setw(8) << "";
             std::ranges::for_each(aligned_seq | views::slice(begin_pos, end_pos) | views::to_char,
-                                  [&stream] (char ch) { stream << ch; });
+                                  [&stream](char ch)
+                                  {
+                                      stream << ch;
+                                  });
         };
         (stream_f(get<idx>(align), get<idx + 1>(align)), ...);
         stream << '\n';
@@ -94,8 +105,8 @@ namespace seqan3
  * \return The given stream to which the alignment representation is appended.
  */
 template <typename char_t, typename alignment_t>
-    requires (detail::debug_streamable_tuple<alignment_t> &&
-              detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
+    requires (detail::debug_streamable_tuple<alignment_t>
+              && detail::all_model_aligned_seq<detail::tuple_type_list_t<std::remove_cvref_t<alignment_t>>>)
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream, alignment_t && alignment)
 {
     constexpr size_t sequence_count = std::tuple_size_v<std::remove_cvref_t<alignment_t>>;
@@ -106,4 +117,4 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
     return stream;
 }
 
-} // namespace seqan
+} // namespace seqan3

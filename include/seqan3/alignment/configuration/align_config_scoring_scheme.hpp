@@ -50,12 +50,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr scoring_scheme() = default; //!< Defaulted
-    constexpr scoring_scheme(scoring_scheme const &) = default; //!< Defaulted
-    constexpr scoring_scheme(scoring_scheme &&) = default; //!< Defaulted
+    constexpr scoring_scheme() = default;                                   //!< Defaulted
+    constexpr scoring_scheme(scoring_scheme const &) = default;             //!< Defaulted
+    constexpr scoring_scheme(scoring_scheme &&) = default;                  //!< Defaulted
     constexpr scoring_scheme & operator=(scoring_scheme const &) = default; //!< Defaulted
-    constexpr scoring_scheme & operator=(scoring_scheme &&) = default; //!< Defaulted
-    ~scoring_scheme() = default; //!< Defaulted
+    constexpr scoring_scheme & operator=(scoring_scheme &&) = default;      //!< Defaulted
+    ~scoring_scheme() = default;                                            //!< Defaulted
 
     /*!\brief Initialises the scoring scheme config with the given scheme.
      * \param[in] scheme The scoring scheme to be used in the alignment algorithm.

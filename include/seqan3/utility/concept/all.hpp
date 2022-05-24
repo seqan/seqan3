@@ -15,5 +15,4 @@
 
 #include <seqan3/core/platform.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.3.0.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.3.0.")

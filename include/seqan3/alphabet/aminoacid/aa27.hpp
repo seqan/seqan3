@@ -58,84 +58,54 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa27()                         noexcept = default; //!< Defaulted.
-    constexpr aa27(aa27 const &)             noexcept = default; //!< Defaulted.
-    constexpr aa27(aa27 &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa27() noexcept = default;                         //!< Defaulted.
+    constexpr aa27(aa27 const &) noexcept = default;             //!< Defaulted.
+    constexpr aa27(aa27 &&) noexcept = default;                  //!< Defaulted.
     constexpr aa27 & operator=(aa27 const &) noexcept = default; //!< Defaulted.
-    constexpr aa27 & operator=(aa27 &&)      noexcept = default; //!< Defaulted.
-    ~aa27()                                  noexcept = default; //!< Defaulted.
+    constexpr aa27 & operator=(aa27 &&) noexcept = default;      //!< Defaulted.
+    ~aa27() noexcept = default;                                  //!< Defaulted.
 
     using base_t::base_t;
     //!\}
 
 private:
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'E',
-        'F',
-        'G',
-        'H',
-        'I',
-        'J',
-        'K',
-        'L',
-        'M',
-        'N',
-        'O',
-        'P',
-        'Q',
-        'R',
-        'S',
-        'T',
-        'U',
-        'V',
-        'W',
-        'X',
-        'Y',
-        'Z',
-        '*'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                                                                 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                                                                 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '*'};
 
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret)
+        c = 23; // value of 'X'
+
+    // reverse mapping for characters and their lowercase
+    for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
     {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> ret{};
-
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = 23; // value of 'X'
-
-            // reverse mapping for characters and their lowercase
-            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
-                ret[static_cast<rank_type>(to_lower(rank_to_char_table[rnk]))] = rnk;
-            }
-
-            return ret;
-        }()
-    };
-
-    //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
+        ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
+        ret[static_cast<rank_type>(to_lower(rank_to_char_table[rnk]))] = rnk;
     }
 
-    //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
-};
+    return ret;
+}()
+}; // namespace seqan3
+
+//!\copydoc seqan3::dna4::rank_to_char
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
+
+//!\copydoc seqan3::dna4::char_to_rank
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 // ------------------------------------------------------------------
 // containers
@@ -196,6 +166,6 @@ inline aa27_vector operator""_aa27(char const * const s, size_t const n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

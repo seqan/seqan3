@@ -51,18 +51,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_persist()                                               noexcept = default; //!< Defaulted.
-    constexpr view_persist(view_persist const & rhs)             noexcept = default; //!< Defaulted.
-    constexpr view_persist(view_persist && rhs)                  noexcept = default; //!< Defaulted.
+    view_persist() noexcept = default;                                               //!< Defaulted.
+    constexpr view_persist(view_persist const & rhs) noexcept = default;             //!< Defaulted.
+    constexpr view_persist(view_persist && rhs) noexcept = default;                  //!< Defaulted.
     constexpr view_persist & operator=(view_persist const & rhs) noexcept = default; //!< Defaulted.
-    constexpr view_persist & operator=(view_persist && rhs)      noexcept = default; //!< Defaulted.
-    ~view_persist()                                              noexcept = default; //!< Defaulted.
+    constexpr view_persist & operator=(view_persist && rhs) noexcept = default;      //!< Defaulted.
+    ~view_persist() noexcept = default;                                              //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] _urange The underlying range.
      */
-    view_persist(urng_t && _urange) :
-        urange{new urng_t{std::move(_urange)}}
+    view_persist(urng_t && _urange) : urange{new urng_t{std::move(_urange)}}
     {}
     //!\}
 
@@ -216,6 +215,6 @@ private:
  *
  * \hideinitializer
  */
-inline auto constexpr persist = persist_fn{};
+inline constexpr auto persist = persist_fn{};
 
 } // namespace seqan3::detail

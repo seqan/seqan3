@@ -31,10 +31,11 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_size = requires (tuple_t v)
-{
-    {std::tuple_size<tuple_t>::value} -> std::convertible_to<size_t>;
-};
+concept tuple_size = requires (tuple_t v) {
+                         {
+                             std::tuple_size<tuple_t>::value
+                             } -> std::convertible_to<size_t>;
+                     };
 //!\endcond
 
 /*!\interface seqan3::detail::tuple_get <>
@@ -44,21 +45,29 @@ concept tuple_size = requires (tuple_t v)
  */
 //!\cond
 template <typename tuple_t>
-concept tuple_get = requires (tuple_t & v, tuple_t const & v_c)
-{
-    requires std::tuple_size_v<tuple_t> > 0;
+concept tuple_get =
+    requires (tuple_t & v, tuple_t const & v_c) {
+        requires std::tuple_size_v<tuple_t> > 0;
 
-    typename std::tuple_element<0, tuple_t>::type;
+        typename std::tuple_element<0, tuple_t>::type;
 
-    {get<0>(v)} -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
-//     requires weakly_assignable_from<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
-    //TODO check that the previous returns something that can be assigned to
-    // unfortunately std::assignable_from requires lvalue-reference, but we want to accept xvalues too (returned
-    // proxies)
-    {get<0>(v_c)} -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
-    {get<0>(std::move(v))} -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
-    {get<0>(std::move(v_c))} -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type const &&>;
-};
+        {
+            get<0>(v)
+            } -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
+        //     requires weakly_assignable_from<decltype(get<0>(v)), typename std::tuple_element<0, tuple_t>::type>;
+        //TODO check that the previous returns something that can be assigned to
+        // unfortunately std::assignable_from requires lvalue-reference, but we want to accept xvalues too (returned
+        // proxies)
+        {
+            get<0>(v_c)
+            } -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
+        {
+            get<0>(std::move(v))
+            } -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type>;
+        {
+            get<0>(std::move(v_c))
+            } -> std::convertible_to<typename std::tuple_element<0, tuple_t>::type const &&>;
+    };
 //!\endcond
 
 /*!\brief Transformation trait to expose the tuple element types as seqan3::type_list
@@ -72,9 +81,8 @@ template <detail::tuple_size tuple_t>
 struct tuple_type_list
 {
 protected:
-
     //!\brief Helper function to extract the types using the tuple elements.
-    template <size_t ... Is>
+    template <size_t... Is>
     static constexpr auto invoke_to_type_list(std::index_sequence<Is...>)
     {
         return type_list<std::tuple_element_t<Is, tuple_t>...>{};
@@ -96,7 +104,7 @@ using tuple_type_list_t = typename tuple_type_list<tuple_t>::type;
 /*!\brief Helper type function to check for std::totally_ordered on all elements of the given tuple type.
  * \ingroup utility_tuple
  */
-template <typename ...elements_t>
+template <typename... elements_t>
 inline constexpr auto all_elements_model_totally_ordered(seqan3::type_list<elements_t...>)
     -> std::bool_constant<(std::totally_ordered<elements_t> && ... && true)>;
 
@@ -105,10 +113,11 @@ inline constexpr auto all_elements_model_totally_ordered(seqan3::type_list<eleme
  * \ingroup utility_tuple
  */
 template <typename tuple_t>
-    requires requires()
-    {
-        { detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}) };
-    }
+    requires requires () {
+                 {
+                     detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{})
+                 };
+             }
 static constexpr bool all_elements_model_totally_ordered_v =
     decltype(detail::all_elements_model_totally_ordered(tuple_type_list_t<tuple_t>{}))::value;
 } // namespace seqan3::detail
@@ -170,19 +179,20 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept tuple_like = detail::tuple_size<std::remove_reference_t<t>> && requires(t v)
-{
-    typename detail::tuple_type_list<std::remove_cvref_t<t>>::type;
+concept tuple_like =
+    detail::tuple_size<std::remove_reference_t<t>>
+    && requires (t v) {
+           typename detail::tuple_type_list<std::remove_cvref_t<t>>::type;
 
-    // NOTE(rrahn): To check the full tuple_concept including the get interface and the std::totally_ordered
-    //              we need to make some assumptions. In general these checks can only be executed if the tuple is not
-    //              empty. Furthermore, the std::totally_ordered can only be checked if all elements in the
-    //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
-    requires (std::tuple_size<std::remove_reference_t<t>>::value == 0) ||
-             (detail::tuple_get<std::remove_cvref_t<t>> &&
-              (!detail::all_elements_model_totally_ordered_v<std::remove_cvref_t<t>> ||
-                std::totally_ordered<std::remove_cvref_t<t>>));
-};
+           // NOTE(rrahn): To check the full tuple_concept including the get interface and the std::totally_ordered
+           //              we need to make some assumptions. In general these checks can only be executed if the tuple is not
+           //              empty. Furthermore, the std::totally_ordered can only be checked if all elements in the
+           //              tuple are strict_totally_ordered. This is done, by the fold expression in the second part.
+           requires (std::tuple_size<std::remove_reference_t<t>>::value == 0)
+                        || (detail::tuple_get<std::remove_cvref_t<t>>
+                            && (!detail::all_elements_model_totally_ordered_v<std::remove_cvref_t<t>>
+                                || std::totally_ordered<std::remove_cvref_t<t>>));
+       };
 //!\endcond
 
 /*!\interface seqan3::pair_like

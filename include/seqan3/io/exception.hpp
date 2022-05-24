@@ -60,10 +60,10 @@ struct io_error : std::ios_base::failure
     // see https://en.cppreference.com/w/cpp/io/ios_base/failure
     using base_t = std::ios_base::failure;
     using base_t::base_t;
-#else // ^^^ workaround / no workaround vvv
+#else  // ^^^ workaround / no workaround vvv
     //!\brief Constructor that forwards the exception string.
-    explicit io_error(std::string const & s, std::error_code const & ec = std::io_errc::stream)
-        : std::ios_base::failure{s, ec}
+    explicit io_error(std::string const & s, std::error_code const & ec = std::io_errc::stream) :
+        std::ios_base::failure{s, ec}
     {}
 #endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 };

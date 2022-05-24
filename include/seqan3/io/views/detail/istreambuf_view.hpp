@@ -13,7 +13,6 @@
 #pragma once
 
 #include <iosfwd>
-
 #include <iterator>
 #include <seqan3/std/ranges>
 
@@ -41,11 +40,9 @@ struct istreambuf_fn
     constexpr auto operator()(std::basic_streambuf<stream_char_t, stream_traits_t> & s) const
     {
         return std::ranges::subrange<detail::fast_istreambuf_iterator<stream_char_t, stream_traits_t>,
-                                     std::default_sentinel_t>
-        {
+                                     std::default_sentinel_t>{
             detail::fast_istreambuf_iterator<stream_char_t, stream_traits_t>{s},
-            std::default_sentinel_t{}
-        };
+            std::default_sentinel_t{}};
     }
 
     /*!\brief Return the view object.

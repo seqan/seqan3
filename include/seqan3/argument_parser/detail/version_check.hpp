@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <sys/stat.h>
-
 #include <array>
 #include <chrono>
 #include <fstream>
@@ -21,13 +19,15 @@
 #include <iostream>
 #include <optional>
 #include <regex>
+#include <seqan3/std/charconv>
 
 #include <seqan3/argument_parser/auxiliary.hpp>
 #include <seqan3/argument_parser/detail/terminal.hpp>
 #include <seqan3/io/detail/misc.hpp>
 #include <seqan3/io/detail/safe_filesystem_entry.hpp>
-#include <seqan3/std/charconv>
 #include <seqan3/version.hpp>
+
+#include <sys/stat.h>
 
 namespace seqan3::detail
 {
@@ -141,11 +141,11 @@ public:
             std::string line{};
             std::getline(version_file, line); // get first line which should only contain the version number of the app
 
-        if (line != unregistered_app)
-            srv_app_version = get_numbers_from_version_string(line);
+            if (line != unregistered_app)
+                srv_app_version = get_numbers_from_version_string(line);
 #if !defined(NDEBUG)
-        else
-            std::cerr << message_unregistered_app;
+            else
+                std::cerr << message_unregistered_app;
 #endif // !defined(NDEBUG)
 
             std::getline(version_file, line); // get second line which should only contain the version number of seqan
@@ -191,11 +191,9 @@ public:
         std::filesystem::path out_file = cookie_path / (name + ".version");
 
         // build up command for server call
-        std::string command = program +              // no user defined input
-                              " " +
-                              out_file.string() +
-                              " " +
-                              std::string{"http://seqan-update.informatik.uni-tuebingen.de/check/SeqAn3_"} +
+        std::string command = program + // no user defined input
+                              " " + out_file.string() + " "
+                            + std::string{"http://seqan-update.informatik.uni-tuebingen.de/check/SeqAn3_"} +
 #ifdef __linux
                               "Linux" +
 #elif __APPLE__
@@ -214,9 +212,8 @@ public:
 #else
                               "_32_" +
 #endif
-                              name +                 // !user input! escaped on construction of the argument parser
-                              "_" +
-                              version +              // !user input! escaped on construction of the version_checker
+                              name +          // !user input! escaped on construction of the argument parser
+                              "_" + version + // !user input! escaped on construction of the version_checker
 #if defined(_WIN32)
                               "; exit  [int] -not $?}\" > nul 2>&1";
 #else
@@ -316,7 +313,7 @@ public:
             {
                 std::getline(timestamp_file, cookie_line); // first line contains the timestamp
 
-                if (get_time_diff_to_current(cookie_line) < 86400/*one day in seconds*/)
+                if (get_time_diff_to_current(cookie_line) < 86400 /*one day in seconds*/)
                 {
                     return false;
                 }
@@ -370,24 +367,24 @@ public:
 
             switch (line[0])
             {
-                case 'y':
-                {
-                    return true;
-                }
-                case 's':
-                {
-                    return false;
-                }
-                case 'n':
-                {
-                    write_cookie(std::string{"NEVER"}); // overwrite cookie
-                    return false;
-                }
-                default:
-                {
-                    write_cookie(std::string{"ALWAYS"}); // overwrite cookie
-                    return true;
-                }
+            case 'y':
+            {
+                return true;
+            }
+            case 's':
+            {
+                return false;
+            }
+            case 'n':
+            {
+                write_cookie(std::string{"NEVER"}); // overwrite cookie
+                return false;
+            }
+            default:
+            {
+                write_cookie(std::string{"ALWAYS"}); // overwrite cookie
+                return true;
+            }
             }
         }
         else // if !detail::is_terminal()
@@ -427,7 +424,7 @@ public:
     std::string message_app_update =
         "[APP INFO] :: A new version of this application is now available.\n"
         "[APP INFO] :: If you don't wish to receive further notifications, set --version-check false.\n\n";
-        /*Might be extended if a url is given on construction.*/
+    /*Might be extended if a url is given on construction.*/
 
     //!\brief The environment name of the home environment used by getenv()
     static constexpr char const * home_env_name
@@ -455,22 +452,23 @@ private:
     static std::string get_program()
     {
 #if defined(_WIN32)
-        return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' -OutFile";
-#else  // Unix based platforms.
+        return "powershell.exe -NoLogo -NonInteractive -Command \"& {Invoke-WebRequest -erroraction 'silentlycontinue' "
+               "-OutFile";
+#else // Unix based platforms.
         if (!system("/usr/bin/env -i wget --version > /dev/null 2>&1"))
             return "/usr/bin/env -i wget --timeout=10 --tries=1 -q -O";
         else if (!system("/usr/bin/env -i curl --version > /dev/null 2>&1"))
             return "/usr/bin/env -i curl --connect-timeout 10 -o";
-    // In case neither wget nor curl is available try ftp/fetch if system is OpenBSD/FreeBSD.
-    // Note, both systems have ftp/fetch command installed by default so we do not guard against it.
-    #if defined(__OpenBSD__)
+// In case neither wget nor curl is available try ftp/fetch if system is OpenBSD/FreeBSD.
+// Note, both systems have ftp/fetch command installed by default so we do not guard against it.
+#    if defined(__OpenBSD__)
         return "/usr/bin/env -i ftp -w10 -Vo";
-    #elif defined(__FreeBSD__)
+#    elif defined(__FreeBSD__)
         return "/usr/bin/env -i fetch --timeout=10 -o";
-    #else
+#    else
         return "";
-    #endif // __OpenBSD__
-#endif  // defined(_WIN32)
+#    endif // __OpenBSD__
+#endif     // defined(_WIN32)
     }
 
     //!\brief Reads the timestamp file if possible and returns the time difference to the current time.
@@ -523,4 +521,4 @@ private:
     }
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

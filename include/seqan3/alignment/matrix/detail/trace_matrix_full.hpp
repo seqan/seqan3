@@ -53,9 +53,8 @@ class trace_matrix_full
 {
 private:
     //!\brief The type to store the complete trace matrix.
-    using matrix_t = two_dimensional_matrix<trace_t,
-                                            aligned_allocator<trace_t, sizeof(trace_t)>,
-                                            matrix_major_order::column>;
+    using matrix_t =
+        two_dimensional_matrix<trace_t, aligned_allocator<trace_t, sizeof(trace_t)>, matrix_major_order::column>;
     //!\brief The type of the score column which allocates memory for the entire column.
     using physical_column_t = std::vector<trace_t>;
     //!\brief The type of the virtual score column which only stores one value.
@@ -78,12 +77,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    trace_matrix_full() = default; //!< Defaulted.
-    trace_matrix_full(trace_matrix_full const &) = default; //!< Defaulted.
-    trace_matrix_full(trace_matrix_full &&) = default; //!< Defaulted.
+    trace_matrix_full() = default;                                      //!< Defaulted.
+    trace_matrix_full(trace_matrix_full const &) = default;             //!< Defaulted.
+    trace_matrix_full(trace_matrix_full &&) = default;                  //!< Defaulted.
     trace_matrix_full & operator=(trace_matrix_full const &) = default; //!< Defaulted.
-    trace_matrix_full & operator=(trace_matrix_full &&) = default; //!< Defaulted.
-    ~trace_matrix_full() = default; //!< Defaulted.
+    trace_matrix_full & operator=(trace_matrix_full &&) = default;      //!< Defaulted.
+    ~trace_matrix_full() = default;                                     //!< Defaulted.
 
     //!\}
 
@@ -110,8 +109,7 @@ public:
      * Basic exception guarantee. Might throw std::bad_alloc on resizing the internal matrices.
      */
     template <std::integral column_index_t, std::integral row_index_t>
-    void resize(column_index_type<column_index_t> const column_count,
-                row_index_type<row_index_t> const row_count)
+    void resize(column_index_type<column_index_t> const column_count, row_index_type<row_index_t> const row_count)
     {
         this->column_count = column_count.get();
         this->row_count = row_count.get();
@@ -211,12 +209,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    iterator() noexcept = default; //!< Defaulted.
-    iterator(iterator const &) noexcept = default; //!< Defaulted.
-    iterator(iterator &&) noexcept = default; //!< Defaulted.
+    iterator() noexcept = default;                             //!< Defaulted.
+    iterator(iterator const &) noexcept = default;             //!< Defaulted.
+    iterator(iterator &&) noexcept = default;                  //!< Defaulted.
     iterator & operator=(iterator const &) noexcept = default; //!< Defaulted.
-    iterator & operator=(iterator &&) noexcept = default; //!< Defaulted.
-    ~iterator() = default; //!< Defaulted.
+    iterator & operator=(iterator &&) noexcept = default;      //!< Defaulted.
+    ~iterator() = default;                                     //!< Defaulted.
 
     /*!\brief Initialises the iterator from the underlying matrix.
      *
@@ -238,9 +236,8 @@ public:
         auto column_begin = host_ptr->complete_matrix.data() + current_column_id * host_ptr->row_count;
         single_trace_column_type single_trace_column{column_begin, column_begin + host_ptr->row_count};
 
-        return column_proxy{views::zip(std::move(single_trace_column),
-                                       host_ptr->horizontal_column,
-                                       host_ptr->vertical_column)};
+        return column_proxy{
+            views::zip(std::move(single_trace_column), host_ptr->horizontal_column, host_ptr->vertical_column)};
     }
     //!\}
 
@@ -298,12 +295,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    column_proxy() = default; //!< Defaulted.
-    column_proxy(column_proxy const &) = default; //!< Defaulted.
-    column_proxy(column_proxy &&) = default; //!< Defaulted.
+    column_proxy() = default;                                 //!< Defaulted.
+    column_proxy(column_proxy const &) = default;             //!< Defaulted.
+    column_proxy(column_proxy &&) = default;                  //!< Defaulted.
     column_proxy & operator=(column_proxy const &) = default; //!< Defaulted.
-    column_proxy & operator=(column_proxy &&) = default; //!< Defaulted.
-    ~column_proxy() = default; //!< Defaulted.
+    column_proxy & operator=(column_proxy &&) = default;      //!< Defaulted.
+    ~column_proxy() = default;                                //!< Defaulted.
 
     /*!\brief Initialises the proxy with the respective column.
     *

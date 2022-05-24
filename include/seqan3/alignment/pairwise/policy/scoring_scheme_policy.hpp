@@ -80,8 +80,7 @@ private:
 
     //!\overload
     template <semialphabet alphabet_t>
-    alphabet_t scoring_scheme_profile_column(alphabet_t && alphabet) const
-        noexcept
+    alphabet_t scoring_scheme_profile_column(alphabet_t && alphabet) const noexcept
     {
         return std::forward<alphabet_t>(alphabet);
     }

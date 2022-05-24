@@ -30,9 +30,9 @@ protected:
     using base_t = policy_affine_gap_recursion<alignment_configuration_t>;
 
     // Import base types.
-    using typename base_t::traits_type;
-    using typename base_t::score_type;
     using typename base_t::affine_score_tuple_t;
+    using typename base_t::score_type;
+    using typename base_t::traits_type;
 
     //!\brief The trace type to use.
     using trace_type = typename traits_type::trace_type;
@@ -42,22 +42,22 @@ protected:
     using affine_cell_type = affine_cell_proxy<std::pair<affine_score_tuple_t, affine_trace_tuple_t>>;
 
     // Import base member.
+    using base_t::first_column_is_free;
+    using base_t::first_row_is_free;
     using base_t::gap_extension_score;
     using base_t::gap_open_score;
-    using base_t::first_row_is_free;
-    using base_t::first_column_is_free;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_affine_gap_with_trace_recursion() = default; //!< Defaulted.
+    policy_affine_gap_with_trace_recursion() = default;                                               //!< Defaulted.
     policy_affine_gap_with_trace_recursion(policy_affine_gap_with_trace_recursion const &) = default; //!< Defaulted.
-    policy_affine_gap_with_trace_recursion(policy_affine_gap_with_trace_recursion &&) = default; //!< Defaulted.
-    policy_affine_gap_with_trace_recursion & operator=(policy_affine_gap_with_trace_recursion const &)
-        = default; //!< Defaulted.
-    policy_affine_gap_with_trace_recursion & operator=(policy_affine_gap_with_trace_recursion &&)
-        = default; //!< Defaulted.
-    ~policy_affine_gap_with_trace_recursion() = default; //!< Defaulted.
+    policy_affine_gap_with_trace_recursion(policy_affine_gap_with_trace_recursion &&) = default;      //!< Defaulted.
+    policy_affine_gap_with_trace_recursion &
+    operator=(policy_affine_gap_with_trace_recursion const &) = default; //!< Defaulted.
+    policy_affine_gap_with_trace_recursion &
+    operator=(policy_affine_gap_with_trace_recursion &&) = default; //!< Defaulted.
+    ~policy_affine_gap_with_trace_recursion() = default;            //!< Defaulted.
 
     //!\copydoc seqan3::detail::policy_affine_gap_recursion::policy_affine_gap_recursion
     explicit policy_affine_gap_with_trace_recursion(alignment_configuration_t const & config) : base_t{config}
@@ -76,11 +76,11 @@ protected:
         trace_directions best_trace = trace_directions::diagonal;
 
         diagonal_score = (diagonal_score < vertical_score)
-                       ? (best_trace = previous_cell.vertical_trace(), vertical_score)
-                       : (best_trace |= previous_cell.vertical_trace(), diagonal_score);
+                           ? (best_trace = previous_cell.vertical_trace(), vertical_score)
+                           : (best_trace |= previous_cell.vertical_trace(), diagonal_score);
         diagonal_score = (diagonal_score < horizontal_score)
-                       ? (best_trace = previous_cell.horizontal_trace(), horizontal_score)
-                       : (best_trace |= previous_cell.horizontal_trace(), diagonal_score);
+                           ? (best_trace = previous_cell.horizontal_trace(), horizontal_score)
+                           : (best_trace |= previous_cell.horizontal_trace(), diagonal_score);
 
         score_type tmp = diagonal_score + gap_open_score;
         vertical_score += gap_extension_score;
@@ -90,12 +90,10 @@ protected:
         trace_directions next_vertical_trace = trace_directions::up;
         trace_directions next_horizontal_trace = trace_directions::left;
 
-        vertical_score = (vertical_score < tmp)
-                       ? (next_vertical_trace = trace_directions::up_open, tmp)
-                       : vertical_score;
-        horizontal_score = (horizontal_score < tmp)
-                         ? (next_horizontal_trace = trace_directions::left_open, tmp)
-                         : horizontal_score;
+        vertical_score =
+            (vertical_score < tmp) ? (next_vertical_trace = trace_directions::up_open, tmp) : vertical_score;
+        horizontal_score =
+            (horizontal_score < tmp) ? (next_horizontal_trace = trace_directions::left_open, tmp) : horizontal_score;
 
         return {{diagonal_score, horizontal_score, vertical_score},
                 {best_trace, next_horizontal_trace, next_vertical_trace}};

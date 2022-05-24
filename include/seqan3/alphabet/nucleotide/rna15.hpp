@@ -63,12 +63,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr rna15()                           noexcept = default; //!< Defaulted.
-    constexpr rna15(rna15 const &)              noexcept = default; //!< Defaulted.
-    constexpr rna15(rna15 &&)                   noexcept = default; //!< Defaulted.
-    constexpr rna15 & operator=(rna15 const &)  noexcept = default; //!< Defaulted.
-    constexpr rna15 & operator=(rna15 &&)       noexcept = default; //!< Defaulted.
-    ~rna15()                                    noexcept = default; //!< Defaulted.
+    constexpr rna15() noexcept = default;                          //!< Defaulted.
+    constexpr rna15(rna15 const &) noexcept = default;             //!< Defaulted.
+    constexpr rna15(rna15 &&) noexcept = default;                  //!< Defaulted.
+    constexpr rna15 & operator=(rna15 const &) noexcept = default; //!< Defaulted.
+    constexpr rna15 & operator=(rna15 &&) noexcept = default;      //!< Defaulted.
+    ~rna15() noexcept = default;                                   //!< Defaulted.
 
     using base_t::base_t;
 
@@ -88,24 +88,8 @@ public:
 
 private:
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'B',
-        'C',
-        'D',
-        'G',
-        'H',
-        'K',
-        'M',
-        'N',
-        'R',
-        'S',
-        'U',
-        'V',
-        'W',
-        'Y'
-    };
+    static constexpr char_type
+        rank_to_char_table[alphabet_size]{'A', 'B', 'C', 'D', 'G', 'H', 'K', 'M', 'N', 'R', 'S', 'U', 'V', 'W', 'Y'};
 
     //!\copydoc seqan3::dna4::rank_complement
     static constexpr rank_type rank_complement(rank_type const rank)
@@ -183,6 +167,6 @@ inline rna15_vector operator""_rna15(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

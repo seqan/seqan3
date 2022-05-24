@@ -130,8 +130,9 @@ base_t pow(base_t base, exp_t exp)
     {
         if ((base < 0 ? std::numeric_limits<base_t>::min() : std::numeric_limits<base_t>::max()) / base < result)
         {
-            std::string error_message{"Calculating " + std::to_string(base) + '^' + std::to_string(exp) +
-                                      " will result in an " + (std::same_as<base_t, int64_t> ? "int64_t" : "uint64_t")};
+            std::string error_message{"Calculating " + std::to_string(base) + '^' + std::to_string(exp)
+                                      + " will result in an "
+                                      + (std::same_as<base_t, int64_t> ? "int64_t" : "uint64_t")};
             if (base < 0)
                 throw std::underflow_error{error_message + " underflow."};
             else

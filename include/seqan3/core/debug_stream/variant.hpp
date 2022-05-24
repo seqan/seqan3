@@ -38,7 +38,12 @@ template <typename char_t, typename variant_type>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, variant_type && v)
 {
     if (!v.valueless_by_exception())
-        std::visit([&s] (auto && arg) {s << arg;}, v);
+        std::visit(
+            [&s](auto && arg)
+            {
+                s << arg;
+            },
+            v);
     else
         s << "<VALUELESS_VARIANT>";
     return s;

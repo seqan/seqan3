@@ -56,12 +56,14 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    kmer_hash_view() requires std::default_initializable<urng_t> = default; //!< Defaulted.
-    kmer_hash_view(kmer_hash_view const & rhs) = default; //!< Defaulted.
-    kmer_hash_view(kmer_hash_view && rhs) = default; //!< Defaulted.
+    kmer_hash_view()
+        requires std::default_initializable<urng_t>
+    = default;                                                        //!< Defaulted.
+    kmer_hash_view(kmer_hash_view const & rhs) = default;             //!< Defaulted.
+    kmer_hash_view(kmer_hash_view && rhs) = default;                  //!< Defaulted.
     kmer_hash_view & operator=(kmer_hash_view const & rhs) = default; //!< Defaulted.
-    kmer_hash_view & operator=(kmer_hash_view && rhs) = default; //!< Defaulted.
-    ~kmer_hash_view() = default; //!< Defaulted.
+    kmer_hash_view & operator=(kmer_hash_view && rhs) = default;      //!< Defaulted.
+    ~kmer_hash_view() = default;                                      //!< Defaulted.
 
     /*!\brief Construct from a view and a given shape.
      * \throws std::invalid_argument if hashes resulting from the shape/alphabet combination cannot be represented in
@@ -81,11 +83,11 @@ public:
      *         `uint64_t`, i.e. \f$s>\frac{64}{\log_2\sigma}\f$ with shape size \f$s\f$ and alphabet size \f$\sigma\f$.
      */
     template <typename rng_t>
-     requires (!std::same_as<std::remove_cvref_t<rng_t>, kmer_hash_view>) &&
-              std::ranges::viewable_range<rng_t> &&
-              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
+        requires (!std::same_as<std::remove_cvref_t<rng_t>, kmer_hash_view>) && std::ranges::viewable_range<rng_t>
+                  && std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<rng_t>>>
     kmer_hash_view(rng_t && urange_, shape const & s_) :
-        urange{std::views::all(std::forward<rng_t>(urange_))}, shape_{s_}
+        urange{std::views::all(std::forward<rng_t>(urange_))},
+        shape_{s_}
     {
         if (shape_.count() > (64 / std::log2(alphabet_size<std::ranges::range_reference_t<urng_t>>)))
         {
@@ -207,8 +209,8 @@ public:
  */
 template <std::ranges::view urng_t>
 template <bool const_range>
-class kmer_hash_view<urng_t>::basic_iterator
-    : public maybe_iterator_category<maybe_const_iterator_t<const_range, urng_t>>
+class kmer_hash_view<urng_t>::basic_iterator :
+    public maybe_iterator_category<maybe_const_iterator_t<const_range, urng_t>>
 {
 private:
     //!\brief The iterator type of the underlying range.
@@ -240,21 +242,22 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr basic_iterator()                                   = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator const &)             = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator &&)                  = default; //!< Defaulted.
+    constexpr basic_iterator() = default;                                   //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const &) = default;             //!< Defaulted.
+    constexpr basic_iterator(basic_iterator &&) = default;                  //!< Defaulted.
     constexpr basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
-    constexpr basic_iterator & operator=(basic_iterator &&)      = default; //!< Defaulted.
-    ~basic_iterator()                                            = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator &&) = default;      //!< Defaulted.
+    ~basic_iterator() = default;                                            //!< Defaulted.
 
     //!\brief Allow iterator on a const range to be constructible from an iterator over a non-const range.
     constexpr basic_iterator(basic_iterator<!const_range> const & it) noexcept
         requires const_range
-        : hash_value{std::move(it.hash_value)},
-          roll_factor{std::move(it.roll_factor)},
-          shape_{std::move(it.shape_)},
-          text_left{std::move(it.text_left)},
-          text_right{std::move(it.text_right)}
+    :
+        hash_value{std::move(it.hash_value)},
+        roll_factor{std::move(it.roll_factor)},
+        shape_{std::move(it.shape_)},
+        text_left{std::move(it.text_left)},
+        text_right{std::move(it.text_right)}
     {}
 
     /*!\brief Construct from a given iterator on the text and a seqan3::shape.
@@ -269,7 +272,9 @@ public:
     * Linear in size of shape.
     */
     basic_iterator(it_t it_start, sentinel_t it_end, shape s_) :
-        shape_{s_}, text_left{it_start}, text_right{std::ranges::next(text_left, shape_.size() - 1, it_end)}
+        shape_{s_},
+        text_left{it_start},
+        text_right{std::ranges::next(text_left, shape_.size() - 1, it_end)}
     {
         assert(std::ranges::size(shape_) > 0);
 
@@ -566,7 +571,7 @@ private:
         }
         else
         {
-            std::ranges::advance(text_left,  1);
+            std::ranges::advance(text_left, 1);
             hash_full();
         }
     }
@@ -594,7 +599,7 @@ private:
         }
         else
         {
-            std::ranges::advance(text_left,  -1);
+            std::ranges::advance(text_left, -1);
             hash_full();
         }
     }
@@ -621,7 +626,6 @@ private:
             hash_value *= shape_[i] ? sigma : 1;
             std::ranges::advance(text_right, 1);
         }
-
     }
 
     //!\brief Calculates the next hash value via rolling hash.
@@ -631,7 +635,7 @@ private:
         hash_value += to_rank(*(text_right));
         hash_value *= sigma;
 
-        std::ranges::advance(text_left,  1);
+        std::ranges::advance(text_left, 1);
         std::ranges::advance(text_right, 1);
     }
 
@@ -641,7 +645,7 @@ private:
     void hash_roll_backward()
         requires std::bidirectional_iterator<it_t>
     {
-        std::ranges::advance(text_left,  -1);
+        std::ranges::advance(text_left, -1);
         std::ranges::advance(text_right, -1);
 
         hash_value /= sigma;
@@ -680,11 +684,11 @@ struct kmer_hash_fn
     constexpr auto operator()(urng_t && urange, shape const & shape_) const
     {
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The range parameter to views::kmer_hash cannot be a temporary of a non-view range.");
+                      "The range parameter to views::kmer_hash cannot be a temporary of a non-view range.");
         static_assert(std::ranges::forward_range<urng_t>,
-            "The range parameter to views::kmer_hash must model std::ranges::forward_range.");
+                      "The range parameter to views::kmer_hash must model std::ranges::forward_range.");
         static_assert(semialphabet<std::ranges::range_reference_t<urng_t>>,
-            "The range parameter to views::kmer_hash must be over elements of seqan3::semialphabet.");
+                      "The range parameter to views::kmer_hash must be over elements of seqan3::semialphabet.");
 
         return kmer_hash_view{std::forward<urng_t>(urange), shape_};
     }

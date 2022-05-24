@@ -76,35 +76,34 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_embl() noexcept = default; //!< Defaulted.
-    format_embl(format_embl const &) noexcept = default; //!< Defaulted.
+    format_embl() noexcept = default;                                //!< Defaulted.
+    format_embl(format_embl const &) noexcept = default;             //!< Defaulted.
     format_embl & operator=(format_embl const &) noexcept = default; //!< Defaulted.
-    format_embl(format_embl &&) noexcept = default; //!< Defaulted.
-    format_embl & operator=(format_embl &&) noexcept = default; //!< Defaulted.
-    ~format_embl() noexcept = default; //!< Defaulted.
+    format_embl(format_embl &&) noexcept = default;                  //!< Defaulted.
+    format_embl & operator=(format_embl &&) noexcept = default;      //!< Defaulted.
+    ~format_embl() noexcept = default;                               //!< Defaulted.
 
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
-    static inline std::vector<std::string> file_extensions
-    {
-        { "embl" },
+    static inline std::vector<std::string> file_extensions{
+        {"embl"},
     };
 
 protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
-    template <typename stream_type,     // constraints checked by file
+    template <typename stream_type, // constraints checked by file
               typename seq_legal_alph_type,
               typename stream_pos_type,
-              typename seq_type,        // other constraints checked inside function
+              typename seq_type, // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void read_sequence_record(stream_type & stream,
                               sequence_file_input_options<seq_legal_alph_type> const & options,
                               stream_pos_type & position_buffer,
-                              seq_type    & sequence,
-                              id_type     & id,
-                              qual_type   & SEQAN3_DOXYGEN_ONLY(qualities))
+                              seq_type & sequence,
+                              id_type & id,
+                              qual_type & SEQAN3_DOXYGEN_ONLY(qualities))
     {
         auto stream_view = detail::istreambuf(stream);
         auto stream_it = std::ranges::begin(stream_view);
@@ -122,15 +121,17 @@ protected:
         {
             if (options.embl_genbank_complete_header)
             {
-                std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>, std::back_inserter(id));
+                std::ranges::copy(idbuffer | views::char_to<std::ranges::range_value_t<id_type>>,
+                                  std::back_inserter(id));
                 do
                 {
                     std::ranges::copy(stream_view | detail::take_until_or_throw(is_char<'S'>)
-                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::back_inserter(id));
+                                          | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));
                     id.push_back(*stream_it);
                     ++stream_it;
-                } while (*stream_it != 'Q');
+                }
+                while (*stream_it != 'Q');
                 id.pop_back(); // remove 'S' from id
                 idbuffer = "SQ";
             }
@@ -143,51 +144,54 @@ protected:
                 if (options.truncate_ids)
                 {
                     std::ranges::copy(stream_view | detail::take_until_or_throw(is_blank || is_char<';'> || is_cntrl)
-                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::back_inserter(id));
+                                          | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));
                 }
                 else
                 {
                     std::ranges::copy(stream_view | detail::take_until_or_throw(is_char<';'>)
-                                                  | views::char_to<std::ranges::range_value_t<id_type>>,
-                                 std::back_inserter(id));
+                                          | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      std::back_inserter(id));
                 }
             }
         }
 
         // Jump to sequence
-        if (idbuffer !="SQ")
+        if (idbuffer != "SQ")
         {
             do
             {
                 detail::consume(stream_view | detail::take_until_or_throw(is_char<'S'>));
                 ++stream_it;
-            } while (*stream_it != 'Q');
+            }
+            while (*stream_it != 'Q');
         }
         detail::consume(stream_view | detail::take_line_or_throw); //Consume line with infos to sequence
 
         // Sequence
-        auto constexpr is_end = is_char<'/'> ;
+        constexpr auto is_end = is_char<'/'>;
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
             auto seq_view = stream_view | std::views::filter(!(is_space || is_digit)) // ignore whitespace and numbers
-                                        | detail::take_until_or_throw(is_end);   // until //
+                          | detail::take_until_or_throw(is_end);                      // until //
 
-            auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
-            std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                    {
-                                        if (!is_legal_alph(c))
-                                        {
-                                            throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              "char_is_valid_for<" +
-                                                              detail::type_name_as_string<seq_legal_alph_type> +
-                                                              "> evaluated to false on " +
-                                                              detail::make_printable(c)};
-                                        }
-                                        return c;
-                                    })
-                                  | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
-                         std::back_inserter(sequence));
+            constexpr auto is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
+            std::ranges::copy(
+                seq_view
+                    | std::views::transform(
+                        [is_legal_alph](char const c) // enforce legal alphabet
+                        {
+                            if (!is_legal_alph(c))
+                            {
+                                throw parse_error{std::string{"Encountered an unexpected letter: "}
+                                                  + "char_is_valid_for<"
+                                                  + detail::type_name_as_string<seq_legal_alph_type>
+                                                  + "> evaluated to false on " + detail::make_printable(c)};
+                            }
+                            return c;
+                        })
+                    | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
+                std::back_inserter(sequence));
         }
         else
         {
@@ -200,15 +204,15 @@ protected:
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename stream_type, // constraints checked by file
+              typename seq_type,    // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write_sequence_record(stream_type                          & stream,
-                               sequence_file_output_options const   & options,
-                               seq_type                             && sequence,
-                               id_type                              && id,
-                               qual_type                            && SEQAN3_DOXYGEN_ONLY(qualities))
+    void write_sequence_record(stream_type & stream,
+                               sequence_file_output_options const & options,
+                               seq_type && sequence,
+                               id_type && id,
+                               qual_type && SEQAN3_DOXYGEN_ONLY(qualities))
     {
         seqan3::detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
 
@@ -293,4 +297,4 @@ protected:
     }
 };
 
-} // namespace seqan
+} // namespace seqan3

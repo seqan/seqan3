@@ -22,8 +22,8 @@
 #include <seqan3/core/range/type_traits.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/views/type_reduce.hpp>
 #include <seqan3/utility/views/zip.hpp>
 
@@ -59,9 +59,7 @@ template <std::ranges::view urng_t, simd::simd_concept simd_t>
 class view_to_simd : public std::ranges::view_interface<view_to_simd<urng_t, simd_t>>
 {
 private:
-
-    static_assert(std::ranges::forward_range<urng_t>,
-                  "The underlying range must model forward_range.");
+    static_assert(std::ranges::forward_range<urng_t>, "The underlying range must model forward_range.");
     static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
                   "Expects the value type of the underlying range to be an input_range.");
     static_assert(std::default_initializable<std::ranges::iterator_t<std::ranges::range_value_t<urng_t>>>,
@@ -74,9 +72,9 @@ private:
     /*!\name Auxiliary types
      * \{
      */
-    using inner_range_type = std::ranges::range_value_t<urng_t>; //!< The inner range type.
+    using inner_range_type = std::ranges::range_value_t<urng_t>;        //!< The inner range type.
     using chunk_type = std::array<simd_t, simd_traits<simd_t>::length>; //!< The underlying type to hold the chunks.
-    using scalar_type = typename simd_traits<simd_t>::scalar_type; //!< The scalar type.
+    using scalar_type = typename simd_traits<simd_t>::scalar_type;      //!< The scalar type.
     //!\brief The SIMD type with maximal number of lanes for the current arch.
     using max_simd_type = simd_type_t<uint8_t, simd_traits<simd_t>::max_length>;
     //!\}
@@ -85,10 +83,10 @@ private:
      * \{
      */
     //!\brief Check if fast load is enabled.
-    static constexpr bool fast_load = std::ranges::contiguous_range<inner_range_type> &&
-                                      std::sized_sentinel_for<std::ranges::iterator_t<inner_range_type>,
-                                                              std::ranges::sentinel_t<inner_range_type>> &&
-                                      sizeof(alphabet_rank_t<std::ranges::range_value_t<inner_range_type>>) == 1;
+    static constexpr bool fast_load =
+        std::ranges::contiguous_range<inner_range_type>
+        && std::sized_sentinel_for<std::ranges::iterator_t<inner_range_type>, std::ranges::sentinel_t<inner_range_type>>
+        && sizeof(alphabet_rank_t<std::ranges::range_value_t<inner_range_type>>) == 1;
 
     //!\brief The size of one chunk. Equals the number of elements in the simd vector.
     static constexpr uint8_t chunk_size = simd_traits<simd_t>::length;
@@ -104,16 +102,17 @@ private:
     struct iterator_type;
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr view_to_simd() requires std::default_initializable<urng_t> = default; //!< Defaulted.
-    constexpr view_to_simd(view_to_simd const &) = default; //!< Defaulted.
-    constexpr view_to_simd(view_to_simd &&) = default; //!< Defaulted.
+    constexpr view_to_simd()
+        requires std::default_initializable<urng_t>
+    = default;                                                          //!< Defaulted.
+    constexpr view_to_simd(view_to_simd const &) = default;             //!< Defaulted.
+    constexpr view_to_simd(view_to_simd &&) = default;                  //!< Defaulted.
     constexpr view_to_simd & operator=(view_to_simd const &) = default; //!< Defaulted.
-    constexpr view_to_simd & operator=(view_to_simd &&) = default; //!< Defaulted.
-    ~view_to_simd() = default; //!< Defaulted.
+    constexpr view_to_simd & operator=(view_to_simd &&) = default;      //!< Defaulted.
+    ~view_to_simd() = default;                                          //!< Defaulted.
 
     /*!\brief Construction from the underlying range.
      * \param[in] urng The underlying range.
@@ -132,9 +131,8 @@ public:
 
     //!\overload
     template <typename other_urng_t>
-    requires (!std::same_as<std::remove_cvref_t<other_urng_t>, view_to_simd>) &&
-             (!std::same_as<other_urng_t, urng_t>) &&
-             std::ranges::viewable_range<other_urng_t>
+        requires (!std::same_as<std::remove_cvref_t<other_urng_t>, view_to_simd>)
+              && (!std::same_as<other_urng_t, urng_t>) && std::ranges::viewable_range<other_urng_t>
     constexpr view_to_simd(other_urng_t && urng, scalar_type const padding_value = alphabet_size) :
         view_to_simd{views::type_reduce(std::forward<other_urng_t>(urng)), padding_value}
     {}
@@ -166,10 +164,11 @@ public:
     constexpr bool empty() const noexcept
         requires std::ranges::forward_range<inner_range_type>
     {
-        return std::ranges::all_of(urng, [] (auto & rng)
-        {
-            return std::ranges::empty(rng);
-        });
+        return std::ranges::all_of(urng,
+                                   [](auto & rng)
+                                   {
+                                       return std::ranges::empty(rng);
+                                   });
     }
 
     /*!\brief Returns the size of this range.
@@ -181,19 +180,19 @@ public:
     constexpr size_t size() const noexcept
         requires std::ranges::sized_range<inner_range_type>
     {
-        auto it = std::ranges::max_element(urng, [] (auto & lhs, auto & rhs)
-        {
-            return std::ranges::size(lhs) < std::ranges::size(rhs);
-        });
+        auto it = std::ranges::max_element(urng,
+                                           [](auto & lhs, auto & rhs)
+                                           {
+                                               return std::ranges::size(lhs) < std::ranges::size(rhs);
+                                           });
 
         return (it != std::ranges::end(urng)) ? (std::ranges::size(*it) + chunk_size - 1) / chunk_size : 0;
     }
 
 private:
-
-    urng_t urng{}; //!< The underlying range.
+    urng_t urng{};                                             //!< The underlying range.
     std::array<chunk_type, total_chunks> cached_simd_chunks{}; //!< The cached chunks of transformed simd vectors.
-    simd_t padding_simd_vector{}; //!< A cached simd vector with the padding symbol.
+    simd_t padding_simd_vector{};                              //!< A cached simd vector with the padding symbol.
     scalar_type padding_value{}; //!< The padding value used to fill the corresponding simd vector element.
 };
 
@@ -212,22 +211,22 @@ public:
      * \{
      */
     using reference = std::span<std::ranges::range_value_t<chunk_type>>; //!< The reference type.
-    using value_type = reference; //!< The value type.
-    using pointer = void; //!< The pointer type.
-    using difference_type = ptrdiff_t; //!< The difference type.
-    using iterator_category = std::input_iterator_tag; //!< The iterator category.
-    using iterator_concept = iterator_category; //!< The iterator concept.
+    using value_type = reference;                                        //!< The value type.
+    using pointer = void;                                                //!< The pointer type.
+    using difference_type = ptrdiff_t;                                   //!< The difference type.
+    using iterator_category = std::input_iterator_tag;                   //!< The iterator category.
+    using iterator_concept = iterator_category;                          //!< The iterator concept.
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr iterator_type()                                  = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type const &)             = default; //!< Defaulted.
-    constexpr iterator_type(iterator_type &&)                  = default; //!< Defaulted.
+    constexpr iterator_type() = default;                                  //!< Defaulted.
+    constexpr iterator_type(iterator_type const &) = default;             //!< Defaulted.
+    constexpr iterator_type(iterator_type &&) = default;                  //!< Defaulted.
     constexpr iterator_type & operator=(iterator_type const &) = default; //!< Defaulted.
-    constexpr iterator_type & operator=(iterator_type &&)      = default; //!< Defaulted.
-    ~iterator_type()                                           = default; //!< Defaulted.
+    constexpr iterator_type & operator=(iterator_type &&) = default;      //!< Defaulted.
+    ~iterator_type() = default;                                           //!< Defaulted.
 
     /*!\brief Construction from the associated range.
      * \param this_view A reference to the associated view.
@@ -357,7 +356,7 @@ private:
      */
     auto unpack(max_simd_type const & row) const
     {
-        if constexpr (chunk_size == simd_traits<max_simd_type>::length / 2)  // upcast into 2 vectors.
+        if constexpr (chunk_size == simd_traits<max_simd_type>::length / 2) // upcast into 2 vectors.
         {
             return std::array{simd::upcast<simd_t>(extract_half<0>(row)),  // 1. half
                               simd::upcast<simd_t>(extract_half<1>(row))}; // 2. half
@@ -371,14 +370,14 @@ private:
         }
         else if constexpr (chunk_size == simd_traits<max_simd_type>::length / 8) // upcast into 8 vectors.
         {
-            return std::array{simd::upcast<simd_t>(extract_eighth<0>(row)),   // 1. eighth
-                              simd::upcast<simd_t>(extract_eighth<1>(row)),   // 2. eighth
-                              simd::upcast<simd_t>(extract_eighth<2>(row)),   // 3. eighth
-                              simd::upcast<simd_t>(extract_eighth<3>(row)),   // 4. eighth
-                              simd::upcast<simd_t>(extract_eighth<4>(row)),   // 5. eighth
-                              simd::upcast<simd_t>(extract_eighth<5>(row)),   // 6. eighth
-                              simd::upcast<simd_t>(extract_eighth<6>(row)),   // 7. eighth
-                              simd::upcast<simd_t>(extract_eighth<7>(row))};  // 8. eighth
+            return std::array{simd::upcast<simd_t>(extract_eighth<0>(row)),  // 1. eighth
+                              simd::upcast<simd_t>(extract_eighth<1>(row)),  // 2. eighth
+                              simd::upcast<simd_t>(extract_eighth<2>(row)),  // 3. eighth
+                              simd::upcast<simd_t>(extract_eighth<3>(row)),  // 4. eighth
+                              simd::upcast<simd_t>(extract_eighth<4>(row)),  // 5. eighth
+                              simd::upcast<simd_t>(extract_eighth<5>(row)),  // 6. eighth
+                              simd::upcast<simd_t>(extract_eighth<6>(row)),  // 7. eighth
+                              simd::upcast<simd_t>(extract_eighth<7>(row))}; // 8. eighth
         }
         else
         {
@@ -398,7 +397,7 @@ private:
      */
     constexpr void split_into_sub_matrices(std::array<max_simd_type, simd_traits<max_simd_type>::length> matrix) const
     {
-        auto apply_padding = [this] (simd_t const vec)
+        auto apply_padding = [this](simd_t const vec)
         {
             return (vec == simd::fill<simd_t>(static_cast<uint8_t>(~0))) ? this_view->padding_simd_vector : vec;
         };
@@ -417,7 +416,7 @@ private:
             {
                 static_assert(chunked_row.size() == chunks_per_load, "Expected chunks_per_load many simd vectors.");
 
-                for (uint8_t chunk = 0; chunk < chunks_per_load; ++chunk)  // store chunks in respective cached entries.
+                for (uint8_t chunk = 0; chunk < chunks_per_load; ++chunk) // store chunks in respective cached entries.
                 {
                     size_t idx = chunk * chunks_per_load + row / chunk_size;
                     this_view->cached_simd_chunks[idx][row % chunk_size] = apply_padding(std::move(chunked_row[chunk]));
@@ -433,10 +432,11 @@ private:
     {
         using std::get;
 
-        return std::ranges::all_of(views::zip(cached_iter, cached_sentinel), [] (auto && iterator_sentinel_pair)
-        {
-            return get<0>(iterator_sentinel_pair) == get<1>(iterator_sentinel_pair);
-        });
+        return std::ranges::all_of(views::zip(cached_iter, cached_sentinel),
+                                   [](auto && iterator_sentinel_pair)
+                                   {
+                                       return get<0>(iterator_sentinel_pair) == get<1>(iterator_sentinel_pair);
+                                   });
     }
 
     /*!\brief Convert a single column into a simd vector.
@@ -449,8 +449,7 @@ private:
      * Converts a single column over the sequences into a simd type. If the end of one sequence was already
      * reached it will return the padding value instead.
      */
-    constexpr simd_t convert_single_column()
-        noexcept
+    constexpr simd_t convert_single_column() noexcept
     {
         simd_t simd_column{};
         for (size_t idx = 0u; idx < chunk_size; ++idx)
@@ -489,7 +488,7 @@ private:
         assert(max_distance <= (total_chunks * chunk_size));
 
         --max_distance;
-        final_chunk_pos = max_distance  / chunk_size;
+        final_chunk_pos = max_distance / chunk_size;
         // first we should be able to check the chunk position.
         final_chunk_size = (max_distance % chunk_size) + 1;
     }
@@ -499,7 +498,7 @@ private:
         requires fast_load
     {
         at_end = final_chunk;
-        if (at_end)  // reached end of stream.
+        if (at_end) // reached end of stream.
             return;
         // For the efficient load we assume at most one byte sized alphabets.
         // Hence we can load `simd_traits<simd_t>::max_length` length many elements at once.
@@ -529,7 +528,7 @@ private:
         decltype(cached_iter) iterators_before_update{cached_iter}; // Keep track of iterators before the update.
         // Iterate over each sequence.
         for (uint8_t sequence_pos = 0; sequence_pos < chunk_size; ++sequence_pos)
-        {  // Iterate over each block depending on the packing of the target simd vector.
+        { // Iterate over each block depending on the packing of the target simd vector.
             for (uint8_t chunk_pos = 0; chunk_pos < chunks_per_load; ++chunk_pos)
             {
                 uint8_t pos = chunk_pos * chunk_size + sequence_pos; // matrix entry to fill
@@ -538,7 +537,7 @@ private:
                     matrix[pos] = simd::load<max_simd_type>(std::addressof(*cached_iter[sequence_pos]));
                     std::advance(cached_iter[sequence_pos], max_size);
                 }
-                else  // Loads the final block byte wise in order to not load from uninitialised memory.
+                else // Loads the final block byte wise in order to not load from uninitialised memory.
                 {
                     matrix[pos] = simd::fill<max_simd_type>(~0);
                     auto & sequence_it = cached_iter[sequence_pos];
@@ -563,7 +562,7 @@ private:
         requires (!fast_load)
     {
         at_end = final_chunk;
-        if (at_end)  // reached end of stream.
+        if (at_end) // reached end of stream.
             return;
 
         decltype(cached_iter) iterators_before_update{cached_iter}; // Keep track of iterators before the update.
@@ -635,13 +634,13 @@ struct to_simd_fn
     constexpr auto operator()(urng_t && urange, padding_t const padding_value) const noexcept
     {
         static_assert(std::ranges::forward_range<urng_t>,
-            "The underlying range in views::to_simd must model std::ranges::forward_range.");
+                      "The underlying range in views::to_simd must model std::ranges::forward_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The underlying range in views::to_simd must model std::ranges::viewable_range.");
+                      "The underlying range in views::to_simd must model std::ranges::viewable_range.");
         static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
-            "The value type of the underlying range must model std::ranges::input_range.");
+                      "The value type of the underlying range must model std::ranges::input_range.");
         static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
-            "The value type of the inner ranges must model seqan3::semialphabet.");
+                      "The value type of the inner ranges must model seqan3::semialphabet.");
 
         return view_to_simd<type_reduce_t<urng_t>, simd_t>{std::forward<urng_t>(urange), padding_value};
     }
@@ -654,13 +653,13 @@ struct to_simd_fn
     constexpr auto operator()(urng_t && urange) const noexcept
     {
         static_assert(std::ranges::forward_range<urng_t>,
-            "The underlying range in views::to_simd must model std::ranges::forward_range.");
+                      "The underlying range in views::to_simd must model std::ranges::forward_range.");
         static_assert(std::ranges::viewable_range<urng_t>,
-            "The underlying range in views::to_simd must model std::ranges::viewable_range.");
+                      "The underlying range in views::to_simd must model std::ranges::viewable_range.");
         static_assert(std::ranges::input_range<std::ranges::range_value_t<urng_t>>,
-            "The value type of the underlying range must model std::ranges::input_range.");
+                      "The value type of the underlying range must model std::ranges::input_range.");
         static_assert(semialphabet<std::ranges::range_value_t<std::ranges::range_value_t<urng_t>>>,
-            "The value type of the inner ranges must model seqan3::semialphabet.");
+                      "The value type of the inner ranges must model seqan3::semialphabet.");
 
         return view_to_simd<type_reduce_t<urng_t>, simd_t>{std::forward<urng_t>(urange)};
     }

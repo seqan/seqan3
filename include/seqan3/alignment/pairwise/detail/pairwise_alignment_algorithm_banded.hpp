@@ -26,7 +26,7 @@ namespace seqan3::detail
  * \ingroup alignment_pairwise
  * \copydetails seqan3::detail::pairwise_alignment_algorithm
  */
-template <typename alignment_configuration_t, typename ...policies_t>
+template <typename alignment_configuration_t, typename... policies_t>
     requires is_type_specialisation_of_v<alignment_configuration_t, configuration>
 class pairwise_alignment_algorithm_banded :
     protected pairwise_alignment_algorithm<alignment_configuration_t, policies_t...>
@@ -36,9 +36,9 @@ protected:
     using base_algorithm_t = pairwise_alignment_algorithm<alignment_configuration_t, policies_t...>;
 
     // Import types from base class.
-    using typename base_algorithm_t::traits_type;
     using typename base_algorithm_t::alignment_result_type;
     using typename base_algorithm_t::score_type;
+    using typename base_algorithm_t::traits_type;
 
     static_assert(!std::same_as<alignment_result_type, empty_type>, "Alignment result type was not configured.");
     static_assert(traits_type::is_banded, "Alignment configuration must have band configured.");
@@ -47,12 +47,13 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    pairwise_alignment_algorithm_banded() = default; //!< Defaulted.
+    pairwise_alignment_algorithm_banded() = default;                                            //!< Defaulted.
     pairwise_alignment_algorithm_banded(pairwise_alignment_algorithm_banded const &) = default; //!< Defaulted.
-    pairwise_alignment_algorithm_banded(pairwise_alignment_algorithm_banded &&) = default; //!< Defaulted.
-    pairwise_alignment_algorithm_banded & operator=(pairwise_alignment_algorithm_banded const &) = default; //!< Defaulted.
+    pairwise_alignment_algorithm_banded(pairwise_alignment_algorithm_banded &&) = default;      //!< Defaulted.
+    pairwise_alignment_algorithm_banded &
+    operator=(pairwise_alignment_algorithm_banded const &) = default;                                  //!< Defaulted.
     pairwise_alignment_algorithm_banded & operator=(pairwise_alignment_algorithm_banded &&) = default; //!< Defaulted.
-    ~pairwise_alignment_algorithm_banded() = default; //!< Defaulted.
+    ~pairwise_alignment_algorithm_banded() = default;                                                  //!< Defaulted.
 
     /*!\brief Constructs and initialises the algorithm using the alignment configuration.
      * \param config The configuration passed into the algorithm.
@@ -82,9 +83,8 @@ public:
             size_t sequence1_size = std::ranges::distance(get<0>(sequence_pair));
             size_t const sequence2_size = std::ranges::distance(get<1>(sequence_pair));
 
-            auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
-                                                                              sequence2_size,
-                                                                              this->lowest_viable_score());
+            auto && [alignment_matrix, index_matrix] =
+                this->acquire_matrices(sequence1_size, sequence2_size, this->lowest_viable_score());
 
             // Initialise the cell updater with the dimensions of the regular matrix.
             this->compare_and_set_optimum.set_target_indices(row_index_type{sequence2_size},
@@ -136,17 +136,16 @@ public:
         size_t const sequence1_size = std::ranges::distance(simd_seq1_collection);
         size_t const sequence2_size = std::ranges::distance(simd_seq2_collection);
 
-        auto && [alignment_matrix, index_matrix] = this->acquire_matrices(sequence1_size,
-                                                                          sequence2_size,
-                                                                          this->lowest_viable_score());
+        auto && [alignment_matrix, index_matrix] =
+            this->acquire_matrices(sequence1_size, sequence2_size, this->lowest_viable_score());
 
         compute_matrix(simd_seq1_collection, simd_seq2_collection, alignment_matrix, index_matrix);
 
         size_t index = 0;
         for (auto && [sequence_pair, idx] : indexed_sequence_pairs)
         {
-            original_score_t score = this->optimal_score[index] -
-                                     (this->padding_offsets[index] * this->scoring_scheme.padding_match_score());
+            original_score_t score = this->optimal_score[index]
+                                   - (this->padding_offsets[index] * this->scoring_scheme.padding_match_score());
             matrix_coordinate coordinate{row_index_type{size_t{this->optimal_coordinate.row[index]}},
                                          column_index_type{size_t{this->optimal_coordinate.col[index]}}};
             this->make_result_and_invoke(std::forward<decltype(sequence_pair)>(sequence_pair),
@@ -217,8 +216,8 @@ protected:
               std::ranges::forward_range sequence2_t,
               std::ranges::input_range alignment_matrix_t,
               std::ranges::input_range index_matrix_t>
-        requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>> &&
-                 std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
+        requires std::ranges::forward_range<std::ranges::range_reference_t<alignment_matrix_t>>
+              && std::ranges::forward_range<std::ranges::range_reference_t<index_matrix_t>>
     void compute_matrix(sequence1_t && sequence1,
                         sequence2_t && sequence2,
                         alignment_matrix_t && alignment_matrix,
@@ -233,7 +232,7 @@ protected:
         auto alignment_matrix_it = alignment_matrix.begin();
         auto indexed_matrix_it = index_matrix.begin();
 
-        using row_index_t = std::ranges::range_difference_t<sequence2_t>; // row_size = |sequence2| + 1
+        using row_index_t = std::ranges::range_difference_t<sequence2_t>;    // row_size = |sequence2| + 1
         using column_index_t = std::ranges::range_difference_t<sequence1_t>; // column_size = |sequence1| + 1
 
         row_index_t row_size = std::max<int32_t>(0, -this->lower_diagonal);
@@ -357,10 +356,10 @@ protected:
         decltype(current_alignment_column_it) next_alignment_column_it{current_alignment_column_it};
         auto cell = *current_alignment_column_it;
         cell = this->track_cell(
-                this->initialise_band_first_cell(cell.best_score(),
-                                                 *++next_alignment_column_it,
-                                                 this->scoring_scheme.score(alphabet1, *std::ranges::begin(sequence2))),
-                *cell_index_column_it);
+            this->initialise_band_first_cell(cell.best_score(),
+                                             *++next_alignment_column_it,
+                                             this->scoring_scheme.score(alphabet1, *std::ranges::begin(sequence2))),
+            *cell_index_column_it);
 
         // ---------------------------------------------------------------------
         // Iteration phase: iterate over column and compute each cell
@@ -370,11 +369,10 @@ protected:
         {
             current_alignment_column_it = next_alignment_column_it;
             auto cell = *current_alignment_column_it;
-            cell = this->track_cell(
-                this->compute_inner_cell(cell.best_score(),
-                                         *++next_alignment_column_it,
-                                         this->scoring_scheme.score(alphabet1, alphabet2)),
-                *++cell_index_column_it);
+            cell = this->track_cell(this->compute_inner_cell(cell.best_score(),
+                                                             *++next_alignment_column_it,
+                                                             this->scoring_scheme.score(alphabet1, alphabet2)),
+                                    *++cell_index_column_it);
         }
 
         // ---------------------------------------------------------------------

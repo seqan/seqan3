@@ -41,7 +41,7 @@ struct function_traits;
  *
  * \include snippet/utility/type_traits/function_traits.cpp
  */
-template <typename return_t, typename ...args_t>
+template <typename return_t, typename... args_t>
 struct function_traits<std::function<return_t(args_t...)>>
 {
     //!\brief The number of arguments passed to the std::function target.
@@ -61,7 +61,11 @@ struct function_traits<std::function<return_t(args_t...)>>
 //!\cond
 // Overload for all function types.
 template <typename function_t>
-    requires requires (function_t fn) { {std::function{fn}}; }
+    requires requires (function_t fn) {
+                 {
+                     std::function{fn}
+                 };
+             }
 struct function_traits<function_t> : function_traits<decltype(std::function{std::declval<function_t>()})>
 {};
 //!\endcond

@@ -14,8 +14,8 @@
 
 #include <vector>
 
-#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/alphabet/alphabet_base.hpp>
+#include <seqan3/alphabet/concept.hpp>
 #include <seqan3/utility/char_operations/transform.hpp>
 
 // ------------------------------------------------------------------
@@ -72,56 +72,50 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dssp9()                           noexcept = default; //!< Defaulted.
-    constexpr dssp9(dssp9 const &)              noexcept = default; //!< Defaulted.
-    constexpr dssp9(dssp9 &&)                   noexcept = default; //!< Defaulted.
-    constexpr dssp9 & operator=(dssp9 const &)  noexcept = default; //!< Defaulted.
-    constexpr dssp9 & operator=(dssp9 &&)       noexcept = default; //!< Defaulted.
-    ~dssp9()                                    noexcept = default; //!< Defaulted.
+    constexpr dssp9() noexcept = default;                          //!< Defaulted.
+    constexpr dssp9(dssp9 const &) noexcept = default;             //!< Defaulted.
+    constexpr dssp9(dssp9 &&) noexcept = default;                  //!< Defaulted.
+    constexpr dssp9 & operator=(dssp9 const &) noexcept = default; //!< Defaulted.
+    constexpr dssp9 & operator=(dssp9 &&) noexcept = default;      //!< Defaulted.
+    ~dssp9() noexcept = default;                                   //!< Defaulted.
 
     //!\}
 
 private:
     //!\copydoc seqan3::dna4::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'H', 'B', 'E', 'G', 'I', 'T', 'S', 'C', 'X'};
 
     //!\copydoc seqan3::dna4::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+
+    // initialize with X (std::array::fill unfortunately not constexpr)
+    for (rank_type & rnk : ret)
+        rnk = 8u;
+
+    // reverse mapping for characters
+    for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
     {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> ret{};
-
-            // initialize with X (std::array::fill unfortunately not constexpr)
-            for (rank_type & rnk : ret)
-                rnk = 8u;
-
-            // reverse mapping for characters
-            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
-            }
-
-            return ret;
-        } ()
-    };
-
-    //!\copydoc seqan3::dna4::rank_to_char
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
+        ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
     }
 
-    //!\copydoc seqan3::dna4::char_to_rank
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
-};
+    return ret;
+}()
+}; // namespace seqan3
+
+//!\copydoc seqan3::dna4::rank_to_char
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
+
+//!\copydoc seqan3::dna4::char_to_rank
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 inline namespace literals
 {
@@ -155,7 +149,7 @@ constexpr dssp9 operator""_dssp9(char const ch) noexcept
  *
  * \experimentalapi{Experimental since version 3.1.}
  */
-inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
+inline std::vector<dssp9> operator""_dssp9(char const * str, std::size_t len)
 {
     std::vector<dssp9> vec;
     vec.resize(len);
@@ -167,6 +161,6 @@ inline std::vector<dssp9> operator""_dssp9(const char * str, std::size_t len)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

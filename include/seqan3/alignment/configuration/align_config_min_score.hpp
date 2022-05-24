@@ -44,19 +44,18 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr min_score() noexcept = default; //!< Defaulted
-    constexpr min_score(min_score const &) noexcept = default; //!< Defaulted
-    constexpr min_score(min_score &&) noexcept = default; //!< Defaulted
+    constexpr min_score() noexcept = default;                              //!< Defaulted
+    constexpr min_score(min_score const &) noexcept = default;             //!< Defaulted
+    constexpr min_score(min_score &&) noexcept = default;                  //!< Defaulted
     constexpr min_score & operator=(min_score const &) noexcept = default; //!< Defaulted
-    constexpr min_score & operator=(min_score &&) noexcept = default; //!< Defaulted
-    ~min_score() noexcept = default; //!< Defaulted
+    constexpr min_score & operator=(min_score &&) noexcept = default;      //!< Defaulted
+    ~min_score() noexcept = default;                                       //!< Defaulted
 
     /*!\brief Initialises the minimal score.
      *
      * \param score \copybrief score
      */
-    constexpr min_score(const int32_t score) :
-        score{score}
+    constexpr min_score(const int32_t score) : score{score}
     {}
     //!\}
 

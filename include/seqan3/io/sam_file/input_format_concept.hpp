@@ -49,8 +49,8 @@ public:
     // Can't use `using format_type::read_alignment_record` as it produces a hard failure in the format concept check
     // for types that do not model the format concept, i.e. don't offer the proper read_alignment_record interface.
     //!\brief Forwards to the seqan3::sam_file_input_format::read_alignment_record interface.
-    template <typename ...ts>
-    void read_alignment_record(ts && ...args)
+    template <typename... ts>
+    void read_alignment_record(ts &&... args)
     {
         format_type::read_alignment_record(std::forward<ts>(args)...);
     }
@@ -75,74 +75,76 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sam_file_input_format =
-    requires (detail::sam_file_input_format_exposer<t>                            & v,
-              std::ifstream                                                       & stream,
-              sam_file_input_options<dna5>                                        & options,
-              std::vector<dna5_vector>                                            & ref_sequences,
-              sam_file_header<>                                                   & header,
-              std::streampos                                                      & position_buffer,
-              dna5_vector                                                         & seq,
-              std::vector<phred42>                                                & qual,
-              std::string                                                         & id,
-              int32_t                                                             & offset,
-              dna5_vector                                                         & ref_seq,
-              std::optional<int32_t>                                              & ref_id,
-              std::optional<int32_t>                                              & ref_offset,
-              std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>     & align,
-              std::vector<cigar>                                                  & cigar,
-              sam_flag                                                            & flag,
-              uint8_t                                                             & mapq,
-              std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> & mate,
-              sam_tag_dictionary                                                  & tag_dict,
-              double                                                              & e_value,
-              double                                                              & bit_score)
-{
-    t::file_extensions;
-    // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
+concept sam_file_input_format = requires (detail::sam_file_input_format_exposer<t> & v,
+                                          std::ifstream & stream,
+                                          sam_file_input_options<dna5> & options,
+                                          std::vector<dna5_vector> & ref_sequences,
+                                          sam_file_header<> & header,
+                                          std::streampos & position_buffer,
+                                          dna5_vector & seq,
+                                          std::vector<phred42> & qual,
+                                          std::string & id,
+                                          int32_t & offset,
+                                          dna5_vector & ref_seq,
+                                          std::optional<int32_t> & ref_id,
+                                          std::optional<int32_t> & ref_offset,
+                                          std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> & align,
+                                          std::vector<cigar> & cigar,
+                                          sam_flag & flag,
+                                          uint8_t & mapq,
+                                          std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> & mate,
+                                          sam_tag_dictionary & tag_dict,
+                                          double & e_value,
+                                          double & bit_score) {
+                                    t::file_extensions;
+                                    // std::same_as<decltype(t::file_extensions), std::vector<std::string>>;
 
-    { v.read_alignment_record(stream,
-                              options,
-                              ref_sequences,
-                              header,
-                              position_buffer,
-                              seq,
-                              qual,
-                              id,
-                              offset,
-                              ref_seq,
-                              ref_id,
-                              ref_offset,
-                              align,
-                              cigar,
-                              flag,
-                              mapq,
-                              mate,
-                              tag_dict,
-                              e_value,
-                              bit_score)};
+                                    {
+                                        v.read_alignment_record(stream,
+                                                                options,
+                                                                ref_sequences,
+                                                                header,
+                                                                position_buffer,
+                                                                seq,
+                                                                qual,
+                                                                id,
+                                                                offset,
+                                                                ref_seq,
+                                                                ref_id,
+                                                                ref_offset,
+                                                                align,
+                                                                cigar,
+                                                                flag,
+                                                                mapq,
+                                                                mate,
+                                                                tag_dict,
+                                                                e_value,
+                                                                bit_score)
+                                    };
 
-    { v.read_alignment_record(stream,
-                              options,
-                              std::ignore,
-                              header,
-                              position_buffer,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore,
-                              std::ignore)};
-};
+                                    {
+                                        v.read_alignment_record(stream,
+                                                                options,
+                                                                std::ignore,
+                                                                header,
+                                                                position_buffer,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore,
+                                                                std::ignore)
+                                    };
+                                };
 //!\endcond
 
 /*!\name Requirements for seqan3::sam_file_input_format
@@ -220,7 +222,7 @@ concept sam_file_input_format =
  *     except stream, options and header. [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
- /*!\var static inline std::vector<std::string> seqan3::sam_file_input_format::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::sam_file_input_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
@@ -243,7 +245,7 @@ constexpr bool is_type_list_of_sam_file_input_formats_v = false;
  * \ingroup io_sam_file
  * \see seqan3::type_list_of_sam_file_input_formats
  */
-template <typename ...ts>
+template <typename... ts>
 constexpr bool is_type_list_of_sam_file_input_formats_v<type_list<ts...>> = (sam_file_input_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet

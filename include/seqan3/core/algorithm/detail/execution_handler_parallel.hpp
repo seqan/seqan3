@@ -75,17 +75,18 @@ public:
         auto * q = &(state->queue);
         for (size_t i = 0; i < thread_count; ++i)
         {
-            state->thread_pool.emplace_back([q] ()
-            {
-                for (;;)
+            state->thread_pool.emplace_back(
+                [q]()
                 {
-                    task_type task;
-                    if (q->wait_pop(task) == contrib::queue_op_status::closed)
-                        return;
+                    for (;;)
+                    {
+                        task_type task;
+                        if (q->wait_pop(task) == contrib::queue_op_status::closed)
+                            return;
 
-                    task();
-                }
-            });
+                        task();
+                    }
+                });
         }
     }
 
@@ -106,11 +107,11 @@ public:
     execution_handler_parallel() : execution_handler_parallel{1u}
     {}
 
-    execution_handler_parallel(execution_handler_parallel const &) = delete; //!< Deleted.
-    execution_handler_parallel(execution_handler_parallel &&) = default; //!< Defaulted.
+    execution_handler_parallel(execution_handler_parallel const &) = delete;             //!< Deleted.
+    execution_handler_parallel(execution_handler_parallel &&) = default;                 //!< Defaulted.
     execution_handler_parallel & operator=(execution_handler_parallel const &) = delete; //!< Deleted.
-    execution_handler_parallel & operator=(execution_handler_parallel &&) = default; //!< Defaulted.
-    ~execution_handler_parallel() = default; //!< Defaulted.
+    execution_handler_parallel & operator=(execution_handler_parallel &&) = default;     //!< Defaulted.
+    ~execution_handler_parallel() = default;                                             //!< Defaulted.
 
     //!\}
 
@@ -132,11 +133,9 @@ public:
      * type, however, is perfectly forwarded if `input` is a lvalue-reference or moved if it is a rvalue-reference.
      * Accordingly, the `algorithm_input_t` must either be a lvalue_reference or std::move_constructible.
      */
-    template <std::copy_constructible algorithm_t,
-              typename algorithm_input_t,
-              std::copy_constructible callback_t>
-        requires std::invocable<algorithm_t, algorithm_input_t, callback_t> &&
-                 (std::is_lvalue_reference_v<algorithm_input_t> || std::move_constructible<algorithm_input_t>)
+    template <std::copy_constructible algorithm_t, typename algorithm_input_t, std::copy_constructible callback_t>
+        requires std::invocable<algorithm_t, algorithm_input_t, callback_t>
+              && (std::is_lvalue_reference_v<algorithm_input_t> || std::move_constructible<algorithm_input_t>)
     void execute(algorithm_t && algorithm, algorithm_input_t && input, callback_t && callback)
     {
         assert(state != nullptr);
@@ -154,8 +153,8 @@ public:
 
         // Asynchronously pushes the algorithm job as a task to the queue.
         // Note: that lambda is mutable, s.t. we can move out the content of input_tpl
-        task_type task = [=,
-                          input_tpl = std::tuple<algorithm_input_t>{std::forward<algorithm_input_t>(input)}] () mutable
+        task_type task =
+            [=, input_tpl = std::tuple<algorithm_input_t>{std::forward<algorithm_input_t>(input)}]() mutable
         {
             using forward_input_t = std::tuple_element_t<0, decltype(input_tpl)>;
             algorithm(std::forward<forward_input_t>(std::get<0>(input_tpl)), std::move(callback));
@@ -217,11 +216,11 @@ private:
         * \brief Instances of this class are not copyable.
         * \{
         */
-        internal_state() = default; //!< Defaulted.
-        internal_state(internal_state const &) = delete; //!< Deleted.
-        internal_state(internal_state &&) = default; //!< Defaulted.
+        internal_state() = default;                                  //!< Defaulted.
+        internal_state(internal_state const &) = delete;             //!< Deleted.
+        internal_state(internal_state &&) = default;                 //!< Defaulted.
         internal_state & operator=(internal_state const &) = delete; //!< Deleted.
-        internal_state & operator=(internal_state &&) = default; //!< Defaulted.
+        internal_state & operator=(internal_state &&) = default;     //!< Defaulted.
 
         //!\brief Waits for threads to finish.
         ~internal_state()
@@ -250,13 +249,13 @@ private:
         }
 
         //!\brief The thread pool.
-        std::vector<std::thread>                 thread_pool{};
+        std::vector<std::thread> thread_pool{};
         //!\brief The concurrent queue containing the algorithms to process.
-        contrib::fixed_buffer_queue<task_type>   queue{10000};
+        contrib::fixed_buffer_queue<task_type> queue{10000};
     };
 
     //!\brief Manages the internal state.
     std::unique_ptr<internal_state> state{nullptr};
 };
 
-} // namespace seqan3
+} // namespace seqan3::detail

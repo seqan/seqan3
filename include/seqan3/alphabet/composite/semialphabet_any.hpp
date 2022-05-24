@@ -54,18 +54,18 @@ private:
     friend base_t;
 
 public:
-    using base_t::to_rank;
     using base_t::assign_rank;
+    using base_t::to_rank;
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr semialphabet_any()                                     noexcept = default; //!< Defaulted.
-    constexpr semialphabet_any(semialphabet_any const &)             noexcept = default; //!< Defaulted.
-    constexpr semialphabet_any(semialphabet_any &&)                  noexcept = default; //!< Defaulted.
+    constexpr semialphabet_any() noexcept = default;                                     //!< Defaulted.
+    constexpr semialphabet_any(semialphabet_any const &) noexcept = default;             //!< Defaulted.
+    constexpr semialphabet_any(semialphabet_any &&) noexcept = default;                  //!< Defaulted.
     constexpr semialphabet_any & operator=(semialphabet_any const &) noexcept = default; //!< Defaulted.
-    constexpr semialphabet_any & operator=(semialphabet_any &&)      noexcept = default; //!< Defaulted.
-    ~semialphabet_any()                                              noexcept = default; //!< Defaulted.
+    constexpr semialphabet_any & operator=(semialphabet_any &&) noexcept = default;      //!< Defaulted.
+    ~semialphabet_any() noexcept = default;                                              //!< Defaulted.
 
     /*!\brief Construct semialphabet_any from alphabet of the same size
      * \details

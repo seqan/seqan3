@@ -27,23 +27,23 @@ namespace seqan3
 enum struct genetic_code : uint8_t
 {
     canonical = 1, //!< [The Standard Code](https://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi#SG1).
-//     vert_mitochondrial,
-//     yeast_mitochondrial,
-//     mold_mitochondrial,
-//     invert_mitochondrial,
-//     ciliate,
-//     flatworm_mitochondrial = 9,
-//     euplotid,
-//     prokaryote,
-//     alt_yeast,
-//     ascidian_mitochondrial,
-//     alt_flatworm_mitochondrial,
-//     blepharisma,
-//     chlorophycean_mitochondrial,
-//     trematode_mitochondrial = 21,
-//     scenedesmus_mitochondrial,
-//     thraustochytrium_mitochondrial,
-//     pterobranchia_mitochondrial,
-//     gracilibacteria
+    //     vert_mitochondrial,
+    //     yeast_mitochondrial,
+    //     mold_mitochondrial,
+    //     invert_mitochondrial,
+    //     ciliate,
+    //     flatworm_mitochondrial = 9,
+    //     euplotid,
+    //     prokaryote,
+    //     alt_yeast,
+    //     ascidian_mitochondrial,
+    //     alt_flatworm_mitochondrial,
+    //     blepharisma,
+    //     chlorophycean_mitochondrial,
+    //     trematode_mitochondrial = 21,
+    //     scenedesmus_mitochondrial,
+    //     thraustochytrium_mitochondrial,
+    //     pterobranchia_mitochondrial,
+    //     gracilibacteria
 };
-}
+} // namespace seqan3

@@ -99,8 +99,8 @@ public:
                                 get<1>(sequence_pair),
                                 std::forward<callback_t>(callback));
     }
-private:
 
+private:
     /*!\brief Invokes the actual alignment computation for a single pair of sequences.
      * \tparam    first_range_t  The type of the first sequence (or packed sequences); must model
      *                           std::ranges::forward_range.

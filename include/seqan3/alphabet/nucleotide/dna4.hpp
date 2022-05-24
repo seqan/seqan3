@@ -67,12 +67,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dna4()                          noexcept = default; //!< Defaulted.
-    constexpr dna4(dna4 const &)              noexcept = default; //!< Defaulted.
-    constexpr dna4(dna4 &&)                   noexcept = default; //!< Defaulted.
-    constexpr dna4 & operator=(dna4 const &)  noexcept = default; //!< Defaulted.
-    constexpr dna4 & operator=(dna4 &&)       noexcept = default; //!< Defaulted.
-    ~dna4()                                   noexcept = default; //!< Defaulted.
+    constexpr dna4() noexcept = default;                         //!< Defaulted.
+    constexpr dna4(dna4 const &) noexcept = default;             //!< Defaulted.
+    constexpr dna4(dna4 &&) noexcept = default;                  //!< Defaulted.
+    constexpr dna4 & operator=(dna4 const &) noexcept = default; //!< Defaulted.
+    constexpr dna4 & operator=(dna4 &&) noexcept = default;      //!< Defaulted.
+    ~dna4() noexcept = default;                                  //!< Defaulted.
 
     using base_t::base_t;
 
@@ -114,86 +114,87 @@ private:
      *
      * \sa https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99320 for the progress on gcc
      */
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'C',
-        'G',
-        'T'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'A', 'C', 'G', 'T'};
 
     /*!\brief The lookup table used in #char_to_rank.
      * \copydetails seqan3::dna4::rank_to_char_table
      */
-    static constexpr std::array<rank_type, 256> char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+
+    // reverse mapping for characters and their lowercase
+    for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
     {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> ret{};
+        ret[rank_to_char_table[rnk]] = rnk;
+        ret[to_lower(rank_to_char_table[rnk])] = rnk;
+    }
 
-            // reverse mapping for characters and their lowercase
-            for (size_t rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[rank_to_char_table[rnk]] = rnk;
-                ret[to_lower(rank_to_char_table[rnk])] = rnk;
-            }
+    // set U equal to T
+    ret['U'] = ret['T'];
+    ret['u'] = ret['t'];
 
-            // set U equal to T
-            ret['U'] = ret['T']; ret['u'] = ret['t'];
+    // iupac characters get special treatment, because there is no N
+    ret['R'] = ret['A'];
+    ret['r'] = ret['A']; // A or G
+    ret['Y'] = ret['C'];
+    ret['y'] = ret['C']; // C or T
+    ret['S'] = ret['C'];
+    ret['s'] = ret['C']; // C or G
+    ret['W'] = ret['A'];
+    ret['w'] = ret['A']; // A or T
+    ret['K'] = ret['G'];
+    ret['k'] = ret['G']; // G or T
+    ret['M'] = ret['A'];
+    ret['m'] = ret['A']; // A or T
+    ret['B'] = ret['C'];
+    ret['b'] = ret['C']; // C or G or T
+    ret['D'] = ret['A'];
+    ret['d'] = ret['A']; // A or G or T
+    ret['H'] = ret['A'];
+    ret['h'] = ret['A']; // A or C or T
+    ret['V'] = ret['A'];
+    ret['v'] = ret['A']; // A or C or G
 
-            // iupac characters get special treatment, because there is no N
-            ret['R'] = ret['A']; ret['r'] = ret['A']; // A or G
-            ret['Y'] = ret['C']; ret['y'] = ret['C']; // C or T
-            ret['S'] = ret['C']; ret['s'] = ret['C']; // C or G
-            ret['W'] = ret['A']; ret['w'] = ret['A']; // A or T
-            ret['K'] = ret['G']; ret['k'] = ret['G']; // G or T
-            ret['M'] = ret['A']; ret['m'] = ret['A']; // A or T
-            ret['B'] = ret['C']; ret['b'] = ret['C']; // C or G or T
-            ret['D'] = ret['A']; ret['d'] = ret['A']; // A or G or T
-            ret['H'] = ret['A']; ret['h'] = ret['A']; // A or C or T
-            ret['V'] = ret['A']; ret['v'] = ret['A']; // A or C or G
+    return ret;
+}()
+}; // namespace seqan3
 
-            return ret;
-        }()
-    };
+//!\brief The rank complement table.
+static constexpr rank_type rank_complement_table[alphabet_size]{
+    3, // T is complement of 'A'_dna4
+    2, // G is complement of 'C'_dna4
+    1, // C is complement of 'G'_dna4
+    0  // A is complement of 'T'_dna4
+};
 
-    //!\brief The rank complement table.
-    static constexpr rank_type rank_complement_table[alphabet_size]
-    {
-        3, // T is complement of 'A'_dna4
-        2, // G is complement of 'C'_dna4
-        1, // C is complement of 'G'_dna4
-        0  // A is complement of 'T'_dna4
-    };
-
-    /*!\brief Returns the complement by rank.
+/*!\brief Returns the complement by rank.
      * \details
      * This function is required by seqan3::nucleotide_base.
      */
-    static constexpr rank_type rank_complement(rank_type const rank)
-    {
-        return rank_complement_table[rank];
-    }
+static constexpr rank_type rank_complement(rank_type const rank)
+{
+    return rank_complement_table[rank];
+}
 
-    /*!\brief Returns the character representation of rank.
+/*!\brief Returns the character representation of rank.
      * \details
      * This function is required by seqan3::alphabet_base.
      */
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
-    }
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
 
-    /*!\brief Returns the rank representation of character.
+/*!\brief Returns the rank representation of character.
      * \details
      * This function is required by seqan3::alphabet_base.
      */
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
-};
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 // ------------------------------------------------------------------
 // containers
@@ -255,6 +256,6 @@ inline dna4_vector operator""_dna4(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

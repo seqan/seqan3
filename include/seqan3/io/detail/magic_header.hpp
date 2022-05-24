@@ -31,10 +31,7 @@ namespace seqan3::detail
 struct gz_compression
 {
     //!\brief The valid file extension for gz compression.
-    static inline std::vector<std::string> file_extensions
-    {
-        {"gz"}
-    };
+    static inline std::vector<std::string> file_extensions{{"gz"}};
 
     //!\brief The magic byte sequence to disambiguate gz compressed files.
     static constexpr std::array<char, 3> magic_header{'\x1f', '\x8b', '\x08'};
@@ -45,10 +42,7 @@ struct gz_compression
 struct bz2_compression
 {
     //!\brief The valid file extension for bz2 compression.
-    static inline std::vector<std::string> file_extensions
-    {
-        {"bz2"}
-    };
+    static inline std::vector<std::string> file_extensions{{"bz2"}};
 
     //!\brief The magic byte sequence to disambiguate bz2 compressed files.
     static constexpr std::array<char, 3> magic_header{'\x42', '\x5a', '\x68'};
@@ -59,10 +53,7 @@ struct bz2_compression
 struct zstd_compression
 {
     //!\brief The valid file extension for zstd compression.
-    static inline std::vector<std::string> file_extensions
-    {
-        {"zst"}
-    };
+    static inline std::vector<std::string> file_extensions{{"zst"}};
 
     //!\brief The magic byte sequence to disambiguate zstd compressed files.
     static constexpr std::array<char, 4> magic_header{'\x28', '\xb5', '\x2f', '\xfd'};
@@ -73,21 +64,31 @@ struct zstd_compression
 struct bgzf_compression
 {
     //!\brief The valid file extension for bgzf compression.
-    static inline std::vector<std::string> file_extensions
-    {
-        {"bgzf"}
-    };
+    static inline std::vector<std::string> file_extensions{{"bgzf"}};
 
     //!\brief The magic byte sequence to disambiguate bgzf compressed files.
-    static constexpr std::array<char, 18> magic_header
-    {
-    //  ID1                              ID2                              CM
-        gz_compression::magic_header[0], gz_compression::magic_header[1], gz_compression::magic_header[2],
-    //  FLG     [MTIME                       ]  XFL     OS      [XLEN        ]
-        '\x04', '\x00', '\x00', '\x00', '\x00', '\x00', '\xff', '\x06', '\x00',
-    //  B       C       [SLEN        ]  [BSIZE       ]
-        '\x42', '\x43', '\x02', '\x00', '\x00', '\x00'
-    };
+    static constexpr std::array<char, 18> magic_header{
+        //  ID1                              ID2                              CM
+        gz_compression::magic_header[0],
+        gz_compression::magic_header[1],
+        gz_compression::magic_header[2],
+        //  FLG     [MTIME                       ]  XFL     OS      [XLEN        ]
+        '\x04',
+        '\x00',
+        '\x00',
+        '\x00',
+        '\x00',
+        '\x00',
+        '\xff',
+        '\x06',
+        '\x00',
+        //  B       C       [SLEN        ]  [BSIZE       ]
+        '\x42',
+        '\x43',
+        '\x02',
+        '\x00',
+        '\x00',
+        '\x00'};
 
     /*!\brief Checks if the given header is a bgzf header.
      * \param[in] header The header to validate.
@@ -99,14 +100,14 @@ struct bgzf_compression
         static_assert(std::equality_comparable_with<char_t, char>,
                       "The given char type of the span must be comparable with char.");
 
-        return (header[0] == magic_header[0] &&                                                            // GZ_ID1
-                header[1] == magic_header[1] &&                                                            // GZ_ID2
-                header[2] == magic_header[2] &&                                                            // GZ_CM
-                (header[3] & magic_header[3]) != 0 &&                                                      // FLG_FEXTRA
-                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[10])) == magic_header[10] &&  // BGZF_ID1
-                header[12] == magic_header[12] &&                                                          // BGZF_ID2
-                header[13] == magic_header[13] &&                                                          // BGZF_SLEN
-                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[14])) == magic_header[14]);   // BGZF_XLEN
+        return (header[0] == magic_header[0] &&                                                           // GZ_ID1
+                header[1] == magic_header[1] &&                                                           // GZ_ID2
+                header[2] == magic_header[2] &&                                                           // GZ_CM
+                (header[3] & magic_header[3]) != 0 &&                                                     // FLG_FEXTRA
+                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[10])) == magic_header[10] && // BGZF_ID1
+                header[12] == magic_header[12] &&                                                         // BGZF_ID2
+                header[13] == magic_header[13] &&                                                         // BGZF_SLEN
+                to_little_endian(*reinterpret_cast<uint16_t const *>(&header[14])) == magic_header[14]);  // BGZF_XLEN
     }
 };
 
@@ -114,16 +115,19 @@ struct bgzf_compression
  * \ingroup io
  */
 using compression_formats = pack_traits::drop_front<void
-                                                    #if defined(SEQAN3_HAS_ZLIB)
-                                                    , gz_compression
-                                                    , bgzf_compression
-                                                    #endif // defined(SEQAN3_HAS_ZLIB)
-                                                    #if defined(SEQAN3_HAS_BZIP2)
-                                                    , bz2_compression
-                                                    #endif // defined(SEQAN3_HAS_BZIP2)
-                                                    #if SEQAN3_HAS_ZSTD
-                                                    , zstd_compression
-                                                    #endif // SEQAN3_HAS_ZSTD
+#if defined(SEQAN3_HAS_ZLIB)
+                                                    ,
+                                                    gz_compression,
+                                                    bgzf_compression
+#endif // defined(SEQAN3_HAS_ZLIB)
+#if defined(SEQAN3_HAS_BZIP2)
+                                                    ,
+                                                    bz2_compression
+#endif // defined(SEQAN3_HAS_BZIP2)
+#if SEQAN3_HAS_ZSTD
+                                                    ,
+                                                    zstd_compression
+#endif // SEQAN3_HAS_ZSTD
                                                     >;
 
 } // namespace seqan3::detail

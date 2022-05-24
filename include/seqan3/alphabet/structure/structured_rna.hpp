@@ -51,12 +51,15 @@ template <nucleotide_alphabet sequence_alphabet_t, rna_structure_alphabet struct
     requires writable_alphabet<sequence_alphabet_t> && writable_alphabet<structure_alphabet_t>
 class structured_rna :
     public alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
-                                 sequence_alphabet_t, structure_alphabet_t>
+                               sequence_alphabet_t,
+                               structure_alphabet_t>
 {
 private:
     //!\brief The base type.
     using base_type = alphabet_tuple_base<structured_rna<sequence_alphabet_t, structure_alphabet_t>,
-                                            sequence_alphabet_t, structure_alphabet_t>;
+                                          sequence_alphabet_t,
+                                          structure_alphabet_t>;
+
 public:
     /*!\brief First template parameter as member type.
      * \details
@@ -78,23 +81,24 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr structured_rna()                                    noexcept = default; //!< Defaulted.
-    constexpr structured_rna(structured_rna const &)              noexcept = default; //!< Defaulted.
-    constexpr structured_rna(structured_rna &&)                   noexcept = default; //!< Defaulted.
-    constexpr structured_rna & operator =(structured_rna const &) noexcept = default; //!< Defaulted.
-    constexpr structured_rna & operator =(structured_rna &&)      noexcept = default; //!< Defaulted.
-    ~structured_rna()                                             noexcept = default; //!< Defaulted.
+    constexpr structured_rna() noexcept = default;                                   //!< Defaulted.
+    constexpr structured_rna(structured_rna const &) noexcept = default;             //!< Defaulted.
+    constexpr structured_rna(structured_rna &&) noexcept = default;                  //!< Defaulted.
+    constexpr structured_rna & operator=(structured_rna const &) noexcept = default; //!< Defaulted.
+    constexpr structured_rna & operator=(structured_rna &&) noexcept = default;      //!< Defaulted.
+    ~structured_rna() noexcept = default;                                            //!< Defaulted.
 
     using base_type::base_type; // Inherit non-default constructors
 
-#if SEQAN3_DOXYGEN_ONLY(1)0
+#if SEQAN3_DOXYGEN_ONLY(1) 0
     /*!\copybrief seqan3::alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
      * \details
      * \sa seqan3::alphabet_tuple_base::alphabet_tuple_base(component_type const alph)
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    constexpr structured_rna(component_type const alph) noexcept {}
+    constexpr structured_rna(component_type const alph) noexcept
+    {}
 
     /*!\copybrief seqan3::alphabet_tuple_base::alphabet_tuple_base(indirect_component_type const alph)
      * \details
@@ -102,7 +106,8 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    constexpr structured_rna(indirect_component_type const alph) noexcept {}
+    constexpr structured_rna(indirect_component_type const alph) noexcept
+    {}
 
     /*!\copybrief seqan3::alphabet_tuple_base::operator=(component_type const alph)
      * \details
@@ -110,7 +115,8 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    constexpr structured_rna & operator=(component_type const alph) noexcept {}
+    constexpr structured_rna & operator=(component_type const alph) noexcept
+    {}
 
     /*!\copybrief seqan3::alphabet_tuple_base::operator=(indirect_component_type const alph)
      * \details
@@ -118,7 +124,8 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    constexpr structured_rna & operator=(indirect_component_type const alph) noexcept {}
+    constexpr structured_rna & operator=(indirect_component_type const alph) noexcept
+    {}
 #endif // SEQAN3_DOXYGEN_ONLY
     //!\}
 

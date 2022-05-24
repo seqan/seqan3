@@ -93,7 +93,7 @@ private:
     /*!\name Suffix array intervals of forward and reverse cursors.
      * \{
      */
-     //!\brief Left suffix array interval of the forward cursor (for extend_right).
+    //!\brief Left suffix array interval of the forward cursor (for extend_right).
     size_type fwd_lb{};
     //!\brief Right suffix array interval of the forward cursor (for extend_right).
     size_type fwd_rb{};
@@ -144,11 +144,14 @@ private:
 
     //!\brief Optimized bidirectional search without alphabet mapping
     template <typename csa_t>
-        requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
-                  std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
-    bool bidirectional_search(csa_t const & csa, sdsl_char_type const c,
-                              size_type & l_fwd, size_type & r_fwd,
-                              size_type & l_bwd, size_type & r_bwd) const noexcept
+        requires (std::same_as<csa_t, typename index_type::sdsl_index_type>
+                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>) bool
+    bidirectional_search(csa_t const & csa,
+                         sdsl_char_type const c,
+                         size_type & l_fwd,
+                         size_type & r_fwd,
+                         size_type & l_bwd,
+                         size_type & r_bwd) const noexcept
     {
         assert((l_fwd <= r_fwd) && (r_fwd < csa.size()));
         assert(r_fwd + 1 >= l_fwd);
@@ -157,7 +160,7 @@ private:
         size_type _l_fwd, _r_fwd, _l_bwd, _r_bwd;
 
         size_type cc = c;
-        if constexpr(!std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr (!std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
         {
             cc = csa.char2comp[c];
             if (cc == 0 && c > 0) // [[unlikely]]
@@ -175,9 +178,9 @@ private:
         }
         else
         {
-            auto      const r_s_b  = csa.wavelet_tree.lex_count(l_fwd, r_fwd + 1, c);
+            auto const r_s_b = csa.wavelet_tree.lex_count(l_fwd, r_fwd + 1, c);
             size_type const rank_l = std::get<0>(r_s_b);
-            size_type const s      = std::get<1>(r_s_b), b = std::get<2>(r_s_b);
+            size_type const s = std::get<1>(r_s_b), b = std::get<2>(r_s_b);
             size_type const rank_r = r_fwd - l_fwd - s - b + rank_l;
             _l_fwd = c_begin + rank_l;
             _r_fwd = c_begin + rank_r;
@@ -200,25 +203,27 @@ private:
 
     //!\brief Optimized bidirectional search for cycle_back() and cycle_front() without alphabet mapping
     template <typename csa_t>
-        requires (std::same_as<csa_t, typename index_type::sdsl_index_type> ||
-                  std::same_as<csa_t, typename index_type::rev_sdsl_index_type>)
-    bool bidirectional_search_cycle(csa_t const & csa, sdsl_char_type const c,
-                                    size_type const l_parent, size_type const r_parent,
-                                    size_type & l_fwd, size_type & r_fwd,
-                                    size_type & l_bwd, size_type & r_bwd) const noexcept
+        requires (std::same_as<csa_t, typename index_type::sdsl_index_type>
+                  || std::same_as<csa_t, typename index_type::rev_sdsl_index_type>) bool
+    bidirectional_search_cycle(csa_t const & csa,
+                               sdsl_char_type const c,
+                               size_type const l_parent,
+                               size_type const r_parent,
+                               size_type & l_fwd,
+                               size_type & r_fwd,
+                               size_type & l_bwd,
+                               size_type & r_bwd) const noexcept
     {
         assert((l_parent <= r_parent) && (r_parent < csa.size()));
 
         size_type c_begin;
-        if constexpr(std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
+        if constexpr (std::same_as<index_alphabet_type, sdsl::plain_byte_alphabet>)
             c_begin = csa.C[c]; // TODO: check whether this can be removed
         else
             c_begin = csa.C[csa.char2comp[c]];
 
         auto const r_s_b = csa.wavelet_tree.lex_count(l_parent, r_parent + 1, c);
-        size_type const s      = std::get<1>(r_s_b),
-                        b      = std::get<2>(r_s_b),
-                        rank_l = std::get<0>(r_s_b),
+        size_type const s = std::get<1>(r_s_b), b = std::get<2>(r_s_b), rank_l = std::get<0>(r_s_b),
                         rank_r = r_parent - l_parent - s - b + rank_l;
 
         size_type const _l_fwd = c_begin + rank_l;
@@ -240,7 +245,6 @@ private:
     }
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
@@ -255,11 +259,14 @@ public:
     ~bi_fm_index_cursor() = default;                                               //!< Defaulted.
 
     //! \brief Construct from given index.
-    bi_fm_index_cursor(index_t const & _index) noexcept : index(&_index),
-                                                          fwd_lb(0), fwd_rb(_index.size() - 1),
-                                                          rev_lb(0), rev_rb(_index.size() - 1),
-                                                          sigma(_index.fwd_fm.index.sigma - index_t::text_layout_mode),
-                                                          depth(0)
+    bi_fm_index_cursor(index_t const & _index) noexcept :
+        index(&_index),
+        fwd_lb(0),
+        fwd_rb(_index.size() - 1),
+        rev_lb(0),
+        rev_rb(_index.size() - 1),
+        sigma(_index.fwd_fm.index.sigma - index_t::text_layout_mode),
+        depth(0)
     {}
     //\}
 
@@ -279,9 +286,8 @@ public:
     {
         assert(index != nullptr);
         // equal SA interval implies equal parent node information (or both are root nodes)
-        assert(!(fwd_lb == rhs.fwd_lb && fwd_rb == rhs.fwd_rb && depth == rhs.depth) ||
-               (depth == 0) ||
-               (parent_lb == rhs.parent_lb && parent_rb == rhs.parent_rb && _last_char == rhs._last_char));
+        assert(!(fwd_lb == rhs.fwd_lb && fwd_rb == rhs.fwd_rb && depth == rhs.depth) || (depth == 0)
+               || (parent_lb == rhs.parent_lb && parent_rb == rhs.parent_rb && _last_char == rhs._last_char));
 
         return std::tie(fwd_lb, fwd_rb, depth) == std::tie(rhs.fwd_lb, rhs.fwd_rb, rhs.depth);
     }
@@ -324,18 +330,22 @@ public:
      */
     bool extend_right() noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         fwd_cursor_last_used = true;
-    #endif
+#endif
 
         assert(index != nullptr);
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
         sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
-        while (c < sigma &&
-               !bidirectional_search(index->fwd_fm.index, index->fwd_fm.index.comp2char[c],
-                                     fwd_lb, fwd_rb, rev_lb, rev_rb))
+        while (c < sigma
+               && !bidirectional_search(index->fwd_fm.index,
+                                        index->fwd_fm.index.comp2char[c],
+                                        fwd_lb,
+                                        fwd_rb,
+                                        rev_lb,
+                                        rev_rb))
         {
             ++c;
         }
@@ -372,18 +382,22 @@ public:
      */
     bool extend_left() noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         fwd_cursor_last_used = false;
-    #endif
+#endif
 
         assert(index != nullptr);
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
         sdsl_char_type c = 1; // NOTE: start with 0 or 1 depending on implicit_sentintel
-        while (c < sigma &&
-               !bidirectional_search(index->rev_fm.index, index->rev_fm.index.comp2char[c],
-                                     rev_lb, rev_rb, fwd_lb, fwd_rb))
+        while (c < sigma
+               && !bidirectional_search(index->rev_fm.index,
+                                        index->rev_fm.index.comp2char[c],
+                                        rev_lb,
+                                        rev_rb,
+                                        fwd_lb,
+                                        fwd_rb))
         {
             ++c;
         }
@@ -415,18 +429,18 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-        requires std::convertible_to<char_t, index_alphabet_type>
-    bool extend_right(char_t const c) noexcept
+        requires std::convertible_to<char_t, index_alphabet_type> bool
+    extend_right(char_t const c) noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         fwd_cursor_last_used = true;
-    #endif
+#endif
 
         assert(index != nullptr);
         // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
         // for the indexed text.
-        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c)) <
-               ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c))
+               < ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
         size_type new_parent_lb = fwd_lb, new_parent_rb = fwd_rb;
 
@@ -446,8 +460,8 @@ public:
 
     //!\overload
     template <typename char_type>
-        requires seqan3::detail::is_char_adaptation_v<char_type>
-    bool extend_right(char_type const * cstring) noexcept
+        requires seqan3::detail::is_char_adaptation_v<char_type> bool
+    extend_right(char_type const * cstring) noexcept
     {
         return extend_right(std::basic_string_view<char_type>{cstring});
     }
@@ -466,18 +480,18 @@ public:
      * No-throw guarantee.
      */
     template <typename char_t>
-        requires std::convertible_to<char_t, index_alphabet_type>
-    bool extend_left(char_t const c) noexcept
+        requires std::convertible_to<char_t, index_alphabet_type> bool
+    extend_left(char_t const c) noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         fwd_cursor_last_used = false;
-    #endif
+#endif
 
         assert(index != nullptr);
         // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
         // for the indexed text.
-        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c)) <
-               ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+        assert(seqan3::to_rank(static_cast<index_alphabet_type>(c))
+               < ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
         size_type new_parent_lb = rev_lb, new_parent_rb = rev_rb;
 
@@ -497,8 +511,8 @@ public:
 
     //!\overload
     template <typename char_type>
-        requires seqan3::detail::is_char_adaptation_v<char_type>
-    bool extend_left(char_type const * cstring) noexcept
+        requires seqan3::detail::is_char_adaptation_v<char_type> bool
+    extend_left(char_type const * cstring) noexcept
     {
         return extend_left(std::basic_string_view<char_type>{cstring});
     }
@@ -531,9 +545,9 @@ public:
         auto first = std::ranges::begin(seq);
         auto last = std::ranges::end(seq);
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
         fwd_cursor_last_used = (first != last); // only if seq was not empty
-    #endif
+#endif
 
         size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb, _rev_lb = rev_lb, _rev_rb = rev_rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
@@ -544,8 +558,8 @@ public:
         {
             // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
             // for the indexed text.
-            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it)) <
-                   ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it))
+                   < ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
             c = seqan3::to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
@@ -601,13 +615,12 @@ public:
         auto first = std::ranges::begin(rev_seq);
         auto last = std::ranges::end(rev_seq);
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
         if (first != last) // only if seq was not empty
             fwd_cursor_last_used = false;
-    #endif
+#endif
 
-        size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb,
-                  _rev_lb = rev_lb, _rev_rb = rev_rb;
+        size_type _fwd_lb = fwd_lb, _fwd_rb = fwd_rb, _rev_lb = rev_lb, _rev_rb = rev_rb;
         size_type new_parent_lb = parent_lb, new_parent_rb = parent_rb;
         sdsl_char_type c = _last_char;
         size_t len{0};
@@ -616,8 +629,8 @@ public:
         {
             // The rank cannot exceed 255 for single text and 254 for text collections as they are reserved as sentinels
             // for the indexed text.
-            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it)) <
-                   ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
+            assert(seqan3::to_rank(static_cast<index_alphabet_type>(*it))
+                   < ((index_type::text_layout_mode == text_layout::single) ? 255 : 254));
 
             c = seqan3::to_rank(static_cast<index_alphabet_type>(*it)) + 1;
 
@@ -668,18 +681,24 @@ public:
      */
     bool cycle_back() noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         // cycle_back() can only be used if the last extension was to the right.
         assert(fwd_cursor_last_used);
-    #endif
+#endif
 
         assert(index != nullptr && query_length() > 0);
 
         sdsl_char_type c = _last_char + 1;
 
-        while (c < sigma &&
-               !bidirectional_search_cycle(index->fwd_fm.index, index->fwd_fm.index.comp2char[c],
-                                           parent_lb, parent_rb, fwd_lb, fwd_rb, rev_lb, rev_rb))
+        while (c < sigma
+               && !bidirectional_search_cycle(index->fwd_fm.index,
+                                              index->fwd_fm.index.comp2char[c],
+                                              parent_lb,
+                                              parent_rb,
+                                              fwd_lb,
+                                              fwd_rb,
+                                              rev_lb,
+                                              rev_rb))
         {
             ++c;
         }
@@ -721,17 +740,23 @@ public:
      */
     bool cycle_front() noexcept
     {
-    #ifndef NDEBUG
+#ifndef NDEBUG
         // cycle_front() can only be used if the last extension was to the left.
         assert(!fwd_cursor_last_used);
-    #endif
+#endif
 
         assert(index != nullptr && query_length() > 0);
 
         sdsl_char_type c = _last_char + 1;
-        while (c < sigma &&
-               !bidirectional_search_cycle(index->rev_fm.index, index->rev_fm.index.comp2char[c],
-                                           parent_lb, parent_rb, rev_lb, rev_rb, fwd_lb, fwd_rb))
+        while (c < sigma
+               && !bidirectional_search_cycle(index->rev_fm.index,
+                                              index->rev_fm.index.comp2char[c],
+                                              parent_lb,
+                                              parent_rb,
+                                              rev_lb,
+                                              rev_rb,
+                                              fwd_lb,
+                                              fwd_rb))
         {
             ++c;
         }
@@ -744,7 +769,6 @@ public:
         }
         return false;
     }
-
 
     /*!\brief Outputs the rightmost respectively leftmost rank depending on whether extend_right() or extend_left()
      *        has been called last.
@@ -785,11 +809,7 @@ public:
     {
         assert(index != nullptr);
         // depth == 0 -> root node
-        assert(depth != 0 ||
-               (fwd_lb == rev_lb &&
-                fwd_rb == rev_rb &&
-                fwd_lb == 0 &&
-                fwd_rb == index->size() - 1));
+        assert(depth != 0 || (fwd_lb == rev_lb && fwd_rb == rev_rb && fwd_lb == 0 && fwd_rb == index->size() - 1));
 
         return depth;
     }
@@ -822,14 +842,14 @@ public:
         cur.parent_rb = parent_rb;
         cur.node = {fwd_lb, fwd_rb, depth, _last_char};
 
-    #ifndef NDEBUG
+#ifndef NDEBUG
         if (!fwd_cursor_last_used)
         {
             // invalidate parent interval
             cur.parent_lb = 1;
             cur.parent_rb = 0;
         }
-    #endif
+#endif
 
         return cur;
     }
@@ -972,10 +992,11 @@ public:
         assert(index != nullptr);
 
         return std::views::iota(fwd_lb, fwd_lb + count())
-             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
-               {
-                   return locate_result_value_type{0u, _offset - index->fwd_fm.index[sa_pos]};
-               });
+             | std::views::transform(
+                   [*this, _offset = offset()](auto sa_pos)
+                   {
+                       return locate_result_value_type{0u, _offset - index->fwd_fm.index[sa_pos]};
+                   });
     }
 
     //!\overload
@@ -985,13 +1006,14 @@ public:
         assert(index != nullptr);
 
         return std::views::iota(fwd_lb, fwd_lb + count())
-             | std::views::transform([*this, _offset = offset()] (auto sa_pos)
-               {
-                   auto loc = _offset - index->fwd_fm.index[sa_pos];
-                   size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
-                   size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);
-                   return locate_result_value_type{sequence_rank-1, sequence_position};
-               });
+             | std::views::transform(
+                   [*this, _offset = offset()](auto sa_pos)
+                   {
+                       auto loc = _offset - index->fwd_fm.index[sa_pos];
+                       size_type sequence_rank = index->fwd_fm.text_begin_rs.rank(loc + 1);
+                       size_type sequence_position = loc - index->fwd_fm.text_begin_ss.select(sequence_rank);
+                       return locate_result_value_type{sequence_rank - 1, sequence_position};
+                   });
     }
 
     /*!\cond DEV

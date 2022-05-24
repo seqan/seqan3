@@ -76,84 +76,66 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr aa20()                         noexcept = default; //!< Defaulted.
-    constexpr aa20(aa20 const &)             noexcept = default; //!< Defaulted.
-    constexpr aa20(aa20 &&)                  noexcept = default; //!< Defaulted.
+    constexpr aa20() noexcept = default;                         //!< Defaulted.
+    constexpr aa20(aa20 const &) noexcept = default;             //!< Defaulted.
+    constexpr aa20(aa20 &&) noexcept = default;                  //!< Defaulted.
     constexpr aa20 & operator=(aa20 const &) noexcept = default; //!< Defaulted.
-    constexpr aa20 & operator=(aa20 &&)      noexcept = default; //!< Defaulted.
-    ~aa20()                                  noexcept = default; //!< Defaulted.
+    constexpr aa20 & operator=(aa20 &&) noexcept = default;      //!< Defaulted.
+    ~aa20() noexcept = default;                                  //!< Defaulted.
 
     using base_t::base_t;
     //!\}
 
 private:
     //!\copydoc seqan3::aa27::rank_to_char_table
-    static constexpr char_type rank_to_char_table[alphabet_size]
-    {
-        'A',
-        'C',
-        'D',
-        'E',
-        'F',
-        'G',
-        'H',
-        'I',
-        'K',
-        'L',
-        'M',
-        'N',
-        'P',
-        'Q',
-        'R',
-        'S',
-        'T',
-        'V',
-        'W',
-        'Y'
-    };
+    static constexpr char_type rank_to_char_table[alphabet_size]{'A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
+                                                                 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y'};
 
     //!\copydoc seqan3::aa27::char_to_rank_table
-    static constexpr std::array<rank_type, 256> char_to_rank_table
+    static constexpr std::array<rank_type, 256> char_to_rank_table{[]() constexpr {std::array<rank_type, 256> ret{};
+
+    // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
+    for (auto & c : ret)
+        c = 15; // value of 'S', because that appears most frequently
+
+    // reverse mapping for characters and their lowercase
+    for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
     {
-        [] () constexpr
-        {
-            std::array<rank_type, 256> ret{};
-
-            // initialize with UNKNOWN (std::array::fill unfortunately not constexpr)
-            for (auto & c : ret)
-                c = 15; // value of 'S', because that appears most frequently
-
-            // reverse mapping for characters and their lowercase
-            for (rank_type rnk = 0u; rnk < alphabet_size; ++rnk)
-            {
-                ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
-                ret[static_cast<rank_type>(to_lower(rank_to_char_table[rnk]))] = rnk;
-            }
-
-            ret['B'] = ret['D']; ret['b'] = ret['D']; // Convert b (either D/N) to D, since D occurs more frequently.
-            ret['J'] = ret['L']; ret['j'] = ret['L']; // Convert j (either I/L) to L, since L occurs more frequently.
-            ret['O'] = ret['L']; ret['o'] = ret['L']; // Convert Pyrrolysine to lysine.
-            ret['U'] = ret['C']; ret['u'] = ret['C']; // Convert Selenocysteine to cysteine.
-            ret['X'] = ret['S']; ret['x'] = ret['S']; // Convert unknown amino acids to serine.
-            ret['Z'] = ret['E']; ret['z'] = ret['E']; // Convert z (either E/Q) to E, since E occurs more frequently.
-            ret['*'] = ret['W']; // The most common stop codon is UGA. This is most similar to a Tryptophan.
-            return ret;
-        }()
-    };
-
-    //!\copydoc seqan3::aa27::rank_to_char
-    static constexpr char_type rank_to_char(rank_type const rank)
-    {
-        return rank_to_char_table[rank];
+        ret[static_cast<rank_type>(rank_to_char_table[rnk])] = rnk;
+        ret[static_cast<rank_type>(to_lower(rank_to_char_table[rnk]))] = rnk;
     }
 
-    //!\copydoc seqan3::aa27::char_to_rank
-    static constexpr rank_type char_to_rank(char_type const chr)
-    {
-        using index_t = std::make_unsigned_t<char_type>;
-        return char_to_rank_table[static_cast<index_t>(chr)];
-    }
-};
+    ret['B'] = ret['D'];
+    ret['b'] = ret['D']; // Convert b (either D/N) to D, since D occurs more frequently.
+    ret['J'] = ret['L'];
+    ret['j'] = ret['L']; // Convert j (either I/L) to L, since L occurs more frequently.
+    ret['O'] = ret['L'];
+    ret['o'] = ret['L']; // Convert Pyrrolysine to lysine.
+    ret['U'] = ret['C'];
+    ret['u'] = ret['C']; // Convert Selenocysteine to cysteine.
+    ret['X'] = ret['S'];
+    ret['x'] = ret['S']; // Convert unknown amino acids to serine.
+    ret['Z'] = ret['E'];
+    ret['z'] = ret['E']; // Convert z (either E/Q) to E, since E occurs more frequently.
+    ret['*'] = ret['W']; // The most common stop codon is UGA. This is most similar to a Tryptophan.
+    return ret;
+}()
+}; // namespace seqan3
+
+//!\copydoc seqan3::aa27::rank_to_char
+static constexpr char_type rank_to_char(rank_type const rank)
+{
+    return rank_to_char_table[rank];
+}
+
+//!\copydoc seqan3::aa27::char_to_rank
+static constexpr rank_type char_to_rank(char_type const chr)
+{
+    using index_t = std::make_unsigned_t<char_type>;
+    return char_to_rank_table[static_cast<index_t>(chr)];
+}
+}
+;
 
 // ------------------------------------------------------------------
 // containers
@@ -213,6 +195,6 @@ inline aa20_vector operator""_aa20(char const * const s, size_t const n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

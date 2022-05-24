@@ -10,7 +10,7 @@
  * \brief Meta-header for the \link alphabet_cigar Alphabet / CIGAR submodule \endlink.
  */
 
- /*!\defgroup alphabet_cigar CIGAR
+/*!\defgroup alphabet_cigar CIGAR
   * \brief Provides (semi-)alphabets for representing elements in CIGAR strings.
   * \ingroup alphabet
   * \see alphabet

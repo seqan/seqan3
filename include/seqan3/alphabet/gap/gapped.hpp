@@ -13,12 +13,11 @@
 
 #pragma once
 
-#include <seqan3/alphabet/gap/gap.hpp>
 #include <seqan3/alphabet/composite/alphabet_variant.hpp>
+#include <seqan3/alphabet/gap/gap.hpp>
 
 namespace seqan3
 {
-
 
 /*!\brief Extends a given alphabet with a gap character.
  * \ingroup alphabet_gap

@@ -63,11 +63,12 @@ namespace seqan3::views
  *
  * \stableapi{Since version 3.1.}
  */
-inline auto const to_rank = deep{std::views::transform([] (auto const in) noexcept
-{
-    static_assert(semialphabet<decltype(in)>,
-                  "The value type of seqan3::views::to_rank must model the seqan3::alphabet.");
-    return seqan3::to_rank(in);
-})};
+inline auto const to_rank = deep{std::views::transform(
+    [](auto const in) noexcept
+    {
+        static_assert(semialphabet<decltype(in)>,
+                      "The value type of seqan3::views::to_rank must model the seqan3::alphabet.");
+        return seqan3::to_rank(in);
+    })};
 
 } // namespace seqan3::views

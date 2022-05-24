@@ -14,7 +14,7 @@
  * \brief A special sub namespace for the alignment configurations.
  */
 
- /*!\if DEV
+/*!\if DEV
   * \namespace seqan3::align_cfg::detail
   * \copydoc seqan3::detail
   * \endif

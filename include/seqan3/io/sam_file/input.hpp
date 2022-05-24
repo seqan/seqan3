@@ -111,53 +111,55 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept sam_file_input_traits = requires (t v)
-{
-    // field::seq
-    requires writable_alphabet<typename t::sequence_alphabet>;
-    requires writable_alphabet<typename t::sequence_legal_alphabet>;
-    requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
+concept sam_file_input_traits =
+    requires (t v) {
+        // field::seq
+        requires writable_alphabet<typename t::sequence_alphabet>;
+        requires writable_alphabet<typename t::sequence_legal_alphabet>;
+        requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+        requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
-    // field::id
-    requires sequence_container<typename t::template id_container<char>>;
+        // field::id
+        requires sequence_container<typename t::template id_container<char>>;
 
-    // field::qual
-    requires writable_quality_alphabet<typename t::quality_alphabet>;
-    requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
+        // field::qual
+        requires writable_quality_alphabet<typename t::quality_alphabet>;
+        requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
 
-    // field::ref_seq
-    // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
-    requires std::same_as<typename t::ref_sequences, ref_info_not_given> || requires ()
-    {
-        requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_sequences>>>;
+        // field::ref_seq
+        // either ref_info_not_given or a range over ranges over alphabet (e.g. std::vector<dna4_vector>)
+        requires std::same_as<typename t::ref_sequences, ref_info_not_given>
+                     || requires () {
+                            requires alphabet<std::ranges::range_reference_t<
+                                std::ranges::range_reference_t<typename t::ref_sequences>>>;
+                        };
+
+        // field::ref_id
+        requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>
+                     && (!std::same_as<typename t::ref_sequences, ref_info_not_given>
+                         || writable_alphabet<
+                             std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>);
+        requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
+        requires std::ranges::forward_range<typename t::ref_ids>;
+
+        // field::offset is fixed to int32_t
+        // field::ref_offset is fixed to std::optional<int32_t>
+        // field::flag is fixed to seqan3::sam_flag
+        // field::mapq is fixed to uint8_t
+        // field::evalue is fixed to double
+        // field::bitscore is fixed to double
+        // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
+
+        // field::alignment
+        // the alignment type cannot be configured.
+        // Type of tuple entry 1 (reference) is set to
+        // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
+        // or 2) a "dummy" sequence type:
+        // views::repeat_n(sequence_alphabet{}, size_t{}) | std::views::transform(detail::access_restrictor_fn{})
+        // Type of tuple entry 2 (query) is set to
+        // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
+        // or 2) a "dummy" sequence type:
     };
-
-    // field::ref_id
-    requires alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>> &&
-             (!std::same_as<typename t::ref_sequences, ref_info_not_given> ||
-              writable_alphabet<std::ranges::range_reference_t<std::ranges::range_reference_t<typename t::ref_ids>>>);
-    requires std::ranges::forward_range<std::ranges::range_reference_t<typename t::ref_ids>>;
-    requires std::ranges::forward_range<typename t::ref_ids>;
-
-    // field::offset is fixed to int32_t
-    // field::ref_offset is fixed to std::optional<int32_t>
-    // field::flag is fixed to seqan3::sam_flag
-    // field::mapq is fixed to uint8_t
-    // field::evalue is fixed to double
-    // field::bitscore is fixed to double
-    // field::mate is fixed to std::tuple<ref_id_container<ref_id_alphabet>, ref_offset_type, int32_t>
-
-    // field::alignment
-    // the alignment type cannot be configured.
-    // Type of tuple entry 1 (reference) is set to
-    // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
-    // or 2) a "dummy" sequence type:
-    // views::repeat_n(sequence_alphabet{}, size_t{}) | std::views::transform(detail::access_restrictor_fn{})
-    // Type of tuple entry 2 (query) is set to
-    // 1) a std::ranges::subrange over std::ranges::range_value_t<typename t::ref_sequences> if reference information was given
-    // or 2) a "dummy" sequence type:
-};
 //!\endcond
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -188,31 +190,31 @@ struct sam_file_input_default_traits
      */
 
     //!\brief The sequence alphabet is seqan3::dna5.
-    using sequence_alphabet                     = dna5;
+    using sequence_alphabet = dna5;
 
     //!\brief The legal sequence alphabet for parsing is seqan3::dna15.
-    using sequence_legal_alphabet               = dna15;
+    using sequence_legal_alphabet = dna15;
 
     //!\brief The container for a sequence is std::vector.
     template <typename _sequence_alphabet>
-    using sequence_container                    = std::vector<_sequence_alphabet>;
+    using sequence_container = std::vector<_sequence_alphabet>;
 
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
-    using id_container                          = std::basic_string<_id_alphabet>;
+    using id_container = std::basic_string<_id_alphabet>;
 
     //!\brief The alphabet for a quality annotation is seqan3::phred42.
-    using quality_alphabet                      = phred42;
+    using quality_alphabet = phred42;
 
     //!\brief The string type for a quality annotation is std::vector.
     template <typename _quality_alphabet>
-    using quality_container                     = std::vector<_quality_alphabet>;
+    using quality_container = std::vector<_quality_alphabet>;
 
     //!\brief The type of the reference sequences is deduced on construction.
-    using ref_sequences                         = ref_sequences_t;
+    using ref_sequences = ref_sequences_t;
 
     //!\brief The type of the reference identifiers is deduced on construction.
-    using ref_ids                               = ref_ids_t;
+    using ref_ids = ref_ids_t;
     //!\}
 };
 
@@ -235,22 +237,21 @@ struct sam_file_input_default_traits
  *
  * \remark For a complete overview, take a look at \ref io_sam_file
  */
-template <
-    sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,
-    detail::fields_specialisation selected_field_ids_ = fields<field::seq,
-                                                               field::id,
-                                                               field::offset,
-                                                               field::ref_id,
-                                                               field::ref_offset,
-                                                               field::alignment,
-                                                               field::cigar,
-                                                               field::mapq,
-                                                               field::qual,
-                                                               field::flag,
-                                                               field::mate,
-                                                               field::tags,
-                                                               field::header_ptr>,
-    detail::type_list_of_sam_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
+template <sam_file_input_traits traits_type_ = sam_file_input_default_traits<>,
+          detail::fields_specialisation selected_field_ids_ = fields<field::seq,
+                                                                     field::id,
+                                                                     field::offset,
+                                                                     field::ref_id,
+                                                                     field::ref_offset,
+                                                                     field::alignment,
+                                                                     field::cigar,
+                                                                     field::mapq,
+                                                                     field::qual,
+                                                                     field::flag,
+                                                                     field::mate,
+                                                                     field::tags,
+                                                                     field::header_ptr>,
+          detail::type_list_of_sam_file_input_formats valid_formats_ = type_list<format_sam, format_bam>>
 class sam_file_input
 {
 public:
@@ -259,29 +260,29 @@ public:
      * \{
      */
     //!\brief A traits type that defines aliases and template for storage of the fields.
-    using traits_type           = traits_type_;
+    using traits_type = traits_type_;
     //!\brief A seqan3::fields list with the fields selected for the record.
-    using selected_field_ids    = selected_field_ids_;
+    using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
-    using valid_formats         = valid_formats_;
+    using valid_formats = valid_formats_;
     //!\brief Character type of the stream(s).
-    using stream_char_type      = char;
+    using stream_char_type = char;
     //!\}
 
 private:
     //!\brief The dummy ref sequence type if no reference information were given.
-    using dummy_ref_type = decltype(views::repeat_n(typename traits_type::sequence_alphabet{}, size_t{}) |
-                                    std::views::transform(detail::access_restrictor_fn{}));
+    using dummy_ref_type = decltype(views::repeat_n(typename traits_type::sequence_alphabet{}, size_t{})
+                                    | std::views::transform(detail::access_restrictor_fn{}));
 
     //!\brief The unsliced ref sequence type if reference information were given.
-    using ref_sequence_unsliced_type =
-        detail::lazy_conditional_t<std::ranges::range<typename traits_type::ref_sequences const>,
-                                  detail::lazy<std::ranges::range_reference_t,
-                                               typename traits_type::ref_sequences const>,
-                                  dummy_ref_type>;
+    using ref_sequence_unsliced_type = detail::lazy_conditional_t<
+        std::ranges::range<typename traits_type::ref_sequences const>,
+        detail::lazy<std::ranges::range_reference_t, typename traits_type::ref_sequences const>,
+        dummy_ref_type>;
 
     //!\brief The ref sequence type if reference information were given.
     using ref_sequence_sliced_type = decltype(std::declval<ref_sequence_unsliced_type>() | views::slice(0, 0));
+
 public:
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -289,12 +290,11 @@ public:
      * \{
      */
     //!\brief The type of field::seq (default std::vector<seqan3::dna5>).
-    using sequence_type            = typename traits_type::template sequence_container<
-                                         typename traits_type::sequence_alphabet>;
+    using sequence_type = typename traits_type::template sequence_container<typename traits_type::sequence_alphabet>;
     //!\brief The type of field::id (default std::string by default).
-    using id_type                  = typename traits_type::template id_container<char>;
+    using id_type = typename traits_type::template id_container<char>;
     //!\brief The type of field::offset is fixed to int32_t.
-    using offset_type              = int32_t;
+    using offset_type = int32_t;
     /*!\brief The type of field::ref_seq (default depends on construction).
      *
      * If no reference information are given on construction, this type deduces to a sized view that throws on
@@ -311,36 +311,33 @@ public:
      *
      * \attention SeqaAn3 transforms the 1-based SAM format position into a 0-based position.
      */
-    using ref_id_type              = std::optional<int32_t>;
+    using ref_id_type = std::optional<int32_t>;
     /*!\brief The type of field::ref_offset is fixed to a std::optional<int32_t>.
      *
      * The SAM format is 1-based and a 0 in the ref_offset field indicated an unmapped read. Since we convert 1-based
      * positions to 0-based positions when reading the SAM format, we model the ref_offset_type as a std::optional.
      * If the input value is 0, the std::optional will remain valueless.
      */
-    using ref_offset_type          = std::optional<int32_t>;
+    using ref_offset_type = std::optional<int32_t>;
     //!\brief The type of field::mapq is fixed to uint8_t.
-    using mapq_type                = uint8_t;
+    using mapq_type = uint8_t;
     //!\brief The type of field::qual (default std::vector<seqan3::phred42>).
-    using quality_type             = typename traits_type::template quality_container<
-                                         typename traits_type::quality_alphabet>;
+    using quality_type = typename traits_type::template quality_container<typename traits_type::quality_alphabet>;
     //!\brief The type of field::flag is fixed to seqan3::sam_flag.
-    using flag_type                = sam_flag;
+    using flag_type = sam_flag;
     //!\brief The type of field::cigar is fixed to std::vector<cigar>.
-    using cigar_type               = std::vector<cigar>;
+    using cigar_type = std::vector<cigar>;
     //!\brief The type of field::mate is fixed to std::tuple<ref_id_type, ref_offset_type, int32_t>).
-    using mate_type                = std::tuple<ref_id_type, ref_offset_type, int32_t>;
+    using mate_type = std::tuple<ref_id_type, ref_offset_type, int32_t>;
     //!\brief The type of field::header_ptr (default: sam_file_header<typename traits_type::ref_ids>).
-    using header_type              = sam_file_header<typename traits_type::ref_ids>;
+    using header_type = sam_file_header<typename traits_type::ref_ids>;
 
 private:
     //!\brief The type of the aligned query sequence (second type of the pair of alignment_type).
     using alignment_query_type = std::conditional_t<
-                                     selected_field_ids::contains(field::seq),
-                                     gap_decorator<
-                                         decltype(std::declval<sequence_type &>() | views::slice(0, 0))>,
-                                     typename traits_type::template sequence_container<
-                                         gapped<typename traits_type::sequence_alphabet>>>;
+        selected_field_ids::contains(field::seq),
+        gap_decorator<decltype(std::declval<sequence_type &>() | views::slice(0, 0))>,
+        typename traits_type::template sequence_container<gapped<typename traits_type::sequence_alphabet>>>;
 
 public:
     //!\brief The type of field::alignment (default: std::pair<std::vector<gapped<dna5>>, std::vector<gapped<dna5>>>).
@@ -396,19 +393,19 @@ public:
                              field::tags,
                              field::header_ptr>;
 
-    static_assert([] () constexpr
-                  {
-                      for (field f : selected_field_ids::as_array)
-                          if (!field_ids::contains(f))
-                              return false;
-                      return true;
-                  }(),
-                  "You selected a field that is not valid for alignment files, please refer to the documentation "
-                  "of sam_file_input::field_ids for the accepted values.");
+    static_assert(
+        []() constexpr {
+            for (field f : selected_field_ids::as_array)
+                if (!field_ids::contains(f))
+                    return false;
+            return true;
+        }(),
+        "You selected a field that is not valid for alignment files, please refer to the documentation "
+        "of sam_file_input::field_ids for the accepted values.");
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
-    using record_type = sam_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
-                                   selected_field_ids>;
+    using record_type =
+        sam_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>, selected_field_ids>;
     //!\}
 
     /*!\name Range associated types
@@ -416,21 +413,21 @@ public:
      * \{
      */
     //!\brief The value_type is the \ref record_type.
-    using value_type        = record_type;
+    using value_type = record_type;
     //!\brief The reference type.
-    using reference         = record_type &;
+    using reference = record_type &;
     //!\brief The const_reference type is void because files are not const-iterable.
-    using const_reference   = void;
+    using const_reference = void;
     //!\brief An unsigned integer type, usually std::size_t.
-    using size_type         = size_t;
+    using size_type = size_t;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::make_signed_t<size_t>;
+    using difference_type = std::make_signed_t<size_t>;
     //!\brief The iterator type of this view (an input iterator).
-    using iterator          = detail::in_file_iterator<sam_file_input>;
+    using iterator = detail::in_file_iterator<sam_file_input>;
     //!\brief The const iterator type is void because files are not const-iterable.
-    using const_iterator    = void;
+    using const_iterator = void;
     //!\brief The type returned by end().
-    using sentinel          = std::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -731,8 +728,8 @@ protected:
     void init_by_filename(std::filesystem::path filename)
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
-        static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
-                                                                             std::ios_base::in | std::ios::binary);
+        static_cast<std::basic_ifstream<char> *>(primary_stream.get())
+            ->open(filename, std::ios_base::in | std::ios::binary);
         // open stream
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
@@ -771,11 +768,15 @@ protected:
      */
     //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
     using stream_ptr_t = std::unique_ptr<std::basic_istream<stream_char_type>,
-                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
+                                         std::function<void(std::basic_istream<stream_char_type> *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_istream<stream_char_type> *) {}
+    static void stream_deleter_noop(std::basic_istream<stream_char_type> *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
+    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr)
+    {
+        delete ptr;
+    }
 
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
     stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
@@ -788,8 +789,7 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, a std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::sam_file_input_format_exposer>::type;
+    using format_type = typename detail::variant_from_tags<valid_formats, detail::sam_file_input_format_exposer>::type;
 
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
@@ -824,10 +824,9 @@ protected:
         {
             header_ptr->ref_id_info.emplace_back(std::ranges::distance(ref_sequences[idx]), "");
 
-            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<
-                                                            typename traits_type::ref_ids>> &&
-                          std::ranges::sized_range<std::ranges::range_reference_t<typename traits_type::ref_ids>> &&
-                          std::ranges::borrowed_range<std::ranges::range_reference_t<typename traits_type::ref_ids>>)
+            if constexpr (std::ranges::contiguous_range<std::ranges::range_reference_t<typename traits_type::ref_ids>>
+                          && std::ranges::sized_range<std::ranges::range_reference_t<typename traits_type::ref_ids>>
+                          && std::ranges::borrowed_range<std::ranges::range_reference_t<typename traits_type::ref_ids>>)
             {
                 auto && id = header_ptr->ref_ids()[idx];
                 header_ptr->ref_dict[std::span{std::ranges::data(id), std::ranges::size(id)}] = idx;
@@ -848,38 +847,40 @@ protected:
         detail::get_or_ignore<field::header_ptr>(record_buffer) = header_ptr.get();
 
         // at end if we could not read further
-        if (std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
-            std::istreambuf_iterator<stream_char_type>{})
+        if (std::istreambuf_iterator<stream_char_type>{*secondary_stream}
+            == std::istreambuf_iterator<stream_char_type>{})
         {
             at_end = true;
             return;
         }
 
-        auto call_read_func = [this] (auto & ref_seq_info)
+        auto call_read_func = [this](auto & ref_seq_info)
         {
-            std::visit([&] (auto & f)
-            {
-                f.read_alignment_record(*secondary_stream,
-                                        options,
-                                        ref_seq_info,
-                                        *header_ptr,
-                                        position_buffer,
-                                        detail::get_or_ignore<field::seq>(record_buffer),
-                                        detail::get_or_ignore<field::qual>(record_buffer),
-                                        detail::get_or_ignore<field::id>(record_buffer),
-                                        detail::get_or_ignore<field::offset>(record_buffer),
-                                        detail::get_or_ignore<field::ref_seq>(record_buffer),
-                                        detail::get_or_ignore<field::ref_id>(record_buffer),
-                                        detail::get_or_ignore<field::ref_offset>(record_buffer),
-                                        detail::get_or_ignore<field::alignment>(record_buffer),
-                                        detail::get_or_ignore<field::cigar>(record_buffer),
-                                        detail::get_or_ignore<field::flag>(record_buffer),
-                                        detail::get_or_ignore<field::mapq>(record_buffer),
-                                        detail::get_or_ignore<field::mate>(record_buffer),
-                                        detail::get_or_ignore<field::tags>(record_buffer),
-                                        detail::get_or_ignore<field::evalue>(record_buffer),
-                                        detail::get_or_ignore<field::bit_score>(record_buffer));
-            }, format);
+            std::visit(
+                [&](auto & f)
+                {
+                    f.read_alignment_record(*secondary_stream,
+                                            options,
+                                            ref_seq_info,
+                                            *header_ptr,
+                                            position_buffer,
+                                            detail::get_or_ignore<field::seq>(record_buffer),
+                                            detail::get_or_ignore<field::qual>(record_buffer),
+                                            detail::get_or_ignore<field::id>(record_buffer),
+                                            detail::get_or_ignore<field::offset>(record_buffer),
+                                            detail::get_or_ignore<field::ref_seq>(record_buffer),
+                                            detail::get_or_ignore<field::ref_id>(record_buffer),
+                                            detail::get_or_ignore<field::ref_offset>(record_buffer),
+                                            detail::get_or_ignore<field::alignment>(record_buffer),
+                                            detail::get_or_ignore<field::cigar>(record_buffer),
+                                            detail::get_or_ignore<field::flag>(record_buffer),
+                                            detail::get_or_ignore<field::mapq>(record_buffer),
+                                            detail::get_or_ignore<field::mate>(record_buffer),
+                                            detail::get_or_ignore<field::tags>(record_buffer),
+                                            detail::get_or_ignore<field::evalue>(record_buffer),
+                                            detail::get_or_ignore<field::bit_score>(record_buffer));
+                },
+                format);
         };
 
         assert(!format.valueless_by_exception());
@@ -915,14 +916,14 @@ sam_file_input(stream_type & stream, file_format const &, selected_field_ids con
 //!\brief Deduce file_format, and default the rest.
 template <input_stream stream_type, sam_file_input_format file_format>
 sam_file_input(stream_type && stream, file_format const &)
-    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+    -> sam_file_input<typename sam_file_input<>::traits_type,        // actually use the default
                       typename sam_file_input<>::selected_field_ids, // actually use the default
                       type_list<file_format>>;
 
 //!\brief Deduce file_format, and default the rest.
 template <input_stream stream_type, sam_file_input_format file_format>
 sam_file_input(stream_type & stream, file_format const &)
-    -> sam_file_input<typename sam_file_input<>::traits_type, // actually use the default
+    -> sam_file_input<typename sam_file_input<>::traits_type,        // actually use the default
                       typename sam_file_input<>::selected_field_ids, // actually use the default
                       type_list<file_format>>;
 
@@ -931,19 +932,17 @@ template <std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           detail::fields_specialisation selected_field_ids>
 sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &, selected_field_ids const &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      selected_field_ids,
-                      typename sam_file_input<>::valid_formats>;  // actually use the default
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        selected_field_ids,
+        typename sam_file_input<>::valid_formats>; // actually use the default
 
 //!\brief Deduce ref_sequences_t and ref_ids_t, default the rest.
-template <std::ranges::forward_range ref_ids_t,
-          std::ranges::forward_range ref_sequences_t>
-sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      typename sam_file_input<>::selected_field_ids, // actually use the default
-                      typename sam_file_input<>::valid_formats>;     // actually use the default
+template <std::ranges::forward_range ref_ids_t, std::ranges::forward_range ref_sequences_t>
+sam_file_input(std::filesystem::path path, ref_ids_t &, ref_sequences_t &) -> sam_file_input<
+    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+    typename sam_file_input<>::selected_field_ids, // actually use the default
+    typename sam_file_input<>::valid_formats>;     // actually use the default
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
@@ -952,10 +951,10 @@ template <input_stream stream_type,
           sam_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
 sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &, selected_field_ids const &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      selected_field_ids,
-                      type_list<file_format>>;
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        selected_field_ids,
+        type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
@@ -964,32 +963,30 @@ template <input_stream stream_type,
           sam_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
 sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &, selected_field_ids const &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      selected_field_ids,
-                      type_list<file_format>>;
+    -> sam_file_input<
+        sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+        selected_field_ids,
+        type_list<file_format>>;
 
 //!\brief Deduce ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           sam_file_input_format file_format>
-sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      typename sam_file_input<>::selected_field_ids, // actually use the default
-                      type_list<file_format>>;
+sam_file_input(stream_type && stream, ref_ids_t &, ref_sequences_t &, file_format const &) -> sam_file_input<
+    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+    typename sam_file_input<>::selected_field_ids, // actually use the default
+    type_list<file_format>>;
 
 //!\brief Deduce selected fields, ref_sequences_t and ref_ids_t, and file format.
 template <input_stream stream_type,
           std::ranges::forward_range ref_ids_t,
           std::ranges::forward_range ref_sequences_t,
           sam_file_input_format file_format>
-sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &)
-    -> sam_file_input<sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>,
-                                                    std::remove_reference_t<ref_ids_t>>,
-                      typename sam_file_input<>::selected_field_ids, // actually use the default
-                      type_list<file_format>>;
+sam_file_input(stream_type & stream, ref_ids_t &, ref_sequences_t &, file_format const &) -> sam_file_input<
+    sam_file_input_default_traits<std::remove_reference_t<ref_sequences_t>, std::remove_reference_t<ref_ids_t>>,
+    typename sam_file_input<>::selected_field_ids, // actually use the default
+    type_list<file_format>>;
 //!\}
 
 } // namespace seqan3

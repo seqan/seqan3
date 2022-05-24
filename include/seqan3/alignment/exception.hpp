@@ -26,14 +26,14 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    gap_erase_failure(std::string const & s) : std::logic_error{s} {}
+    gap_erase_failure(std::string const & s) : std::logic_error{s}
+    {}
 };
 
 //!\brief Thrown if the configuration of the alignment algorithm is invalid.
 class invalid_alignment_configuration : public std::invalid_argument
 {
 public:
-
     /*!\brief The constructor.
      * \param[in] s The error message.
      */

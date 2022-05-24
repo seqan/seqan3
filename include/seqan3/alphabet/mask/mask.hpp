@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cassert>
+
 #include <seqan3/alphabet/alphabet_base.hpp>
 
 namespace seqan3
@@ -74,6 +75,6 @@ public:
     //!\}
 };
 
-mask constexpr mask::unmasked{mask{}.assign_rank(0)};
-mask constexpr mask::masked{mask{}.assign_rank(1)};
+constexpr mask mask::unmasked{mask{}.assign_rank(0)};
+constexpr mask mask::masked{mask{}.assign_rank(1)};
 } // namespace seqan3

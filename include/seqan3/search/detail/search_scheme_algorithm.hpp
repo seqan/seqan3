@@ -31,7 +31,7 @@ namespace seqan3::detail
  * \tparam index_t The type of index; index_t::cursor_type must model seqan3::detail::template_specialisation_of
  *                 a seqan3::bi_fm_index_cursor.
  */
-template <typename configuration_t, typename index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename... policies_t>
     requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
 class search_scheme_algorithm : protected policies_t...
 {
@@ -47,12 +47,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    search_scheme_algorithm() = default; //!< Defaulted.
-    search_scheme_algorithm(search_scheme_algorithm const &) = default; //!< Defaulted.
-    search_scheme_algorithm(search_scheme_algorithm &&) = default; //!< Defaulted.
+    search_scheme_algorithm() = default;                                            //!< Defaulted.
+    search_scheme_algorithm(search_scheme_algorithm const &) = default;             //!< Defaulted.
+    search_scheme_algorithm(search_scheme_algorithm &&) = default;                  //!< Defaulted.
     search_scheme_algorithm & operator=(search_scheme_algorithm const &) = default; //!< Defaulted.
-    search_scheme_algorithm & operator=(search_scheme_algorithm &&) = default; //!< Defaulted.
-    ~search_scheme_algorithm() = default; //!< Defaulted.
+    search_scheme_algorithm & operator=(search_scheme_algorithm &&) = default;      //!< Defaulted.
+    ~search_scheme_algorithm() = default;                                           //!< Defaulted.
 
     /*!\brief Constructs from a configuration object and an index.
      * \tparam configuration_t The search configuration type.
@@ -93,9 +93,9 @@ public:
      * \f$O(|query|^e)\f$ where \f$e\f$ is the total number of maximum errors.
      */
     template <tuple_like indexed_query_t, typename callback_t>
-        requires (std::tuple_size_v<indexed_query_t> == 2) &&
-                 std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>> &&
-                 std::invocable<callback_t, search_result_type>
+        requires (std::tuple_size_v<indexed_query_t> == 2)
+              && std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>>
+              && std::invocable<callback_t, search_result_type>
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;
@@ -103,7 +103,7 @@ public:
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
         std::vector<typename index_t::cursor_type> internal_hits{};
-        auto on_hit_delegate = [&internal_hits] (auto const & it)
+        auto on_hit_delegate = [&internal_hits](auto const & it)
         {
             internal_hits.push_back(it);
         };
@@ -219,22 +219,22 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 {
     using blocks_length_type = typename search_scheme_t::value_type::blocks_length_type;
 
-    bool constexpr is_dyn_scheme = std::same_as<search_scheme_t, search_scheme_dyn_type>;
+    constexpr bool is_dyn_scheme = std::same_as<search_scheme_t, search_scheme_dyn_type>;
 
     // Either store information in an array (for search schemes known at compile time) or in a vector otherwise.
-    using result_type = std::conditional_t<is_dyn_scheme,
-                                           std::vector<std::tuple<blocks_length_type, size_t>>,
-                                           std::array<std::tuple<blocks_length_type, size_t>,
-                                                      transformation_trait_or_t<std::tuple_size<search_scheme_t>,
-                                                                                std::false_type>::value>>;
+    using result_type = std::conditional_t<
+        is_dyn_scheme,
+        std::vector<std::tuple<blocks_length_type, size_t>>,
+        std::array<std::tuple<blocks_length_type, size_t>,
+                   transformation_trait_or_t<std::tuple_size<search_scheme_t>, std::false_type>::value>>;
 
     result_type result;
     if constexpr (is_dyn_scheme)
         result.resize(search_scheme.size());
 
-    uint8_t const blocks      {search_scheme[0].blocks()};
-    size_t  const block_length{query_length / blocks};
-    uint8_t const rest        {static_cast<uint8_t>(query_length % blocks)};
+    uint8_t const blocks{search_scheme[0].blocks()};
+    size_t const block_length{query_length / blocks};
+    uint8_t const rest{static_cast<uint8_t>(query_length % blocks)};
 
     blocks_length_type blocks_length;
     // set all blocks_length values to block_length
@@ -271,12 +271,23 @@ inline auto search_scheme_block_info(search_scheme_t const & search_scheme, size
 
 //!\cond
 // forward declaration
-template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit,
+          typename cursor_t,
+          typename query_t,
+          typename search_t,
+          typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss(cursor_t cur, query_t & query,
-                      typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
-                      uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
-                      blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate);
+inline bool search_ss(cursor_t cur,
+                      query_t & query,
+                      typename cursor_t::size_type const lb,
+                      typename cursor_t::size_type const rb,
+                      uint8_t const errors_spent,
+                      uint8_t const block_id,
+                      bool const go_right,
+                      search_t const & search,
+                      blocks_length_t const & blocks_length,
+                      search_param const error_left,
+                      delegate_t && delegate);
 //!\endcond
 
 /*!\brief Searches a query sequence in a bidirectional index using a single search of a search scheme.
@@ -310,13 +321,23 @@ inline bool search_ss(cursor_t cur, query_t & query,
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit,
+          typename cursor_t,
+          typename query_t,
+          typename search_t,
+          typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_exact(cursor_t cur, query_t & query,
-                            typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
-                            uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
-                            search_t const & search, blocks_length_t const & blocks_length,
-                            search_param const error_left, delegate_t && delegate)
+inline bool search_ss_exact(cursor_t cur,
+                            query_t & query,
+                            typename cursor_t::size_type const lb,
+                            typename cursor_t::size_type const rb,
+                            uint8_t const errors_spent,
+                            uint8_t const block_id,
+                            bool const go_right,
+                            search_t const & search,
+                            blocks_length_t const & blocks_length,
+                            search_param const error_left,
+                            delegate_t && delegate)
 {
     using size_type = typename cursor_t::size_type;
 
@@ -325,14 +346,24 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
 
     if (go_right)
     {
-        size_type const infix_lb = rb - 1; // inclusive
+        size_type const infix_lb = rb - 1;                           // inclusive
         size_type const infix_rb = lb + blocks_length[block_id] - 1; // exclusive
 
         if (!cur.extend_right(query | views::slice(infix_lb, infix_rb + 1)))
             return false;
 
-        if (search_ss<abort_on_hit>(cur, query, lb, infix_rb + 2, errors_spent, block_id2, go_right2, search,
-                                    blocks_length, error_left, delegate) && abort_on_hit)
+        if (search_ss<abort_on_hit>(cur,
+                                    query,
+                                    lb,
+                                    infix_rb + 2,
+                                    errors_spent,
+                                    block_id2,
+                                    go_right2,
+                                    search,
+                                    blocks_length,
+                                    error_left,
+                                    delegate)
+            && abort_on_hit)
         {
             return true;
         }
@@ -340,13 +371,23 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
     else
     {
         size_type const infix_lb = rb - blocks_length[block_id] - 1; // inclusive
-        size_type const infix_rb = lb - 1; // inclusive
+        size_type const infix_rb = lb - 1;                           // inclusive
 
         if (!cur.extend_left(query | views::slice(infix_lb, infix_rb + 1)))
             return false;
 
-        if (search_ss<abort_on_hit>(cur, query, infix_lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
-                                    error_left, delegate) && abort_on_hit)
+        if (search_ss<abort_on_hit>(cur,
+                                    query,
+                                    infix_lb,
+                                    rb,
+                                    errors_spent,
+                                    block_id2,
+                                    go_right2,
+                                    search,
+                                    blocks_length,
+                                    error_left,
+                                    delegate)
+            && abort_on_hit)
         {
             return true;
         }
@@ -360,13 +401,23 @@ inline bool search_ss_exact(cursor_t cur, query_t & query,
  *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit,
+          typename cursor_t,
+          typename query_t,
+          typename search_t,
+          typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_deletion(cursor_t cur, query_t & query,
-                               typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
-                               uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
-                               search_t const & search, blocks_length_t const & blocks_length,
-                               search_param const error_left, delegate_t && delegate)
+inline bool search_ss_deletion(cursor_t cur,
+                               query_t & query,
+                               typename cursor_t::size_type const lb,
+                               typename cursor_t::size_type const rb,
+                               uint8_t const errors_spent,
+                               uint8_t const block_id,
+                               bool const go_right,
+                               search_t const & search,
+                               blocks_length_t const & blocks_length,
+                               search_param const error_left,
+                               delegate_t && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0);
@@ -377,8 +428,18 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
         bool const go_right2 = block_id2 == 0 ? true : search.pi[block_id2] > search.pi[block_id2 - 1];
 
-        if (search_ss<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id2, go_right2, search, blocks_length,
-                                    error_left, delegate) && abort_on_hit)
+        if (search_ss<abort_on_hit>(cur,
+                                    query,
+                                    lb,
+                                    rb,
+                                    errors_spent,
+                                    block_id2,
+                                    go_right2,
+                                    search,
+                                    blocks_length,
+                                    error_left,
+                                    delegate)
+            && abort_on_hit)
         {
             return true;
         }
@@ -387,22 +448,32 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
     // Insert deletions into the current block as long as possible
     // Do not allow deletions at the beginning of the leftmost block
     // Do not allow deletions at the end of the rightmost block
-    if (!(search.pi[block_id] == 1 && !go_right) &&
-        !(search.pi[block_id] == search.blocks() && go_right) &&
-        max_error_left_in_block > 0 && error_left.total > 0 && error_left.deletion > 0 &&
-        ((go_right && cur.extend_right()) || (!go_right && cur.extend_left())))
+    if (!(search.pi[block_id] == 1 && !go_right) && !(search.pi[block_id] == search.blocks() && go_right)
+        && max_error_left_in_block > 0 && error_left.total > 0 && error_left.deletion > 0
+        && ((go_right && cur.extend_right()) || (!go_right && cur.extend_left())))
     {
         search_param error_left2{error_left};
         error_left2.total--;
         error_left2.deletion--;
         do
         {
-            if (search_ss_deletion<abort_on_hit>(cur, query, lb, rb, errors_spent + 1, block_id, go_right, search,
-                                                 blocks_length, error_left2, delegate) && abort_on_hit)
+            if (search_ss_deletion<abort_on_hit>(cur,
+                                                 query,
+                                                 lb,
+                                                 rb,
+                                                 errors_spent + 1,
+                                                 block_id,
+                                                 go_right,
+                                                 search,
+                                                 blocks_length,
+                                                 error_left2,
+                                                 delegate)
+                && abort_on_hit)
             {
                 return true;
             }
-        } while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
+        }
+        while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
     }
     return false;
 }
@@ -415,13 +486,23 @@ inline bool search_ss_deletion(cursor_t cur, query_t & query,
  *
  * \param[in] min_error_left_in_block Number of remaining errors that need to be spent in the current block.
  */
-template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t, typename blocks_length_t,
+template <bool abort_on_hit,
+          typename cursor_t,
+          typename query_t,
+          typename search_t,
+          typename blocks_length_t,
           typename delegate_t>
-inline bool search_ss_children(cursor_t cur, query_t & query,
-                               typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
-                               uint8_t const errors_spent, uint8_t const block_id, bool const go_right,
-                               uint8_t const min_error_left_in_block, search_t const & search,
-                               blocks_length_t const & blocks_length, search_param const error_left,
+inline bool search_ss_children(cursor_t cur,
+                               query_t & query,
+                               typename cursor_t::size_type const lb,
+                               typename cursor_t::size_type const rb,
+                               uint8_t const errors_spent,
+                               uint8_t const block_id,
+                               bool const go_right,
+                               uint8_t const min_error_left_in_block,
+                               search_t const & search,
+                               blocks_length_t const & blocks_length,
+                               search_param const error_left,
                                delegate_t && delegate)
 {
     using size_type = typename cursor_t::size_type;
@@ -456,9 +537,18 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
                     // Thus do not change the direction (go_right) yet.
                     if (error_left.deletion > 0)
                     {
-                        if (search_ss_deletion<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id,
-                                                             go_right, search, blocks_length, error_left2, delegate) &&
-                            abort_on_hit)
+                        if (search_ss_deletion<abort_on_hit>(cur,
+                                                             query,
+                                                             lb2,
+                                                             rb2,
+                                                             errors_spent + delta,
+                                                             block_id,
+                                                             go_right,
+                                                             search,
+                                                             blocks_length,
+                                                             error_left2,
+                                                             delegate)
+                            && abort_on_hit)
                         {
                             return true;
                         }
@@ -468,9 +558,18 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
                         uint8_t const block_id2 = std::min<uint8_t>(block_id + 1, search.blocks() - 1);
                         bool const go_right2 = block_id2 == 0 ? true : search.pi[block_id2] > search.pi[block_id2 - 1];
 
-                        if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id2, go_right2,
-                                                    search, blocks_length, error_left2, delegate) &&
-                            abort_on_hit)
+                        if (search_ss<abort_on_hit>(cur,
+                                                    query,
+                                                    lb2,
+                                                    rb2,
+                                                    errors_spent + delta,
+                                                    block_id2,
+                                                    go_right2,
+                                                    search,
+                                                    blocks_length,
+                                                    error_left2,
+                                                    delegate)
+                            && abort_on_hit)
                         {
                             return true;
                         }
@@ -478,8 +577,18 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
                 }
                 else
                 {
-                    if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + delta, block_id, go_right, search,
-                                                blocks_length, error_left2, delegate) && abort_on_hit)
+                    if (search_ss<abort_on_hit>(cur,
+                                                query,
+                                                lb2,
+                                                rb2,
+                                                errors_spent + delta,
+                                                block_id,
+                                                go_right,
+                                                search,
+                                                blocks_length,
+                                                error_left2,
+                                                delegate)
+                        && abort_on_hit)
                     {
                         return true;
                     }
@@ -490,17 +599,26 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
             // TODO: check whether the conditions for deletions at the beginning/end of the query are really necessary
             // No deletion at the beginning of the leftmost block.
             // No deletion at the end of the rightmost block.
-            if (error_left.deletion > 0 &&
-                !(go_right && (rb == 1 || rb == std::ranges::size(query) + 1)) &&
-                !(!go_right && (lb == 0 || lb == std::ranges::size(query))))
+            if (error_left.deletion > 0 && !(go_right && (rb == 1 || rb == std::ranges::size(query) + 1))
+                && !(!go_right && (lb == 0 || lb == std::ranges::size(query))))
             {
                 search_param error_left3{error_left};
                 error_left3.total--;
                 error_left3.deletion--;
-                search_ss<abort_on_hit>(cur, query, lb, rb, errors_spent + 1, block_id, go_right, search, blocks_length,
-                                        error_left3, delegate);
+                search_ss<abort_on_hit>(cur,
+                                        query,
+                                        lb,
+                                        rb,
+                                        errors_spent + 1,
+                                        block_id,
+                                        go_right,
+                                        search,
+                                        blocks_length,
+                                        error_left3,
+                                        delegate);
             }
-        } while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
+        }
+        while ((go_right && cur.cycle_back()) || (!go_right && cur.cycle_front()));
     }
     return false;
 }
@@ -510,12 +628,23 @@ inline bool search_ss_children(cursor_t cur, query_t & query,
  *
  * \copydetails search_ss_exact
  */
-template <bool abort_on_hit, typename cursor_t, typename query_t, typename search_t,
-          typename blocks_length_t, typename delegate_t>
-inline bool search_ss(cursor_t cur, query_t & query,
-                      typename cursor_t::size_type const lb, typename cursor_t::size_type const rb,
-                      uint8_t const errors_spent, uint8_t const block_id, bool const go_right, search_t const & search,
-                      blocks_length_t const & blocks_length, search_param const error_left, delegate_t && delegate)
+template <bool abort_on_hit,
+          typename cursor_t,
+          typename query_t,
+          typename search_t,
+          typename blocks_length_t,
+          typename delegate_t>
+inline bool search_ss(cursor_t cur,
+                      query_t & query,
+                      typename cursor_t::size_type const lb,
+                      typename cursor_t::size_type const rb,
+                      uint8_t const errors_spent,
+                      uint8_t const block_id,
+                      bool const go_right,
+                      search_t const & search,
+                      blocks_length_t const & blocks_length,
+                      search_param const error_left,
+                      delegate_t && delegate)
 {
     uint8_t const max_error_left_in_block = search.u[block_id] - errors_spent;
     uint8_t const min_error_left_in_block = std::max(search.l[block_id] - errors_spent, 0); // NOTE: changed
@@ -527,11 +656,21 @@ inline bool search_ss(cursor_t cur, query_t & query,
         return true;
     }
     // Exact search in current block.
-    else if (((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id])) ||
-             (error_left.total == 0 && min_error_left_in_block == 0))
+    else if (((max_error_left_in_block == 0) && (rb - lb - 1 != blocks_length[block_id]))
+             || (error_left.total == 0 && min_error_left_in_block == 0))
     {
-        if (search_ss_exact<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id, go_right, search, blocks_length,
-                                          error_left, delegate) && abort_on_hit)
+        if (search_ss_exact<abort_on_hit>(cur,
+                                          query,
+                                          lb,
+                                          rb,
+                                          errors_spent,
+                                          block_id,
+                                          go_right,
+                                          search,
+                                          blocks_length,
+                                          error_left,
+                                          delegate)
+            && abort_on_hit)
         {
             return true;
         }
@@ -559,24 +698,54 @@ inline bool search_ss(cursor_t cur, query_t & query,
                 // TODO: benchmark the improvement on preventing insertions followed by a deletion and vice versa. Does
                 // it pay off the additional complexity and documentation for the user? (Note that the user might only
                 // allow for insertions and deletion and not for mismatches).
-                if (search_ss_deletion<abort_on_hit>(cur, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
-                                                     blocks_length, error_left2, delegate) && abort_on_hit)
+                if (search_ss_deletion<abort_on_hit>(cur,
+                                                     query,
+                                                     lb2,
+                                                     rb2,
+                                                     errors_spent + 1,
+                                                     block_id,
+                                                     go_right,
+                                                     search,
+                                                     blocks_length,
+                                                     error_left2,
+                                                     delegate)
+                    && abort_on_hit)
                 {
                     return true;
                 }
             }
             else
             {
-                if (search_ss<abort_on_hit>(cur, query, lb2, rb2, errors_spent + 1, block_id, go_right, search,
-                                            blocks_length, error_left2, delegate) && abort_on_hit)
+                if (search_ss<abort_on_hit>(cur,
+                                            query,
+                                            lb2,
+                                            rb2,
+                                            errors_spent + 1,
+                                            block_id,
+                                            go_right,
+                                            search,
+                                            blocks_length,
+                                            error_left2,
+                                            delegate)
+                    && abort_on_hit)
                 {
                     return true;
                 }
             }
         }
-        if (search_ss_children<abort_on_hit>(cur, query, lb, rb, errors_spent, block_id, go_right,
-                                             min_error_left_in_block, search, blocks_length, error_left, delegate) &&
-            abort_on_hit)
+        if (search_ss_children<abort_on_hit>(cur,
+                                             query,
+                                             lb,
+                                             rb,
+                                             errors_spent,
+                                             block_id,
+                                             go_right,
+                                             min_error_left_in_block,
+                                             search,
+                                             blocks_length,
+                                             error_left,
+                                             delegate)
+            && abort_on_hit)
         {
             return true;
         }
@@ -608,8 +777,11 @@ inline bool search_ss(cursor_t cur, query_t & query,
  * strong exception guarantee; basic exception guarantee otherwise.
  */
 template <bool abort_on_hit, typename index_t, typename query_t, typename search_scheme_t, typename delegate_t>
-inline void search_ss(index_t const & index, query_t & query, search_param const error_left,
-                      search_scheme_t const & search_scheme, delegate_t && delegate)
+inline void search_ss(index_t const & index,
+                      query_t & query,
+                      search_param const error_left,
+                      search_scheme_t const & search_scheme,
+                      delegate_t && delegate)
 {
     // retrieve cumulative block lengths and starting position
     auto const block_info = search_scheme_block_info(search_scheme, std::ranges::size(query));
@@ -619,18 +791,19 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
         auto const & search = search_scheme[search_id];
         auto const & [blocks_length, start_pos] = block_info[search_id];
 
-        bool const hit = search_ss<abort_on_hit>(
-                             index.cursor(),           // cursor on the index
-                             query,                    // query to be searched
-                             start_pos, start_pos + 1, // infix range already searched (open interval)
-                                                       // the first character of `query` has the index 1 (not 0)
-                             0,                        // errors spent
-                             0,                        // current block id in search scheme
-                             true,                     // search the first block from left to right
-                             search, blocks_length,     // search scheme information
-                             error_left,               // errors left (broken down by error types)
-                             delegate                  // delegate function called on hit
-                         );
+        bool const hit = search_ss<abort_on_hit>(index.cursor(), // cursor on the index
+                                                 query,          // query to be searched
+                                                 start_pos,
+                                                 start_pos + 1, // infix range already searched (open interval)
+                                                 // the first character of `query` has the index 1 (not 0)
+                                                 0,    // errors spent
+                                                 0,    // current block id in search scheme
+                                                 true, // search the first block from left to right
+                                                 search,
+                                                 blocks_length, // search scheme information
+                                                 error_left,    // errors left (broken down by error types)
+                                                 delegate       // delegate function called on hit
+        );
 
         if (abort_on_hit && hit)
             return;
@@ -655,7 +828,7 @@ inline void search_ss(index_t const & index, query_t & query, search_param const
  * Strong exception guarantee if iterating the query does not change its state and if invoking the delegate also has a
  * strong exception guarantee; basic exception guarantee otherwise.
  */
-template <typename configuration_t, typename index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename... policies_t>
     requires (template_specialisation_of<typename index_t::cursor_type, bi_fm_index_cursor>)
 template <bool abort_on_hit, typename query_t, typename delegate_t>
 inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::search_algo_bi(
@@ -665,22 +838,22 @@ inline void search_scheme_algorithm<configuration_t, index_t, policies_t...>::se
 {
     switch (error_left.total)
     {
-        case 0:
-            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 0>, delegate);
-            break;
-        case 1:
-            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 1>, delegate);
-            break;
-        case 2:
-            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 2>, delegate);
-            break;
-        case 3:
-            search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 3>, delegate);
-            break;
-        default:
-            auto const & search_scheme{compute_ss(0, error_left.total)};
-            search_ss<abort_on_hit>(*index_ptr, query, error_left, search_scheme, delegate);
-            break;
+    case 0:
+        search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 0>, delegate);
+        break;
+    case 1:
+        search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 1>, delegate);
+        break;
+    case 2:
+        search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 2>, delegate);
+        break;
+    case 3:
+        search_ss<abort_on_hit>(*index_ptr, query, error_left, optimum_search_scheme<0, 3>, delegate);
+        break;
+    default:
+        auto const & search_scheme{compute_ss(0, error_left.total)};
+        search_ss<abort_on_hit>(*index_ptr, query, error_left, search_scheme, delegate);
+        break;
     }
 }
 

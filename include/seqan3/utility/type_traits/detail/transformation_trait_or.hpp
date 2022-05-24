@@ -39,9 +39,9 @@ namespace seqan3::detail
  *   seqan3::detail::transformation_trait_or_t as a shorthand for *seqan3::detail::transformation_trait_or::type*
  */
 template <typename type_t, typename default_t>
-using transformation_trait_or = std::conditional_t<transformation_trait<type_t>,    // check if type_t::type exists
-                                                   type_t,                          // if yes, return type_t
-                                                   std::type_identity<default_t>>;  // else return default_t as trait
+using transformation_trait_or = std::conditional_t<transformation_trait<type_t>,   // check if type_t::type exists
+                                                   type_t,                         // if yes, return type_t
+                                                   std::type_identity<default_t>>; // else return default_t as trait
 
 /*!\brief Helper type of seqan3::detail::transformation_trait_or (transformation_trait shortcut).
  * \see seqan3::detail::transformation_trait_or

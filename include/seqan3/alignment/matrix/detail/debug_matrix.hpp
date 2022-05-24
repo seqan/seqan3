@@ -72,15 +72,13 @@ protected:
     //!\brief Whether a score matrix already returns std::optional scores. (Where std::nullopt means
     //!       unset/invalid/infinite score)
     static constexpr bool is_optional_score = is_type_specialisation_of_v<entry_t, std::optional>;
-public:
 
+public:
     /*!\name Associated types
      * \{
      */
     //!\copydoc seqan3::detail::matrix::value_type
-    using value_type = std::conditional_t<is_traceback_matrix || is_optional_score,
-                                          entry_t,
-                                          std::optional<entry_t>>;
+    using value_type = std::conditional_t<is_traceback_matrix || is_optional_score, entry_t, std::optional<entry_t>>;
     //!\copydoc seqan3::detail::matrix::reference
     using reference = value_type;
     //!\brief The const reference type.
@@ -92,18 +90,17 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    debug_matrix() = default; //!< Defaulted
-    debug_matrix(debug_matrix const &) = default; //!< Defaulted
-    debug_matrix(debug_matrix &&) = default; //!< Defaulted
+    debug_matrix() = default;                                 //!< Defaulted
+    debug_matrix(debug_matrix const &) = default;             //!< Defaulted
+    debug_matrix(debug_matrix &&) = default;                  //!< Defaulted
     debug_matrix & operator=(debug_matrix const &) = default; //!< Defaulted
-    debug_matrix & operator=(debug_matrix &&) = default; //!< Defaulted
-    ~debug_matrix() = default;  //!< Defaulted
+    debug_matrix & operator=(debug_matrix &&) = default;      //!< Defaulted
+    ~debug_matrix() = default;                                //!< Defaulted
 
     /*!\brief Construct the matrix out of an existing matrix.
      * \param matrix An alignment matrix; Must model seqan3::detail::matrix.
      */
-    debug_matrix(matrix_t matrix)
-        : debug_matrix(std::forward<matrix_t>(matrix), std::nullopt, std::nullopt)
+    debug_matrix(matrix_t matrix) : debug_matrix(std::forward<matrix_t>(matrix), std::nullopt, std::nullopt)
     {}
 
     /*!\brief Construct the matrix out of an existing matrix and two sequences.
@@ -111,17 +108,17 @@ public:
      * \param first_sequence The first sequence of the sequence alignment.
      * \param second_sequence The second sequence of the sequence alignment.
      */
-    debug_matrix(matrix_t matrix, first_sequence_t first_sequence, second_sequence_t second_sequence)
-        : _matrix{std::forward<matrix_t>(matrix)},
-          _first_sequence{std::forward<first_sequence_t>(first_sequence)},
-          _second_sequence{std::forward<second_sequence_t>(second_sequence)}
+    debug_matrix(matrix_t matrix, first_sequence_t first_sequence, second_sequence_t second_sequence) :
+        _matrix{std::forward<matrix_t>(matrix)},
+        _first_sequence{std::forward<first_sequence_t>(first_sequence)},
+        _second_sequence{std::forward<second_sequence_t>(second_sequence)}
     {
-        if constexpr(has_first_sequence)
+        if constexpr (has_first_sequence)
         {
             assert(_matrix.cols() <= _first_sequence.size() + 1u);
         }
 
-        if constexpr(has_second_sequence)
+        if constexpr (has_second_sequence)
         {
             assert(_matrix.rows() <= _second_sequence.size() + 1u);
         }
@@ -184,7 +181,7 @@ public:
             if (!is_traceback_matrix || !_transpose)
                 return entry;
 
-            if constexpr(is_traceback_matrix)
+            if constexpr (is_traceback_matrix)
             {
                 trace_directions reverse{};
                 if ((entry & trace_directions::left) == trace_directions::left)
@@ -197,7 +194,7 @@ public:
             }
         }
 
-        if constexpr(is_traceback_matrix)
+        if constexpr (is_traceback_matrix)
             return trace_directions::none;
         else
             return std::nullopt;
@@ -224,9 +221,7 @@ public:
      */
     debug_matrix & mask_matrix(std::vector<bool> masking_vector) noexcept
     {
-        return mask_matrix(row_wise_matrix<bool>{number_rows{rows()},
-                                                 number_cols{cols()},
-                                                 std::move(masking_vector)});
+        return mask_matrix(row_wise_matrix<bool>{number_rows{rows()}, number_cols{cols()}, std::move(masking_vector)});
     }
 
     /*!\brief Limits the view port of the current matrix.
@@ -279,12 +274,12 @@ public:
     void stream_matrix(ostream_t & cout, fmtflags2 const flags) const noexcept
     {
         format_type const & symbols = (flags & fmtflags2::utf8) == fmtflags2::utf8 ? unicode : csv;
-        size_t const column_width = this->column_width.has_value() ?
-                                    this->column_width.value() : auto_column_width(flags);
+        size_t const column_width =
+            this->column_width.has_value() ? this->column_width.value() : auto_column_width(flags);
 
         auto char_first_sequence = [&]([[maybe_unused]] size_t const i) -> std::string
         {
-            if constexpr(!has_first_sequence)
+            if constexpr (!has_first_sequence)
                 return " ";
             else
                 return as_string(first_sequence()[i], flags);
@@ -292,7 +287,7 @@ public:
 
         auto char_second_sequence = [&]([[maybe_unused]] size_t const i) -> std::string
         {
-            if constexpr(!has_second_sequence)
+            if constexpr (!has_second_sequence)
                 return " ";
             else
                 return as_string(second_sequence()[i], flags);
@@ -305,10 +300,7 @@ public:
             size_t const length = unicode_str_length(symbol);
             size_t const offset = length_bytes - length;
 
-            cout << std::left
-                 << std::setw(column_width + offset)
-                 << symbol
-                 << symbols.col_sep;
+            cout << std::left << std::setw(column_width + offset) << symbol << symbols.col_sep;
         };
 
         auto print_first_cell = [&](std::string const & symbol)
@@ -367,8 +359,9 @@ public:
         size_t col_width = 1;
         for (size_t row = 0; row < rows(); ++row)
             for (size_t col = 0; col < cols(); ++col)
-                col_width = std::max(col_width,
-                                     unicode_str_length(entry_at({row_index_type{row}, column_index_type{col}}, flags)));
+                col_width =
+                    std::max(col_width,
+                             unicode_str_length(entry_at({row_index_type{row}, column_index_type{col}}, flags)));
 
         return col_width;
     }
@@ -463,14 +456,13 @@ protected:
  */
 //!\brief The type deduction guide for the constructor seqan3::detail::debug_matrix(matrix_t)
 template <matrix matrix_t>
-debug_matrix(matrix_t &&)
-   -> debug_matrix<matrix_t>;
+debug_matrix(matrix_t &&) -> debug_matrix<matrix_t>;
 
 //!\brief The type deduction guide for the constructor
 //!       seqan3::detail::debug_matrix(matrix_t, first_sequence_t, second_sequence_t)
 template <matrix matrix_t, typename first_sequence_t, typename second_sequence_t>
 debug_matrix(matrix_t &&, first_sequence_t &&, second_sequence_t &&)
-   -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
+    -> debug_matrix<matrix_t, first_sequence_t, second_sequence_t>;
 //!\}
 
 } // namespace seqan3::detail

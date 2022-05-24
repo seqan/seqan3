@@ -60,7 +60,7 @@ private:
     //!\brief The value type (equals the value_t with any references removed).
     using value_type = std::remove_reference_t<value_t>;
     //!\brief The reference_type.
-    using reference  = value_type &;
+    using reference = value_type &;
     //!\brief The const reference type.
     using const_reference = value_type const &;
     //!\brief The type to store the difference of two iterators.
@@ -88,12 +88,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    repeat_view() = default; //!< Defaulted.
-    repeat_view(repeat_view const &) = default; //!< Defaulted.
+    repeat_view() = default;                                //!< Defaulted.
+    repeat_view(repeat_view const &) = default;             //!< Defaulted.
     repeat_view & operator=(repeat_view const &) = default; //!< Defaulted.
-    repeat_view(repeat_view &&) = default; //!< Defaulted.
-    repeat_view & operator=(repeat_view &&) = default; //!< Defaulted.
-    ~repeat_view() = default; //!< Defaulted.
+    repeat_view(repeat_view &&) = default;                  //!< Defaulted.
+    repeat_view & operator=(repeat_view &&) = default;      //!< Defaulted.
+    ~repeat_view() = default;                               //!< Defaulted.
 
     //!\brief Construct from any type (Note: the value will be copied into views::single).
     constexpr explicit repeat_view(value_t const & value) : single_value{value}
@@ -199,8 +199,7 @@ private:
 //!\brief The iterator type for views::repeat (a random access iterator).
 template <std::copy_constructible value_t>
 template <typename parent_type>
-class repeat_view<value_t>::basic_iterator :
-    public detail::random_access_iterator_base<parent_type, basic_iterator>
+class repeat_view<value_t>::basic_iterator : public detail::random_access_iterator_base<parent_type, basic_iterator>
 {
     //!\brief The CRTP base type.
     using base_t = detail::random_access_iterator_base<parent_type, basic_iterator>;
@@ -223,26 +222,26 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    basic_iterator() = default; //!< Defaulted.
-    basic_iterator(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator() = default;                                   //!< Defaulted.
+    basic_iterator(basic_iterator const &) = default;             //!< Defaulted.
     basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
-    basic_iterator (basic_iterator &&) = default; //!< Defaulted.
-    basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
-    ~basic_iterator() = default; //!< Defaulted.
+    basic_iterator(basic_iterator &&) = default;                  //!< Defaulted.
+    basic_iterator & operator=(basic_iterator &&) = default;      //!< Defaulted.
+    ~basic_iterator() = default;                                  //!< Defaulted.
 
     /*!\brief Construct by host range.
      * \param host The host range.
      */
-    explicit constexpr basic_iterator(parent_type & host) noexcept : base_t{host} {}
+    explicit constexpr basic_iterator(parent_type & host) noexcept : base_t{host}
+    {}
 
     /*!\brief Constructor for const version from non-const version.
      * \param rhs a non-const version of basic_iterator to construct from.
      */
     template <typename parent_type2>
-        requires std::is_const_v<parent_type> && (!std::is_const_v<parent_type2>) &&
-                 std::is_same_v<std::remove_const_t<parent_type>, parent_type2>
-    constexpr basic_iterator(basic_iterator<parent_type2> const & rhs) noexcept :
-        base_t{rhs}
+        requires std::is_const_v<parent_type>
+              && (!std::is_const_v<parent_type2>) && std::is_same_v<std::remove_const_t<parent_type>, parent_type2>
+    constexpr basic_iterator(basic_iterator<parent_type2> const & rhs) noexcept : base_t{rhs}
     {}
     //!\}
 
@@ -267,15 +266,13 @@ public:
     }
 
     //!\brief Equality comparison to the sentinel always returns false on an infinite view.
-    friend constexpr bool operator==(std::default_sentinel_t const &,
-                                     basic_iterator const &) noexcept
+    friend constexpr bool operator==(std::default_sentinel_t const &, basic_iterator const &) noexcept
     {
         return false;
     }
 
     //!\brief Inequality comparison to the sentinel always returns true on an infinite view.
-    friend constexpr bool operator!=(std::default_sentinel_t const &,
-                                     basic_iterator const &) noexcept
+    friend constexpr bool operator!=(std::default_sentinel_t const &, basic_iterator const &) noexcept
     {
         return true;
     }
@@ -342,6 +339,6 @@ namespace seqan3::views
  *
  * \hideinitializer
  */
-constexpr inline detail::repeat_fn repeat{};
+inline constexpr detail::repeat_fn repeat{};
 
 } // namespace seqan3::views

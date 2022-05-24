@@ -118,7 +118,6 @@ private:
     using pointer = typename _derived_t::pointer;
 
 public:
-
     /*!\name Element access
      * \{
      */
@@ -302,7 +301,8 @@ public:
     // What if the derived type is different?
     // How can make sure this is the same type?
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator==(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter == rhs.as_derived().host_iter;
@@ -310,7 +310,8 @@ public:
 
     //!\brief Returns `true` if both iterators are unequal, `false` otherwise.
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator!=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return !(*this == rhs);
@@ -318,7 +319,8 @@ public:
 
     //!\brief Checks if `lhs` is smaller than `rhs`.
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator<(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter < rhs.as_derived().host_iter;
@@ -326,7 +328,8 @@ public:
 
     //!\brief Checks if `lhs` is smaller than or equal to `rhs`.
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator<=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter <= rhs.as_derived().host_iter;
@@ -334,7 +337,8 @@ public:
 
     //!\brief Checks if `lhs` is greater than `rhs`.
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator>(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter > rhs.as_derived().host_iter;
@@ -342,14 +346,15 @@ public:
 
     //!\brief Checks if `lhs` is greater than or equal to `rhs`.
     template <typename other_derived_t>
-        requires std::constructible_from<derived_t, other_derived_t> || std::constructible_from<other_derived_t, derived_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              || std::constructible_from<other_derived_t, derived_t>
     constexpr bool operator>=(two_dimensional_matrix_iterator_base<other_derived_t, order> const & rhs) const noexcept
     {
         return as_derived().host_iter >= rhs.as_derived().host_iter;
     }
     //!\}
-private:
 
+private:
     //!\brief Return the host_iter of the derived type.
     constexpr auto const & as_host_iter() const
     {

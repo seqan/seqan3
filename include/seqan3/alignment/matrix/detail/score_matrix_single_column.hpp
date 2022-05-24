@@ -73,12 +73,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    score_matrix_single_column() = default; //!< Defaulted.
-    score_matrix_single_column(score_matrix_single_column const &) = default; //!< Defaulted.
-    score_matrix_single_column(score_matrix_single_column &&) = default; //!< Defaulted.
+    score_matrix_single_column() = default;                                               //!< Defaulted.
+    score_matrix_single_column(score_matrix_single_column const &) = default;             //!< Defaulted.
+    score_matrix_single_column(score_matrix_single_column &&) = default;                  //!< Defaulted.
     score_matrix_single_column & operator=(score_matrix_single_column const &) = default; //!< Defaulted.
-    score_matrix_single_column & operator=(score_matrix_single_column &&) = default; //!< Defaulted.
-    ~score_matrix_single_column() = default; //!< Defaulted.
+    score_matrix_single_column & operator=(score_matrix_single_column &&) = default;      //!< Defaulted.
+    ~score_matrix_single_column() = default;                                              //!< Defaulted.
 
     //!\}
 
@@ -160,19 +160,18 @@ template <typename score_t>
 class score_matrix_single_column<score_t>::matrix_iterator
 {
 private:
-
     //!\brief The type of the zipped score column.
     using matrix_column_t = decltype(views::zip(std::declval<physical_column_t &>(),
                                                 std::declval<physical_column_t &>(),
                                                 std::declval<virtual_column_t &>()));
 
     //!\brief The transform adaptor to convert the tuple from the zip view into a seqan3::detail::affine_cell_type.
-    static constexpr auto transform_to_affine_cell = std::views::transform([] (auto && tpl)
-        -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
-    {
-        using fwd_tuple_t = decltype(tpl);
-        return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
-    });
+    static constexpr auto transform_to_affine_cell = std::views::transform(
+        [](auto && tpl) -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
+        {
+            using fwd_tuple_t = decltype(tpl);
+            return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
+        });
 
     //!\brief The pointer to the underlying matrix.
     score_matrix_single_column * host_ptr{nullptr};
@@ -198,12 +197,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    matrix_iterator() noexcept = default; //!< Defaulted.
-    matrix_iterator(matrix_iterator const &) noexcept = default; //!< Defaulted.
-    matrix_iterator(matrix_iterator &&) noexcept = default; //!< Defaulted.
+    matrix_iterator() noexcept = default;                                    //!< Defaulted.
+    matrix_iterator(matrix_iterator const &) noexcept = default;             //!< Defaulted.
+    matrix_iterator(matrix_iterator &&) noexcept = default;                  //!< Defaulted.
     matrix_iterator & operator=(matrix_iterator const &) noexcept = default; //!< Defaulted.
-    matrix_iterator & operator=(matrix_iterator &&) noexcept = default; //!< Defaulted.
-    ~matrix_iterator() = default; //!< Defaulted.
+    matrix_iterator & operator=(matrix_iterator &&) noexcept = default;      //!< Defaulted.
+    ~matrix_iterator() = default;                                            //!< Defaulted.
 
     /*!\brief Initialises the iterator from the underlying matrix.
      *

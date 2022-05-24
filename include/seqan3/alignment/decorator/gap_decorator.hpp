@@ -75,8 +75,8 @@ namespace seqan3
  * \stableapi{Since version 3.1.}
  */
 template <std::ranges::viewable_range inner_type>
-    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
-             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
+    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type>
+          && (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
 class gap_decorator
 {
 private:
@@ -146,22 +146,23 @@ public:
      * \stableapi{Since version 3.1.}
      */
     gap_decorator() = default;
-    gap_decorator(gap_decorator const &) = default; //!< Defaulted.
+    gap_decorator(gap_decorator const &) = default;             //!< Defaulted.
     gap_decorator & operator=(gap_decorator const &) = default; //!< Defaulted.
-    gap_decorator(gap_decorator && rhs) = default; //!< Defaulted.
-    gap_decorator & operator=(gap_decorator && rhs) = default; //!< Defaulted.
-    ~gap_decorator() = default; //!< Defaulted.
+    gap_decorator(gap_decorator && rhs) = default;              //!< Defaulted.
+    gap_decorator & operator=(gap_decorator && rhs) = default;  //!< Defaulted.
+    ~gap_decorator() = default;                                 //!< Defaulted.
 
     /*!\brief Construct with the ungapped range type.
      * \details
      * \experimentalapi{Experimental since version 3.1. This is a non-standard C++ extension.}
      */
     template <typename other_range_t>
-         requires (!std::same_as<other_range_t, gap_decorator>) &&
-                  std::same_as<std::remove_cvref_t<other_range_t>, std::remove_cvref_t<inner_type>> &&
-                  std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
+        requires (!std::same_as<other_range_t, gap_decorator>)
+              && std::same_as<std::remove_cvref_t<other_range_t>, std::remove_cvref_t<inner_type>>
+              && std::ranges::viewable_range<other_range_t> // at end, otherwise it competes with the move ctor
     gap_decorator(other_range_t && range) : ungapped_view{views::type_reduce(std::forward<inner_type>(range))}
-    {} // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
+    {
+    } // TODO (@smehringer) only works for copyable views. Has to be changed once views are not required to be copyable anymore.
     // !\}
 
     /*!\brief Returns the total length of the aligned sequence.
@@ -227,7 +228,7 @@ public:
                 it_set = anchors.erase(it_set);
                 anchors.insert(it_set, gap);
             }
-            else                                  // insert new gap
+            else // insert new gap
             {
                 anchor_gap_t gap{pos, it_set->second + count};
                 ++it_set;
@@ -240,7 +241,7 @@ public:
         return iterator{*this, pos};
     }
 
-   /*!\brief Erase one gap symbol at the indicated iterator postion.
+    /*!\brief Erase one gap symbol at the indicated iterator postion.
     * \param it     Iterator indicating the gap to be erased.
     * \returns      Iterator following the last removed element.
     * \throws seqan3::gap_erase_failure if character is no seqan3::gap.
@@ -284,8 +285,8 @@ public:
         set_iterator_type it = anchors.upper_bound(anchor_gap_t{pos1, bound_dummy}); // first element greater than pos1
 
         if (it == anchors.begin())
-            throw gap_erase_failure{"There is no gap to erase in range [" + std::to_string(pos1) + "," +
-                                    std::to_string(pos2) + "]."};
+            throw gap_erase_failure{"There is no gap to erase in range [" + std::to_string(pos1) + ","
+                                    + std::to_string(pos2) + "]."};
 
         --it;
         size_type const gap_len = gap_length(it);
@@ -306,7 +307,7 @@ public:
             anchor_gap_t gap{it->first, it->second - pos2 + pos1};
             it = anchors.erase(it);
             it = anchors.insert(it, gap); // amortized constant because of hint
-            ++it; // update node after the current
+            ++it;                         // update node after the current
         }
 
         // post-processing: forward update of succeeding gaps
@@ -461,9 +462,8 @@ public:
      */
     friend bool operator==(gap_decorator const & lhs, gap_decorator const & rhs)
     {
-        if (lhs.size()  == rhs.size()  &&
-            lhs.anchors == rhs.anchors &&
-            std::ranges::equal(lhs.ungapped_view, rhs.ungapped_view))
+        if (lhs.size() == rhs.size() && lhs.anchors == rhs.anchors
+            && std::ranges::equal(lhs.ungapped_view, rhs.ungapped_view))
         {
             return true;
         }
@@ -493,9 +493,9 @@ public:
             ++lit, ++rit;
 
         if (rit == rhs.end())
-            return false;           //  lhs == rhs, or rhs prefix of lhs
+            return false; //  lhs == rhs, or rhs prefix of lhs
         else if (lit == lhs.end())
-            return true;            // lhs prefix of rhs
+            return true; // lhs prefix of rhs
 
         return *lit < *rit;
     }
@@ -513,9 +513,9 @@ public:
             ++lit, ++rit;
 
         if (lit == lhs.end())
-            return true;            // lhs == rhs, or lhs prefix of rhs
+            return true; // lhs == rhs, or lhs prefix of rhs
         else if (rit == rhs.end())
-            return false;           // rhs prefix of lhs
+            return false; // rhs prefix of lhs
 
         return *lit < *rit;
     }
@@ -550,7 +550,7 @@ private:
     using set_iterator_type = typename anchor_set_type::iterator;
 
     //!\brief The maximum value is needed for a correct search with upper_bound() in the anchor set.
-    constexpr static size_t bound_dummy{std::numeric_limits<size_t>::max()};
+    static constexpr size_t bound_dummy{std::numeric_limits<size_t>::max()};
 
     /*!\brief Helper function to compute the length of the gap indicated by the input iterator.
      * \param[in] it    Iterator over the internal gap set.
@@ -656,8 +656,8 @@ gap_decorator(urng_t range) -> gap_decorator<urng_t>;
  * std::random_access_iterator albeit its non-conforming runtime complexity.
  */
 template <std::ranges::viewable_range inner_type>
-    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type> &&
-             (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
+    requires std::ranges::random_access_range<inner_type> && std::ranges::sized_range<inner_type>
+          && (std::is_const_v<std::remove_reference_t<inner_type>> || std::ranges::view<inner_type>)
 template <bool>
 class gap_decorator<inner_type>::basic_iterator
 {
@@ -698,8 +698,8 @@ protected:
             left_gap_end = prev->first + gap_len;
         }
 
-        if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()) &&
-            pos >= left_gap_end && (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first))
+        if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()) && pos >= left_gap_end
+            && (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first))
             is_at_gap = false;
         else
             is_at_gap = true;
@@ -724,16 +724,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    basic_iterator() = default; //!< Defaulted.
-    basic_iterator(basic_iterator const &) = default; //!< Defaulted.
+    basic_iterator() = default;                                   //!< Defaulted.
+    basic_iterator(basic_iterator const &) = default;             //!< Defaulted.
     basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
-    basic_iterator(basic_iterator &&) = default; //!< Defaulted.
-    basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
-    ~basic_iterator() = default; //!< Defaulted.
+    basic_iterator(basic_iterator &&) = default;                  //!< Defaulted.
+    basic_iterator & operator=(basic_iterator &&) = default;      //!< Defaulted.
+    ~basic_iterator() = default;                                  //!< Defaulted.
 
     //!\brief Construct from seqan3::gap_decorator and initialising to first position.
-    explicit basic_iterator(gap_decorator const & host_) :
-        host(&host_), anchor_set_it{host_.anchors.begin()}
+    explicit basic_iterator(gap_decorator const & host_) : host(&host_), anchor_set_it{host_.anchors.begin()}
     {
         if (host_.anchors.size() && (*host_.anchors.begin()).first == 0) // there are gaps at the very front
         {
@@ -767,15 +766,15 @@ public:
             return *this;
 
         if (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first)
-        {   // proceed within the view since we are right of the previous gap but didn't arrive at the right gap yet
+        { // proceed within the view since we are right of the previous gap but didn't arrive at the right gap yet
             ++ungapped_view_pos;
             if (ungapped_view_pos != static_cast<int64_t>(host->ungapped_view.size()))
                 is_at_gap = false;
         }
         else
-        {   // we arrived at the right gap and have to update the variables. ungapped_view_pos remains unchanged.
-            left_gap_end = anchor_set_it->first + anchor_set_it->second -
-                            ((anchor_set_it != host->anchors.begin()) ? (std::prev(anchor_set_it))->second : 0);
+        { // we arrived at the right gap and have to update the variables. ungapped_view_pos remains unchanged.
+            left_gap_end = anchor_set_it->first + anchor_set_it->second
+                         - ((anchor_set_it != host->anchors.begin()) ? (std::prev(anchor_set_it))->second : 0);
             ++anchor_set_it;
             is_at_gap = true;
 
@@ -820,14 +819,14 @@ public:
         --pos;
 
         if (pos < left_gap_end)
-        {   // there was no gap before but we arrive at the left gap and have to update the variables.
+        { // there was no gap before but we arrive at the left gap and have to update the variables.
             (anchor_set_it != host->anchors.begin()) ? --anchor_set_it : anchor_set_it;
 
             if (anchor_set_it != host->anchors.begin())
             {
                 auto prev = std::prev(anchor_set_it);
-                left_gap_end = prev->first + prev->second -
-                               ((prev != host->anchors.begin()) ? std::prev(prev)->second : 0);
+                left_gap_end =
+                    prev->first + prev->second - ((prev != host->anchors.begin()) ? std::prev(prev)->second : 0);
             }
             else // [[unlikely]]
             {
@@ -836,7 +835,7 @@ public:
             is_at_gap = true;
         }
         else if (anchor_set_it == host->anchors.end() || pos < anchor_set_it->first)
-        {   // we are neither at the left nor right gap
+        { // we are neither at the left nor right gap
             --ungapped_view_pos;
             is_at_gap = false;
         }
@@ -938,4 +937,4 @@ public:
     //!\}
 };
 
-} // namespace seqan
+} // namespace seqan3

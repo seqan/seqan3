@@ -49,25 +49,27 @@ struct trim_fn
     {
         static_assert(quality_alphabet<std::remove_reference_t<std::ranges::range_reference_t<irng_t>>>,
                       "views::trim_quality can only operate on ranges over seqan3::quality_alphabet.");
-        static_assert(std::same_as<std::remove_cvref_t<threshold_t>,
-                     std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>> ||
-                      std::integral<std::remove_cvref_t<threshold_t>>,
-                      "The threshold must either be a letter of the underlying alphabet or an integral type "
-                      "in which case it is compared with the underlying Phred score type.");
+        static_assert(
+            std::same_as<std::remove_cvref_t<threshold_t>, std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>>
+                || std::integral<std::remove_cvref_t<threshold_t>>,
+            "The threshold must either be a letter of the underlying alphabet or an integral type "
+            "in which case it is compared with the underlying Phred score type.");
 
-        return detail::take_until(std::forward<irng_t>(irange), [threshold] (auto const value)
-        {
-            if constexpr (std::same_as<std::remove_cvref_t<threshold_t>,
-                          std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>>)
+        return detail::take_until(
+            std::forward<irng_t>(irange),
+            [threshold](auto const value)
             {
-                return to_phred(value) < to_phred(threshold);
-            }
-            else
-            {
-                using c_t = std::common_type_t<decltype(to_phred(value)), threshold_t>;
-                return static_cast<c_t>(to_phred(value)) < static_cast<c_t>(threshold);
-            }
-        });
+                if constexpr (std::same_as<std::remove_cvref_t<threshold_t>,
+                                           std::remove_cvref_t<std::ranges::range_reference_t<irng_t>>>)
+                {
+                    return to_phred(value) < to_phred(threshold);
+                }
+                else
+                {
+                    using c_t = std::common_type_t<decltype(to_phred(value)), threshold_t>;
+                    return static_cast<c_t>(to_phred(value)) < static_cast<c_t>(threshold);
+                }
+            });
     }
 };
 

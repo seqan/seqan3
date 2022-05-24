@@ -13,12 +13,12 @@
 #pragma once
 
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_base.hpp>
-#include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_proxy.hpp>
-#include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full.hpp>
+#include <seqan3/alignment/matrix/detail/alignment_trace_matrix_full_banded.hpp>
 #include <seqan3/alignment/matrix/detail/alignment_trace_matrix_proxy.hpp>
 #include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
 #include <seqan3/alignment/matrix/detail/score_matrix_single_column.hpp>

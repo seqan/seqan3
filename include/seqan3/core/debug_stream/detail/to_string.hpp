@@ -25,8 +25,8 @@ namespace seqan3::detail
  * \param[in] values     Variable number of parameters of any type that implement the stream operator.
  * \returns A concatenated string of all values (no separator in between is added).
  */
-template <typename ...value_type>
-std::string to_string(value_type && ...values)
+template <typename... value_type>
+std::string to_string(value_type &&... values)
 {
     std::stringstream stream;
     debug_stream_type dstream{stream};

@@ -12,11 +12,12 @@
 
 #pragma once
 
+#include <concepts>
+#include <seqan3/std/ranges>
+
 #include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_base.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
-#include <concepts>
-#include <seqan3/std/ranges>
 
 namespace seqan3::detail
 {
@@ -69,8 +70,8 @@ private:
     template <typename other_derived_t, two_dimensional_matrix_iterator other_matrix_iter_t>
     //!\cond
 #if !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
-        requires std::constructible_from<derived_t, other_derived_t> &&
-                 std::constructible_from<matrix_iter_t, other_matrix_iter_t>
+        requires std::constructible_from<derived_t, other_derived_t>
+              && std::constructible_from<matrix_iter_t, other_matrix_iter_t>
 #endif // !SEQAN3_WORKAROUND_FURTHER_CONSTRAIN_FRIEND_DECLARATION
     //!\endcond
     friend class trace_iterator_base;
@@ -81,12 +82,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr trace_iterator_base() = default; //!< Defaulted.
-    constexpr trace_iterator_base(trace_iterator_base const &) = default; //!< Defaulted.
-    constexpr trace_iterator_base(trace_iterator_base &&) = default; //!< Defaulted.
+    constexpr trace_iterator_base() = default;                                        //!< Defaulted.
+    constexpr trace_iterator_base(trace_iterator_base const &) = default;             //!< Defaulted.
+    constexpr trace_iterator_base(trace_iterator_base &&) = default;                  //!< Defaulted.
     constexpr trace_iterator_base & operator=(trace_iterator_base const &) = default; //!< Defaulted.
-    constexpr trace_iterator_base & operator=(trace_iterator_base &&) = default; //!< Defaulted.
-    ~trace_iterator_base() = default; //!< Defaulted.
+    constexpr trace_iterator_base & operator=(trace_iterator_base &&) = default;      //!< Defaulted.
+    ~trace_iterator_base() = default;                                                 //!< Defaulted.
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
@@ -117,10 +118,10 @@ public:
     /*!\name Associated types
      * \{
      */
-    using value_type = trace_directions; //!< The value type.
-    using reference = trace_directions const &; //!< The reference type.
-    using pointer = value_type const *; //!< The pointer type.
-    using difference_type = std::ptrdiff_t; //!< The difference type.
+    using value_type = trace_directions;                 //!< The value type.
+    using reference = trace_directions const &;          //!< The reference type.
+    using pointer = value_type const *;                  //!< The pointer type.
+    using difference_type = std::ptrdiff_t;              //!< The difference type.
     using iterator_category = std::forward_iterator_tag; //!< Forward iterator tag.
     //!\}
 
@@ -260,13 +261,12 @@ private:
         {
             current_direction = trace_directions::diagonal;
         }
-        else if (static_cast<bool>(dir & trace_directions::up) ||
-                 static_cast<bool>(dir & trace_directions::up_open))
+        else if (static_cast<bool>(dir & trace_directions::up) || static_cast<bool>(dir & trace_directions::up_open))
         {
             current_direction = trace_directions::up;
         }
-        else if (static_cast<bool>(dir & trace_directions::left) ||
-                 static_cast<bool>(dir & trace_directions::left_open))
+        else if (static_cast<bool>(dir & trace_directions::left)
+                 || static_cast<bool>(dir & trace_directions::left_open))
         {
             current_direction = trace_directions::left;
         }
@@ -288,7 +288,7 @@ private:
         return static_cast<derived_t const &>(*this);
     }
 
-    matrix_iter_t matrix_iter{}; //!< The underlying matrix iterator.
+    matrix_iter_t matrix_iter{};          //!< The underlying matrix iterator.
     trace_directions current_direction{}; //!< The current trace direction.
 };
 

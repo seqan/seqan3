@@ -30,7 +30,7 @@ namespace seqan3::detail
 {
 
 //!\brief Helper function to print elements of a tuple separately.
-template <typename char_t, typename tuple_t, std::size_t ...I>
+template <typename char_t, typename tuple_t, std::size_t... I>
 void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequence<I...> const &)
 {
     using std::get;
@@ -51,9 +51,9 @@ void print_tuple(debug_stream_type<char_t> & s, tuple_t && t, std::index_sequenc
  */
 //!\cond
 template <typename tuple_t>
-concept debug_streamable_tuple = !std::ranges::input_range<tuple_t> &&
-                                        !alphabet<tuple_t> &&  // exclude alphabet_tuple_base
-                                        tuple_like<std::remove_cvref_t<tuple_t>>;
+concept debug_streamable_tuple = !
+std::ranges::input_range<tuple_t> && !alphabet<tuple_t> && // exclude alphabet_tuple_base
+    tuple_like<std::remove_cvref_t<tuple_t>>;
 //!\endcond
 } // namespace seqan3::detail
 
@@ -70,7 +70,8 @@ template <typename char_t, typename tuple_t>
     requires (detail::debug_streamable_tuple<tuple_t>)
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, tuple_t && t)
 {
-    detail::print_tuple(s, std::forward<tuple_t>(t),
+    detail::print_tuple(s,
+                        std::forward<tuple_t>(t),
                         std::make_index_sequence<std::tuple_size_v<std::remove_cvref_t<tuple_t>>>{});
     return s;
 }

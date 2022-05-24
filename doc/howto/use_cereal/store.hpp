@@ -5,7 +5,7 @@
 #include <cereal/archives/binary.hpp> // includes the cereal::BinaryOutputArchive
 //! [binary_include]
 //! [vector_include]
-#include <cereal/types/vector.hpp>    // includes cerealisation support for std::vector
+#include <cereal/types/vector.hpp> // includes cerealisation support for std::vector
 //! [vector_include]
 
 #include <seqan3/core/debug_stream.hpp>
@@ -25,8 +25,8 @@ int main()
     // could be used, e.g. seqan3::fm_index.
     seqan3::test::tmp_filename tmp_file{"data.out"}; // This is a temporary file, use any other filename.
 
-    std::vector<int16_t> vec{1,2,3,4};
-    store(vec, tmp_file);                            // Calls store on a std::vector.
+    std::vector<int16_t> vec{1, 2, 3, 4};
+    store(vec, tmp_file); // Calls store on a std::vector.
 
     return 0;
 }

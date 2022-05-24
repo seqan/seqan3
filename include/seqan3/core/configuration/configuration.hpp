@@ -40,11 +40,11 @@ namespace seqan3
  * configurations for a specific algorithm. It extends the standard tuple interface with some useful functions to modify
  * and query the user configurations.
  */
-template <detail::config_element ... configs_t>
+template <detail::config_element... configs_t>
 class configuration : public std::tuple<configs_t...>
 {
     //!\brief Friend declaration for other instances of the configuration.
-    template <detail::config_element ... _configs_t>
+    template <detail::config_element... _configs_t>
     friend class configuration;
 
 public:
@@ -56,12 +56,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr configuration()                                  = default; //!< Defaulted.
-    constexpr configuration(configuration const &)             = default; //!< Defaulted.
-    constexpr configuration(configuration &&)                  = default; //!< Defaulted.
+    constexpr configuration() = default;                                  //!< Defaulted.
+    constexpr configuration(configuration const &) = default;             //!< Defaulted.
+    constexpr configuration(configuration &&) = default;                  //!< Defaulted.
     constexpr configuration & operator=(configuration const &) = default; //!< Defaulted.
-    constexpr configuration & operator=(configuration &&)      = default; //!< Defaulted.
-    ~configuration()                                           = default; //!< Defaulted.
+    constexpr configuration & operator=(configuration &&) = default;      //!< Defaulted.
+    ~configuration() = default;                                           //!< Defaulted.
 
     /*!\brief Constructs a configuration from a single configuration element.
      * \tparam config_element_t The configuration element to add; must model
@@ -69,8 +69,8 @@ public:
      * \param[in] config_element The configuration element to construct the configuration from.
      */
     template <typename config_element_t>
-        requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>) &&
-                 detail::config_element<std::remove_cvref_t<config_element_t>>
+        requires (!std::same_as<std::remove_cvref_t<config_element_t>, configuration>)
+              && detail::config_element<std::remove_cvref_t<config_element_t>>
     constexpr configuration(config_element_t && config_element) :
         base_type{std::forward<config_element_t>(config_element)}
     {}
@@ -150,7 +150,7 @@ public:
         return pack_traits::contains<query_t, configs_t...>;
     }
     //!\brief Checks if the given type exists in the tuple.
-    template <template <typename ...> typename query_t>
+    template <template <typename...> typename query_t>
     static constexpr bool exists() noexcept
     {
         return (pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...> > -1);
@@ -182,11 +182,9 @@ public:
     {
         if constexpr (detail::config_element<std::remove_cvref_t<other_configuration_t>>)
         {
-            return configuration<configs_t..., std::remove_cvref_t<other_configuration_t>>
-            {
+            return configuration<configs_t..., std::remove_cvref_t<other_configuration_t>>{
                 std::tuple_cat(static_cast<base_type>(*this),
-                               std::tuple{std::forward<other_configuration_t>(other_config)})
-            };
+                               std::tuple{std::forward<other_configuration_t>(other_config)})};
         }
         else
         {
@@ -199,20 +197,19 @@ public:
             using other_base_t = typename std::remove_cvref_t<other_configuration_t>::base_type;
 
             // The other base tuple type matching the reference type and the const qualifier of the input parameter.
-            using other_base_same_modifier_t = detail::transfer_type_modifier_onto_t<other_configuration_t,
-                                                                                     other_base_t>;
+            using other_base_same_modifier_t =
+                detail::transfer_type_modifier_onto_t<other_configuration_t, other_base_t>;
 
             // Form a new seqan3::configuration type with the concatenated configuration element types of this and the
             // other configuration.
             using other_configs_list_t = detail::transfer_template_args_onto_t<other_base_t, type_list>;
-            using appended_configuration_t =
-                    detail::transfer_template_args_onto_t<list_traits::concat<type_list<configs_t...>,
-                                                                              other_configs_list_t>,
-                                                          configuration>;
+            using appended_configuration_t = detail::transfer_template_args_onto_t<
+                list_traits::concat<type_list<configs_t...>, other_configs_list_t>,
+                configuration>;
 
             // Concatenate the two configurations using their base tuple types.
-            return appended_configuration_t{std::tuple_cat(static_cast<base_type>(*this),
-                                                           std::forward<other_base_same_modifier_t>(other_config))};
+            return appended_configuration_t{
+                std::tuple_cat(static_cast<base_type>(*this), std::forward<other_base_same_modifier_t>(other_config))};
         }
     }
 
@@ -229,28 +226,27 @@ public:
     }
 
     //!\overload
-    template <template <typename ...> typename query_t>
+    template <template <typename...> typename query_t>
     [[nodiscard]] constexpr auto remove() const
         requires (exists<query_t>())
     {
-        constexpr int index = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke,
-                                                   configs_t...>;
+        constexpr int index =
+            pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
         return remove_at<index>();
     }
     //!\}
 
 private:
-
     /*!\name Internal constructor
      * \{
      */
     //!\brief Constructs from std::tuple.
-    template <typename ..._configs_t>
+    template <typename... _configs_t>
     explicit constexpr configuration(std::tuple<_configs_t...> const & cfg) : base_type{cfg}
     {}
 
     //!\brief Constructs from std::tuple.
-    template <typename ..._configs_t>
+    template <typename... _configs_t>
     explicit constexpr configuration(std::tuple<_configs_t...> && cfg) : base_type{std::move(cfg)}
     {}
     //!\}
@@ -299,9 +295,8 @@ private:
      * specialisation of this class template is stored.
      */
     template <typename this_t, typename query_t, typename alternative_t>
-    static constexpr decltype(auto) get_or_impl(this_t && me,
-                                                query_t const & SEQAN3_DOXYGEN_ONLY(query),
-                                                alternative_t && alternative) noexcept
+    static constexpr decltype(auto)
+    get_or_impl(this_t && me, query_t const & SEQAN3_DOXYGEN_ONLY(query), alternative_t && alternative) noexcept
     {
         if constexpr (exists<query_t>())
         {
@@ -316,11 +311,12 @@ private:
 
     //!\overload
     template <typename this_t,
-              template <typename ...> typename query_template_t, typename ...parameters_t,
+              template <typename...>
+              typename query_template_t,
+              typename... parameters_t,
               typename alternative_t>
-    static constexpr decltype(auto) get_or_impl(this_t && me,
-                                                query_template_t<parameters_t...> const &,
-                                                alternative_t && alternative) noexcept
+    static constexpr decltype(auto)
+    get_or_impl(this_t && me, query_template_t<parameters_t...> const &, alternative_t && alternative) noexcept
     {
         if constexpr (exists<query_template_t>())
         {
@@ -405,7 +401,7 @@ constexpr auto operator|(lhs_config_t && lhs, rhs_config_t && rhs)
  *
  * Constant time.
  */
-template <template <typename ...> class query_t, typename ...configs_t>
+template <template <typename...> class query_t, typename... configs_t>
 constexpr auto & get(configuration<configs_t...> & config) noexcept
 {
     constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
@@ -415,7 +411,7 @@ constexpr auto & get(configuration<configs_t...> & config) noexcept
 }
 
 //!\overload
-template <template <typename ...> class query_t, typename ...configs_t>
+template <template <typename...> class query_t, typename... configs_t>
 constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 {
     constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
@@ -425,7 +421,7 @@ constexpr auto const & get(configuration<configs_t...> const & config) noexcept
 }
 
 //!\overload
-template <template <typename ...> class query_t, typename ...configs_t>
+template <template <typename...> class query_t, typename... configs_t>
 constexpr auto && get(configuration<configs_t...> && config) noexcept
 {
     constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
@@ -435,7 +431,7 @@ constexpr auto && get(configuration<configs_t...> && config) noexcept
 }
 
 //!\overload
-template <template <typename ...> class query_t, typename ...configs_t>
+template <template <typename...> class query_t, typename... configs_t>
 constexpr auto const && get(configuration<configs_t...> const && config) noexcept
 {
     constexpr auto pos = pack_traits::find_if<detail::is_same_configuration_f<query_t>::template invoke, configs_t...>;
@@ -445,7 +441,7 @@ constexpr auto const && get(configuration<configs_t...> const && config) noexcep
 }
 //!\}
 
-} // namespace seqan3::detail
+} // namespace seqan3
 
 namespace std
 {
@@ -456,7 +452,7 @@ namespace std
  * \see std::tuple_size_v
  * \ingroup core_configuration
  */
-template <seqan3::detail::config_element ... configs_t>
+template <seqan3::detail::config_element... configs_t>
 struct tuple_size<seqan3::configuration<configs_t...>>
 {
     //!\brief The number of elements.
@@ -468,11 +464,11 @@ struct tuple_size<seqan3::configuration<configs_t...>>
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  * \ingroup core_configuration
  */
-template <size_t pos, seqan3::detail::config_element ... configs_t>
+template <size_t pos, seqan3::detail::config_element... configs_t>
 struct tuple_element<pos, seqan3::configuration<configs_t...>>
 {
     //!\brief The type of the config at position `pos`
     using type = std::tuple_element_t<pos, typename seqan3::configuration<configs_t...>::base_type>;
 };
 //!\endcond
-}  //namespace std
+} //namespace std

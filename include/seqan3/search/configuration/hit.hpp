@@ -36,12 +36,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr hit_all() = default; //!< Defaulted.
-    constexpr hit_all(hit_all const &) = default; //!< Defaulted.
-    constexpr hit_all(hit_all &&) = default; //!< Defaulted.
+    constexpr hit_all() = default;                            //!< Defaulted.
+    constexpr hit_all(hit_all const &) = default;             //!< Defaulted.
+    constexpr hit_all(hit_all &&) = default;                  //!< Defaulted.
     constexpr hit_all & operator=(hit_all const &) = default; //!< Defaulted.
-    constexpr hit_all & operator=(hit_all &&) = default; //!< Defaulted.
-    ~hit_all() = default; //!< Defaulted.
+    constexpr hit_all & operator=(hit_all &&) = default;      //!< Defaulted.
+    ~hit_all() = default;                                     //!< Defaulted.
 
     //!\}
 
@@ -61,12 +61,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr hit_all_best() = default; //!< Defaulted.
-    constexpr hit_all_best(hit_all_best const &) = default; //!< Defaulted.
-    constexpr hit_all_best(hit_all_best &&) = default; //!< Defaulted.
+    constexpr hit_all_best() = default;                                 //!< Defaulted.
+    constexpr hit_all_best(hit_all_best const &) = default;             //!< Defaulted.
+    constexpr hit_all_best(hit_all_best &&) = default;                  //!< Defaulted.
     constexpr hit_all_best & operator=(hit_all_best const &) = default; //!< Defaulted.
-    constexpr hit_all_best & operator=(hit_all_best &&) = default; //!< Defaulted.
-    ~hit_all_best() = default; //!< Defaulted.
+    constexpr hit_all_best & operator=(hit_all_best &&) = default;      //!< Defaulted.
+    ~hit_all_best() = default;                                          //!< Defaulted.
 
     //!\}
 
@@ -86,12 +86,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr hit_single_best() = default; //!< Defaulted.
-    constexpr hit_single_best(hit_single_best const &) = default; //!< Defaulted.
-    constexpr hit_single_best(hit_single_best &&) = default; //!< Defaulted.
+    constexpr hit_single_best() = default;                                    //!< Defaulted.
+    constexpr hit_single_best(hit_single_best const &) = default;             //!< Defaulted.
+    constexpr hit_single_best(hit_single_best &&) = default;                  //!< Defaulted.
     constexpr hit_single_best & operator=(hit_single_best const &) = default; //!< Defaulted.
-    constexpr hit_single_best & operator=(hit_single_best &&) = default; //!< Defaulted.
-    ~hit_single_best() = default; //!< Defaulted.
+    constexpr hit_single_best & operator=(hit_single_best &&) = default;      //!< Defaulted.
+    ~hit_single_best() = default;                                             //!< Defaulted.
 
     //!\}
 
@@ -115,12 +115,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr hit_strata() = default; //!< Defaulted.
-    constexpr hit_strata(hit_strata const &) = default; //!< Defaulted.
-    constexpr hit_strata(hit_strata &&) = default; //!< Defaulted.
+    constexpr hit_strata() = default;                               //!< Defaulted.
+    constexpr hit_strata(hit_strata const &) = default;             //!< Defaulted.
+    constexpr hit_strata(hit_strata &&) = default;                  //!< Defaulted.
     constexpr hit_strata & operator=(hit_strata const &) = default; //!< Defaulted.
-    constexpr hit_strata & operator=(hit_strata &&) = default; //!< Defaulted.
-    ~hit_strata() = default; //!< Defaulted.
+    constexpr hit_strata & operator=(hit_strata &&) = default;      //!< Defaulted.
+    ~hit_strata() = default;                                        //!< Defaulted.
 
     /*!\brief Initialises the strata config.
      * \param[in] stratum The stratum to include in the search.
@@ -152,12 +152,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    hit() = default; //!< Defaulted.
-    hit(hit const &) = default; //!< Defaulted.
-    hit(hit &&) = default; //!< Defaulted.
+    hit() = default;                        //!< Defaulted.
+    hit(hit const &) = default;             //!< Defaulted.
+    hit(hit &&) = default;                  //!< Defaulted.
     hit & operator=(hit const &) = default; //!< Defaulted.
-    hit & operator=(hit &&) = default; //!< Defaulted.
-    ~hit() = default; //!< Defaulted.
+    hit & operator=(hit &&) = default;      //!< Defaulted.
+    ~hit() = default;                       //!< Defaulted.
 
     /*!\brief Sets the given configuration element to the dynamic hit configuration element.
      *

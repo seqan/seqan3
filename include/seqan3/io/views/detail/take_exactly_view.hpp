@@ -80,20 +80,19 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take_exactly() = default; //!< Defaulted.
-    view_take_exactly(view_take_exactly const & rhs) = default; //!< Defaulted.
-    view_take_exactly(view_take_exactly && rhs) = default; //!< Defaulted.
+    view_take_exactly() = default;                                          //!< Defaulted.
+    view_take_exactly(view_take_exactly const & rhs) = default;             //!< Defaulted.
+    view_take_exactly(view_take_exactly && rhs) = default;                  //!< Defaulted.
     view_take_exactly & operator=(view_take_exactly const & rhs) = default; //!< Defaulted.
-    view_take_exactly & operator=(view_take_exactly && rhs) = default; //!< Defaulted.
-    ~view_take_exactly() = default; //!< Defaulted.
+    view_take_exactly & operator=(view_take_exactly && rhs) = default;      //!< Defaulted.
+    ~view_take_exactly() = default;                                         //!< Defaulted.
 
     /*!\brief Construct from another View.
      * \param[in] _urange The underlying range.
      * \param[in] _size   The desired size (after which to stop returning elements).
      * \throws unexpected_end_of_input If `or_throw && seqan3::sized_range<urng_t>`.
      */
-    constexpr view_take_exactly(urng_t _urange, size_t const _size)
-        : urange{std::move(_urange)}, target_size{_size}
+    constexpr view_take_exactly(urng_t _urange, size_t const _size) : urange{std::move(_urange)}, target_size{_size}
     {
         if constexpr (std::ranges::sized_range<urng_t>)
         {
@@ -101,11 +100,9 @@ public:
             {
                 if constexpr (or_throw)
                 {
-                    throw std::invalid_argument
-                    {
+                    throw std::invalid_argument{
                         "You are trying to construct a detail::take_exactly_or_throw from a range that is strictly "
-                        "smaller."
-                    };
+                        "smaller."};
                 }
                 else
                 {
@@ -123,8 +120,8 @@ public:
      */
     template <std::ranges::viewable_range rng_t>
         requires std::constructible_from<rng_t, std::views::all_t<rng_t>>
-    constexpr view_take_exactly(rng_t && _urange, size_t const _size)
-        : view_take_exactly{std::views::all(std::forward<rng_t>(_urange)), _size}
+    constexpr view_take_exactly(rng_t && _urange, size_t const _size) :
+        view_take_exactly{std::views::all(std::forward<rng_t>(_urange)), _size}
     {}
     //!\}
 
@@ -217,9 +214,8 @@ public:
 
 //!\brief Template argument type deduction guide that strips references.
 //!\relates seqan3::detail::view_take_exactly
-template <typename urng_t,
-          bool or_throw = false>
-view_take_exactly(urng_t && , size_t) -> view_take_exactly<std::views::all_t<urng_t>, or_throw>;
+template <typename urng_t, bool or_throw = false>
+view_take_exactly(urng_t &&, size_t) -> view_take_exactly<std::views::all_t<urng_t>, or_throw>;
 
 //!\brief The iterator for the view_take_exactly. It inherits from the underlying type, but overwrites several operators.
 //!\tparam rng_t Should be `urng_t` for defining #iterator and `urng_t const` for defining #const_iterator.
@@ -251,16 +247,15 @@ public:
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    basic_iterator() = default; //!< Defaulted.
-    basic_iterator(basic_iterator const & rhs) = default; //!< Defaulted.
-    basic_iterator(basic_iterator && rhs) = default; //!< Defaulted.
+    basic_iterator() = default;                                       //!< Defaulted.
+    basic_iterator(basic_iterator const & rhs) = default;             //!< Defaulted.
+    basic_iterator(basic_iterator && rhs) = default;                  //!< Defaulted.
     basic_iterator & operator=(basic_iterator const & rhs) = default; //!< Defaulted.
-    basic_iterator & operator=(basic_iterator && rhs) = default; //!< Defaulted.
-    ~basic_iterator() = default; //!< Defaulted.
+    basic_iterator & operator=(basic_iterator && rhs) = default;      //!< Defaulted.
+    ~basic_iterator() = default;                                      //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer.
-    constexpr basic_iterator(base_base_t const & it) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}
+    constexpr basic_iterator(base_base_t const & it) noexcept(noexcept(base_t{it})) : base_t{std::move(it)}
     {}
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the members.
@@ -268,7 +263,9 @@ public:
                              size_t const _pos,
                              size_t const _max_pos,
                              view_take_exactly * host = nullptr) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}, pos{_pos}, max_pos(_max_pos)
+        base_t{std::move(it)},
+        pos{_pos},
+        max_pos(_max_pos)
     {
         host_ptr = host;
 
@@ -298,9 +295,9 @@ public:
     }
 
     //!\brief Returns an iterator incremented by one.
-    constexpr decltype(auto) operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>()) &&
-                                                      (std::same_as<decltype(std::declval<base_base_t &>()++), void> ||
-                                                       std::is_nothrow_copy_constructible_v<basic_iterator>))
+    constexpr decltype(auto) operator++(int) noexcept(noexcept(++std::declval<basic_iterator &>())
+                                                      && (std::same_as<decltype(std::declval<base_base_t &>()++), void>
+                                                          || std::is_nothrow_copy_constructible_v<basic_iterator>))
     {
         // if underlying iterator is a C++20 input iterator (i.e. returns void), return void too.
         if constexpr (std::same_as<decltype(std::declval<base_base_t &>()++), void>)
@@ -325,8 +322,8 @@ public:
     }
 
     //!\brief Returns an iterator decremented by one.
-    constexpr basic_iterator operator--(int) noexcept(noexcept(--std::declval<basic_iterator &>()) &&
-                                                      std::is_nothrow_copy_constructible_v<basic_iterator>)
+    constexpr basic_iterator operator--(int) noexcept(noexcept(--std::declval<basic_iterator &>())
+                                                      && std::is_nothrow_copy_constructible_v<basic_iterator>)
         requires std::bidirectional_iterator<base_base_t>
     {
         basic_iterator cpy{*this};
@@ -335,8 +332,8 @@ public:
     }
 
     //!\brief Advances the iterator by skip positions.
-    constexpr basic_iterator & operator+=(difference_type const skip)
-        noexcept(noexcept(std::declval<base_t &>() += skip))
+    constexpr basic_iterator & operator+=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() +=
+                                                                                        skip))
         requires std::random_access_iterator<base_base_t>
     {
         base_t::operator+=(skip);
@@ -345,8 +342,8 @@ public:
     }
 
     //!\brief Advances the iterator by -skip positions.
-    constexpr basic_iterator & operator-=(difference_type const skip)
-        noexcept(noexcept(std::declval<base_t &>() -= skip))
+    constexpr basic_iterator & operator-=(difference_type const skip) noexcept(noexcept(std::declval<base_t &>() -=
+                                                                                        skip))
         requires std::random_access_iterator<base_base_t>
     {
         base_t::operator-=(skip);
@@ -389,8 +386,8 @@ public:
     }
 
     //!\brief Checks whether `lhs` is equal to `rhs`.
-    constexpr friend bool operator==(sentinel_type const & lhs, basic_iterator const & rhs)
-        noexcept(noexcept(rhs == lhs))
+    constexpr friend bool operator==(sentinel_type const & lhs,
+                                     basic_iterator const & rhs) noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
@@ -411,8 +408,8 @@ public:
     }
 
     //!\brief Checks whether `lhs` is not equal to `rhs`.
-    constexpr friend bool operator!=(sentinel_type const & lhs, basic_iterator const & rhs)
-        noexcept(noexcept(rhs != lhs))
+    constexpr friend bool operator!=(sentinel_type const & lhs,
+                                     basic_iterator const & rhs) noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
     }
@@ -485,44 +482,36 @@ struct take_exactly_fn
             return urange.substr(0, target_size);
         }
         // string const &
-        else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string> &&
-                           std::is_const_v<std::remove_reference_t<urng_t>>)
+        else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string>
+                           && std::is_const_v<std::remove_reference_t<urng_t>>)
         {
             // not in standard
             // seqan3::views::type_reduce does this too
             return std::basic_string_view{std::ranges::data(urange), target_size};
         }
         // contiguous
-        else if constexpr (std::ranges::borrowed_range<urng_t> &&
-                           std::ranges::contiguous_range<urng_t> &&
-                           std::ranges::sized_range<urng_t>)
+        else if constexpr (std::ranges::borrowed_range<urng_t> && std::ranges::contiguous_range<urng_t>
+                           && std::ranges::sized_range<urng_t>)
         {
             // not in standard (special case for std::span in standard)
             // seqan3::views::type_reduce does this too
             return std::span{std::ranges::data(urange), target_size};
         }
         // random_access
-        else if constexpr (std::ranges::borrowed_range<urng_t> &&
-                           std::ranges::random_access_range<urng_t> &&
-                           std::ranges::sized_range<urng_t>)
+        else if constexpr (std::ranges::borrowed_range<urng_t> && std::ranges::random_access_range<urng_t>
+                           && std::ranges::sized_range<urng_t>)
         {
             // not in standard
             // seqan3::views::type_reduce does this too
-            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
-            {
+            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>{
                 std::ranges::begin(urange),
                 std::ranges::begin(urange) + target_size,
-                target_size
-            };
+                target_size};
         }
         // our type
         else
         {
-            return view_take_exactly<std::views::all_t<urng_t>, or_throw>
-            {
-                std::forward<urng_t>(urange),
-                target_size
-            };
+            return view_take_exactly<std::views::all_t<urng_t>, or_throw>{std::forward<urng_t>(urange), target_size};
         }
     }
 };
@@ -584,7 +573,7 @@ namespace seqan3::detail
  *
  * \hideinitializer
  */
-inline auto constexpr take_exactly = take_exactly_fn<false>{};
+inline constexpr auto take_exactly = take_exactly_fn<false>{};
 
 // ============================================================================
 //  detail::take_exactly_or_throw (adaptor instance definition)
@@ -598,5 +587,5 @@ inline auto constexpr take_exactly = take_exactly_fn<false>{};
  * \copydetails seqan3::detail::take_exactly
  * \hideinitializer
  */
-inline auto constexpr take_exactly_or_throw = take_exactly_fn<true>{};
+inline constexpr auto take_exactly_or_throw = take_exactly_fn<true>{};
 } // namespace seqan3::detail

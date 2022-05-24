@@ -24,7 +24,7 @@ namespace seqan3
 /*!\brief Type that contains multiple types.
  * \ingroup utility_type_list
  */
-template <typename ...types>
+template <typename... types>
 struct type_list
 {
     //!\brief The type list itself
