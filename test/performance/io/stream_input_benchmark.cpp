@@ -72,19 +72,18 @@ std::string const & input_comp<seqan::Nothing> = input;
 #endif
 
 #if defined(SEQAN3_HAS_ZLIB)
+// clang-format off
 template <>
 std::string const input_comp<seqan3::contrib::gz_istream>
-{
-    [] ()
-    {
-        std::ostringstream ret;
-        { // In scope to force flush of ostream on destruction.
-            seqan3::contrib::gz_ostream os{ret};
-            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
-        }
-        return ret.str();
-    } ()
-};
+    {[]()
+     {
+         std::ostringstream ret;
+         { // In scope to force flush of ostream on destruction.
+             seqan3::contrib::gz_ostream os{ret};
+             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+         }
+         return ret.str();
+     }()};
 
 template <>
 std::string const input_comp<seqan3::contrib::bgzf_istream>
@@ -99,30 +98,31 @@ std::string const input_comp<seqan3::contrib::bgzf_istream>
         return ret.str();
     } ()
 };
-#ifdef SEQAN3_HAS_SEQAN2
+// clang-format on
+#    ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan::GZFile> = input_comp<seqan3::contrib::gz_istream>;
 
 template <>
 std::string const & input_comp<seqan::BgzfFile> = input_comp<seqan3::contrib::bgzf_istream>;
-#endif
+#    endif
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
+// clang-format off
 template <>
 std::string const input_comp<seqan3::contrib::bz2_istream>
-{
-    [] ()
-    {
-        std::ostringstream ret;
-        { // In scope to force flush of ostream on destruction.
-            seqan3::contrib::bz2_ostream os{ret};
-            std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
-        }
-        return ret.str();
-    } ()
-};
-#ifdef SEQAN3_HAS_SEQAN2
+    {[]()
+     {
+         std::ostringstream ret;
+         { // In scope to force flush of ostream on destruction.
+             seqan3::contrib::bz2_ostream os{ret};
+             std::copy(input.begin(), input.end(), std::ostreambuf_iterator<char>(os));
+         }
+         return ret.str();
+     }()};
+// clang-format on
+#    ifdef SEQAN3_HAS_SEQAN2
 template <>
 std::string const & input_comp<seqan::BZ2File> = input_comp<seqan3::contrib::bz2_istream>;
 #endif
