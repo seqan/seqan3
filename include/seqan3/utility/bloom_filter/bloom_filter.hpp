@@ -90,9 +90,8 @@ private:
     //!\endcond
 
     //!\brief The underlying datatype to use.
-    using data_type = std::conditional_t<data_layout_mode_ == data_layout::uncompressed,
-                                         sdsl::bit_vector,
-                                         sdsl::sd_vector<>>;
+    using data_type =
+        std::conditional_t<data_layout_mode_ == data_layout::uncompressed, sdsl::bit_vector, sdsl::sd_vector<>>;
 
     //!\brief The size of the underlying bit vector in bits.
     size_t size_in_bits{};
@@ -119,9 +118,9 @@ private:
     inline constexpr size_t hash_and_fit(size_t h, size_t const seed) const
     {
         h *= seed;
-        h ^= h >> hash_shift; // XOR and shift higher bits into lower bits
+        h ^= h >> hash_shift;         // XOR and shift higher bits into lower bits
         h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
-        // Use fastrange (integer modulo without division) if possible.
+                                      // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
         h = static_cast<uint64_t>((static_cast<__uint128_t>(h) * static_cast<__uint128_t>(size_in_bits)) >> 64);
 #else
@@ -137,12 +136,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    bloom_filter() = default; //!< Defaulted.
-    bloom_filter(bloom_filter const &) = default; //!< Defaulted.
+    bloom_filter() = default;                                 //!< Defaulted.
+    bloom_filter(bloom_filter const &) = default;             //!< Defaulted.
     bloom_filter & operator=(bloom_filter const &) = default; //!< Defaulted.
-    bloom_filter(bloom_filter &&) = default; //!< Defaulted.
-    bloom_filter & operator=(bloom_filter &&) = default; //!< Defaulted.
-    ~bloom_filter() = default; //!< Defaulted.
+    bloom_filter(bloom_filter &&) = default;                  //!< Defaulted.
+    bloom_filter & operator=(bloom_filter &&) = default;      //!< Defaulted.
+    ~bloom_filter() = default;                                //!< Defaulted.
 
     /*!\brief Construct an uncompressed Bloom Filter.
      * \param size The bit vector size (in bits).
@@ -156,8 +155,7 @@ public:
      *
      * \include test/snippet/utility/bloom_filter/bloom_filter_constructor.cpp
      */
-    bloom_filter(seqan3::bin_size size,
-                 seqan3::hash_function_count funs = seqan3::hash_function_count{2u})
+    bloom_filter(seqan3::bin_size size, seqan3::hash_function_count funs = seqan3::hash_function_count{2u})
         requires (data_layout_mode == data_layout::uncompressed)
     {
         size_in_bits = size.get();
@@ -186,8 +184,7 @@ public:
     bloom_filter(bloom_filter<data_layout::uncompressed> const & bf)
         requires (data_layout_mode == data_layout::compressed)
     {
-        std::tie(size_in_bits, hash_shift, hash_funs) =
-            std::tie(bf.size_in_bits, bf.hash_shift, bf.hash_funs);
+        std::tie(size_in_bits, hash_shift, hash_funs) = std::tie(bf.size_in_bits, bf.hash_shift, bf.hash_funs);
 
         data = sdsl::sd_vector<>{bf.data};
     }
@@ -253,11 +250,11 @@ public:
      */
     bool contains(size_t const value) const noexcept
     {
-        for ( size_t i = 0; i < hash_funs; i++ )
+        for (size_t i = 0; i < hash_funs; i++)
         {
             size_t idx = hash_and_fit(value, hash_seeds[i]);
             assert(idx < data.size());
-            if ( data[idx] == 0 )
+            if (data[idx] == 0)
                 return false;
         }
         return true;
@@ -328,8 +325,8 @@ public:
      */
     friend bool operator==(bloom_filter const & lhs, bloom_filter const & rhs) noexcept
     {
-        return std::tie(lhs.size_in_bits, lhs.hash_shift, lhs.hash_funs, lhs.data) ==
-               std::tie(rhs.size_in_bits, rhs.hash_shift, rhs.hash_funs, rhs.data);
+        return std::tie(lhs.size_in_bits, lhs.hash_shift, lhs.hash_funs, lhs.data)
+            == std::tie(rhs.size_in_bits, rhs.hash_shift, rhs.hash_funs, rhs.data);
     }
 
     /*!\brief Test for inequality.

@@ -43,12 +43,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_max_error() = default; //!< Defaulted.
-    policy_max_error(policy_max_error const &) = default; //!< Defaulted.
-    policy_max_error(policy_max_error &&) = default; //!< Defaulted.
+    policy_max_error() = default;                                     //!< Defaulted.
+    policy_max_error(policy_max_error const &) = default;             //!< Defaulted.
+    policy_max_error(policy_max_error &&) = default;                  //!< Defaulted.
     policy_max_error & operator=(policy_max_error const &) = default; //!< Defaulted.
-    policy_max_error & operator=(policy_max_error &&) = default; //!< Defaulted.
-    ~policy_max_error() = default; //!< Defaulted.
+    policy_max_error & operator=(policy_max_error &&) = default;      //!< Defaulted.
+    ~policy_max_error() = default;                                    //!< Defaulted.
 
     /*!\brief Initialises the policy with the given configuration.
      *
@@ -130,9 +130,10 @@ private:
      * based on the length of the query sequence.
      */
     uint8_t to_error_count(std::variant<search_cfg::error_count, search_cfg::error_rate> const & error_variant,
-                            [[maybe_unused]] size_t const query_size)
+                           [[maybe_unused]] size_t const query_size)
     {
-        return std::visit([&query_size] (auto error)
+        return std::visit(
+            [&query_size](auto error)
             {
                 if constexpr (std::same_as<decltype(error), search_cfg::error_count>)
                     return error.get();
@@ -146,7 +147,8 @@ private:
                     uint8_t const calculated_error_count = std::clamp(error.get() * query_size, 0.0, 255.0);
                     return calculated_error_count;
                 }
-            }, error_variant);
+            },
+            error_variant);
     }
 };
 

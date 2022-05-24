@@ -49,21 +49,28 @@ inline std::string make_printable(char const c)
 {
     switch (c)
     {
-        case '\0':                   return "'\\0'";
-        case '\t':                   return "'\\t'";
-        case '\n':                   return "'\\n'";
-        case '\v':                   return "'\\v'";
-        case '\f':                   return "'\\f'";
-        case '\r':                   return "'\\r'";
-        case static_cast<char>(127): return "'DEL'";
-        default:
-        {
-            if ((c >= static_cast<char>(1) && c <= static_cast<char>(8)) ||
-                (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
-                return "'CTRL'";
-            else
-                return {'\'', c, '\''};
-        }
+    case '\0':
+        return "'\\0'";
+    case '\t':
+        return "'\\t'";
+    case '\n':
+        return "'\\n'";
+    case '\v':
+        return "'\\v'";
+    case '\f':
+        return "'\\f'";
+    case '\r':
+        return "'\\r'";
+    case static_cast<char>(127):
+        return "'DEL'";
+    default:
+    {
+        if ((c >= static_cast<char>(1) && c <= static_cast<char>(8))
+            || (c >= static_cast<char>(14) && c <= static_cast<char>(31)))
+            return "'CTRL'";
+        else
+            return {'\'', c, '\''};
+    }
     }
 }
 

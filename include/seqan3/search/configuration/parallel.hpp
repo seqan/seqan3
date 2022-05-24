@@ -31,7 +31,7 @@ namespace seqan3::search_cfg
  *
  * \include test/snippet/search/configuration_parallel.cpp
  */
-using parallel = seqan3::detail::parallel_mode<std::integral_constant<detail::search_config_id,
-                                                                      detail::search_config_id::parallel>>;
+using parallel =
+    seqan3::detail::parallel_mode<std::integral_constant<detail::search_config_id, detail::search_config_id::parallel>>;
 
 } // namespace seqan3::search_cfg

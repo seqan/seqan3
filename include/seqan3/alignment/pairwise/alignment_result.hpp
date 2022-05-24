@@ -74,9 +74,8 @@ struct alignment_result_value_type
  * \brief Type deduction for the different combinations of result types.
  * \{
  */
- //! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
-alignment_result_value_type()
-    -> alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
+//! \brief Type deduction for an empty object. It will always fail the compilation, if any field is accessed.
+alignment_result_value_type()->alignment_result_value_type<std::nullopt_t *, std::nullopt_t *, std::nullopt_t *>;
 
 //! \brief Type deduction for id and score only.
 template <typename sequence1_id_t, typename sequence2_id_t, typename score_t>
@@ -173,9 +172,9 @@ private:
 
     //!\brief Befriend alignment result builder.
     template <typename configuration_t>
-    #if !SEQAN3_WORKAROUND_GCC_93467
+#if !SEQAN3_WORKAROUND_GCC_93467
         requires detail::is_type_specialisation_of_v<configuration_t, configuration>
-    #endif // !SEQAN3_WORKAROUND_GCC_93467
+#endif // !SEQAN3_WORKAROUND_GCC_93467
     friend class detail::policy_alignment_result_builder;
 
 public:
@@ -329,8 +328,9 @@ public:
      */
     constexpr auto const & score_matrix() const noexcept
     {
-        static_assert(!std::is_same_v<decltype(data.score_debug_matrix), std::nullopt_t *>,
-                      "Trying to access the score matrix, although it was not requested in the alignment configuration.");
+        static_assert(
+            !std::is_same_v<decltype(data.score_debug_matrix), std::nullopt_t *>,
+            "Trying to access the score matrix, although it was not requested in the alignment configuration.");
         return data.score_debug_matrix;
     }
 
@@ -347,8 +347,9 @@ public:
      */
     constexpr auto const & trace_matrix() const noexcept
     {
-        static_assert(!std::is_same_v<decltype(data.trace_debug_matrix), std::nullopt_t *>,
-                      "Trying to access the trace matrix, although it was not requested in the alignment configuration.");
+        static_assert(
+            !std::is_same_v<decltype(data.trace_debug_matrix), std::nullopt_t *>,
+            "Trying to access the trace matrix, although it was not requested in the alignment configuration.");
         return data.trace_debug_matrix;
     }
     //!\endcond
@@ -398,14 +399,14 @@ inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & stream
     constexpr bool has_sequence1_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence1_id), disabled_t>;
     constexpr bool has_sequence2_id = !std::is_same_v<decltype(std::declval<result_data_t>().sequence2_id), disabled_t>;
     constexpr bool has_score = !std::is_same_v<decltype(std::declval<result_data_t>().score), disabled_t>;
-    constexpr bool has_end_positions = !std::is_same_v<decltype(std::declval<result_data_t>().end_positions),
-                                                       disabled_t>;
-    constexpr bool has_begin_positions = !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions),
-                                                         disabled_t>;
+    constexpr bool has_end_positions =
+        !std::is_same_v<decltype(std::declval<result_data_t>().end_positions), disabled_t>;
+    constexpr bool has_begin_positions =
+        !std::is_same_v<decltype(std::declval<result_data_t>().begin_positions), disabled_t>;
     constexpr bool has_alignment = !std::is_same_v<decltype(std::declval<result_data_t>().alignment), disabled_t>;
 
     bool prepend_comma = false;
-    auto append_to_stream = [&] (auto && ...args)
+    auto append_to_stream = [&](auto &&... args)
     {
         ((stream << (prepend_comma ? std::string{", "} : std::string{})) << ... << std::forward<decltype(args)>(args));
         prepend_comma = true;

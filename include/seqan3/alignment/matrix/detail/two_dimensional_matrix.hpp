@@ -64,7 +64,6 @@ template <typename value_t,
 class two_dimensional_matrix
 {
 private:
-
     /*!\name Auxiliary types
      * \{
      */
@@ -76,37 +75,37 @@ private:
     class basic_iterator;
 
 public:
-
     /*!\name Associated types
      * \{
      */
-    using value_type = typename storage_type::value_type;  //!< The value type.
-    using reference = typename storage_type::reference;  //!< The reference type.
+    using value_type = typename storage_type::value_type;           //!< The value type.
+    using reference = typename storage_type::reference;             //!< The reference type.
     using const_reference = typename storage_type::const_reference; //!< The const reference type.
-    using pointer = typename storage_type::pointer;  //!< The pointer type.
-    using const_pointer = typename storage_type::const_pointer;  //!< The pointer type.
+    using pointer = typename storage_type::pointer;                 //!< The pointer type.
+    using const_pointer = typename storage_type::const_pointer;     //!< The pointer type.
     using difference_type = typename storage_type::difference_type; //!< The difference type.
-    using size_type = typename storage_type::size_type;  //!< The difference type.
-    using iterator = basic_iterator<false>; //!< The iterator type.
-    using const_iterator = basic_iterator<true>; //!< The const iterator type.
+    using size_type = typename storage_type::size_type;             //!< The difference type.
+    using iterator = basic_iterator<false>;                         //!< The iterator type.
+    using const_iterator = basic_iterator<true>;                    //!< The const iterator type.
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    two_dimensional_matrix() = default; //!< Defaulted
-    two_dimensional_matrix(two_dimensional_matrix const &) = default; //!< Defaulted
-    two_dimensional_matrix(two_dimensional_matrix &&) = default; //!< Defaulted
+    two_dimensional_matrix() = default;                                           //!< Defaulted
+    two_dimensional_matrix(two_dimensional_matrix const &) = default;             //!< Defaulted
+    two_dimensional_matrix(two_dimensional_matrix &&) = default;                  //!< Defaulted
     two_dimensional_matrix & operator=(two_dimensional_matrix const &) = default; //!< Defaulted
-    two_dimensional_matrix & operator=(two_dimensional_matrix &&) = default; //!< Defaulted
-    ~two_dimensional_matrix() = default; //!< Defaulted
+    two_dimensional_matrix & operator=(two_dimensional_matrix &&) = default;      //!< Defaulted
+    ~two_dimensional_matrix() = default;                                          //!< Defaulted
 
     /*!\brief Constructs the matrix by the given dimensions.
      * \param row_dim The row dimension (number of rows).
      * \param col_dim The column dimension (number of columns).
      */
     two_dimensional_matrix(number_rows const row_dim, number_cols const col_dim) :
-        row_dim{row_dim.get()}, col_dim{col_dim.get()}
+        row_dim{row_dim.get()},
+        col_dim{col_dim.get()}
     {
         storage.resize(row_dim.get() * col_dim.get());
     }
@@ -123,7 +122,8 @@ public:
         row_dim{row_dim.get()},
         col_dim{col_dim.get()}
     {
-        static_assert(std::move_constructible<std::ranges::range_value_t<entries_t>>, "The value type must be moveable.");
+        static_assert(std::move_constructible<std::ranges::range_value_t<entries_t>>,
+                      "The value type must be moveable.");
 
         assert(static_cast<size_t>(std::ranges::distance(entries)) == (row_dim.get() * col_dim.get()));
         storage.resize(row_dim.get() * col_dim.get());
@@ -166,9 +166,8 @@ public:
      */
     template <typename other_value_t, typename other_allocator_t, matrix_major_order other_order>
         requires std::assignable_from<other_value_t &, value_t &>
-    explicit constexpr two_dimensional_matrix(two_dimensional_matrix<other_value_t,
-                                                                     other_allocator_t,
-                                                                     other_order> const & matrix) :
+    explicit constexpr two_dimensional_matrix(
+        two_dimensional_matrix<other_value_t, other_allocator_t, other_order> const & matrix) :
         two_dimensional_matrix{number_rows{matrix.rows()}, number_cols{matrix.cols()}}
     {
         for (size_t i = 0; i < cols(); ++i)
@@ -190,8 +189,9 @@ public:
         assert(coordinate.col < cols());
         assert(coordinate.row < rows());
 
-        return *(begin() + matrix_offset{row_index_type{static_cast<std::ptrdiff_t>(coordinate.row)},
-                                         column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
+        return *(begin()
+                 + matrix_offset{row_index_type{static_cast<std::ptrdiff_t>(coordinate.row)},
+                                 column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
     }
 
     //!\copydoc operator[]
@@ -200,8 +200,9 @@ public:
         assert(coordinate.col < cols());
         assert(coordinate.row < rows());
 
-        return *(begin() + matrix_offset{row_index_type{static_cast<std::ptrdiff_t>(coordinate.row)},
-                                         column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
+        return *(begin()
+                 + matrix_offset{row_index_type{static_cast<std::ptrdiff_t>(coordinate.row)},
+                                 column_index_type{static_cast<std::ptrdiff_t>(coordinate.col)}});
     }
 
     //!\copydoc seqan3::detail::matrix::at
@@ -303,10 +304,9 @@ public:
     //!\}
 
 private:
-
     storage_type storage; //!< The matrix as a one-dimensional (flattened) vector of entries.
-    size_type    row_dim; //!< \copydoc seqan3::detail::matrix::rows
-    size_type    col_dim; //!< \copydoc seqan3::detail::matrix::cols
+    size_type row_dim;    //!< \copydoc seqan3::detail::matrix::rows
+    size_type col_dim;    //!< \copydoc seqan3::detail::matrix::cols
 };
 
 /*!\brief A two-dimensional matrix iterator.
@@ -346,7 +346,6 @@ private:
     using storage_iterator = detail::maybe_const_iterator_t<const_range, storage_type>;
 
 public:
-
     /*!\name Associated types
     * \{
     */
@@ -365,27 +364,24 @@ public:
     /*!\name Constructors, destructor and assignment
     * \{
     */
-    constexpr basic_iterator() = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator const &) = default; //!< Defaulted.
-    constexpr basic_iterator(basic_iterator &&) = default; //!< Defaulted.
+    constexpr basic_iterator() = default;                                   //!< Defaulted.
+    constexpr basic_iterator(basic_iterator const &) = default;             //!< Defaulted.
+    constexpr basic_iterator(basic_iterator &&) = default;                  //!< Defaulted.
     constexpr basic_iterator & operator=(basic_iterator const &) = default; //!< Defaulted.
-    constexpr basic_iterator & operator=(basic_iterator &&) = default; //!< Defaulted.
-    ~basic_iterator() = default; //!< Defaulted.
+    constexpr basic_iterator & operator=(basic_iterator &&) = default;      //!< Defaulted.
+    ~basic_iterator() = default;                                            //!< Defaulted.
 
     /*!\brief Construction from the underlying matrix and the iterator over actual storage.
     * \param[in] matrix The underlying matrix to access the corresponding dimensions.
     * \param[in] iter   The underlying iterator over the actual storage; must model std::random_access_iterator.
     */
-    constexpr basic_iterator(parent_t & matrix, storage_iterator iter) :
-        matrix_ptr{&matrix},
-        host_iter{iter}
+    constexpr basic_iterator(parent_t & matrix, storage_iterator iter) : matrix_ptr{&matrix}, host_iter{iter}
     {}
 
     //!\brief Construction of cons-iterator from non-const-iterator.
     constexpr basic_iterator(basic_iterator<!const_range> const & other) noexcept
         requires const_range
-        : matrix_ptr{other.matrix_ptr},
-          host_iter{other.host_iter}
+    : matrix_ptr{other.matrix_ptr}, host_iter{other.host_iter}
     {}
     //!\}
 
@@ -423,9 +419,8 @@ public:
     }
 
 private:
-
     parent_t * matrix_ptr{nullptr}; //!< Points to the associated matrix.
-    storage_iterator host_iter{}; //!< The underlying storage iterator.
+    storage_iterator host_iter{};   //!< The underlying storage iterator.
 };
 
 } // namespace seqan3::detail

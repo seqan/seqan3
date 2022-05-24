@@ -16,8 +16,8 @@
 #include <seqan3/std/ranges>
 #include <type_traits>
 
-#include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/core/range/detail/adaptor_base.hpp>
+#include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 #include <seqan3/utility/range/concept.hpp>
 
 namespace seqan3::detail
@@ -43,22 +43,20 @@ template <std::ranges::view urng_t>
 class view_enforce_random_access : public std::ranges::view_interface<view_enforce_random_access<urng_t>>
 {
 private:
-
     // Iterator declaration.
     template <typename underlying_iter_t>
     class basic_iterator;
 
 public:
-
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr view_enforce_random_access() = default; //!< Defaulted.
-    constexpr view_enforce_random_access(view_enforce_random_access const &) = default; //!< Defaulted.
-    constexpr view_enforce_random_access(view_enforce_random_access &&) = default; //!< Defaulted.
+    constexpr view_enforce_random_access() = default;                                               //!< Defaulted.
+    constexpr view_enforce_random_access(view_enforce_random_access const &) = default;             //!< Defaulted.
+    constexpr view_enforce_random_access(view_enforce_random_access &&) = default;                  //!< Defaulted.
     constexpr view_enforce_random_access & operator=(view_enforce_random_access const &) = default; //!< Defaulted.
-    constexpr view_enforce_random_access & operator=(view_enforce_random_access &&) = default; //!< Defaulted.
-    ~view_enforce_random_access() = default; //!< Defaulted.
+    constexpr view_enforce_random_access & operator=(view_enforce_random_access &&) = default;      //!< Defaulted.
+    ~view_enforce_random_access() = default;                                                        //!< Defaulted.
 
     //!\brief Construction from the underlying view.
     explicit constexpr view_enforce_random_access(urng_t && range) : urng{std::move(range)}
@@ -66,9 +64,9 @@ public:
 
     //!\brief Construction from the underlying viewable range.
     template <typename viewable_rng_t>
-     requires (!std::same_as<std::remove_cvref_t<viewable_rng_t>, view_enforce_random_access>) &&
-              std::ranges::viewable_range<viewable_rng_t> &&
-              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
+        requires (!std::same_as<std::remove_cvref_t<viewable_rng_t>, view_enforce_random_access>)
+              && std::ranges::viewable_range<viewable_rng_t>
+              && std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<viewable_rng_t>>>
     explicit constexpr view_enforce_random_access(viewable_rng_t && range) :
         view_enforce_random_access{std::views::all(std::forward<viewable_rng_t>(range))}
     {}
@@ -139,7 +137,6 @@ private:
     using base_t = inherited_iterator_base<basic_iterator<underlying_iter_t>, underlying_iter_t>;
 
 public:
-
     //!\brief The new iterator category.
     using iterator_category = std::random_access_iterator_tag;
     //!\brief The new iterator concept.
@@ -172,33 +169,29 @@ public:
     using base_t::operator==;
     using base_t::operator!=;
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
-        noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
-                          std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator==(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs) noexcept(
+        noexcept(std::declval<underlying_iter_t const &>() == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return lhs.base() == rhs;
     }
 
     //!\brief Tests if iterator is at the end.
-    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
-        noexcept(noexcept(std::declval<underlying_iter_t const &>() ==
-                          std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator==(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs) noexcept(
+        noexcept(std::declval<underlying_iter_t const &>() == std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return rhs == lhs;
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs)
-        noexcept(noexcept(std::declval<underlying_iter_t const &>() !=
-                          std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator!=(basic_iterator const & lhs, std::ranges::sentinel_t<urng_t> const & rhs) noexcept(
+        noexcept(std::declval<underlying_iter_t const &>() != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return !(lhs == rhs);
     }
 
     //!\brief Tests if iterator is not at the end.
-    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs)
-        noexcept(noexcept(std::declval<underlying_iter_t const &>() !=
-                          std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+    friend constexpr bool operator!=(std::ranges::sentinel_t<urng_t> const & lhs, basic_iterator const & rhs) noexcept(
+        noexcept(std::declval<underlying_iter_t const &>() != std::declval<std::ranges::sentinel_t<urng_t> const &>()))
     {
         return rhs != lhs;
     }
@@ -212,18 +205,18 @@ public:
 
     //!\brief Computes the distance betwen this iterator and the sentinel of the underlying range.
     constexpr typename base_t::difference_type operator-(std::ranges::sentinel_t<urng_t> const & rhs) const
-        noexcept(noexcept(std::declval<underlying_iter_t const &>() -
-                          std::declval<std::ranges::sentinel_t<urng_t> const &>()))
+        noexcept(noexcept(std::declval<underlying_iter_t const &>()
+                          - std::declval<std::ranges::sentinel_t<urng_t> const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>
     {
         return this->base() - rhs;
     }
 
     //!\brief Computes the distance betwen this iterator and the sentinel of the underlying range.
-    constexpr friend typename base_t::difference_type operator-(std::ranges::sentinel_t<urng_t> const & lhs,
-                                                                basic_iterator const & rhs)
-        noexcept(noexcept(std::declval<std::ranges::sentinel_t<urng_t> const &>() -
-                          std::declval<underlying_iter_t const &>()))
+    constexpr friend typename base_t::difference_type
+    operator-(std::ranges::sentinel_t<urng_t> const & lhs,
+              basic_iterator const & rhs) noexcept(noexcept(std::declval<std::ranges::sentinel_t<urng_t> const &>()
+                                                            - std::declval<underlying_iter_t const &>()))
         requires std::sized_sentinel_for<std::ranges::sentinel_t<urng_t>, underlying_iter_t>
     {
         return lhs - rhs.base();
@@ -282,7 +275,7 @@ private:
     }
 };
 
-}  // namespace seqan3::detail
+} // namespace seqan3::detail
 
 namespace seqan3::views
 {

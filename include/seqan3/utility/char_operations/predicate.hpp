@@ -72,7 +72,7 @@ inline constexpr auto is_char = detail::is_char_type<char_v>{};
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_eof
  */
-inline auto constexpr is_eof = is_char<EOF>;
+inline constexpr auto is_eof = is_char<EOF>;
 
 /*!\brief Checks whether `c` is a control character.
  * \ingroup utility_char_operations
@@ -87,8 +87,7 @@ inline auto constexpr is_eof = is_char<EOF>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_cntrl
  */
-inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
-                                 is_char<static_cast<char>(127)>;
+inline constexpr auto is_cntrl = is_in_interval<'\0', static_cast<char>(31)> || is_char<static_cast<char>(127)>;
 
 /*!\brief Checks whether `c` is a printable character.
  * \ingroup utility_char_operations
@@ -102,7 +101,7 @@ inline auto constexpr is_cntrl = is_in_interval<'\0', static_cast<char>(31)> ||
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_print
  */
-inline auto constexpr is_print = is_in_interval<' ', '~'> ;
+inline constexpr auto is_print = is_in_interval<' ', '~'>;
 
 /*!\brief Checks whether `c` is a space character.
  * \ingroup utility_char_operations
@@ -123,7 +122,7 @@ inline auto constexpr is_print = is_in_interval<' ', '~'> ;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_space
  */
-inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
+inline constexpr auto is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a blank character.
  * \ingroup utility_char_operations
@@ -140,7 +139,7 @@ inline auto constexpr is_space = is_in_interval<'\t', '\r'> || is_char<' '>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_blank
  */
-inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
+inline constexpr auto is_blank = is_char<'\t'> || is_char<' '>;
 
 /*!\brief Checks whether `c` is a graphic character.
  * \ingroup utility_char_operations
@@ -160,7 +159,7 @@ inline auto constexpr is_blank = is_char<'\t'> || is_char<' '>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_graph
  */
-inline auto constexpr is_graph = is_in_interval<'!', '~'>;
+inline constexpr auto is_graph = is_in_interval<'!', '~'>;
 
 /*!\brief Checks whether `c` is a punctuation character.
  * \ingroup utility_char_operations
@@ -176,10 +175,8 @@ inline auto constexpr is_graph = is_in_interval<'!', '~'>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_punct
  */
-inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
-                                 is_in_interval<':', '@'> ||
-                                 is_in_interval<'[', '`'> ||
-                                 is_in_interval<'{', '~'>;
+inline constexpr auto is_punct =
+    is_in_interval<'!', '/'> || is_in_interval<':', '@'> || is_in_interval<'[', '`'> || is_in_interval<'{', '~'>;
 
 /*!\brief Checks whether `c` is a alphanumeric character.
  * \ingroup utility_char_operations
@@ -197,9 +194,7 @@ inline auto constexpr is_punct = is_in_interval<'!', '/'> ||
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_alnum
  */
-inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
-                                 is_in_interval<'A','Z'> ||
-                                 is_in_interval<'a','z'>;
+inline constexpr auto is_alnum = is_in_interval<'0', '9'> || is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a alphabetical character.
  * \ingroup utility_char_operations
@@ -216,7 +211,7 @@ inline auto constexpr is_alnum = is_in_interval<'0','9'> ||
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_alpha
  */
-inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
+inline constexpr auto is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a upper case character.
  * \ingroup utility_char_operations
@@ -232,7 +227,7 @@ inline auto constexpr is_alpha = is_in_interval<'A', 'Z'> || is_in_interval<'a',
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_upper
  */
-inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
+inline constexpr auto is_upper = is_in_interval<'A', 'Z'>;
 
 /*!\brief Checks whether `c` is a lower case character.
  * \ingroup utility_char_operations
@@ -248,7 +243,7 @@ inline auto constexpr is_upper = is_in_interval<'A', 'Z'>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_lower
  */
-inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
+inline constexpr auto is_lower = is_in_interval<'a', 'z'>;
 
 /*!\brief Checks whether `c` is a digital character.
  * \ingroup utility_char_operations
@@ -264,7 +259,7 @@ inline auto constexpr is_lower = is_in_interval<'a', 'z'>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_digit
  */
-inline auto constexpr is_digit = is_in_interval<'0', '9'>;
+inline constexpr auto is_digit = is_in_interval<'0', '9'>;
 
 /*!\brief Checks whether `c` is a hexadecimal character.
  * \ingroup utility_char_operations
@@ -282,9 +277,7 @@ inline auto constexpr is_digit = is_in_interval<'0', '9'>;
  *
  * \snippet test/snippet/utility/char_operations/char_predicate.cpp is_xdigit
  */
-inline auto constexpr is_xdigit = is_in_interval<'0', '9'> ||
-                                  is_in_interval<'A', 'F'> ||
-                                  is_in_interval<'a', 'f'>;
+inline constexpr auto is_xdigit = is_in_interval<'0', '9'> || is_in_interval<'A', 'F'> || is_in_interval<'a', 'f'>;
 //!\}
 
 /*!\name Char predicates

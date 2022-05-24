@@ -28,9 +28,9 @@ protected:
     //!\brief The type of the base policy.
     using base_t = policy_affine_gap_recursion<alignment_configuration_t>;
     // Import base types
-    using typename base_t::traits_type;
-    using typename base_t::score_type;
     using typename base_t::affine_cell_type;
+    using typename base_t::score_type;
+    using typename base_t::traits_type;
 
     //Import member types.
     using base_t::gap_extension_score;
@@ -39,12 +39,13 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_affine_gap_recursion_banded() = default; //!< Defaulted.
+    policy_affine_gap_recursion_banded() = default;                                           //!< Defaulted.
     policy_affine_gap_recursion_banded(policy_affine_gap_recursion_banded const &) = default; //!< Defaulted.
-    policy_affine_gap_recursion_banded(policy_affine_gap_recursion_banded &&) = default; //!< Defaulted.
-    policy_affine_gap_recursion_banded & operator=(policy_affine_gap_recursion_banded const &) = default; //!< Defaulted.
+    policy_affine_gap_recursion_banded(policy_affine_gap_recursion_banded &&) = default;      //!< Defaulted.
+    policy_affine_gap_recursion_banded &
+    operator=(policy_affine_gap_recursion_banded const &) = default;                                 //!< Defaulted.
     policy_affine_gap_recursion_banded & operator=(policy_affine_gap_recursion_banded &&) = default; //!< Defaulted.
-    ~policy_affine_gap_recursion_banded() = default; //!< Defaulted.
+    ~policy_affine_gap_recursion_banded() = default;                                                 //!< Defaulted.
 
     /*!\brief Construction and initialisation using the alignment configuration.
      * \param[in] config The alignment configuration.

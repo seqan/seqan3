@@ -14,12 +14,12 @@
 
 #include <future>
 #include <iostream>
+#include <regex>
 #include <set>
 #include <sstream>
 #include <string>
 #include <variant>
 #include <vector>
-#include <regex>
 
 // #include <seqan3/argument_parser/detail/format_ctd.hpp>
 #include <seqan3/argument_parser/detail/format_help.hpp>
@@ -187,7 +187,7 @@ public:
         if (!std::regex_match(app_name, app_name_regex))
         {
             throw design_error{("The application name must only contain alpha-numeric characters or '_' and '-' "
-                               "(regex: \"^[a-zA-Z0-9_-]+$\").")};
+                                "(regex: \"^[a-zA-Z0-9_-]+$\").")};
         }
 
         for (auto & sub : this->subcommands)
@@ -237,9 +237,9 @@ public:
      * \throws seqan3::design_error
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
-        requires (argument_parser_compatible_option<option_type> ||
-                  argument_parser_compatible_option<std::ranges::range_value_t<option_type>>) &&
-                  std::invocable<validator_type, option_type>
+        requires (argument_parser_compatible_option<option_type>
+                  || argument_parser_compatible_option<std::ranges::range_value_t<option_type>>)
+              && std::invocable<validator_type, option_type>
     void add_option(option_type & value,
                     char const short_id,
                     std::string const & long_id,
@@ -253,8 +253,12 @@ public:
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
-        std::visit([=, &value] (auto & f) { f.add_option(value, short_id, long_id, desc, spec, option_validator); },
-                   format);
+        std::visit(
+            [=, &value](auto & f)
+            {
+                f.add_option(value, short_id, long_id, desc, spec, option_validator);
+            },
+            format);
     }
 
     /*!\brief Adds a flag to the seqan3::argument_parser.
@@ -280,7 +284,12 @@ public:
         verify_identifiers(short_id, long_id);
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
-        std::visit([=, &value] (auto & f) { f.add_flag(value, short_id, long_id, desc, spec); }, format);
+        std::visit(
+            [=, &value](auto & f)
+            {
+                f.add_flag(value, short_id, long_id, desc, spec);
+            },
+            format);
     }
 
     /*!\brief Adds a positional option to the seqan3::argument_parser.
@@ -304,9 +313,9 @@ public:
      * The validator must be applicable to the given output variable (\p value).
      */
     template <typename option_type, validator validator_type = detail::default_validator<option_type>>
-        requires (argument_parser_compatible_option<option_type> ||
-                  argument_parser_compatible_option<std::ranges::range_value_t<option_type>>) &&
-                  std::invocable<validator_type, option_type>
+        requires (argument_parser_compatible_option<option_type>
+                  || argument_parser_compatible_option<std::ranges::range_value_t<option_type>>)
+              && std::invocable<validator_type, option_type>
     void add_positional_option(option_type & value,
                                std::string const & desc,
                                validator_type option_validator = validator_type{}) // copy to bind rvalues
@@ -316,14 +325,19 @@ public:
 
         if (has_positional_list_option)
             throw design_error{"You added a positional option with a list value before so you cannot add "
-                                      "any other positional options."};
+                               "any other positional options."};
 
         if constexpr (detail::is_container_option<option_type>)
             has_positional_list_option = true; // keep track of a list option because there must be only one!
 
         // copy variables into the lambda because the calls are pushed to a stack
         // and the references would go out of scope.
-        std::visit([=, &value] (auto & f) { f.add_positional_option(value, desc, option_validator); }, format);
+        std::visit(
+            [=, &value](auto & f)
+            {
+                f.add_positional_option(value, desc, option_validator);
+            },
+            format);
     }
     //!\}
 
@@ -402,7 +416,8 @@ public:
         if (std::holds_alternative<detail::format_parse>(format) && !subcommands.empty() && sub_parser == nullptr)
         {
             throw too_few_arguments{detail::to_string("You either forgot or misspelled the subcommand! Please specify"
-                                                      " which sub-program you want to use: one of ", subcommands,
+                                                      " which sub-program you want to use: one of ",
+                                                      subcommands,
                                                       ". Use -h/--help for more information.")};
         }
 
@@ -414,7 +429,12 @@ public:
             app_version(std::move(app_version_prom));
         }
 
-        std::visit([this] (auto & f) { f.parse(info); }, format);
+        std::visit(
+            [this](auto & f)
+            {
+                f.parse(info);
+            },
+            format);
         parse_was_called = true;
     }
 
@@ -457,8 +477,8 @@ public:
      *   via `seqan3::argument_parser::add_option()` calls beforehand.
      */
     template <typename id_type>
-        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type>
-    bool is_option_set(id_type const & id) const
+        requires std::same_as<id_type, char> || std::constructible_from<std::string, id_type> bool
+    is_option_set(id_type const & id) const
     {
         if (!parse_was_called)
             throw design_error{"You can only ask which options have been set after calling the function `parse()`."};
@@ -471,9 +491,9 @@ public:
         {
             if (short_or_long_id.size() == 1)
             {
-                throw design_error{"Long option identifiers must be longer than one character! If " + short_or_long_id +
-                                   "' was meant to be a short identifier, please pass it as a char ('') not a string"
-                                   " (\"\")!"};
+                throw design_error{"Long option identifiers must be longer than one character! If " + short_or_long_id
+                                   + "' was meant to be a short identifier, please pass it as a char ('') not a string"
+                                     " (\"\")!"};
             }
         }
 
@@ -497,7 +517,12 @@ public:
      */
     void add_section(std::string const & title, option_spec const spec = option_spec::standard)
     {
-        std::visit([&] (auto & f) { f.add_section(title, spec); }, format);
+        std::visit(
+            [&](auto & f)
+            {
+                f.add_section(title, spec);
+            },
+            format);
     }
 
     /*!\brief Adds an help page subsection to the seqan3::argument_parser.
@@ -508,7 +533,12 @@ public:
      */
     void add_subsection(std::string const & title, option_spec const spec = option_spec::standard)
     {
-        std::visit([&] (auto & f) { f.add_subsection(title, spec); }, format);
+        std::visit(
+            [&](auto & f)
+            {
+                f.add_subsection(title, spec);
+            },
+            format);
     }
 
     /*!\brief Adds an help page text line to the seqan3::argument_parser.
@@ -522,7 +552,12 @@ public:
      */
     void add_line(std::string const & text, bool is_paragraph = false, option_spec const spec = option_spec::standard)
     {
-        std::visit([&] (auto & f) { f.add_line(text, is_paragraph, spec); }, format);
+        std::visit(
+            [&](auto & f)
+            {
+                f.add_line(text, is_paragraph, spec);
+            },
+            format);
     }
 
     /*!\brief Adds an help page list item (key-value) to the seqan3::argument_parser.
@@ -543,11 +578,15 @@ public:
      *            Super important integer for age.
      *```
      */
-    void add_list_item(std::string const & key,
-                       std::string const & desc,
-                       option_spec const spec = option_spec::standard)
+    void
+    add_list_item(std::string const & key, std::string const & desc, option_spec const spec = option_spec::standard)
     {
-        std::visit([&] (auto & f) { f.add_list_item(key, desc, spec); }, format);
+        std::visit(
+            [&](auto & f)
+            {
+                f.add_list_item(key, desc, spec);
+            },
+            format);
     }
     //!\}
 
@@ -696,7 +735,6 @@ private:
 
         bool special_format_was_set{false};
 
-
         for (int i = 1, argv_len = argc; i < argv_len; ++i) // start at 1 to skip binary name
         {
             std::string arg{argv[i]};
@@ -739,7 +777,7 @@ private:
                 {
                     if (argv_len <= i + 1)
                         throw too_few_arguments{"Option --export-help must be followed by a value."};
-                    export_format = {argv[i+1]};
+                    export_format = {argv[i + 1]};
                 }
 
                 if (export_format == "html")
@@ -751,7 +789,7 @@ private:
                 //     format = detail::format_ctd{};
                 else
                     throw validation_error{"Validation failed for option --export-help: "
-                                            "Value must be one of [html, man]"};
+                                           "Value must be one of [html, man]"};
                 init_standard_options();
                 special_format_was_set = true;
             }
@@ -792,14 +830,14 @@ private:
     {
         add_subsection("Basic options:");
         add_list_item("\\fB-h\\fP, \\fB--help\\fP", "Prints the help page.");
-        add_list_item("\\fB-hh\\fP, \\fB--advanced-help\\fP",
-                                    "Prints the help page including advanced options.");
+        add_list_item("\\fB-hh\\fP, \\fB--advanced-help\\fP", "Prints the help page including advanced options.");
         add_list_item("\\fB--version\\fP", "Prints the version information.");
         add_list_item("\\fB--copyright\\fP", "Prints the copyright/license information.");
         add_list_item("\\fB--export-help\\fP (std::string)",
-                                    "Export the help page information. Value must be one of [html, man].");
+                      "Export the help page information. Value must be one of [html, man].");
         if (version_check_dev_decision == update_notifications::on)
-            add_list_item("\\fB--version-check\\fP (bool)", "Whether to check for the newest app version. Default: true.");
+            add_list_item("\\fB--version-check\\fP (bool)",
+                          "Whether to check for the newest app version. Default: true.");
     }
 
     /*!\brief Checks whether the long identifier has already been used before.
@@ -826,7 +864,7 @@ private:
      */
     void verify_identifiers(char const short_id, std::string const & long_id)
     {
-        auto constexpr allowed = is_alnum || is_char<'_'> || is_char<'@'>;
+        constexpr auto allowed = is_alnum || is_char<'_'> || is_char<'@'>;
 
         if (id_exists(short_id))
             throw design_error("Option Identifier '" + std::string(1, short_id) + "' was already used before.");
@@ -839,10 +877,13 @@ private:
         if (long_id.size() > 0 && is_char<'-'>(long_id[0]))
             throw design_error("First character of long ID cannot be '-'.");
 
-        std::for_each(long_id.begin(), long_id.end(), [&allowed] (char c)
+        std::for_each(long_id.begin(),
+                      long_id.end(),
+                      [&allowed](char c)
                       {
                           if (!(allowed(c) || is_char<'-'>(c)))
-                              throw design_error("Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
+                              throw design_error(
+                                  "Long identifiers may only contain alphanumeric characters, '_', '-', or '@'.");
                       });
         if (detail::format_parse::is_empty_id(short_id) && detail::format_parse::is_empty_id(long_id))
             throw design_error("Option Identifiers cannot both be empty.");

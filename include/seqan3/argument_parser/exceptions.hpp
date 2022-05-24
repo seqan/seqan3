@@ -42,7 +42,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    argument_parser_error(std::string const & s) : std::runtime_error(s) {}
+    argument_parser_error(std::string const & s) : std::runtime_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when encountering unknown option.
@@ -54,7 +55,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    unknown_option(std::string const & s) : argument_parser_error(s) {}
+    unknown_option(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when too many arguments are provided.
@@ -66,7 +68,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_many_arguments(std::string const & s) : argument_parser_error(s) {}
+    too_many_arguments(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when too few arguments are provided.
@@ -78,7 +81,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    too_few_arguments(std::string const & s) : argument_parser_error(s) {}
+    too_few_arguments(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when a required option is missing.
@@ -90,7 +94,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    required_option_missing(std::string const & s) : argument_parser_error(s) {}
+    required_option_missing(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when a non-list option is declared multiple times.
@@ -102,7 +107,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    option_declared_multiple_times(std::string const & s) : argument_parser_error(s) {}
+    option_declared_multiple_times(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when an incorrect argument is given as (positional) option value.
@@ -114,7 +120,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    user_input_error(std::string const & s) : argument_parser_error(s) {}
+    user_input_error(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 //!\brief Argument parser exception thrown when an argument could not be casted to the according type.
@@ -126,7 +133,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    validation_error(std::string const & s) : argument_parser_error(s) {}
+    validation_error(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 /*!\brief Argument parser exception that is thrown whenever there is an design
@@ -145,7 +153,8 @@ public:
     /*!\brief The constructor.
      * \param[in] s The error message.
      */
-    design_error(std::string const & s) : argument_parser_error(s) {}
+    design_error(std::string const & s) : argument_parser_error(s)
+    {}
 };
 
 } // namespace seqan3

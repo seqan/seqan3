@@ -62,11 +62,11 @@ namespace seqan3
 enum class field
 {
     // Fields used in multiple contexts ........................................
-    seq,            //!< The "sequence", usually a range of nucleotides or amino acids.
-    id,             //!< The identifier, usually a string.
-    qual,           //!< The qualities, usually in Phred score notation.
+    seq,  //!< The "sequence", usually a range of nucleotides or amino acids.
+    id,   //!< The identifier, usually a string.
+    qual, //!< The qualities, usually in Phred score notation.
 
-    offset,         //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
+    offset, //!< Sequence (seqan3::field::seq) relative start position (0-based), unsigned value.
 
     // Fields unique to structure io ...........................................
     bpp,            //!< Base pair probability matrix of interactions, usually a matrix of float numbers.
@@ -78,20 +78,20 @@ enum class field
     comment,        //!< Comment field of arbitrary content, usually a string.
 
     // Fields unique to alignment io ...........................................
-    alignment,      //!< The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
-    ref_id,         //!< The identifier of the (reference) sequence that seqan3::field::seq was aligned to.
-    ref_seq,        //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
-    ref_offset,     //!< Sequence (seqan3::field::ref_seq) relative start position (0-based), unsigned value.
-    header_ptr,     //!< A pointer to the seqan3::sam_file_header object storing header information.
+    alignment,  //!< The (pairwise) alignment stored in an object that models seqan3::detail::pairwise_alignment.
+    ref_id,     //!< The identifier of the (reference) sequence that seqan3::field::seq was aligned to.
+    ref_seq,    //!< The (reference) "sequence" information, usually a range of nucleotides or amino acids.
+    ref_offset, //!< Sequence (seqan3::field::ref_seq) relative start position (0-based), unsigned value.
+    header_ptr, //!< A pointer to the seqan3::sam_file_header object storing header information.
 
-    flag,           //!< The alignment flag (bit information), `uint16_t` value.
-    mate,           //!< The mate pair information given as a std::tuple of reference name, offset and template length.
-    mapq,           //!< The mapping quality of the seqan3::field::seq alignment, usually a Phred-scaled score.
-    cigar,          //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
-    tags,           //!< The optional tags in the SAM format, stored in a dictionary.
+    flag,  //!< The alignment flag (bit information), `uint16_t` value.
+    mate,  //!< The mate pair information given as a std::tuple of reference name, offset and template length.
+    mapq,  //!< The mapping quality of the seqan3::field::seq alignment, usually a Phred-scaled score.
+    cigar, //!< The cigar vector (std::vector<seqan3::cigar>) representing the alignment in SAM/BAM format.
+    tags,  //!< The optional tags in the SAM format, stored in a dictionary.
 
-    bit_score,      //!< The bit score (statistical significance indicator), unsigned value.
-    evalue,         //!< The e-value (length normalized bit score), `double` value.
+    bit_score, //!< The bit score (statistical significance indicator), unsigned value.
+    evalue,    //!< The e-value (length normalized bit score), `double` value.
 
     // User defined field aliases .. ...........................................
     user_defined_0, //!< Identifier for user defined file formats and specialisations.
@@ -123,7 +123,7 @@ enum class field
  * \include test/snippet/io/record_1.cpp
  *
  */
-template <field ...fs>
+template <field... fs>
 struct fields
 {
     //!\privatesection
@@ -151,15 +151,16 @@ struct fields
         return index_of(f) != npos;
     }
 
-    static_assert([] () constexpr
-                  {
-                      for (size_t i = 0; i < as_array.size(); ++i)
-                          for (size_t j = i + 1; j < as_array.size(); ++j)
-                              if (as_array[i] == as_array[j])
-                                  return false;
+    static_assert(
+        []() constexpr {
+            for (size_t i = 0; i < as_array.size(); ++i)
+                for (size_t j = i + 1; j < as_array.size(); ++j)
+                    if (as_array[i] == as_array[j])
+                        return false;
 
-                      return true;
-                  } (), "You may not include a field twice into fields<>.");
+            return true;
+        }(),
+        "You may not include a field twice into fields<>.");
 };
 
 // ----------------------------------------------------------------------------
@@ -206,7 +207,10 @@ private:
     }
 
     //!\brief A lambda function that expands a pack and calls `clear_element` on every argument in the pack.
-    static constexpr auto expander = [] (auto & ...args) { (clear_element(args), ...); };
+    static constexpr auto expander = [](auto &... args)
+    {
+        (clear_element(args), ...);
+    };
 
 public:
     //!\brief A specialisation of std::tuple.
@@ -262,8 +266,8 @@ namespace std
  * \see std::tuple_size_v
  */
 template <typename field_types, typename field_ids>
-struct tuple_size<seqan3::record<field_types, field_ids>>
-    : tuple_size<typename seqan3::record<field_types, field_ids>::base_type>
+struct tuple_size<seqan3::record<field_types, field_ids>> :
+    tuple_size<typename seqan3::record<field_types, field_ids>::base_type>
 {};
 
 /*!\brief Obtains the type of the specified element.
@@ -272,8 +276,8 @@ struct tuple_size<seqan3::record<field_types, field_ids>>
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <size_t elem_no, typename field_types, typename field_ids>
-struct tuple_element<elem_no, seqan3::record<field_types, field_ids>>
-    : tuple_element<elem_no, typename seqan3::record<field_types, field_ids>::base_type>
+struct tuple_element<elem_no, seqan3::record<field_types, field_ids>> :
+    tuple_element<elem_no, typename seqan3::record<field_types, field_ids>::base_type>
 {};
 
 } // namespace std

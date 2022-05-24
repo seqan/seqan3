@@ -38,16 +38,16 @@ namespace seqan3::detail
  *
  * \include test/snippet/core/detail/is_class_template_declarable_with.cpp
  */
-template <template <typename ...> typename query_t, typename ...args_t>
+template <template <typename...> typename query_t, typename... args_t>
 struct is_class_template_declarable_with :
-//!\cond
+    //!\cond
     public std::false_type
 //!\endcond
 {};
 
 //!\cond
-template <template <typename ...> typename query_t, typename ...args_t>
-requires requires { typename std::type_identity<query_t<args_t...>>::type; }
+template <template <typename...> typename query_t, typename... args_t>
+    requires requires { typename std::type_identity<query_t<args_t...>>::type; }
 struct is_class_template_declarable_with<query_t, args_t...> : public std::true_type
 {};
 //!\endcond
@@ -57,7 +57,7 @@ struct is_class_template_declarable_with<query_t, args_t...> : public std::true_
  * \tparam args_t  The template parameter pack to instantiate the template class with.
  * \relates seqan3::detail::is_class_template_declarable_with
  */
-template <template <typename ...> typename query_t, typename ...args_t>
+template <template <typename...> typename query_t, typename... args_t>
 inline constexpr bool is_class_template_declarable_with_v =
     is_class_template_declarable_with<query_t, args_t...>::value;
 

@@ -22,4 +22,4 @@ namespace seqan3::detail
 struct empty_type
 {};
 
-}  // namespace seqan3::detail
+} // namespace seqan3::detail

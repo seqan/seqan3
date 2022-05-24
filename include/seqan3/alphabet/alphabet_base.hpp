@@ -84,12 +84,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alphabet_base()                                   noexcept = default; //!< Defaulted.
-    constexpr alphabet_base(alphabet_base const &)              noexcept = default; //!< Defaulted.
-    constexpr alphabet_base(alphabet_base &&)                   noexcept = default; //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base const &)  noexcept = default; //!< Defaulted.
-    constexpr alphabet_base & operator=(alphabet_base &&)       noexcept = default; //!< Defaulted.
-    ~alphabet_base()                                            noexcept = default; //!< Defaulted.
+    constexpr alphabet_base() noexcept = default;                                  //!< Defaulted.
+    constexpr alphabet_base(alphabet_base const &) noexcept = default;             //!< Defaulted.
+    constexpr alphabet_base(alphabet_base &&) noexcept = default;                  //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base const &) noexcept = default; //!< Defaulted.
+    constexpr alphabet_base & operator=(alphabet_base &&) noexcept = default;      //!< Defaulted.
+    ~alphabet_base() noexcept = default;                                           //!< Defaulted.
 
     //!\}
 
@@ -196,7 +196,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    static detail::min_viable_uint_t<size> constexpr alphabet_size = size;
+    static constexpr detail::min_viable_uint_t<size> alphabet_size = size;
 
     //!\name Comparison operators
     //!\{

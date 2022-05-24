@@ -26,8 +26,8 @@
 #include <seqan3/core/algorithm/algorithm_result_generator_range.hpp>
 #include <seqan3/core/algorithm/detail/algorithm_executor_blocking.hpp>
 #include <seqan3/core/detail/persist_view.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/type_traits/basic.hpp>
 
 namespace seqan3
@@ -128,14 +128,14 @@ namespace seqan3
  * when being iterated over.
  */
 template <typename sequence_t, typename alignment_config_t>
-    requires detail::align_pairwise_single_input<sequence_t> &&
-             std::copy_constructible<std::remove_reference_t<sequence_t>> &&
-             detail::is_type_specialisation_of_v<alignment_config_t, configuration>
+    requires detail::align_pairwise_single_input<sequence_t>
+          && std::copy_constructible<std::remove_reference_t<sequence_t>>
+          && detail::is_type_specialisation_of_v<alignment_config_t, configuration>
 constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & config)
 {
     using std::get;
 
-    if constexpr (std::is_lvalue_reference_v<sequence_t>)  // Forward tuple elements as references.
+    if constexpr (std::is_lvalue_reference_v<sequence_t>) // Forward tuple elements as references.
     {
         return align_pairwise(std::tie(get<0>(seq), get<1>(seq)), config);
     }
@@ -144,8 +144,8 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
         static_assert(std::tuple_size_v<std::remove_reference_t<sequence_t>> == 2,
                       "Alignment configuration error: Expects exactly two sequences for pairwise alignments.");
 
-        static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>> &&
-                      std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
+        static_assert(std::ranges::viewable_range<std::tuple_element_t<0, std::remove_reference_t<sequence_t>>>
+                          && std::ranges::viewable_range<std::tuple_element_t<1, std::remove_reference_t<sequence_t>>>,
                       "Alignment configuration error: The tuple elements must model std::ranges::viewable_range.");
 
         return align_pairwise(std::views::single(std::forward<sequence_t>(seq)), config);
@@ -154,12 +154,11 @@ constexpr auto align_pairwise(sequence_t && seq, alignment_config_t const & conf
 
 //!\cond
 template <typename sequence_t, typename alignment_config_t>
-    requires detail::align_pairwise_range_input<sequence_t> &&
-             detail::is_type_specialisation_of_v<alignment_config_t, configuration>
-constexpr auto align_pairwise(sequence_t && sequences,
-                              alignment_config_t const & config)
+    requires detail::align_pairwise_range_input<sequence_t>
+          && detail::is_type_specialisation_of_v<alignment_config_t, configuration>
+constexpr auto align_pairwise(sequence_t && sequences, alignment_config_t const & config)
 {
-    using first_seq_t  = std::tuple_element_t<0, std::ranges::range_value_t<sequence_t>>;
+    using first_seq_t = std::tuple_element_t<0, std::ranges::range_value_t<sequence_t>>;
     using second_seq_t = std::tuple_element_t<1, std::ranges::range_value_t<sequence_t>>;
 
     static_assert(std::ranges::random_access_range<first_seq_t> && std::ranges::sized_range<first_seq_t>,
@@ -175,21 +174,19 @@ constexpr auto align_pairwise(sequence_t && sequences,
     using complete_config_t = std::remove_cvref_t<decltype(complete_config)>;
     using traits_t = detail::alignment_configuration_traits<complete_config_t>;
 
-    auto indexed_sequence_chunk_view = views::zip(seq_view, std::views::iota(0))
-                                     | views::chunk(traits_t::alignments_per_vector);
+    auto indexed_sequence_chunk_view =
+        views::zip(seq_view, std::views::iota(0)) | views::chunk(traits_t::alignments_per_vector);
 
     using indexed_sequences_t = decltype(indexed_sequence_chunk_view);
     using alignment_result_t = typename traits_t::alignment_result_type;
     using execution_handler_t = std::conditional_t<complete_config_t::template exists<align_cfg::parallel>(),
                                                    detail::execution_handler_parallel,
                                                    detail::execution_handler_sequential>;
-    using executor_t = detail::algorithm_executor_blocking<indexed_sequences_t,
-                                                           decltype(algorithm),
-                                                           alignment_result_t,
-                                                           execution_handler_t>;
+    using executor_t = detail::
+        algorithm_executor_blocking<indexed_sequences_t, decltype(algorithm), alignment_result_t, execution_handler_t>;
 
     // Select the execution handler for the alignment configuration.
-    auto select_execution_handler = [parallel = complete_config.get_or(align_cfg::parallel{})] ()
+    auto select_execution_handler = [parallel = complete_config.get_or(align_cfg::parallel{})]()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
         {
@@ -209,11 +206,11 @@ constexpr auto align_pairwise(sequence_t && sequences,
         select_execution_handler().bulk_execute(algorithm,
                                                 indexed_sequence_chunk_view,
                                                 get<align_cfg::on_result>(complete_config).callback);
-    else  // Require two way execution: return the range over the alignments.
+    else // Require two way execution: return the range over the alignments.
         return algorithm_result_generator_range{executor_t{std::move(indexed_sequence_chunk_view),
-                                                std::move(algorithm),
-                                                alignment_result_t{},
-                                                select_execution_handler()}};
+                                                           std::move(algorithm),
+                                                           alignment_result_t{},
+                                                           select_execution_handler()}};
 }
 //!\endcond
 

@@ -19,9 +19,9 @@
 
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/detail/builtin_simd.hpp>
-#include <seqan3/utility/simd/detail/simd_algorithm_sse4.hpp>
 #include <seqan3/utility/simd/detail/simd_algorithm_avx2.hpp>
 #include <seqan3/utility/simd/detail/simd_algorithm_avx512.hpp>
+#include <seqan3/utility/simd/detail/simd_algorithm_sse4.hpp>
 #include <seqan3/utility/simd/simd_traits.hpp>
 
 namespace seqan3::detail
@@ -149,8 +149,7 @@ constexpr simd_t extract_half(simd_t const & src)
 
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t>
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_half(simd_t const & src)
 {
     static_assert(index < 2, "The index must be in the range of [0, 1]");
@@ -200,8 +199,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
 
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t>
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_quarter(simd_t const & src)
 {
     static_assert(index < 4, "The index must be in the range of [0, 1, 2, 3]");
@@ -215,7 +213,7 @@ constexpr simd_t extract_quarter(simd_t const & src)
 #if defined(__AVX512DQ__)
     else if constexpr (simd_traits<simd_t>::max_length == 64) // AVX512
         return detail::extract_quarter_avx512<index>(src);
-#endif // defined(__AVX512DQ__)
+#endif   // defined(__AVX512DQ__)
     else // Anything else
         return detail::extract_impl<4>(src, index);
 }
@@ -251,8 +249,7 @@ constexpr simd_t extract_eighth(simd_t const & src)
 
 //!\cond
 template <uint8_t index, simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t>
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t extract_eighth(simd_t const & src)
 {
     static_assert(index < 8, "The index must be in the range of [0, 1, 2, 3, 4, 5, 6, 7]");
@@ -266,8 +263,8 @@ constexpr simd_t extract_eighth(simd_t const & src)
 #if defined(__AVX512DQ__)
     else if constexpr (simd_traits<simd_t>::max_length == 64) // AVX512
         return detail::extract_eighth_avx512<index>(src);
-#endif // defined(__AVX512DQ__)
-    else  // Anything else
+#endif   // defined(__AVX512DQ__)
+    else // Anything else
         return detail::extract_impl<8>(src, index);
 }
 //!\endcond
@@ -349,8 +346,7 @@ constexpr simd_t load(void const * mem_addr)
 
 //!\cond
 template <simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t>
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
 constexpr simd_t load(void const * mem_addr)
 {
     assert(mem_addr != nullptr);
@@ -389,8 +385,7 @@ constexpr void store(void * mem_addr, simd_t const & simd_vec)
 
 //!\cond
 template <simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t>
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
 constexpr void store(void * mem_addr, simd_t const & simd_vec)
 {
     assert(mem_addr != nullptr);
@@ -433,16 +428,15 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 //!\cond
 // Implementation for seqan builtin simd.
 template <simd::simd_concept simd_t>
-    requires detail::is_builtin_simd_v<simd_t> &&
-             detail::is_native_builtin_simd_v<simd_t> &&
-             (simd_traits<simd_t>::max_length == simd_traits<simd_t>::length)
+    requires detail::is_builtin_simd_v<simd_t> && detail::is_native_builtin_simd_v<simd_t>
+          && (simd_traits<simd_t>::max_length == simd_traits<simd_t>::length)
 constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matrix)
 {
     if constexpr (simd_traits<simd_t>::length == 16) // SSE4 implementation
         detail::transpose_matrix_sse4(matrix);
     else if constexpr (simd_traits<simd_t>::length == 32) // AVX2 implementation
         detail::transpose_matrix_avx2(matrix);
-#if defined(__AVX512BW__) // Requires byte-word extension of AVX512 instruction set.
+#if defined(__AVX512BW__)                                 // Requires byte-word extension of AVX512 instruction set.
     else if constexpr (simd_traits<simd_t>::length == 64) // AVX512 implementation
         detail::transpose_matrix_avx512(matrix);
 #endif // defined(__AVX512BW__)
@@ -462,8 +456,9 @@ constexpr void transpose(std::array<simd_t, simd_traits<simd_t>::length> & matri
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
 constexpr target_simd_t upcast(source_simd_t const & src)
 {
-    static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
-                  "The length of the target simd type must be greater or equal than the length of the source simd type.");
+    static_assert(
+        simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
+        "The length of the target simd type must be greater or equal than the length of the source simd type.");
 
     target_simd_t tmp{};
     for (unsigned i = 0; i < simd_traits<target_simd_t>::length; ++i)
@@ -474,19 +469,19 @@ constexpr target_simd_t upcast(source_simd_t const & src)
 
 //!\cond
 template <simd::simd_concept target_simd_t, simd::simd_concept source_simd_t>
-    requires detail::is_builtin_simd_v<target_simd_t> &&
-             detail::is_builtin_simd_v<source_simd_t> &&
-             detail::is_native_builtin_simd_v<source_simd_t>
+    requires detail::is_builtin_simd_v<target_simd_t> && detail::is_builtin_simd_v<source_simd_t>
+          && detail::is_native_builtin_simd_v<source_simd_t>
 constexpr target_simd_t upcast(source_simd_t const & src)
 {
-    static_assert(simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
-                  "The length of the target simd type must be greater or equal than the length of the source simd type.");
+    static_assert(
+        simd_traits<target_simd_t>::length <= simd_traits<source_simd_t>::length,
+        "The length of the target simd type must be greater or equal than the length of the source simd type.");
 
     if constexpr (simd_traits<source_simd_t>::length == simd_traits<target_simd_t>::length)
     {
         static_assert(simd_traits<target_simd_t>::max_length == simd_traits<source_simd_t>::max_length,
-                    "Target vector has a different byte size.");
-        return reinterpret_cast<target_simd_t>(src);  // Same packing so we do not cast.
+                      "Target vector has a different byte size.");
+        return reinterpret_cast<target_simd_t>(src); // Same packing so we do not cast.
     }
     else if constexpr (std::signed_integral<typename simd_traits<source_simd_t>::scalar_type>)
     {
@@ -501,6 +496,6 @@ constexpr target_simd_t upcast(source_simd_t const & src)
 }
 //!\endcond
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

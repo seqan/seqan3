@@ -38,16 +38,15 @@ namespace seqan3::detail
 class latch
 {
 public:
-
     /*!\name Constructors, destructor and assignment
      * \brief Not default constructible nor copyable or movable.
      * \{
      */
-    latch()                           = delete;  //!< Deleted.
-    latch(latch const &)              = delete;  //!< Deleted.
-    latch(latch &&)                   = delete;  //!< Deleted.
-    latch & operator=(latch const &)  = delete;  //!< Deleted.
-    latch & operator=(latch &&)       = delete;  //!< Deleted.
+    latch() = delete;                          //!< Deleted.
+    latch(latch const &) = delete;             //!< Deleted.
+    latch(latch &&) = delete;                  //!< Deleted.
+    latch & operator=(latch const &) = delete; //!< Deleted.
+    latch & operator=(latch &&) = delete;      //!< Deleted.
 
     //!\brief Destructs the latch and waits for all participating threads to arrive.
     ~latch()
@@ -60,8 +59,7 @@ public:
     /*!\brief Constructs the latch with the expected number of threads.
      * \param expected The number of threads participating in this synchronisation point.
      */
-    explicit latch(ptrdiff_t const expected) :
-        counter{expected}
+    explicit latch(ptrdiff_t const expected) : counter{expected}
     {
         assert(expected >= 0);
         num_waiting.store(0, std::memory_order_relaxed);
@@ -157,9 +155,8 @@ public:
     }
 
 private:
-
     //!\brief The number of participating threads.
-    alignas(std::hardware_destructive_interference_size) std::atomic<std::ptrdiff_t>         counter;
+    alignas(std::hardware_destructive_interference_size) std::atomic<std::ptrdiff_t> counter;
     //!\brief The number of waiting threads.
     alignas(std::hardware_destructive_interference_size) mutable std::atomic<std::ptrdiff_t> num_waiting;
 };

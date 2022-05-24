@@ -14,8 +14,8 @@
 
 #include <seqan3/core/detail/copyable_wrapper.hpp>
 
-SEQAN3_DEPRECATED_HEADER(
-    "This header is deprecated and will be removed in SeqAn-3.3.0; Please #include <seqan3/core/detail/copyable_wrapper.hpp> instead.")
+SEQAN3_DEPRECATED_HEADER("This header is deprecated and will be removed in SeqAn-3.3.0; Please #include "
+                         "<seqan3/core/detail/copyable_wrapper.hpp> instead.")
 
 namespace seqan3
 {
@@ -39,4 +39,4 @@ using semiregular_box SEQAN3_DEPRECATED_330 = detail::copyable_wrapper<t>;
 template <typename t>
 using semiregular_box_t SEQAN3_DEPRECATED_330 = detail::copyable_wrapper_t<t>;
 
-}  // namespace seqan3
+} // namespace seqan3

@@ -60,12 +60,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr on_result() = default; //!< Defaulted.
-    constexpr on_result(on_result const &) = default; //!< Defaulted.
-    constexpr on_result(on_result &&) = default; //!< Defaulted.
+    constexpr on_result() = default;                              //!< Defaulted.
+    constexpr on_result(on_result const &) = default;             //!< Defaulted.
+    constexpr on_result(on_result &&) = default;                  //!< Defaulted.
     constexpr on_result & operator=(on_result const &) = default; //!< Defaulted.
-    constexpr on_result & operator=(on_result &&) = default; //!< Defaulted.
-    ~on_result() = default; //!< Defaulted.
+    constexpr on_result & operator=(on_result &&) = default;      //!< Defaulted.
+    ~on_result() = default;                                       //!< Defaulted.
 
     /*!\brief Constructs the configuration element with the given user callback.
      * \param[in] callback The callback to invoke with a computed seqan3::search_result.
@@ -86,4 +86,4 @@ public:
 template <std::copy_constructible callback_t>
 on_result(callback_t &&) -> on_result<std::decay_t<callback_t>>;
 //!\}
-}  // namespace seqan3::search_cfg
+} // namespace seqan3::search_cfg

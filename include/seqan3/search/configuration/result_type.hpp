@@ -50,16 +50,16 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr result_type() = default; //!< Defaulted.
-    constexpr result_type(result_type const &) = default; //!< Defaulted.
-    constexpr result_type(result_type &&) = default; //!< Defaulted.
+    constexpr result_type() = default;                                //!< Defaulted.
+    constexpr result_type(result_type const &) = default;             //!< Defaulted.
+    constexpr result_type(result_type &&) = default;                  //!< Defaulted.
     constexpr result_type & operator=(result_type const &) = default; //!< Defaulted.
-    constexpr result_type & operator=(result_type &&) = default; //!< Defaulted.
-    ~result_type() = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type &&) = default;      //!< Defaulted.
+    ~result_type() = default;                                         //!< Defaulted.
 
     //!\}
 
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::search_config_id id{seqan3::detail::search_config_id::result_type};
 };
-}  // namespace seqan3::search_cfg::detail
+} // namespace seqan3::search_cfg::detail

@@ -48,12 +48,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_alignment_result_builder() = default; //!< Defaulted.
-    policy_alignment_result_builder(policy_alignment_result_builder const &) = default; //!< Defaulted.
-    policy_alignment_result_builder(policy_alignment_result_builder &&) = default; //!< Defaulted.
+    policy_alignment_result_builder() = default;                                                    //!< Defaulted.
+    policy_alignment_result_builder(policy_alignment_result_builder const &) = default;             //!< Defaulted.
+    policy_alignment_result_builder(policy_alignment_result_builder &&) = default;                  //!< Defaulted.
     policy_alignment_result_builder & operator=(policy_alignment_result_builder const &) = default; //!< Defaulted.
-    policy_alignment_result_builder & operator=(policy_alignment_result_builder &&) = default; //!< Defaulted.
-    ~policy_alignment_result_builder() = default; //!< Defaulted.
+    policy_alignment_result_builder & operator=(policy_alignment_result_builder &&) = default;      //!< Defaulted.
+    ~policy_alignment_result_builder() = default;                                                   //!< Defaulted.
 
     /*!\brief Construction and initialisation using the alignment configuration.
      * \param[in] config The alignment configuration [not used in this context].

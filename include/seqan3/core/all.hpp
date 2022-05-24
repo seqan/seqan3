@@ -32,7 +32,7 @@
  * \see \ref about_customisation
  */
 
- /*!\namespace seqan3::exposition_only
+/*!\namespace seqan3::exposition_only
   * \brief A namespace for SeqAn entities that are intended for documentation purposes only.
   *
   * \details
@@ -74,7 +74,7 @@
 #include <seqan3/core/algorithm/all.hpp>
 #include <seqan3/core/concept/all.hpp>
 #include <seqan3/core/configuration/all.hpp>
-#include <seqan3/core/debug_stream/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
+#include <seqan3/core/debug_stream/all.hpp>
 #include <seqan3/core/platform.hpp>
 #include <seqan3/core/range/all.hpp>

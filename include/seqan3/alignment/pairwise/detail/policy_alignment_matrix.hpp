@@ -63,12 +63,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_alignment_matrix() = default; //!< Defaulted.
-    policy_alignment_matrix(policy_alignment_matrix const &) = default; //!< Defaulted.
-    policy_alignment_matrix(policy_alignment_matrix &&) = default; //!< Defaulted.
+    policy_alignment_matrix() = default;                                            //!< Defaulted.
+    policy_alignment_matrix(policy_alignment_matrix const &) = default;             //!< Defaulted.
+    policy_alignment_matrix(policy_alignment_matrix &&) = default;                  //!< Defaulted.
     policy_alignment_matrix & operator=(policy_alignment_matrix const &) = default; //!< Defaulted.
-    policy_alignment_matrix & operator=(policy_alignment_matrix &&) = default; //!< Defaulted.
-    ~policy_alignment_matrix() = default; //!< Defaulted.
+    policy_alignment_matrix & operator=(policy_alignment_matrix &&) = default;      //!< Defaulted.
+    ~policy_alignment_matrix() = default;                                           //!< Defaulted.
 
     /*!\brief Constructs and initialises the algorithm using the alignment configuration.
      * \tparam alignment_configuration_t The type of the alignment configuration; must be an instance of
@@ -112,9 +112,11 @@ protected:
         }
 
         if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] cannot be used with the current "
-                                                  "alignment configuration:" + error_cause};
+            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":"
+                                                  + std::to_string(upper_diagonal)
+                                                  + "] cannot be used with the current "
+                                                    "alignment configuration:"
+                                                  + error_cause};
     }
     //!\}
 
@@ -190,15 +192,17 @@ protected:
         if constexpr (traits_t::is_global)
         {
             // band ends in last column without free gaps or band ends in last row without free gaps.
-            invalid_band |= (lower_diagonal_ends_behind_last_cell && !last_column_is_free) ||
-                            (upper_diagonal_ends_before_last_cell && !last_row_is_free);
+            invalid_band |= (lower_diagonal_ends_behind_last_cell && !last_column_is_free)
+                         || (upper_diagonal_ends_before_last_cell && !last_row_is_free);
             error_cause = "The band ends in a region without free gaps.";
         }
 
         if (invalid_band)
-            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":" +
-                                                  std::to_string(upper_diagonal) + "] cannot be used with the current "
-                                                  "alignment configuration: " + error_cause};
+            throw invalid_alignment_configuration{"The selected band [" + std::to_string(lower_diagonal) + ":"
+                                                  + std::to_string(upper_diagonal)
+                                                  + "] cannot be used with the current "
+                                                    "alignment configuration: "
+                                                  + error_cause};
     }
 };
 } // namespace seqan3::detail

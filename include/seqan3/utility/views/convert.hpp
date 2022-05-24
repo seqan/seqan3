@@ -66,15 +66,16 @@ namespace seqan3::views
  * \noapi
  */
 template <typename out_t>
-inline auto constexpr convert = std::views::transform([] (auto && in) -> out_t
-{
-    static_assert(std::convertible_to<decltype(in) &&, out_t> || explicitly_convertible_to<decltype(in) &&, out_t>,
-                  "The reference type of the input to views::convert is not convertible to out_t.");
+inline constexpr auto convert = std::views::transform(
+    [](auto && in) -> out_t
+    {
+        static_assert(std::convertible_to<decltype(in) &&, out_t> || explicitly_convertible_to<decltype(in) &&, out_t>,
+                      "The reference type of the input to views::convert is not convertible to out_t.");
 
-    if constexpr (std::convertible_to<decltype(in) &&, out_t>)
-        return std::forward<decltype(in)>(in);
-    else
-        return static_cast<out_t>(std::forward<decltype(in)>(in));
-});
+        if constexpr (std::convertible_to<decltype(in) &&, out_t>)
+            return std::forward<decltype(in)>(in);
+        else
+            return static_cast<out_t>(std::forward<decltype(in)>(in));
+    });
 
 } // namespace seqan3::views

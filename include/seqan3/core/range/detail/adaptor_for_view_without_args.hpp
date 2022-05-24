@@ -44,7 +44,7 @@ namespace seqan3::detail
  *
  * \snippet include/seqan3/utility/views/single_pass_input.hpp adaptor_def
  */
-template <template <typename, typename ...> typename view_type>
+template <template <typename, typename...> typename view_type>
 class adaptor_for_view_without_args : public adaptor_base<adaptor_for_view_without_args<view_type>>
 {
 private:
@@ -60,8 +60,8 @@ private:
      * \param[in] args      The arguments to the constructor.
      * \returns An instance of `view_type`.
      */
-    template <typename ...arg_types>
-    static auto impl(arg_types && ... args)
+    template <typename... arg_types>
+    static auto impl(arg_types &&... args)
     {
         return view_type{std::forward<arg_types>(args)...};
     }
@@ -71,17 +71,17 @@ public:
      * \{
      */
     //!\brief Defaulted.
-    constexpr adaptor_for_view_without_args()                                                           = default;
+    constexpr adaptor_for_view_without_args() = default;
     //!\brief Defaulted.
-    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args const &)             noexcept = default;
+    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args const &) noexcept = default;
     //!\brief Defaulted.
-    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args &&)                  noexcept = default;
+    constexpr adaptor_for_view_without_args(adaptor_for_view_without_args &&) noexcept = default;
     //!\brief Defaulted.
     constexpr adaptor_for_view_without_args & operator=(adaptor_for_view_without_args const &) noexcept = default;
     //!\brief Defaulted.
-    constexpr adaptor_for_view_without_args & operator=(adaptor_for_view_without_args &&)      noexcept = default;
+    constexpr adaptor_for_view_without_args & operator=(adaptor_for_view_without_args &&) noexcept = default;
     //!\brief Defaulted.
-    ~adaptor_for_view_without_args()                                                           noexcept = default;
+    ~adaptor_for_view_without_args() noexcept = default;
 
     //!\brief Inherit the base type's constructors.
     using base_type::base_type;

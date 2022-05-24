@@ -44,12 +44,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr vectorised() = default; //!< Defaulted.
-    constexpr vectorised(vectorised const &) = default; //!< Defaulted.
-    constexpr vectorised(vectorised &&) = default; //!< Defaulted.
+    constexpr vectorised() = default;                               //!< Defaulted.
+    constexpr vectorised(vectorised const &) = default;             //!< Defaulted.
+    constexpr vectorised(vectorised &&) = default;                  //!< Defaulted.
     constexpr vectorised & operator=(vectorised const &) = default; //!< Defaulted.
-    constexpr vectorised & operator=(vectorised &&) = default; //!< Defaulted.
-    ~vectorised() = default; //!< Defaulted.
+    constexpr vectorised & operator=(vectorised &&) = default;      //!< Defaulted.
+    ~vectorised() = default;                                        //!< Defaulted.
 
     //!\}
 

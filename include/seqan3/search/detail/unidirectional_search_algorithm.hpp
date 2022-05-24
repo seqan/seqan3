@@ -40,7 +40,7 @@ enum class error_type : uint8_t
  * \tparam configuration_t The search configuration type.
  * \tparam index_t The type of index.
  */
-template <typename configuration_t, typename index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename... policies_t>
 class unidirectional_search_algorithm : protected policies_t...
 {
 private:
@@ -55,12 +55,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    unidirectional_search_algorithm() = default; //!< Defaulted.
-    unidirectional_search_algorithm(unidirectional_search_algorithm const &) = default; //!< Defaulted.
-    unidirectional_search_algorithm(unidirectional_search_algorithm &&) = default; //!< Defaulted.
+    unidirectional_search_algorithm() = default;                                                    //!< Defaulted.
+    unidirectional_search_algorithm(unidirectional_search_algorithm const &) = default;             //!< Defaulted.
+    unidirectional_search_algorithm(unidirectional_search_algorithm &&) = default;                  //!< Defaulted.
     unidirectional_search_algorithm & operator=(unidirectional_search_algorithm const &) = default; //!< Defaulted.
-    unidirectional_search_algorithm & operator=(unidirectional_search_algorithm &&) = default; //!< Defaulted.
-    ~unidirectional_search_algorithm() = default; //!< Defaulted.
+    unidirectional_search_algorithm & operator=(unidirectional_search_algorithm &&) = default;      //!< Defaulted.
+    ~unidirectional_search_algorithm() = default;                                                   //!< Defaulted.
 
     /*!\brief Constructs from a configuration object and an index.
      * \tparam configuration_t The search configuration type.
@@ -100,9 +100,9 @@ public:
      * \f$O(|query|^e)\f$ where \f$e\f$ is the maximum number of errors.
      */
     template <typename indexed_query_t, typename callback_t>
-        requires (std::tuple_size_v<indexed_query_t> == 2) &&
-                 std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>> &&
-                 std::invocable<callback_t, search_result_type>
+        requires (std::tuple_size_v<indexed_query_t> == 2)
+              && std::ranges::forward_range<std::tuple_element_t<1, indexed_query_t>>
+              && std::invocable<callback_t, search_result_type>
     void operator()(indexed_query_t && indexed_query, callback_t && callback)
     {
         auto && [query_idx, query] = indexed_query;
@@ -110,7 +110,7 @@ public:
 
         // construct internal delegate for collecting hits for later filtering (if necessary)
         std::vector<typename index_t::cursor_type> internal_hits{};
-        delegate = [&internal_hits] (auto const & it)
+        delegate = [&internal_hits](auto const & it)
         {
             internal_hits.push_back(it);
         };
@@ -205,7 +205,7 @@ private:
  *
  * No-throw guarantee if invoking the delegate also guarantees no-throw.
  */
-template <typename configuration_t, typename index_t, typename ...policies_t>
+template <typename configuration_t, typename index_t, typename... policies_t>
 template <bool abort_on_hit, typename query_t>
 inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t...>::search_trivial(
     typename index_t::cursor_type cur,
@@ -219,8 +219,8 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
     {
         // If not at end of query sequence, try searching the remaining suffix without any errors.
         using drop_size_t = std::ranges::range_difference_t<query_t>;
-        if (query_pos == std::ranges::size(query) ||
-            cur.extend_right(std::views::drop(query, static_cast<drop_size_t>(query_pos))))
+        if (query_pos == std::ranges::size(query)
+            || cur.extend_right(std::views::drop(query, static_cast<drop_size_t>(query_pos))))
         {
             delegate(cur);
             return true;
@@ -231,10 +231,11 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
     {
         // Insertion
         // Only allow insertions if there is no match and we are not at the beginning of the query.
-        bool const allow_insertion = (cur.query_length() > 0) ? cur.last_rank() != seqan3::to_rank(query[query_pos]) : true;
+        bool const allow_insertion =
+            (cur.query_length() > 0) ? cur.last_rank() != seqan3::to_rank(query[query_pos]) : true;
 
-        if (allow_insertion && (prev_error != error_type::deletion || error_left.substitution == 0) &&
-            error_left.insertion > 0)
+        if (allow_insertion && (prev_error != error_type::deletion || error_left.substitution == 0)
+            && error_left.insertion > 0)
         {
             search_param error_left2{error_left};
             error_left2.insertion--;
@@ -242,11 +243,8 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
 
             // Always perform a recursive call. Abort recursion if and only if recursive call found a hit and
             // abort_on_hit is set to true.
-            if (search_trivial<abort_on_hit>(cur,
-                                             query, query_pos + 1,
-                                             error_left2,
-                                             error_type::insertion) &&
-                abort_on_hit)
+            if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left2, error_type::insertion)
+                && abort_on_hit)
             {
                 return true;
             }
@@ -265,12 +263,8 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
                     error_left2.total -= delta;
                     error_left2.substitution -= delta;
 
-                    if (search_trivial<abort_on_hit>(cur,
-                                                     query,
-                                                     query_pos + 1,
-                                                     error_left2,
-                                                     error_type::matchmm) &&
-                        abort_on_hit)
+                    if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left2, error_type::matchmm)
+                        && abort_on_hit)
                     {
                         return true;
                     }
@@ -282,12 +276,8 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
                     // Match (when error_left.substitution == 0)
                     if (error_left.substitution == 0 && cur.last_rank() == seqan3::to_rank(query[query_pos]))
                     {
-                        if (search_trivial<abort_on_hit>(cur,
-                                                         query,
-                                                         query_pos + 1,
-                                                         error_left,
-                                                         error_type::matchmm) &&
-                            abort_on_hit)
+                        if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left, error_type::matchmm)
+                            && abort_on_hit)
                         {
                             return true;
                         }
@@ -297,8 +287,8 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
                     // arrives here, it cannot be at the end of the query and since deletions do not touch the query
                     // (i.e. increase query_pos) it won't be at the end of the query after the deletion.
                     // Do not allow deletions after an insertion.
-                    if ((prev_error != error_type::insertion || error_left.substitution == 0) &&
-                        error_left.deletion > 0)
+                    if ((prev_error != error_type::insertion || error_left.substitution == 0)
+                        && error_left.deletion > 0)
                     {
                         search_param error_left2{error_left};
                         error_left2.total--;
@@ -307,31 +297,24 @@ inline bool unidirectional_search_algorithm<configuration_t, index_t, policies_t
                         // (Same character is covered by a match.)
                         if (cur.last_rank() != seqan3::to_rank(query[query_pos]))
                         {
-                            if (search_trivial<abort_on_hit>(cur,
-                                                             query,
-                                                             query_pos,
-                                                             error_left2,
-                                                             error_type::deletion) &&
-                                abort_on_hit)
+                            if (search_trivial<abort_on_hit>(cur, query, query_pos, error_left2, error_type::deletion)
+                                && abort_on_hit)
                             {
                                 return true;
                             }
                         }
                     }
                 }
-            } while (cur.cycle_back());
+            }
+            while (cur.cycle_back());
         }
         else
         {
             // Match (when error_left.substitution == 0)
             if (cur.extend_right(query[query_pos]))
             {
-                if (search_trivial<abort_on_hit>(cur,
-                                                 query,
-                                                 query_pos + 1,
-                                                 error_left,
-                                                 error_type::matchmm) &&
-                    abort_on_hit)
+                if (search_trivial<abort_on_hit>(cur, query, query_pos + 1, error_left, error_type::matchmm)
+                    && abort_on_hit)
                 {
                     return true;
                 }

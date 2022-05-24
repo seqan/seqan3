@@ -76,9 +76,9 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr reference_proxy_type() noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type() noexcept = default;                             //!< Defaulted.
         constexpr reference_proxy_type(reference_proxy_type const &) noexcept = default; //!< Defaulted.
-        constexpr reference_proxy_type(reference_proxy_type &&) noexcept = default; //!< Defaulted.
+        constexpr reference_proxy_type(reference_proxy_type &&) noexcept = default;      //!< Defaulted.
 
         //!\brief Assign the value of the bit.
         constexpr reference_proxy_type & operator=(reference_proxy_type const rhs) noexcept
@@ -100,7 +100,8 @@ private:
 
         //!\brief Initialise from seqan3::dynamic_bitset's underlying data and a bit position.
         constexpr reference_proxy_type(bitfield & internal_, size_t const pos) noexcept :
-            internal{internal_}, mask{1ULL<<pos}
+            internal{internal_},
+            mask{1ULL << pos}
         {}
 
         //!\brief Returns the value of the referenced bit.
@@ -210,18 +211,18 @@ public:
 
     //!\cond
     // this signals to range-v3 that something is a container :|
-    using allocator_type    = void;
+    using allocator_type = void;
     //!\endcond
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr dynamic_bitset()                                   noexcept = default; //!< Defaulted.
-    constexpr dynamic_bitset(dynamic_bitset const &)             noexcept = default; //!< Defaulted.
-    constexpr dynamic_bitset(dynamic_bitset &&)                  noexcept = default; //!< Defaulted.
+    constexpr dynamic_bitset() noexcept = default;                                   //!< Defaulted.
+    constexpr dynamic_bitset(dynamic_bitset const &) noexcept = default;             //!< Defaulted.
+    constexpr dynamic_bitset(dynamic_bitset &&) noexcept = default;                  //!< Defaulted.
     constexpr dynamic_bitset & operator=(dynamic_bitset const &) noexcept = default; //!< Defaulted.
-    constexpr dynamic_bitset & operator=(dynamic_bitset &&)      noexcept = default; //!< Defaulted.
-    ~dynamic_bitset()                                            noexcept = default; //!< Defaulted.
+    constexpr dynamic_bitset & operator=(dynamic_bitset &&) noexcept = default;      //!< Defaulted.
+    ~dynamic_bitset() noexcept = default;                                            //!< Defaulted.
 
     /*!\brief Construct from an `uint64_t`.
      * \param[in] value The `uint64_t` to construct/assign from.
@@ -271,10 +272,9 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-        requires std::sentinel_for<end_it_type, begin_it_type> &&
-                 std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
-    constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept:
-        dynamic_bitset{}
+        requires std::sentinel_for<end_it_type, begin_it_type>
+              && std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
+    constexpr dynamic_bitset(begin_it_type begin_it, end_it_type end_it) noexcept : dynamic_bitset{}
     {
         assign(begin_it, end_it);
     }
@@ -318,8 +318,7 @@ public:
      *
      * \experimentalapi{Experimental since version 3.1.}
      */
-    constexpr dynamic_bitset(size_type const n, value_type const value) noexcept :
-        dynamic_bitset{}
+    constexpr dynamic_bitset(size_type const n, value_type const value) noexcept : dynamic_bitset{}
     {
         assign(n, value);
     }
@@ -536,8 +535,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-        requires std::sentinel_for<end_it_type, begin_it_type> &&
-                 std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type>
+              && std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
         clear();
@@ -1065,8 +1064,8 @@ public:
     constexpr reference at(size_t const i)
     {
         if (i >= size()) // [[unlikely]]
-            throw std::out_of_range{"Trying to access position " + std::to_string(i) +
-                                    " in a seqan3::dynamic_bitset of size " + std::to_string(size()) + "."};
+            throw std::out_of_range{"Trying to access position " + std::to_string(i)
+                                    + " in a seqan3::dynamic_bitset of size " + std::to_string(size()) + "."};
         return (*this)[i];
     }
 
@@ -1074,8 +1073,8 @@ public:
     constexpr const_reference at(size_t const i) const
     {
         if (i >= size()) // [[unlikely]]
-            throw std::out_of_range{"Trying to access position " + std::to_string(i) +
-                                    " in a seqan3::dynamic_bitset of size " + std::to_string(size()) + "."};
+            throw std::out_of_range{"Trying to access position " + std::to_string(i)
+                                    + " in a seqan3::dynamic_bitset of size " + std::to_string(size()) + "."};
         return (*this)[i];
     }
 
@@ -1406,8 +1405,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-        requires std::sentinel_for<end_it_type, begin_it_type> &&
-                 std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type>
+              && std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
     constexpr iterator insert(const_iterator pos, begin_it_type begin_it, end_it_type end_it) noexcept
     {
         auto const pos_as_num = std::ranges::distance(cbegin(), pos);
@@ -1515,7 +1514,7 @@ public:
      */
     constexpr iterator erase(const_iterator pos) noexcept
     {
-       return erase(pos, pos + 1);
+        return erase(pos, pos + 1);
     }
 
     /*!\brief Appends the given element `value` to the end of the container.
@@ -1913,9 +1912,8 @@ public:
         if (s)
         {
             arg.clear(); // clear the bitset
-            std::streamsize num_char = (is.width() > 0)
-                ? std::min<std::streamsize>(is.width(), arg.max_size())
-                : arg.max_size();
+            std::streamsize num_char =
+                (is.width() > 0) ? std::min<std::streamsize>(is.width(), arg.max_size()) : arg.max_size();
             assert(num_char > 0);
             std::vector<bool> tmp{};
             tmp.reserve(num_char);
@@ -1927,7 +1925,7 @@ public:
 
             arg.assign(std::views::reverse(tmp));
 
-            if (arg.size() == 0) // nothing extracted so we set the fail bit.
+            if (arg.size() == 0)                     // nothing extracted so we set the fail bit.
                 is.setstate(std::ios_base::failbit); // LCOV_EXCL_LINE
 
             is.width(0); // cancel the effects of std::setw, if any.

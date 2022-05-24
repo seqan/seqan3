@@ -42,8 +42,8 @@ namespace seqan3::detail
  * its reference type is a seqan3::detail::affine_cell_proxy.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
-              std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
+    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>>
+              && std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
 class combined_score_and_trace_matrix
 {
 private:
@@ -62,12 +62,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    combined_score_and_trace_matrix() = default; //!< Defaulted.
-    combined_score_and_trace_matrix(combined_score_and_trace_matrix const &) = default; //!< Defaulted.
-    combined_score_and_trace_matrix(combined_score_and_trace_matrix &&) = default; //!< Defaulted.
+    combined_score_and_trace_matrix() = default;                                                    //!< Defaulted.
+    combined_score_and_trace_matrix(combined_score_and_trace_matrix const &) = default;             //!< Defaulted.
+    combined_score_and_trace_matrix(combined_score_and_trace_matrix &&) = default;                  //!< Defaulted.
     combined_score_and_trace_matrix & operator=(combined_score_and_trace_matrix const &) = default; //!< Defaulted.
-    combined_score_and_trace_matrix & operator=(combined_score_and_trace_matrix &&) = default; //!< Defaulted.
-    ~combined_score_and_trace_matrix() = default; //!< Defaulted.
+    combined_score_and_trace_matrix & operator=(combined_score_and_trace_matrix &&) = default;      //!< Defaulted.
+    ~combined_score_and_trace_matrix() = default;                                                   //!< Defaulted.
 
     //!\}
 
@@ -154,8 +154,8 @@ public:
  * is a seqan3::detail::affine_cell_proxy holding the score and trace values of the respective alignment matrix cells.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
-              std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
+    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>>
+              && std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
 class combined_score_and_trace_matrix<score_matrix_t, trace_matrix_t>::iterator
 {
 private:
@@ -168,8 +168,8 @@ private:
     static_assert(std::ranges::viewable_range<trace_matrix_reference_type>);
 
     //!\brief The combined column type.
-    using combined_column_type = decltype(views::zip(std::declval<score_matrix_reference_type>(),
-                                                     std::declval<trace_matrix_reference_type>()));
+    using combined_column_type =
+        decltype(views::zip(std::declval<score_matrix_reference_type>(), std::declval<trace_matrix_reference_type>()));
     //!\brief The type of the score matrix iterator.
     using score_matrix_iter_type = std::ranges::iterator_t<score_matrix_t>;
     //!\brief The type of the trace matrix iterator.
@@ -177,17 +177,17 @@ private:
 
     // Befriend the base class.
     template <std::ranges::input_range other_score_matrix_t, std::ranges::input_range other_trace_matrix_t>
-        requires (std::ranges::input_range<std::ranges::range_reference_t<other_score_matrix_t>> &&
-                  std::ranges::input_range<std::ranges::range_reference_t<other_trace_matrix_t>>)
+        requires (std::ranges::input_range<std::ranges::range_reference_t<other_score_matrix_t>>
+                  && std::ranges::input_range<std::ranges::range_reference_t<other_trace_matrix_t>>)
     friend class combined_score_and_trace_matrix;
 
     //!\brief The transform adaptor to convert the tuple from the zip view into a seqan3::detail::affine_cell_type.
-    static constexpr auto transform_to_combined_matrix_cell = std::views::transform([] (auto && tpl)
-        -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
-    {
-        using fwd_tuple_t = decltype(tpl);
-        return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
-    });
+    static constexpr auto transform_to_combined_matrix_cell = std::views::transform(
+        [](auto && tpl) -> affine_cell_proxy<std::remove_cvref_t<decltype(tpl)>>
+        {
+            using fwd_tuple_t = decltype(tpl);
+            return affine_cell_proxy<std::remove_cvref_t<fwd_tuple_t>>{std::forward<fwd_tuple_t>(tpl)};
+        });
 
     //!\brief The current iterator over the score matrix.
     score_matrix_iter_type score_matrix_it;
@@ -213,20 +213,19 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    iterator() = default; //!< Defaulted.
-    iterator(iterator const &) = default; //!< Defaulted.
-    iterator(iterator &&) = default; //!< Defaulted.
+    iterator() = default;                             //!< Defaulted.
+    iterator(iterator const &) = default;             //!< Defaulted.
+    iterator(iterator &&) = default;                  //!< Defaulted.
     iterator & operator=(iterator const &) = default; //!< Defaulted.
-    iterator & operator=(iterator &&) = default; //!< Defaulted.
-    ~iterator() = default; //!< Defaulted.
+    iterator & operator=(iterator &&) = default;      //!< Defaulted.
+    ~iterator() = default;                            //!< Defaulted.
 
     /*!\brief Initialises the iterator from the underlying matrix.
      *
      * \param[in] score_matrix_it \copybrief seqan3::detail::combined_score_and_trace_matrix::iterator::score_matrix_it
      * \param[in] trace_matrix_it \copybrief seqan3::detail::combined_score_and_trace_matrix::iterator::trace_matrix_it
      */
-    explicit iterator(score_matrix_iter_type score_matrix_it,
-                      trace_matrix_iter_type trace_matrix_it) noexcept :
+    explicit iterator(score_matrix_iter_type score_matrix_it, trace_matrix_iter_type trace_matrix_it) noexcept :
         score_matrix_it{std::move(score_matrix_it)},
         trace_matrix_it{std::move(trace_matrix_it)}
     {}
@@ -269,8 +268,8 @@ public:
  * since the invariant of the matrix requires that both submatrices have the same number of columns.
  */
 template <std::ranges::input_range score_matrix_t, std::ranges::input_range trace_matrix_t>
-    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>> &&
-              std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
+    requires (std::ranges::input_range<std::ranges::range_reference_t<score_matrix_t>>
+              && std::ranges::input_range<std::ranges::range_reference_t<trace_matrix_t>>)
 class combined_score_and_trace_matrix<score_matrix_t, trace_matrix_t>::sentinel
 {
 private:
@@ -284,12 +283,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    sentinel() = default; //!< Defaulted.
-    sentinel(sentinel const &) = default; //!< Defaulted.
-    sentinel(sentinel &&) = default; //!< Defaulted.
+    sentinel() = default;                             //!< Defaulted.
+    sentinel(sentinel const &) = default;             //!< Defaulted.
+    sentinel(sentinel &&) = default;                  //!< Defaulted.
     sentinel & operator=(sentinel const &) = default; //!< Defaulted.
-    sentinel & operator=(sentinel &&) = default; //!< Defaulted.
-    ~sentinel() = default; //!< Defaulted.
+    sentinel & operator=(sentinel &&) = default;      //!< Defaulted.
+    ~sentinel() = default;                            //!< Defaulted.
 
     /*!\brief Initialises the sentinel from the underlying matrix.
      *

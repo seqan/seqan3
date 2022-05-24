@@ -45,12 +45,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_score() = default; //!< Defaulted.
-    constexpr output_score(output_score const &) = default; //!< Defaulted.
-    constexpr output_score(output_score &&) = default; //!< Defaulted.
+    constexpr output_score() = default;                                 //!< Defaulted.
+    constexpr output_score(output_score const &) = default;             //!< Defaulted.
+    constexpr output_score(output_score &&) = default;                  //!< Defaulted.
     constexpr output_score & operator=(output_score const &) = default; //!< Defaulted.
-    constexpr output_score & operator=(output_score &&) = default; //!< Defaulted.
-    ~output_score() = default; //!< Defaulted.
+    constexpr output_score & operator=(output_score &&) = default;      //!< Defaulted.
+    ~output_score() = default;                                          //!< Defaulted.
 
     //!\}
 
@@ -89,12 +89,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_end_position() = default; //!< Defaulted.
-    constexpr output_end_position(output_end_position const &) = default; //!< Defaulted.
-    constexpr output_end_position(output_end_position &&) = default; //!< Defaulted.
+    constexpr output_end_position() = default;                                        //!< Defaulted.
+    constexpr output_end_position(output_end_position const &) = default;             //!< Defaulted.
+    constexpr output_end_position(output_end_position &&) = default;                  //!< Defaulted.
     constexpr output_end_position & operator=(output_end_position const &) = default; //!< Defaulted.
-    constexpr output_end_position & operator=(output_end_position &&) = default; //!< Defaulted.
-    ~output_end_position() = default; //!< Defaulted.
+    constexpr output_end_position & operator=(output_end_position &&) = default;      //!< Defaulted.
+    ~output_end_position() = default;                                                 //!< Defaulted.
 
     //!\}
 
@@ -133,12 +133,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_begin_position() = default; //!< Defaulted.
-    constexpr output_begin_position(output_begin_position const &) = default; //!< Defaulted.
-    constexpr output_begin_position(output_begin_position &&) = default; //!< Defaulted.
+    constexpr output_begin_position() = default;                                          //!< Defaulted.
+    constexpr output_begin_position(output_begin_position const &) = default;             //!< Defaulted.
+    constexpr output_begin_position(output_begin_position &&) = default;                  //!< Defaulted.
     constexpr output_begin_position & operator=(output_begin_position const &) = default; //!< Defaulted.
-    constexpr output_begin_position & operator=(output_begin_position &&) = default; //!< Defaulted.
-    ~output_begin_position() = default; //!< Defaulted.
+    constexpr output_begin_position & operator=(output_begin_position &&) = default;      //!< Defaulted.
+    ~output_begin_position() = default;                                                   //!< Defaulted.
 
     //!\}
 
@@ -173,12 +173,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_alignment() = default; //!< Defaulted.
-    constexpr output_alignment(output_alignment const &) = default; //!< Defaulted.
-    constexpr output_alignment(output_alignment &&) = default; //!< Defaulted.
+    constexpr output_alignment() = default;                                     //!< Defaulted.
+    constexpr output_alignment(output_alignment const &) = default;             //!< Defaulted.
+    constexpr output_alignment(output_alignment &&) = default;                  //!< Defaulted.
     constexpr output_alignment & operator=(output_alignment const &) = default; //!< Defaulted.
-    constexpr output_alignment & operator=(output_alignment &&) = default; //!< Defaulted.
-    ~output_alignment() = default; //!< Defaulted.
+    constexpr output_alignment & operator=(output_alignment &&) = default;      //!< Defaulted.
+    ~output_alignment() = default;                                              //!< Defaulted.
 
     //!\}
 
@@ -213,19 +213,18 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_sequence1_id() = default; //!< Defaulted.
-    constexpr output_sequence1_id(output_sequence1_id const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id(output_sequence1_id &&) = default; //!< Defaulted.
+    constexpr output_sequence1_id() = default;                                        //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id const &) = default;             //!< Defaulted.
+    constexpr output_sequence1_id(output_sequence1_id &&) = default;                  //!< Defaulted.
     constexpr output_sequence1_id & operator=(output_sequence1_id const &) = default; //!< Defaulted.
-    constexpr output_sequence1_id & operator=(output_sequence1_id &&) = default; //!< Defaulted.
-    ~output_sequence1_id() = default; //!< Defaulted.
+    constexpr output_sequence1_id & operator=(output_sequence1_id &&) = default;      //!< Defaulted.
+    ~output_sequence1_id() = default;                                                 //!< Defaulted.
 
     //!\}
     //!\privatesection
     //!\brief Internal id to check for consistent configuration settings.
     static constexpr seqan3::detail::align_config_id id{seqan3::detail::align_config_id::output_sequence1_id};
 };
-
 
 /*!\brief Configures the alignment result to output the id of the second sequence.
  * \ingroup alignment_configuration
@@ -253,12 +252,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr output_sequence2_id() = default; //!< Defaulted.
-    constexpr output_sequence2_id(output_sequence2_id const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id(output_sequence2_id &&) = default; //!< Defaulted.
+    constexpr output_sequence2_id() = default;                                        //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id const &) = default;             //!< Defaulted.
+    constexpr output_sequence2_id(output_sequence2_id &&) = default;                  //!< Defaulted.
     constexpr output_sequence2_id & operator=(output_sequence2_id const &) = default; //!< Defaulted.
-    constexpr output_sequence2_id & operator=(output_sequence2_id &&) = default; //!< Defaulted.
-    ~output_sequence2_id() = default; //!< Defaulted.
+    constexpr output_sequence2_id & operator=(output_sequence2_id &&) = default;      //!< Defaulted.
+    ~output_sequence2_id() = default;                                                 //!< Defaulted.
 
     //!\}
 

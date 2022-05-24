@@ -88,6 +88,6 @@ namespace seqan3::views
  *
  * \hideinitializer
  */
-constexpr inline auto repeat_n = detail::repeat_n_fn{};
+inline constexpr auto repeat_n = detail::repeat_n_fn{};
 
 } // namespace seqan3::views

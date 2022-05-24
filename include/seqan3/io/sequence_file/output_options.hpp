@@ -25,25 +25,24 @@ namespace seqan3
 struct sequence_file_output_options
 {
     //!\brief Begin the ID line with ";" instead of ">" (not recommended).
-    bool        fasta_legacy_id_marker  = false;
+    bool fasta_legacy_id_marker = false;
     //!\brief Insert a single space after ">" (or ";") before the actual ID.
-    bool        fasta_blank_before_id   = false;
+    bool fasta_blank_before_id = false;
     //!\brief Inserts linebreaks after every n-th letter in the sequence; 0 means no linebreaks.
-    uint32_t    fasta_letters_per_line  = 80;
+    uint32_t fasta_letters_per_line = 80;
     //TODO:
-//     bool        fasta_charcounts        = false;
-
+    //     bool        fasta_charcounts        = false;
 
     //!\brief Whether to write the ID only '@' or also after '+' line.
-    bool        fastq_double_id         = false;
+    bool fastq_double_id = false;
 
     /*!\brief The default plain text line-ending is "\n", but on Windows an additional carriage return is
      *        recommended ("\r\n" for line-ending).
      */
-    bool        add_carriage_return     = false;
+    bool add_carriage_return = false;
 
     //!\brief Complete header given for embl or genbank
-    bool        embl_genbank_complete_header  = false;
+    bool embl_genbank_complete_header = false;
 };
 
 } // namespace seqan3

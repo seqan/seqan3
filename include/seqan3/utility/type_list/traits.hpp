@@ -29,21 +29,21 @@ namespace seqan3::list_traits::detail
  * \tparam pack_t   Types in the type list.
  * \ingroup utility_type_list
  */
-template <ptrdiff_t idx, typename ...pack_t>
+template <ptrdiff_t idx, typename... pack_t>
 std::type_identity<seqan3::pack_traits::at<idx, pack_t...>> at(type_list<pack_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::front.
  * \tparam pack_t   Types in the type list.
  * \ingroup utility_type_list
  */
-template <typename ...pack_t>
+template <typename... pack_t>
 std::type_identity<seqan3::pack_traits::front<pack_t...>> front(type_list<pack_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::back.
  * \tparam pack_t   Types in the type list.
  * \ingroup utility_type_list
  */
-template <typename ...pack_t>
+template <typename... pack_t>
 std::type_identity<seqan3::pack_traits::back<pack_t...>> back(type_list<pack_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::concat.
@@ -51,8 +51,7 @@ std::type_identity<seqan3::pack_traits::back<pack_t...>> back(type_list<pack_t..
  * \tparam pack2_t   Types in the second type list.
  * \ingroup utility_type_list
  */
-template <typename ...pack1_t,
-          typename ...pack2_t>
+template <typename... pack1_t, typename... pack2_t>
 type_list<pack1_t..., pack2_t...> concat(type_list<pack1_t...>, type_list<pack2_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::concat [overload for more than two lists].
@@ -61,10 +60,8 @@ type_list<pack1_t..., pack2_t...> concat(type_list<pack1_t...>, type_list<pack2_
  * \tparam more_lists_t The remaining type lists.
  * \ingroup utility_type_list
  */
-template <typename ...pack1_t,
-          typename ...pack2_t,
-          typename ...more_lists_t>
-auto concat(type_list<pack1_t...>, type_list<pack2_t...>, more_lists_t ...)
+template <typename... pack1_t, typename... pack2_t, typename... more_lists_t>
+auto concat(type_list<pack1_t...>, type_list<pack2_t...>, more_lists_t...)
 {
     return concat(type_list<pack1_t..., pack2_t...>{}, more_lists_t{}...);
 }
@@ -73,7 +70,7 @@ auto concat(type_list<pack1_t...>, type_list<pack2_t...>, more_lists_t ...)
  * \tparam pack_t   Types in the type list.
  * \ingroup utility_type_list
  */
-template <typename ...pack_t>
+template <typename... pack_t>
 pack_traits::drop_front<pack_t...> drop_front(type_list<pack_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::transform.
@@ -81,7 +78,7 @@ pack_traits::drop_front<pack_t...> drop_front(type_list<pack_t...>);
  * \tparam pack_t  Types in the type list.
  * \ingroup utility_type_list
  */
-template <template <typename> typename trait_t, typename ...pack_t>
+template <template <typename> typename trait_t, typename... pack_t>
 pack_traits::transform<trait_t, pack_t...> transform(type_list<pack_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::split_after.
@@ -89,8 +86,7 @@ pack_traits::transform<trait_t, pack_t...> transform(type_list<pack_t...>);
  * \tparam pack_t Types in the type list to split
  * \ingroup utility_type_list
  */
-template <ptrdiff_t idx,
-          typename ...pack1_t>
+template <ptrdiff_t idx, typename... pack1_t>
 pack_traits::split_after<idx, pack1_t...> split_after(type_list<pack1_t...>);
 
 /*!\brief Implementation for seqan3::list_traits::repeat.
@@ -106,13 +102,13 @@ auto repeat()
     else if constexpr (count == 1)
         return type_list<t>{};
     else if constexpr (count == 2)
-        return type_list<t,t>{};
+        return type_list<t, t>{};
     else if constexpr (count == 3)
-        return type_list<t,t,t>{};
+        return type_list<t, t, t>{};
     else if constexpr (count == 4)
-        return type_list<t,t,t,t>{};
+        return type_list<t, t, t, t>{};
     else if constexpr (count == 5)
-        return type_list<t,t,t,t,t>{};
+        return type_list<t, t, t, t, t>{};
     else
         return concat(repeat<5, t>(), repeat<count - 5, t>());
 }
@@ -123,28 +119,32 @@ auto repeat()
  * \tparam pack_t Types in the type list to be modified.
  * \ingroup utility_type_list
  */
-template <typename replace_t,
-          ptrdiff_t idx,
-          typename ...pack_t>
+template <typename replace_t, ptrdiff_t idx, typename... pack_t>
 pack_traits::replace_at<replace_t, idx, pack_t...> replace_at(type_list<pack_t...>);
 
 //!\brief A replacement for meta::reverse [recursion anchor]
-inline constexpr type_list<> reverse(type_list<>) { return {}; }
+inline constexpr type_list<> reverse(type_list<>)
+{
+    return {};
+}
 
 //!\brief A replacement for meta::reverse [recursion]
-template <typename head_t, typename ...pack_t>
+template <typename head_t, typename... pack_t>
 auto reverse(type_list<head_t, pack_t...>)
 {
     return concat(reverse(type_list<pack_t...>{}), type_list<head_t>{});
 }
 
 //!\brief Constructs the multiset difference `list1 \ list2` [recursion anchor]
-template <typename ...current_list_t>
-constexpr seqan3::type_list<current_list_t...> type_list_difference(seqan3::type_list<current_list_t...>, seqan3::type_list<>)
-{ return {}; }
+template <typename... current_list_t>
+constexpr seqan3::type_list<current_list_t...> type_list_difference(seqan3::type_list<current_list_t...>,
+                                                                    seqan3::type_list<>)
+{
+    return {};
+}
 
 //!\brief Constructs the multiset difference `list1 \ list2` [recursion]
-template <typename ...current_list_t, typename remove_t, typename ...remove_list_t>
+template <typename... current_list_t, typename remove_t, typename... remove_list_t>
 constexpr auto type_list_difference(seqan3::type_list<current_list_t...>, seqan3::type_list<remove_t, remove_list_t...>)
 {
     constexpr auto pos = seqan3::pack_traits::find<remove_t, current_list_t...>;
@@ -191,7 +191,7 @@ inline constexpr size_t size = 0;
  *
  * \include test/snippet/utility/type_list/list_traits_size.cpp
  */
-template <typename ...pack_t>
+template <typename... pack_t>
 inline constexpr size_t size<type_list<pack_t...>> = sizeof...(pack_t);
 
 //!\cond
@@ -206,9 +206,8 @@ inline constexpr ptrdiff_t count = -1;
  *
  * \include test/snippet/utility/type_list/list_traits_count.cpp
  */
-template <typename query_t, typename ...pack_t>
-inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> =
-    seqan3::pack_traits::count<query_t, pack_t...>;
+template <typename query_t, typename... pack_t>
+inline constexpr ptrdiff_t count<query_t, type_list<pack_t...>> = seqan3::pack_traits::count<query_t, pack_t...>;
 
 //!\cond
 template <typename query_t, typename list_t>
@@ -222,7 +221,7 @@ inline constexpr ptrdiff_t find = -1;
  *
  * \include test/snippet/utility/type_list/list_traits_find.cpp
  */
-template <typename query_t, typename ...pack_t>
+template <typename query_t, typename... pack_t>
 inline constexpr ptrdiff_t find<query_t, type_list<pack_t...>> =
     seqan3::pack_traits::detail::find<query_t, pack_t...>();
 
@@ -238,7 +237,7 @@ inline constexpr ptrdiff_t find_if = -1;
  *
  * \include test/snippet/utility/type_list/list_traits_find_if.cpp
  */
-template <template <typename> typename pred_t, typename ...pack_t>
+template <template <typename> typename pred_t, typename... pack_t>
 inline constexpr ptrdiff_t find_if<pred_t, type_list<pack_t...>> =
     seqan3::pack_traits::detail::find_if<pred_t, pack_t...>();
 
@@ -275,8 +274,8 @@ inline constexpr bool contains = (find<query_t, list_t> != -1);
  * \include test/snippet/utility/type_list/list_traits_at.cpp
  */
 template <ptrdiff_t idx, typename list_t>
-    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>) &&
-             ((idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>))
+    requires (seqan3::detail::template_specialisation_of<list_t, seqan3::type_list>)
+              && ((idx >= 0 && idx < size<list_t>) || (-idx <= size<list_t>))
 using at = typename decltype(detail::at<idx>(list_t{}))::type;
 
 /*!\brief Return the first type from the type list.
@@ -338,7 +337,7 @@ using back = typename decltype(detail::back(list_t{}))::type;
  *
  * \include test/snippet/utility/type_list/list_traits_concat.cpp
  */
-template <typename ...lists_t>
+template <typename... lists_t>
     requires (seqan3::detail::template_specialisation_of<lists_t, seqan3::type_list> && ...)
 using concat = decltype(detail::concat(lists_t{}...));
 

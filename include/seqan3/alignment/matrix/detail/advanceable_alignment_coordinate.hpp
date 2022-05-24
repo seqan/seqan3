@@ -65,7 +65,6 @@ template <advanceable_alignment_coordinate_state state = advanceable_alignment_c
 class advanceable_alignment_coordinate
 {
 public:
-
     /*!\name Member types
      * \{
      */
@@ -77,7 +76,7 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr advanceable_alignment_coordinate() noexcept = default;                                    //!< Defaulted
+    constexpr advanceable_alignment_coordinate() noexcept = default; //!< Defaulted
     //!\brief Defaulted
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate const &) noexcept = default;
     constexpr advanceable_alignment_coordinate(advanceable_alignment_coordinate &&) noexcept = default; //!< Defaulted
@@ -85,7 +84,7 @@ public:
     constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate const &) noexcept = default;
     //!\brief Defaulted
     constexpr advanceable_alignment_coordinate & operator=(advanceable_alignment_coordinate &&) noexcept = default;
-    ~advanceable_alignment_coordinate() noexcept = default;                                             //!< Defaulted
+    ~advanceable_alignment_coordinate() noexcept = default; //!< Defaulted
 
     //!\brief Copy-constructs from another advanceable_alignment_coordinate with a different policy.
     template <advanceable_alignment_coordinate_state other_state>
@@ -114,7 +113,7 @@ public:
     {}
     //!\}
 
-     //!\cond
+    //!\cond
     constexpr friend bool operator==(advanceable_alignment_coordinate const & lhs,
                                      advanceable_alignment_coordinate const & rhs) noexcept
     {
@@ -133,8 +132,8 @@ public:
         return std::tie(lhs.first, lhs.second) <= std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator< (advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr friend bool operator<(advanceable_alignment_coordinate const & lhs,
+                                    advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) < std::tie(rhs.first, rhs.second);
     }
@@ -145,12 +144,12 @@ public:
         return std::tie(lhs.first, lhs.second) >= std::tie(rhs.first, rhs.second);
     }
 
-    constexpr friend bool operator> (advanceable_alignment_coordinate const & lhs,
-                                     advanceable_alignment_coordinate const & rhs) noexcept
+    constexpr friend bool operator>(advanceable_alignment_coordinate const & lhs,
+                                    advanceable_alignment_coordinate const & rhs) noexcept
     {
         return std::tie(lhs.first, lhs.second) > std::tie(rhs.first, rhs.second);
     }
-     //!\endcond
+    //!\endcond
 
     /*!\name Member functions
      * \brief Advances or decrements the respective column or row coordinate depending on the set policy.

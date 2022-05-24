@@ -43,7 +43,7 @@ struct search_configuration_validator
     static void validate_query_type()
     {
         using pure_query_t = std::remove_cvref_t<query_t>;
-        if constexpr(range_dimension_v<pure_query_t> == 1u)
+        if constexpr (range_dimension_v<pure_query_t> == 1u)
         {
             static_assert(std::ranges::random_access_range<pure_query_t>,
                           "The query sequence must model random_access_range.");
@@ -97,11 +97,10 @@ namespace seqan3
 template <typename index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
-             std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>
-inline auto search(queries_t && queries,
-                   index_t const & index,
-                   configuration_t const & cfg = search_cfg::default_configuration)
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>>
+          && std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>
+inline auto
+search(queries_t && queries, index_t const & index, configuration_t const & cfg = search_cfg::default_configuration)
 {
     auto updated_cfg = detail::search_configurator::add_defaults(cfg);
 
@@ -118,13 +117,12 @@ inline auto search(queries_t && queries,
     using complete_configuration_t = decltype(complete_config);
     using traits_t = detail::search_traits<complete_configuration_t>;
     using algorithm_result_t = typename traits_t::search_result_type;
-    using execution_handler_t = std::conditional_t<
-                                    complete_configuration_t::template exists<search_cfg::parallel>(),
-                                    detail::execution_handler_parallel,
-                                    detail::execution_handler_sequential>;
+    using execution_handler_t = std::conditional_t<complete_configuration_t::template exists<search_cfg::parallel>(),
+                                                   detail::execution_handler_parallel,
+                                                   detail::execution_handler_sequential>;
 
     // Select the execution handler for the search configuration.
-    auto select_execution_handler = [parallel = complete_config.get_or(search_cfg::parallel{})] ()
+    auto select_execution_handler = [parallel = complete_config.get_or(search_cfg::parallel{})]()
     {
         if constexpr (std::same_as<execution_handler_t, detail::execution_handler_parallel>)
         {
@@ -167,8 +165,8 @@ inline auto search(queries_t && queries,
 template <typename index_t,
           std::ranges::forward_range queries_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>> &&
-             (!std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>)
+    requires std::ranges::forward_range<std::ranges::range_reference_t<queries_t>>
+          && (!std::same_as<range_innermost_value_t<queries_t>, typename index_t::alphabet_type>)
 inline auto search(queries_t && queries,
                    index_t const & index,
                    configuration_t const & cfg = search_cfg::default_configuration)
@@ -187,9 +185,8 @@ inline auto search(queries_t && queries,
 template <typename index_t,
           std::ranges::forward_range query_t,
           typename configuration_t = decltype(search_cfg::default_configuration)>
-inline auto search(query_t && query,
-                   index_t const & index,
-                   configuration_t const & cfg = search_cfg::default_configuration)
+inline auto
+search(query_t && query, index_t const & index, configuration_t const & cfg = search_cfg::default_configuration)
 {
     return search(std::views::single(std::forward<query_t>(query)), index, cfg);
 }
@@ -211,7 +208,11 @@ inline auto search(std::initializer_list<char const * const> const & queries,
 {
     std::vector<std::string_view> query;
     query.reserve(std::ranges::size(queries));
-    std::ranges::for_each(queries, [&query] (char const * const q) { query.push_back(std::string_view{q}); });
+    std::ranges::for_each(queries,
+                          [&query](char const * const q)
+                          {
+                              query.push_back(std::string_view{q});
+                          });
     return search(std::move(query) | detail::persist, index, cfg);
 }
 //!\endcond

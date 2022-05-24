@@ -36,10 +36,7 @@ namespace seqan3::detail
  */
 //!\cond
 template <typename t>
-concept alphabet_tuple_like = requires
-{
-    requires t::seqan3_alphabet_tuple_like;
-};
+concept alphabet_tuple_like = requires { requires t::seqan3_alphabet_tuple_like; };
 //!\endcond
 
 // ------------------------------------------------------------------
@@ -107,10 +104,7 @@ struct recursive_required_types
  * \ingroup alphabet_composite
  */
 template <typename t>
-    requires requires
-    {
-        typename t::seqan3_recursive_required_types;
-    }
+    requires requires { typename t::seqan3_recursive_required_types; }
 struct recursive_required_types<t>
 {
     //!\brief The returned type.
@@ -216,16 +210,13 @@ namespace seqan3
 {
 
 // forward
-template <typename ...alternative_types>
-    requires (detail::writable_constexpr_alphabet<alternative_types> && ...) &&
-             (std::regular<alternative_types> && ...) &&
-             (sizeof...(alternative_types) >= 2)
+template <typename... alternative_types>
+    requires (detail::writable_constexpr_alphabet<alternative_types> && ...) && (std::regular<alternative_types> && ...)
+          && (sizeof...(alternative_types) >= 2)
 class alphabet_variant;
 
-template <typename derived_type,
-          typename ...component_types>
-    requires (detail::writable_constexpr_semialphabet<component_types> && ...) &&
-             (std::regular<component_types> && ...)
+template <typename derived_type, typename... component_types>
+    requires (detail::writable_constexpr_semialphabet<component_types> && ...) && (std::regular<component_types> && ...)
 class alphabet_tuple_base;
 
 } // namespace seqan3

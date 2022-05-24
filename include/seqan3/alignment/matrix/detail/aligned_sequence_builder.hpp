@@ -135,14 +135,14 @@ public:
      * \{
      */
     constexpr aligned_sequence_builder()
-        requires std::default_initializable<type_reduce_t<fst_sequence_t>> &&
-                 std::default_initializable<type_reduce_t<sec_sequence_t>>
-        = default; //!< Defaulted.
-    constexpr aligned_sequence_builder(aligned_sequence_builder const &) = default; //!< Defaulted.
-    constexpr aligned_sequence_builder(aligned_sequence_builder &&) = default; //!< Defaulted.
+        requires std::default_initializable<type_reduce_t<fst_sequence_t>>
+                  && std::default_initializable<type_reduce_t<sec_sequence_t>>
+    = default;                                                                                  //!< Defaulted.
+    constexpr aligned_sequence_builder(aligned_sequence_builder const &) = default;             //!< Defaulted.
+    constexpr aligned_sequence_builder(aligned_sequence_builder &&) = default;                  //!< Defaulted.
     constexpr aligned_sequence_builder & operator=(aligned_sequence_builder const &) = default; //!< Defaulted.
-    constexpr aligned_sequence_builder & operator=(aligned_sequence_builder &&) = default; //!< Defaulted.
-    ~aligned_sequence_builder() = default; //!< Defaulted.
+    constexpr aligned_sequence_builder & operator=(aligned_sequence_builder &&) = default;      //!< Defaulted.
+    ~aligned_sequence_builder() = default;                                                      //!< Defaulted.
 
     /*!\brief Construction from the underlying sequences.
      * \param[in] fst_rng The first range to build the aligned sequence for.
@@ -194,12 +194,14 @@ public:
         std::tie(res.first_sequence_slice_positions.first, res.second_sequence_slice_positions.first) =
             std::pair<size_t, size_t>{trace_it.coordinate()};
 
-        assign_unaligned(std::get<0>(res.alignment),
-                         std::views::all(fst_rng) | views::slice(res.first_sequence_slice_positions.first,
-                                                                 res.first_sequence_slice_positions.second));
-        assign_unaligned(std::get<1>(res.alignment),
-                         std::views::all(sec_rng) | views::slice(res.second_sequence_slice_positions.first,
-                                                                 res.second_sequence_slice_positions.second));
+        assign_unaligned(
+            std::get<0>(res.alignment),
+            std::views::all(fst_rng)
+                | views::slice(res.first_sequence_slice_positions.first, res.first_sequence_slice_positions.second));
+        assign_unaligned(
+            std::get<1>(res.alignment),
+            std::views::all(sec_rng)
+                | views::slice(res.second_sequence_slice_positions.first, res.second_sequence_slice_positions.second));
 
         // Now we need to insert the values.
         fill_aligned_sequence(trace_segments | std::views::reverse,
@@ -210,7 +212,6 @@ public:
     }
 
 private:
-
     /*!\brief Fills the sequences with gaps according to the given trace segments.
      * \tparam reverse_traces_t The type storing the reverse trace.
      * \param[in] rev_traces The trace segments in order from source to sink in the trace matrix.
@@ -253,7 +254,7 @@ private:
  */
 //!\brief Deduces the type from the passed constructor arguments.
 template <std::ranges::viewable_range fst_sequence_t, std::ranges::viewable_range sec_sequence_t>
-aligned_sequence_builder(fst_sequence_t &&, sec_sequence_t &&) ->
-    aligned_sequence_builder<fst_sequence_t, sec_sequence_t>;
+aligned_sequence_builder(fst_sequence_t &&, sec_sequence_t &&)
+    -> aligned_sequence_builder<fst_sequence_t, sec_sequence_t>;
 //!\}
 } // namespace seqan3::detail

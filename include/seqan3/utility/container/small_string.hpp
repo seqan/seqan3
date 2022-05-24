@@ -49,17 +49,18 @@ private:
     // make data inherited members visible
     using base_t::data_;
     using base_t::sz;
+
 public:
     /*!\name Associated types
      * \{
      */
-    using typename base_t::value_type;
-    using typename base_t::reference;
-    using typename base_t::const_reference;
-    using typename base_t::iterator;
     using typename base_t::const_iterator;
+    using typename base_t::const_reference;
     using typename base_t::difference_type;
+    using typename base_t::iterator;
+    using typename base_t::reference;
     using typename base_t::size_type;
+    using typename base_t::value_type;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -148,7 +149,7 @@ public:
     {
         static_assert(N <= capacity_ + 1, "Length of string literal exceeds capacity of small_string.");
         assert(_lit[N - 1] == '\0');
-        assign(&_lit[0], &_lit[N-1]);
+        assign(&_lit[0], &_lit[N - 1]);
     }
 
     /*!\brief Assign from pair of iterators.
@@ -169,8 +170,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <std::forward_iterator begin_it_type, typename end_it_type>
-        requires std::sentinel_for<end_it_type, begin_it_type> &&
-                 std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
+        requires std::sentinel_for<end_it_type, begin_it_type>
+              && std::constructible_from<value_type, std::iter_reference_t<begin_it_type>>
     constexpr void assign(begin_it_type begin_it, end_it_type end_it) noexcept
     {
         base_t::assign(begin_it, end_it);
@@ -238,7 +239,7 @@ public:
     {
         assert(count <= capacity_);
 
-        for (size_t i = sz; i < count; ++i)  // sz < count; add `value` in [sz, count)
+        for (size_t i = sz; i < count; ++i) // sz < count; add `value` in [sz, count)
             data_[i] = value;
 
         sz = count;
@@ -404,9 +405,8 @@ public:
         if (s)
         {
             str.erase(); // clear the string
-            std::streamsize num_char = (is.width() > 0)
-                ? std::min<std::streamsize>(is.width(), str.max_size())
-                : str.max_size();
+            std::streamsize num_char =
+                (is.width() > 0) ? std::min<std::streamsize>(is.width(), str.max_size()) : str.max_size();
             assert(num_char > 0);
             for (std::streamsize n = num_char; n > 0 && !std::isspace(static_cast<char>(is.peek()), is.getloc()); --n)
             {
@@ -451,7 +451,7 @@ small_string(std::array<char, N> const &) -> small_string<N>;
   * \details
   * \experimentalapi{Experimental since version 3.1.}
   */
-small_string(char const) -> small_string<1>;
+small_string(char const)->small_string<1>;
 //!\}
 
 } // namespace seqan3

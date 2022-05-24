@@ -12,12 +12,12 @@
 
 #pragma once
 
+#include <concepts>
 #include <optional>
+#include <type_traits>
 
 #include <seqan3/alphabet/concept.hpp>
 #include <seqan3/core/detail/customisation_point.hpp>
-#include <concepts>
-#include <type_traits>
 
 // ============================================================================
 // is_pair_open()
@@ -27,8 +27,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void is_pair_open(args_t ...) = delete;
+template <typename... args_t>
+void is_pair_open(args_t...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_pair_open.
  * \ingroup alphabet_structure
@@ -45,8 +45,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)(
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_pair_open(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -55,8 +54,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)(
         /*return*/ is_pair_open(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -65,8 +63,7 @@ struct is_pair_open_cpo : public detail::customisation_point_object<is_pair_open
      * \param alphabet The alphabet that is queried whether it is a pair_open.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)(
         /*return*/ std::forward<alphabet_t>(alphabet).is_pair_open() == true /*;*/
     );
 };
@@ -118,8 +115,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void is_pair_close(args_t ...) = delete;
+template <typename... args_t>
+void is_pair_close(args_t...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_pair_close.
  * \ingroup alphabet_structure
@@ -136,8 +133,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)(
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_pair_close(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -146,8 +142,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)(
         /*return*/ is_pair_close(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -156,8 +151,7 @@ struct is_pair_close_cpo : public detail::customisation_point_object<is_pair_clo
      * \param alphabet The alphabet that is queried whether it is a pair_close.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)(
         /*return*/ std::forward<alphabet_t>(alphabet).is_pair_close() == true /*;*/
     );
 };
@@ -209,8 +203,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void is_unpaired(args_t ...) = delete;
+template <typename... args_t>
+void is_unpaired(args_t...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::is_unpaired.
  * \ingroup alphabet_structure
@@ -227,8 +221,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)(
         /*return*/ seqan3::custom::alphabet<alphabet_t>::is_unpaired(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -237,8 +230,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)(
         /*return*/ is_unpaired(std::forward<alphabet_t>(alphabet)) == true /*;*/
     );
 
@@ -247,8 +239,7 @@ struct is_unpaired_cpo : public detail::customisation_point_object<is_unpaired_c
      * \param alphabet The alphabet that is queried whether it is unpaired.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)(
         /*return*/ std::forward<alphabet_t>(alphabet).is_unpaired() == true /*;*/
     );
 };
@@ -300,8 +291,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void max_pseudoknot_depth(args_t ...) = delete;
+template <typename... args_t>
+void max_pseudoknot_depth(args_t...) = delete;
 
 /*!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::max_pseudoknot_depth.
  * \tparam alphabet_t The alphabet type being queried.
@@ -319,18 +310,17 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename alphabet_type>
-    using alphabet_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>> &&
-                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
-                             std::remove_cvref_t<alphabet_type>,
-                             std::type_identity<alphabet_type>>;
+    using alphabet_or_type_identity =
+        std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>>
+                               && seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                           std::remove_cvref_t<alphabet_type>,
+                           std::type_identity<alphabet_type>>;
 
     /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)(
         /*return*/ seqan3::custom::alphabet<alphabet_type>::max_pseudoknot_depth /*;*/
     );
 
@@ -344,8 +334,7 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
      * `max_pseudoknot_depth(std::type_identity<alphabet_type>{})` will be called.
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)(
         /*return*/ max_pseudoknot_depth(alphabet_or_type_identity<alphabet_type>{}) /*;*/
     );
 
@@ -353,8 +342,7 @@ struct max_pseudoknot_depth_cpo : public detail::customisation_point_object<max_
      * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)(
         /*return*/ std::remove_cvref_t<alphabet_type>::max_pseudoknot_depth /*;*/
     );
 };
@@ -404,7 +392,11 @@ namespace seqan3
  * \experimentalapi{Experimental since version 3.1.}
  */
 template <typename alph_t>
-    requires requires { { detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}() }; }
+    requires requires {
+                 {
+                     detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}()
+                 };
+             }
 inline constexpr auto max_pseudoknot_depth = detail::adl_only::max_pseudoknot_depth_cpo<alph_t>{}();
 
 } // namespace seqan3
@@ -417,8 +409,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void pseudoknot_id(args_t ...) = delete;
+template <typename... args_t>
+void pseudoknot_id(args_t...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::pseudoknot_id_cpo.
 //!\ingroup alphabet_structure
@@ -434,8 +426,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>, alphabet_t && alphabet)(
         /*return*/ seqan3::custom::alphabet<alphabet_t>::pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
@@ -444,8 +435,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>, alphabet_t && alphabet)(
         /*return*/ pseudoknot_id(std::forward<alphabet_t>(alphabet)) /*;*/
     );
 
@@ -454,8 +444,7 @@ struct pseudoknot_id_cpo : public detail::customisation_point_object<pseudoknot_
      * \param alphabet The alphabet the pseudoknot_id is returned from.
      */
     template <typename alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>, alphabet_t && alphabet)(
         /*return*/ std::forward<alphabet_t>(alphabet).pseudoknot_id() /*;*/
     );
 };
@@ -541,16 +530,23 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept rna_structure_alphabet = seqan3::alphabet<t> && requires(t val)
-{
-    { seqan3::is_pair_open(val) };
-    { seqan3::is_pair_close(val) };
-    { seqan3::is_unpaired(val) };
-    { seqan3::pseudoknot_id(val) };
+concept rna_structure_alphabet = seqan3::alphabet<t> && requires (t val) {
+                                                            {
+                                                                seqan3::is_pair_open(val)
+                                                            };
+                                                            {
+                                                                seqan3::is_pair_close(val)
+                                                            };
+                                                            {
+                                                                seqan3::is_unpaired(val)
+                                                            };
+                                                            {
+                                                                seqan3::pseudoknot_id(val)
+                                                            };
 
-    // this is delegated to a static class variable, which must not be 0
-    requires seqan3::max_pseudoknot_depth<t> > 0;
-};
+                                                            // this is delegated to a static class variable, which must not be 0
+                                                            requires seqan3::max_pseudoknot_depth<t> > 0;
+                                                        };
 //!\endcond
 
 } // namespace seqan3

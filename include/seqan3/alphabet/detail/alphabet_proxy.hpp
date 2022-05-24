@@ -56,19 +56,19 @@ namespace seqan3
  */
 template <typename derived_type, writable_semialphabet alphabet_type>
     requires std::regular<alphabet_type>
-class alphabet_proxy : public
-    std::conditional_t<std::is_class_v<alphabet_type>,
-                       alphabet_type,
-                       alphabet_base<derived_type,
-                                     alphabet_size<alphabet_type>,
-                                     detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>>
+class alphabet_proxy :
+    public std::conditional_t<std::is_class_v<alphabet_type>,
+                              alphabet_type,
+                              alphabet_base<derived_type,
+                                            alphabet_size<alphabet_type>,
+                                            detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>>
 {
 private:
     //!\brief Type of the base class.
     using base_t =
         std::conditional_t<std::is_class_v<alphabet_type>,
-                           alphabet_type,                                   // inherit from emulated type if possible
-                           alphabet_base<derived_type,                      // else: alphabet_base
+                           alphabet_type,              // inherit from emulated type if possible
+                           alphabet_base<derived_type, // else: alphabet_base
                                          alphabet_size<alphabet_type>,
                                          detail::valid_template_spec_or_t<void, alphabet_char_t, alphabet_type>>>;
 
@@ -76,7 +76,7 @@ private:
     friend base_t;
 
     //!\brief The type of the alphabet character.
-    using char_type  = detail::valid_template_spec_or_t<char, alphabet_char_t, alphabet_type>;
+    using char_type = detail::valid_template_spec_or_t<char, alphabet_char_t, alphabet_type>;
 
     //!\brief The type of the Phred score.
     using phred_type = detail::valid_template_spec_or_t<int8_t, alphabet_phred_t, alphabet_type>;
@@ -95,13 +95,13 @@ private:
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
         requires std::is_class_v<alphabet_type>
-        : base_t{a}
+    : base_t{a}
     {}
 
     //!\brief Construction from the emulated type.
     constexpr alphabet_proxy(alphabet_type const a) noexcept
         requires (!std::is_class_v<alphabet_type>)
-        : base_t{}
+    : base_t{}
     {
         base_t::assign_rank(seqan3::to_rank(a));
     }
@@ -243,11 +243,12 @@ public:
      *        e.g. seqan3::alphabet_variant.
      * \{
      */
+
 private:
     //!\brief work around a gcc bug that disables short-circuiting of operator&& in an enable_if_t of a friend function
     template <typename t>
-    static constexpr bool is_alphabet_comparable_with = !std::is_same_v<derived_type, t> &&
-                                                        detail::weakly_equality_comparable_with<alphabet_type, t>;
+    static constexpr bool is_alphabet_comparable_with =
+        !std::is_same_v<derived_type, t> && detail::weakly_equality_comparable_with<alphabet_type, t>;
 
 public:
     //!\brief Allow (in-)equality comparison with types that the emulated type is comparable with.

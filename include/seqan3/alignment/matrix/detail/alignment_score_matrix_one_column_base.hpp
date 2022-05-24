@@ -16,8 +16,8 @@
 #include <utility>
 #include <vector>
 
-#include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/concept.hpp>
+#include <seqan3/utility/container/aligned_allocator.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 
 namespace seqan3::detail
@@ -49,11 +49,12 @@ protected:
     using pool_type = std::vector<element_type, allocator_type>;
     //!\brief The size type.
     using size_type = size_t;
+
 public:
     //!\brief The linearised memory pool storing only one column of the matrix.
     pool_type pool{};
     //!\brief Internal cache for the last diagonal and vertical value during the alignment computation.
-    std::array<underlying_type, 3> cache{};  // Third argument is used to cache next diagonal value in non-banded case.
+    std::array<underlying_type, 3> cache{}; // Third argument is used to cache next diagonal value in non-banded case.
     //!\brief The number of columns.
     size_type num_cols{};
     //!\brief The number of num_rows.

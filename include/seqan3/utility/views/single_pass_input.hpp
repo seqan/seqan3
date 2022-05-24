@@ -40,9 +40,9 @@ class basic_iterator;
 template <std::ranges::view urng_t>
 class single_pass_input_view : public std::ranges::view_interface<single_pass_input_view<urng_t>>
 {
-//![view_def]
-private:
+    //![view_def]
 
+private:
     //!\brief The iterator type for the underlying range.
     using urng_iterator_type = std::ranges::iterator_t<urng_t>;
 
@@ -90,17 +90,16 @@ public:
     ~single_pass_input_view() = default;
 
     //!\brief Construction from the underlying view.
-    explicit single_pass_input_view(urng_t _urng) :
-        state_ptr{new state{std::move(_urng)}}
+    explicit single_pass_input_view(urng_t _urng) : state_ptr{new state{std::move(_urng)}}
     {}
 
     //!\brief Construction from std::ranges::viewable_range.
     template <typename other_urng_t>
-    requires (!std::same_as<std::remove_cvref_t<other_urng_t>, single_pass_input_view> &&
-              std::ranges::viewable_range<other_urng_t> &&  // Must come after self type check to avoid conflicts with the move constructor.
-              std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<other_urng_t>>>)
-    explicit single_pass_input_view(other_urng_t && _urng) :
-        single_pass_input_view{std::views::all(_urng)}
+        requires (!std::same_as<std::remove_cvref_t<other_urng_t>, single_pass_input_view>
+                  && std::ranges::viewable_range<other_urng_t>
+                  && // Must come after self type check to avoid conflicts with the move constructor.
+                  std::constructible_from<urng_t, std::ranges::ref_view<std::remove_reference_t<other_urng_t>>>)
+    explicit single_pass_input_view(other_urng_t && _urng) : single_pass_input_view{std::views::all(_urng)}
     {}
     //!\}
 
@@ -140,10 +139,9 @@ public:
 
 //!\brief Deduces the single_pass_input_view from the underlying range if it is a std::ranges::viewable_range.
 template <std::ranges::viewable_range urng_t>
-single_pass_input_view(urng_t &&) ->
-    single_pass_input_view<std::views::all_t<urng_t>>;
+single_pass_input_view(urng_t &&) -> single_pass_input_view<std::views::all_t<urng_t>>;
 //!\}
-} // seqan3::detail
+} // namespace seqan3::detail
 
 //-----------------------------------------------------------------------------
 // Iterator for single pass input view.
@@ -177,7 +175,6 @@ class basic_iterator<single_pass_input_view<view_type>>
     static_assert(std::sentinel_for<sentinel_type, base_iterator_type>);
 
 public:
-
     /*!\name Associated types
      * \{
      */
@@ -262,8 +259,7 @@ public:
     }
 
     //!\copydoc operator==
-    friend constexpr bool
-    operator==(sentinel_type const & s, basic_iterator const & rhs) noexcept
+    friend constexpr bool operator==(sentinel_type const & s, basic_iterator const & rhs) noexcept
     {
         return rhs == s;
     }
@@ -275,15 +271,14 @@ public:
     }
 
     //!\copydoc operator!=
-    friend constexpr bool
-    operator!=(sentinel_type const & s, basic_iterator const & rhs) noexcept
+    friend constexpr bool operator!=(sentinel_type const & s, basic_iterator const & rhs) noexcept
     {
         return rhs != s;
     }
     //!\}
 
 protected:
-//!\privatesection
+    //!\privatesection
     //!\brief Gives access to the cached iterator.
     base_iterator_type & cached() const noexcept
     {
@@ -292,7 +287,7 @@ protected:
         return view_ptr->state_ptr->cached_urng_iter;
     }
 };
-}  // seqan3::detail
+} // namespace seqan3::detail
 
 //-----------------------------------------------------------------------------
 // View shortcut for functor.

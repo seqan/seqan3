@@ -53,12 +53,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr alignment_matrix_policy() = default; //!< Defaulted.
-    constexpr alignment_matrix_policy(alignment_matrix_policy const &) = default; //!< Defaulted.
-    constexpr alignment_matrix_policy(alignment_matrix_policy &&) = default; //!< Defaulted.
+    constexpr alignment_matrix_policy() = default;                                            //!< Defaulted.
+    constexpr alignment_matrix_policy(alignment_matrix_policy const &) = default;             //!< Defaulted.
+    constexpr alignment_matrix_policy(alignment_matrix_policy &&) = default;                  //!< Defaulted.
     constexpr alignment_matrix_policy & operator=(alignment_matrix_policy const &) = default; //!< Defaulted.
-    constexpr alignment_matrix_policy & operator=(alignment_matrix_policy &&) = default; //!< Defaulted.
-    ~alignment_matrix_policy() = default; //!< Defaulted.
+    constexpr alignment_matrix_policy & operator=(alignment_matrix_policy &&) = default;      //!< Defaulted.
+    ~alignment_matrix_policy() = default;                                                     //!< Defaulted.
 
     //!\brief Initialise the policy.
     template <typename configuration_t>
@@ -150,14 +150,14 @@ private:
         size_t seq1_size = std::ranges::distance(sequence1);
         size_t seq2_size = std::ranges::distance(sequence2);
 
-        auto trim_sequence1 = [&] () constexpr
+        auto trim_sequence1 = [&]() constexpr
         {
             size_t begin_pos = std::max<std::ptrdiff_t>(band.lower_diagonal - 1, 0);
             size_t end_pos = std::min<std::ptrdiff_t>(band.upper_diagonal + seq2_size, seq1_size);
             return sequence1 | views::slice(begin_pos, end_pos);
         };
 
-        auto trim_sequence2 = [&] () constexpr
+        auto trim_sequence2 = [&]() constexpr
         {
             size_t begin_pos = std::abs(std::min<std::ptrdiff_t>(band.upper_diagonal + 1, 0));
             size_t end_pos = std::min<std::ptrdiff_t>(seq1_size - band.lower_diagonal, seq2_size);
@@ -201,4 +201,4 @@ private:
     typename score_matrix_t::iterator score_matrix_iter{}; //!< The matrix iterator over the score matrix.
     typename trace_matrix_t::iterator trace_matrix_iter{}; //!< The matrix iterator over the trace matrix.
 };
-}  // namespace seqan3::detail
+} // namespace seqan3::detail

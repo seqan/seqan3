@@ -32,12 +32,12 @@ public:
     /*!\name Constructors, assignment and destructor
      * \{
      */
-    constexpr debug_mode() = default;  //!< Defaulted.
-    constexpr debug_mode(debug_mode const &) = default; //!< Defaulted.
-    constexpr debug_mode(debug_mode &&) = default; //!< Defaulted.
+    constexpr debug_mode() = default;                               //!< Defaulted.
+    constexpr debug_mode(debug_mode const &) = default;             //!< Defaulted.
+    constexpr debug_mode(debug_mode &&) = default;                  //!< Defaulted.
     constexpr debug_mode & operator=(debug_mode const &) = default; //!< Defaulted.
-    constexpr debug_mode & operator=(debug_mode &&) = default; //!< Defaulted.
-    ~debug_mode() = default; //!< Defaulted.
+    constexpr debug_mode & operator=(debug_mode &&) = default;      //!< Defaulted.
+    ~debug_mode() = default;                                        //!< Defaulted.
 
     //!\}
 

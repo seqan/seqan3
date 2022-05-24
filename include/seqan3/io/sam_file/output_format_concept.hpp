@@ -50,8 +50,8 @@ public:
     // Can't use `using format_type::write_alignment_record` as it produces a hard failure in the format concept check
     // for types that do not model the format concept, i.e. don't offer the proper write_alignment_record interface.
     //!\brief Forwards to the seqan3::sam_file_output_format::write_alignment_record interface.
-    template <typename ...ts>
-    void write_alignment_record(ts && ...args)
+    template <typename... ts>
+    void write_alignment_record(ts &&... args)
     {
         format_type::write_alignment_record(std::forward<ts>(args)...);
     }
@@ -75,48 +75,48 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sam_file_output_format =
-    requires (detail::sam_file_output_format_exposer<t>                            & v,
-              std::ofstream                                                        & stream,
-              sam_file_output_options                                              & options,
-              sam_file_header<>                                                    & header,
-              dna5_vector                                                          & seq,
-              std::vector<phred42>                                                 & qual,
-              std::string                                                          & id,
-              int32_t                                                              & offset,
-              dna5_vector                                                          & ref_seq,
-              std::optional<int32_t>                                               & ref_id,
-              std::optional<int32_t>                                               & ref_offset,
-              std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>>      & align,
-              std::vector<cigar>                                                   & cigar,
-              sam_flag                                                             & flag,
-              uint8_t                                                              & mapq,
-              std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>  & mate,
-              sam_tag_dictionary                                                   & tag_dict,
-              double                                                               & e_value,
-              double                                                               & bit_score)
-{
-    t::file_extensions;
+concept sam_file_output_format = requires (detail::sam_file_output_format_exposer<t> & v,
+                                           std::ofstream & stream,
+                                           sam_file_output_options & options,
+                                           sam_file_header<> & header,
+                                           dna5_vector & seq,
+                                           std::vector<phred42> & qual,
+                                           std::string & id,
+                                           int32_t & offset,
+                                           dna5_vector & ref_seq,
+                                           std::optional<int32_t> & ref_id,
+                                           std::optional<int32_t> & ref_offset,
+                                           std::pair<std::vector<gapped<dna4>>, std::vector<gapped<dna4>>> & align,
+                                           std::vector<cigar> & cigar,
+                                           sam_flag & flag,
+                                           uint8_t & mapq,
+                                           std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t> & mate,
+                                           sam_tag_dictionary & tag_dict,
+                                           double & e_value,
+                                           double & bit_score) {
+                                     t::file_extensions;
 
-    {v.write_alignment_record(stream,
-                              options,
-                              header,
-                              seq,
-                              qual,
-                              id,
-                              offset,
-                              ref_seq,
-                              ref_id,
-                              ref_offset,
-                              align,
-                              cigar,
-                              flag,
-                              mapq,
-                              mate,
-                              tag_dict,
-                              e_value,
-                              bit_score)} -> std::same_as<void>;
-};
+                                     {
+                                         v.write_alignment_record(stream,
+                                                                  options,
+                                                                  header,
+                                                                  seq,
+                                                                  qual,
+                                                                  id,
+                                                                  offset,
+                                                                  ref_seq,
+                                                                  ref_id,
+                                                                  ref_offset,
+                                                                  align,
+                                                                  cigar,
+                                                                  flag,
+                                                                  mapq,
+                                                                  mate,
+                                                                  tag_dict,
+                                                                  e_value,
+                                                                  bit_score)
+                                         } -> std::same_as<void>;
+                                 };
 //!\endcond
 
 /*!\name Requirements for seqan3::sam_file_output_format
@@ -204,7 +204,7 @@ constexpr bool is_type_list_of_sam_file_output_formats_v = false;
  * \ingroup io_sam_file
  * \see seqan3::type_list_of_sam_file_output_formats
  */
-template <typename ...ts>
+template <typename... ts>
 constexpr bool is_type_list_of_sam_file_output_formats_v<type_list<ts...>> = (sam_file_output_format<ts> && ...);
 
 /*!\brief Auxiliary concept that checks whether a type is a seqan3::type_list and all types meet

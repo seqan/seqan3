@@ -47,6 +47,7 @@ class out_file_iterator
 {
     static_assert(!std::is_const_v<file_type>,
                   "You cannot iterate over const files, because the iterator changes the file.");
+
 public:
     /*!\name Member types
      * \brief The associated types are `void`, see the full description.
@@ -54,17 +55,17 @@ public:
      */
 
     //!\brief The value type (void).
-    using value_type        = void;
+    using value_type = void;
     //!\brief The reference type (void).
-    using reference         = void;
+    using reference = void;
     //!\brief The const reference type (void).
-    using const_reference   = void;
+    using const_reference = void;
     //!\brief The size type (void).
-    using size_type         = void;
+    using size_type = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::ptrdiff_t;
+    using difference_type = std::ptrdiff_t;
     //!\brief The pointer type.
-    using pointer           = void *;
+    using pointer = void *;
     //!\brief Tag this class as an input access iterator.
     using iterator_category = std::output_iterator_tag;
     //!\}
@@ -79,15 +80,14 @@ public:
     //!\brief Copy construction via assignment.
     constexpr out_file_iterator & operator=(out_file_iterator const &) = default;
     //!\brief Move constructor.
-    constexpr out_file_iterator (out_file_iterator &&) = default;
+    constexpr out_file_iterator(out_file_iterator &&) = default;
     //!\brief Move assignment.
     constexpr out_file_iterator & operator=(out_file_iterator &&) = default;
     //!\brief Use default deconstructor.
     ~out_file_iterator() = default;
 
     //!\brief Construct with reference to host.
-    constexpr out_file_iterator(file_type & _host) noexcept :
-        host{&_host}
+    constexpr out_file_iterator(file_type & _host) noexcept : host{&_host}
     {}
     //!\}
 
@@ -144,15 +144,13 @@ public:
     }
 
     //!\brief Checks whether `it` is equal to the sentinel.
-    constexpr friend bool operator==(std::default_sentinel_t const &,
-                                     out_file_iterator const & it) noexcept
+    constexpr friend bool operator==(std::default_sentinel_t const &, out_file_iterator const & it) noexcept
     {
         return (it == std::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
-    constexpr friend bool operator!=(std::default_sentinel_t const &,
-                                     out_file_iterator const & it) noexcept
+    constexpr friend bool operator!=(std::default_sentinel_t const &, out_file_iterator const & it) noexcept
     {
         return (it != std::default_sentinel);
     }

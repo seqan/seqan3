@@ -29,14 +29,14 @@
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/structure/dssp9.hpp>
 #include <seqan3/alphabet/structure/structured_aa.hpp>
-#include <seqan3/io/stream/concept.hpp>
-#include <seqan3/io/exception.hpp>
 #include <seqan3/io/detail/in_file_iterator.hpp>
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/record.hpp>
+#include <seqan3/io/exception.hpp>
+#include <seqan3/io/stream/concept.hpp>
+#include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/input_format_concept.hpp>
 #include <seqan3/io/structure_file/input_options.hpp>
-#include <seqan3/io/structure_file/format_vienna.hpp>
 #include <seqan3/io/structure_file/record.hpp>
 #include <seqan3/utility/container/concept.hpp>
 #include <seqan3/utility/type_list/traits.hpp>
@@ -139,66 +139,67 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept structure_file_input_traits = requires(t v)
-{
-    // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
-    // sequence
-    requires writable_alphabet<typename t::seq_alphabet>;
-    requires writable_alphabet<typename t::seq_legal_alphabet>;
-    requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
-    requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
+concept structure_file_input_traits =
+    requires (t v) {
+        // TODO(joergi-w) The expensive concept checks are currently omitted. Check again when compiler has improved.
+        // sequence
+        requires writable_alphabet<typename t::seq_alphabet>;
+        requires writable_alphabet<typename t::seq_legal_alphabet>;
+        requires explicitly_convertible_to<typename t::seq_legal_alphabet, typename t::seq_alphabet>;
+        requires sequence_container<typename t::template seq_container<typename t::seq_alphabet>>;
 
-    // id
-    requires writable_alphabet<typename t::id_alphabet>;
-    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+        // id
+        requires writable_alphabet<typename t::id_alphabet>;
+        requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
 
-    // bpp
-    requires std::is_floating_point_v<typename t::bpp_prob>;
-    requires std::numeric_limits<typename t::bpp_partner>::is_integer;
+        // bpp
+        requires std::is_floating_point_v<typename t::bpp_prob>;
+        requires std::numeric_limits<typename t::bpp_partner>::is_integer;
 
-//    requires container // TODO check Associative container Concept when implemented
-//        <typename t::template bpp_queue
-//            <typename t::template bpp_item
-//                <typename t::bpp_prob, typename t::bpp_partner>>>
-//        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
-//            <typename t::template bpp_item
-//                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
-//    requires sequence_container
-//        <typename t::template bpp_container
-//            <typename t::template bpp_queue
-//                 <typename t::template bpp_item
-//                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
+        //    requires container // TODO check Associative container Concept when implemented
+        //        <typename t::template bpp_queue
+        //            <typename t::template bpp_item
+        //                <typename t::bpp_prob, typename t::bpp_partner>>>
+        //        && requires(typename t::template bpp_queue // TODO maybe implement also a version that allows emplace_back
+        //            <typename t::template bpp_item
+        //                <typename t::bpp_prob, typename t::bpp_partner>> value) { value.emplace(1.0, 1); };
+        //    requires sequence_container
+        //        <typename t::template bpp_container
+        //            <typename t::template bpp_queue
+        //                 <typename t::template bpp_item
+        //                      <typename t::bpp_prob, typename t::bpp_partner>>>>;
 
-    // structure
-    requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
-          || rna_structure_alphabet<typename t::structure_alphabet>;
-    requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
+        // structure
+        requires std::is_same_v<typename t::structure_alphabet, dssp9> // TODO(joergi-w) add aa_structure_concept
+                     || rna_structure_alphabet<typename t::structure_alphabet>;
+        requires sequence_container<typename t::template structure_container<typename t::structure_alphabet>>;
 
-    // structured sequence: tuple composites of seq and structure
-    requires std::is_base_of_v<alphabet_tuple_base
-        <typename t::template structured_seq_alphabet
-            <typename t::seq_alphabet, typename t::structure_alphabet>,
-             typename t::seq_alphabet, typename t::structure_alphabet>,
-        typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
-//    requires sequence_container
-//        <typename t::template structured_seq_container
-//            <typename t::template structured_seq_alphabet
-//                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
+        // structured sequence: tuple composites of seq and structure
+        requires std::is_base_of_v<
+            alphabet_tuple_base<
+                typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>,
+                typename t::seq_alphabet,
+                typename t::structure_alphabet>,
+            typename t::template structured_seq_alphabet<typename t::seq_alphabet, typename t::structure_alphabet>>;
+        //    requires sequence_container
+        //        <typename t::template structured_seq_container
+        //            <typename t::template structured_seq_alphabet
+        //                <typename t::seq_alphabet, typename t::structure_alphabet>>>;
 
-    // energy: std::optional of floating point number
-    requires std::is_floating_point_v<typename t::energy_type::value_type>;
+        // energy: std::optional of floating point number
+        requires std::is_floating_point_v<typename t::energy_type::value_type>;
 
-    // reactivity [error]
-    requires std::is_floating_point_v<typename t::react_type>;
-    requires sequence_container<typename t::template react_container<typename t::react_type>>;
+        // reactivity [error]
+        requires std::is_floating_point_v<typename t::react_type>;
+        requires sequence_container<typename t::template react_container<typename t::react_type>>;
 
-    // comment
-    requires writable_alphabet<typename t::comment_alphabet>;
-    requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
+        // comment
+        requires writable_alphabet<typename t::comment_alphabet>;
+        requires sequence_container<typename t::template comment_container<typename t::comment_alphabet>>;
 
-    // offset
-    requires std::numeric_limits<typename t::offset_type>::is_integer;
-};
+        // offset
+        requires std::numeric_limits<typename t::offset_type>::is_integer;
+    };
 //!\endcond
 
 // ----------------------------------------------------------------------------
@@ -228,90 +229,90 @@ struct structure_file_input_default_traits_rna
     // sequence
 
     //!\brief The sequence alphabet is seqan3::rna5.
-    using seq_alphabet                       = rna5;
+    using seq_alphabet = rna5;
 
     //!\brief The legal sequence alphabet for parsing is seqan3::rna15.
-    using seq_legal_alphabet                 = rna15;
+    using seq_legal_alphabet = rna15;
 
     //!\brief The type of an RNA sequence is std::vector.
     template <typename _seq_alphabet>
-    using seq_container                      = std::vector<_seq_alphabet>;
+    using seq_container = std::vector<_seq_alphabet>;
 
     // id
 
     //!\brief The alphabet for an identifier string is char.
-    using id_alphabet                        = char;
+    using id_alphabet = char;
 
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
-    using id_container                       = std::basic_string<_id_alphabet>;
+    using id_container = std::basic_string<_id_alphabet>;
 
     // base pair probability structure
 
     //!\brief The type for a base pair probability is double.
-    using bpp_prob                           = double;
+    using bpp_prob = double;
 
     //!\brief The type for the partner position of a base pair probability is size_t.
-    using bpp_partner                        = size_t;
+    using bpp_partner = size_t;
 
     //!\brief The type of a base pair item is std::pair<double, size_t>.
     template <typename _bpp_prob, typename _bpp_partner>
-    using bpp_item                           = std::pair<_bpp_prob, _bpp_partner>;
+    using bpp_item = std::pair<_bpp_prob, _bpp_partner>;
 
     //!\brief A queue of base pair items sorted by probability is realised with std::set.
     template <typename _bpp_item>
-    using bpp_queue                          = std::set<_bpp_item>;
+    using bpp_queue = std::set<_bpp_item>;
 
     //!\brief A string over all bases containing the respective interaction queues is represented as std::vector.
     template <typename _bpp_queue>
-    using bpp_container                      = std::vector<_bpp_queue>;
+    using bpp_container = std::vector<_bpp_queue>;
 
     // fixed structure
 
     //!\brief The alphabet for a structure annotation is seqan3::phred42.
-    using structure_alphabet                 = wuss51;
+    using structure_alphabet = wuss51;
 
     //!\brief The string type for a structure annotation is std::vector.
     template <typename _structure_alphabet>
-    using structure_container                = std::vector<_structure_alphabet>;
+    using structure_container = std::vector<_structure_alphabet>;
 
     // combined sequence and structure
 
     //!\brief The combined structured sequence alphabet is seqan3::structured_rna<seqan3::rna5, seqan3::wuss51>.
     template <typename _seq_alphabet, typename _structure_alphabet>
-    using structured_seq_alphabet            = structured_rna<_seq_alphabet, _structure_alphabet>;
+    using structured_seq_alphabet = structured_rna<_seq_alphabet, _structure_alphabet>;
 
     //!\brief The type of a structured RNA sequence is std::vector.
     template <typename _structured_seq_alphabet>
-    using structured_seq_container           = std::vector<_structured_seq_alphabet>;
+    using structured_seq_container = std::vector<_structured_seq_alphabet>;
 
     // energy
 
     //!\brief The type of the energy is std::optional<double>.
-    using energy_type                        = std::optional<double>;
+    using energy_type = std::optional<double>;
 
     // reactivity [error]
 
     //!\brief The type of the reactivity and reactivity error is double.
-    using react_type                         = double;
+    using react_type = double;
 
     //!\brief The type of a string of reactivity values is std::vector.
     template <typename _react_type>
-    using react_container                    = std::vector<_react_type>;
+    using react_container = std::vector<_react_type>;
 
     // comment
 
     //!\brief The alphabet for a comment string is char.
-    using comment_alphabet                   = char;
+    using comment_alphabet = char;
 
     //!\brief The string type for a comment is std::basic_string.
     template <typename _comment_alphabet>
-    using comment_container                  = std::basic_string<_comment_alphabet>;
+    using comment_container = std::basic_string<_comment_alphabet>;
 
     // offset
 
     //!\brief The type of the offset is size_t.
-    using offset_type                        = size_t;
+    using offset_type = size_t;
     //!\}
 };
 
@@ -325,14 +326,14 @@ struct structure_file_input_default_traits_aa : structure_file_input_default_tra
      */
 
     //!\brief The sequence alphabet is seqan3::aa27.
-    using seq_alphabet             = aa27;
+    using seq_alphabet = aa27;
     //!\brief The legal sequence alphabet for parsing is seqan3::aa27.
-    using seq_legal_alphabet       = aa27;
+    using seq_legal_alphabet = aa27;
     //!\brief The structure annotation alphabet is seqan3::dssp9.
-    using structure_alphabet       = dssp9;
+    using structure_alphabet = dssp9;
     //!\brief The combined structured sequence alphabet is seqan3::structured_aa<seqan3::aa27, seqan3::dssp9>.
     template <typename _seq_alphabet, typename _structure_alphabet>
-    using structured_seq_alphabet  = structured_aa<_seq_alphabet, _structure_alphabet>;
+    using structured_seq_alphabet = structured_aa<_seq_alphabet, _structure_alphabet>;
     //!\}
 };
 
@@ -365,13 +366,13 @@ public:
      * \{
      */
     //!\brief A traits type that defines aliases and template for storage of the fields.
-    using traits_type        = traits_type_;
+    using traits_type = traits_type_;
     //!\brief A seqan3::fields list with the fields selected for the record.
     using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
-    using valid_formats      = valid_formats_;
+    using valid_formats = valid_formats_;
     //!\brief Character type of the stream(s).
-    using stream_char_type   = char;
+    using stream_char_type = char;
     //!\}
 
     /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
@@ -388,23 +389,23 @@ public:
                              field::comment,
                              field::offset>;
 
-    static_assert([]() constexpr
-                  {
-                      for (field f : selected_field_ids::as_array)
-                          if (!field_ids::contains(f))
-                              return false;
-                      return true;
-                  }(),
-                  "You selected a field that is not valid for structure files, please refer to the documentation "
-                  "of structure_file_input::field_ids for the accepted values.");
+    static_assert(
+        []() constexpr {
+            for (field f : selected_field_ids::as_array)
+                if (!field_ids::contains(f))
+                    return false;
+            return true;
+        }(),
+        "You selected a field that is not valid for structure files, please refer to the documentation "
+        "of structure_file_input::field_ids for the accepted values.");
 
-    static_assert([]() constexpr
-                  {
-                      return !(selected_field_ids::contains(field::structured_seq) &&
-                               (selected_field_ids::contains(field::seq) ||
-                               (selected_field_ids::contains(field::structure))));
-                  }(), "You may not select field::structured_seq and either of field::seq and field::structure "
-                       "at the same time.");
+    static_assert(
+        []() constexpr {
+            return !(selected_field_ids::contains(field::structured_seq)
+                     && (selected_field_ids::contains(field::seq) || (selected_field_ids::contains(field::structure))));
+        }(),
+        "You may not select field::structured_seq and either of field::seq and field::structure "
+        "at the same time.");
 
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -412,38 +413,42 @@ public:
      * \{
      */
     //!\brief The type of the sequence field (default std::vector of seqan3::rna5).
-    using seq_type            = typename traits_type::template seq_container<typename traits_type::seq_alphabet>;
+    using seq_type = typename traits_type::template seq_container<typename traits_type::seq_alphabet>;
     //!\brief The type of the ID field (default std::string).
-    using id_type             = typename traits_type::template id_container<typename traits_type::id_alphabet>;
+    using id_type = typename traits_type::template id_container<typename traits_type::id_alphabet>;
     //!\brief The type of the base pair probabilies (default std::vector of std::set<std::pair<double, size_t>>).
-    using bpp_type            = typename traits_type::template bpp_container
-        <typename traits_type::template bpp_queue
-            <typename traits_type::template bpp_item
-                <typename traits_type::bpp_prob, typename traits_type::bpp_partner>>>;
+    using bpp_type = typename traits_type::template bpp_container<typename traits_type::template bpp_queue<
+        typename traits_type::template bpp_item<typename traits_type::bpp_prob, typename traits_type::bpp_partner>>>;
     //!\brief The type of the structure field (default std::vector of seqan3::wuss51).
-    using structure_type      = typename traits_type::template structure_container
-        <typename traits_type::structure_alphabet>;
+    using structure_type = typename traits_type::template structure_container<typename traits_type::structure_alphabet>;
     //!\brief The type of the sequence-structure field (default std::vector of structured_rna<rna5, wuss51>).
-    using structured_seq_type = typename traits_type::template structured_seq_container
-        <typename traits_type::template structured_seq_alphabet
-            <typename traits_type::seq_alphabet, typename traits_type::structure_alphabet>>;
+    using structured_seq_type = typename traits_type::template structured_seq_container<
+        typename traits_type::template structured_seq_alphabet<typename traits_type::seq_alphabet,
+                                                               typename traits_type::structure_alphabet>>;
     //!\brief The type of the energy field (default double).
-    using energy_type         = typename traits_type::energy_type;
+    using energy_type = typename traits_type::energy_type;
     //!\brief The type of the reactivity and reactivity error fields (default double).
-    using react_type          = typename traits_type::template react_container<typename traits_type::react_type>;
+    using react_type = typename traits_type::template react_container<typename traits_type::react_type>;
     //!\brief The type of the comment field (default double).
-    using comment_type        = typename traits_type::template comment_container
-        <typename traits_type::comment_alphabet>;
+    using comment_type = typename traits_type::template comment_container<typename traits_type::comment_alphabet>;
     //!\brief The type of the offset field (default size_t).
-    using offset_type         = typename traits_type::offset_type;
+    using offset_type = typename traits_type::offset_type;
 
     //!\brief The previously defined types aggregated in a seqan3::type_list.
-    using field_types    = type_list<seq_type, id_type, bpp_type, structure_type, structured_seq_type, energy_type,
-                                     react_type, react_type, comment_type, offset_type>;
+    using field_types = type_list<seq_type,
+                                  id_type,
+                                  bpp_type,
+                                  structure_type,
+                                  structured_seq_type,
+                                  energy_type,
+                                  react_type,
+                                  react_type,
+                                  comment_type,
+                                  offset_type>;
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
-    using record_type    = structure_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
-                                            selected_field_ids>;
+    using record_type = structure_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
+                                         selected_field_ids>;
     //!\}
 
     /*!\name Range associated types
@@ -451,38 +456,38 @@ public:
      * \{
      */
     //!\brief The value_type is the \ref record_type.
-    using value_type      = record_type;
+    using value_type = record_type;
     //!\brief The reference type.
-    using reference       = record_type &;
+    using reference = record_type &;
     //!\brief The const_reference type is void, because files are not const-iterable.
     using const_reference = void;
     //!\brief An unsigned integer type, usually std::size_t.
-    using size_type       = size_t;
+    using size_type = size_t;
     //!\brief A signed integer type, usually std::ptrdiff_t.
     using difference_type = std::make_signed_t<size_t>;
     //!\brief The iterator type of this view (an input iterator).
-    using iterator        = detail::in_file_iterator<structure_file_input>;
+    using iterator = detail::in_file_iterator<structure_file_input>;
     //!\brief The const iterator type is void, because files are not const-iterable.
-    using const_iterator  = void;
+    using const_iterator = void;
     //!\brief The type returned by end().
-    using sentinel        = std::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
     //!\brief Default constructor is explicitly deleted, you need to give a stream or file name.
-    structure_file_input()                                         = delete;
+    structure_file_input() = delete;
     //!\brief Copy construction is explicitly deleted, because you cannot have multiple access to the same file.
-    structure_file_input(structure_file_input const &)             = delete;
+    structure_file_input(structure_file_input const &) = delete;
     //!\brief Copy assignment is explicitly deleted, because you cannot have multiple access to the same file.
     structure_file_input & operator=(structure_file_input const &) = delete;
     //!\brief Move construction is defaulted.
-    structure_file_input(structure_file_input &&)                  = default;
+    structure_file_input(structure_file_input &&) = default;
     //!\brief Move assignment is defaulted.
-    structure_file_input & operator=(structure_file_input &&)      = default;
+    structure_file_input & operator=(structure_file_input &&) = default;
     //!\brief Destructor is defaulted.
-    ~structure_file_input()                                        = default;
+    ~structure_file_input() = default;
 
     /*!\brief Construct from filename.
      * \param[in] filename Path to the file you wish to open.
@@ -505,8 +510,8 @@ public:
         primary_stream{new std::ifstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
-        static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
-                                                                             std::ios_base::in | std::ios::binary);
+        static_cast<std::basic_ifstream<char> *>(primary_stream.get())
+            ->open(filename, std::ios_base::in | std::ios::binary);
 
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
@@ -644,7 +649,8 @@ public:
 
     //!\brief The options are public and its members can be set directly.
     structure_file_input_options<typename traits_type::seq_legal_alphabet,
-                                 selected_field_ids::contains(field::structured_seq)> options;
+                                 selected_field_ids::contains(field::structured_seq)>
+        options;
 
 protected:
     //!\privatesection
@@ -664,11 +670,15 @@ protected:
      */
     //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
     using stream_ptr_t = std::unique_ptr<std::basic_istream<stream_char_type>,
-                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
+                                         std::function<void(std::basic_istream<stream_char_type> *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_istream<stream_char_type> *) {}
+    static void stream_deleter_noop(std::basic_istream<stream_char_type> *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
+    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr)
+    {
+        delete ptr;
+    }
 
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
     stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
@@ -681,8 +691,8 @@ protected:
     bool at_end{false};
 
     //!\brief Type of the format, a std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::structure_file_input_format_exposer>::type;
+    using format_type =
+        typename detail::variant_from_tags<valid_formats, detail::structure_file_input_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -697,50 +707,52 @@ protected:
         position_buffer = secondary_stream->tellg();
 
         // at end if we could not read further
-        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
-             std::istreambuf_iterator<stream_char_type>{}))
+        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream}
+             == std::istreambuf_iterator<stream_char_type>{}))
         {
             at_end = true;
             return;
         }
 
         assert(!format.valueless_by_exception());
-        std::visit([&] (auto & f)
-        {
-            // read new record
-            if constexpr (selected_field_ids::contains(field::structured_seq))
+        std::visit(
+            [&](auto & f)
             {
-                static_assert(!selected_field_ids::contains(field::structure),
-                              "You may not select field::structured_seq and field::structure at the same time.");
-                static_assert(!selected_field_ids::contains(field::seq),
-                              "You may not select field::structured_seq and field::seq at the same time.");
-                f.read_structure_record(*secondary_stream,
-                                        options,
-                                        detail::get_or_ignore<field::structured_seq>(record_buffer), // seq
-                                        detail::get_or_ignore<field::id>(record_buffer),
-                                        detail::get_or_ignore<field::bpp>(record_buffer),
-                                        detail::get_or_ignore<field::structured_seq>(record_buffer), // structure
-                                        detail::get_or_ignore<field::energy>(record_buffer),
-                                        detail::get_or_ignore<field::react>(record_buffer),
-                                        detail::get_or_ignore<field::react_err>(record_buffer),
-                                        detail::get_or_ignore<field::comment>(record_buffer),
-                                        detail::get_or_ignore<field::offset>(record_buffer));
-            }
-            else
-            {
-                f.read_structure_record(*secondary_stream,
-                                        options,
-                                        detail::get_or_ignore<field::seq>(record_buffer),
-                                        detail::get_or_ignore<field::id>(record_buffer),
-                                        detail::get_or_ignore<field::bpp>(record_buffer),
-                                        detail::get_or_ignore<field::structure>(record_buffer),
-                                        detail::get_or_ignore<field::energy>(record_buffer),
-                                        detail::get_or_ignore<field::react>(record_buffer),
-                                        detail::get_or_ignore<field::react_err>(record_buffer),
-                                        detail::get_or_ignore<field::comment>(record_buffer),
-                                        detail::get_or_ignore<field::offset>(record_buffer));
-            }
-        }, format);
+                // read new record
+                if constexpr (selected_field_ids::contains(field::structured_seq))
+                {
+                    static_assert(!selected_field_ids::contains(field::structure),
+                                  "You may not select field::structured_seq and field::structure at the same time.");
+                    static_assert(!selected_field_ids::contains(field::seq),
+                                  "You may not select field::structured_seq and field::seq at the same time.");
+                    f.read_structure_record(*secondary_stream,
+                                            options,
+                                            detail::get_or_ignore<field::structured_seq>(record_buffer), // seq
+                                            detail::get_or_ignore<field::id>(record_buffer),
+                                            detail::get_or_ignore<field::bpp>(record_buffer),
+                                            detail::get_or_ignore<field::structured_seq>(record_buffer), // structure
+                                            detail::get_or_ignore<field::energy>(record_buffer),
+                                            detail::get_or_ignore<field::react>(record_buffer),
+                                            detail::get_or_ignore<field::react_err>(record_buffer),
+                                            detail::get_or_ignore<field::comment>(record_buffer),
+                                            detail::get_or_ignore<field::offset>(record_buffer));
+                }
+                else
+                {
+                    f.read_structure_record(*secondary_stream,
+                                            options,
+                                            detail::get_or_ignore<field::seq>(record_buffer),
+                                            detail::get_or_ignore<field::id>(record_buffer),
+                                            detail::get_or_ignore<field::bpp>(record_buffer),
+                                            detail::get_or_ignore<field::structure>(record_buffer),
+                                            detail::get_or_ignore<field::energy>(record_buffer),
+                                            detail::get_or_ignore<field::react>(record_buffer),
+                                            detail::get_or_ignore<field::react_err>(record_buffer),
+                                            detail::get_or_ignore<field::comment>(record_buffer),
+                                            detail::get_or_ignore<field::offset>(record_buffer));
+                }
+            },
+            format);
     }
 
     //!\brief Befriend iterator so it can access the buffers.
@@ -757,7 +769,7 @@ template <input_stream stream_type,
           structure_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
 structure_file_input(stream_type && stream, file_format const &, selected_field_ids const &)
-    -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
+    -> structure_file_input<typename structure_file_input<>::traits_type, // actually use the default
                             selected_field_ids,
                             type_list<file_format>>;
 
@@ -766,7 +778,7 @@ template <input_stream stream_type,
           structure_file_input_format file_format,
           detail::fields_specialisation selected_field_ids>
 structure_file_input(stream_type & stream, file_format const &, selected_field_ids const &)
-    -> structure_file_input<typename structure_file_input<>::traits_type,       // actually use the default
+    -> structure_file_input<typename structure_file_input<>::traits_type, // actually use the default
                             selected_field_ids,
                             type_list<file_format>>;
 //!\}

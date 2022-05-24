@@ -43,22 +43,22 @@ public:
     /*!\name Associated types
      * \{
      */
-    using difference_type   = ptrdiff_t;               //!< Defaults to ptrdiff_t.
-    using value_type        = char_t;                  //!< The char type of the stream.
-    using reference         = char_t;                  //!< The char type of the stream.
-    using pointer           = void;                    //!< Has no pointer type.
+    using difference_type = ptrdiff_t;                 //!< Defaults to ptrdiff_t.
+    using value_type = char_t;                         //!< The char type of the stream.
+    using reference = char_t;                          //!< The char type of the stream.
+    using pointer = void;                              //!< Has no pointer type.
     using iterator_category = std::input_iterator_tag; //!< Pure input iterator.
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    fast_istreambuf_iterator()                                              noexcept = default; //!< Defaulted.
-    fast_istreambuf_iterator(fast_istreambuf_iterator const &)              noexcept = default; //!< Defaulted.
-    fast_istreambuf_iterator(fast_istreambuf_iterator &&)                   noexcept = default; //!< Defaulted.
-    fast_istreambuf_iterator & operator=(fast_istreambuf_iterator const &)  noexcept = default; //!< Defaulted.
-    fast_istreambuf_iterator & operator=(fast_istreambuf_iterator &&)       noexcept = default; //!< Defaulted.
-    ~fast_istreambuf_iterator()                                             noexcept = default; //!< Defaulted.
+    fast_istreambuf_iterator() noexcept = default;                                             //!< Defaulted.
+    fast_istreambuf_iterator(fast_istreambuf_iterator const &) noexcept = default;             //!< Defaulted.
+    fast_istreambuf_iterator(fast_istreambuf_iterator &&) noexcept = default;                  //!< Defaulted.
+    fast_istreambuf_iterator & operator=(fast_istreambuf_iterator const &) noexcept = default; //!< Defaulted.
+    fast_istreambuf_iterator & operator=(fast_istreambuf_iterator &&) noexcept = default;      //!< Defaulted.
+    ~fast_istreambuf_iterator() noexcept = default;                                            //!< Defaulted.
 
     //!\brief Construct from a stream buffer.
     explicit fast_istreambuf_iterator(std::basic_streambuf<char_t, traits_t> & ibuf) :

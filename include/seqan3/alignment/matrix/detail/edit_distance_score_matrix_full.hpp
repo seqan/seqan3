@@ -42,12 +42,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     edit_distance_score_matrix_full() = default;                                                    //!< Defaulted
-     edit_distance_score_matrix_full(edit_distance_score_matrix_full const &) = default;             //!< Defaulted
-     edit_distance_score_matrix_full(edit_distance_score_matrix_full &&) = default;                  //!< Defaulted
-     edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full const &) = default; //!< Defaulted
-     edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full &&) = default;      //!< Defaulted
-     ~edit_distance_score_matrix_full() = default;                                                   //!< Defaulted
+    edit_distance_score_matrix_full() = default;                                                    //!< Defaulted
+    edit_distance_score_matrix_full(edit_distance_score_matrix_full const &) = default;             //!< Defaulted
+    edit_distance_score_matrix_full(edit_distance_score_matrix_full &&) = default;                  //!< Defaulted
+    edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full const &) = default; //!< Defaulted
+    edit_distance_score_matrix_full & operator=(edit_distance_score_matrix_full &&) = default;      //!< Defaulted
+    ~edit_distance_score_matrix_full() = default;                                                   //!< Defaulted
 
 protected:
     //!\brief Allow seqan3::detail::edit_distance_unbanded_score_matrix_policy to access the private constructor.
@@ -57,8 +57,7 @@ protected:
     /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
      * \param rows_size \copydoc rows_size
      */
-    edit_distance_score_matrix_full(size_t const rows_size)
-        : rows_size{rows_size}, columns{}
+    edit_distance_score_matrix_full(size_t const rows_size) : rows_size{rows_size}, columns{}
     {}
     //!\}
 
@@ -106,8 +105,10 @@ public:
      * \return Number of max rows in the current column.
      */
     template <typename score_type>
-    static size_t max_rows(word_type const score_mask, unsigned const last_block,
-                           score_type const score, score_type const max_errors) noexcept
+    static size_t max_rows(word_type const score_mask,
+                           unsigned const last_block,
+                           score_type const score,
+                           score_type const max_errors) noexcept
     {
         size_t const offset = std::bit_width(score_mask);
         size_t const active_row = word_size * last_block + offset;
@@ -137,7 +138,7 @@ public:
         assert(col < cols());
 
         column_type const & column = columns[col];
-        if constexpr(use_max_errors)
+        if constexpr (use_max_errors)
             if (!(row < column.max_rows))
                 return inf;
 
@@ -189,9 +190,7 @@ protected:
     };
 
     //!\brief The state of one computation step.
-    struct column_type :
-        enable_state_t<true, score_matrix_state>,
-        enable_state_t<use_max_errors, max_errors_state>
+    struct column_type : enable_state_t<true, score_matrix_state>, enable_state_t<use_max_errors, max_errors_state>
     {};
 
     /*!\brief Adds a column to the score matrix.

@@ -13,15 +13,15 @@
 #pragma once
 
 #include <seqan3/alphabet/concept.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/dna5.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna5.hpp>
 #include <seqan3/alphabet/quality/concept.hpp>
 #include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/qualified.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
-#include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 
 namespace seqan3
 {

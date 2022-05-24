@@ -48,12 +48,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr nucleotide_base()                                    noexcept = default; //!< Defaulted.
-    constexpr nucleotide_base(nucleotide_base const &)             noexcept = default; //!< Defaulted.
-    constexpr nucleotide_base(nucleotide_base &&)                  noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base() noexcept = default;                                    //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base const &) noexcept = default;             //!< Defaulted.
+    constexpr nucleotide_base(nucleotide_base &&) noexcept = default;                  //!< Defaulted.
     constexpr nucleotide_base & operator=(nucleotide_base const &) noexcept = default; //!< Defaulted.
-    constexpr nucleotide_base & operator=(nucleotide_base &&)      noexcept = default; //!< Defaulted.
-    ~nucleotide_base()                                             noexcept = default; //!< Defaulted.
+    constexpr nucleotide_base & operator=(nucleotide_base &&) noexcept = default;      //!< Defaulted.
+    ~nucleotide_base() noexcept = default;                                             //!< Defaulted.
 
     //!\}
 
@@ -78,9 +78,8 @@ public:
      * \experimentalapi{Experimental since version 3.1.}
      */
     template <typename other_nucl_type>
-        requires (!std::same_as<nucleotide_base, other_nucl_type>) &&
-                 (!std::same_as<derived_type, other_nucl_type>) &&
-                 nucleotide_alphabet<other_nucl_type>
+        requires (!std::same_as<nucleotide_base, other_nucl_type>)
+              && (!std::same_as<derived_type, other_nucl_type>) && nucleotide_alphabet<other_nucl_type>
     explicit constexpr nucleotide_base(other_nucl_type const & other) noexcept
     {
         static_cast<derived_type &>(*this) =
@@ -144,30 +143,27 @@ public:
 
 private:
     //!\brief Implementation of #char_is_valid().
-    static constexpr std::array<bool, 256> valid_char_table
+    static constexpr std::array<bool, 256> valid_char_table{[]() constexpr {// init with false
+                                                                            std::array<bool, 256> ret{};
+
+    // the original valid chars and their lower cases
+    for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
     {
-        [] () constexpr
-        {
-            // init with false
-            std::array<bool, 256> ret{};
+        uint8_t c = derived_type::rank_to_char(rank);
+        ret[c] = true;
+        ret[to_lower(c)] = true;
+    }
 
-            // the original valid chars and their lower cases
-            for (size_t rank = 0u; rank < derived_type::alphabet_size; ++rank)
-            {
-                uint8_t c = derived_type::rank_to_char(rank);
-                ret[c] = true;
-                ret[to_lower(c)] = true;
-            }
+    // U and T shall be accepted for all
+    ret['U'] = true;
+    ret['T'] = true;
+    ret['u'] = true;
+    ret['t'] = true;
 
-            // U and T shall be accepted for all
-            ret['U'] = true;
-            ret['T'] = true;
-            ret['u'] = true;
-            ret['t'] = true;
-
-            return ret;
-        }()
-    };
-};
+    return ret;
+}()
+}; // namespace seqan3
+}
+;
 
 } // namespace seqan3

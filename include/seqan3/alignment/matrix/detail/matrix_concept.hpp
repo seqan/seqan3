@@ -12,11 +12,11 @@
 
 #pragma once
 
+#include <concepts>
 #include <cstddef>
 #include <limits>
 
 #include <seqan3/alignment/matrix/detail/matrix_coordinate.hpp>
-#include <concepts>
 
 namespace seqan3::detail
 {
@@ -38,46 +38,51 @@ constexpr score_type matrix_inf = std::numeric_limits<score_type>::max();
  */
 //!\cond
 template <typename matrix_t>
-concept matrix = requires(std::remove_cvref_t<matrix_t> m)
-{
-//!\endcond
+concept matrix = requires (std::remove_cvref_t<matrix_t> m) {
+                     //!\endcond
 
-    /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
+                     /*!\typedef typedef IMPLEMENTATION_DEFINED value_type;
      * \brief The type of an entry in the matrix.
      */
-    typename std::remove_cvref_t<matrix_t>::value_type;
-    /*!\typedef typedef IMPLEMENTATION_DEFINED reference;
+                     typename std::remove_cvref_t<matrix_t>::value_type;
+                     /*!\typedef typedef IMPLEMENTATION_DEFINED reference;
      * \brief The type of a reference to an entry in the matrix.
      */
-    typename std::remove_cvref_t<matrix_t>::reference;
-    /*!\typedef typedef IMPLEMENTATION_DEFINED size_type;
+                     typename std::remove_cvref_t<matrix_t>::reference;
+                     /*!\typedef typedef IMPLEMENTATION_DEFINED size_type;
      * \brief The size type of the matrix.
      */
-    typename std::remove_cvref_t<matrix_t>::size_type;
+                     typename std::remove_cvref_t<matrix_t>::size_type;
 
-    /*!\fn size_type cols() const noexcept;
+                     /*!\fn size_type cols() const noexcept;
      * \brief The number of columns in the matrix.
      */
-    //!\cond
-    {m.cols()} -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
-    //!\endcond
+                     //!\cond
+                     {
+                         m.cols()
+                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
+                     //!\endcond
 
-    /*!\fn size_type rows() const noexcept;
+                     /*!\fn size_type rows() const noexcept;
      * \brief The number of rows in the matrix.
      */
-    //!\cond
-    {m.rows()} -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
-    //!\endcond
+                     //!\cond
+                     {
+                         m.rows()
+                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::size_type>;
+                     //!\endcond
 
-    /*!\fn reference at(matrix_coordinate coordinate) noexcept;
+                     /*!\fn reference at(matrix_coordinate coordinate) noexcept;
      * \brief A reference to the entry of the matrix at the given coordinate.
      */
-    //!\cond
-    {m.at(matrix_coordinate{})} -> std::same_as<typename std::remove_cvref_t<matrix_t>::reference>;
-    //!\endcond
+                     //!\cond
+                     {
+                         m.at(matrix_coordinate{})
+                         } -> std::same_as<typename std::remove_cvref_t<matrix_t>::reference>;
+                     //!\endcond
 
-//!\cond
-};
+                     //!\cond
+                 };
 //!\endcond
 //!\}
 

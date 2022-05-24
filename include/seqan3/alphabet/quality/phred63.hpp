@@ -59,12 +59,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred63()                             noexcept = default; //!< Defaulted.
-    constexpr phred63(phred63 const &)              noexcept = default; //!< Defaulted.
-    constexpr phred63(phred63 &&)                   noexcept = default; //!< Defaulted.
-    constexpr phred63 & operator=(phred63 const &)  noexcept = default; //!< Defaulted.
-    constexpr phred63 & operator=(phred63 &&)       noexcept = default; //!< Defaulted.
-    ~phred63()                                      noexcept = default; //!< Defaulted.
+    constexpr phred63() noexcept = default;                            //!< Defaulted.
+    constexpr phred63(phred63 const &) noexcept = default;             //!< Defaulted.
+    constexpr phred63(phred63 &&) noexcept = default;                  //!< Defaulted.
+    constexpr phred63 & operator=(phred63 const &) noexcept = default; //!< Defaulted.
+    constexpr phred63 & operator=(phred63 &&) noexcept = default;      //!< Defaulted.
+    ~phred63() noexcept = default;                                     //!< Defaulted.
 
     // Inherit converting constructor
     using base_t::base_t;
@@ -131,6 +131,6 @@ inline std::vector<phred63> operator""_phred63(char const * s, std::size_t n)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

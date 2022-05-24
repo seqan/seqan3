@@ -42,12 +42,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr trace_iterator() = default; //!< Defaulted.
-    constexpr trace_iterator(trace_iterator const &) = default; //!< Defaulted.
-    constexpr trace_iterator(trace_iterator &&) = default; //!< Defaulted.
+    constexpr trace_iterator() = default;                                   //!< Defaulted.
+    constexpr trace_iterator(trace_iterator const &) = default;             //!< Defaulted.
+    constexpr trace_iterator(trace_iterator &&) = default;                  //!< Defaulted.
     constexpr trace_iterator & operator=(trace_iterator const &) = default; //!< Defaulted.
-    constexpr trace_iterator & operator=(trace_iterator &&) = default; //!< Defaulted.
-    ~trace_iterator() = default; //!< Defaulted.
+    constexpr trace_iterator & operator=(trace_iterator &&) = default;      //!< Defaulted.
+    ~trace_iterator() = default;                                            //!< Defaulted.
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.

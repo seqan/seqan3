@@ -77,4 +77,4 @@ struct fm_index_cursor_node
     //!\endcond
 };
 
-}
+} // namespace seqan3::detail

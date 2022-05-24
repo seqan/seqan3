@@ -34,7 +34,7 @@ namespace seqan3::align_cfg
  *
  * \remark For a complete overview, take a look at \ref alignment_pairwise.
  */
-using parallel = seqan3::detail::parallel_mode<std::integral_constant<seqan3::detail::align_config_id,
-                                                                      seqan3::detail::align_config_id::parallel>>;
+using parallel = seqan3::detail::parallel_mode<
+    std::integral_constant<seqan3::detail::align_config_id, seqan3::detail::align_config_id::parallel>>;
 
 } // namespace seqan3::align_cfg

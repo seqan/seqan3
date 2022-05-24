@@ -65,7 +65,7 @@ struct argument_parsing<t const &> : argument_parsing<t>
 {};
 //!\endcond
 
-} // seqan3::custom
+} // namespace seqan3::custom
 
 namespace seqan3::detail::adl_only
 {
@@ -89,17 +89,16 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename option_type>
-    using option_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>>,
-                             std::remove_cvref_t<option_type>,
-                             std::type_identity<option_type>>;
+    using option_or_type_identity =
+        std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<option_type>>,
+                           std::remove_cvref_t<option_type>,
+                           std::type_identity<option_type>>;
 
     /*!\brief CPO overload (check 1 out of 2): explicit customisation via `seqan3::custom::argument_parsing`
      * \tparam option_type The type of the option. (Needed to defer instantiation for incomplete types.)
      */
     template <typename option_type = option_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)(
         /*return*/ seqan3::custom::argument_parsing<option_type>::enumeration_names /*;*/
     );
 
@@ -113,8 +112,7 @@ struct enumeration_names_cpo : public detail::customisation_point_object<enumera
      * `enumeration_names(std::type_identity<option_t>{})` will be called.
      */
     template <typename option_type = option_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)(
         /*return*/ enumeration_names(option_or_type_identity<option_type>{}) /*;*/
     );
 };
@@ -163,7 +161,11 @@ namespace seqan3
  * simply provide one of the two functions specified above.
  */
 template <typename option_type>
-    requires requires { { detail::adl_only::enumeration_names_cpo<option_type>{}() }; }
+    requires requires {
+                 {
+                     detail::adl_only::enumeration_names_cpo<option_type>{}()
+                 };
+             }
 inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<option_type>{}();
 //!\}
 
@@ -181,10 +183,11 @@ inline auto const enumeration_names = detail::adl_only::enumeration_names_cpo<op
  */
 //!\cond
 template <typename option_type>
-concept named_enumeration = requires
-{
-    { seqan3::enumeration_names<option_type> };
-};
+concept named_enumeration = requires {
+                                {
+                                    seqan3::enumeration_names<option_type>
+                                };
+                            };
 //!\endcond
 
 /*!\interface seqan3::argument_parser_compatible_option <>
@@ -201,8 +204,8 @@ concept named_enumeration = requires
  */
 //!\cond
 template <typename option_type>
-concept argument_parser_compatible_option = input_stream_over<std::istringstream, option_type> ||
-                                            named_enumeration<option_type>;
+concept argument_parser_compatible_option =
+    input_stream_over<std::istringstream, option_type> || named_enumeration<option_type>;
 //!\endcond
 
 /*!\name Formatted output overloads

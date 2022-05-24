@@ -51,11 +51,10 @@ template <std::ranges::view urng_t, typename fun_t, bool or_throw, bool and_cons
 class view_take_until : public std::ranges::view_interface<view_take_until<urng_t, fun_t, or_throw, and_consume>>
 {
 private:
-
     static_assert(std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>,
                   "The functor type for detail::take_until must model"
                   "std::invocable<fun_t, std::ranges::range_reference_t<urng_t>>.");
-    static_assert(std::convertible_to<std::result_of_t<fun_t&&(std::ranges::range_reference_t<urng_t>)>, bool>,
+    static_assert(std::convertible_to<std::result_of_t<fun_t && (std::ranges::range_reference_t<urng_t>)>, bool>,
                   "The result type of the functor for detail::take_until must be a boolean.");
 
     //!\brief The underlying range.
@@ -65,8 +64,8 @@ private:
     copyable_wrapper_t<fun_t> fun;
 
     //!\brief Whether this view is const_iterable or not.
-    static constexpr bool const_iterable = const_iterable_range<urng_t> &&
-                                           indirect_unary_predicate_on_range<fun_t const, urng_t const>;
+    static constexpr bool const_iterable =
+        const_iterable_range<urng_t> && indirect_unary_predicate_on_range<fun_t const, urng_t const>;
 
     //!\brief Iterator of the underlying range (urng_t).
     //!\tparam const_range Whether iterator is a const iterator (const_range = true) or a non-const iterator.
@@ -92,19 +91,20 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    view_take_until()                                                  = default; //!< Defaulted.
-    constexpr view_take_until(view_take_until const & rhs)             = default; //!< Defaulted.
-    constexpr view_take_until(view_take_until && rhs)                  = default; //!< Defaulted.
+    view_take_until() = default;                                                  //!< Defaulted.
+    constexpr view_take_until(view_take_until const & rhs) = default;             //!< Defaulted.
+    constexpr view_take_until(view_take_until && rhs) = default;                  //!< Defaulted.
     constexpr view_take_until & operator=(view_take_until const & rhs) = default; //!< Defaulted.
-    constexpr view_take_until & operator=(view_take_until && rhs)      = default; //!< Defaulted.
-    ~view_take_until()                                                 = default; //!< Defaulted.
+    constexpr view_take_until & operator=(view_take_until && rhs) = default;      //!< Defaulted.
+    ~view_take_until() = default;                                                 //!< Defaulted.
 
     /*!\brief Construct from another range.
      * \param[in] _urange The underlying range.
      * \param[in] _fun    The functor that acts as termination criterium.
      */
-    view_take_until(urng_t && _urange, fun_t && _fun)
-        : urange{std::forward<urng_t>(_urange)}, fun{std::forward<fun_t>(_fun)}
+    view_take_until(urng_t && _urange, fun_t && _fun) :
+        urange{std::forward<urng_t>(_urange)},
+        fun{std::forward<fun_t>(_fun)}
     {}
 
     /*!\brief Construct from another viewable_range.
@@ -114,8 +114,8 @@ public:
      */
     template <std::ranges::viewable_range rng_t>
         requires std::constructible_from<urng_t, std::views::all_t<rng_t>>
-    view_take_until(rng_t && _urange, fun_t && _fun)
-        : view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::forward<fun_t>(_fun)}
+    view_take_until(rng_t && _urange, fun_t && _fun) :
+        view_take_until{std::views::all(std::forward<rng_t>(_urange)), std::forward<fun_t>(_fun)}
     {}
     //!\}
 
@@ -138,9 +138,7 @@ public:
     auto begin() noexcept
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t>)
-            return basic_consume_iterator<false>{std::ranges::begin(urange),
-                                                 fun,
-                                                 std::ranges::end(urange)};
+            return basic_consume_iterator<false>{std::ranges::begin(urange), fun, std::ranges::end(urange)};
         else
             return basic_iterator<false>{std::ranges::begin(urange)};
     }
@@ -150,9 +148,7 @@ public:
         requires const_iterable
     {
         if constexpr (and_consume && !std::ranges::forward_range<urng_t const>)
-            return basic_consume_iterator<true>{std::ranges::cbegin(urange),
-                                                fun,
-                                                std::ranges::cend(urange)};
+            return basic_consume_iterator<true>{std::ranges::cbegin(urange), fun, std::ranges::cend(urange)};
         else
             return basic_iterator<true>{std::ranges::cbegin(urange)};
     }
@@ -224,18 +220,20 @@ public:
      * \brief Exceptions specification is implicitly inherited.
      * \{
      */
-    constexpr basic_consume_iterator() = default; //!< Defaulted.
-    constexpr basic_consume_iterator(basic_consume_iterator const & rhs) = default; //!< Defaulted.
-    constexpr basic_consume_iterator(basic_consume_iterator && rhs) = default; //!< Defaulted.
+    constexpr basic_consume_iterator() = default;                                               //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator const & rhs) = default;             //!< Defaulted.
+    constexpr basic_consume_iterator(basic_consume_iterator && rhs) = default;                  //!< Defaulted.
     constexpr basic_consume_iterator & operator=(basic_consume_iterator const & rhs) = default; //!< Defaulted.
-    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs) = default; //!< Defaulted.
-    ~basic_consume_iterator() = default; //!< Defaulted.
+    constexpr basic_consume_iterator & operator=(basic_consume_iterator && rhs) = default;      //!< Defaulted.
+    ~basic_consume_iterator() = default;                                                        //!< Defaulted.
 
     //!\brief Constructor that delegates to the CRTP layer and initialises the callable.
     basic_consume_iterator(underlying_iterator_t it,
                            copyable_wrapper_t<fun_t> const & _fun,
                            underlying_sentinel_t sen) noexcept(noexcept(base_t{it})) :
-        base_t{std::move(it)}, fun{std::addressof(_fun)}, underlying_sentinel{std::move(sen)}
+        base_t{std::move(it)},
+        fun{std::addressof(_fun)},
+        underlying_sentinel{std::move(sen)}
     {
         if ((this->base() != underlying_sentinel) && fun->operator()(**this))
         {
@@ -250,10 +248,10 @@ public:
      * \{
      */
     using difference_type = std::iter_difference_t<underlying_iterator_t>; //!< From base.
-    using value_type = std::iter_value_t<underlying_iterator_t>; //!< From base.
-    using reference = std::iter_reference_t<underlying_iterator_t>; //!< From base.
-    using pointer = detail::iter_pointer_t<underlying_iterator_t>; //!< From base.
-    using iterator_category = std::input_iterator_tag; //!< Always input.
+    using value_type = std::iter_value_t<underlying_iterator_t>;           //!< From base.
+    using reference = std::iter_reference_t<underlying_iterator_t>;        //!< From base.
+    using pointer = detail::iter_pointer_t<underlying_iterator_t>;         //!< From base.
+    using iterator_category = std::input_iterator_tag;                     //!< Always input.
     //!\}
 
     /*!\name Arithmetic operators
@@ -261,10 +259,9 @@ public:
      * \{
      */
     //!\brief Override pre-increment to implement consuming behaviour.
-    basic_consume_iterator & operator++()
-        noexcept(noexcept(++std::declval<base_t &>()) &&
-                 noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
-                 noexcept(fun->operator()(std::declval<reference>())))
+    basic_consume_iterator & operator++() noexcept(noexcept(++std::declval<base_t &>()) && noexcept(
+        std::declval<underlying_iterator_t &>()
+        != std::declval<underlying_sentinel_t &>()) && noexcept(fun->operator()(std::declval<reference>())))
     {
         base_t::operator++();
 
@@ -278,10 +275,9 @@ public:
     }
 
     //!\brief Post-increment implemented via pre-increment.
-    decltype(auto) operator++(int)
-        noexcept(noexcept(++std::declval<basic_consume_iterator &>()) &&
-                 (std::same_as<decltype(std::declval<underlying_iterator_t &>()++), void> ||
-                  std::is_nothrow_copy_constructible_v<basic_consume_iterator>))
+    decltype(auto) operator++(int) noexcept(noexcept(++std::declval<basic_consume_iterator &>())
+                                            && (std::same_as<decltype(std::declval<underlying_iterator_t &>()++), void>
+                                                || std::is_nothrow_copy_constructible_v<basic_consume_iterator>))
     {
         // if underlying iterator is a C++20 input iterator (i.e. returns void), return void too.
         if constexpr (std::same_as<decltype(std::declval<underlying_iterator_t &>()++), void>)
@@ -301,10 +297,9 @@ public:
      * \{
      */
     //!\brief Return the saved at_end state.
-    bool operator==(basic_consume_sentinel<const_range> const &) const
-        noexcept(!or_throw &&
-                 noexcept(std::declval<underlying_iterator_t &>() != std::declval<underlying_sentinel_t &>()) &&
-                 noexcept(fun->operator()(std::declval<reference>())))
+    bool operator==(basic_consume_sentinel<const_range> const &) const noexcept(!or_throw && noexcept(
+        std::declval<underlying_iterator_t &>()
+        != std::declval<underlying_sentinel_t &>()) && noexcept(fun->operator()(std::declval<reference>())))
     {
         if (at_end_gracefully)
             return true;
@@ -321,8 +316,8 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator==(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
-        noexcept(noexcept(rhs == lhs))
+    friend bool operator==(basic_consume_sentinel<const_range> const & lhs,
+                           basic_consume_iterator const & rhs) noexcept(noexcept(rhs == lhs))
     {
         return rhs == lhs;
     }
@@ -335,8 +330,8 @@ public:
     }
 
     //!\brief Return the saved at_end state.
-    friend bool operator!=(basic_consume_sentinel<const_range> const & lhs, basic_consume_iterator const & rhs)
-        noexcept(noexcept(rhs != lhs))
+    friend bool operator!=(basic_consume_sentinel<const_range> const & lhs,
+                           basic_consume_iterator const & rhs) noexcept(noexcept(rhs != lhs))
     {
         return rhs != lhs;
     }
@@ -361,12 +356,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    basic_sentinel() = default; //!< Defaulted.
-    basic_sentinel(basic_sentinel const &) = default; //!< Defaulted.
-    basic_sentinel(basic_sentinel &&) = default; //!< Defaulted.
+    basic_sentinel() = default;                                   //!< Defaulted.
+    basic_sentinel(basic_sentinel const &) = default;             //!< Defaulted.
+    basic_sentinel(basic_sentinel &&) = default;                  //!< Defaulted.
     basic_sentinel & operator=(basic_sentinel const &) = default; //!< Defaulted.
-    basic_sentinel & operator=(basic_sentinel &&) = default; //!< Defaulted.
-    ~basic_sentinel() = default; //!< Defaulted.
+    basic_sentinel & operator=(basic_sentinel &&) = default;      //!< Defaulted.
+    ~basic_sentinel() = default;                                  //!< Defaulted.
 
     /*!\brief Construct from a sentinel and a functor.
      * \param[in] underlying_sentinel  The actual end of the underlying range.
@@ -380,8 +375,7 @@ public:
     //!\brief Construct from a not const range a const range.
     basic_sentinel(basic_sentinel<!const_range> other)
         requires const_range && std::convertible_to<std::ranges::sentinel_t<urng_t>, underlying_sentinel_t>
-        : underlying_sentinel{std::move(other.underlying_sentinel)},
-          fun{other.fun}
+    : underlying_sentinel{std::move(other.underlying_sentinel)}, fun{other.fun}
     {}
     //!\}
 
@@ -492,11 +486,9 @@ struct take_until_fn
     template <std::ranges::viewable_range urng_t, typename fun_t>
     constexpr auto operator()(urng_t && urange, fun_t && fun) const
     {
-        return view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>
-        {
+        return view_take_until<std::views::all_t<urng_t>, fun_t, or_throw, and_consume>{
             std::views::all(std::forward<urng_t>(urange)),
-            std::forward<fun_t>(fun)
-        };
+            std::forward<fun_t>(fun)};
     }
 };
 
@@ -565,7 +557,7 @@ namespace seqan3::detail
  *
  * \hideinitializer
  */
-inline auto constexpr take_until = take_until_fn<false, false>{};
+inline constexpr auto take_until = take_until_fn<false, false>{};
 
 // ============================================================================
 //  detail::take_until_or_throw (adaptor instance definition)
@@ -579,7 +571,7 @@ inline auto constexpr take_until = take_until_fn<false, false>{};
  * \copydetails seqan3::detail::take_until
  * \hideinitializer
  */
-inline auto constexpr take_until_or_throw = take_until_fn<true, false>{};
+inline constexpr auto take_until_or_throw = take_until_fn<true, false>{};
 
 // ============================================================================
 //  detail::take_until_and_consume (adaptor instance definition)
@@ -593,7 +585,7 @@ inline auto constexpr take_until_or_throw = take_until_fn<true, false>{};
  * \copydetails seqan3::detail::take_until
  * \hideinitializer
  */
-inline auto constexpr take_until_and_consume = take_until_fn<false, true>{};
+inline constexpr auto take_until_and_consume = take_until_fn<false, true>{};
 
 // ============================================================================
 //  detail::take_until_or_throw_and_consume (adaptor instance definition)
@@ -607,6 +599,6 @@ inline auto constexpr take_until_and_consume = take_until_fn<false, true>{};
  * \copydetails seqan3::detail::take_until_and_consume
  * \hideinitializer
  */
-inline auto constexpr take_until_or_throw_and_consume = take_until_fn<true, true>{};
+inline constexpr auto take_until_or_throw_and_consume = take_until_fn<true, true>{};
 
 } // namespace seqan3::detail

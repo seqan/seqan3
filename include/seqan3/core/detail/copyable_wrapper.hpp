@@ -36,11 +36,11 @@ template <typename t>
 class copyable_wrapper : public std::optional<t>
 {
 public:
-    using std::optional<t>::optional; //!< Use std::optional constructors.
-    using std::optional<t>::operator=; //!< Use std::optional assignment operators.
+    using std::optional<t>::optional;                               //!< Use std::optional constructors.
+    using std::optional<t>::operator=;                              //!< Use std::optional assignment operators.
     constexpr copyable_wrapper(copyable_wrapper const &) = default; //!< Defaulted.
-    constexpr copyable_wrapper(copyable_wrapper &&) = default; //!< Defaulted.
-    constexpr ~copyable_wrapper() = default; //!< Defaulted.
+    constexpr copyable_wrapper(copyable_wrapper &&) = default;      //!< Defaulted.
+    constexpr ~copyable_wrapper() = default;                        //!< Defaulted.
 
     /*!\brief Use a specialised default constructor, if the wrapped type is default initialisable.
      *        If not, the default constructor of std::optional is used.
@@ -51,8 +51,8 @@ public:
     {}
 
     //!\brief Copy assignment for non-copyable wrapped types.
-    constexpr copyable_wrapper & operator=(copyable_wrapper const & other)
-        noexcept(std::is_nothrow_copy_constructible_v<t>)
+    constexpr copyable_wrapper &
+    operator=(copyable_wrapper const & other) noexcept(std::is_nothrow_copy_constructible_v<t>)
         requires (!std::copyable<t>)
     {
         if (this != std::addressof(other))
@@ -114,25 +114,30 @@ public:
  * If `t` is `std::copyable`, the STL allows to store `t` directly, i.e. no `std::optional` is needed.
  */
 template <boxable t>
-    requires std::copyable<t> || (std::is_nothrow_move_constructible_v<t> && std::is_nothrow_copy_constructible_v<t>)
+    requires std::copyable<t>
+          || (std::is_nothrow_move_constructible_v<t> && std::is_nothrow_copy_constructible_v<t>)
 #if SEQAN3_WORKAROUND_DEFAULT_CONSTRUCTIBLE_VIEW // If views must be default constructible, t must also be
-    && std::default_initializable<t>
+                 && std::default_initializable<t>
 #endif
-class copyable_wrapper<t>
+             class copyable_wrapper<t>
 {
 private:
     t value{}; //!< An object of the wrapped type.
 
 public:
     //!\brief copyable_wrapper is default constructible, iff the wrapped type is default initialisable.
-    constexpr copyable_wrapper() requires std::default_initializable<t> = default;
+    constexpr copyable_wrapper()
+        requires std::default_initializable<t>
+    = default;
 
     constexpr copyable_wrapper(copyable_wrapper const &) = default; //!< Defaulted.
-    constexpr copyable_wrapper(copyable_wrapper &&) = default; //!< Defaulted.
-    constexpr ~copyable_wrapper() = default; //!< Defaulted.
+    constexpr copyable_wrapper(copyable_wrapper &&) = default;      //!< Defaulted.
+    constexpr ~copyable_wrapper() = default;                        //!< Defaulted.
 
     //!\brief Copy assignment for copyable types is the default copy assignment.
-    constexpr copyable_wrapper & operator=(copyable_wrapper const &) requires std::copyable<t> = default;
+    constexpr copyable_wrapper & operator=(copyable_wrapper const &)
+        requires std::copyable<t>
+    = default;
 
     //!\brief Copy assignment for non-copyable types uses the Destroy-then-copy paradigm.
     constexpr copyable_wrapper & operator=(copyable_wrapper const & other) noexcept
@@ -140,14 +145,16 @@ public:
         // Destroy-then-copy
         if (this != std::addressof(other))
         {
-            value.~t(); // Call destructor of value
+            value.~t();                                       // Call destructor of value
             std::construct_at(std::addressof(value), *other); // Copy construct
         }
         return *this;
     }
 
     //!\brief Move assignment for copyable types is the default move assignment.
-    constexpr copyable_wrapper & operator=(copyable_wrapper &&) requires std::copyable<t> = default;
+    constexpr copyable_wrapper & operator=(copyable_wrapper &&)
+        requires std::copyable<t>
+    = default;
 
     //!\brief Move assignment for non-copyable types uses the Destroy-then-copy paradigm.
     constexpr copyable_wrapper & operator=(copyable_wrapper && other) noexcept
@@ -155,7 +162,7 @@ public:
         // Destroy-then-copy
         if (this != std::addressof(other))
         {
-            value.~t(); // Call destructor of value
+            value.~t();                                                  // Call destructor of value
             std::construct_at(std::addressof(value), std::move(*other)); // Move construct
         }
         return *this;
@@ -174,8 +181,8 @@ public:
     //!\brief Construct from argument pack. Part of the std::optional API.
     template <typename... args_t>
         requires std::constructible_from<t, args_t...>
-    constexpr explicit copyable_wrapper(std::in_place_t, args_t... args)
-        noexcept(std::is_nothrow_constructible_v<t, args_t...>) :
+    constexpr explicit copyable_wrapper(std::in_place_t,
+                                        args_t... args) noexcept(std::is_nothrow_constructible_v<t, args_t...>) :
         value{std::forward<args_t>(args)...}
     {}
 
@@ -249,4 +256,4 @@ copyable_wrapper(t) -> copyable_wrapper<std::remove_reference_t<t>>;
 template <typename t>
 using copyable_wrapper_t = copyable_wrapper<std::remove_reference_t<t>>;
 
-}  // namespace seqan3::detail
+} // namespace seqan3::detail

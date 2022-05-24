@@ -49,8 +49,9 @@ private:
     template <std::ranges::range urng_t>
     static constexpr auto impl(urng_t && urange)
     {
-        static_assert(std::ranges::viewable_range<urng_t>,
-                      "The views::type_reduce adaptor can only be passed viewable_ranges, i.e. Views or &-to-non-View.");
+        static_assert(
+            std::ranges::viewable_range<urng_t>,
+            "The views::type_reduce adaptor can only be passed viewable_ranges, i.e. Views or &-to-non-View.");
 
         // views are always passed as-is
         if constexpr (std::ranges::view<std::remove_cvref_t<urng_t>>)
@@ -58,29 +59,25 @@ private:
             return std::views::all(std::forward<urng_t>(urange));
         }
         // string const &
-        else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string> &&
-                           std::is_const_v<std::remove_reference_t<urng_t>>)
+        else if constexpr (is_type_specialisation_of_v<std::remove_cvref_t<urng_t>, std::basic_string>
+                           && std::is_const_v<std::remove_reference_t<urng_t>>)
         {
             return std::basic_string_view{std::ranges::data(urange), std::ranges::size(urange)};
         }
         // contiguous
-        else if constexpr (std::ranges::borrowed_range<urng_t> &&
-                           std::ranges::contiguous_range<urng_t> &&
-                           std::ranges::sized_range<urng_t>)
+        else if constexpr (std::ranges::borrowed_range<urng_t> && std::ranges::contiguous_range<urng_t>
+                           && std::ranges::sized_range<urng_t>)
         {
             return std::span{std::ranges::data(urange), std::ranges::size(urange)};
         }
         // random_access
-        else if constexpr (std::ranges::borrowed_range<urng_t> &&
-                           std::ranges::random_access_range<urng_t> &&
-                           std::ranges::sized_range<urng_t>)
+        else if constexpr (std::ranges::borrowed_range<urng_t> && std::ranges::random_access_range<urng_t>
+                           && std::ranges::sized_range<urng_t>)
         {
-            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>
-            {
+            return std::ranges::subrange<std::ranges::iterator_t<urng_t>, std::ranges::iterator_t<urng_t>>{
                 std::ranges::begin(urange),
                 std::ranges::begin(urange) + std::ranges::size(urange),
-                std::ranges::size(urange)
-            };
+                std::ranges::size(urange)};
         }
         // pass to std::views::all (will return ref-view)
         else
@@ -163,4 +160,4 @@ namespace seqan3
  */
 template <typename t>
 using type_reduce_t = decltype(views::type_reduce(std::declval<t>()));
-}
+} // namespace seqan3

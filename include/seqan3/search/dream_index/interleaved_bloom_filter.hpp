@@ -139,9 +139,8 @@ private:
     //!\endcond
 
     //!\brief The underlying datatype to use.
-    using data_type = std::conditional_t<data_layout_mode_ == data_layout::uncompressed,
-                                         sdsl::bit_vector,
-                                         sdsl::sd_vector<>>;
+    using data_type =
+        std::conditional_t<data_layout_mode_ == data_layout::uncompressed, sdsl::bit_vector, sdsl::sd_vector<>>;
 
     //!\brief The number of bins specified by the user.
     size_t bins{};
@@ -175,9 +174,9 @@ private:
     {
         h *= seed;
         assert(hash_shift < 64);
-        h ^= h >> hash_shift; // XOR and shift higher bits into lower bits
+        h ^= h >> hash_shift;         // XOR and shift higher bits into lower bits
         h *= 11400714819323198485ULL; // = 2^64 / golden_ration, to expand h to 64 bit range
-        // Use fastrange (integer modulo without division) if possible.
+                                      // Use fastrange (integer modulo without division) if possible.
 #ifdef __SIZEOF_INT128__
         h = static_cast<uint64_t>((static_cast<__uint128_t>(h) * static_cast<__uint128_t>(bin_size_)) >> 64);
 #else
@@ -199,12 +198,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    interleaved_bloom_filter() = default; //!< Defaulted.
-    interleaved_bloom_filter(interleaved_bloom_filter const &) = default; //!< Defaulted.
+    interleaved_bloom_filter() = default;                                             //!< Defaulted.
+    interleaved_bloom_filter(interleaved_bloom_filter const &) = default;             //!< Defaulted.
     interleaved_bloom_filter & operator=(interleaved_bloom_filter const &) = default; //!< Defaulted.
-    interleaved_bloom_filter(interleaved_bloom_filter &&) = default; //!< Defaulted.
-    interleaved_bloom_filter & operator=(interleaved_bloom_filter &&) = default; //!< Defaulted.
-    ~interleaved_bloom_filter() = default; //!< Defaulted.
+    interleaved_bloom_filter(interleaved_bloom_filter &&) = default;                  //!< Defaulted.
+    interleaved_bloom_filter & operator=(interleaved_bloom_filter &&) = default;      //!< Defaulted.
+    ~interleaved_bloom_filter() = default;                                            //!< Defaulted.
 
     /*!\brief Construct an uncompressed Interleaved Bloom Filter.
      * \param bins_ The number of bins.
@@ -236,8 +235,8 @@ public:
             throw std::logic_error{"The size of a bin must be > 0."};
 
         hash_shift = std::countl_zero(bin_size_);
-        bin_words = (bins + 63) >> 6; // = ceil(bins/64)
-        technical_bins  = bin_words << 6; // = bin_words * 64
+        bin_words = (bins + 63) >> 6;    // = ceil(bins/64)
+        technical_bins = bin_words << 6; // = bin_words * 64
         data = sdsl::bit_vector(technical_bins * bin_size_);
     }
 
@@ -486,9 +485,19 @@ public:
      */
     friend bool operator==(interleaved_bloom_filter const & lhs, interleaved_bloom_filter const & rhs) noexcept
     {
-        return std::tie(lhs.bins, lhs.technical_bins, lhs.bin_size_, lhs.hash_shift, lhs.bin_words, lhs.hash_funs,
-                        lhs.data) ==
-               std::tie(rhs.bins, rhs.technical_bins, rhs.bin_size_, rhs.hash_shift, rhs.bin_words, rhs.hash_funs,
+        return std::tie(lhs.bins,
+                        lhs.technical_bins,
+                        lhs.bin_size_,
+                        lhs.hash_shift,
+                        lhs.bin_words,
+                        lhs.hash_funs,
+                        lhs.data)
+            == std::tie(rhs.bins,
+                        rhs.technical_bins,
+                        rhs.bin_size_,
+                        rhs.hash_shift,
+                        rhs.bin_words,
+                        rhs.hash_funs,
                         rhs.data);
     }
 
@@ -572,19 +581,18 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    membership_agent_type() = default; //!< Defaulted.
-    membership_agent_type(membership_agent_type const &) = default; //!< Defaulted.
+    membership_agent_type() = default;                                          //!< Defaulted.
+    membership_agent_type(membership_agent_type const &) = default;             //!< Defaulted.
     membership_agent_type & operator=(membership_agent_type const &) = default; //!< Defaulted.
-    membership_agent_type(membership_agent_type &&) = default; //!< Defaulted.
-    membership_agent_type & operator=(membership_agent_type &&) = default; //!< Defaulted.
-    ~membership_agent_type() = default; //!< Defaulted.
+    membership_agent_type(membership_agent_type &&) = default;                  //!< Defaulted.
+    membership_agent_type & operator=(membership_agent_type &&) = default;      //!< Defaulted.
+    ~membership_agent_type() = default;                                         //!< Defaulted.
 
     /*!\brief Construct a membership_agent_type from a seqan3::interleaved_bloom_filter.
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
-    explicit membership_agent_type(ibf_t const & ibf) :
-        ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count())
+    explicit membership_agent_type(ibf_t const & ibf) : ibf_ptr(std::addressof(ibf)), result_buffer(ibf.bin_count())
     {}
     //!\}
 
@@ -624,15 +632,15 @@ public:
 
         for (size_t batch = 0; batch < ibf_ptr->bin_words; ++batch)
         {
-           size_t tmp{-1ULL};
-           for (size_t i = 0; i < ibf_ptr->hash_funs; ++i)
-           {
-               assert(bloom_filter_indices[i] < ibf_ptr->data.size());
-               tmp &= ibf_ptr->data.get_int(bloom_filter_indices[i]);
-               bloom_filter_indices[i] += 64;
-           }
+            size_t tmp{-1ULL};
+            for (size_t i = 0; i < ibf_ptr->hash_funs; ++i)
+            {
+                assert(bloom_filter_indices[i] < ibf_ptr->data.size());
+                tmp &= ibf_ptr->data.get_int(bloom_filter_indices[i]);
+                bloom_filter_indices[i] += 64;
+            }
 
-           result_buffer.data.set_int(batch << 6, tmp);
+            result_buffer.data.set_int(batch << 6, tmp);
         }
 
         return result_buffer;
@@ -642,7 +650,6 @@ public:
     // is immediately destroyed.
     [[nodiscard]] binning_bitvector const & bulk_contains(size_t const value) && noexcept = delete;
     //!\}
-
 };
 
 //!\brief A bitvector representing the result of a call to `bulk_contains` of the seqan3::interleaved_bloom_filter.
@@ -661,16 +668,15 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    binning_bitvector() = default; //!< Defaulted.
-    binning_bitvector(binning_bitvector const &) = default; //!< Defaulted.
+    binning_bitvector() = default;                                      //!< Defaulted.
+    binning_bitvector(binning_bitvector const &) = default;             //!< Defaulted.
     binning_bitvector & operator=(binning_bitvector const &) = default; //!< Defaulted.
-    binning_bitvector(binning_bitvector &&) = default; //!< Defaulted.
-    binning_bitvector & operator=(binning_bitvector &&) = default; //!< Defaulted.
-    ~binning_bitvector() = default; //!< Defaulted.
+    binning_bitvector(binning_bitvector &&) = default;                  //!< Defaulted.
+    binning_bitvector & operator=(binning_bitvector &&) = default;      //!< Defaulted.
+    ~binning_bitvector() = default;                                     //!< Defaulted.
 
     //!\brief Construct with given size.
-    explicit binning_bitvector(size_t const size) :
-        data(size)
+    explicit binning_bitvector(size_t const size) : data(size)
     {}
     //!\}
 
@@ -727,7 +733,7 @@ public:
     /*!\name Access
      * \{
      */
-     //!\brief Return the i-th element.
+    //!\brief Return the i-th element.
     auto operator[](size_t const i) noexcept
     {
         assert(i < size());
@@ -795,19 +801,20 @@ private:
     template <typename binning_bitvector_t>
     static constexpr bool is_binning_bitvector =
         std::same_as<binning_bitvector_t,
-                     interleaved_bloom_filter<data_layout::uncompressed>::membership_agent_type::binning_bitvector> ||
-        std::same_as<binning_bitvector_t,
-                     interleaved_bloom_filter<data_layout::compressed>::membership_agent_type::binning_bitvector>;
+                     interleaved_bloom_filter<data_layout::uncompressed>::membership_agent_type::binning_bitvector>
+        || std::same_as<binning_bitvector_t,
+                        interleaved_bloom_filter<data_layout::compressed>::membership_agent_type::binning_bitvector>;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    counting_vector() = default; //!< Defaulted.
-    counting_vector(counting_vector const &) = default; //!< Defaulted.
+    counting_vector() = default;                                    //!< Defaulted.
+    counting_vector(counting_vector const &) = default;             //!< Defaulted.
     counting_vector & operator=(counting_vector const &) = default; //!< Defaulted.
-    counting_vector(counting_vector &&) = default; //!< Defaulted.
-    counting_vector & operator=(counting_vector &&) = default; //!< Defaulted.
-    ~counting_vector() = default; //!< Defaulted.
+    counting_vector(counting_vector &&) = default;                  //!< Defaulted.
+    counting_vector & operator=(counting_vector &&) = default;      //!< Defaulted.
+    ~counting_vector() = default;                                   //!< Defaulted.
 
     using base_t::base_t;
     //!\}
@@ -828,10 +835,11 @@ public:
         requires is_binning_bitvector<binning_bitvector_t>
     counting_vector & operator+=(binning_bitvector_t const & binning_bitvector)
     {
-        for_each_set_bin(binning_bitvector, [this](size_t const bin)
-        {
-            ++(*this)[bin];
-        });
+        for_each_set_bin(binning_bitvector,
+                         [this](size_t const bin)
+                         {
+                             ++(*this)[bin];
+                         });
         return *this;
     }
 
@@ -846,11 +854,12 @@ public:
         requires is_binning_bitvector<binning_bitvector_t>
     counting_vector & operator-=(binning_bitvector_t const & binning_bitvector)
     {
-        for_each_set_bin(binning_bitvector, [this](size_t const bin)
-        {
-            assert((*this)[bin] > 0);
-            --(*this)[bin];
-        });
+        for_each_set_bin(binning_bitvector,
+                         [this](size_t const bin)
+                         {
+                             assert((*this)[bin] > 0);
+                             --(*this)[bin];
+                         });
         return *this;
     }
 
@@ -881,17 +890,20 @@ public:
     {
         assert(this->size() >= rhs.size()); // The counting vector may be bigger than what we need.
 
-        std::transform(this->begin(), this->end(), rhs.begin(), this->begin(), [](auto a, auto b)
-        {
-            assert(a >= b);
-            return a - b;
-        });
+        std::transform(this->begin(),
+                       this->end(),
+                       rhs.begin(),
+                       this->begin(),
+                       [](auto a, auto b)
+                       {
+                           assert(a >= b);
+                           return a - b;
+                       });
 
         return *this;
     }
 
 private:
-
     //!\brief Enumerates all bins of a seqan3::interleaved_bloom_filter::membership_agent_type::binning_bitvector.
     template <typename binning_bitvector_t, typename on_bin_fn_t>
     void for_each_set_bin(binning_bitvector_t && binning_bitvector, on_bin_fn_t && on_bin_fn)
@@ -899,7 +911,7 @@ private:
         assert(this->size() >= binning_bitvector.size()); // The counting vector may be bigger than what we need.
 
         // Jump to the next 1 and return the number of places jumped in the bit_sequence
-        auto jump_to_next_1bit = [] (size_t & x)
+        auto jump_to_next_1bit = [](size_t & x)
         {
             auto const zeros = std::countr_zero(x);
             x >>= zeros; // skip number of zeros
@@ -951,19 +963,21 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    counting_agent_type() = default; //!< Defaulted.
-    counting_agent_type(counting_agent_type const &) = default; //!< Defaulted.
+    counting_agent_type() = default;                                        //!< Defaulted.
+    counting_agent_type(counting_agent_type const &) = default;             //!< Defaulted.
     counting_agent_type & operator=(counting_agent_type const &) = default; //!< Defaulted.
-    counting_agent_type(counting_agent_type &&) = default; //!< Defaulted.
-    counting_agent_type & operator=(counting_agent_type &&) = default; //!< Defaulted.
-    ~counting_agent_type() = default; //!< Defaulted.
+    counting_agent_type(counting_agent_type &&) = default;                  //!< Defaulted.
+    counting_agent_type & operator=(counting_agent_type &&) = default;      //!< Defaulted.
+    ~counting_agent_type() = default;                                       //!< Defaulted.
 
     /*!\brief Construct a counting_agent_type for an existing seqan3::interleaved_bloom_filter.
      * \private
      * \param ibf The seqan3::interleaved_bloom_filter.
      */
     explicit counting_agent_type(ibf_t const & ibf) :
-        ibf_ptr(std::addressof(ibf)), membership_agent(ibf), result_buffer(ibf.bin_count())
+        ibf_ptr(std::addressof(ibf)),
+        membership_agent(ibf),
+        result_buffer(ibf.bin_count())
     {}
     //!\}
 
@@ -1015,7 +1029,6 @@ public:
     template <std::ranges::range value_range_t>
     [[nodiscard]] counting_vector<value_t> const & bulk_count(value_range_t && values) && noexcept = delete;
     //!\}
-
 };
 
 } // namespace seqan3

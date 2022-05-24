@@ -30,22 +30,24 @@ namespace seqan3
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept output_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                             requires (stream_type & os, value_type & val)
-{
-    typename std::remove_reference_t<stream_type>::char_type;
-    typename std::remove_reference_t<stream_type>::traits_type;
-    typename std::remove_reference_t<stream_type>::int_type;
-    typename std::remove_reference_t<stream_type>::pos_type;
-    typename std::remove_reference_t<stream_type>::off_type;
+concept output_stream_over =
+    std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>>
+    && requires (stream_type & os, value_type & val) {
+           typename std::remove_reference_t<stream_type>::char_type;
+           typename std::remove_reference_t<stream_type>::traits_type;
+           typename std::remove_reference_t<stream_type>::int_type;
+           typename std::remove_reference_t<stream_type>::pos_type;
+           typename std::remove_reference_t<stream_type>::off_type;
 
-    {os << val} -> std::same_as<std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
-                                                   typename std::remove_reference_t<stream_type>::traits_type> &>;
-};
+           {
+               os << val
+               } -> std::same_as<std::basic_ostream<typename std::remove_reference_t<stream_type>::char_type,
+                                                    typename std::remove_reference_t<stream_type>::traits_type> &>;
+       };
 
 template <typename stream_type>
-concept output_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                        output_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+concept output_stream = requires { typename std::remove_reference_t<stream_type>::char_type; }
+                     && output_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::output_stream_over
@@ -66,23 +68,23 @@ concept output_stream = requires { typename std::remove_reference_t<stream_type>
  * will provide an implementation).
  */
 
- /*!\typedef typename stream::char_type char_type
+/*!\typedef typename stream::char_type char_type
   * \brief Declares the associated char type.
   */
 
- /*!\typedef typename stream::traits_type traits_type
+/*!\typedef typename stream::traits_type traits_type
   * \brief Declares the associated traits type.
   */
 
- /*!\typedef typename stream::int_type int_type
+/*!\typedef typename stream::int_type int_type
   * \brief Declares the associated int type.
   */
 
- /*!\typedef typename stream::pos_type pos_type
+/*!\typedef typename stream::pos_type pos_type
   * \brief Declares the associated pos type.
   */
 
- /*!\typedef typename stream::off_type off_type
+/*!\typedef typename stream::off_type off_type
   * \brief Declares the associated off type.
   */
 //!\}
@@ -97,23 +99,24 @@ concept output_stream = requires { typename std::remove_reference_t<stream_type>
  */
 //!\cond
 template <typename stream_type, typename value_type>
-concept input_stream_over = std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>> &&
-                            requires (stream_type & is, value_type & val)
-{
-    typename std::remove_reference_t<stream_type>::char_type;
-    typename std::remove_reference_t<stream_type>::traits_type;
-    typename std::remove_reference_t<stream_type>::int_type;
-    typename std::remove_reference_t<stream_type>::pos_type;
-    typename std::remove_reference_t<stream_type>::off_type;
+concept input_stream_over =
+    std::is_base_of_v<std::ios_base, std::remove_reference_t<stream_type>>
+    && requires (stream_type & is, value_type & val) {
+           typename std::remove_reference_t<stream_type>::char_type;
+           typename std::remove_reference_t<stream_type>::traits_type;
+           typename std::remove_reference_t<stream_type>::int_type;
+           typename std::remove_reference_t<stream_type>::pos_type;
+           typename std::remove_reference_t<stream_type>::off_type;
 
-
-    {is >> val} -> std::same_as<std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
-                                                   typename std::remove_reference_t<stream_type>::traits_type> &>;
-};
+           {
+               is >> val
+               } -> std::same_as<std::basic_istream<typename std::remove_reference_t<stream_type>::char_type,
+                                                    typename std::remove_reference_t<stream_type>::traits_type> &>;
+       };
 
 template <typename stream_type>
-concept input_stream = requires { typename std::remove_reference_t<stream_type>::char_type; } &&
-                       input_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
+concept input_stream = requires { typename std::remove_reference_t<stream_type>::char_type; }
+                    && input_stream_over<stream_type, typename std::remove_reference_t<stream_type>::char_type>;
 //!\endcond
 
 /*!\name Requirements for seqan3::input_stream_over
@@ -134,23 +137,23 @@ concept input_stream = requires { typename std::remove_reference_t<stream_type>:
  * will provide an implementation).
  */
 
- /*!\typedef typename stream::char_type char_type
+/*!\typedef typename stream::char_type char_type
   * \brief Declares the associated char type.
   */
 
- /*!\typedef typename stream::traits_type traits_type
+/*!\typedef typename stream::traits_type traits_type
   * \brief Declares the associated traits type.
   */
 
- /*!\typedef typename stream::int_type int_type
+/*!\typedef typename stream::int_type int_type
   * \brief Declares the associated int type.
   */
 
- /*!\typedef typename stream::pos_type pos_type
+/*!\typedef typename stream::pos_type pos_type
   * \brief Declares the associated pos type.
   */
 
- /*!\typedef typename stream::off_type off_type
+/*!\typedef typename stream::off_type off_type
   * \brief Declares the associated off type.
   */
 //!\}

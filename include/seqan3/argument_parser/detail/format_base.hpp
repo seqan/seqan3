@@ -214,7 +214,8 @@ private:
      * \param[in] advanced Set to `true` to show advanced options.
      */
     format_help_base(std::vector<std::string> const & names, bool const advanced) :
-        command_names{names}, show_advanced_options{advanced}
+        command_names{names},
+        show_advanced_options{advanced}
     {}
     //!\}
 
@@ -234,7 +235,12 @@ public:
         std::string info{desc};
         info += ((spec & option_spec::required) ? std::string{" "} : detail::to_string(" Default: ", value, ". "));
         info += option_validator.get_help_page_message();
-        store_help_page_element([this, id, info] () { derived_t().print_list_item(id, info); }, spec);
+        store_help_page_element(
+            [this, id, info]()
+            {
+                derived_t().print_list_item(id, info);
+            },
+            spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
@@ -247,31 +253,37 @@ public:
                   option_spec const spec)
     {
         std::string id = prep_id_for_help(short_id, long_id);
-        store_help_page_element([this, id, desc] () { derived_t().print_list_item(id, desc); }, spec);
+        store_help_page_element(
+            [this, id, desc]()
+            {
+                derived_t().print_list_item(id, desc);
+            },
+            spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to be evaluated later on.
      * \copydetails seqan3::argument_parser::add_positional_option
      */
     template <typename option_type, typename validator_type>
-    void add_positional_option(option_type & value,
-                               std::string const & desc,
-                               validator_type & option_validator)
+    void add_positional_option(option_type & value, std::string const & desc, validator_type & option_validator)
     {
         std::string msg = option_validator.get_help_page_message();
 
-        positional_option_calls.push_back([this, &value, desc, msg] ()
-        {
-            ++positional_option_count;
-            derived_t().print_list_item(detail::to_string("\\fBARGUMENT-", positional_option_count, "\\fP ",
-                                                          option_type_and_list_info(value)),
-                                        desc +
-                                        // a list at the end may be empty and thus have a default value
-                                        ((detail::is_container_option<option_type>)
-                                            ? detail::to_string(" Default: ", value, ". ")
-                                            : std::string{" "}) +
-                                        msg);
-        });
+        positional_option_calls.push_back(
+            [this, &value, desc, msg]()
+            {
+                ++positional_option_count;
+                derived_t().print_list_item(detail::to_string("\\fBARGUMENT-",
+                                                              positional_option_count,
+                                                              "\\fP ",
+                                                              option_type_and_list_info(value)),
+                                            desc +
+                                                // a list at the end may be empty and thus have a default value
+                                                ((detail::is_container_option<option_type>)
+                                                     ? detail::to_string(" Default: ", value, ". ")
+                                                     : std::string{" "})
+                                                + msg);
+            });
     }
 
     /*!\brief Initiates the printing of the help page to std::cout.
@@ -302,11 +314,13 @@ public:
             derived_t().print_line("This program must be invoked with one of the following subcommands:", false);
             for (std::string const & name : command_names)
                 derived_t().print_line("- \\fB" + name + "\\fP", false);
-            derived_t().print_line("See the respective help page for further details (e.g. by calling " +
-                                   meta.app_name + " " + command_names[0] + " -h).", true);
+            derived_t().print_line("See the respective help page for further details (e.g. by calling " + meta.app_name
+                                       + " " + command_names[0] + " -h).",
+                                   true);
             derived_t().print_line("The following options below belong to the top-level parser and need to be "
                                    "specified \\fBbefore\\fP the subcommand key word. Every argument after the "
-                                   "subcommand key word is passed on to the corresponding sub-parser.", true);
+                                   "subcommand key word is passed on to the corresponding sub-parser.",
+                                   true);
         }
 
         // add positional options if specified
@@ -346,7 +360,12 @@ public:
      */
     void add_section(std::string const & title, option_spec const spec)
     {
-        store_help_page_element([this, title] () { derived_t().print_section(title); }, spec);
+        store_help_page_element(
+            [this, title]()
+            {
+                derived_t().print_section(title);
+            },
+            spec);
     }
 
     /*!\brief Adds a print_subsection call to parser_set_up_calls.
@@ -354,7 +373,12 @@ public:
      */
     void add_subsection(std::string const & title, option_spec const spec)
     {
-        store_help_page_element([this, title] () { derived_t().print_subsection(title); }, spec);
+        store_help_page_element(
+            [this, title]()
+            {
+                derived_t().print_subsection(title);
+            },
+            spec);
     }
 
     /*!\brief Adds a print_line call to parser_set_up_calls.
@@ -362,7 +386,12 @@ public:
      */
     void add_line(std::string const & text, bool is_paragraph, option_spec const spec)
     {
-        store_help_page_element([this, text, is_paragraph] () { derived_t().print_line(text, is_paragraph); }, spec);
+        store_help_page_element(
+            [this, text, is_paragraph]()
+            {
+                derived_t().print_line(text, is_paragraph);
+            },
+            spec);
     }
 
     /*!\brief Adds a seqan3::print_list_item call to parser_set_up_calls.
@@ -370,7 +399,12 @@ public:
      */
     void add_list_item(std::string const & key, std::string const & desc, option_spec const spec)
     {
-        store_help_page_element([this, key, desc] () { derived_t().print_list_item(key, desc); }, spec);
+        store_help_page_element(
+            [this, key, desc]()
+            {
+                derived_t().print_list_item(key, desc);
+            },
+            spec);
     }
 
     /*!\brief Stores all meta information about the application
@@ -442,11 +476,8 @@ protected:
     void print_legal()
     {
         // Print legal stuff
-        if ((!empty(meta.short_copyright)) ||
-            (!empty(meta.long_copyright)) ||
-            (!empty(meta.citation)) ||
-            (!empty(meta.author)) ||
-            (!empty(meta.email)))
+        if ((!empty(meta.short_copyright)) || (!empty(meta.long_copyright)) || (!empty(meta.citation))
+            || (!empty(meta.author)) || (!empty(meta.email)))
         {
             derived_t().print_section("Legal");
 
@@ -466,8 +497,9 @@ protected:
                 derived_t().print_line(derived_t().in_bold("Contact: ") + meta.email, false);
             }
 
-            derived_t().print_line(derived_t().in_bold("SeqAn Copyright: ") +
-                                   "2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.", false);
+            derived_t().print_line(derived_t().in_bold("SeqAn Copyright: ")
+                                       + "2006-2021 Knut Reinert, FU-Berlin; released under the 3-clause BSDL.",
+                                   false);
 
             if (!empty(meta.citation))
             {
@@ -477,8 +509,8 @@ protected:
 
             if (!empty(meta.long_copyright))
             {
-                derived_t().print_line("For full copyright and/or warranty information see " +
-                                       derived_t().in_bold("--copyright") + ".",
+                derived_t().print_line("For full copyright and/or warranty information see "
+                                           + derived_t().in_bold("--copyright") + ".",
                                        false);
             }
         }

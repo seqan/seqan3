@@ -16,11 +16,11 @@
 
 //!\cond
 #ifndef SEQAN3_HAS_MM_PAUSE
-#   if defined(__SSE2__) && __has_include(<xmmintrin.h>)
-#       include <xmmintrin.h> // _mm_pause()
-#       define SEQAN3_HAS_MM_PAUSE 1
-#   endif // defined(__SSE2__) && __has_include(<xmmintrin.h>)
-#endif // SEQAN3_HAS_MM_PAUSE
+#    if defined(__SSE2__) && __has_include(<xmmintrin.h>)
+#        include <xmmintrin.h> // _mm_pause()
+#        define SEQAN3_HAS_MM_PAUSE 1
+#    endif // defined(__SSE2__) && __has_include(<xmmintrin.h>)
+#endif     // SEQAN3_HAS_MM_PAUSE
 //!\endcond
 
 #include <seqan3/core/platform.hpp>
@@ -44,12 +44,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr spin_delay()                               noexcept = default;  //!< Defaulted.
-    constexpr spin_delay(spin_delay const &)             noexcept = default;  //!< Defaulted.
-    constexpr spin_delay(spin_delay &&)                  noexcept = default;  //!< Defaulted.
-    constexpr spin_delay & operator=(spin_delay const &) noexcept = default;  //!< Defaulted.
-    constexpr spin_delay & operator=(spin_delay &&)      noexcept = default;  //!< Defaulted.
-    ~spin_delay()                                        noexcept = default;  //!< Defaulted.
+    constexpr spin_delay() noexcept = default;                               //!< Defaulted.
+    constexpr spin_delay(spin_delay const &) noexcept = default;             //!< Defaulted.
+    constexpr spin_delay(spin_delay &&) noexcept = default;                  //!< Defaulted.
+    constexpr spin_delay & operator=(spin_delay const &) noexcept = default; //!< Defaulted.
+    constexpr spin_delay & operator=(spin_delay &&) noexcept = default;      //!< Defaulted.
+    ~spin_delay() noexcept = default;                                        //!< Defaulted.
 
     //!\}
 
@@ -62,42 +62,42 @@ public:
      */
     void wait()
     {
-        if (current <= max_repetitions)  // Start active spinning phase
+        if (current <= max_repetitions) // Start active spinning phase
         {
             for (int_fast32_t i = 0; i < current; ++i)
                 pause_processor();
-            current <<= 1;  // double the amount of active CPU waiting cycles.
+            current <<= 1; // double the amount of active CPU waiting cycles.
         }
-        else  // Start passive spinning phase
+        else // Start passive spinning phase
         {
             std::this_thread::yield();
         }
     }
 
 private:
-
     //!\brief Efficient instruction to pause the CPU.
     void pause_processor()
     {
-        #if SEQAN3_HAS_MM_PAUSE  // AMD and Intel
-            _mm_pause();
-        #elif defined(__armel__) || defined(__ARMEL__) // arm, but broken? ; repeat of default case as armel also defines __arm__
-            asm volatile ("nop" ::: "memory");  // default operation - does nothing => Might lead to passive spinning.
-        #elif defined(__arm__) || defined(__aarch64__) // arm big endian / arm64
-            __asm__ __volatile__ ("yield" ::: "memory");
-        #elif defined(__ia64__)  // IA64
-            __asm__ __volatile__ ("hint @pause");
-        #elif defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) // PowerPC
-            __asm__ __volatile__ ("or 27,27,27" ::: "memory");
-        #else  // everything else.
-            asm volatile ("nop" ::: "memory");  // default operation - does nothing => Might lead to passive spinning.
-        #endif
+#if SEQAN3_HAS_MM_PAUSE // AMD and Intel
+        _mm_pause();
+#elif defined(__armel__)                                                                                               \
+    || defined(__ARMEL__) // arm, but broken? ; repeat of default case as armel also defines __arm__
+        asm volatile("nop" ::: "memory"); // default operation - does nothing => Might lead to passive spinning.
+#elif defined(__arm__) || defined(__aarch64__)                     // arm big endian / arm64
+        __asm__ __volatile__("yield" ::: "memory");
+#elif defined(__ia64__)                                            // IA64
+        __asm__ __volatile__("hint @pause");
+#elif defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) // PowerPC
+        __asm__ __volatile__("or 27,27,27" ::: "memory");
+#else                                                              // everything else.
+        asm volatile("nop" ::: "memory"); // default operation - does nothing => Might lead to passive spinning.
+#endif
     }
 
     //!\brief The maximal number of repetitions until the thread yields.
     static constexpr int_fast32_t max_repetitions{16};
     //!\brief The current waiting phase.
-    int_fast32_t                  current{1};
+    int_fast32_t current{1};
 };
 
 } // namespace seqan3::detail

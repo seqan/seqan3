@@ -40,7 +40,7 @@ namespace seqan3::detail
  */
 template <typename score_t>
 struct alignment_optimum
-#if SEQAN3_DOXYGEN_ONLY(1)0
+#if SEQAN3_DOXYGEN_ONLY(1) 0
 {
     //!\brief The index type used to store the alignment coordinates of the optimum.
     using index_t = IMPLEMENTATION_DEFINED;
@@ -90,8 +90,8 @@ struct alignment_optimum<score_t>
                                                row_index_type<row_index_t> row_index) noexcept
     {
         score = (compare_score > score)
-              ? (this->column_index = column_index.get(), this->row_index = row_index.get(), compare_score)
-              : score;
+                  ? (this->column_index = column_index.get(), this->row_index = row_index.get(), compare_score)
+                  : score;
     }
 };
 
@@ -122,7 +122,7 @@ struct alignment_optimum<score_t>
  * \{
  */
 //!\brief Default constructed objects deduce to `int32_t`.
-alignment_optimum() -> alignment_optimum<int32_t>;
+alignment_optimum()->alignment_optimum<int32_t>;
 
 //!\brief Construction from column index, row index and the score deduces the score type.
 template <typename column_index_t, typename row_index_t, typename score_t>

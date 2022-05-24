@@ -14,14 +14,13 @@
 #pragma once
 
 #ifndef _WIN32
-#   include <sys/ioctl.h>
+#    include <sys/ioctl.h>
 #else
-#   include <windows.h>
+#    include <windows.h>
 #endif
 
-#include <unistd.h>
-
 #include <cstdio>
+#include <unistd.h>
 
 #include <seqan3/core/platform.hpp>
 
@@ -73,4 +72,4 @@ inline unsigned get_terminal_width()
 #endif
 }
 
-}  // namespace seqan::detail
+} // namespace seqan3::detail

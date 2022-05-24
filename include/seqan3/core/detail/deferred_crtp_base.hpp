@@ -38,7 +38,7 @@ namespace seqan3::detail
  * \see seqan3::detail::invoke_deferred_crtp_base
  * \see seqan3::detail::deferred_crtp_base_vargs
  */
-template <template <typename ...> typename crtp_base, typename ...args_t>
+template <template <typename...> typename crtp_base, typename... args_t>
 struct deferred_crtp_base
 {
     /*!\brief Invokes the deferred crtp_base with the corresponding derived type.
@@ -71,7 +71,7 @@ struct deferred_crtp_base
  * \see seqan3::detail::invoke_deferred_crtp_base
  * \see seqan3::detail::deferred_crtp_base
  */
-template <template <typename, auto ...> typename crtp_base, auto ...args>
+template <template <typename, auto...> typename crtp_base, auto... args>
 struct deferred_crtp_base_vargs
 {
     /*!\brief Invokes the deferred crtp_base with the corresponding derived type.

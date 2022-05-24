@@ -73,25 +73,25 @@ public:
      * \{
      */
     //!\brief A seqan3::fields list with the fields selected for the record.
-    using selected_field_ids    = selected_field_ids_;
+    using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
-    using valid_formats         = valid_formats_;
+    using valid_formats = valid_formats_;
     //!\brief Character type of the stream(s).
-    using stream_char_type      = char;
+    using stream_char_type = char;
     //!\}
 
     //!\brief The subset of seqan3::field IDs that are valid for this file.
-    using field_ids            = fields<field::seq, field::id, field::qual>;
+    using field_ids = fields<field::seq, field::id, field::qual>;
 
-    static_assert([] () constexpr
-                  {
-                      for (field f : selected_field_ids::as_array)
-                          if (!field_ids::contains(f))
-                              return false;
-                      return true;
-                  }(),
-                  "You selected a field that is not valid for sequence files, please refer to the documentation "
-                  "of sequence_file_output::field_ids for the accepted values.");
+    static_assert(
+        []() constexpr {
+            for (field f : selected_field_ids::as_array)
+                if (!field_ids::contains(f))
+                    return false;
+            return true;
+        }(),
+        "You selected a field that is not valid for sequence files, please refer to the documentation "
+        "of sequence_file_output::field_ids for the accepted values.");
 
     /*!\name Range associated types
      * \brief Most of the range associated types are `void` for output ranges.
@@ -99,21 +99,21 @@ public:
      */
 
     //!\brief The value type (void).
-    using value_type        = void;
+    using value_type = void;
     //!\brief The reference type (void).
-    using reference         = void;
+    using reference = void;
     //!\brief The const reference type (void).
-    using const_reference   = void;
+    using const_reference = void;
     //!\brief The size type (void).
-    using size_type         = void;
+    using size_type = void;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::ptrdiff_t;
+    using difference_type = std::ptrdiff_t;
     //!\brief The iterator type of this view (an output iterator).
-    using iterator          = detail::out_file_iterator<sequence_file_output>;
+    using iterator = detail::out_file_iterator<sequence_file_output>;
     //!\brief The const iterator type is void, because files are not const-iterable.
-    using const_iterator    = void;
+    using const_iterator = void;
     //!\brief The type returned by end().
-    using sentinel          = std::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -152,8 +152,8 @@ public:
         primary_stream{new std::ofstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
-        static_cast<std::basic_ofstream<char> *>(primary_stream.get())->open(filename,
-                                                                             std::ios_base::out | std::ios::binary);
+        static_cast<std::basic_ofstream<char> *>(primary_stream.get())
+            ->open(filename, std::ios_base::out | std::ios::binary);
 
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for writing."};
@@ -180,11 +180,10 @@ public:
      * want compression.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <output_stream stream_t,
-              sequence_file_output_format file_format>
+    template <output_stream stream_t, sequence_file_output_format file_format>
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    sequence_file_output(stream_t                 & stream,
-                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
+    sequence_file_output(stream_t & stream,
+                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         secondary_stream{&stream, stream_deleter_noop},
@@ -195,11 +194,10 @@ public:
     }
 
     //!\overload
-    template <output_stream stream_t,
-              sequence_file_output_format file_format>
+    template <output_stream stream_t, sequence_file_output_format file_format>
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    sequence_file_output(stream_t                && stream,
-                         file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
+    sequence_file_output(stream_t && stream,
+                         file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                          selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         secondary_stream{&*primary_stream, stream_deleter_noop},
@@ -336,8 +334,8 @@ public:
      *
      * \include test/snippet/io/sequence_file/sequence_file_output_emplace_back.cpp
      */
-    template <typename arg_t, typename ...arg_types>
-    void emplace_back(arg_t && arg, arg_types && ... args)
+    template <typename arg_t, typename... arg_types>
+    void emplace_back(arg_t && arg, arg_types &&... args)
     {
         push_back(std::tie(arg, args...));
     }
@@ -428,6 +426,7 @@ public:
         return *secondary_stream;
     }
     //!\endcond
+
 protected:
     //!\privatesection
     //!\brief A larger (compared to stl default) stream buffer to use when reading from a file.
@@ -438,11 +437,15 @@ protected:
      */
     //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
     using stream_ptr_t = std::unique_ptr<std::basic_ostream<stream_char_type>,
-                                         std::function<void(std::basic_ostream<stream_char_type>*)>>;
+                                         std::function<void(std::basic_ostream<stream_char_type> *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *) {}
+    static void stream_deleter_noop(std::basic_ostream<stream_char_type> *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr) { delete ptr; }
+    static void stream_deleter_default(std::basic_ostream<stream_char_type> * ptr)
+    {
+        delete ptr;
+    }
 
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
     stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
@@ -450,8 +453,8 @@ protected:
     stream_ptr_t secondary_stream{nullptr, stream_deleter_noop};
 
     //!\brief Type of the format, a std::variant over the `valid_formats`.
-    using format_type = typename detail::variant_from_tags<valid_formats,
-                                                           detail::sequence_file_output_format_exposer>::type;
+    using format_type =
+        typename detail::variant_from_tags<valid_formats, detail::sequence_file_output_format_exposer>::type;
     //!\brief The actual std::variant holding a pointer to the detected/selected format.
     format_type format;
     //!\}
@@ -461,16 +464,14 @@ protected:
     void write_record(seq_t && seq, id_t && id, qual_t && qual)
     {
         assert(!format.valueless_by_exception());
-        std::visit([&] (auto & f)
-        {
+        std::visit(
+            [&](auto & f)
             {
-                f.write_sequence_record(*secondary_stream,
-                                        options,
-                                        seq,
-                                        id,
-                                        qual);
-            }
-        }, format);
+                {
+                    f.write_sequence_record(*secondary_stream, options, seq, id, qual);
+                }
+            },
+            format);
     }
 
     //!\brief Befriend iterator so it can access the buffers.
@@ -483,39 +484,31 @@ protected:
  */
 
 //!\brief Deduction guide for given stream and file format.
-template <output_stream stream_t,
-          sequence_file_output_format file_format>
+template <output_stream stream_t, sequence_file_output_format file_format>
 sequence_file_output(stream_t &,
                      file_format const &)
-    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids
+    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids, // default field ids
                             type_list<file_format>>;
 
 //!\overload
-template <output_stream stream_t,
-          sequence_file_output_format file_format>
+template <output_stream stream_t, sequence_file_output_format file_format>
 sequence_file_output(stream_t &&,
                      file_format const &)
-    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids,  // default field ids.
+    -> sequence_file_output<typename sequence_file_output<>::selected_field_ids, // default field ids.
                             type_list<file_format>>;
 
 //!\brief Deduction guide for given stream, file format and field ids.
 template <output_stream stream_t,
           sequence_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-sequence_file_output(stream_t &&,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> sequence_file_output<selected_field_ids,
-                            type_list<file_format>>;
+sequence_file_output(stream_t &&, file_format const &, selected_field_ids const &)
+    -> sequence_file_output<selected_field_ids, type_list<file_format>>;
 
 //!\overload
 template <output_stream stream_t,
           sequence_file_output_format file_format,
           detail::fields_specialisation selected_field_ids>
-sequence_file_output(stream_t &,
-                     file_format const &,
-                     selected_field_ids const &)
-    -> sequence_file_output<selected_field_ids,
-                            type_list<file_format>>;
+sequence_file_output(stream_t &, file_format const &, selected_field_ids const &)
+    -> sequence_file_output<selected_field_ids, type_list<file_format>>;
 //!\}
 } // namespace seqan3

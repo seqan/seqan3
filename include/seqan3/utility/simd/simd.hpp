@@ -58,6 +58,6 @@ template <typename scalar_t,
           template <typename scalar_t_, size_t length_> typename simd_backend = detail::default_simd_backend>
 using simd_type_t = typename simd_type<scalar_t, length, simd_backend>::type;
 
-} // inline namespace simd
+} // namespace simd
 
 } // namespace seqan3

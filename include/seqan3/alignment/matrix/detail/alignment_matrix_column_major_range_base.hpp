@@ -98,7 +98,6 @@ private:
         class iterator_type
         {
         public:
-
             /*!\name Associated types
              * \{
              */
@@ -117,12 +116,12 @@ private:
             /*!\name Constructors, destructor and assignment
              * \{
              */
-            constexpr iterator_type() = default; //!< Defaulted.
-            constexpr iterator_type(iterator_type const &) = default; //!< Defaulted.
-            constexpr iterator_type(iterator_type &&) = default; //!< Defaulted.
+            constexpr iterator_type() = default;                                  //!< Defaulted.
+            constexpr iterator_type(iterator_type const &) = default;             //!< Defaulted.
+            constexpr iterator_type(iterator_type &&) = default;                  //!< Defaulted.
             constexpr iterator_type & operator=(iterator_type const &) = default; //!< Defaulted.
-            constexpr iterator_type & operator=(iterator_type &&) = default; //!< Defaulted.
-            ~iterator_type() = default; //!< Defaulted.
+            constexpr iterator_type & operator=(iterator_type &&) = default;      //!< Defaulted.
+            ~iterator_type() = default;                                           //!< Defaulted.
 
             /*!\brief Construction from the underlying alignment-column.
              * \param host The alignment-column for this iterator.
@@ -223,12 +222,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr alignment_column_type() = default; //!< Defaulted.
-        constexpr alignment_column_type(alignment_column_type const &) = default; //!< Defaulted.
-        constexpr alignment_column_type(alignment_column_type &&) = default; //!< Defaulted.
+        constexpr alignment_column_type() = default;                                          //!< Defaulted.
+        constexpr alignment_column_type(alignment_column_type const &) = default;             //!< Defaulted.
+        constexpr alignment_column_type(alignment_column_type &&) = default;                  //!< Defaulted.
         constexpr alignment_column_type & operator=(alignment_column_type const &) = default; //!< Defaulted.
-        constexpr alignment_column_type & operator=(alignment_column_type &&) = default; //!< Defaulted.
-        ~alignment_column_type() = default; //!< Defaulted.
+        constexpr alignment_column_type & operator=(alignment_column_type &&) = default;      //!< Defaulted.
+        ~alignment_column_type() = default;                                                   //!< Defaulted.
 
         /*!\brief Constructs from the derived type.
          * \param[in] me  An instance of the derived type.
@@ -238,9 +237,7 @@ private:
          *
          * This constructor is called by the derived type when invoking the function `initialise_column`.
          */
-        constexpr alignment_column_type(derived_t & me, view_type ref) :
-            ref{std::move(ref)},
-            me_ptr{&me}
+        constexpr alignment_column_type(derived_t & me, view_type ref) : ref{std::move(ref)}, me_ptr{&me}
         {}
         //!\}
 
@@ -314,19 +311,17 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        constexpr iterator_type() = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type const &) = default; //!< Defaulted.
-        constexpr iterator_type(iterator_type &&) = default; //!< Defaulted.
+        constexpr iterator_type() = default;                                  //!< Defaulted.
+        constexpr iterator_type(iterator_type const &) = default;             //!< Defaulted.
+        constexpr iterator_type(iterator_type &&) = default;                  //!< Defaulted.
         constexpr iterator_type & operator=(iterator_type const &) = default; //!< Defaulted.
-        constexpr iterator_type & operator=(iterator_type &&) = default; //!< Defaulted.
-        ~iterator_type() = default; //!< Defaulted.
+        constexpr iterator_type & operator=(iterator_type &&) = default;      //!< Defaulted.
+        ~iterator_type() = default;                                           //!< Defaulted.
 
         /*!\brief Construction from an instance of the derived type.
          * \param me     An instance of the derived type.
          */
-        explicit constexpr iterator_type(derived_t & me) :
-            me_ptr{&me},
-            column_index{0}
+        explicit constexpr iterator_type(derived_t & me) : me_ptr{&me}, column_index{0}
         {}
         //!\}
 
@@ -451,7 +446,7 @@ private:
      * stores a column view as defined by the derived class using the
      * seqan3::detail::alignment_matrix_column_major_range_base::column_data_view_type type definition.
      */
-    SEQAN3_DOXYGEN_ONLY(alignment_column_type initialise_column(size_t column_index) {})
+    SEQAN3_DOXYGEN_ONLY(alignment_column_type initialise_column(size_t column_index){})
 
     /*!\brief Allows additional initialisations when calling begin on an alignment-column.
      * \tparam iter_t The iterator type of the host iterator.

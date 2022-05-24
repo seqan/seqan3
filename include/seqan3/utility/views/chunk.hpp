@@ -14,9 +14,9 @@
 
 #include <seqan3/std/ranges>
 
-#include <range/v3/view/chunk.hpp>
-
 #include <seqan3/core/platform.hpp>
+
+#include <range/v3/view/chunk.hpp>
 
 namespace seqan3::views
 {

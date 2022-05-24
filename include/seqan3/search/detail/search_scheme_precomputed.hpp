@@ -84,90 +84,64 @@ using search_scheme_dyn_type = std::vector<search_dyn>;
  *          seems to be a good greedy approach.
  */
 template <uint8_t min_error, uint8_t max_error>
-inline int constexpr optimum_search_scheme{0};
+inline constexpr int optimum_search_scheme{0};
 
 //!\cond
 
 template <>
-inline search_scheme_type<1, 1> constexpr optimum_search_scheme<0, 0>
-{{
-    {{1}, {0}, {0}}
-}};
+inline constexpr search_scheme_type<1, 1> optimum_search_scheme<0, 0>{{{{1}, {0}, {0}}}};
 
 template <>
-inline search_scheme_type<2, 2> constexpr optimum_search_scheme<0, 1>
-{{
-    {{1, 2}, {0, 0}, {0, 1}},
-    {{2, 1}, {0, 1}, {0, 1}}
-}};
+inline constexpr search_scheme_type<2, 2> optimum_search_scheme<0, 1>{
+    {{{1, 2}, {0, 0}, {0, 1}}, {{2, 1}, {0, 1}, {0, 1}}}};
 
 template <>
-inline search_scheme_type<2, 2> constexpr optimum_search_scheme<1, 1>
-{{
-    {{1, 2}, {0, 1}, {0, 1}},
-    {{2, 1}, {0, 1}, {0, 1}}
-}};
+inline constexpr search_scheme_type<2, 2> optimum_search_scheme<1, 1>{
+    {{{1, 2}, {0, 1}, {0, 1}}, {{2, 1}, {0, 1}, {0, 1}}}};
 
 template <>
-inline search_scheme_type<3, 4> constexpr optimum_search_scheme<0, 2>
-{{
-    {{1, 2, 3, 4}, {0, 0, 1, 1}, {0, 0, 2, 2}},
-    {{3, 2, 1, 4}, {0, 0, 0, 0}, {0, 1, 1, 2}},
-    {{4, 3, 2, 1}, {0, 0, 0, 2}, {0, 1, 2, 2}}
-}};
+inline constexpr search_scheme_type<3, 4> optimum_search_scheme<0, 2>{{{{1, 2, 3, 4}, {0, 0, 1, 1}, {0, 0, 2, 2}},
+                                                                       {{3, 2, 1, 4}, {0, 0, 0, 0}, {0, 1, 1, 2}},
+                                                                       {{4, 3, 2, 1}, {0, 0, 0, 2}, {0, 1, 2, 2}}}};
 
 template <>
-inline search_scheme_type<3, 4> constexpr optimum_search_scheme<1, 2>
-{{
-    {{1, 2, 3, 4}, {0, 0, 0, 1}, {0, 0, 2, 2}},
-    {{3, 2, 1, 4}, {0, 0, 1, 1}, {0, 1, 1, 2}},
-    {{4, 3, 2, 1}, {0, 0, 0, 2}, {0, 1, 2, 2}}
-}};
+inline constexpr search_scheme_type<3, 4> optimum_search_scheme<1, 2>{{{{1, 2, 3, 4}, {0, 0, 0, 1}, {0, 0, 2, 2}},
+                                                                       {{3, 2, 1, 4}, {0, 0, 1, 1}, {0, 1, 1, 2}},
+                                                                       {{4, 3, 2, 1}, {0, 0, 0, 2}, {0, 1, 2, 2}}}};
 
 template <>
-inline search_scheme_type<3, 4> constexpr optimum_search_scheme<2, 2>
-{{
-    {{4, 3, 2, 1}, {0, 0, 1, 2}, {0, 0, 2, 2}},
-    {{2, 3, 4, 1}, {0, 0, 0, 2}, {0, 1, 1, 2}},
-    {{1, 2, 3, 4}, {0, 0, 0, 2}, {0, 1, 2, 2}}
-}};
+inline constexpr search_scheme_type<3, 4> optimum_search_scheme<2, 2>{{{{4, 3, 2, 1}, {0, 0, 1, 2}, {0, 0, 2, 2}},
+                                                                       {{2, 3, 4, 1}, {0, 0, 0, 2}, {0, 1, 1, 2}},
+                                                                       {{1, 2, 3, 4}, {0, 0, 0, 2}, {0, 1, 2, 2}}}};
 
 template <>
-inline search_scheme_type<4, 5> constexpr optimum_search_scheme<0, 3>
-{{
-    // TODO: benchmark whether the first search is really the fastest one (see \details of optimum_search_scheme)
-    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 0}, {0, 0, 3, 3, 3}},
-    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 1}, {0, 1, 1, 2, 3}},
-    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
-    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
-}};
+inline constexpr search_scheme_type<4, 5> optimum_search_scheme<0, 3>{
+    {// TODO: benchmark whether the first search is really the fastest one (see \details of optimum_search_scheme)
+     {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 0}, {0, 0, 3, 3, 3}},
+     {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 1}, {0, 1, 1, 2, 3}},
+     {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
+     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}}};
 
 template <>
-inline search_scheme_type<4, 5> constexpr optimum_search_scheme<1, 3>
-{{
-    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 1}, {0, 0, 3, 3, 3}},
-    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 1}, {0, 1, 1, 2, 3}},
-    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
-    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
-}};
+inline constexpr search_scheme_type<4, 5> optimum_search_scheme<1, 3>{
+    {{{5, 4, 3, 2, 1}, {0, 0, 0, 0, 1}, {0, 0, 3, 3, 3}},
+     {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 1}, {0, 1, 1, 2, 3}},
+     {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
+     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}}};
 
 template <>
-inline search_scheme_type<4, 5> constexpr optimum_search_scheme<2, 3>
-{{
-    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 2}, {0, 0, 3, 3, 3}},
-    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 2}, {0, 1, 1, 2, 3}},
-    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
-    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
-}};
+inline constexpr search_scheme_type<4, 5> optimum_search_scheme<2, 3>{
+    {{{5, 4, 3, 2, 1}, {0, 0, 0, 0, 2}, {0, 0, 3, 3, 3}},
+     {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 2}, {0, 1, 1, 2, 3}},
+     {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 2}, {0, 1, 2, 2, 3}},
+     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}}};
 
 template <>
-inline search_scheme_type<4, 5> constexpr optimum_search_scheme<3, 3>
-{{
-    {{5, 4, 3, 2, 1}, {0, 0, 0, 0, 3}, {0, 0, 3, 3, 3}},
-    {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 3}, {0, 1, 1, 2, 3}},
-    {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 3}, {0, 1, 2, 2, 3}},
-    {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}
-}};
+inline constexpr search_scheme_type<4, 5> optimum_search_scheme<3, 3>{
+    {{{5, 4, 3, 2, 1}, {0, 0, 0, 0, 3}, {0, 0, 3, 3, 3}},
+     {{3, 4, 5, 2, 1}, {0, 0, 1, 1, 3}, {0, 1, 1, 2, 3}},
+     {{2, 3, 4, 5, 1}, {0, 0, 0, 2, 3}, {0, 1, 2, 2, 3}},
+     {{1, 2, 3, 4, 5}, {0, 0, 0, 0, 3}, {0, 2, 2, 3, 3}}}};
 
 // TODO: add the following missing optimum search schemes (computation has not finished yet)
 // optimum_search_scheme<i, 4>, 0 < i <= 4

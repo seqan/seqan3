@@ -56,12 +56,11 @@ public:
     constexpr nucleotide_scoring_scheme() noexcept = default;
     //!\copydoc scoring_scheme_base::scoring_scheme_base(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
     template <arithmetic score_arg_t>
-    constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms)
-        : base_t{ms, mms}
+    constexpr nucleotide_scoring_scheme(match_score<score_arg_t> const ms, mismatch_score<score_arg_t> const mms) :
+        base_t{ms, mms}
     {}
     //!\copydoc scoring_scheme_base::scoring_scheme_base(matrix_type const & matrix)
-    constexpr nucleotide_scoring_scheme(matrix_type const & matrix) noexcept
-        : base_t{matrix}
+    constexpr nucleotide_scoring_scheme(matrix_type const & matrix) noexcept : base_t{matrix}
     {}
     //!\}
 };
@@ -72,14 +71,14 @@ public:
  */
 
 //!\brief Default constructed objects deduce to `int8_t`.
-nucleotide_scoring_scheme() -> nucleotide_scoring_scheme<int8_t>;
+nucleotide_scoring_scheme()->nucleotide_scoring_scheme<int8_t>;
 
 /*!\brief Attention: This guide does not actually deduce from the underlying type, but always defaults to `int8_t`.
  * To use a larger type, specify the template argument manually.
  */
 template <arithmetic score_arg_type>
-nucleotide_scoring_scheme(match_score<score_arg_type>,
-                          mismatch_score<score_arg_type>) -> nucleotide_scoring_scheme<int8_t>;
+nucleotide_scoring_scheme(match_score<score_arg_type>, mismatch_score<score_arg_type>)
+    -> nucleotide_scoring_scheme<int8_t>;
 
 //!\brief Deduce the score type from the provided matrix.
 template <arithmetic score_arg_type>

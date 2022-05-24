@@ -47,12 +47,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    method_local() = default; //!< Defaulted.
-    method_local(method_local const &) = default; //!< Defaulted.
-    method_local(method_local &&) = default; //!< Defaulted.
+    method_local() = default;                                 //!< Defaulted.
+    method_local(method_local const &) = default;             //!< Defaulted.
+    method_local(method_local &&) = default;                  //!< Defaulted.
     method_local & operator=(method_local const &) = default; //!< Defaulted.
-    method_local & operator=(method_local &&) = default; //!< Defaulted.
-    ~method_local() = default; //!< Defaulted.
+    method_local & operator=(method_local &&) = default;      //!< Defaulted.
+    ~method_local() = default;                                //!< Defaulted.
 
     //!\}
 
@@ -124,12 +124,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    method_global() = default; //!< Defaulted.
-    method_global(method_global const &) = default; //!< Defaulted.
-    method_global(method_global &&) = default; //!< Defaulted.
+    method_global() = default;                                  //!< Defaulted.
+    method_global(method_global const &) = default;             //!< Defaulted.
+    method_global(method_global &&) = default;                  //!< Defaulted.
     method_global & operator=(method_global const &) = default; //!< Defaulted.
-    method_global & operator=(method_global &&) = default; //!< Defaulted.
-    ~method_global() = default; //!< Defaulted.
+    method_global & operator=(method_global &&) = default;      //!< Defaulted.
+    ~method_global() = default;                                 //!< Defaulted.
 
     /*!\brief Construct method_global with a specific free end gap configuration.
      * \param[in] free_sequence1_leading An instance of seqan3::align_cfg::free_end_gaps_sequence1_leading that

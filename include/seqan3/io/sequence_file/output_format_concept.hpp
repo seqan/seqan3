@@ -41,12 +41,11 @@ template <typename format_type>
 struct sequence_file_output_format_exposer : public format_type
 {
 public:
-
     // Can't use `using format_type::write_sequence_record` as it produces a hard failure in the format concept check
     // for types that do not model the format concept, i.e. don't offer the proper write_sequence_record interface.
     //!\brief Forwards to the seqan3::sequence_file_output_format::write_sequence_record interface.
-    template <typename ...ts>
-    void write_sequence_record(ts && ...args)
+    template <typename... ts>
+    void write_sequence_record(ts &&... args)
     {
         format_type::write_sequence_record(std::forward<ts>(args)...);
     }
@@ -70,20 +69,25 @@ namespace seqan3
 //!\cond
 template <typename t>
 concept sequence_file_output_format = requires (detail::sequence_file_output_format_exposer<t> & v,
-                                                std::ofstream                                  & f,
-                                                sequence_file_output_options                   & options,
-                                                dna5_vector                                    & seq,
-                                                std::string                                    & id,
-                                                std::vector<phred42>                           & qual,
-                                                std::vector<dna5q>                             & seq_qual)
-{
-    t::file_extensions;
+                                                std::ofstream & f,
+                                                sequence_file_output_options & options,
+                                                dna5_vector & seq,
+                                                std::string & id,
+                                                std::vector<phred42> & qual,
+                                                std::vector<dna5q> & seq_qual) {
+                                          t::file_extensions;
 
-    {v.write_sequence_record(f, options, seq, id, qual)} -> std::same_as<void>;
-    {v.write_sequence_record(f, options, std::ignore, id, std::ignore)} -> std::same_as<void>;
-    {v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore)} -> std::same_as<void>;
-    // the last is required to be compile time valid, but should always throw at run-time.
-};
+                                          {
+                                              v.write_sequence_record(f, options, seq, id, qual)
+                                              } -> std::same_as<void>;
+                                          {
+                                              v.write_sequence_record(f, options, std::ignore, id, std::ignore)
+                                              } -> std::same_as<void>;
+                                          {
+                                              v.write_sequence_record(f, options, std::ignore, std::ignore, std::ignore)
+                                              } -> std::same_as<void>;
+                                          // the last is required to be compile time valid, but should always throw at run-time.
+                                      };
 //!\endcond
 
 /*!\name Requirements for seqan3::sequence_file_output_format
@@ -139,7 +143,7 @@ constexpr bool is_type_list_of_sequence_file_output_formats_v = false;
  * \ingroup io_sequence_file
  * \see seqan3::type_list_specialisationOfsequence_file_output_formats
  */
-template <typename ...ts>
+template <typename... ts>
 constexpr bool is_type_list_of_sequence_file_output_formats_v<type_list<ts...>> =
     (sequence_file_output_format<ts> && ...);
 

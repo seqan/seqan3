@@ -42,23 +42,22 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-     edit_distance_trace_matrix_full() = default;                                                    //!< Defaulted
-     edit_distance_trace_matrix_full(edit_distance_trace_matrix_full const &) = default;             //!< Defaulted
-     edit_distance_trace_matrix_full(edit_distance_trace_matrix_full &&) = default;                  //!< Defaulted
-     edit_distance_trace_matrix_full & operator=(edit_distance_trace_matrix_full const &) = default; //!< Defaulted
-     edit_distance_trace_matrix_full & operator=(edit_distance_trace_matrix_full &&) = default;      //!< Defaulted
-     ~edit_distance_trace_matrix_full() = default;                                                   //!< Defaulted
+    edit_distance_trace_matrix_full() = default;                                                    //!< Defaulted
+    edit_distance_trace_matrix_full(edit_distance_trace_matrix_full const &) = default;             //!< Defaulted
+    edit_distance_trace_matrix_full(edit_distance_trace_matrix_full &&) = default;                  //!< Defaulted
+    edit_distance_trace_matrix_full & operator=(edit_distance_trace_matrix_full const &) = default; //!< Defaulted
+    edit_distance_trace_matrix_full & operator=(edit_distance_trace_matrix_full &&) = default;      //!< Defaulted
+    ~edit_distance_trace_matrix_full() = default;                                                   //!< Defaulted
 
- protected:
-     //!\brief Allow seqan3::detail::edit_distance_unbanded_trace_matrix_policy to access the private constructor.
-     template <typename derived_t, typename edit_traits>
-     friend class edit_distance_unbanded_trace_matrix_policy;
+protected:
+    //!\brief Allow seqan3::detail::edit_distance_unbanded_trace_matrix_policy to access the private constructor.
+    template <typename derived_t, typename edit_traits>
+    friend class edit_distance_unbanded_trace_matrix_policy;
 
-     /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
+    /*!\brief Construct the score_matrix by giving the number of rows within the matrix.
       * \param rows_size \copydoc rows_size
       */
-    edit_distance_trace_matrix_full(size_t const rows_size)
-        : rows_size{rows_size}, columns{}
+    edit_distance_trace_matrix_full(size_t const rows_size) : rows_size{rows_size}, columns{}
     {}
     //!\}
 
@@ -106,13 +105,13 @@ public:
 
         column_type const & column = columns[col];
 
-        if constexpr(use_max_errors)
+        if constexpr (use_max_errors)
             if (!(row < column.max_rows))
                 return detail::trace_directions::none;
 
         if (row == 0u)
         {
-            if constexpr(is_semi_global)
+            if constexpr (is_semi_global)
                 return detail::trace_directions::none;
 
             if (col == 0u)
@@ -128,9 +127,9 @@ public:
         bool const diagonal = std::bitset<word_size>(column.diagonal[idx])[offset];
         bool const up = std::bitset<word_size>(column.up[idx])[offset];
 
-        auto const dir = (left ? detail::trace_directions::left : detail::trace_directions::none) |
-                         (diagonal ? detail::trace_directions::diagonal : detail::trace_directions::none) |
-                         (up ? detail::trace_directions::up : detail::trace_directions::none);
+        auto const dir = (left ? detail::trace_directions::left : detail::trace_directions::none)
+                       | (diagonal ? detail::trace_directions::diagonal : detail::trace_directions::none)
+                       | (up ? detail::trace_directions::up : detail::trace_directions::none);
 
         return dir;
     }
@@ -183,9 +182,7 @@ protected:
     };
 
     //!\brief The state of one computation step.
-    struct column_type :
-        enable_state_t<true, trace_matrix_state>,
-        enable_state_t<use_max_errors, max_errors_state>
+    struct column_type : enable_state_t<true, trace_matrix_state>, enable_state_t<use_max_errors, max_errors_state>
     {};
 
     /*!\brief Adds a column to the trace matrix.
@@ -210,7 +207,9 @@ protected:
      * \param up       \copydoc trace_matrix_state::up
      * \param max_rows \copydoc max_errors_state::max_rows
      */
-    void add_column(std::vector<word_type> left, std::vector<word_type> diagonal, std::vector<word_type> up,
+    void add_column(std::vector<word_type> left,
+                    std::vector<word_type> diagonal,
+                    std::vector<word_type> up,
                     size_t const max_rows)
         requires use_max_errors
     {
@@ -259,13 +258,13 @@ struct edit_distance_trace_matrix_full<word_t, is_semi_global, use_max_errors>::
     //!\}
 
     //!\brief Shortcut for seqan3::detail::trace_directions::diagonal.
-    constexpr static value_type D = value_type::diagonal;
+    static constexpr value_type D = value_type::diagonal;
     //!\brief Shortcut for seqan3::detail::trace_directions::left.
-    constexpr static value_type L = value_type::left;
+    static constexpr value_type L = value_type::left;
     //!\brief Shortcut for seqan3::detail::trace_directions::up.
-    constexpr static value_type U = value_type::up;
+    static constexpr value_type U = value_type::up;
     //!\brief Shortcut for seqan3::detail::trace_directions::none.
-    constexpr static value_type N = value_type::none;
+    static constexpr value_type N = value_type::none;
 
     /*!\name Element access
      * \{

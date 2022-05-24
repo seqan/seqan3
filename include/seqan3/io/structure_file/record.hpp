@@ -38,16 +38,17 @@ class structure_record : public record<field_types, field_ids>
     using field_constant = typename base_t::template field_constant<f>;
 
     using base_t::get_impl;
+
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    structure_record() = default; //!< Defaulted.
-    structure_record(structure_record const &) = default; //!< Defaulted.
+    structure_record() = default;                                     //!< Defaulted.
+    structure_record(structure_record const &) = default;             //!< Defaulted.
     structure_record & operator=(structure_record const &) = default; //!< Defaulted.
-    structure_record(structure_record &&) = default; //!< Defaulted.
-    structure_record & operator=(structure_record &&) = default; //!< Defaulted.
-    ~structure_record() = default; //!< Defaulted.
+    structure_record(structure_record &&) = default;                  //!< Defaulted.
+    structure_record & operator=(structure_record &&) = default;      //!< Defaulted.
+    ~structure_record() = default;                                    //!< Defaulted.
 
     //!\brief Inherit std::tuple's and seqan3::record constructors.
     using base_t::base_t;
@@ -175,8 +176,8 @@ namespace std
  * \see std::tuple_size_v
  */
 template <typename field_types, typename field_ids>
-struct tuple_size<seqan3::structure_record<field_types, field_ids>>
-    : tuple_size<typename seqan3::structure_record<field_types, field_ids>::base_type>
+struct tuple_size<seqan3::structure_record<field_types, field_ids>> :
+    tuple_size<typename seqan3::structure_record<field_types, field_ids>::base_type>
 {};
 
 /*!\brief Obtains the type of the specified element.
@@ -185,8 +186,8 @@ struct tuple_size<seqan3::structure_record<field_types, field_ids>>
  * \see [std::tuple_element](https://en.cppreference.com/w/cpp/utility/tuple/tuple_element)
  */
 template <size_t elem_no, typename field_types, typename field_ids>
-struct tuple_element<elem_no, seqan3::structure_record<field_types, field_ids>>
-    : tuple_element<elem_no, typename seqan3::structure_record<field_types, field_ids>::base_type>
+struct tuple_element<elem_no, seqan3::structure_record<field_types, field_ids>> :
+    tuple_element<elem_no, typename seqan3::structure_record<field_types, field_ids>::base_type>
 {};
 
 } // namespace std

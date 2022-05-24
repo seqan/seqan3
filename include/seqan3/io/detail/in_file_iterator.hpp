@@ -41,6 +41,7 @@ class in_file_iterator
 {
     static_assert(!std::is_const_v<file_type>,
                   "You cannot iterate over const files, because the iterator changes the file.");
+
 public:
     /*!\name Member types
      * \brief The associated types are derived from the `file_type`.
@@ -48,17 +49,17 @@ public:
      */
 
     //!\brief The value type.
-    using value_type        = typename file_type::value_type;
+    using value_type = typename file_type::value_type;
     //!\brief The reference type.
-    using reference         = typename file_type::reference;
+    using reference = typename file_type::reference;
     //!\brief The const reference type.
-    using const_reference   = typename file_type::reference;
+    using const_reference = typename file_type::reference;
     //!\brief The size type.
-    using size_type         = typename file_type::size_type;
+    using size_type = typename file_type::size_type;
     //!\brief The difference type. A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = typename file_type::difference_type;
+    using difference_type = typename file_type::difference_type;
     //!\brief The pointer type.
-    using pointer           = typename file_type::value_type *;
+    using pointer = typename file_type::value_type *;
     //!\brief Tag this class as an input iterator.
     using iterator_category = std::input_iterator_tag;
     //!\}
@@ -73,15 +74,14 @@ public:
     //!\brief Copy construction via assignment.
     constexpr in_file_iterator & operator=(in_file_iterator const &) = default;
     //!\brief Move constructor.
-    constexpr in_file_iterator (in_file_iterator &&) = default;
+    constexpr in_file_iterator(in_file_iterator &&) = default;
     //!\brief Move assignment.
     constexpr in_file_iterator & operator=(in_file_iterator &&) = default;
     //!\brief Use default deconstructor.
     ~in_file_iterator() = default;
 
     //!\brief Construct with reference to host.
-    constexpr in_file_iterator(file_type & _host) noexcept :
-        host{&_host}
+    constexpr in_file_iterator(file_type & _host) noexcept : host{&_host}
     {}
     //!\}
 
@@ -138,15 +138,13 @@ public:
     }
 
     //!\brief Checks whether `it` is equal to the sentinel.
-    constexpr friend bool operator==(std::default_sentinel_t const &,
-                                     in_file_iterator const & it) noexcept
+    constexpr friend bool operator==(std::default_sentinel_t const &, in_file_iterator const & it) noexcept
     {
         return (it == std::default_sentinel);
     }
 
     //!\brief Checks whether `it` is not equal to the sentinel.
-    constexpr friend bool operator!=(std::default_sentinel_t const &,
-                                     in_file_iterator const & it) noexcept
+    constexpr friend bool operator!=(std::default_sentinel_t const &, in_file_iterator const & it) noexcept
     {
         return (it != std::default_sentinel);
     }
@@ -157,27 +155,27 @@ public:
      * \{
      */
 
-     //!\brief Returns the current position in the file via `std::streampos`.
-     std::streampos file_position() const
-     {
-         assert(host != nullptr);
-         return host->position_buffer;
-     }
+    //!\brief Returns the current position in the file via `std::streampos`.
+    std::streampos file_position() const
+    {
+        assert(host != nullptr);
+        return host->position_buffer;
+    }
 
-     //!\brief Low level API. Sets the current position of the iterator to the given position, throws if at end of file.
-     in_file_iterator & seek_to(std::streampos const & pos)
-     {
-         assert(host != nullptr);
-         host->secondary_stream->seekg(pos);
-         if (host->secondary_stream->fail())
-         {
-             throw std::runtime_error{"Seeking to file position failed!"};
-         }
-         host->at_end = false; // iterator will not be at end if seeking to a specific record
-         host->read_next_record();
-         return *this;
-     }
-     //!\}
+    //!\brief Low level API. Sets the current position of the iterator to the given position, throws if at end of file.
+    in_file_iterator & seek_to(std::streampos const & pos)
+    {
+        assert(host != nullptr);
+        host->secondary_stream->seekg(pos);
+        if (host->secondary_stream->fail())
+        {
+            throw std::runtime_error{"Seeking to file position failed!"};
+        }
+        host->at_end = false; // iterator will not be at end if seeking to a specific record
+        host->read_next_record();
+        return *this;
+    }
+    //!\}
 
 private:
     //!\brief Pointer to file host.

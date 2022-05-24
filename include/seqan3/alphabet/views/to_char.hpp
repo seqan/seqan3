@@ -60,10 +60,12 @@ namespace seqan3::views
  *
  * \stableapi{Since version 3.1.}
  */
-inline auto const to_char = deep{std::views::transform([] (auto const in) noexcept
-{
-    static_assert(alphabet<std::remove_cvref_t<decltype(in)>>, "The value type of seqan3::views::to_char must model the seqan3::alphabet.");
-    return seqan3::to_char(in);
-})};
+inline auto const to_char = deep{std::views::transform(
+    [](auto const in) noexcept
+    {
+        static_assert(alphabet<std::remove_cvref_t<decltype(in)>>,
+                      "The value type of seqan3::views::to_char must model the seqan3::alphabet.");
+        return seqan3::to_char(in);
+    })};
 
 } // namespace seqan3::views

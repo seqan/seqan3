@@ -25,7 +25,7 @@ namespace seqan3
 // Forward declarations
 struct pipeable_config_element;
 //!\endcond
-}
+} // namespace seqan3
 
 namespace seqan3::detail
 {
@@ -101,7 +101,7 @@ public:
             using config2_id_t = id_type<config2_t>;
 
             if constexpr (std::same_as<config1_id_t, config2_id_t>)
-                return std::bool_constant<compatibility_table<config1_id_t>[as_int<config1_t>][as_int<config2_t>]>{};
+                return std::bool_constant<compatibility_table<config1_id_t>[as_int<config1_t>][as_int<config2_t>]> {};
             else
                 return std::false_type{};
         }
@@ -136,16 +136,17 @@ public:
 //!\}
 //!\cond
 template <typename config_t>
-concept config_element = requires
-{
-    requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
-    requires std::copyable<config_t>;
+concept config_element = requires {
+                             requires std::is_base_of_v<seqan3::pipeable_config_element, config_t>;
+                             requires std::copyable<config_t>;
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-    requires config_id_accessor::has_id<config_t>;
-#else // ^^^ workaround / no workaround vvv
-    { config_t::id };
+                             requires config_id_accessor::has_id<config_t>;
+#else  // ^^^ workaround / no workaround vvv
+                             {
+                                 config_t::id
+                             };
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-};
+                         };
 //!\endcond
 
 /*!\interface seqan3::detail::config_element_pipeable_with <>
@@ -166,15 +167,14 @@ concept config_element = requires
 //!\cond
 template <typename config1_t, typename config2_t>
 concept config_element_pipeable_with =
-    config_element<config1_t> &&
-    config_element<config2_t> &&
+    config_element<config1_t> && config_element<config2_t> &&
 #if SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
-    std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>> &&
-    decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
-#else // ^^^ workaround / no workaround vvv
-    std::same_as<std::remove_cvref_t<decltype(config1_t::id)>, std::remove_cvref_t<decltype(config2_t::id)>> &&
-    compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>[static_cast<int32_t>(config1_t::id)]
-                                                                     [static_cast<int32_t>(config2_t::id)];
+    std::same_as<config_id_accessor::id_type<config1_t>, config_id_accessor::id_type<config2_t>>
+    && decltype(config_id_accessor::is_compatible<config1_t, config2_t>())::value;
+#else  // ^^^ workaround / no workaround vvv
+    std::same_as<std::remove_cvref_t<decltype(config1_t::id)>, std::remove_cvref_t<decltype(config2_t::id)>>
+    && compatibility_table<std::remove_cvref_t<decltype(config1_t::id)>>
+[static_cast<int32_t>(config1_t::id)][static_cast<int32_t>(config2_t::id)];
 #endif // SEQAN3_WORKAROUND_GCC_PIPEABLE_CONFIG_CONCEPT
 //!\endcond
 
@@ -184,7 +184,7 @@ namespace seqan3
 {
 //!\cond
 // Forward declaration.
-template <detail::config_element ... configs_t>
+template <detail::config_element... configs_t>
 class configuration;
 //!\endcond
 
@@ -213,17 +213,17 @@ inline constexpr bool is_config_element_combineable_v = detail::config_element_p
 
 //!\cond
 // Specialised for config2_t == seqan3::configuration
-template <typename config1_t, typename ...configs2_t>
+template <typename config1_t, typename... configs2_t>
 inline constexpr bool is_config_element_combineable_v<config1_t, configuration<configs2_t...>> =
     (detail::config_element_pipeable_with<config1_t, configs2_t> && ...);
 
 // Specialised for config1_t == seqan3::configuration
-template <typename ...configs1_t, typename config2_t>
+template <typename... configs1_t, typename config2_t>
 inline constexpr bool is_config_element_combineable_v<configuration<configs1_t...>, config2_t> =
     (detail::config_element_pipeable_with<configs1_t, config2_t> && ...);
 
 // Specialised for config1_t == seqan3::configuration && config2_t == seqan3::configuration
-template <typename ...configs1_t, typename ...configs2_t>
+template <typename... configs1_t, typename... configs2_t>
 inline constexpr bool is_config_element_combineable_v<configuration<configs1_t...>, configuration<configs2_t...>> =
     (is_config_element_combineable_v<configs1_t, configuration<configs2_t...>> && ...);
 //!\endcond

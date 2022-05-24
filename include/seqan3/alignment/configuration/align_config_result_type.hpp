@@ -50,12 +50,12 @@ public:
     /*!\name Constructor, destructor and assignment
      * \{
      */
-    constexpr result_type() = default; //!< Defaulted.
-    constexpr result_type(result_type const &) = default; //!< Defaulted.
-    constexpr result_type(result_type &&) = default; //!< Defaulted.
+    constexpr result_type() = default;                                //!< Defaulted.
+    constexpr result_type(result_type const &) = default;             //!< Defaulted.
+    constexpr result_type(result_type &&) = default;                  //!< Defaulted.
     constexpr result_type & operator=(result_type const &) = default; //!< Defaulted.
-    constexpr result_type & operator=(result_type &&) = default; //!< Defaulted.
-    ~result_type() = default; //!< Defaulted.
+    constexpr result_type & operator=(result_type &&) = default;      //!< Defaulted.
+    ~result_type() = default;                                         //!< Defaulted.
 
     //!\}
 

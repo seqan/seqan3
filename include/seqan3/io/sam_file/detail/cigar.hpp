@@ -13,8 +13,8 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/charconv>
 #include <concepts>
+#include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
 #include <sstream>
 
@@ -84,13 +84,13 @@ template <typename reference_char_type, typename query_char_type>
 [[nodiscard]] constexpr cigar::operation map_aligned_values_to_cigar_op(reference_char_type const reference_char,
                                                                         query_char_type const query_char,
                                                                         bool const extended_cigar)
-    requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap> &&
-             seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
+    requires seqan3::detail::weakly_equality_comparable_with<reference_char_type, gap>
+          && seqan3::detail::weakly_equality_comparable_with<query_char_type, gap>
 {
-    constexpr std::array<char, 6> operators{'M', 'D', 'I', 'P', 'X', '='};  // contains the possible cigar operators.
+    constexpr std::array<char, 6> operators{'M', 'D', 'I', 'P', 'X', '='}; // contains the possible cigar operators.
     uint8_t key = (static_cast<uint8_t>(reference_char == gap{}) << 1) | static_cast<uint8_t>(query_char == gap{});
     if (extended_cigar && (key == 0)) // in extended format refine the substitution operator to match/mismatch.
-        key |= ((1 << 2) | static_cast<uint8_t>(query_char == reference_char));  // maps to [4, 5].
+        key |= ((1 << 2) | static_cast<uint8_t>(query_char == reference_char)); // maps to [4, 5].
 
     return assign_char_to(operators[key], cigar::operation{});
 }
@@ -109,11 +109,24 @@ inline void update_alignment_lengths(int32_t & ref_length,
 {
     switch (cigar_operation)
     {
-        case 'M': case '=': case 'X': ref_length += cigar_count, seq_length += cigar_count; break;
-        case 'D': case 'N':           ref_length += cigar_count; break;
-        case 'I':                     seq_length += cigar_count; break;
-        case 'S': case 'H': case 'P': break; // no op (soft-clipping or padding does not increase either length)
-        default: throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
+    case 'M':
+    case '=':
+    case 'X':
+        ref_length += cigar_count, seq_length += cigar_count;
+        break;
+    case 'D':
+    case 'N':
+        ref_length += cigar_count;
+        break;
+    case 'I':
+        seq_length += cigar_count;
+        break;
+    case 'S':
+    case 'H':
+    case 'P':
+        break; // no op (soft-clipping or padding does not increase either length)
+    default:
+        throw format_error{"Illegal cigar operation: " + std::string{cigar_operation}};
     }
 }
 
@@ -230,9 +243,8 @@ template <seqan3::detail::pairwise_alignment alignment_type>
     // go through alignment columns
     for (auto column : views::zip(ref_seq, query_seq))
     {
-        cigar::operation next_op = map_aligned_values_to_cigar_op(std::get<0>(column),
-                                                                  std::get<1>(column),
-                                                                  extended_cigar);
+        cigar::operation next_op =
+            map_aligned_values_to_cigar_op(std::get<0>(column), std::get<1>(column), extended_cigar);
 
         if (operation == next_op)
         {
@@ -264,7 +276,11 @@ template <seqan3::detail::pairwise_alignment alignment_type>
 [[nodiscard]] inline std::string get_cigar_string(std::vector<cigar> const & cigar_vector)
 {
     std::string result{};
-    std::ranges::for_each(cigar_vector, [&result] (auto & cig) { result.append(cig.to_string()); });
+    std::ranges::for_each(cigar_vector,
+                          [&result](auto & cig)
+                          {
+                              result.append(cig.to_string());
+                          });
     return result;
 }
 
@@ -379,7 +395,7 @@ template <seqan3::detail::writable_pairwise_alignment alignment_type>
 inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> const & cigar_vector)
 {
     using std::get;
-    auto current_ref_pos  = std::ranges::begin(get<0>(alignment));
+    auto current_ref_pos = std::ranges::begin(get<0>(alignment));
     auto current_read_pos = std::ranges::begin(get<1>(alignment));
 
     for (auto [cigar_count, cigar_operation] : cigar_vector)
@@ -388,15 +404,15 @@ inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> 
         if (('S'_cigar_operation == cigar_operation) || ('H'_cigar_operation == cigar_operation))
             continue;
 
-        assert(('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation) ||
-               ('X'_cigar_operation == cigar_operation) || ('D'_cigar_operation == cigar_operation) ||
-               ('N'_cigar_operation == cigar_operation) || ('I'_cigar_operation == cigar_operation) ||
-               ('P'_cigar_operation == cigar_operation)); // checked during IO
+        assert(('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation)
+               || ('X'_cigar_operation == cigar_operation) || ('D'_cigar_operation == cigar_operation)
+               || ('N'_cigar_operation == cigar_operation) || ('I'_cigar_operation == cigar_operation)
+               || ('P'_cigar_operation == cigar_operation)); // checked during IO
 
-        if (('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation) ||
-            ('X'_cigar_operation == cigar_operation))
+        if (('M'_cigar_operation == cigar_operation) || ('='_cigar_operation == cigar_operation)
+            || ('X'_cigar_operation == cigar_operation))
         {
-            std::ranges::advance(current_ref_pos , cigar_count);
+            std::ranges::advance(current_ref_pos, cigar_count);
             std::ranges::advance(current_read_pos, cigar_count);
         }
         else if (('D'_cigar_operation == cigar_operation) || ('N'_cigar_operation == cigar_operation))
@@ -406,7 +422,7 @@ inline void alignment_from_cigar(alignment_type & alignment, std::vector<cigar> 
             assert(std::distance(current_read_pos, std::ranges::end(get<1>(alignment))) >= 0);
             current_read_pos = insert_gap(get<1>(alignment), current_read_pos, cigar_count);
             ++current_read_pos;
-            std::ranges::advance(current_ref_pos , cigar_count);
+            std::ranges::advance(current_ref_pos, cigar_count);
         }
         else if (('I'_cigar_operation == cigar_operation)) // Insert gaps into ref
         {
@@ -434,7 +450,7 @@ struct access_restrictor_fn
     template <typename chr_t>
     [[noreturn]] chr_t operator()(chr_t) const
     {
-         throw std::logic_error{"Access is not allowed because there is no sequence information."};
+        throw std::logic_error{"Access is not allowed because there is no sequence information."};
     }
 };
 

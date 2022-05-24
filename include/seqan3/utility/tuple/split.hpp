@@ -33,10 +33,7 @@ namespace seqan3::detail
  *
  * \returns A new tuple with the extracted elements.
  */
-template <size_t beg,
-          template <typename ...> typename tuple_t,
-          size_t ... Is,
-          typename ...ts>
+template <size_t beg, template <typename...> typename tuple_t, size_t... Is, typename... ts>
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -44,10 +41,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t, std::index_sequence<Is...> 
 }
 
 //!\copydoc seqan3::detail::tuple_split
-template <size_t beg,
-          template <typename ...> typename tuple_t,
-          size_t ... Is,
-          typename ...ts>
+template <size_t beg, template <typename...> typename tuple_t, size_t... Is, typename... ts>
     requires tuple_like<tuple_t<ts...>> && tuple_like<tuple_t<>>
 constexpr auto tuple_split(tuple_t<ts...> && t, std::index_sequence<Is...> const & SEQAN3_DOXYGEN_ONLY(idx))
 {
@@ -85,7 +79,7 @@ namespace seqan3
  *
  * Concurrent invocations of this functions are thread safe.
  */
-template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
+template <size_t pivot_c, template <typename...> typename tuple_t, typename... ts>
     requires tuple_like<tuple_t<ts...>>
 constexpr auto tuple_split(tuple_t<ts...> const & t)
 {
@@ -96,7 +90,7 @@ constexpr auto tuple_split(tuple_t<ts...> const & t)
 }
 
 //!\copydoc seqan3::tuple_split
-template <size_t pivot_c, template <typename ...> typename tuple_t, typename ...ts>
+template <size_t pivot_c, template <typename...> typename tuple_t, typename... ts>
     requires tuple_like<tuple_t<ts...>>
 constexpr auto tuple_split(tuple_t<ts...> && t)
 {

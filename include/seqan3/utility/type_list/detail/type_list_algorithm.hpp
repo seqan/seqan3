@@ -47,7 +47,7 @@ struct type_list_expander;
  * This is a technical trick to make a type representable as a value. Instantiating a type might not always work
  * because not every type provides a default constructor. In addition it is possible to use incomplete types as well.
  */
-template <template <typename ...> typename type_list_t, typename ...args_t>
+template <template <typename...> typename type_list_t, typename... args_t>
 struct type_list_expander<type_list_t<args_t...>>
 {
     /*!\brief Invokes the actual function by passing the types as instances of std::type_identity to the target
@@ -110,10 +110,11 @@ template <typename type_list_t, typename unary_predicate_t>
 [[nodiscard]] constexpr bool all_of(unary_predicate_t && fn)
     requires template_specialisation_of<type_list_t, seqan3::type_list>
 {
-    return type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
-    {
-        return all_of(fn, std::forward<decltype(type_identities)>(type_identities)...);
-    });
+    return type_list_expander<type_list_t>::invoke_on_type_identities(
+        [&](auto &&... type_identities)
+        {
+            return all_of(fn, std::forward<decltype(type_identities)>(type_identities)...);
+        });
 }
 
 //-----------------------------------------------------------------------------
@@ -158,10 +159,11 @@ template <typename type_list_t, typename unary_function_t>
     requires template_specialisation_of<type_list_t, seqan3::type_list>
 constexpr void for_each(unary_function_t && fn)
 {
-    type_list_expander<type_list_t>::invoke_on_type_identities([&] (auto && ...type_identities)
-    {
-        for_each(fn, std::forward<decltype(type_identities)>(type_identities)...);
-    });
+    type_list_expander<type_list_t>::invoke_on_type_identities(
+        [&](auto &&... type_identities)
+        {
+            for_each(fn, std::forward<decltype(type_identities)>(type_identities)...);
+        });
 }
 
-}  // namespace seqan3::detail
+} // namespace seqan3::detail

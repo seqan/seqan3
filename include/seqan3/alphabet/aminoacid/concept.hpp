@@ -44,8 +44,8 @@ namespace seqan3::detail::adl_only
 {
 
 //!\brief Poison-pill overload to prevent non-ADL forms of unqualified lookup.
-template <typename ...args_t>
-void enable_aminoacid(args_t ...) = delete;
+template <typename... args_t>
+void enable_aminoacid(args_t...) = delete;
 
 //!\brief seqan3::detail::customisation_point_object (CPO) definition for seqan3::enable_aminoacid.
 //!\ingroup alphabet_aminoacid
@@ -61,18 +61,17 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
      *        std::type_identity instead of a default constructed alphabet.
      */
     template <typename alphabet_type>
-    using alphabet_or_type_identity
-        = std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>> &&
-                             seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
-                             std::remove_cvref_t<alphabet_type>,
-                             std::type_identity<alphabet_type>>;
+    using alphabet_or_type_identity =
+        std::conditional_t<std::is_nothrow_default_constructible_v<std::remove_cvref_t<alphabet_type>>
+                               && seqan3::is_constexpr_default_constructible_v<std::remove_cvref_t<alphabet_type>>,
+                           std::remove_cvref_t<alphabet_type>,
+                           std::type_identity<alphabet_type>>;
 
     /*!\brief CPO overload (check 1 out of 3): explicit customisation via `seqan3::custom::alphabet`
      * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<2>)(
         /*return*/ std::bool_constant<seqan3::custom::alphabet<alphabet_type>::enable_aminoacid>::value == true /*;*/
     );
 
@@ -86,8 +85,7 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
      * `enable_aminoacid(std::type_identity<alphabet_type>{})` will be called.
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<1>)(
         /*return*/ std::bool_constant<enable_aminoacid(alphabet_or_type_identity<alphabet_type>{})>::value == true /*;*/
     );
 
@@ -95,8 +93,7 @@ struct enable_aminoacid_cpo : public detail::customisation_point_object<enable_a
      * \tparam alphabet_type The type of the alphabet. (Needed to defer instantiation for incomplete types.)
      */
     template <typename alphabet_type = alphabet_t>
-    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)
-    (
+    static constexpr auto SEQAN3_CPO_OVERLOAD(priority_tag<0>)(
         /*return*/ std::is_base_of_v<seqan3::aminoacid_empty_base, alphabet_type> == true /*;*/
     );
 };

@@ -93,12 +93,12 @@ private:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr simd_find_optimum_policy() = default; //!< Defaulted.
-    constexpr simd_find_optimum_policy(simd_find_optimum_policy const &) = default; //!< Defaulted.
-    constexpr simd_find_optimum_policy(simd_find_optimum_policy &&) = default; //!< Defaulted.
+    constexpr simd_find_optimum_policy() = default;                                             //!< Defaulted.
+    constexpr simd_find_optimum_policy(simd_find_optimum_policy const &) = default;             //!< Defaulted.
+    constexpr simd_find_optimum_policy(simd_find_optimum_policy &&) = default;                  //!< Defaulted.
     constexpr simd_find_optimum_policy & operator=(simd_find_optimum_policy const &) = default; //!< Defaulted.
-    constexpr simd_find_optimum_policy & operator=(simd_find_optimum_policy &&) = default; //!< Defaulted.
-    ~simd_find_optimum_policy() = default; //!< Defaulted.
+    constexpr simd_find_optimum_policy & operator=(simd_find_optimum_policy &&) = default;      //!< Defaulted.
+    ~simd_find_optimum_policy() = default;                                                      //!< Defaulted.
 
     //!\brief Initialise the policy.
     template <typename configuration_t>
@@ -136,9 +136,9 @@ protected:
 
     //!\copydoc seqan3::detail::find_optimum_policy::check_score_of_last_row_cell
     template <typename cell_t, typename score_t>
-    constexpr void check_score_of_last_row_cell([[maybe_unused]] cell_t const & last_row_cell,
-                                                [[maybe_unused]] alignment_algorithm_state<score_t> & state) const
-        noexcept
+    constexpr void
+    check_score_of_last_row_cell([[maybe_unused]] cell_t const & last_row_cell,
+                                 [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only search in last row if requested and not done already.}
         if (!test_every_cell && test_last_row_cell)
@@ -152,9 +152,9 @@ protected:
 
     //!\copydoc seqan3::detail::find_optimum_policy::check_score_of_cells_in_last_column
     template <typename alignment_column_t, typename score_t>
-    constexpr void check_score_of_cells_in_last_column([[maybe_unused]] alignment_column_t && last_column,
-                                                       [[maybe_unused]] alignment_algorithm_state<score_t> & state)
-        const noexcept
+    constexpr void
+    check_score_of_cells_in_last_column([[maybe_unused]] alignment_column_t && last_column,
+                                        [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only check last cell if not done before.
         if (!test_every_cell && test_last_column_cell)
@@ -301,10 +301,8 @@ private:
         // In global alignment we are only interested in the position not the max of the scores.
         // In addition, the scores need to be corrected in order to track the right score.
         state.optimum.score = mask ? score_cell.current - this->score_offset : state.optimum.score;
-        state.optimum.column_index = mask ? column_positions - this->coordinate_offset
-                                          : state.optimum.column_index;
-        state.optimum.row_index = mask ? row_positions - this->coordinate_offset
-                                       : state.optimum.row_index;
+        state.optimum.column_index = mask ? column_positions - this->coordinate_offset : state.optimum.column_index;
+        state.optimum.row_index = mask ? row_positions - this->coordinate_offset : state.optimum.row_index;
     }
 };
 

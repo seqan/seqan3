@@ -67,7 +67,6 @@ private:
     //!\endcond
 
 public:
-
     /*!\brief The (extended) cigar operation alphabet of M,D,I,H,N,P,S,X,=.
      *
      * \details
@@ -101,12 +100,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr cigar() noexcept = default; //!< Defaulted.
-    constexpr cigar(cigar const &) noexcept = default; //!< Defaulted.
-    constexpr cigar(cigar &&) noexcept = default; //!< Defaulted.
+    constexpr cigar() noexcept = default;                          //!< Defaulted.
+    constexpr cigar(cigar const &) noexcept = default;             //!< Defaulted.
+    constexpr cigar(cigar &&) noexcept = default;                  //!< Defaulted.
     constexpr cigar & operator=(cigar const &) noexcept = default; //!< Defaulted.
-    constexpr cigar & operator=(cigar &&) noexcept = default; //!< Defaulted.
-    ~cigar() noexcept = default; //!< Defaulted.
+    constexpr cigar & operator=(cigar &&) noexcept = default;      //!< Defaulted.
+    ~cigar() noexcept = default;                                   //!< Defaulted.
 
     // Inherit constructors from base
     using base_t::base_t;
@@ -119,7 +118,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( constexpr cigar(component_type const alph) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY((constexpr cigar(component_type const alph) noexcept {}))
 
     /*!\brief Assignment via a value of one of the components.
      * \tparam component_type One of the component types; must be uniquely contained in the type list of the composite.
@@ -129,7 +128,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( constexpr cigar & operator=(component_type const alph) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY((constexpr cigar & operator=(component_type const alph) noexcept {}))
 
     // Inherit operators from base
     using base_t::operator=;
@@ -147,7 +146,7 @@ public:
         small_string<11> ret{}; // maximum number of digits for uint32_t + 1 char for the cigar operation
         ret.resize(11);
 
-        auto [ ptr, errc ] = std::to_chars(ret.data(), ret.data() + 10, get<0>(*this));
+        auto [ptr, errc] = std::to_chars(ret.data(), ret.data() + 10, get<0>(*this));
 
         *ptr = seqan3::to_char(get<1>(*this));
         (void)errc;
@@ -167,7 +166,7 @@ public:
     cigar & assign_string(small_string<11> const s) noexcept
     {
         uint32_t num{};
-        auto [ ptr, errc ] = std::from_chars(s.data(), s.data() + 10, num);
+        auto [ptr, errc] = std::from_chars(s.data(), s.data() + 10, num);
 
         if ((errc != std::errc{}) || (!char_is_valid_for<operation>(*ptr)) || (*(ptr + 1) != 0))
         {
@@ -193,7 +192,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( friend template <size_t index> constexpr auto get(cigar & l) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY((friend template <size_t index> constexpr auto get(cigar & l) noexcept {}))
 
     /*!\copybrief get
      * \tparam type Return the element of specified type; only available if the type is unique in the set of components.
@@ -203,7 +202,7 @@ public:
      *
      * \stableapi{Since version 3.1.}
      */
-    SEQAN3_DOXYGEN_ONLY(( friend template <typename type> constexpr auto get(cigar & l) noexcept {} ))
+    SEQAN3_DOXYGEN_ONLY((friend template <typename type> constexpr auto get(cigar & l) noexcept {}))
     //!\}
 };
 
@@ -241,6 +240,6 @@ constexpr cigar::operation operator""_cigar_operation(char const c) noexcept
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

@@ -32,28 +32,27 @@ namespace seqan3::align_cfg
  */
 struct open_score : seqan3::detail::strong_type<int32_t, open_score, seqan3::detail::strong_type_skill::convert>
 {
-   //!\brief The type of the strong type base class.
-   using base_t = seqan3::detail::strong_type<int32_t, open_score, seqan3::detail::strong_type_skill::convert>;
-   using base_t::base_t; // Import the base class constructors
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<int32_t, open_score, seqan3::detail::strong_type_skill::convert>;
+    using base_t::base_t; // Import the base class constructors
 };
 
- // ------------------------------------------------------------------
- // seqan3::align_cfg::extension_score
- // ------------------------------------------------------------------
+// ------------------------------------------------------------------
+// seqan3::align_cfg::extension_score
+// ------------------------------------------------------------------
 
- /*!\brief A strong type of underlying type `int32_t` that represents the score (usually negative) of any character
+/*!\brief A strong type of underlying type `int32_t` that represents the score (usually negative) of any character
   *        against a gap character.
   * \ingroup alignment_configuration
   * \see seqan3::align_cfg::gap_cost_affine
   */
- struct extension_score : seqan3::detail::strong_type<int32_t,
-                                                      extension_score,
-                                                      seqan3::detail::strong_type_skill::convert>
- {
-     //!\brief The type of the strong type base class.
-     using base_t = seqan3::detail::strong_type<int32_t, extension_score, seqan3::detail::strong_type_skill::convert>;
-     using base_t::base_t; // Import the base class constructors
- };
+struct extension_score :
+    seqan3::detail::strong_type<int32_t, extension_score, seqan3::detail::strong_type_skill::convert>
+{
+    //!\brief The type of the strong type base class.
+    using base_t = seqan3::detail::strong_type<int32_t, extension_score, seqan3::detail::strong_type_skill::convert>;
+    using base_t::base_t; // Import the base class constructors
+};
 
 /*!\brief A configuration element for the affine gap cost scheme.
  * \ingroup alignment_configuration
@@ -83,12 +82,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr gap_cost_affine() = default; //!< Defaulted
-    constexpr gap_cost_affine(gap_cost_affine const &)= default; //!< Defaulted
-    constexpr gap_cost_affine(gap_cost_affine &&) = default; //!< Defaulted
+    constexpr gap_cost_affine() = default;                                    //!< Defaulted
+    constexpr gap_cost_affine(gap_cost_affine const &) = default;             //!< Defaulted
+    constexpr gap_cost_affine(gap_cost_affine &&) = default;                  //!< Defaulted
     constexpr gap_cost_affine & operator=(gap_cost_affine const &) = default; //!< Defaulted
-    constexpr gap_cost_affine & operator=(gap_cost_affine &&) = default; //!< Defaulted
-    ~gap_cost_affine() = default; //!< Defaulted
+    constexpr gap_cost_affine & operator=(gap_cost_affine &&) = default;      //!< Defaulted
+    ~gap_cost_affine() = default;                                             //!< Defaulted
 
     /*!\brief Construction from strongly typed open score and extension score.
      * \param open_score The cost per consecutive sequence of gaps (of type seqan3::open_score).
@@ -103,7 +102,9 @@ public:
      */
     constexpr gap_cost_affine(seqan3::align_cfg::open_score open_score,
                               seqan3::align_cfg::extension_score extension_score) :
-        open_score(std::move(open_score)), extension_score(std::move(extension_score)) {}
+        open_score(std::move(open_score)),
+        extension_score(std::move(extension_score))
+    {}
     //!\}
 
     //!\privatesection

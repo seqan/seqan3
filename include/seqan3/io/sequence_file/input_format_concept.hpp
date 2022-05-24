@@ -40,12 +40,11 @@ template <typename format_type>
 struct sequence_file_input_format_exposer : public format_type
 {
 public:
-
     // Can't use `using format_type::read_sequence_record` as it produces a hard failure in the format concept check
     // for types that do not model the format concept, i.e. don't offer the proper read_sequence_record interface.
     //!\brief Forwards to the seqan3::sequence_file_input_format::read_sequence_record interface.
-    template <typename ...ts>
-    void read_sequence_record(ts && ...args)
+    template <typename... ts>
+    void read_sequence_record(ts &&... args)
     {
         format_type::read_sequence_record(std::forward<ts>(args)...);
     }
@@ -70,21 +69,27 @@ namespace seqan3
  */
 //!\cond
 template <typename t>
-concept sequence_file_input_format = requires (detail::sequence_file_input_format_exposer<t> & v,
-                                               std::ifstream                                 & f,
-                                               sequence_file_input_options<dna5>             & options,
-                                               std::streampos                                & position_buffer,
-                                               std::vector<dna5>                             & seq,
-                                               std::string                                   & id,
-                                               std::vector<phred42>                          & qual,
-                                               std::vector<qualified<dna5, phred42>>         & seq_qual)
-{
-    t::file_extensions;
+concept sequence_file_input_format =
+    requires (detail::sequence_file_input_format_exposer<t> & v,
+              std::ifstream & f,
+              sequence_file_input_options<dna5> & options,
+              std::streampos & position_buffer,
+              std::vector<dna5> & seq,
+              std::string & id,
+              std::vector<phred42> & qual,
+              std::vector<qualified<dna5, phred42>> & seq_qual) {
+        t::file_extensions;
 
-    {v.read_sequence_record(f, options, position_buffer, seq, id, qual)} -> std::same_as<void>;
-    {v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual)} -> std::same_as<void>;
-    {v.read_sequence_record(f, options, position_buffer, std::ignore, std::ignore, std::ignore)} -> std::same_as<void>;
-};
+        {
+            v.read_sequence_record(f, options, position_buffer, seq, id, qual)
+            } -> std::same_as<void>;
+        {
+            v.read_sequence_record(f, options, position_buffer, seq_qual, id, seq_qual)
+            } -> std::same_as<void>;
+        {
+            v.read_sequence_record(f, options, position_buffer, std::ignore, std::ignore, std::ignore)
+            } -> std::same_as<void>;
+    };
 //!\endcond
 
 /*!\name Requirements for seqan3::sequence_file_input_format
@@ -123,7 +128,7 @@ concept sequence_file_input_format = requires (detail::sequence_file_input_forma
  *     [This is enforced by the concept checker!]
  *   * In this case the data read for that field shall be discarded by the format.
  */
- /*!\var static inline std::vector<std::string> seqan3::sequence_file_input_format::file_extensions
+/*!\var static inline std::vector<std::string> seqan3::sequence_file_input_format::file_extensions
  * \brief The format type is required to provide a vector of all supported file extensions.
  */
 //!\}
@@ -146,7 +151,7 @@ constexpr bool is_type_list_of_sequence_file_input_formats_v = false;
  * \ingroup core
   * \see seqan3::type_list_specialisationOfsequence_file_input_formats
  */
-template <typename ...ts>
+template <typename... ts>
 constexpr bool is_type_list_of_sequence_file_input_formats_v<type_list<ts...>> =
     (sequence_file_input_format<ts> && ...);
 

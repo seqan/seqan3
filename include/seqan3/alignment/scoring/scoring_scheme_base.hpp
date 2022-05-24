@@ -21,7 +21,7 @@
 #include <seqan3/utility/concept.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <cereal/types/array.hpp>
+#    include <cereal/types/array.hpp>
 #endif // SEQAN3_WITH_CEREAL
 
 namespace seqan3
@@ -39,7 +39,7 @@ namespace seqan3
 template <arithmetic score_type>
 struct match_score : detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>
 {
-     using detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>::strong_type;
+    using detail::strong_type<score_type, match_score<score_type>, detail::strong_type_skill::convert>::strong_type;
 };
 
 /*!\name Template argument type deduction guides
@@ -64,7 +64,7 @@ match_score(score_type) -> match_score<score_type>;
 template <arithmetic score_type>
 struct mismatch_score : detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>
 {
-     using detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>::strong_type;
+    using detail::strong_type<score_type, mismatch_score<score_type>, detail::strong_type_skill::convert>::strong_type;
 };
 
 /*!\name Template argument type deduction guides
@@ -179,8 +179,8 @@ public:
     {
         std::conditional_t<std::integral<score_t>, int64_t, double> i_ms = static_cast<score_arg_t>(ms);
         std::conditional_t<std::integral<score_t>, int64_t, double> i_mms = static_cast<score_arg_t>(mms);
-        if ((i_ms  < std::numeric_limits<score_t>::lowest() || i_ms  > std::numeric_limits<score_t>::max()) ||
-            (i_mms < std::numeric_limits<score_t>::lowest() || i_mms > std::numeric_limits<score_t>::max()))
+        if ((i_ms < std::numeric_limits<score_t>::lowest() || i_ms > std::numeric_limits<score_t>::max())
+            || (i_mms < std::numeric_limits<score_t>::lowest() || i_mms > std::numeric_limits<score_t>::max()))
         {
             throw std::invalid_argument{"You passed a score value to set_simple_scheme that is out of range of the "
                                         "scoring scheme's underlying type. Define your scoring scheme with a larger "

@@ -32,16 +32,15 @@ namespace seqan3::detail
  * \hideinitializer
  */
 template <alphabet in_t, alphabet out_t>
-constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation
-{
-    [] () constexpr
-    {
-        std::array<out_t, alphabet_size<in_t>> ret{};
-        // for (decltype(alphabet_size<in_t>) i = 0; ...) causes indefinite compilation :(
-        for (auto i = decltype(alphabet_size<in_t>){0}; i < alphabet_size<in_t>; ++i)
-            assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
-        return ret;
-    }()
-};
+constexpr std::array<out_t, alphabet_size<in_t>> convert_through_char_representation{
+    []() constexpr {std::array<out_t, alphabet_size<in_t>> ret{};
+// for (decltype(alphabet_size<in_t>) i = 0; ...) causes indefinite compilation :(
+for (auto i = decltype(alphabet_size<in_t>){0}; i < alphabet_size<in_t>; ++i)
+    assign_char_to(to_char(assign_rank_to(i, in_t{})), ret[i]);
+return ret;
+} // namespace seqan3::detail
+()
+}
+;
 
 } // namespace seqan3::detail

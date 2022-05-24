@@ -45,12 +45,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr trace_iterator_banded() = default; //!< Defaulted.
-    constexpr trace_iterator_banded(trace_iterator_banded const &) = default; //!< Defaulted.
-    constexpr trace_iterator_banded(trace_iterator_banded &&) = default; //!< Defaulted.
+    constexpr trace_iterator_banded() = default;                                          //!< Defaulted.
+    constexpr trace_iterator_banded(trace_iterator_banded const &) = default;             //!< Defaulted.
+    constexpr trace_iterator_banded(trace_iterator_banded &&) = default;                  //!< Defaulted.
     constexpr trace_iterator_banded & operator=(trace_iterator_banded const &) = default; //!< Defaulted.
-    constexpr trace_iterator_banded & operator=(trace_iterator_banded &&) = default; //!< Defaulted.
-    ~trace_iterator_banded() = default; //!< Defaulted.
+    constexpr trace_iterator_banded & operator=(trace_iterator_banded &&) = default;      //!< Defaulted.
+    ~trace_iterator_banded() = default;                                                   //!< Defaulted.
 
     /*!\brief Constructs from the underlying trace matrix iterator indicating the start of the trace path.
      * \param[in] matrix_iter The underlying matrix iterator.
@@ -58,8 +58,8 @@ public:
      *                         banded matrix.
      */
     template <typename index_t>
-    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter, column_index_type<index_t> const & pivot_column)
-        noexcept :
+    constexpr trace_iterator_banded(matrix_iter_t const matrix_iter,
+                                    column_index_type<index_t> const & pivot_column) noexcept :
         base_t{matrix_iter},
         pivot_column{static_cast<size_t>(pivot_column.get())}
     {}

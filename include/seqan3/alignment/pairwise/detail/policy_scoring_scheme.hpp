@@ -40,12 +40,12 @@ protected:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    policy_scoring_scheme() = default; //!< Defaulted.
-    policy_scoring_scheme(policy_scoring_scheme const &) = default; //!< Defaulted.
-    policy_scoring_scheme(policy_scoring_scheme &&) = default; //!< Defaulted.
+    policy_scoring_scheme() = default;                                          //!< Defaulted.
+    policy_scoring_scheme(policy_scoring_scheme const &) = default;             //!< Defaulted.
+    policy_scoring_scheme(policy_scoring_scheme &&) = default;                  //!< Defaulted.
     policy_scoring_scheme & operator=(policy_scoring_scheme const &) = default; //!< Defaulted.
-    policy_scoring_scheme & operator=(policy_scoring_scheme &&) = default; //!< Defaulted.
-    ~policy_scoring_scheme() = default; //!< Defaulted.
+    policy_scoring_scheme & operator=(policy_scoring_scheme &&) = default;      //!< Defaulted.
+    ~policy_scoring_scheme() = default;                                         //!< Defaulted.
 
     /*!\brief Construction and initialisation using the alignment configuration.
      * \param[in] config The alignment configuration with the stored scoring scheme.

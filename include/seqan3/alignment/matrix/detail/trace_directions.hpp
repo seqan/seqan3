@@ -28,17 +28,17 @@ namespace seqan3::detail
 enum struct trace_directions : uint8_t
 {
     //!\brief No trace
-    none      = 0b00000,
+    none = 0b00000,
     //!\brief Trace comes from the diagonal entry.
-    diagonal  = 0b00001,
+    diagonal = 0b00001,
     //!\brief Trace comes from the above entry, while opening the gap.
-    up_open   = 0b00010,
+    up_open = 0b00010,
     //!\brief Trace comes from the above entry.
-    up        = 0b00100,
+    up = 0b00100,
     //!\brief Trace comes from the left entry, while opening the gap.
     left_open = 0b01000,
     //!\brief Trace comes from the left entry.
-    left      = 0b10000
+    left = 0b10000
 };
 
 } // namespace seqan3::detail
@@ -74,15 +74,13 @@ constexpr bool add_enum_bitwise_operators<seqan3::detail::trace_directions> = tr
 template <typename char_t>
 inline debug_stream_type<char_t> & operator<<(debug_stream_type<char_t> & s, detail::trace_directions const trace)
 {
-    static char const * unicode[32]{ "↺",   "↖",   "↑",   "↖↑",   "⇡",   "↖⇡",   "↑⇡",   "↖↑⇡",
-                                     "←",  "↖←",  "↑←",  "↖↑←",  "⇡←",  "↖⇡←",  "↑⇡←",  "↖↑⇡←",
-                                     "⇠",  "↖⇠",  "↑⇠",  "↖↑⇠",  "⇡⇠",  "↖⇡⇠",  "↑⇡⇠",  "↖↑⇡⇠",
-                                    "←⇠", "↖←⇠", "↑←⇠", "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
+    static char const * unicode[32]{"↺",   "↖",    "↑",   "↖↑",  "⇡",    "↖⇡",   "↑⇡",  "↖↑⇡",  "←",    "↖←",   "↑←",
+                                    "↖↑←", "⇡←",   "↖⇡←", "↑⇡←", "↖↑⇡←", "⇠",    "↖⇠",  "↑⇠",   "↖↑⇠",  "⇡⇠",   "↖⇡⇠",
+                                    "↑⇡⇠", "↖↑⇡⇠", "←⇠",  "↖←⇠", "↑←⇠",  "↖↑←⇠", "⇡←⇠", "↖⇡←⇠", "↑⇡←⇠", "↖↑⇡←⇠"};
 
-    static char const * csv[32]{ "N",   "D",   "U",   "DU",   "u",   "Du",   "Uu",   "DUu",
-                                 "L",  "DL",  "UL",  "DUL",  "uL",  "DuL",  "UuL",  "DUuL",
-                                 "l",  "Dl",  "Ul",  "DUl",  "ul",  "Dul",  "Uul",  "DUul",
-                                "Ll", "DLl", "ULl", "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
+    static char const * csv[32]{"N",   "D",    "U",   "DU",  "u",    "Du",   "Uu",  "DUu",  "L",    "DL",   "UL",
+                                "DUL", "uL",   "DuL", "UuL", "DUuL", "l",    "Dl",  "Ul",   "DUl",  "ul",   "Dul",
+                                "Uul", "DUul", "Ll",  "DLl", "ULl",  "DULl", "uLl", "DuLl", "UuLl", "DUuLl"};
 
     bool is_unicode = (s.flags2() & fmtflags2::utf8) == fmtflags2::utf8;
     auto const & trace_dir = is_unicode ? unicode : csv;

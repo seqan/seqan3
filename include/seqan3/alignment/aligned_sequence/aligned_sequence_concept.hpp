@@ -29,18 +29,21 @@ namespace seqan3::detail
 {
 
 //!\brief Helper function to deduce the unaligned sequence type from an aligned sequence container.
-template <template <typename ...> typename container_type, typename seq_alph_t, typename ...rest_t>
+template <template <typename...> typename container_type, typename seq_alph_t, typename... rest_t>
     requires container<container_type<gapped<seq_alph_t>, rest_t...>>
 constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, rest_t...>)
     -> container_type<seq_alph_t, rest_t...>;
 
 //!\overload
-template <template <typename ...> typename container_type,
-          template <typename ...> typename allocator_type,
-          typename seq_alph_t, typename ...rest_t>
+template <template <typename...> typename container_type,
+          template <typename...>
+          typename allocator_type,
+          typename seq_alph_t,
+          typename... rest_t>
     requires container<container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>>
-constexpr auto remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
-    -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;
+constexpr auto
+    remove_gap_from_value_type(container_type<gapped<seq_alph_t>, allocator_type<gapped<seq_alph_t>>, rest_t...>)
+        -> container_type<seq_alph_t, allocator_type<seq_alph_t>, rest_t...>;
 
 //!\brief Default transformation trait that shall expose the unaligned sequence type of t when specialised.
 template <typename t>
@@ -49,8 +52,8 @@ struct unaligned_seq
 
 //!\brief Exposes the unaligned sequence type given an aligned sequence container type.
 template <typename t>
-    requires (!requires { typename std::remove_reference_t<t>::unaligned_sequence_type; }) &&
-              requires { remove_gap_from_value_type(std::declval<t>()); }
+    requires (!requires { typename std::remove_reference_t<t>::unaligned_sequence_type; })
+          && requires { remove_gap_from_value_type(std::declval<t>()); }
 struct unaligned_seq<t>
 {
     //!\brief The unaligned sequence type of t
@@ -101,9 +104,7 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept aligned_sequence =
-    sequence<t> &&
-    std::equality_comparable_with<std::ranges::range_reference_t<t>, gap>;
+concept aligned_sequence = sequence<t> && std::equality_comparable_with<std::ranges::range_reference_t<t>, gap>;
 //!\endcond
 
 /*!\interface seqan3::writable_aligned_sequence <>
@@ -214,18 +215,25 @@ concept aligned_sequence =
 //!\cond
 template <typename t>
 concept writable_aligned_sequence =
-    aligned_sequence<t> &&
-    std::ranges::forward_range<t> &&
-    requires { typename detail::unaligned_seq_t<t>; } &&
-    requires (t v, detail::unaligned_seq_t<t> unaligned)
-    {
-        // global functions for generic usability
-        {insert_gap(v, std::ranges::begin(v))} -> std::same_as<std::ranges::iterator_t<t>>;
-        {insert_gap(v, std::ranges::begin(v), 2)} -> std::same_as<std::ranges::iterator_t<t>>;
-        {erase_gap(v, std::ranges::begin(v))} -> std::same_as<std::ranges::iterator_t<t>>;
-        {erase_gap(v, std::ranges::begin(v), std::ranges::end(v))} -> std::same_as<std::ranges::iterator_t<t>>;
-        {assign_unaligned(v, unaligned)} -> std::same_as<void>;
-    };
+    aligned_sequence<t> && std::ranges::forward_range<t> && requires { typename detail::unaligned_seq_t<t>; }
+    && requires (t v, detail::unaligned_seq_t<t> unaligned) {
+           // global functions for generic usability
+           {
+               insert_gap(v, std::ranges::begin(v))
+               } -> std::same_as<std::ranges::iterator_t<t>>;
+           {
+               insert_gap(v, std::ranges::begin(v), 2)
+               } -> std::same_as<std::ranges::iterator_t<t>>;
+           {
+               erase_gap(v, std::ranges::begin(v))
+               } -> std::same_as<std::ranges::iterator_t<t>>;
+           {
+               erase_gap(v, std::ranges::begin(v), std::ranges::end(v))
+               } -> std::same_as<std::ranges::iterator_t<t>>;
+           {
+               assign_unaligned(v, unaligned)
+               } -> std::same_as<void>;
+       };
 //!\endcond
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -371,8 +379,8 @@ inline typename aligned_seq_t::iterator erase_gap(aligned_seq_t & aligned_seq,
  *
  */
 template <sequence_container aligned_seq_t, std::ranges::forward_range unaligned_sequence_type>
-    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>> &&
-             weakly_assignable_from<std::ranges::range_reference_t<aligned_seq_t>,
+    requires detail::is_gapped_alphabet<std::iter_value_t<aligned_seq_t>>
+          && weakly_assignable_from<std::ranges::range_reference_t<aligned_seq_t>,
                                     std::ranges::range_reference_t<unaligned_sequence_type>>
 inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_type && unaligned_seq)
 {
@@ -405,11 +413,10 @@ inline void assign_unaligned(aligned_seq_t & aligned_seq, unaligned_sequence_typ
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
-    requires requires (range_type v)
-        {
-            v.insert_gap(std::ranges::iterator_t<range_type>{});
-            v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
-        }
+    requires requires (range_type v) {
+                 v.insert_gap(std::ranges::iterator_t<range_type>{});
+                 v.insert_gap(std::ranges::iterator_t<range_type>{}, typename range_type::size_type{});
+             }
 std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
                                                std::ranges::iterator_t<range_type> const pos_it,
                                                typename range_type::size_type const size = 1)
@@ -435,8 +442,7 @@ std::ranges::iterator_t<range_type> insert_gap(range_type & rng,
  */
 template <typename range_type>
     requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}); }
-std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
-                                              std::ranges::iterator_t<range_type> const pos_it)
+std::ranges::iterator_t<range_type> erase_gap(range_type & rng, std::ranges::iterator_t<range_type> const pos_it)
 {
     return rng.erase_gap(pos_it);
 }
@@ -460,7 +466,9 @@ std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
  * \note This may cause reallocations and thus invalidates all iterators and references. Use the returned iterator.
  */
 template <typename range_type>
-    requires requires (range_type v) { v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{}); }
+    requires requires (range_type v) {
+                 v.erase_gap(std::ranges::iterator_t<range_type>{}, std::ranges::iterator_t<range_type>{});
+             }
 std::ranges::iterator_t<range_type> erase_gap(range_type & rng,
                                               std::ranges::iterator_t<range_type> const first,
                                               std::ranges::iterator_t<range_type> const last)
@@ -476,12 +484,12 @@ namespace seqan3::detail
 /*!\brief True, if each type models seqan3::aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
-template <typename ...elems>
-inline bool constexpr all_model_aligned_seq = (aligned_sequence<elems> && ...);
+template <typename... elems>
+inline constexpr bool all_model_aligned_seq = (aligned_sequence<elems> && ...);
 
 /*!\brief True, if each type in the seqan3::type_list models seqan3::aligned_sequence; false otherwise.
  * \tparam elems The pack of types to be tested.
  */
-template <typename ...elems>
-inline bool constexpr all_model_aligned_seq<type_list<elems...>> = all_model_aligned_seq<elems...>;
+template <typename... elems>
+inline constexpr bool all_model_aligned_seq<type_list<elems...>> = all_model_aligned_seq<elems...>;
 } // namespace seqan3::detail

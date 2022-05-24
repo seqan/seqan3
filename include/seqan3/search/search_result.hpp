@@ -20,8 +20,8 @@
 #include <seqan3/core/debug_stream/debug_stream_type.hpp>
 #include <seqan3/core/detail/empty_type.hpp>
 #include <seqan3/core/detail/template_inspection.hpp>
-#include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/concept.hpp>
 #include <seqan3/search/fm_index/fm_index_cursor.hpp>
 
 namespace seqan3::detail
@@ -70,13 +70,13 @@ template <typename query_id_type,
           typename cursor_type,
           typename reference_id_type,
           typename reference_begin_position_type>
-    requires (std::integral<query_id_type> || std::same_as<query_id_type, detail::empty_type>) &&
-             (detail::template_specialisation_of<cursor_type, fm_index_cursor> ||
-                     detail::template_specialisation_of<cursor_type, bi_fm_index_cursor> ||
-                     std::same_as<cursor_type, detail::empty_type>) &&
-             (std::integral<reference_id_type> || std::same_as<reference_id_type, detail::empty_type>) &&
-             (std::integral<reference_begin_position_type> || std::same_as<reference_begin_position_type,
-                                                                           detail::empty_type>)
+    requires (std::integral<query_id_type> || std::same_as<query_id_type, detail::empty_type>)
+          && (detail::template_specialisation_of<cursor_type, fm_index_cursor>
+              || detail::template_specialisation_of<cursor_type, bi_fm_index_cursor>
+              || std::same_as<cursor_type, detail::empty_type>)
+          && (std::integral<reference_id_type> || std::same_as<reference_id_type, detail::empty_type>)
+          && (std::integral<reference_begin_position_type>
+              || std::same_as<reference_begin_position_type, detail::empty_type>)
 class search_result
 {
 private:
@@ -91,21 +91,21 @@ private:
 
     // Grant the policy access to private constructors.
     template <typename search_configuration_t>
-    #if !SEQAN3_WORKAROUND_GCC_93467
+#if !SEQAN3_WORKAROUND_GCC_93467
         requires detail::is_type_specialisation_of_v<search_configuration_t, configuration>
-    #endif // !SEQAN3_WORKAROUND_GCC_93467
+#endif // !SEQAN3_WORKAROUND_GCC_93467
     friend struct detail::policy_search_result_builder;
 
 public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    search_result() = default; //!< Defaulted.
-    search_result(search_result const &) = default; //!< Defaulted.
-    search_result(search_result &&) = default; //!< Defaulted.
+    search_result() = default;                                  //!< Defaulted.
+    search_result(search_result const &) = default;             //!< Defaulted.
+    search_result(search_result &&) = default;                  //!< Defaulted.
     search_result & operator=(search_result const &) = default; //!< Defaulted.
-    search_result & operator=(search_result &&) = default; //!< Defaulted.
-    ~search_result() = default; //!< Defaulted.
+    search_result & operator=(search_result &&) = default;      //!< Defaulted.
+    ~search_result() = default;                                 //!< Defaulted.
 
     //!\}
 

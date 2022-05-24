@@ -62,12 +62,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr shape()                          noexcept = default; //!< Defaulted.
-    constexpr shape(shape const &)             noexcept = default; //!< Defaulted.
-    constexpr shape(shape &&)                  noexcept = default; //!< Defaulted.
+    constexpr shape() noexcept = default;                          //!< Defaulted.
+    constexpr shape(shape const &) noexcept = default;             //!< Defaulted.
+    constexpr shape(shape &&) noexcept = default;                  //!< Defaulted.
     constexpr shape & operator=(shape const &) noexcept = default; //!< Defaulted.
-    constexpr shape & operator=(shape &&)      noexcept = default; //!< Defaulted.
-    ~shape()                                   noexcept = default; //!< Defaulted.
+    constexpr shape & operator=(shape &&) noexcept = default;      //!< Defaulted.
+    ~shape() noexcept = default;                                   //!< Defaulted.
 
     /*!\brief Construct an ungapped shape from a given size.
      *
@@ -127,6 +127,6 @@ constexpr shape operator""_shape(unsigned long long const value)
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
-}// namespace seqan3
+} // namespace seqan3

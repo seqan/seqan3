@@ -90,12 +90,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr simd_matrix_scoring_scheme() = default; //!< Defaulted.
-    constexpr simd_matrix_scoring_scheme(simd_matrix_scoring_scheme const &) = default; //!< Defaulted.
-    constexpr simd_matrix_scoring_scheme(simd_matrix_scoring_scheme &&) = default; //!< Defaulted.
+    constexpr simd_matrix_scoring_scheme() = default;                                               //!< Defaulted.
+    constexpr simd_matrix_scoring_scheme(simd_matrix_scoring_scheme const &) = default;             //!< Defaulted.
+    constexpr simd_matrix_scoring_scheme(simd_matrix_scoring_scheme &&) = default;                  //!< Defaulted.
     constexpr simd_matrix_scoring_scheme & operator=(simd_matrix_scoring_scheme const &) = default; //!< Defaulted.
-    constexpr simd_matrix_scoring_scheme & operator=(simd_matrix_scoring_scheme &&) = default; //!< Defaulted.
-    ~simd_matrix_scoring_scheme() = default; //!< Defaulted.
+    constexpr simd_matrix_scoring_scheme & operator=(simd_matrix_scoring_scheme &&) = default;      //!< Defaulted.
+    ~simd_matrix_scoring_scheme() = default;                                                        //!< Defaulted.
 
     //!\copydoc seqan3::detail::simd_matrix_scoring_scheme::initialise_from_scalar_scoring_scheme
     template <typename scoring_scheme_t>
@@ -187,7 +187,7 @@ private:
         using score_t = decltype(std::declval<scoring_scheme_t const &>().score(alphabet_t{}, alphabet_t{}));
 
         // Helper function to check if the matrix score is in the value range representable by the selected simd vector.
-        [[maybe_unused]] auto check_score_range = [&] ([[maybe_unused]] score_t score)
+        [[maybe_unused]] auto check_score_range = [&]([[maybe_unused]] score_t score)
         {
             // Note only if the size of the scalar type of the simd vector is smaller than the size of the score type
             // of the original scoring scheme, the score might exceed the valid value range of the scalar type. In this

@@ -23,7 +23,7 @@
 #include <seqan3/utility/views/slice.hpp>
 
 #if SEQAN3_WITH_CEREAL
-#include <cereal/types/vector.hpp>
+#    include <cereal/types/vector.hpp>
 #endif
 
 namespace seqan3
@@ -81,9 +81,9 @@ namespace seqan3
  */
 template <typename underlying_container_type,
           typename data_delimiters_type = std::vector<typename underlying_container_type::size_type>>
-    requires reservible_container<std::remove_reference_t<underlying_container_type>> &&
-             reservible_container<std::remove_reference_t<data_delimiters_type>> &&
-             std::is_same_v<std::ranges::range_size_t<underlying_container_type>,
+    requires reservible_container<std::remove_reference_t<underlying_container_type>>
+          && reservible_container<std::remove_reference_t<data_delimiters_type>>
+          && std::is_same_v<std::ranges::range_size_t<underlying_container_type>,
                             std::ranges::range_value_t<data_delimiters_type>>
 class concatenated_sequences
 {
@@ -119,8 +119,8 @@ public:
      * \details
      * \experimentalapi{Experimental since version 3.1.}
      */
-    using const_reference = decltype(std::declval<std::decay_t<underlying_container_type> const &>() |
-                                     views::slice(0, 1));
+    using const_reference =
+        decltype(std::declval<std::decay_t<underlying_container_type> const &>() | views::slice(0, 1));
 
     /*!\brief The iterator type of this container (a random access iterator).
      * \hideinitializer
@@ -153,7 +153,7 @@ public:
 
     //!\cond
     // this signals to range-v3 that something is a container :|
-    using allocator_type    = void;
+    using allocator_type = void;
     //!\endcond
 
 protected:
@@ -167,8 +167,8 @@ protected:
     template <std::ranges::range t>
     static constexpr bool is_compatible_with_value_type_aux(std::type_identity<t>)
     {
-        return range_dimension_v<t> == range_dimension_v<value_type> &&
-               std::convertible_to<std::ranges::range_reference_t<t>, std::ranges::range_value_t<value_type>>;
+        return range_dimension_v<t> == range_dimension_v<value_type>
+            && std::convertible_to<std::ranges::range_reference_t<t>, std::ranges::range_value_t<value_type>>;
     }
 
     static constexpr bool is_compatible_with_value_type_aux(...)
@@ -298,8 +298,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     concatenated_sequences(begin_iterator_type begin_it, end_iterator_type end_it)
-        requires std::sized_sentinel_for<end_iterator_type, begin_iterator_type> &&
-                 iter_value_t_is_compatible_with_value_type<begin_iterator_type>
+        requires std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
+              && iter_value_t_is_compatible_with_value_type<begin_iterator_type>
     {
         insert(cend(), begin_it, end_it);
     }
@@ -412,8 +412,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     void assign(begin_iterator_type begin_it, end_iterator_type end_it)
-        requires iter_value_t_is_compatible_with_value_type<begin_iterator_type> &&
-                 std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
+        requires iter_value_t_is_compatible_with_value_type<begin_iterator_type>
+              && std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
     {
         concatenated_sequences rhs{begin_it, end_it};
         swap(rhs);
@@ -564,14 +564,14 @@ public:
     reference operator[](size_type const i)
     {
         assert(i < size());
-        return data_values | views::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | views::slice(data_delimiters[i], data_delimiters[i + 1]);
     }
 
     //!\copydoc operator[]()
     const_reference operator[](size_type const i) const
     {
         assert(i < size());
-        return data_values | views::slice(data_delimiters[i], data_delimiters[i+1]);
+        return data_values | views::slice(data_delimiters[i], data_delimiters[i + 1]);
     }
 
     /*!\brief Return the first element as a view. Calling front on an empty container is undefined.
@@ -618,14 +618,14 @@ public:
     reference back()
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     //!\copydoc back()
     const_reference back() const
     {
         assert(size() > 0);
-        return (*this)[size()-1];
+        return (*this)[size() - 1];
     }
 
     /*!\brief Return the concatenation of all members.
@@ -875,7 +875,6 @@ public:
     }
     //!\}
 
-
     /*!\name Modifiers
      * \{
      */
@@ -983,8 +982,8 @@ public:
             value_len = std::distance(std::ranges::begin(value), std::ranges::end(value));
 
         data_values.reserve(data_values.size() + count * value_len);
-        auto placeholder = views::repeat_n(std::ranges::range_value_t<rng_type>{}, count * value_len)
-                         | std::views::common;
+        auto placeholder =
+            views::repeat_n(std::ranges::range_value_t<rng_type>{}, count * value_len) | std::views::common;
         // insert placeholder so the tail is moved once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            std::ranges::begin(placeholder),
@@ -997,9 +996,7 @@ public:
                 data_values[i++] = v;
 
         data_delimiters.reserve(data_values.size() + count);
-        data_delimiters.insert(data_delimiters.begin() + pos_as_num,
-                               count,
-                               *(data_delimiters.begin() + pos_as_num));
+        data_delimiters.insert(data_delimiters.begin() + pos_as_num, count, *(data_delimiters.begin() + pos_as_num));
 
         // adapt delimiters of inserted
         for (size_type i = 0; i < count; ++i)
@@ -1009,7 +1006,10 @@ public:
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + pos_as_num + count + 1,
                       data_delimiters.end(),
-                      [full_len = value_len * count] (auto & d) { d += full_len; });
+                      [full_len = value_len * count](auto & d)
+                      {
+                          d += full_len;
+                      });
 
         return begin() + pos_as_num;
     }
@@ -1042,8 +1042,8 @@ public:
      */
     template <std::forward_iterator begin_iterator_type, typename end_iterator_type>
     iterator insert(const_iterator pos, begin_iterator_type first, end_iterator_type last)
-        requires iter_value_t_is_compatible_with_value_type<begin_iterator_type> &&
-                 std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
+        requires iter_value_t_is_compatible_with_value_type<begin_iterator_type>
+              && std::sized_sentinel_for<end_iterator_type, begin_iterator_type>
     {
         auto const pos_as_num = std::distance(cbegin(), pos);
         // TODO SEQAN_UNLIKELY
@@ -1060,7 +1060,6 @@ public:
                                ilist.size(),
                                *(data_delimiters.begin() + pos_as_num));
 
-
         // adapt delimiters of inserted region
         size_type full_len = 0;
         for (size_type i = 0; i < ilist.size(); ++i, ++first)
@@ -1070,8 +1069,7 @@ public:
         }
 
         // adapt values of inserted region
-        auto placeholder = views::repeat_n(std::ranges::range_value_t<value_type>{}, full_len)
-                         | std::views::common;
+        auto placeholder = views::repeat_n(std::ranges::range_value_t<value_type>{}, full_len) | std::views::common;
         // insert placeholder so the tail is moved only once:
         data_values.insert(data_values.begin() + data_delimiters[pos_as_num],
                            std::ranges::begin(placeholder),
@@ -1083,12 +1081,14 @@ public:
             for (auto && v1 : v0)
                 data_values[i++] = v1;
 
-
         // adapt delimiters behind inserted region
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + pos_as_num + ilist.size() + 1,
                       data_delimiters.end(),
-                      [full_len] (auto & d) { d += full_len; });
+                      [full_len](auto & d)
+                      {
+                          d += full_len;
+                      });
 
         return begin() + pos_as_num;
     }
@@ -1155,17 +1155,18 @@ public:
         for (; first != last; ++first)
             sum_size += std::ranges::size(*first);
 
-        data_values.erase(data_values.begin() + data_delimiters[distf],
-                          data_values.begin() + data_delimiters[dist]);
+        data_values.erase(data_values.begin() + data_delimiters[distf], data_values.begin() + data_delimiters[dist]);
 
-        data_delimiters.erase(data_delimiters.begin() + distf + 1,
-                              data_delimiters.begin() + dist + 1);
+        data_delimiters.erase(data_delimiters.begin() + distf + 1, data_delimiters.begin() + dist + 1);
 
         // adapt delimiters after that
         // TODO parallel execution policy or vectorization?
         std::for_each(data_delimiters.begin() + distf + 1,
                       data_delimiters.end(),
-                      [sum_size] (auto & d) { d -= sum_size; });
+                      [sum_size](auto & d)
+                      {
+                          d -= sum_size;
+                      });
         return begin() + dist;
     }
 
@@ -1191,7 +1192,7 @@ public:
      */
     iterator erase(const_iterator pos)
     {
-       return erase(pos, pos + 1);
+        return erase(pos, pos + 1);
     }
 
     /*!\brief Appends the given element value to the end of the container.

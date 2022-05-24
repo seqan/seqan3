@@ -29,11 +29,11 @@ namespace seqan3
 //!\sa seqan3::enum_bitwise_operators enables combining enum values.
 enum fmtflags2
 {
-    none                = 0,        //!< No flag is set.
-    utf8                = 1,        //!< Enables use of non-ASCII UTF8 characters in formatted output.
-    small_int_as_number = 1 << 1,   //!< `int8_t` and `uint8_t` are often aliases for `signed char` and `unsigned char`
-                                    //!< resp. resulting in chars being printed; this options prints them as numbers.
-    default_            = small_int_as_number
+    none = 0,                     //!< No flag is set.
+    utf8 = 1,                     //!< Enables use of non-ASCII UTF8 characters in formatted output.
+    small_int_as_number = 1 << 1, //!< `int8_t` and `uint8_t` are often aliases for `signed char` and `unsigned char`
+                                  //!< resp. resulting in chars being printed; this options prints them as numbers.
+    default_ = small_int_as_number
 };
 
 //!\cond DEV
@@ -81,12 +81,12 @@ public:
      * \brief The standard functions are explicitly set to default.
      * \{
      */
-    debug_stream_type() = default;                                       //!< Defaulted
-    debug_stream_type(debug_stream_type const &) = default;              //!< Defaulted
-    debug_stream_type(debug_stream_type &&) = default;                   //!< Defaulted
-    debug_stream_type & operator= (debug_stream_type const &) = default; //!< Defaulted
-    debug_stream_type & operator= (debug_stream_type &&) = default;      //!< Defaulted
-    ~debug_stream_type() = default;                                      //!< Defaulted
+    debug_stream_type() = default;                                      //!< Defaulted
+    debug_stream_type(debug_stream_type const &) = default;             //!< Defaulted
+    debug_stream_type(debug_stream_type &&) = default;                  //!< Defaulted
+    debug_stream_type & operator=(debug_stream_type const &) = default; //!< Defaulted
+    debug_stream_type & operator=(debug_stream_type &&) = default;      //!< Defaulted
+    ~debug_stream_type() = default;                                     //!< Defaulted
 
     //!\brief Construction from an output stream.
     constexpr explicit debug_stream_type(std::basic_ostream<char_t> & out) : stream{&out}
@@ -127,7 +127,7 @@ public:
     friend debug_stream_type<other_char_t> & operator<<(debug_stream_type<other_char_t> & s, t && v);
 
     //!\brief This overloads enables forwarding std::endl and other manipulators.
-    debug_stream_type & operator<<(std::ostream&(*fp)(std::ostream&))
+    debug_stream_type & operator<<(std::ostream & (*fp)(std::ostream &))
     {
         *stream << fp;
         return *this;
@@ -232,7 +232,7 @@ public:
 
 private:
     //!\brief Pointer to the output stream.
-    std::basic_ostream<char_t> *stream/* = &std::cerr*/;
+    std::basic_ostream<char_t> * stream /* = &std::cerr*/;
 
     //!\brief The SeqAn specific flags to the stream.
     fmtflags2 flgs2{fmtflags2::default_};

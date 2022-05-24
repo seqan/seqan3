@@ -52,12 +52,12 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr phred68solexa()                                   noexcept = default; //!< Defaulted.
-    constexpr phred68solexa(phred68solexa const &)              noexcept = default; //!< Defaulted.
-    constexpr phred68solexa(phred68solexa &&)                   noexcept = default; //!< Defaulted.
-    constexpr phred68solexa & operator=(phred68solexa const &)  noexcept = default; //!< Defaulted.
-    constexpr phred68solexa & operator=(phred68solexa &&)       noexcept = default; //!< Defaulted.
-    ~phred68solexa()                                            noexcept = default; //!< Defaulted.
+    constexpr phred68solexa() noexcept = default;                                  //!< Defaulted.
+    constexpr phred68solexa(phred68solexa const &) noexcept = default;             //!< Defaulted.
+    constexpr phred68solexa(phred68solexa &&) noexcept = default;                  //!< Defaulted.
+    constexpr phred68solexa & operator=(phred68solexa const &) noexcept = default; //!< Defaulted.
+    constexpr phred68solexa & operator=(phred68solexa &&) noexcept = default;      //!< Defaulted.
+    ~phred68solexa() noexcept = default;                                           //!< Defaulted.
 
     // Inherit converting constructor
     using base_t::base_t;
@@ -124,6 +124,6 @@ inline std::vector<phred68solexa> operator""_phred68solexa(char const * s, std::
 }
 //!\}
 
-} // inline namespace literals
+} // namespace literals
 
 } // namespace seqan3

@@ -59,12 +59,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    counted_simd_iterator() = default; //!< Defaulted.
-    counted_simd_iterator(counted_simd_iterator const &) = default; //!< Defaulted.
-    counted_simd_iterator(counted_simd_iterator &&) = default; //!< Defaulted.
+    counted_simd_iterator() = default;                                          //!< Defaulted.
+    counted_simd_iterator(counted_simd_iterator const &) = default;             //!< Defaulted.
+    counted_simd_iterator(counted_simd_iterator &&) = default;                  //!< Defaulted.
     counted_simd_iterator & operator=(counted_simd_iterator const &) = default; //!< Defaulted.
-    counted_simd_iterator & operator=(counted_simd_iterator &&) = default; //!< Defaulted.
-    ~counted_simd_iterator() = default; //!< Defaulted.
+    counted_simd_iterator & operator=(counted_simd_iterator &&) = default;      //!< Defaulted.
+    ~counted_simd_iterator() = default;                                         //!< Defaulted.
 
     /*!\brief Constructs and initialises the iterator with the given index.
      *
@@ -155,12 +155,12 @@ public:
     /*!\name Constructor, assignment and destructor
      * \{
      */
-    iota_simd_view() = default; //!< Defaulted.
-    iota_simd_view(iota_simd_view const &) noexcept = default; //!< Defaulted.
-    iota_simd_view(iota_simd_view &&) = default; //!< Defaulted.
+    iota_simd_view() = default;                                   //!< Defaulted.
+    iota_simd_view(iota_simd_view const &) noexcept = default;    //!< Defaulted.
+    iota_simd_view(iota_simd_view &&) = default;                  //!< Defaulted.
     iota_simd_view & operator=(iota_simd_view const &) = default; //!< Defaulted.
-    iota_simd_view & operator=(iota_simd_view &&) = default; //!< Defaulted.
-    ~iota_simd_view() = default; //!< Defaulted.
+    iota_simd_view & operator=(iota_simd_view &&) = default;      //!< Defaulted.
+    ~iota_simd_view() = default;                                  //!< Defaulted.
 
     /*!\brief Constructs the iota view from the given index pair.
      *

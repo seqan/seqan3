@@ -34,9 +34,8 @@ namespace seqan3::detail
 //!\ingroup alphabet_adaptation
 //!\hideinitializer
 template <typename type>
-constexpr bool is_uint_adaptation_v = std::same_as<type, uint8_t>  ||
-                                      std::same_as<type, uint16_t> ||
-                                      std::same_as<type, uint32_t>;
+constexpr bool is_uint_adaptation_v =
+    std::same_as<type, uint8_t> || std::same_as<type, uint16_t> || std::same_as<type, uint32_t>;
 } // namespace seqan3::detail
 
 namespace seqan3::custom

@@ -39,15 +39,15 @@
 // =========================================================================
 
 #if __cpp_lib_to_chars < 201611
-#include <cassert>
-#include <concepts>
-#include <sstream>
+#    include <cassert>
+#    include <concepts>
+#    include <sstream>
 
 namespace seqan3::contrib::charconv_float
 {
-using ::std::to_chars_result;
-using ::std::from_chars_result;
 using ::std::chars_format;
+using ::std::from_chars_result;
+using ::std::to_chars_result;
 
 /*!\brief std::to_chars implementation for floating point via a std::stringstream for default base = 10.
  * \ingroup std_charconv
@@ -90,7 +90,7 @@ inline from_chars_result from_chars_floating_point(char const * first,
         return {last, std::errc::invalid_argument};
 
     float tmp{};
-    ptrdiff_t constexpr buffer_size = 100;
+    constexpr ptrdiff_t buffer_size = 100;
     char buffer[buffer_size];
 
     if (fmt != chars_format::general)
@@ -119,7 +119,7 @@ inline from_chars_result from_chars_floating_point(char const * first,
     // represent the truncated sequence and ensure correct from_chars functionality.
     char * start;
 
-    if ((*last != '\0' ) || fmt == chars_format::hex)
+    if ((*last != '\0') || fmt == chars_format::hex)
     {
         // If hex format is explicitly expected, the 0x prefix is not allowed in the
         // the original sequence according to the std::from_chars cppreference
@@ -267,8 +267,8 @@ namespace std
 {
 // gcc-11 also defines float versions, but they don't clash with ours, because they use explicit overloads for each
 // float type. That means the stdlib has a higher priority in overload resolution then our shim implementation.
-using ::seqan3::contrib::charconv_float::to_chars; // import our shim-float version
 using ::seqan3::contrib::charconv_float::from_chars; // import our shim-float version
+using ::seqan3::contrib::charconv_float::to_chars;   // import our shim-float version
 } // namespace std
 
 #endif // __cpp_lib_to_chars < 201611

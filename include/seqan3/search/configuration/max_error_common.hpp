@@ -26,9 +26,9 @@ namespace seqan3::search_cfg
  * \see search_configuration
  * \tparam value_t The underlying type.
  */
-struct error_count : detail::strong_type<uint8_t,
-                                         error_count,
-                                         detail::strong_type_skill::convert | detail::strong_type_skill::comparable>
+struct error_count :
+    detail::
+        strong_type<uint8_t, error_count, detail::strong_type_skill::convert | detail::strong_type_skill::comparable>
 {
     //!!\brief Import base class constructor.
     using detail::strong_type<uint8_t,
@@ -41,9 +41,8 @@ struct error_count : detail::strong_type<uint8_t,
  * \see search_configuration
  * \tparam value_t The underlying type.
  */
-struct error_rate : detail::strong_type<double,
-                                        error_rate,
-                                        detail::strong_type_skill::convert | detail::strong_type_skill::comparable>
+struct error_rate :
+    detail::strong_type<double, error_rate, detail::strong_type_skill::convert | detail::strong_type_skill::comparable>
 {
     //!!\brief Import base class constructor.
     using detail::strong_type<double,

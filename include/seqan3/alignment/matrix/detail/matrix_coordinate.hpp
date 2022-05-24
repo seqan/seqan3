@@ -91,12 +91,12 @@ struct matrix_index
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    constexpr matrix_index() = default; //!< Defaulted.
-    constexpr matrix_index(matrix_index const &) = default; //!< Defaulted.
-    constexpr matrix_index(matrix_index &&) = default; //!< Defaulted.
+    constexpr matrix_index() = default;                                 //!< Defaulted.
+    constexpr matrix_index(matrix_index const &) = default;             //!< Defaulted.
+    constexpr matrix_index(matrix_index &&) = default;                  //!< Defaulted.
     constexpr matrix_index & operator=(matrix_index const &) = default; //!< Defaulted.
-    constexpr matrix_index & operator=(matrix_index &&) = default; //!< Defaulted.
-    ~matrix_index() = default; //!< Defaulted.
+    constexpr matrix_index & operator=(matrix_index &&) = default;      //!< Defaulted.
+    ~matrix_index() = default;                                          //!< Defaulted.
 
     /*!\brief Construction from strongly typed row index and column index.
      * \param row_idx The row index to set.
@@ -128,8 +128,9 @@ struct matrix_index
                            column_index_type<scalar_index_t> const col_idx) noexcept
         requires simd_index<index_t>
     // Note the explicit type conversion is necessary since the scalar type might be of smaller bit size.
-        : row{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(row_idx.get()))},
-          col{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(col_idx.get()))}
+    :
+        row{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(row_idx.get()))},
+        col{simd::fill<index_t>(static_cast<typename simd_traits<index_t>::scalar_type>(col_idx.get()))}
     {}
 
     /*!\brief Construction from other matrix_index with different integral type.
@@ -137,8 +138,9 @@ struct matrix_index
      */
     template <std::integral other_index_t>
         requires (!std::same_as<other_index_t, index_t>)
-    explicit constexpr matrix_index(matrix_index<other_index_t> other) noexcept
-        : row{static_cast<index_t>(other.row)}, col{static_cast<index_t>(other.col)}
+    explicit constexpr matrix_index(matrix_index<other_index_t> other) noexcept :
+        row{static_cast<index_t>(other.row)},
+        col{static_cast<index_t>(other.col)}
     {}
     //!\}
 
@@ -158,13 +160,13 @@ struct matrix_index
  * \{
  */
 //!\brief Deduces the default index type to std::ptrdiff_t.
-matrix_index() -> matrix_index<std::ptrdiff_t>;
+matrix_index()->matrix_index<std::ptrdiff_t>;
 
 //!\brief Deduces the index type from the common type of both index types.
 template <std::integral row_index_t, std::integral col_index_t>
     requires std::common_with<row_index_t, col_index_t>
-matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>) ->
-    matrix_index<std::common_type_t<row_index_t, col_index_t>>;
+matrix_index(row_index_type<row_index_t>, column_index_type<col_index_t>)
+    -> matrix_index<std::common_type_t<row_index_t, col_index_t>>;
 
 //!\brief Deduces the index type from the simd vector index type.
 template <simd_index index_t>

@@ -64,12 +64,13 @@ namespace seqan3::views
  * \stableapi{Since version 3.1.}
  */
 
-inline auto const complement = deep{std::views::transform([] (auto const in)
-{
-    static_assert(nucleotide_alphabet<decltype(in)>,
-                  "The innermost value type must satisfy the nucleotide_alphabet.");
-    // call element-wise complement from the nucleotide_alphabet
-    return seqan3::complement(in);
-})};
+inline auto const complement = deep{std::views::transform(
+    [](auto const in)
+    {
+        static_assert(nucleotide_alphabet<decltype(in)>,
+                      "The innermost value type must satisfy the nucleotide_alphabet.");
+        // call element-wise complement from the nucleotide_alphabet
+        return seqan3::complement(in);
+    })};
 
 } // namespace seqan3::views

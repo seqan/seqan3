@@ -15,8 +15,8 @@
 #include <tuple>
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
-#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 #include <seqan3/alphabet/aminoacid/translation_details.hpp>
+#include <seqan3/alphabet/aminoacid/translation_genetic_code.hpp>
 #include <seqan3/core/range/type_traits.hpp>
 
 namespace seqan3
@@ -61,9 +61,12 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
     }
     else if constexpr (std::same_as<nucl_type, rna4> || std::same_as<nucl_type, rna5> || std::same_as<nucl_type, rna15>)
     {
-        using rna2dna_t = std::conditional_t<std::same_as<nucl_type, rna4>,  dna4,
-                          std::conditional_t<std::same_as<nucl_type, rna5>,  dna5,
-                          std::conditional_t<std::same_as<nucl_type, rna15>, dna15, void>>>;
+        using rna2dna_t =
+            std::conditional_t<std::same_as<nucl_type, rna4>,
+                               dna4,
+                               std::conditional_t<std::same_as<nucl_type, rna5>,
+                                                  dna5,
+                                                  std::conditional_t<std::same_as<nucl_type, rna15>, dna15, void>>>;
 
         // we can use dna's tables, because ranks are identical
         return seqan3::detail::translation_table<rna2dna_t, gc>::value[to_rank(n1)][to_rank(n2)][to_rank(n3)];
@@ -72,9 +75,8 @@ constexpr aa27 translate_triplet(nucl_type const & n1, nucl_type const & n2, nuc
     {
         // we cast to dna15; slightly slower run-time, but lot's of compile time saved for large alphabets.
         // (nucleotide types can be converted to dna15 by definition)
-        return seqan3::detail::translation_table<dna15, gc>::value[to_rank(static_cast<dna15>(n1))]
-                                                                  [to_rank(static_cast<dna15>(n2))]
-                                                                  [to_rank(static_cast<dna15>(n3))];
+        return seqan3::detail::translation_table<dna15, gc>::value[to_rank(static_cast<dna15>(n1))][to_rank(
+            static_cast<dna15>(n2))][to_rank(static_cast<dna15>(n3))];
     }
 }
 

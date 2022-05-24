@@ -81,28 +81,24 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    format_fastq() noexcept = default; //!< Defaulted.
-    format_fastq(format_fastq const &) noexcept = default; //!< Defaulted.
+    format_fastq() noexcept = default;                                 //!< Defaulted.
+    format_fastq(format_fastq const &) noexcept = default;             //!< Defaulted.
     format_fastq & operator=(format_fastq const &) noexcept = default; //!< Defaulted.
-    format_fastq(format_fastq &&) noexcept = default; //!< Defaulted.
-    format_fastq & operator=(format_fastq &&) noexcept = default; //!< Defaulted.
-    ~format_fastq() noexcept = default; //!< Defaulted.
+    format_fastq(format_fastq &&) noexcept = default;                  //!< Defaulted.
+    format_fastq & operator=(format_fastq &&) noexcept = default;      //!< Defaulted.
+    ~format_fastq() noexcept = default;                                //!< Defaulted.
 
     //!\}
 
     //!\brief The valid file extensions for this format; note that you can modify this value.
-    static inline std::vector<std::string> file_extensions
-    {
-        { "fastq" },
-        { "fq"    }
-    };
+    static inline std::vector<std::string> file_extensions{{"fastq"}, {"fq"}};
 
 protected:
     //!\copydoc sequence_file_input_format::read_sequence_record
-    template <typename stream_type,     // constraints checked by file
+    template <typename stream_type, // constraints checked by file
               typename seq_legal_alph_type,
               typename stream_pos_type,
-              typename seq_type,        // other constraints checked inside function
+              typename seq_type, // other constraints checked inside function
               typename id_type,
               typename qual_type>
     void read_sequence_record(stream_type & stream,
@@ -125,8 +121,8 @@ protected:
         /* ID */
         if (*stream_it != '@') // [[unlikely]]
         {
-            throw parse_error{std::string{"Expected '@' on beginning of ID line, got: "} +
-                              detail::make_printable(*stream_it)};
+            throw parse_error{std::string{"Expected '@' on beginning of ID line, got: "}
+                              + detail::make_printable(*stream_it)};
         }
         ++stream_it; // skip '@'
 
@@ -135,14 +131,14 @@ protected:
             if (options.truncate_ids)
             {
                 std::ranges::copy(stream_view | detail::take_until_or_throw(is_cntrl || is_blank)
-                                              | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::back_inserter(id));
                 detail::consume(stream_view | detail::take_line_or_throw);
             }
             else
             {
                 std::ranges::copy(stream_view | detail::take_line_or_throw
-                                              | views::char_to<std::ranges::range_value_t<id_type>>,
+                                      | views::char_to<std::ranges::range_value_t<id_type>>,
                                   std::back_inserter(id));
             }
         }
@@ -152,25 +148,27 @@ protected:
         }
 
         /* Sequence */
-        auto seq_view = stream_view | detail::take_until_or_throw(is_char<'+'>)    // until 2nd ID line
-                                    | std::views::filter(!is_space);           // ignore whitespace
+        auto seq_view = stream_view | detail::take_until_or_throw(is_char<'+'>) // until 2nd ID line
+                      | std::views::filter(!is_space);                          // ignore whitespace
         if constexpr (!detail::decays_to_ignore_v<seq_type>)
         {
-            auto constexpr is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
-            std::ranges::copy(seq_view | std::views::transform([is_legal_alph] (char const c) // enforce legal alphabet
-                                    {
-                                        if (!is_legal_alph(c))
-                                        {
-                                            throw parse_error{std::string{"Encountered an unexpected letter: "} +
-                                                              "char_is_valid_for<" +
-                                                              detail::type_name_as_string<seq_legal_alph_type> +
-                                                              "> evaluated to false on " +
-                                                              detail::make_printable(c)};
-                                        }
-                                        return c;
-                                    })
-                                        | views::char_to<std::ranges::range_value_t<seq_type>>,         // convert to actual target alphabet
-                              std::back_inserter(sequence));
+            constexpr auto is_legal_alph = char_is_valid_for<seq_legal_alph_type>;
+            std::ranges::copy(
+                seq_view
+                    | std::views::transform(
+                        [is_legal_alph](char const c) // enforce legal alphabet
+                        {
+                            if (!is_legal_alph(c))
+                            {
+                                throw parse_error{std::string{"Encountered an unexpected letter: "}
+                                                  + "char_is_valid_for<"
+                                                  + detail::type_name_as_string<seq_legal_alph_type>
+                                                  + "> evaluated to false on " + detail::make_printable(c)};
+                            }
+                            return c;
+                        })
+                    | views::char_to<std::ranges::range_value_t<seq_type>>, // convert to actual target alphabet
+                std::back_inserter(sequence));
             sequence_size_after = size(sequence);
         }
         else // consume, but count
@@ -187,8 +185,8 @@ protected:
         detail::consume(stream_view | detail::take_line_or_throw);
 
         /* Qualities */
-        auto qview = stream_view | std::views::filter(!is_space)                  // this consumes trailing newline
-                                 | detail::take_exactly_or_throw(sequence_size_after - sequence_size_before);
+        auto qview = stream_view | std::views::filter(!is_space) // this consumes trailing newline
+                   | detail::take_exactly_or_throw(sequence_size_after - sequence_size_before);
         if constexpr (!detail::decays_to_ignore_v<qual_type>)
         {
             std::ranges::copy(qview | views::char_to<std::ranges::range_value_t<qual_type>>,
@@ -201,15 +199,15 @@ protected:
     }
 
     //!\copydoc sequence_file_output_format::write_sequence_record
-    template <typename stream_type,     // constraints checked by file
-              typename seq_type,        // other constraints checked inside function
+    template <typename stream_type, // constraints checked by file
+              typename seq_type,    // other constraints checked inside function
               typename id_type,
               typename qual_type>
-    void write_sequence_record(stream_type                     & stream,
+    void write_sequence_record(stream_type & stream,
                                sequence_file_output_options const & options,
-                               seq_type                       && sequence,
-                               id_type                        && id,
-                               qual_type                      && qualities)
+                               seq_type && sequence,
+                               id_type && id,
+                               qual_type && qualities)
     {
         seqan3::detail::fast_ostreambuf_iterator stream_it{*stream.rdbuf()};
 
@@ -231,7 +229,8 @@ protected:
         // Sequence
         if constexpr (detail::decays_to_ignore_v<seq_type>)
         {
-            throw std::logic_error{"The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTQ files."};
+            throw std::logic_error{
+                "The SEQ and SEQ_QUAL fields may not both be set to ignore when writing FASTQ files."};
         }
         else
         {
@@ -256,7 +255,8 @@ protected:
         // Quality line
         if constexpr (detail::decays_to_ignore_v<qual_type>)
         {
-            throw std::logic_error{"The QUAL and SEQ_QUAL fields may not both be set to ignore when writing FASTQ files."};
+            throw std::logic_error{
+                "The QUAL and SEQ_QUAL fields may not both be set to ignore when writing FASTQ files."};
         }
         else
         {
@@ -274,4 +274,4 @@ protected:
     }
 };
 
-} // namespace seqan
+} // namespace seqan3

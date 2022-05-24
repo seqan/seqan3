@@ -14,6 +14,6 @@
  * \ingroup utility
  */
 
- #pragma once
+#pragma once
 
- #include <seqan3/utility/bloom_filter/bloom_filter.hpp>
+#include <seqan3/utility/bloom_filter/bloom_filter.hpp>

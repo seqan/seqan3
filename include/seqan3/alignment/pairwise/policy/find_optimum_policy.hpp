@@ -60,7 +60,7 @@ private:
     find_optimum_policy(configuration_t const & config)
     {
         if constexpr (configuration_t::template exists<align_cfg::method_local>())
-            test_every_cell =  true;
+            test_every_cell = true;
 
         auto method_global_config = config.get_or(align_cfg::method_global{});
         test_last_row_cell = method_global_config.free_end_gaps_sequence1_trailing;
@@ -112,9 +112,9 @@ protected:
      * or if the trait for searching every cell is set to std::true_type.
      */
     template <typename cell_t, typename score_t>
-    constexpr void check_score_of_last_row_cell([[maybe_unused]] cell_t const & last_row_cell,
-                                                [[maybe_unused]] alignment_algorithm_state<score_t> & state) const
-        noexcept
+    constexpr void
+    check_score_of_last_row_cell([[maybe_unused]] cell_t const & last_row_cell,
+                                 [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only search in last row if requested and not done already.
         if (!test_every_cell && test_last_row_cell)
@@ -134,9 +134,9 @@ protected:
      * or if the trait for searching every cell is set to std::true_type.
      */
     template <typename alignment_column_t, typename score_t>
-    constexpr void check_score_of_cells_in_last_column([[maybe_unused]] alignment_column_t && last_column,
-                                                       [[maybe_unused]] alignment_algorithm_state<score_t> & state)
-        const noexcept
+    constexpr void
+    check_score_of_cells_in_last_column([[maybe_unused]] alignment_column_t && last_column,
+                                        [[maybe_unused]] alignment_algorithm_state<score_t> & state) const noexcept
     {
         // Only check last cell if not done before.
         if (!test_every_cell && test_last_column_cell)

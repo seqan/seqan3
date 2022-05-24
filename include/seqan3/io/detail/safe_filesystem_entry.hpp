@@ -13,10 +13,10 @@
 #pragma once
 
 #include <cassert>
+#include <filesystem>
 #include <system_error>
 
 #include <seqan3/core/platform.hpp>
-#include <filesystem>
 
 namespace seqan3::detail
 {
@@ -40,11 +40,11 @@ public:
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    safe_filesystem_entry() = delete;                                             //!< Deleted.
-    safe_filesystem_entry(safe_filesystem_entry const &) = delete;                //!< Deleted.
-    safe_filesystem_entry(safe_filesystem_entry &&) = default;                    //!< Defaulted.
-    safe_filesystem_entry & operator=(safe_filesystem_entry const &) = delete;    //!< Deleted.
-    safe_filesystem_entry & operator=(safe_filesystem_entry &&) = default;        //!< Defaulted.
+    safe_filesystem_entry() = delete;                                          //!< Deleted.
+    safe_filesystem_entry(safe_filesystem_entry const &) = delete;             //!< Deleted.
+    safe_filesystem_entry(safe_filesystem_entry &&) = default;                 //!< Defaulted.
+    safe_filesystem_entry & operator=(safe_filesystem_entry const &) = delete; //!< Deleted.
+    safe_filesystem_entry & operator=(safe_filesystem_entry &&) = default;     //!< Defaulted.
 
     /*!\brief Constructs the safe guard from a std::filesystem::path.
      * \param p The path pointing to a filesystem entry.
@@ -97,7 +97,6 @@ public:
     }
 
 private:
-
     //!\brief The managed resource.
     std::filesystem::path entry;
 };

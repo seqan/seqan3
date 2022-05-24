@@ -17,8 +17,8 @@
 #include <utility>
 
 #include <seqan3/core/range/type_traits.hpp>
-#include <seqan3/search/fm_index/fm_index.hpp>
 #include <seqan3/search/fm_index/bi_fm_index_cursor.hpp>
+#include <seqan3/search/fm_index/fm_index.hpp>
 
 namespace seqan3
 {
@@ -68,10 +68,10 @@ private:
 
     //!\brief The type of the underlying SDSL index for the reversed text.
     using rev_sdsl_index_type = sdsl::csa_wt<sdsl_wt_index_type::wavelet_tree_type, // Wavelet tree type
-                                             10'000'000, // Sampling rate of the suffix array
-                                             10'000'000, // Sampling rate of the inverse suffix array
+                                             10'000'000,                            // Sampling rate of the suffix array
+                                             10'000'000,                   // Sampling rate of the inverse suffix array
                                              sdsl::sa_order_sa_sampling<>, // Text or SA based sampling for SA
-                                             sdsl::isa_sampling<>, // Text or ISA based sampling for ISA
+                                             sdsl::isa_sampling<>,         // Text or ISA based sampling for ISA
                                              sdsl_wt_index_type::alphabet_type>; // How to represent the alphabet
 
     /*!\brief The type of the reduced alphabet type. (The reduced alphabet might be smaller than the original alphabet
@@ -271,7 +271,7 @@ public:
      */
     fwd_cursor_type fwd_cursor() const noexcept
     {
-       return {fwd_fm};
+        return {fwd_fm};
     }
 
     /*!\cond DEV

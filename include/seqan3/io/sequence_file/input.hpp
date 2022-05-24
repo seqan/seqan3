@@ -95,19 +95,19 @@ namespace seqan3
 //!\}
 //!\cond
 template <typename t>
-concept sequence_file_input_traits = requires (t v)
-{
-    requires writable_alphabet<typename t::sequence_alphabet>;
-    requires writable_alphabet<typename t::sequence_legal_alphabet>;
-    requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
-    requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
+concept sequence_file_input_traits =
+    requires (t v) {
+        requires writable_alphabet<typename t::sequence_alphabet>;
+        requires writable_alphabet<typename t::sequence_legal_alphabet>;
+        requires explicitly_convertible_to<typename t::sequence_legal_alphabet, typename t::sequence_alphabet>;
+        requires sequence_container<typename t::template sequence_container<typename t::sequence_alphabet>>;
 
-    requires writable_alphabet<typename t::id_alphabet>;
-    requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
+        requires writable_alphabet<typename t::id_alphabet>;
+        requires sequence_container<typename t::template id_container<typename t::id_alphabet>>;
 
-    requires writable_quality_alphabet<typename t::quality_alphabet>;
-    requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
-};
+        requires writable_quality_alphabet<typename t::quality_alphabet>;
+        requires sequence_container<typename t::template quality_container<typename t::quality_alphabet>>;
+    };
 //!\endcond
 
 // ----------------------------------------------------------------------------
@@ -137,28 +137,28 @@ struct sequence_file_input_default_traits_dna
      */
 
     //!\brief The sequence alphabet is seqan3::dna5.
-    using sequence_alphabet                 = dna5;
+    using sequence_alphabet = dna5;
 
     //!\brief The legal sequence alphabet for parsing is seqan3::dna15.
-    using sequence_legal_alphabet           = dna15;
+    using sequence_legal_alphabet = dna15;
 
     //!\brief The type of a DNA sequence is std::vector.
     template <typename _sequence_alphabet>
-    using sequence_container                = std::vector<_sequence_alphabet>;
+    using sequence_container = std::vector<_sequence_alphabet>;
 
     //!\brief The alphabet for an identifier string is char.
-    using id_alphabet                       = char;
+    using id_alphabet = char;
 
     //!\brief The string type for an identifier is std::basic_string.
     template <typename _id_alphabet>
-    using id_container                      = std::basic_string<_id_alphabet>;
+    using id_container = std::basic_string<_id_alphabet>;
 
     //!\brief The alphabet for a quality annotation is seqan3::phred42.
-    using quality_alphabet                  = phred42;
+    using quality_alphabet = phred42;
 
     //!\brief The string type for a quality annotation is std::vector.
     template <typename _quality_alphabet>
-    using quality_container                 = std::vector<_quality_alphabet>;
+    using quality_container = std::vector<_quality_alphabet>;
 
     //!\}
 };
@@ -201,14 +201,10 @@ struct sequence_file_input_default_traits_aa : sequence_file_input_default_trait
  * \remark For a complete overview, take a look at \ref io_sequence_file
  */
 
-template <
-    sequence_file_input_traits traits_type_ = sequence_file_input_default_traits_dna,
-    detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::qual>,
-    detail::type_list_of_sequence_file_input_formats valid_formats_ = type_list<format_embl,
-                                                                                format_fasta,
-                                                                                format_fastq,
-                                                                                format_genbank,
-                                                                                format_sam>>
+template <sequence_file_input_traits traits_type_ = sequence_file_input_default_traits_dna,
+          detail::fields_specialisation selected_field_ids_ = fields<field::seq, field::id, field::qual>,
+          detail::type_list_of_sequence_file_input_formats valid_formats_ =
+              type_list<format_embl, format_fasta, format_fastq, format_genbank, format_sam>>
 class sequence_file_input
 {
 public:
@@ -217,29 +213,29 @@ public:
      * \{
      */
     //!\brief A traits type that defines aliases and template for storage of the fields.
-    using traits_type           = traits_type_;
+    using traits_type = traits_type_;
     //!\brief A seqan3::fields list with the fields selected for the record.
-    using selected_field_ids    = selected_field_ids_;
+    using selected_field_ids = selected_field_ids_;
     //!\brief A seqan3::type_list with the possible formats.
-    using valid_formats         = valid_formats_;
+    using valid_formats = valid_formats_;
     //!\brief Character type of the stream(s).
-    using stream_char_type      = char;
+    using stream_char_type = char;
     //!\}
 
     /*!\brief The subset of seqan3::field IDs that are valid for this file; order corresponds to the types in
      * \ref field_types.
      */
-    using field_ids            = fields<field::seq, field::id, field::qual>;
+    using field_ids = fields<field::seq, field::id, field::qual>;
 
-    static_assert([] () constexpr
-                  {
-                      for (field f : selected_field_ids::as_array)
-                          if (!field_ids::contains(f))
-                              return false;
-                      return true;
-                  }(),
-                  "You selected a field that is not valid for sequence files, please refer to the documentation "
-                  "of sequence_file_input::field_ids for the accepted values.");
+    static_assert(
+        []() constexpr {
+            for (field f : selected_field_ids::as_array)
+                if (!field_ids::contains(f))
+                    return false;
+            return true;
+        }(),
+        "You selected a field that is not valid for sequence files, please refer to the documentation "
+        "of sequence_file_input::field_ids for the accepted values.");
 
     /*!\name Field types and record type
      * \brief These types are relevant for record/row-based reading; they may be manipulated via the \ref traits_type
@@ -247,22 +243,17 @@ public:
      * \{
      */
     //!\brief The type of field::seq (std::vector <seqan3::dna5> by default).
-    using sequence_type         = typename traits_type::template sequence_container<
-                                    typename traits_type::sequence_alphabet>;
+    using sequence_type = typename traits_type::template sequence_container<typename traits_type::sequence_alphabet>;
     //!\brief The type of field::id (std::string by defaul).
-    using id_type               = typename traits_type::template id_container<
-                                    typename traits_type::id_alphabet>;
+    using id_type = typename traits_type::template id_container<typename traits_type::id_alphabet>;
     //!\brief The type of field::qual (std::vector <seqan3::phred42> by default).
-    using quality_type          = typename traits_type::template quality_container<
-                                    typename traits_type::quality_alphabet>;
+    using quality_type = typename traits_type::template quality_container<typename traits_type::quality_alphabet>;
     //!\brief The previously defined types aggregated in a seqan3::type_list.
-    using field_types           = type_list<sequence_type, id_type, quality_type>;
+    using field_types = type_list<sequence_type, id_type, quality_type>;
 
     //!\brief The type of the record, a specialisation of seqan3::record; acts as a tuple of the selected field types.
-    using record_type           = sequence_record<detail::select_types_with_ids_t<field_types,
-                                                                                  field_ids,
-                                                                                  selected_field_ids>,
-                                                  selected_field_ids>;
+    using record_type = sequence_record<detail::select_types_with_ids_t<field_types, field_ids, selected_field_ids>,
+                                        selected_field_ids>;
     //!\}
 
     /*!\name Range associated types
@@ -270,21 +261,21 @@ public:
      * \{
      */
     //!\brief The value_type is the \ref record_type.
-    using value_type        = record_type;
+    using value_type = record_type;
     //!\brief The reference type.
-    using reference         = record_type &;
+    using reference = record_type &;
     //!\brief The const_reference type is void, because files are not const-iterable.
-    using const_reference   = void;
+    using const_reference = void;
     //!\brief An unsigned integer type, usually std::size_t.
-    using size_type         = size_t;
+    using size_type = size_t;
     //!\brief A signed integer type, usually std::ptrdiff_t.
-    using difference_type   = std::make_signed_t<size_t>;
+    using difference_type = std::make_signed_t<size_t>;
     //!\brief The iterator type of this view (an input iterator).
-    using iterator          = detail::in_file_iterator<sequence_file_input>;
+    using iterator = detail::in_file_iterator<sequence_file_input>;
     //!\brief The const iterator type is void, because files are not const-iterable.
-    using const_iterator    = void;
+    using const_iterator = void;
     //!\brief The type returned by end().
-    using sentinel          = std::default_sentinel_t;
+    using sentinel = std::default_sentinel_t;
     //!\}
 
     /*!\name Constructors, destructor and assignment
@@ -324,8 +315,8 @@ public:
         primary_stream{new std::ifstream{}, stream_deleter_default}
     {
         primary_stream->rdbuf()->pubsetbuf(stream_buffer.data(), stream_buffer.size());
-        static_cast<std::basic_ifstream<char> *>(primary_stream.get())->open(filename,
-                                                                             std::ios_base::in | std::ios::binary);
+        static_cast<std::basic_ifstream<char> *>(primary_stream.get())
+            ->open(filename, std::ios_base::in | std::ios::binary);
 
         if (!primary_stream->good())
             throw file_open_error{"Could not open file " + filename.string() + " for reading."};
@@ -334,16 +325,18 @@ public:
         secondary_stream = detail::make_secondary_istream(*primary_stream, filename);
 
         // initialise format handler or throw if format is not found
-        using format_variant_t = typename detail::variant_from_tags<valid_formats,
-                                                                    detail::sequence_file_input_format_exposer>::type;
+        using format_variant_t =
+            typename detail::variant_from_tags<valid_formats, detail::sequence_file_input_format_exposer>::type;
         format_variant_t format_variant{};
         detail::set_format(format_variant, filename);
 
-        std::visit([&] (auto && selected_format)
-        {
-            using format_t = std::remove_cvref_t<decltype(selected_format)>;
-            format = std::make_unique<selected_sequence_format<format_t>>();
-        }, format_variant);
+        std::visit(
+            [&](auto && selected_format)
+            {
+                using format_t = std::remove_cvref_t<decltype(selected_format)>;
+                format = std::make_unique<selected_sequence_format<format_t>>();
+            },
+            format_variant);
     }
     /* NOTE(h-2): Curiously we do not need a user-defined deduction guide for the above constructor.
      * A combination of default template parameters and auto-deduction guides works as expected,
@@ -366,11 +359,10 @@ public:
      * it is detected as being compressed.
      * See the section on \link io_compression compression and decompression \endlink for more information.
      */
-    template <input_stream stream_t,
-              sequence_file_input_format file_format>
+    template <input_stream stream_t, sequence_file_input_format file_format>
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    sequence_file_input(stream_t                 & stream,
-                        file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
+    sequence_file_input(stream_t & stream,
+                        file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{&stream, stream_deleter_noop},
         format{std::make_unique<selected_sequence_format<file_format>>()}
@@ -383,11 +375,10 @@ public:
     }
 
     //!\overload
-    template <input_stream stream_t,
-              sequence_file_input_format file_format>
+    template <input_stream stream_t, sequence_file_input_format file_format>
         requires std::same_as<typename std::remove_reference_t<stream_t>::char_type, stream_char_type>
-    sequence_file_input(stream_t                && stream,
-                        file_format        const & SEQAN3_DOXYGEN_ONLY(format_tag),
+    sequence_file_input(stream_t && stream,
+                        file_format const & SEQAN3_DOXYGEN_ONLY(format_tag),
                         selected_field_ids const & SEQAN3_DOXYGEN_ONLY(fields_tag) = selected_field_ids{}) :
         primary_stream{new stream_t{std::move(stream)}, stream_deleter_default},
         format{std::make_unique<selected_sequence_format<file_format>>()}
@@ -500,11 +491,15 @@ protected:
      */
     //!\brief The type of the internal stream pointers. Allows dynamically setting ownership management.
     using stream_ptr_t = std::unique_ptr<std::basic_istream<stream_char_type>,
-                                         std::function<void(std::basic_istream<stream_char_type>*)>>;
+                                         std::function<void(std::basic_istream<stream_char_type> *)>>;
     //!\brief Stream deleter that does nothing (no ownership assumed).
-    static void stream_deleter_noop(std::basic_istream<stream_char_type> *) {}
+    static void stream_deleter_noop(std::basic_istream<stream_char_type> *)
+    {}
     //!\brief Stream deleter with default behaviour (ownership assumed).
-    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr) { delete ptr; }
+    static void stream_deleter_default(std::basic_istream<stream_char_type> * ptr)
+    {
+        delete ptr;
+    }
 
     //!\brief The primary stream is the user provided stream or the file stream if constructed from filename.
     stream_ptr_t primary_stream{nullptr, stream_deleter_noop};
@@ -525,8 +520,8 @@ private:
         record_buffer.clear();
 
         // at end if we could not read further
-        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream} ==
-             std::istreambuf_iterator<stream_char_type>{}))
+        if ((std::istreambuf_iterator<stream_char_type>{*secondary_stream}
+             == std::istreambuf_iterator<stream_char_type>{}))
         {
             at_end = true;
             return;
@@ -550,12 +545,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        sequence_format_base() = default; //!< Default.
-        sequence_format_base(sequence_format_base const &) = default; //!< Default.
-        sequence_format_base(sequence_format_base &&) = default; //!< Default.
+        sequence_format_base() = default;                                         //!< Default.
+        sequence_format_base(sequence_format_base const &) = default;             //!< Default.
+        sequence_format_base(sequence_format_base &&) = default;                  //!< Default.
         sequence_format_base & operator=(sequence_format_base const &) = default; //!< Default.
-        sequence_format_base & operator=(sequence_format_base &&) = default; //!< Default.
-        virtual ~sequence_format_base() = default; //!< Virtual default.
+        sequence_format_base & operator=(sequence_format_base &&) = default;      //!< Default.
+        virtual ~sequence_format_base() = default;                                //!< Virtual default.
         //!\}
 
         /*!\brief Reads the next format specific record from the given istream.
@@ -592,12 +587,12 @@ private:
         /*!\name Constructors, destructor and assignment
          * \{
          */
-        selected_sequence_format() = default; //!< Default.
-        selected_sequence_format(selected_sequence_format const &) = default; //!< Default.
-        selected_sequence_format(selected_sequence_format &&) = default; //!< Default.
+        selected_sequence_format() = default;                                             //!< Default.
+        selected_sequence_format(selected_sequence_format const &) = default;             //!< Default.
+        selected_sequence_format(selected_sequence_format &&) = default;                  //!< Default.
         selected_sequence_format & operator=(selected_sequence_format const &) = default; //!< Default.
-        selected_sequence_format & operator=(selected_sequence_format &&) = default; //!< Default.
-        ~selected_sequence_format() = default; //!< Default.
+        selected_sequence_format & operator=(selected_sequence_format &&) = default;      //!< Default.
+        ~selected_sequence_format() = default;                                            //!< Default.
         //!\}
 
         //!\copydoc sequence_format_base::read_sequence_record
@@ -615,7 +610,7 @@ private:
                                              detail::get_or_ignore<field::id>(record_buffer),
                                              detail::get_or_ignore<field::qual>(record_buffer));
             }
-        };
+        }
 
         //!\brief The selected format stored as a format exposer object.
         detail::sequence_file_input_format_exposer<format_t> _format{};
@@ -634,21 +629,19 @@ private:
  */
 
 //!\brief Deduces the sequence input file type from the stream and the format.
-template <input_stream stream_type,
-          sequence_file_input_format file_format>
+template <input_stream stream_type, sequence_file_input_format file_format>
 sequence_file_input(stream_type & stream,
                     file_format const &)
-    -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
-                           typename sequence_file_input<>::selected_field_ids,  // default field ids.
+    -> sequence_file_input<typename sequence_file_input<>::traits_type,        // actually use the default
+                           typename sequence_file_input<>::selected_field_ids, // default field ids.
                            type_list<file_format>>;
 
 //!\overload
-template <input_stream stream_type,
-          sequence_file_input_format file_format>
+template <input_stream stream_type, sequence_file_input_format file_format>
 sequence_file_input(stream_type && stream,
                     file_format const &)
-    -> sequence_file_input<typename sequence_file_input<>::traits_type,         // actually use the default
-                           typename sequence_file_input<>::selected_field_ids,  // default field ids.
+    -> sequence_file_input<typename sequence_file_input<>::traits_type,        // actually use the default
+                           typename sequence_file_input<>::selected_field_ids, // default field ids.
                            type_list<file_format>>;
 
 //!\brief Deduces the sequence input file type from the stream, the format and the field ids.
@@ -658,7 +651,7 @@ template <input_stream stream_type,
 sequence_file_input(stream_type && stream,
                     file_format const &,
                     selected_field_ids const &)
-    -> sequence_file_input<typename sequence_file_input<>::traits_type,       // actually use the default
+    -> sequence_file_input<typename sequence_file_input<>::traits_type, // actually use the default
                            selected_field_ids,
                            type_list<file_format>>;
 
@@ -669,7 +662,7 @@ template <input_stream stream_type,
 sequence_file_input(stream_type & stream,
                     file_format const &,
                     selected_field_ids const &)
-    -> sequence_file_input<typename sequence_file_input<>::traits_type,       // actually use the default
+    -> sequence_file_input<typename sequence_file_input<>::traits_type, // actually use the default
                            selected_field_ids,
                            type_list<file_format>>;
 //!\}

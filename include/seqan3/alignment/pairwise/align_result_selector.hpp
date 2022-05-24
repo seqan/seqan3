@@ -39,9 +39,7 @@ namespace seqan3::detail
  * \tparam second_range_t  The type of the second sequence.
  * \tparam configuration_t The configuration type. Must be of type seqan3::detail::configuration
  */
-template <std::ranges::forward_range first_range_t,
-          std::ranges::forward_range second_range_t,
-          typename configuration_t>
+template <std::ranges::forward_range first_range_t, std::ranges::forward_range second_range_t, typename configuration_t>
     requires is_type_specialisation_of_v<std::remove_cvref_t<configuration_t>, configuration>
 struct align_result_selector
 {
@@ -49,8 +47,8 @@ private:
     //!\brief The traits type used for the alignment.
     using traits_type = alignment_configuration_traits<configuration_t>;
     //!\brief The user configured score type.
-    using score_type = typename alignment_configuration_traits<
-                                    std::remove_reference_t<configuration_t>>::original_score_type;
+    using score_type =
+        typename alignment_configuration_traits<std::remove_reference_t<configuration_t>>::original_score_type;
     //!\brief The type to indicate that an output option was not configured.
     using disabled_type = std::nullopt_t *;
     //!\brief Score matrix type in debug mode.
@@ -72,11 +70,10 @@ private:
                                                               seqan3::detail::advanceable_alignment_coordinate<>,
                                                               disabled_type>;
     //!\brief The configured alignment type if selected.
-    using configured_alignment_type = typename lazy_conditional_t<traits_type::compute_sequence_alignment,
-                                                                  lazy<make_pairwise_alignment_type,
-                                                                       first_range_t &,
-                                                                       second_range_t &>,
-                                                                  std::type_identity<disabled_type>>::type;
+    using configured_alignment_type =
+        typename lazy_conditional_t<traits_type::compute_sequence_alignment,
+                                    lazy<make_pairwise_alignment_type, first_range_t &, second_range_t &>,
+                                    std::type_identity<disabled_type>>::type;
 
     //!\brief The configured sequence id type for the first sequence if selected.
     using configured_sequence1_id_type = std::conditional_t<traits_type::output_sequence1_id, uint32_t, disabled_type>;
@@ -84,9 +81,8 @@ private:
     using configured_sequence2_id_type = std::conditional_t<traits_type::output_sequence2_id, uint32_t, disabled_type>;
 
     //!\brief The debug score matrix type if selected.
-    using configured_debug_score_matrix_type = std::conditional_t<traits_type::is_debug,
-                                                                  debug_score_matrix_type,
-                                                                  disabled_type>;
+    using configured_debug_score_matrix_type =
+        std::conditional_t<traits_type::is_debug, debug_score_matrix_type, disabled_type>;
 
     //!\brief The debug trace matrix type if selected.
     using configured_debug_trace_matrix_type =

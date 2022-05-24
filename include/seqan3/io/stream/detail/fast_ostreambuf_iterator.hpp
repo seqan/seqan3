@@ -14,8 +14,8 @@
 #pragma once
 
 #include <algorithm>
-#include <seqan3/std/charconv>
 #include <iterator>
+#include <seqan3/std/charconv>
 #include <seqan3/std/ranges>
 
 #include <seqan3/io/stream/detail/stream_buffer_exposer.hpp>
@@ -45,22 +45,22 @@ public:
     /*!\name Associated types
      * \{
      */
-    using difference_type   = ptrdiff_t;                //!< Defaults to ptrdiff_t.
-    using value_type        = char_t;                   //!< The char type of the stream.
-    using reference         = char_t;                   //!< The char type of the stream.
-    using pointer           = void;                     //!< Has no pointer type.
+    using difference_type = ptrdiff_t;                  //!< Defaults to ptrdiff_t.
+    using value_type = char_t;                          //!< The char type of the stream.
+    using reference = char_t;                           //!< The char type of the stream.
+    using pointer = void;                               //!< Has no pointer type.
     using iterator_category = std::output_iterator_tag; //!< Pure output iterator.
     //!\}
 
     /*!\name Constructors, destructor and assignment
      * \{
      */
-    fast_ostreambuf_iterator() noexcept = default; //!< Defaulted.
-    fast_ostreambuf_iterator(fast_ostreambuf_iterator const &) noexcept = default; //!< Defaulted.
-    fast_ostreambuf_iterator(fast_ostreambuf_iterator &&) noexcept = default; //!< Defaulted.
+    fast_ostreambuf_iterator() noexcept = default;                                             //!< Defaulted.
+    fast_ostreambuf_iterator(fast_ostreambuf_iterator const &) noexcept = default;             //!< Defaulted.
+    fast_ostreambuf_iterator(fast_ostreambuf_iterator &&) noexcept = default;                  //!< Defaulted.
     fast_ostreambuf_iterator & operator=(fast_ostreambuf_iterator const &) noexcept = default; //!< Defaulted.
-    fast_ostreambuf_iterator & operator=(fast_ostreambuf_iterator &&) noexcept = default; //!< Defaulted.
-    ~fast_ostreambuf_iterator() noexcept = default; //!< Defaulted.
+    fast_ostreambuf_iterator & operator=(fast_ostreambuf_iterator &&) noexcept = default;      //!< Defaulted.
+    ~fast_ostreambuf_iterator() noexcept = default;                                            //!< Defaulted.
 
     //!\brief Construct from a stream buffer.
     explicit fast_ostreambuf_iterator(std::basic_streambuf<char_t, traits_t> & ibuf) :
