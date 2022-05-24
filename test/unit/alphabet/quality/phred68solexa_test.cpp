@@ -102,7 +102,11 @@ TEST(phred68solexa, string_literal)
     v.resize(5, '#'_phred68solexa);
     EXPECT_EQ(v, "#####"_phred68solexa);
 
-    std::vector<seqan3::phred68solexa> w{'#'_phred68solexa, '#'_phred68solexa, '!'_phred68solexa, '!'_phred68solexa,
-                                         '!'_phred68solexa, '#'_phred68solexa};
+    std::vector<seqan3::phred68solexa> w{'#'_phred68solexa,
+                                         '#'_phred68solexa,
+                                         '!'_phred68solexa,
+                                         '!'_phred68solexa,
+                                         '!'_phred68solexa,
+                                         '#'_phred68solexa};
     EXPECT_EQ(w, "##!!!#"_phred68solexa);
 }

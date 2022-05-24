@@ -5,14 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <array>
 #include <cstdlib>
 
-#include <benchmark/benchmark.h>
-
 #include <seqan3/utility/simd/algorithm.hpp>
-#include <seqan3/utility/simd/simd_traits.hpp>
 #include <seqan3/utility/simd/simd.hpp>
+#include <seqan3/utility/simd/simd_traits.hpp>
 
 // ----------------------------------------------------------------------------
 // Helper functions
@@ -44,7 +44,7 @@ inline auto reduce(simd_t const & vec)
 // Benchhmark transpose
 // ----------------------------------------------------------------------------
 
-static void transpose(benchmark::State& state)
+static void transpose(benchmark::State & state)
 {
     size_t sum = 0;
 
@@ -68,7 +68,7 @@ static void transpose(benchmark::State& state)
 BENCHMARK(transpose);
 
 template <typename source_t, typename target_t>
-static void upcast(benchmark::State& state)
+static void upcast(benchmark::State & state)
 {
     source_t src = seqan3::simd::iota<source_t>(std::rand() % 100);
     target_t target{};

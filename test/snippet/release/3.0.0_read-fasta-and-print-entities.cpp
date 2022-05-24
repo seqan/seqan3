@@ -7,7 +7,7 @@ int main()
     seqan3::sequence_file_input fin{"my.fasta"};
 
     // iterate over every record in the file and split it into fields:
-    for (auto & [ seq, id, qual ] : fin)
+    for (auto & [seq, id, qual] : fin)
     {
         // print the fields:
         seqan3::debug_stream << "ID:  " << id << '\n';

@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <type_traits>
-
 #include <gtest/gtest.h>
+
+#include <type_traits>
 
 #include <seqan3/utility/detail/to_little_endian.hpp>
 
@@ -20,7 +20,7 @@ TEST(to_little_endian, byte)
 
 TEST(to_little_endian, word)
 {
-    uint16_t val = 0x0102;  // 258
+    uint16_t val = 0x0102; // 258
     uint16_t res = seqan3::detail::to_little_endian(val);
     char * res_p = reinterpret_cast<char *>(&res);
 

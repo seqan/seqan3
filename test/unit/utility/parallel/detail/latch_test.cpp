@@ -20,7 +20,7 @@ TEST(latch, arrive_wait)
     seqan3::detail::latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
-    auto work = [&] ()
+    auto work = [&]()
     {
         for (unsigned i = 0; i < 1000000; ++i)
             ++counter;
@@ -49,7 +49,7 @@ TEST(latch, arrive_and_wait)
     seqan3::detail::latch completion_latch{threads};
     std::atomic<uint32_t> counter{0};
 
-    auto work = [&] ()
+    auto work = [&]()
     {
         for (unsigned i = 0; i < 1000000; ++i)
             ++counter;

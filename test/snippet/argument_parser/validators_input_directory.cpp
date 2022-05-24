@@ -1,16 +1,21 @@
-#include <seqan3/argument_parser/all.hpp>
-#include <seqan3/core/debug_stream.hpp>
 #include <filesystem>
 
-int main(int argc, const char ** argv)
+#include <seqan3/argument_parser/all.hpp>
+#include <seqan3/core/debug_stream.hpp>
+
+int main(int argc, char const ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
     //! [validator_call]
     std::filesystem::path mydir{};
 
-    myparser.add_option(mydir, 'd', "dir", "The directory containing the input files.",
-                        seqan3::option_spec::standard, seqan3::input_directory_validator{});
+    myparser.add_option(mydir,
+                        'd',
+                        "dir",
+                        "The directory containing the input files.",
+                        seqan3::option_spec::standard,
+                        seqan3::input_directory_validator{});
     //! [validator_call]
 
     // an exception will be thrown if the user specifies a directory that does not exists or has insufficient

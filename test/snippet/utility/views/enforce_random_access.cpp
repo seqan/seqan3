@@ -19,9 +19,9 @@ int main()
     static_assert(!std::ranges::random_access_range<decltype(aligned_seq)>);
 
     // The default interface models at most std::bidirectional_range.
-    auto it = std::ranges::begin(aligned_seq);  // Returned iterator models std::bidirectional_iterator.
-    std::ranges::advance(it, 3);                // Advancing the iterator takes linear time.
-    seqan3::debug_stream << *it << '\n';        // "T"
+    auto it = std::ranges::begin(aligned_seq); // Returned iterator models std::bidirectional_iterator.
+    std::ranges::advance(it, 3);               // Advancing the iterator takes linear time.
+    seqan3::debug_stream << *it << '\n';       // "T"
 
     // After adapting it with enforce_random_access, the returned range models std::random_access_range.
     auto aligned_seq_ra = aligned_seq | seqan3::views::enforce_random_access;
@@ -33,6 +33,6 @@ int main()
     static_assert(std::ranges::random_access_range<decltype(aligned_seq_ra)>);
 
     auto it_ra = std::ranges::begin(aligned_seq_ra); // Returned iterator models std::random_access_iterator.
-    std::ranges::advance(it_ra, 3);                  // Advancing the iterator takes now logarithmic time instead linear.
-    seqan3::debug_stream << *it_ra << '\n';          // "T"
+    std::ranges::advance(it_ra, 3);         // Advancing the iterator takes now logarithmic time instead linear.
+    seqan3::debug_stream << *it_ra << '\n'; // "T"
 }

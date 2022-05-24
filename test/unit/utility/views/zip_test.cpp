@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <deque>
 #include <iostream>
@@ -12,8 +14,6 @@
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/utility/views/zip.hpp>
 
@@ -25,5 +25,5 @@ TEST(zip_view, gcc10bug_rangev3_1480)
     std::vector<char> const second_sequence{};
 
     auto zip_view = seqan3::views::zip(first_sequence, second_sequence);
-    std::ranges::for_each(zip_view, [&] ([[maybe_unused]] auto && value) {});
+    std::ranges::for_each(zip_view, [&]([[maybe_unused]] auto && value) {});
 }

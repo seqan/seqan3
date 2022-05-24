@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <vector>
-
 #include <gtest/gtest.h>
+
+#include <vector>
 
 #include <seqan3/alignment/pairwise/align_pairwise.hpp>
 
@@ -32,8 +32,7 @@ static auto dna4_all_same = []()
 } // namespace seqan3::test::alignment::collection::simd::global::affine::banded
 
 using pairwise_collection_simd_global_affine_banded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&seqan3::test::alignment::collection::simd::global::affine::banded::dna4_all_same>
-    >;
+    pairwise_alignment_fixture<&seqan3::test::alignment::collection::simd::global::affine::banded::dna4_all_same>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_collection_simd_global_affine_banded,
                                pairwise_alignment_collection_test,

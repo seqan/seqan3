@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <type_traits>
 
@@ -18,8 +20,6 @@
 #include <seqan3/search/search.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include <gtest/gtest.h>
-
 #include "helper.hpp"
 
 using seqan3::operator""_dna4;
@@ -28,11 +28,17 @@ using seqan3::operator""_phred42;
 using namespace std::string_literals;
 
 auto ref_id_and_position = seqan3::detail::persist
-                         | std::views::transform([] (auto && res)
-                         {
-                             return std::make_pair(res.reference_id(), res.reference_begin_position());
-                         });
-auto query_id = seqan3::detail::persist | std::views::transform([] (auto && res) { return res.query_id(); });
+                         | std::views::transform(
+                               [](auto && res)
+                               {
+                                   return std::make_pair(res.reference_id(), res.reference_begin_position());
+                               });
+auto query_id = seqan3::detail::persist
+              | std::views::transform(
+                    [](auto && res)
+                    {
+                        return res.query_id();
+                    });
 
 template <typename index_t>
 class search_test : public ::testing::Test
@@ -59,8 +65,8 @@ public:
     index_t index{text};
 };
 
-using fm_index_types        = ::testing::Types<seqan3::fm_index<seqan3::dna4, seqan3::text_layout::collection>,
-                                               seqan3::bi_fm_index<seqan3::dna4, seqan3::text_layout::collection>>;
+using fm_index_types = ::testing::Types<seqan3::fm_index<seqan3::dna4, seqan3::text_layout::collection>,
+                                        seqan3::bi_fm_index<seqan3::dna4, seqan3::text_layout::collection>>;
 using fm_index_string_types = ::testing::Types<seqan3::fm_index<char, seqan3::text_layout::collection>,
                                                seqan3::bi_fm_index<char, seqan3::text_layout::collection>>;
 
@@ -102,10 +108,9 @@ TYPED_TEST(search_test, error_free)
     {
         // successful and unsuccesful exact search using max_total_error
         auto const zero_count = seqan3::search_cfg::error_count{0};
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{zero_count} |
-                                          seqan3::search_cfg::max_error_substitution{zero_count} |
-                                          seqan3::search_cfg::max_error_insertion{zero_count} |
-                                          seqan3::search_cfg::max_error_deletion{zero_count};
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_total{zero_count} | seqan3::search_cfg::max_error_substitution{zero_count}
+            | seqan3::search_cfg::max_error_insertion{zero_count} | seqan3::search_cfg::max_error_deletion{zero_count};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
@@ -127,10 +132,9 @@ TYPED_TEST(search_test, error_free)
     {
         // successful and unsuccesful exact search using max_total_error_rate
         auto const zero_rate = seqan3::search_cfg::error_rate{.0};
-        seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{zero_rate} |
-                                          seqan3::search_cfg::max_error_substitution{zero_rate} |
-                                          seqan3::search_cfg::max_error_insertion{zero_rate} |
-                                          seqan3::search_cfg::max_error_deletion{zero_rate};
+        seqan3::configuration const cfg =
+            seqan3::search_cfg::max_error_total{zero_rate} | seqan3::search_cfg::max_error_substitution{zero_rate}
+            | seqan3::search_cfg::max_error_insertion{zero_rate} | seqan3::search_cfg::max_error_deletion{zero_rate};
         EXPECT_RANGE_EQ(search("ACGT"_dna4, this->index, cfg) | ref_id_and_position, expected_hits);
         EXPECT_RANGE_EQ(search("ACGG"_dna4, this->index, cfg) | ref_id_and_position, empty_result);
     }
@@ -153,10 +157,10 @@ TYPED_TEST(search_test, single_element_collection)
     std::vector<seqan3::dna4_vector> text{"GGTGTGTCGGCCCTATCCCTTGCG"_dna4};
     TypeParam index{text};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{3}} |
-                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{3}} |
-                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
-                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{3}}
+                                    | seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{3}}
+                                    | seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}
+                                    | seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}};
     typename TestFixture::hits_result_t expected_hits{{0, 0}};
     EXPECT_RANGE_EQ(search("GGTGTGTCG"_dna4, index, cfg) | ref_id_and_position, expected_hits);
 }
@@ -168,10 +172,10 @@ TYPED_TEST(search_test, multiple_queries)
     typename TestFixture::hits_result_t expected_hits{{0, 0}, {1, 0}, {0, 0}, {0, 4}, {1, 0}, {1, 4}};
     std::vector<size_t> expected_query_ids{1, 1, 2, 2, 2, 2};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}}
+                                    | seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}}
+                                    | seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}}
+                                    | seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}};
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | ref_id_and_position, expected_hits);
     EXPECT_RANGE_EQ(search(queries, this->index, cfg) | query_id, expected_query_ids);
 }
@@ -181,12 +185,12 @@ TYPED_TEST(search_test, parallel_queries)
     constexpr size_t num_queries{100u};
     std::vector<std::vector<seqan3::dna4>> const queries{num_queries, {"ACGTACGTACGT"_dna4}};
 
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}} |
-                                      seqan3::search_cfg::parallel{
-                                          std::min<uint32_t>(2, std::thread::hardware_concurrency())};
+    seqan3::configuration const cfg =
+        seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_rate{.0}}
+        | seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_rate{.0}}
+        | seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_rate{.0}}
+        | seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_rate{.0}}
+        | seqan3::search_cfg::parallel{std::min<uint32_t>(2, std::thread::hardware_concurrency())};
 
     typename TestFixture::hits_result_t expected_hits{}; // Expected hits are {0, 0} and {1, 0} for each of the queries.
     std::vector<size_t> expected_query_ids{}; // Expected query ids are 0,0,1,1,...,num_queries-1,num_queries-1.
@@ -216,10 +220,11 @@ TYPED_TEST(search_test, debug_streaming)
     std::ostringstream oss;
     seqan3::debug_stream_type stream{oss};
     stream << search("TAC"_dna4, this->index);
-    EXPECT_EQ(oss.str(), "[<query_id:0, reference_id:0, reference_pos:3>"
-                         ",<query_id:0, reference_id:0, reference_pos:7>"
-                         ",<query_id:0, reference_id:1, reference_pos:3>"
-                         ",<query_id:0, reference_id:1, reference_pos:7>]");
+    EXPECT_EQ(oss.str(),
+              "[<query_id:0, reference_id:0, reference_pos:3>"
+              ",<query_id:0, reference_id:0, reference_pos:7>"
+              ",<query_id:0, reference_id:1, reference_pos:3>"
+              ",<query_id:0, reference_id:1, reference_pos:7>]");
 }
 
 // https://github.com/seqan/seqan3/issues/2115
@@ -229,11 +234,11 @@ TYPED_TEST(search_test, issue_2115)
     TypeParam const index{genomes};
 
     // One substitution error, report all best hits
-    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}} |
-                                      seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}} |
-                                      seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}} |
-                                      seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}} |
-                                      seqan3::search_cfg::hit_all_best{};
+    seqan3::configuration const cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}}
+                                    | seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{1}}
+                                    | seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{0}}
+                                    | seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{0}}
+                                    | seqan3::search_cfg::hit_all_best{};
 
     std::vector<seqan3::dna4> const dna4_query{"ACGG"_dna4};
     std::vector<seqan3::qualified<seqan3::dna4, seqan3::phred42>> const dna4q_query{{'A'_dna4, '!'_phred42},

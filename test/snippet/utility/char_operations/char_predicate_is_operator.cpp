@@ -5,7 +5,7 @@
 int main()
 {
     char chr{'1'};
-    auto constexpr my_cond = seqan3::is_char<'%'> || seqan3::is_digit;
+    constexpr auto my_cond = seqan3::is_char<'%'> || seqan3::is_digit;
     bool is_percent = my_cond(chr);
     std::cout << std::boolalpha << is_percent << '\n'; // true
 }

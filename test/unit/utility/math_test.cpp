@@ -80,10 +80,10 @@ TYPED_TEST(unsigned_operations, ceil_log2)
 
             if constexpr (seqan3::detail::bits_of<unsigned_t> <= 32u) // known to fail for 64bit unsigned integers
             {
-                EXPECT_EQ(std::ceil(std::log2(n)), log2_value + 1u) << "ceil_log2 of " << start << " should be "
-                                                                    << log2_value
-                                                                    << "; If this fails this might be a floating point"
-                                                                    << "rounding error on your machine.";
+                EXPECT_EQ(std::ceil(std::log2(n)), log2_value + 1u)
+                    << "ceil_log2 of " << start << " should be " << log2_value
+                    << "; If this fails this might be a floating point"
+                    << "rounding error on your machine.";
             }
         }
     }

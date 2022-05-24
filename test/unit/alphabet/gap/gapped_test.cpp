@@ -5,16 +5,15 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <sstream>
-
 #include <gtest/gtest.h>
 
+#include <sstream>
 #include <vector>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alphabet/gap/gapped.hpp>
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
@@ -23,8 +22,7 @@
 
 using seqan3::operator""_dna4;
 
-using gapped_types = ::testing::Types<seqan3::gapped<seqan3::dna4>,
-                                      seqan3::gapped<seqan3::dna15>>;
+using gapped_types = ::testing::Types<seqan3::gapped<seqan3::dna4>, seqan3::gapped<seqan3::dna15>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, alphabet, gapped_types, );
 INSTANTIATE_TYPED_TEST_SUITE_P(gapped, semi_alphabet_test, gapped_types, );
@@ -94,8 +92,8 @@ TEST(gapped_test, assign_from_component_alphabet)
 TEST(gapped_test, issue_1972)
 {
     // see issue https://github.com/seqan/seqan3/issues/1972
-    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('A')); // valid seqan3::dna4 char
-    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('a')); // valid seqan3::dna4 char
-    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('-')); // valid seqan3::gap char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('A'));  // valid seqan3::dna4 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('a'));  // valid seqan3::dna4 char
+    EXPECT_TRUE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('-'));  // valid seqan3::gap char
     EXPECT_FALSE(seqan3::char_is_valid_for<seqan3::gapped<seqan3::dna4>>('S')); // neither seqan3::dna4 nor seqan3::gap
 }

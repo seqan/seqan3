@@ -18,7 +18,7 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/stream.h>
+#    include <seqan/stream.h>
 #endif
 
 enum class tag

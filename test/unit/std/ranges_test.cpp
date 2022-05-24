@@ -52,7 +52,6 @@ TEST(ranges_test, drop_view)
     EXPECT_TRUE(std::ranges::view<decltype(std::views::drop(s, 0))>);
 }
 
-
 // https://github.com/ericniebler/range-v3/issues/1514
 TEST(ranges_test, gcc10bug_rangev3_1514)
 {
@@ -84,5 +83,5 @@ TEST(ranges_test, issue372)
     EXPECT_TRUE(ranges::indirectly_readable<iterator2_t>); // this failed
     EXPECT_TRUE(std::input_iterator<iterator2_t>);
     EXPECT_TRUE(ranges::input_iterator<iterator2_t>); // this failed
-#endif // __cpp_lib_ranges
+#endif                                                // __cpp_lib_ranges
 }

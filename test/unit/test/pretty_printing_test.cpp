@@ -6,6 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #include <gtest/gtest.h>
+
 #include <optional>
 #include <ostream>
 #include <variant>
@@ -63,8 +64,8 @@ TEST(pretty_printing, gtest_output)
 TEST(pretty_printing, std_output)
 {
     // if any of these tests get supported by googletest move them to gtest_output
-    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
-    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0,1}, {2,3}, {1,2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+    EXPECT_EQ(gtest_str(std::vector<std::vector<int>>{{0, 1}, {2, 3}, {1, 2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
+    EXPECT_EQ(debug_str(std::vector<std::vector<int>>{{0, 1}, {2, 3}, {1, 2}, {0}}), "[[0,1],[2,3],[1,2],[0]]"s);
 
     EXPECT_EQ(gtest_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);
     EXPECT_EQ(debug_str(std::nullopt), "<VALUELESS_OPTIONAL>"s);

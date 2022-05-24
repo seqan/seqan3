@@ -33,7 +33,7 @@ using alignment_result_t = seqan3::alignment_result<seqan3::detail::alignment_re
 using nt_scheme = seqan3::nucleotide_scoring_scheme<int8_t>;
 
 // Needed for the on result config
-auto on_result_callback = [] ([[maybe_unused]] auto && res) { };
+auto on_result_callback = []([[maybe_unused]] auto && res) {};
 using callback_t = decltype(on_result_callback);
 
 // A list of config types to test, associated with their incompatible config classes defined as a taboo list.
@@ -57,11 +57,11 @@ using align_config_and_taboo_types = seqan3::type_list<
     std::pair<cfg::min_score, seqan3::type_list<cfg::min_score, cfg::method_local>>,
     std::pair<cfg::on_result<callback_t>, seqan3::type_list<cfg::on_result<callback_t>>>,
     std::pair<cfg::parallel, seqan3::type_list<cfg::parallel>>,
-    std::pair<cfg::detail::result_type<alignment_result_t>, seqan3::type_list<cfg::detail::result_type<alignment_result_t>>>,
+    std::pair<cfg::detail::result_type<alignment_result_t>,
+              seqan3::type_list<cfg::detail::result_type<alignment_result_t>>>,
     std::pair<cfg::score_type<int32_t>, seqan3::type_list<cfg::score_type<int32_t>>>,
     std::pair<cfg::scoring_scheme<nt_scheme>, seqan3::type_list<cfg::scoring_scheme<nt_scheme>>>,
-    std::pair<cfg::vectorised, seqan3::type_list<cfg::vectorised>>
-    >;
+    std::pair<cfg::vectorised, seqan3::type_list<cfg::vectorised>>>;
 
 // The pure list of configuration elements to instantiate the typed test case with.
 using align_config_types = pure_config_type_list<align_config_and_taboo_types>;
@@ -73,9 +73,9 @@ public:
     // The actual config type that is tested.
     using config_type = config_t;
     // The taboo list associated with the given TypeParam element.
-    using taboo_list_type =
-        typename seqan3::list_traits::at<seqan3::list_traits::find<config_type, align_config_types>, // determine the index
-                                         align_config_and_taboo_types>::second_type; // extract the taboo list.
+    using taboo_list_type = typename seqan3::list_traits::at<
+        seqan3::list_traits::find<config_type, align_config_types>, // determine the index
+        align_config_and_taboo_types>::second_type;                 // extract the taboo list.
 
     // A compatible configuration type for the current configuration element to test.
     using compatible_configuration_type = make_pipeable_configuration<align_config_types, taboo_list_type>;

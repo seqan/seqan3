@@ -7,9 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <random>
-
 #include <concepts>
+#include <random>
 
 #include "auxiliary.hpp"
 
@@ -23,8 +22,8 @@ TEST(callable_concepts, invocable)
 TEST(callable_concepts, regular_invocable)
 {
     EXPECT_TRUE((!std::regular_invocable<type_a, int, double, type_b>));
-//TODO(rrahn): Should not meet the std::regular_invocable
-//    EXPECT_TRUE((!std::regular_invocable<std::random_device>));
+    //TODO(rrahn): Should not meet the std::regular_invocable
+    //    EXPECT_TRUE((!std::regular_invocable<std::random_device>));
     EXPECT_TRUE((std::regular_invocable<type_c, int, double, type_b>));
 }
 

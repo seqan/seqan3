@@ -26,13 +26,13 @@ int main()
 
         static_assert(std::is_same_v<id_t, std::type_identity<type>>, "id is of type std::type_identity<type>");
 
-        if constexpr(std::is_same_v<type, bool>)
+        if constexpr (std::is_same_v<type, bool>)
             seqan3::debug_stream << "bool";
-        else if constexpr(std::is_same_v<type, int>)
+        else if constexpr (std::is_same_v<type, int>)
             seqan3::debug_stream << "int";
-        else if constexpr(std::is_same_v<type, float>)
+        else if constexpr (std::is_same_v<type, float>)
             seqan3::debug_stream << "float";
-        else if constexpr(std::is_same_v<type, incomplete::type>)
+        else if constexpr (std::is_same_v<type, incomplete::type>)
             seqan3::debug_stream << "incomplete::type";
 
         seqan3::debug_stream << ", ";

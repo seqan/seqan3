@@ -47,10 +47,8 @@ TEST(view_interleave, basic)
 
     // combinability
     // explicitly call seqan3::views::type_reduce
-    auto v4 = seqan3::views::type_reduce(u)
-            | seqan3::views::interleave(s, seqan3::views::type_reduce(i))
-            | std::views::reverse
-            | std::views::take(5);
+    auto v4 = seqan3::views::type_reduce(u) | seqan3::views::interleave(s, seqan3::views::type_reduce(i))
+            | std::views::reverse | std::views::take(5);
     EXPECT_RANGE_EQ(cmp_rev, v4);
     // don't call seqan3::views::type_reduce
     auto v5 = u | seqan3::views::interleave(s, i) | std::views::reverse | std::views::take(5);

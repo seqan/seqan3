@@ -7,11 +7,10 @@
 
 #include <gtest/gtest.h>
 
-#include <seqan3/core/debug_stream.hpp>
-
 #include <seqan3/alignment/matrix/detail/edit_distance_trace_matrix_full.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
+#include <seqan3/core/debug_stream.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 #include <seqan3/test/pretty_printing.hpp>
 
@@ -22,7 +21,8 @@ struct trace_iterator_fixture : public ::testing::Test
     using sequence_t = std::string;
     using trace_path_vector = std::vector<seqan3::detail::trace_directions>;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         matrix.reserve(10u);
 
         matrix.add_column({0b0000'0000u, 0b0000'0000u, 0b0u},
@@ -69,36 +69,31 @@ struct trace_iterator_fixture : public ::testing::Test
     using expect_matrix_type = seqan3::detail::row_wise_matrix<seqan3::detail::trace_directions>;
     // This is nearly seqan3::test::alignment::fixture::global::edit_distance::unbanded::dna4_02T, but the second
     // sequence has an additional A.
-    expect_matrix_type expect_matrix
-    {
-        seqan3::detail::number_rows{18u}, seqan3::detail::number_cols{10u},
-        {
-        //     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
-        /*e*/ N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,
-        /*A*/ u  ,D  ,l  ,l  ,l  ,Dl ,l  ,l  ,l  ,Dl ,
-        /*A*/ u  ,Du ,D  ,Dl ,Dl ,D  ,l  ,l  ,l  ,Dl ,
-        /*C*/ u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,l  ,l  ,l  ,
-        /*C*/ u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl ,Dl ,
-        /*G*/ u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl ,Dl ,
-        /*G*/ u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl ,
-        /*T*/ u  ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl ,
-        /*T*/ u  ,Du ,u  ,u  ,u  ,D  ,l  ,l  ,ul ,D  ,
-        /*A*/ u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,
-        /*A*/ u  ,Du ,u  ,u  ,u  ,Du ,Du ,D  ,Dl ,D  ,
-        /*C*/ u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dul,D  ,Dul,
-        /*C*/ u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dul,D  ,
-        /*G*/ u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,
-        /*G*/ u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,
-        /*T*/ u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,
-        /*T*/ u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,
-        /*A*/ u  ,Du ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D
-        }
-    };
+    expect_matrix_type expect_matrix{seqan3::detail::number_rows{18u},
+                                     seqan3::detail::number_cols{10u},
+                                     {//     e,  A,  C,  G,  T,  A,  C,  G,  T,  A
+                                      /*e*/ N, l,  l,  l,  l,  l,   l,   l,   l,   l,
+                                      /*A*/ u, D,  l,  l,  l,  Dl,  l,   l,   l,   Dl,
+                                      /*A*/ u, Du, D,  Dl, Dl, D,   l,   l,   l,   Dl,
+                                      /*C*/ u, u,  D,  Dl, Dl, Dul, D,   l,   l,   l,
+                                      /*C*/ u, u,  Du, D,  Dl, Dl,  Du,  D,   Dl,  Dl,
+                                      /*G*/ u, u,  u,  D,  Dl, Dl,  Dul, D,   Dl,  Dl,
+                                      /*G*/ u, u,  u,  Du, D,  Dl,  Dl,  Du,  D,   Dl,
+                                      /*T*/ u, u,  u,  u,  D,  Dl,  Dl,  Dul, D,   Dl,
+                                      /*T*/ u, Du, u,  u,  u,  D,   l,   l,   ul,  D,
+                                      /*A*/ u, Du, u,  u,  u,  Du,  D,   Dl,  Dl,  Du,
+                                      /*A*/ u, Du, u,  u,  u,  Du,  Du,  D,   Dl,  D,
+                                      /*C*/ u, u,  Du, u,  u,  u,   D,   Dul, D,   Dul,
+                                      /*C*/ u, u,  Du, u,  u,  u,   Du,  D,   Dul, D,
+                                      /*G*/ u, u,  u,  Du, u,  u,   u,   D,   Dl,  Dul,
+                                      /*G*/ u, u,  u,  Du, u,  u,   u,   Du,  D,   Dl,
+                                      /*T*/ u, u,  u,  u,  Du, u,   u,   u,   D,   Dl,
+                                      /*T*/ u, u,  u,  u,  Du, u,   u,   u,   Du,  D,
+                                      /*A*/ u, Du, u,  u,  u,  Du,  u,   u,   u,   D}};
 
     auto path(size_t row, size_t column)
     {
-        return matrix.trace_path({seqan3::detail::row_index_type{row},
-                                  seqan3::detail::column_index_type{column}});
+        return matrix.trace_path({seqan3::detail::row_index_type{row}, seqan3::detail::column_index_type{column}});
     };
 
     sequence_t sequence1 = "ACGTACGTA";
@@ -120,12 +115,29 @@ TEST_F(trace_iterator_fixture, trace_paths)
     EXPECT_RANGE_EQ(path(0u, 9u), (trace_path_vector{l, l, l, l, l, l, l, l, l}));
     EXPECT_RANGE_EQ(path(17u, 0u), (trace_path_vector{u, u, u, u, u, u, u, u, u, u, u, u, u, u, u, u, u}));
     EXPECT_RANGE_EQ(path(1u, 2u), (trace_path_vector{l, D}));
-    EXPECT_RANGE_EQ(path(2u, 1u), (trace_path_vector{/*D*/u, D}));
-    EXPECT_RANGE_EQ(path(7u, 9u), (trace_path_vector{/*D*/l, D, /*D*/u, D, /*D*/u, D, D, l, l, l, D}));
-    EXPECT_RANGE_EQ(path(10u, 9u), (trace_path_vector{D, /*D*/l, /*D*/l, D, D, D, /*D*/u, D, /*D*/u, D, /*D*/u, D}));
-    EXPECT_RANGE_EQ(path(11u, 9u), (trace_path_vector{/*Du*/l, D, D, D, D, D, /*D*/u, D, /*D*/u, D, /*D*/u, D}));
-    EXPECT_RANGE_EQ(path(17u, 9u), (trace_path_vector{D, /*D*/u, D, /*D*/u, D, /*D*/u, D, /*D*/u, /*D*/u, D, D,
-                                                      /*D*/u, D, /*D*/u, D, /*D*/u, D }));
+    EXPECT_RANGE_EQ(path(2u, 1u), (trace_path_vector{/*D*/ u, D}));
+    EXPECT_RANGE_EQ(path(7u, 9u), (trace_path_vector{/*D*/ l, D, /*D*/ u, D, /*D*/ u, D, D, l, l, l, D}));
+    EXPECT_RANGE_EQ(path(10u, 9u),
+                    (trace_path_vector{D, /*D*/ l, /*D*/ l, D, D, D, /*D*/ u, D, /*D*/ u, D, /*D*/ u, D}));
+    EXPECT_RANGE_EQ(path(11u, 9u), (trace_path_vector{/*Du*/ l, D, D, D, D, D, /*D*/ u, D, /*D*/ u, D, /*D*/ u, D}));
+    EXPECT_RANGE_EQ(path(17u, 9u),
+                    (trace_path_vector{D,
+                                       /*D*/ u,
+                                       D,
+                                       /*D*/ u,
+                                       D,
+                                       /*D*/ u,
+                                       D,
+                                       /*D*/ u,
+                                       /*D*/ u,
+                                       D,
+                                       D,
+                                       /*D*/ u,
+                                       D,
+                                       /*D*/ u,
+                                       D,
+                                       /*D*/ u,
+                                       D}));
 }
 
 TEST_F(trace_iterator_fixture, invalid_trace_path)

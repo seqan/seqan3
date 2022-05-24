@@ -15,11 +15,11 @@
 
 TEST(traits, alignment_function_traits)
 {
-    using result_callback_t = std::function<void(int)>;  // The callback type.
+    using result_callback_t = std::function<void(int)>;                      // The callback type.
     using algorithm_t = std::function<void(std::string, result_callback_t)>; // The algorithm type.
 
     // Get the traits class and evaluate the member types.
-    using function_traits_t =  seqan3::detail::alignment_function_traits<algorithm_t>;
+    using function_traits_t = seqan3::detail::alignment_function_traits<algorithm_t>;
 
     using input_t = typename function_traits_t::sequence_input_type;
     using callback_t = typename function_traits_t::callback_type;

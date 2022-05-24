@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
+
+#include <iostream>
 
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/core/debug_stream/byte.hpp>
@@ -88,26 +88,16 @@ TEST_P(sequence_file_seek_test, seek_to)
 }
 
 sequence_file_seek_test_fixture fasta_file_fixture{"standard.fasta", false, {0, 25, 114}};
-INSTANTIATE_TEST_SUITE_P(fasta_file,
-                         sequence_file_seek_test,
-                         ::testing::Values(fasta_file_fixture));
+INSTANTIATE_TEST_SUITE_P(fasta_file, sequence_file_seek_test, ::testing::Values(fasta_file_fixture));
 
 sequence_file_seek_test_fixture fastq_file_fixture{"standard.fastq", true, {0, 45, 218}};
-INSTANTIATE_TEST_SUITE_P(fastq_file,
-                         sequence_file_seek_test,
-                         ::testing::Values(fastq_file_fixture));
+INSTANTIATE_TEST_SUITE_P(fastq_file, sequence_file_seek_test, ::testing::Values(fastq_file_fixture));
 
 sequence_file_seek_test_fixture sam_file_fixture{"standard.sam", true, {49, 107, 293}};
-INSTANTIATE_TEST_SUITE_P(sam_file,
-                         sequence_file_seek_test,
-                         ::testing::Values(sam_file_fixture));
+INSTANTIATE_TEST_SUITE_P(sam_file, sequence_file_seek_test, ::testing::Values(sam_file_fixture));
 
 sequence_file_seek_test_fixture embl_file_fixture{"standard.embl", false, {0, 108, 283}};
-INSTANTIATE_TEST_SUITE_P(embl_file,
-                         sequence_file_seek_test,
-                         ::testing::Values(embl_file_fixture));
+INSTANTIATE_TEST_SUITE_P(embl_file, sequence_file_seek_test, ::testing::Values(embl_file_fixture));
 
 sequence_file_seek_test_fixture genbank_file_fixture{"standard.genbank", false, {0, 561, 802}};
-INSTANTIATE_TEST_SUITE_P(genbank_file,
-                         sequence_file_seek_test,
-                         ::testing::Values(genbank_file_fixture));
+INSTANTIATE_TEST_SUITE_P(genbank_file, sequence_file_seek_test, ::testing::Values(genbank_file_fixture));

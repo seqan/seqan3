@@ -16,9 +16,8 @@
 template <typename t>
 using alphabet_cereal = ::testing::Test;
 
-using test_types = ::testing::Types<seqan3::dna4,
-                                    seqan3::qualified<seqan3::dna4, seqan3::phred42>,
-                                    seqan3::gapped<seqan3::dna4>>;
+using test_types =
+    ::testing::Types<seqan3::dna4, seqan3::qualified<seqan3::dna4, seqan3::phred42>, seqan3::gapped<seqan3::dna4>>;
 
 TYPED_TEST_SUITE(alphabet_cereal, test_types, );
 

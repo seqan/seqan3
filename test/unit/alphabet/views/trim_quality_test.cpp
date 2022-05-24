@@ -50,8 +50,7 @@ TEST(view_trim, qualified)
                                     {'G'_dna5, 'I'_phred42},
                                     {'G'_dna5, '?'_phred42},
                                     {'A'_dna5, '5'_phred42}};
-    std::vector<seqan3::dna5q> cmp2{{'A'_dna5, 'I'_phred42},
-                                    {'G'_dna5, 'I'_phred42}};
+    std::vector<seqan3::dna5q> cmp2{{'A'_dna5, 'I'_phred42}, {'G'_dna5, 'I'_phred42}};
 
     // trim by phred_value
     EXPECT_RANGE_EQ(cmp1, vec | seqan3::views::trim_quality(20u));

@@ -99,15 +99,15 @@ TYPED_TEST(container_of_container, iterators)
     TypeParam const t2{"ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
 
     // begin
-    EXPECT_RANGE_EQ(*t1.begin(),  "ACGT"_dna4);
+    EXPECT_RANGE_EQ(*t1.begin(), "ACGT"_dna4);
     EXPECT_RANGE_EQ(*t1.cbegin(), "ACGT"_dna4);
-    EXPECT_RANGE_EQ(*t2.begin(),  "ACGT"_dna4);
+    EXPECT_RANGE_EQ(*t2.begin(), "ACGT"_dna4);
     EXPECT_RANGE_EQ(*t2.cbegin(), "ACGT"_dna4);
 
     // end and arithmetic
-    EXPECT_RANGE_EQ(*(t1.end()  - 1), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(*(t1.end() - 1), "GAGGA"_dna4);
     EXPECT_RANGE_EQ(*(t1.cend() - 1), "GAGGA"_dna4);
-    EXPECT_RANGE_EQ(*(t2.end()  - 1), "GAGGA"_dna4);
+    EXPECT_RANGE_EQ(*(t2.end() - 1), "GAGGA"_dna4);
     EXPECT_RANGE_EQ(*(t2.cend() - 1), "GAGGA"_dna4);
 
     // convertibility between const and non-const
@@ -153,7 +153,6 @@ TYPED_TEST(container_of_container, element_access)
         EXPECT_EQ(std::get<1>(t1.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
         EXPECT_EQ(std::get<1>(t2.raw_data()), (std::vector<size_type>{0, 4, 8, 13}));
     }
-
 }
 
 TYPED_TEST(container_of_container, capacity)
@@ -189,9 +188,9 @@ TYPED_TEST(container_of_container, capacity)
 
     // shrink_to_fit
     t1.reserve(1000);
-    EXPECT_GT(t1.capacity(), t1.size()*2);
+    EXPECT_GT(t1.capacity(), t1.size() * 2);
     t1.shrink_to_fit();
-    EXPECT_LE(t1.capacity(), t1.size()*2);
+    EXPECT_LE(t1.capacity(), t1.size() * 2);
 
     if constexpr (std::is_same_v<TypeParam, seqan3::concatenated_sequences<std::vector<seqan3::dna4>>>)
     {
@@ -245,7 +244,7 @@ TYPED_TEST(container_of_container, insert)
     t1 = {"GAGGA"_dna4, "ACGT"_dna4, "ACGT"_dna4, "GAGGA"_dna4};
     t0.insert(t0.cend(), t1.begin() + 1, t1.begin() + 3);
 
-    t0.insert(t0.cend(),   t1.cend() - 1, t1.cend());
+    t0.insert(t0.cend(), t1.cend() - 1, t1.cend());
     t0.insert(t0.cbegin(), t1.cend() - 1, t1.cend());
     EXPECT_EQ(t0, t1);
 
@@ -294,7 +293,7 @@ TYPED_TEST(container_of_container, resize)
 
     // enlarge without values
     t0.resize(3);
-    EXPECT_EQ(t0,( TypeParam{{}, {}, {}}));
+    EXPECT_EQ(t0, (TypeParam{{}, {}, {}}));
 
     // enlarge with value
     t0.resize(5, "ACGT"_dna4);

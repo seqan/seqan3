@@ -51,8 +51,7 @@ struct fake_file_t
         return {*this};
     }
 
-    fake_file_t(std::istringstream in) :
-        secondary_stream{new std::istringstream{std::move(in)}}
+    fake_file_t(std::istringstream in) : secondary_stream{new std::istringstream{std::move(in)}}
     {}
 };
 
@@ -107,7 +106,17 @@ TEST(in_file_iterator, comparison)
     EXPECT_FALSE(it == std::default_sentinel);
 
     // consume the entire range
-    ++it; ++it; ++it; ++it; ++it; ++it; ++it; ++it; ++it; ++it; ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
 
     // at end
     EXPECT_TRUE(it == std::default_sentinel);
@@ -122,7 +131,11 @@ TEST(in_file_iterator, file_position)
     auto beginning = it.file_position();
 
     // Go to the 6th character (w) and store it.
-    ++it; ++it; ++it; ++it; ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
+    ++it;
     EXPECT_EQ(*it, 'w');
     auto w_position = it.file_position();
 

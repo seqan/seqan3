@@ -5,14 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <chrono>
 #include <cmath>
 #include <cstring>
 #include <random>
 #include <seqan3/std/ranges>
 #include <utility>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
@@ -23,7 +23,7 @@
 
 using seqan3::operator""_dna4;
 
-using gap_sequence_gap_decorator = seqan3::gap_decorator<const std::vector<seqan3::dna4> &>;
+using gap_sequence_gap_decorator = seqan3::gap_decorator<std::vector<seqan3::dna4> const &>;
 using gap_sequence_vector = std::vector<seqan3::gapped<seqan3::dna4>>;
 
 // ============================================================================
@@ -41,9 +41,9 @@ void insert_random(benchmark::State & state)
     std::vector<size_type> gaps(seq_len, 0);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
-    if constexpr(gapped_flag)
+    if constexpr (gapped_flag)
     {
-        sample<size_type>(gaps, seq_len, state.range(1)/100.0);
+        sample<size_type>(gaps, seq_len, state.range(1) / 100.0);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
     }
 
@@ -52,7 +52,7 @@ void insert_random(benchmark::State & state)
     assign_unaligned(gap_decorator, seq);
 
     // insert gaps before starting benchmark
-    if constexpr(gapped_flag)
+    if constexpr (gapped_flag)
         insert_gaps<gap_decorator_t>(gaps, gap_decorator, seq_len);
 
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
@@ -60,8 +60,12 @@ void insert_random(benchmark::State & state)
 
     // presample insert positions
     std::vector<size_type> access_positions(1 << 10);
-    std::generate(access_positions.begin(), access_positions.end(),
-        [&](){return uni_dis(generator);});
+    std::generate(access_positions.begin(),
+                  access_positions.end(),
+                  [&]()
+                  {
+                      return uni_dis(generator);
+                  });
     size_t j = 0;
     for (auto _ : state)
     {
@@ -99,9 +103,9 @@ void delete_random(benchmark::State & state)
     std::vector<size_type> gaps(seq_len, 0);
 
     // determine sum of gaps and non-gap symbols for not exceeding targeted sequence length
-    if constexpr(gapped_flag)
+    if constexpr (gapped_flag)
     {
-        sample<size_type>(gaps, seq_len, state.range(1)/100.0);
+        sample<size_type>(gaps, seq_len, state.range(1) / 100.0);
         resize<size_type, sequence_type>(gaps, seq, seq_len);
     }
 
@@ -110,7 +114,7 @@ void delete_random(benchmark::State & state)
     assign_unaligned(gap_decorator, seq);
 
     // insert gaps before starting benchmark
-    if constexpr(gapped_flag)
+    if constexpr (gapped_flag)
         insert_gaps<gap_decorator_t>(gaps, gap_decorator, seq_len);
 
     std::mt19937 generator(time(0)); //Standard mersenne_twister_engine seeded with current time
@@ -118,8 +122,12 @@ void delete_random(benchmark::State & state)
 
     // presample delete positions
     std::vector<size_t> access_positions(1 << 10);
-    std::generate(access_positions.begin(), access_positions.end(),
-        [&](){return uni_dis(generator);});
+    std::generate(access_positions.begin(),
+                  access_positions.end(),
+                  [&]()
+                  {
+                      return uni_dis(generator);
+                  });
 
     iterator_type first, last;
     size_t j = 0;

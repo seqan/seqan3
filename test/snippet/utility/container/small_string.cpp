@@ -3,9 +3,9 @@
 
 int main()
 {
-    constexpr seqan3::small_string sm{"hello"};     // construct from string literal at compile time!
+    constexpr seqan3::small_string sm{"hello"}; // construct from string literal at compile time!
 
-    static_assert(sm[0] == 'h');                    // This way I can also test it at compile-time
+    static_assert(sm[0] == 'h'); // This way I can also test it at compile-time
 
     seqan3::debug_stream << sm.size() << '\n'; // prints 5! (the null character is only stored internally)
 

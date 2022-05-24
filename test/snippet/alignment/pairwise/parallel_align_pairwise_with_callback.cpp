@@ -14,9 +14,8 @@ int main()
     std::vector<sequence_pair_t> sequences{100, {"AGTGCTACG"_dna4, "ACGTGCGACTAG"_dna4}};
 
     // Use edit distance with 4 threads.
-    auto const alignment_config = seqan3::align_cfg::method_global{} |
-                                  seqan3::align_cfg::edit_scheme |
-                                  seqan3::align_cfg::parallel{4};
+    auto const alignment_config =
+        seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | seqan3::align_cfg::parallel{4};
 
     // Compute the alignments in parallel and output them in order based on the input.
     for (auto && result : seqan3::align_pairwise(sequences, alignment_config))
@@ -36,13 +35,14 @@ int main()
 
     // Compute the alignments in parallel and output them unordered using the callback (order is not deterministic).
     std::mutex write_to_debug_stream{}; // Need mutex to synchronise the output.
-    auto const alignment_config_with_callback = alignment_config |
-                                                seqan3::align_cfg::on_result{[&] (auto && result)
-                                                {
-                                                    std::lock_guard sync{write_to_debug_stream}; // critical section
-                                                    seqan3::debug_stream << result << '\n';
-                                                }};
-    seqan3::align_pairwise(sequences, alignment_config_with_callback);  // seqan3::align_pairwise is now declared void.
+    auto const alignment_config_with_callback =
+        alignment_config
+        | seqan3::align_cfg::on_result{[&](auto && result)
+                                       {
+                                           std::lock_guard sync{write_to_debug_stream}; // critical section
+                                           seqan3::debug_stream << result << '\n';
+                                       }};
+    seqan3::align_pairwise(sequences, alignment_config_with_callback); // seqan3::align_pairwise is now declared void.
 
     // might print:
     // [id: 0 score: -4]

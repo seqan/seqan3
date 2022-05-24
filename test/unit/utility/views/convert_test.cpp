@@ -14,15 +14,15 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/utility/views/convert.hpp>
 #include <seqan3/utility/range/concept.hpp>
+#include <seqan3/utility/views/convert.hpp>
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_dna5;
 
 TEST(view_convert, basic)
 {
-    std::vector<int>  vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
+    std::vector<int> vec{7, 5, 0, 5, 0, 0, 4, 8, -3};
     std::vector<bool> cmp{1, 1, 0, 1, 0, 0, 1, 1, 1};
 
     // pipe notation

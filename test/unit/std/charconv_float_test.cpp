@@ -10,18 +10,19 @@
 // make sure that including the std header does not produce any errors
 // see https://github.com/seqan/seqan3/issues/2352
 #include <charconv>
-#include <seqan3/std/charconv>
 #include <cmath>
 #include <concepts>
 #include <iostream>
 #include <limits>
+#include <seqan3/std/charconv>
 
 // =============================================================================
 // std::from_chars for float, double and long double
 // =============================================================================
 
 template <typename T>
-class from_char_real_test: public ::testing::Test { };
+class from_char_real_test : public ::testing::Test
+{};
 
 using real_types = ::testing::Types<float, double, long double>;
 
@@ -205,7 +206,6 @@ TYPED_TEST(from_char_real_test, infinity_value)
         EXPECT_EQ(res.ec, std::errc{});
         EXPECT_EQ(res.ptr, &str[0] + str.size());
     }
-
 }
 
 TYPED_TEST(from_char_real_test, nan_value)

@@ -37,24 +37,23 @@ using seqan3::test::operator""_cigar;
 
 struct sam_record : public ::testing::Test
 {
-    using alignment_t = std::pair<std::vector<seqan3::gapped<seqan3::dna5>>,
-                                  std::vector<seqan3::gapped<seqan3::dna5>>>;
+    using alignment_t = std::pair<std::vector<seqan3::gapped<seqan3::dna5>>, std::vector<seqan3::gapped<seqan3::dna5>>>;
 
     using mate_t = std::tuple<std::optional<int32_t>, std::optional<int32_t>, int32_t>;
 
-    using types = seqan3::type_list<std::string, // seqan3::field::id,
-                                    seqan3::dna5_vector, // seqan3::field::seq,
+    using types = seqan3::type_list<std::string,                  // seqan3::field::id,
+                                    seqan3::dna5_vector,          // seqan3::field::seq,
                                     std::vector<seqan3::phred42>, // seqan3::field::qual,
-                                    int32_t, // seqan3::field::offset,
-                                    alignment_t, // seqan3::field::alignment,
-                                    std::optional<int32_t>, // seqan3::field::ref_id,
-                                    std::optional<int32_t>, // seqan3::field::ref_offset,
+                                    int32_t,                      // seqan3::field::offset,
+                                    alignment_t,                  // seqan3::field::alignment,
+                                    std::optional<int32_t>,       // seqan3::field::ref_id,
+                                    std::optional<int32_t>,       // seqan3::field::ref_offset,
                                     // seqan3::field::header_ptr,
                                     seqan3::sam_file_header<std::vector<std::string>> *,
-                                    seqan3::sam_flag, // seqan3::field::flag,
-                                    mate_t, // seqan3::field::mate,
-                                    uint8_t, // seqan3::field::mapq,
-                                    std::vector<seqan3::cigar>, // seqan3::field::cigar,
+                                    seqan3::sam_flag,            // seqan3::field::flag,
+                                    mate_t,                      // seqan3::field::mate,
+                                    uint8_t,                     // seqan3::field::mapq,
+                                    std::vector<seqan3::cigar>,  // seqan3::field::cigar,
                                     seqan3::sam_tag_dictionary>; // seqan3::field::tags
 
     using types_as_ids = seqan3::fields<seqan3::field::id,
@@ -71,26 +70,23 @@ struct sam_record : public ::testing::Test
                                         seqan3::field::cigar,
                                         seqan3::field::tags>;
 
-    using record_type  = seqan3::sam_record<types, types_as_ids>;
+    using record_type = seqan3::sam_record<types, types_as_ids>;
 
     record_type construct()
     {
-        return
-        {
-            /*.id =*/ "MY ID",
-            /*.sequence =*/ "ACGT"_dna5,
-            /*.base_qualities =*/ "!##$"_phred42,
-            /*.sequence_position =*/ 1,
-            /*.alignment =*/ alignment_t{},
-            /*.reference_id =*/ 0, // "ref"
-            /*.reference_position =*/ 0,
-            /*.header_ptr =*/ nullptr,
-            /*.flag =*/ seqan3::sam_flag{41u},
-            {/*.mate_reference_id =*/ 0,/*.mate_position =*/ 9,/*.template_length =*/ 300},
-            /*.mapping_quality =*/ 61u,
-            /*.cigar_sequence =*/ "1S1M1D1M1I"_cigar,
-            /*.tags =*/ seqan3::sam_tag_dictionary{}
-        };
+        return {/*.id =*/"MY ID",
+                /*.sequence =*/"ACGT"_dna5,
+                /*.base_qualities =*/"!##$"_phred42,
+                /*.sequence_position =*/1,
+                /*.alignment =*/alignment_t{},
+                /*.reference_id =*/0, // "ref"
+                /*.reference_position =*/0,
+                /*.header_ptr =*/nullptr,
+                /*.flag =*/seqan3::sam_flag{41u},
+                {/*.mate_reference_id =*/0, /*.mate_position =*/9, /*.template_length =*/300},
+                /*.mapping_quality =*/61u,
+                /*.cigar_sequence =*/"1S1M1D1M1I"_cigar,
+                /*.tags =*/seqan3::sam_tag_dictionary{}};
     }
 };
 
@@ -210,7 +206,7 @@ TEST_F(sam_record, member_types)
     EXPECT_SAME_TYPE(alignment_t &, decltype(r.alignment()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_id()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.reference_position()));
-    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> * &, decltype(r.header_ptr()));
+    EXPECT_SAME_TYPE(seqan3::sam_file_header<std::vector<std::string>> *&, decltype(r.header_ptr()));
     EXPECT_SAME_TYPE(seqan3::sam_flag &, decltype(r.flag()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.mate_reference_id()));
     EXPECT_SAME_TYPE(std::optional<int32_t> &, decltype(r.mate_position()));

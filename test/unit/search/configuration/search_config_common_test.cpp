@@ -20,13 +20,10 @@ namespace cfg = seqan3::search_cfg;
 
 using nil_t = seqan3::detail::empty_type;
 using search_result_t = seqan3::search_result<nil_t, nil_t, nil_t, nil_t>;
-using all_hit_configs_t = seqan3::type_list<cfg::hit,
-                                            cfg::hit_all,
-                                            cfg::hit_all_best,
-                                            cfg::hit_single_best,
-                                            cfg::hit_strata>;
+using all_hit_configs_t =
+    seqan3::type_list<cfg::hit, cfg::hit_all, cfg::hit_all_best, cfg::hit_single_best, cfg::hit_strata>;
 // Needed for the on result config
-auto on_result_callback = [] ([[maybe_unused]] auto && res) { };
+auto on_result_callback = []([[maybe_unused]] auto && res) {};
 using callback_t = decltype(on_result_callback);
 
 // A list of config types to test, associated with their incompatible config classes defined as a taboo list.
@@ -52,8 +49,7 @@ using search_config_and_taboo_types = seqan3::type_list<
     // other configs
     std::pair<cfg::parallel, seqan3::type_list<cfg::parallel>>,
     std::pair<cfg::on_result<callback_t>, seqan3::type_list<cfg::on_result<callback_t>>>,
-    std::pair<cfg::detail::result_type<search_result_t>, seqan3::type_list<cfg::detail::result_type<search_result_t>>>
->;
+    std::pair<cfg::detail::result_type<search_result_t>, seqan3::type_list<cfg::detail::result_type<search_result_t>>>>;
 
 // The pure list of configuration elements to instantiate the typed test case with.
 using search_config_types = pure_config_type_list<search_config_and_taboo_types>;
@@ -66,9 +62,9 @@ public:
     using config_type = config_t;
 
     // The taboo list associated with the given TypeParam element.
-    using taboo_list_type =
-        typename seqan3::list_traits::at<seqan3::list_traits::find<config_t, search_config_types>, // determine the index
-                                         search_config_and_taboo_types>::second_type; // extract the taboo list.
+    using taboo_list_type = typename seqan3::list_traits::at<
+        seqan3::list_traits::find<config_t, search_config_types>, // determine the index
+        search_config_and_taboo_types>::second_type;              // extract the taboo list.
 
     // A compatible configuration type for the current configuration element to test.
     using compatible_configuration_type = make_pipeable_configuration<search_config_types, taboo_list_type>;

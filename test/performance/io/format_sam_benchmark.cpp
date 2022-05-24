@@ -14,7 +14,7 @@
 #include <seqan3/test/tmp_filename.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/bam_io.h>
+#    include <seqan/bam_io.h>
 #endif
 
 // ============================================================================
@@ -38,23 +38,26 @@ static std::string create_sam_file_string(size_t const n_queries)
         auto reference = seqan3::test::generate_sequence<seqan3::dna4>(reference_size, length_variance, seed);
 
         // align
-        constexpr auto nt_score_scheme = seqan3::nucleotide_scoring_scheme{seqan3::match_score{4},
-                                                                           seqan3::mismatch_score{-2}};
-        auto config = seqan3::align_cfg::method_global{
-                          seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
-                          seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
-                          seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
-                          seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}} |
-                      seqan3::align_cfg::scoring_scheme{nt_score_scheme} |
-                      seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
-                                                         seqan3::align_cfg::extension_score{-1}} |
-                      seqan3::align_cfg::output_begin_position{} |
-                      seqan3::align_cfg::output_alignment{} |
-                      seqan3::align_cfg::output_score{};
+        constexpr auto nt_score_scheme =
+            seqan3::nucleotide_scoring_scheme{seqan3::match_score{4}, seqan3::mismatch_score{-2}};
+        auto config = seqan3::align_cfg::method_global{seqan3::align_cfg::free_end_gaps_sequence1_leading{true},
+                                                       seqan3::align_cfg::free_end_gaps_sequence2_leading{false},
+                                                       seqan3::align_cfg::free_end_gaps_sequence1_trailing{true},
+                                                       seqan3::align_cfg::free_end_gaps_sequence2_trailing{false}}
+                    | seqan3::align_cfg::scoring_scheme{nt_score_scheme}
+                    | seqan3::align_cfg::gap_cost_affine{seqan3::align_cfg::open_score{-10},
+                                                         seqan3::align_cfg::extension_score{-1}}
+                    | seqan3::align_cfg::output_begin_position{} | seqan3::align_cfg::output_alignment{}
+                    | seqan3::align_cfg::output_score{};
 
-        using sam_fields = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::offset,
-                                          seqan3::field::ref_id, seqan3::field::ref_offset,
-                                          seqan3::field::alignment, seqan3::field::mapq, seqan3::field::qual,
+        using sam_fields = seqan3::fields<seqan3::field::seq,
+                                          seqan3::field::id,
+                                          seqan3::field::offset,
+                                          seqan3::field::ref_id,
+                                          seqan3::field::ref_offset,
+                                          seqan3::field::alignment,
+                                          seqan3::field::mapq,
+                                          seqan3::field::qual,
                                           seqan3::field::flag>;
         std::ostringstream stream;
         seqan3::sam_file_output sam_out{stream, seqan3::format_sam{}, sam_fields{}};
@@ -94,7 +97,7 @@ void write_file(std::string const & file_name, size_t const n_queries)
 // seqan3
 // ============================================================================
 
-void sam_file_read_from_stream(benchmark::State &state)
+void sam_file_read_from_stream(benchmark::State & state)
 {
     size_t const n_queries = state.range(0);
 
@@ -115,7 +118,7 @@ void sam_file_read_from_stream(benchmark::State &state)
     }
 }
 
-void sam_file_read_from_disk(benchmark::State &state)
+void sam_file_read_from_disk(benchmark::State & state)
 {
     size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};
@@ -139,7 +142,7 @@ void sam_file_read_from_disk(benchmark::State &state)
 // seqan2 read from stream
 // ============================================================================
 
-void seqan2_sam_file_read_from_stream(benchmark::State &state)
+void seqan2_sam_file_read_from_stream(benchmark::State & state)
 {
     size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};
@@ -162,7 +165,7 @@ void seqan2_sam_file_read_from_stream(benchmark::State &state)
         istream.clear();
         istream.seekg(0, std::ios::beg);
 
-        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input> >(istream);
+        auto it = seqan::Iter<std::istringstream, seqan::StreamIterator<seqan::Input>>(istream);
 
         seqan::readHeader(header, cxt, it, seqan::Sam());
 
@@ -176,7 +179,7 @@ void seqan2_sam_file_read_from_stream(benchmark::State &state)
     }
 }
 
-void seqan2_sam_file_read_from_disk(benchmark::State &state)
+void seqan2_sam_file_read_from_disk(benchmark::State & state)
 {
     size_t const n_queries = state.range(0);
     seqan3::test::tmp_filename file_name{"tmp.sam"};

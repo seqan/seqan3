@@ -35,8 +35,8 @@ TEST(range_concept, forward_range)
     EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::string>>));
     EXPECT_TRUE((std::ranges::forward_range<seqan3::concatenated_sequences<std::vector<char>>>));
     EXPECT_TRUE((std::ranges::forward_range<seqan3::bitpacked_sequence<seqan3::dna4>>));
-    EXPECT_TRUE((std::ranges::forward_range<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4,
-                                                                                         seqan3::phred42>>>));
+    EXPECT_TRUE(
+        (std::ranges::forward_range<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>));
 }
 
 TEST(container, container)
@@ -68,8 +68,8 @@ TEST(container, sequence_container_former_travis_bug)
     EXPECT_EQ("Exmplr", s);
 
 #if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wrestrict"
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wrestrict"
 #endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     // insert(size_type index, const char* s)
     s.insert(2, "e");
@@ -79,7 +79,7 @@ TEST(container, sequence_container_former_travis_bug)
     s.insert(6, "a"s);
     EXPECT_EQ("Exemplar", s);
 #if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic pop
+#    pragma GCC diagnostic pop
 #endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 
     // insert(size_type index, string const& str, size_type index_str, size_type count)
@@ -98,22 +98,21 @@ TEST(container, sequence_container_former_travis_bug)
     // insert(const_iterator pos, InputIt first, InputIt last)
     {
         std::string seq = " string";
-        s.insert(s.begin() + s.find_last_of('e') + 1,
-            std::begin(seq), std::end(seq));
+        s.insert(s.begin() + s.find_last_of('e') + 1, std::begin(seq), std::end(seq));
         EXPECT_EQ("Exemplar is an:== example string", s);
     }
 
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wrestrict"
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#    if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#        pragma GCC diagnostic push
+#        pragma GCC diagnostic ignored "-Wrestrict"
+#    endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
     // insert(const_iterator pos, std::initializer_list<char>)
-    s.insert(s.begin() + s.find_first_of('g') + 1, { '.' });
+    s.insert(s.begin() + s.find_first_of('g') + 1, {'.'});
     EXPECT_EQ("Exemplar is an:== example string.", s);
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic pop
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#else // ^^^ workaround / no workaround vvv
+#    if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#        pragma GCC diagnostic pop
+#    endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#else      // ^^^ workaround / no workaround vvv
     // insert(const_iterator pos, char ch)
     s.insert(s.cbegin() + s.find_first_of('n') + 1, ':');
     EXPECT_EQ("Exemplar is an: example", s);
@@ -125,22 +124,21 @@ TEST(container, sequence_container_former_travis_bug)
     // insert(const_iterator pos, InputIt first, InputIt last)
     {
         std::string seq = " string";
-        s.insert(s.cbegin() + s.find_last_of('e') + 1,
-            std::begin(seq), std::end(seq));
+        s.insert(s.cbegin() + s.find_last_of('e') + 1, std::begin(seq), std::end(seq));
         EXPECT_EQ("Exemplar is an:== example string", s);
     }
 
     // insert(const_iterator pos, std::initializer_list<char>)
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wrestrict"
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-    s.insert(s.cbegin() + s.find_first_of('g') + 1, { '.' });
+#    if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#        pragma GCC diagnostic push
+#        pragma GCC diagnostic ignored "-Wrestrict"
+#    endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+    s.insert(s.cbegin() + s.find_first_of('g') + 1, {'.'});
     EXPECT_EQ("Exemplar is an:== example string.", s);
-#if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#pragma GCC diagnostic pop
-#endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
-#endif // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
+#    if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#        pragma GCC diagnostic pop
+#    endif // SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
+#endif     // SEQAN3_WORKAROUND_GCC_NO_CXX11_ABI
 }
 
 TEST(container, sequence_container)
@@ -186,8 +184,8 @@ TEST(container, reservible_container)
     EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<13>>));
     EXPECT_TRUE((seqan3::reservible_container<sdsl::int_vector<64>>));
     EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::dna4>>));
-    EXPECT_TRUE((seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4,
-                                                                                           seqan3::phred42>>>));
+    EXPECT_TRUE(
+        (seqan3::reservible_container<seqan3::bitpacked_sequence<seqan3::qualified<seqan3::dna4, seqan3::phred42>>>));
 }
 
 /* Check the SDSL containers */

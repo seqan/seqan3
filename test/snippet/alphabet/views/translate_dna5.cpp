@@ -43,9 +43,8 @@ int main()
     // == [T,Y,V,R]
 
     // combinability
-    auto v9 = vec
-            | seqan3::views::complement
-            | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame0);
+    auto v9 =
+        vec | seqan3::views::complement | seqan3::views::translate_single(seqan3::translation_frames::reverse_frame0);
     // == [M,H,A,C]
 
     // combinability with default parameter

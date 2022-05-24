@@ -13,7 +13,6 @@
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
 
-
 class alphabet_proxy_example : public seqan3::alphabet_proxy<alphabet_proxy_example, seqan3::dna4>
 {
 private:
@@ -32,8 +31,7 @@ public:
     constexpr alphabet_proxy_example & operator=(alphabet_proxy_example &&) = default;
     ~alphabet_proxy_example() = default;
 
-    constexpr alphabet_proxy_example(alphabet_type const a) noexcept : base_t{a}
-    {};
+    constexpr alphabet_proxy_example(alphabet_type const a) noexcept : base_t{a} {};
 
     using base_t::operator=;
 };
@@ -59,16 +57,34 @@ public:
     constexpr my_alph(my_alph const &) = default;
     constexpr my_alph & operator=(my_alph const &) = default;
 
-    constexpr my_alph(bool rank) : rank{rank} {}
+    constexpr my_alph(bool rank) : rank{rank}
+    {}
 
-    constexpr friend bool operator==(my_alph lhs, my_alph rhs) { return lhs.rank == rhs.rank; }
-    constexpr friend bool operator!=(my_alph lhs, my_alph rhs) { return lhs.rank != rhs.rank; }
-    constexpr friend bool operator<=(my_alph lhs, my_alph rhs) { return lhs.rank <= rhs.rank; }
-    constexpr friend bool operator>=(my_alph lhs, my_alph rhs) { return lhs.rank >= rhs.rank; }
-    constexpr friend bool operator< (my_alph lhs, my_alph rhs) { return lhs.rank <  rhs.rank; }
-    constexpr friend bool operator> (my_alph lhs, my_alph rhs) { return lhs.rank >  rhs.rank; }
+    constexpr friend bool operator==(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank == rhs.rank;
+    }
+    constexpr friend bool operator!=(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank != rhs.rank;
+    }
+    constexpr friend bool operator<=(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank <= rhs.rank;
+    }
+    constexpr friend bool operator>=(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank >= rhs.rank;
+    }
+    constexpr friend bool operator<(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank < rhs.rank;
+    }
+    constexpr friend bool operator>(my_alph lhs, my_alph rhs)
+    {
+        return lhs.rank > rhs.rank;
+    }
 };
-
 
 constexpr size_t alphabet_size(my_alph const &) noexcept
 {
@@ -98,8 +114,14 @@ constexpr my_alph & assign_char_to(char const c, my_alph & a) noexcept
 {
     switch (c)
     {
-        case '0': case 'F': case 'f': a.rank = 0; return a;
-        default: a.rank = 1; return a;
+    case '0':
+    case 'F':
+    case 'f':
+        a.rank = 0;
+        return a;
+    default:
+        a.rank = 1;
+        return a;
     }
 }
 
@@ -127,8 +149,7 @@ public:
     constexpr alphabet_proxy_example2 & operator=(alphabet_proxy_example2 &&) = default;
     ~alphabet_proxy_example2() = default;
 
-    constexpr alphabet_proxy_example2(alphabet_type const a) noexcept : base_t{a}
-    {};
+    constexpr alphabet_proxy_example2(alphabet_type const a) noexcept : base_t{a} {};
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(alphabet_proxy2, alphabet, alphabet_proxy_example2, );

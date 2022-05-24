@@ -7,14 +7,14 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <seqan3/alignment/matrix/detail/alignment_score_matrix_one_column_banded.hpp>
 
+#include "../../../range/iterator_test_template.hpp"
 #include "alignment_matrix_base_test_template.hpp"
 #include "simulated_alignment_test_template.hpp"
-#include "../../../range/iterator_test_template.hpp"
 
 template <typename t>
 struct alignment_score_matrix_one_column_banded_test
@@ -33,12 +33,8 @@ struct alignment_score_matrix_one_column_banded_test
 
     // Banded matrix. We write only partial columns to the result.
     // The remaining part is therefor 0.
-    std::vector<t> gold_matrix{  0, -1, -2,
-                                -1, -1, -1, -2,
-                                -2, -1, -2, -1, -2,
-                                    -2, -2, -2, -2,
-                                        -2, -3, -2,
-                                 0, 0, 0, 0, 0, 0};
+    std::vector<t> gold_matrix{0,  -1, -2, -1, -1, -1, -2, -2, -1, -2, -1, -2, -2,
+                               -2, -2, -2, -2, -3, -2, 0,  0,  0,  0,  0,  0};
 
     matrix_t matrix{};
     size_t last_init_column = 2;
@@ -50,9 +46,7 @@ INSTANTIATE_TYPED_TEST_SUITE_P(one_column_banded,
 
 using test_type = std::pair<seqan3::detail::alignment_score_matrix_one_column_banded<int32_t>, std::true_type>;
 
-INSTANTIATE_TYPED_TEST_SUITE_P(one_column_banded,
-                               alignment_matrix_base_test,
-                               test_type, );
+INSTANTIATE_TYPED_TEST_SUITE_P(one_column_banded, alignment_matrix_base_test, test_type, );
 
 //-----------------------------------------------------------------------------
 // Test outer iterator
@@ -78,9 +72,7 @@ struct iterator_fixture<outer_iterator> : alignment_matrix_base_test<test_type>
     }
 };
 
-INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_outer_iterator,
-                               iterator_fixture,
-                               outer_iterator, );
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_outer_iterator, iterator_fixture, outer_iterator, );
 
 //-----------------------------------------------------------------------------
 // Test inner iterator
@@ -106,6 +98,4 @@ struct iterator_fixture<inner_iterator> : alignment_matrix_base_test<test_type>
     }
 };
 
-INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_inner_iterator,
-                               iterator_fixture,
-                               inner_iterator, );
+INSTANTIATE_TYPED_TEST_SUITE_P(banded_score_matrix_inner_iterator, iterator_fixture, inner_iterator, );

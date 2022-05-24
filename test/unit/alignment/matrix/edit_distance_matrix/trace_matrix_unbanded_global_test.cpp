@@ -71,18 +71,15 @@ TEST(global, single_word)
 
     // row-wise matrix
     std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<seqan3::detail::trace_directions>> expect
-    {
-        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
-        {u  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  ,l  ,Dl },
-        {u  ,u  ,D  ,D  ,Dl ,l  ,l  ,l  ,l  ,l  },
-        {u  ,u  ,Du ,Du ,D  ,D  ,Dl ,l  ,l  ,l  },
-        {u  ,u  ,Du ,Du ,Du ,Du ,D  ,D  ,Dl ,l  },
-        {u  ,Du ,D  ,Dul,Du ,Du ,Du ,Du ,D  ,D  },
-        {u  ,u  ,u  ,D  ,Dl ,Dul,Du ,Du ,Du ,Du },
-        {u  ,u  ,u  ,u  ,D  ,D  ,Dl ,Dul,Du ,Du },
-        {u  ,u  ,u  ,u  ,Du ,Du ,D  ,D  ,Dl ,Dul}
-    };
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N, l, l, l, l, l, l, l, l, l},
+                                                                      {u, D, Dl, l, l, l, l, l, l, Dl},
+                                                                      {u, u, D, D, Dl, l, l, l, l, l},
+                                                                      {u, u, Du, Du, D, D, Dl, l, l, l},
+                                                                      {u, u, Du, Du, Du, Du, D, D, Dl, l},
+                                                                      {u, Du, D, Dul, Du, Du, Du, Du, D, D},
+                                                                      {u, u, u, D, Dl, Dul, Du, Du, Du, Du},
+                                                                      {u, u, u, u, D, D, Dl, Dul, Du, Du},
+                                                                      {u, u, u, u, Du, Du, D, D, Dl, Dul}};
 
     EXPECT_EQ(result, expect);
 }
@@ -125,27 +122,24 @@ TEST(global, multiple_words)
 
     // row-wise matrix
     std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<seqan3::detail::trace_directions>> expect
-    {
-        {N  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  ,l  },
-        {u  ,D  ,l  ,l  ,l  ,Dl ,l  ,l  ,l  ,Dl },
-        {u  ,Du ,D  ,Dl ,Dl ,D  ,l  ,l  ,l  ,Dl },
-        {u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,l  ,l  ,l  },
-        {u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl ,Dl },
-        {u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl ,Dl },
-        {u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  ,Dl },
-        {u  ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  ,Dl },
-        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du ,D  },
-        {u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul,D  },
-        {u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl ,Du },
-        {u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl ,Dul},
-        {u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl ,Dl },
-        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dl },
-        {u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  ,Dl },
-        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,D  ,Dl },
-        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  },
-        {u  ,u  ,u  ,u  ,Du ,u  ,u  ,u  ,Du ,D  }
-    };
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N, l, l, l, l, l, l, l, l, l},
+                                                                      {u, D, l, l, l, Dl, l, l, l, Dl},
+                                                                      {u, Du, D, Dl, Dl, D, l, l, l, Dl},
+                                                                      {u, u, D, Dl, Dl, Dul, D, l, l, l},
+                                                                      {u, u, Du, D, Dl, Dl, Du, D, Dl, Dl},
+                                                                      {u, u, u, D, Dl, Dl, Dul, D, Dl, Dl},
+                                                                      {u, u, u, Du, D, Dl, Dl, Du, D, Dl},
+                                                                      {u, u, u, u, D, Dl, Dl, Dul, D, Dl},
+                                                                      {u, u, u, u, Du, D, Dl, Dl, Du, D},
+                                                                      {u, Du, u, u, u, D, Dl, Dl, Dul, D},
+                                                                      {u, Du, u, u, u, Du, D, Dl, Dl, Du},
+                                                                      {u, u, Du, u, u, u, D, Dl, Dl, Dul},
+                                                                      {u, u, Du, u, u, u, Du, D, Dl, Dl},
+                                                                      {u, u, u, Du, u, u, u, D, Dl, Dl},
+                                                                      {u, u, u, Du, u, u, u, Du, D, Dl},
+                                                                      {u, u, u, u, Du, u, u, u, D, Dl},
+                                                                      {u, u, u, u, Du, u, u, u, Du, D},
+                                                                      {u, u, u, u, Du, u, u, u, Du, D}};
 
     EXPECT_EQ(result, expect);
 }

@@ -5,13 +5,13 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <deque>
 #include <list>
 #include <seqan3/std/ranges>
 #include <string>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/utility/views/type_reduce.hpp>
 

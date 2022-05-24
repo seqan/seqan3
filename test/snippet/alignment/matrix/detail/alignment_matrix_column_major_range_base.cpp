@@ -1,13 +1,12 @@
+#include <span>
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/alignment_matrix_column_major_range_base.hpp>
 #include <seqan3/core/debug_stream.hpp>
-#include <span>
 
 class my_matrix : public seqan3::detail::alignment_matrix_column_major_range_base<my_matrix>
 {
 public:
-
     // Alias the base class
     using base_t = seqan3::detail::alignment_matrix_column_major_range_base<my_matrix>;
 
@@ -18,9 +17,9 @@ public:
 
     // The following types are required by the base type since they cannot be inferred within the base.
 
-    using column_data_view_type = std::span<int>;  //This type is the underlying view over the actual memory location.
-    using value_type = int; // The actual value type.
-    using reference = int &; // The actual reference type.
+    using column_data_view_type = std::span<int>; //This type is the underlying view over the actual memory location.
+    using value_type = int;                       // The actual value type.
+    using reference = int &;                      // The actual reference type.
 
     my_matrix() = default;
     my_matrix(my_matrix const &) = default;
@@ -29,15 +28,12 @@ public:
     my_matrix & operator=(my_matrix &&) = default;
     ~my_matrix() = default;
 
-    my_matrix(size_t const num_rows, size_t const num_cols) :
-        num_rows{num_rows},
-        num_cols{num_cols}
+    my_matrix(size_t const num_rows, size_t const num_cols) : num_rows{num_rows}, num_cols{num_cols}
     {
         data.resize(num_rows * num_cols);
     }
 
 protected:
-
     std::vector<int> data{};
     size_t num_rows{};
     size_t num_cols{};
@@ -63,7 +59,7 @@ int main()
 
     // Fill the matrix with
     int val = 0;
-    for (auto col : matrix) // Iterate over the columns
+    for (auto col : matrix)     // Iterate over the columns
         for (auto & cell : col) // Iterate over the cells in one column.
             cell = val++;
 

@@ -10,9 +10,9 @@ int main()
 
     // Here a consecutive shape with size 4 (so the k-mer size is 4) and a window size of 8 is used. The seed is set
     // to 0, so lexicographical ordering is used for demonstration purposes.
-    auto minimisers = text | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}},
-                                                           seqan3::window_size{8},
-                                                           seqan3::seed{0});
+    auto minimisers =
+        text
+        | seqan3::views::minimiser_hash(seqan3::shape{seqan3::ungapped{4}}, seqan3::window_size{8}, seqan3::seed{0});
     seqan3::debug_stream << minimisers << '\n';
     // This leads to [27,97,26,22,5] representing the k-mers [ACGT, CGAC, ACGG, accg, aacc], smaller case k-mers are
     // coming from the reverse strand.

@@ -103,8 +103,8 @@ TEST(trace_matrix_full_test, trace_path)
     EXPECT_TRUE(++trace_cell_it == trace_column.end());
     EXPECT_TRUE(++trace_column_it == matrix.end());
 
-    auto trace_path = matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{2u},
-                                                                          seqan3::detail::column_index_type{3u}});
+    auto trace_path = matrix.trace_path(
+        seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{3u}});
 
     auto trace_path_it = trace_path.begin();
     EXPECT_EQ(*trace_path_it, trace_t::left);
@@ -121,9 +121,9 @@ TEST(trace_matrix_full_test, invalid_trace_path_coordinate)
     matrix.resize(seqan3::detail::column_index_type<size_t>{4}, seqan3::detail::row_index_type<size_t>{3});
 
     EXPECT_THROW((matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{3u},
-                                                                     seqan3::detail::column_index_type{3u}})),
+                                                                      seqan3::detail::column_index_type{3u}})),
                  std::invalid_argument);
     EXPECT_THROW((matrix.trace_path(seqan3::detail::matrix_coordinate{seqan3::detail::row_index_type{2u},
-                                                                     seqan3::detail::column_index_type{4u}})),
+                                                                      seqan3::detail::column_index_type{4u}})),
                  std::invalid_argument);
 }

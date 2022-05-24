@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <random>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
@@ -19,15 +19,18 @@
 #include <seqan3/utility/views/to.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/seq_io.h>
-#include <seqan/sequence.h>
-#include <seqan/translation.h>
+#    include <seqan/seq_io.h>
+#    include <seqan/sequence.h>
+#    include <seqan/translation.h>
 #endif
 
 // Tags used to define the benchmark type
-struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
-struct translate_tag{}; // Benchmark view_translate followed by std::views::join
-struct translate_join_tag{}; // Benchmark seqan3::views::translate_join
+struct baseline_tag
+{}; // Baseline where view is applied and only iterating the output range is benchmarked
+struct translate_tag
+{}; // Benchmark view_translate followed by std::views::join
+struct translate_join_tag
+{}; // Benchmark seqan3::views::translate_join
 
 // ============================================================================
 //  sequential_read

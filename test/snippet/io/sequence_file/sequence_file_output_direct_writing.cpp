@@ -1,8 +1,8 @@
+#include <filesystem>
 #include <sstream>
 
 #include <seqan3/io/sequence_file/input.hpp>
 #include <seqan3/io/sequence_file/output.hpp>
-#include <filesystem>
 
 auto input = R"(@TEST1
 ACGT

@@ -7,9 +7,9 @@
 
 #include <gtest/gtest.h>
 
+#include <string_view>
 #include <tuple>
 #include <type_traits>
-#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -33,25 +33,43 @@ template <typename T>
 struct alignment_result_test : public ::testing::Test
 {};
 
-using alignment_result_test_types = ::testing::Types
-      <seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::pair<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::tuple<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, int32_t,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::vector<aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::pair<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::tuple<aligned_seq_type, aligned_seq_type>>,
-       seqan3::detail::alignment_result_value_type<uint32_t, uint32_t, float,
-                                                   std::pair<size_t, size_t>, std::pair<size_t, size_t>,
-                                                   std::vector<aligned_seq_type>>>;
+using alignment_result_test_types =
+    ::testing::Types<seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 int32_t,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<aligned_seq_type, aligned_seq_type>>,
+                     seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 int32_t,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::tuple<aligned_seq_type, aligned_seq_type>>,
+                     seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 int32_t,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::vector<aligned_seq_type>>,
+                     seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 float,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<aligned_seq_type, aligned_seq_type>>,
+                     seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 float,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::tuple<aligned_seq_type, aligned_seq_type>>,
+                     seqan3::detail::alignment_result_value_type<uint32_t,
+                                                                 uint32_t,
+                                                                 float,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::pair<size_t, size_t>,
+                                                                 std::vector<aligned_seq_type>>>;
 
 TYPED_TEST_SUITE(alignment_result_test, alignment_result_test_types, );
 
@@ -115,7 +133,6 @@ TYPED_TEST(alignment_result_test, get_score)
         EXPECT_TRUE((std::is_same_v<decltype(tmp.score()), score_t>));
         EXPECT_TRUE((std::is_same_v<decltype(std::move(tmp).score()), score_t>));
     }
-
 }
 
 TYPED_TEST(alignment_result_test, end_positions)
@@ -192,18 +209,14 @@ TYPED_TEST(alignment_result_test, alignment)
     if constexpr (seqan3::tuple_like<alignment_t>)
     {
         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_RANGE_EQ(std::get<0>(tmp.alignment()) | seqan3::detail::persist | seqan3::views::to_char,
-                        "AT-C--A"sv);
-        EXPECT_RANGE_EQ(std::get<1>(tmp.alignment()) | seqan3::detail::persist | seqan3::views::to_char,
-                        "AT-C--A"sv);
+        EXPECT_RANGE_EQ(std::get<0>(tmp.alignment()) | seqan3::detail::persist | seqan3::views::to_char, "AT-C--A"sv);
+        EXPECT_RANGE_EQ(std::get<1>(tmp.alignment()) | seqan3::detail::persist | seqan3::views::to_char, "AT-C--A"sv);
     }
     else
     {
         seqan3::alignment_result<TypeParam> tmp{TypeParam{1u, 2u, 0, {10ul, 10ul}, {0ul, 0ul}, {seq, seq}}};
-        EXPECT_RANGE_EQ(tmp.alignment()[0] | seqan3::detail::persist | seqan3::views::to_char,
-                        "AT-C--A"sv);
-        EXPECT_RANGE_EQ(tmp.alignment()[1] | seqan3::detail::persist | seqan3::views::to_char,
-                        "AT-C--A"sv);
+        EXPECT_RANGE_EQ(tmp.alignment()[0] | seqan3::detail::persist | seqan3::views::to_char, "AT-C--A"sv);
+        EXPECT_RANGE_EQ(tmp.alignment()[1] | seqan3::detail::persist | seqan3::views::to_char, "AT-C--A"sv);
     }
 }
 
@@ -248,15 +261,10 @@ TEST(alignment_result_test, type_deduction)
 {
     {
         using coord_t = std::pair<int, int>;
-        std::vector<seqan3::gapped<seqan3::rna5>> seq{'A'_rna5,
-                                                      'U'_rna5,
-                                                      seqan3::gap{},
-                                                      'C'_rna5,
-                                                      seqan3::gap{},
-                                                      seqan3::gap{},
-                                                      'A'_rna5};
+        std::vector<seqan3::gapped<seqan3::rna5>>
+            seq{'A'_rna5, 'U'_rna5, seqan3::gap{}, 'C'_rna5, seqan3::gap{}, seqan3::gap{}, 'A'_rna5};
 
-        seqan3::detail::alignment_result_value_type tr{2, 4, 5.0, coord_t{1, -1}, coord_t{10,-10}, seq};
+        seqan3::detail::alignment_result_value_type tr{2, 4, 5.0, coord_t{1, -1}, coord_t{10, -10}, seq};
         seqan3::alignment_result tmp(tr);
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence1_id()), int>));
         EXPECT_TRUE((std::is_same_v<decltype(tmp.sequence2_id()), int>));

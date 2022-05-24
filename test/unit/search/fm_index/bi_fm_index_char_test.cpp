@@ -8,8 +8,7 @@
 #include "fm_index_collection_test_template.hpp"
 #include "fm_index_test_template.hpp"
 
-using t1 = std::pair<seqan3::bi_fm_index<unsigned char, seqan3::text_layout::single>,
-                     std::vector<unsigned char>>;
+using t1 = std::pair<seqan3::bi_fm_index<unsigned char, seqan3::text_layout::single>, std::vector<unsigned char>>;
 INSTANTIATE_TYPED_TEST_SUITE_P(char, fm_index_test, t1, );
 using t2 = std::pair<seqan3::bi_fm_index<unsigned char, seqan3::text_layout::collection>,
                      std::vector<std::vector<unsigned char>>>;

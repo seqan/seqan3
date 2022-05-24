@@ -11,9 +11,9 @@ int main()
     using namespace seqan3::literals;
 
     // The order of the types below represent a mapping between the type and the key.
-    using types        = seqan3::type_list<seqan3::dna4_vector, std::string, std::vector<seqan3::phred42>>;
+    using types = seqan3::type_list<seqan3::dna4_vector, std::string, std::vector<seqan3::phred42>>;
     using types_as_ids = seqan3::fields<seqan3::field::seq, seqan3::field::id, seqan3::field::qual>;
-    using record_type  = seqan3::record<types, types_as_ids>;
+    using record_type = seqan3::record<types, types_as_ids>;
     // record_type now mimics std::tuple<std::string, dna4_vector, std::vector<phred42>>,
     // the order also depends on selected_ids
 

@@ -1,6 +1,7 @@
+#include <seqan3/std/ranges> // For std::ranges::size()
+
 #include <seqan3/core/debug_stream.hpp>       // For seqan3::debug_stream
 #include <seqan3/search/kmer_index/shape.hpp> // For seqan3::shape
-#include <seqan3/std/ranges>                  // For std::ranges::size()
 
 using namespace seqan3::literals;
 

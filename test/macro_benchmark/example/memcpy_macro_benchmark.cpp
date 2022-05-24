@@ -5,15 +5,16 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <algorithm>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/test/performance/units.hpp>
 
 // This test allocates 1Gb data with a string and copies it to another memory location.
-static void memcpy_benchmark(benchmark::State & state) {
+static void memcpy_benchmark(benchmark::State & state)
+{
     size_t size = state.range(0);
     std::vector<char> src(size, '-');
     std::vector<char> dst(size);

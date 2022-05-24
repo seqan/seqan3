@@ -17,8 +17,8 @@ TEST(debug_stream_test, advanceable_alignment_coordinate)
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row>;
-    using col_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using col_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     not_incrementable co_not{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};
     col_incrementable co_col{seqan3::detail::column_index_type{10u}, seqan3::detail::row_index_type{5u}};

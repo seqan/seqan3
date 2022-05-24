@@ -23,7 +23,7 @@ bool do_find(fwd_rng_type const &, uint8_t const, uint8_t const)
     return true;
 }
 
-}  // namespace detail
+} // namespace detail
 
 template <std::ranges::forward_range fwd_rng_type>
 bool search(fwd_rng_type const & rng, window_size const window_size, error const error)

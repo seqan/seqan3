@@ -9,9 +9,9 @@ int main()
     auto v = str | seqan3::views::single_pass_input;
     auto b = v.begin();
 
-    seqan3::debug_stream << *b << '\n';      // prints 'h'
-    seqan3::debug_stream << *(++b) << '\n';  // prints 'e'
-    seqan3::debug_stream << *(++b) << '\n';  // prints 'l'
-    seqan3::debug_stream << *(++b) << '\n';  // prints 'l'
-    seqan3::debug_stream << *(++b) << '\n';  // prints 'o'
+    seqan3::debug_stream << *b << '\n';     // prints 'h'
+    seqan3::debug_stream << *(++b) << '\n'; // prints 'e'
+    seqan3::debug_stream << *(++b) << '\n'; // prints 'l'
+    seqan3::debug_stream << *(++b) << '\n'; // prints 'l'
+    seqan3::debug_stream << *(++b) << '\n'; // prints 'o'
 }

@@ -14,7 +14,6 @@ int main()
     // Note that this is equivalent to get<seqan3::cigar::operation>(letter)
     seqan3::cigar::operation cigar_char{get<1>(letter)};
 
-    seqan3::debug_stream << "Size is "       << size       << '\n';
+    seqan3::debug_stream << "Size is " << size << '\n';
     seqan3::debug_stream << "Cigar char is " << cigar_char << '\n'; // seqan3::debug_stream converts to char on the fly.
-
 }

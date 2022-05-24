@@ -29,17 +29,17 @@ TEST(config_element_test, tags)
 
 TEST(hit_strata_test, member_variable)
 {
-    {   // default construction
+    { // default construction
         seqan3::search_cfg::hit_strata strata_mode{};
         EXPECT_EQ(strata_mode.stratum, 0);
     }
 
-    {   // construct with value
+    { // construct with value
         seqan3::search_cfg::hit_strata strata_mode{3};
         EXPECT_EQ(strata_mode.stratum, 3);
     }
 
-    {   // assign value
+    { // assign value
         seqan3::search_cfg::hit_strata strata_mode{};
         strata_mode.stratum = 3;
         EXPECT_EQ(strata_mode.stratum, 3);

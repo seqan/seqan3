@@ -10,6 +10,6 @@ int main()
     letter.assign_char('C');
     seqan3::debug_stream << letter << '\n'; // prints "C"
 
-    letter.assign_char('F'); // Unknown characters are implicitly converted to N.
+    letter.assign_char('F');                // Unknown characters are implicitly converted to N.
     seqan3::debug_stream << letter << '\n'; // prints "N"
 }

@@ -19,7 +19,7 @@ using seqan3::operator""_dna5;
 TEST(view_to_rank, basic)
 {
     seqan3::dna5_vector vec{"ACTTTGATA"_dna5};
-    std::vector<uint8_t> cmp{0,1,4,4,4,2,0,4,0};
+    std::vector<uint8_t> cmp{0, 1, 4, 4, 4, 2, 0, 4, 0};
 
     // pipe notation
     EXPECT_RANGE_EQ(cmp, vec | seqan3::views::to_rank);

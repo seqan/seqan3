@@ -5,9 +5,9 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <type_traits>
-
 #include <gtest/gtest.h>
+
+#include <type_traits>
 
 #include <seqan3/core/add_enum_bitwise_operators.hpp>
 
@@ -24,7 +24,6 @@ enum class my_enum
 
 template <>
 constexpr bool seqan3::add_enum_bitwise_operators<seqan3::my_enum> = true;
-
 
 TEST(add_enum_bitwise_operators, AND)
 {

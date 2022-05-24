@@ -47,11 +47,12 @@ TEST(advanceable_alignment_coordinate, construction)
 
 TEST(advanceable_alignment_coordinate, construction_with_different_state)
 {
-    seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row>
-        ro{seqan3::detail::column_index_type{2u}, seqan3::detail::row_index_type{3u}};
+    seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row> ro{
+        seqan3::detail::column_index_type{2u},
+        seqan3::detail::row_index_type{3u}};
 
-    seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none>
-        no{ro};
+    seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none> no{
+        ro};
 
     EXPECT_EQ(no.first, 2u);
     EXPECT_EQ(no.second, 3u);
@@ -88,8 +89,8 @@ TEST(advanceable_alignment_coordinate, weakly_equality_comparable_concept)
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row>;
-    using column_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using column_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     EXPECT_TRUE(std::equality_comparable<not_incrementable>);
     EXPECT_TRUE(std::equality_comparable<row_incrementable>);
@@ -132,8 +133,8 @@ TEST(advanceable_alignment_coordinate, incremental_concept)
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::none>;
     using row_incrementable =
         seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::row>;
-    using column_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using column_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     EXPECT_FALSE(std::weakly_incrementable<not_incrementable>);
     EXPECT_TRUE(std::weakly_incrementable<row_incrementable>);
@@ -161,8 +162,8 @@ TEST(advanceable_alignment_coordinate, increment_row)
 
 TEST(advanceable_alignment_coordinate, increment_col)
 {
-    using col_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using col_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}};
     co = ++co;
@@ -202,8 +203,8 @@ TEST(advanceable_alignment_coordinate, decrement_row)
 
 TEST(advanceable_alignment_coordinate, decrement_col)
 {
-    using col_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using col_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}};
     co += 4;
@@ -240,8 +241,8 @@ TEST(advanceable_alignment_coordinate, advance_row)
 
 TEST(advanceable_alignment_coordinate, advance_col)
 {
-    using col_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using col_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}};
     co = co + 4;
@@ -255,8 +256,8 @@ TEST(advanceable_alignment_coordinate, advance_col)
 
 TEST(advanceable_alignment_coordinate, iota_column_index)
 {
-    using col_incrementable =
-        seqan3::detail::advanceable_alignment_coordinate<seqan3::detail::advanceable_alignment_coordinate_state::column>;
+    using col_incrementable = seqan3::detail::advanceable_alignment_coordinate<
+        seqan3::detail::advanceable_alignment_coordinate_state::column>;
 
     col_incrementable co_begin{seqan3::detail::column_index_type{0u}, seqan3::detail::row_index_type{0u}};
     col_incrementable co_end{seqan3::detail::column_index_type{5u}, seqan3::detail::row_index_type{0u}};

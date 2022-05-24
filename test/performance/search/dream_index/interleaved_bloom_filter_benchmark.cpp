@@ -14,12 +14,10 @@
 
 inline benchmark::Counter hashes_per_second(size_t const count)
 {
-    return benchmark::Counter(count,
-                              benchmark::Counter::kIsIterationInvariantRate,
-                              benchmark::Counter::OneK::kIs1000);
+    return benchmark::Counter(count, benchmark::Counter::kIsIterationInvariantRate, benchmark::Counter::OneK::kIs1000);
 }
 
-static void arguments(benchmark::internal::Benchmark* b)
+static void arguments(benchmark::internal::Benchmark * b)
 {
     // Bins must be powers of two
     for (int32_t bins : {64, 8192})
@@ -32,7 +30,7 @@ static void arguments(benchmark::internal::Benchmark* b)
             {
                 for (int32_t hash_num = 2; hash_num < 3; ++hash_num)
                 {
-                    b->Args({bins, (1LL << bits)/bins, hash_num, 1'000});
+                    b->Args({bins, (1LL << bits) / bins, hash_num, 1'000});
                 }
             }
         }
@@ -56,10 +54,8 @@ auto set_up(size_t bins, size_t bits, size_t hash_num, size_t sequence_length)
 template <typename ibf_type>
 void emplace_benchmark(::benchmark::State & state)
 {
-    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
-                                                                 state.range(1),
-                                                                 state.range(2),
-                                                                 state.range(3));
+    auto && [bin_indices, hash_values, ibf] =
+        set_up<ibf_type>(state.range(0), state.range(1), state.range(2), state.range(3));
 
     for (auto _ : state)
     {
@@ -73,15 +69,17 @@ void emplace_benchmark(::benchmark::State & state)
 template <typename ibf_type>
 void clear_benchmark(::benchmark::State & state)
 {
-    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
-                                                                 state.range(1),
-                                                                 state.range(2),
-                                                                 state.range(3));
-    (void) bin_indices;
-    (void) hash_values;
+    auto && [bin_indices, hash_values, ibf] =
+        set_up<ibf_type>(state.range(0), state.range(1), state.range(2), state.range(3));
+    (void)bin_indices;
+    (void)hash_values;
 
     std::vector<seqan3::bin_index> bin_range = std::views::iota(0u, static_cast<size_t>(state.range(0)))
-                                             | std::views::transform([] (size_t i) { return seqan3::bin_index{i}; })
+                                             | std::views::transform(
+                                                   [](size_t i)
+                                                   {
+                                                       return seqan3::bin_index{i};
+                                                   })
                                              | seqan3::views::to<std::vector>;
 
     for (auto _ : state)
@@ -96,17 +94,18 @@ void clear_benchmark(::benchmark::State & state)
 template <typename ibf_type>
 void clear_range_benchmark(::benchmark::State & state)
 {
-    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
-                                                                 state.range(1),
-                                                                 state.range(2),
-                                                                 state.range(3));
-    (void) bin_indices;
-    (void) hash_values;
+    auto && [bin_indices, hash_values, ibf] =
+        set_up<ibf_type>(state.range(0), state.range(1), state.range(2), state.range(3));
+    (void)bin_indices;
+    (void)hash_values;
 
     std::vector<seqan3::bin_index> bin_range = std::views::iota(0u, static_cast<size_t>(state.range(0)))
-                                             | std::views::transform([] (size_t i) { return seqan3::bin_index{i}; })
+                                             | std::views::transform(
+                                                   [](size_t i)
+                                                   {
+                                                       return seqan3::bin_index{i};
+                                                   })
                                              | seqan3::views::to<std::vector>;
-
 
     for (auto _ : state)
     {
@@ -119,11 +118,9 @@ void clear_range_benchmark(::benchmark::State & state)
 template <typename ibf_type>
 void bulk_contains_benchmark(::benchmark::State & state)
 {
-    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
-                                                                 state.range(1),
-                                                                 state.range(2),
-                                                                 state.range(3));
-    (void) bin_indices;
+    auto && [bin_indices, hash_values, ibf] =
+        set_up<ibf_type>(state.range(0), state.range(1), state.range(2), state.range(3));
+    (void)bin_indices;
 
     auto agent = ibf.membership_agent();
     for (auto _ : state)
@@ -138,11 +135,9 @@ void bulk_contains_benchmark(::benchmark::State & state)
 template <typename ibf_type>
 void bulk_count_benchmark(::benchmark::State & state)
 {
-    auto && [ bin_indices, hash_values, ibf ] = set_up<ibf_type>(state.range(0),
-                                                                 state.range(1),
-                                                                 state.range(2),
-                                                                 state.range(3));
-    (void) bin_indices;
+    auto && [bin_indices, hash_values, ibf] =
+        set_up<ibf_type>(state.range(0), state.range(1), state.range(2), state.range(3));
+    (void)bin_indices;
 
     auto agent = ibf.counting_agent();
     for (auto _ : state)
@@ -153,21 +148,21 @@ void bulk_count_benchmark(::benchmark::State & state)
     state.counters["hashes/sec"] = hashes_per_second(std::ranges::size(hash_values));
 }
 
-BENCHMARK_TEMPLATE(emplace_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(clear_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(clear_range_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(emplace_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)
+    ->Apply(arguments);
+BENCHMARK_TEMPLATE(clear_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)
+    ->Apply(arguments);
+BENCHMARK_TEMPLATE(clear_range_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)
+    ->Apply(arguments);
 
-BENCHMARK_TEMPLATE(bulk_contains_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(bulk_contains_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_contains_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)
+    ->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_contains_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)
+    ->Apply(arguments);
 
-BENCHMARK_TEMPLATE(bulk_count_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)->Apply(arguments);
-BENCHMARK_TEMPLATE(bulk_count_benchmark,
-                   seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_count_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::uncompressed>)
+    ->Apply(arguments);
+BENCHMARK_TEMPLATE(bulk_count_benchmark, seqan3::interleaved_bloom_filter<seqan3::data_layout::compressed>)
+    ->Apply(arguments);
 
 BENCHMARK_MAIN();

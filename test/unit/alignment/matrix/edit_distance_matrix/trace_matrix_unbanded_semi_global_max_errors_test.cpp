@@ -71,18 +71,15 @@ TEST(semi_global_max_errors, single_word)
 
     // row-wise matrix
     std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<seqan3::detail::trace_directions>> expect
-    {
-        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
-        {u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du ,Du ,D  },
-        {u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du ,Du ,u  },
-        {u  ,u  ,Du ,u  ,D  ,D  ,Dl ,Dul,Du ,u  },
-        {u  ,u  ,Du ,u  ,Du ,Du ,D  ,D  ,Dl ,u  },
-        {u  ,Du ,D  ,u  ,Du ,Du ,Du ,Du ,D  ,D  },
-        {N  ,u  ,u  ,D  ,D  ,Dul,Du ,Du ,Du ,Du },
-        {N  ,N  ,u  ,u  ,Du ,D  ,Dl ,Dul,Du ,Du },
-        {N  ,N  ,N  ,u  ,Du ,u  ,D  ,D  ,Dl ,N  }
-    };
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N, N, N, N, N, N, N, N, N, N},
+                                                                      {u, D, D, Dul, Du, Du, Du, Du, Du, D},
+                                                                      {u, u, Du, D, Dl, Dul, Du, Du, Du, u},
+                                                                      {u, u, Du, u, D, D, Dl, Dul, Du, u},
+                                                                      {u, u, Du, u, Du, Du, D, D, Dl, u},
+                                                                      {u, Du, D, u, Du, Du, Du, Du, D, D},
+                                                                      {N, u, u, D, D, Dul, Du, Du, Du, Du},
+                                                                      {N, N, u, u, Du, D, Dl, Dul, Du, Du},
+                                                                      {N, N, N, u, Du, u, D, D, Dl, N}};
 
     EXPECT_EQ(result, expect);
 }
@@ -94,58 +91,65 @@ TEST(semi_global_max_errors, multiple_words)
 
     matrix.add_column({0b0000'0000u, 0b0000'0000u, 0b0u},
                       {0b0000'0000u, 0b0000'0000u, 0b0u},
-                      {0b1111'1111u, 0b1111'1111u, 0b1u}, 9u);
+                      {0b1111'1111u, 0b1111'1111u, 0b1u},
+                      9u);
     matrix.add_column({0b0000'0000u, 0b0000'0000u, 0b0u},
                       {0b0000'0011u, 0b0000'0011u, 0b0u},
-                      {0b1111'1110u, 0b1111'1111u, 0b1u}, 10u);
+                      {0b1111'1110u, 0b1111'1111u, 0b1u},
+                      10u);
     matrix.add_column({0b0000'0001u, 0b0000'0000u, 0b0u},
                       {0b0000'1111u, 0b0000'1100u, 0b0u},
-                      {0b1111'1001u, 0b1111'1111u, 0b1u}, 11u);
+                      {0b1111'1001u, 0b1111'1111u, 0b1u},
+                      11u);
     matrix.add_column({0b0000'0110u, 0b0000'0000u, 0b0u},
                       {0b0011'1111u, 0b0011'0000u, 0b0u},
-                      {0b1110'0011u, 0b1111'1111u, 0b1u}, 12u);
+                      {0b1110'0011u, 0b1111'1111u, 0b1u},
+                      12u);
     matrix.add_column({0b0001'1100u, 0b0000'0000u, 0b0u},
                       {0b1111'1111u, 0b1100'0000u, 0b1u},
-                      {0b1000'0111u, 0b1111'1111u, 0b1u}, 13u);
+                      {0b1000'0111u, 0b1111'1111u, 0b1u},
+                      13u);
     matrix.add_column({0b0111'0000u, 0b0000'0000u, 0b0u},
                       {0b1111'0011u, 0b0000'0011u, 0b0u},
-                      {0b0001'1110u, 0b1111'1110u, 0b1u}, 14u);
+                      {0b0001'1110u, 0b1111'1110u, 0b1u},
+                      14u);
     matrix.add_column({0b1100'0001u, 0b0000'0001u, 0b0u},
                       {0b1100'1111u, 0b0000'1111u, 0b0u},
-                      {0b0111'1101u, 0b1111'1000u, 0b1u}, 15u);
+                      {0b0111'1101u, 0b1111'1000u, 0b1u},
+                      15u);
     matrix.add_column({0b0000'0010u, 0b0000'0111u, 0b0u},
                       {0b0011'1111u, 0b0011'1111u, 0b0u},
-                      {0b1111'0001u, 0b1110'0001u, 0b1u}, 16u);
+                      {0b1111'0001u, 0b1110'0001u, 0b1u},
+                      16u);
     matrix.add_column({0b0000'1110u, 0b0001'1100u, 0b0u},
                       {0b1111'1111u, 0b1111'1100u, 0b1u},
-                      {0b1100'0011u, 0b1000'0111u, 0b1u}, 17u);
+                      {0b1100'0011u, 0b1000'0111u, 0b1u},
+                      17u);
     matrix.add_column({0b0000'1000u, 0b0111'0000u, 0b0u},
                       {0b1111'0011u, 0b1111'0011u, 0b1u},
-                      {0b0100'1110u, 0b0001'1111u, 0b0u}, 18u);
+                      {0b0100'1110u, 0b0001'1111u, 0b0u},
+                      18u);
 
     // row-wise matrix
     std::vector<std::vector<seqan3::detail::trace_directions>> result = as_row_wise_vector(matrix);
-    std::vector<std::vector<seqan3::detail::trace_directions>> expect
-    {
-        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  },
-        {u  ,D  ,Dul,Du ,Du ,D  ,Dul,Du ,Du ,D  },
-        {u  ,Du ,D  ,Dul,Du ,Du ,D  ,Dl ,Dul,Du },
-        {u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,Dl ,u  },
-        {u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,Dl ,ul },
-        {u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,D  ,D  },
-        {u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  ,D  },
-        {u  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du ,Du },
-        {u  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du ,D  },
-        {N  ,Du ,u  ,u  ,u  ,D  ,Dl ,Dul,u  ,Du },
-        {N  ,N  ,u  ,u  ,u  ,Du ,D  ,Dl ,u  ,Du },
-        {N  ,N  ,N  ,u  ,u  ,u  ,D  ,Dl ,Dul,u  },
-        {N  ,N  ,N  ,N  ,u  ,u  ,Du ,D  ,Dl ,u  },
-        {N  ,N  ,N  ,N  ,N  ,u  ,u  ,D  ,Dl ,Dul},
-        {N  ,N  ,N  ,N  ,N  ,N  ,u  ,Du ,D  ,Dl },
-        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,u  ,D  ,Dl },
-        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,Du ,D  },
-        {N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,N  ,D  }
-    };
+    std::vector<std::vector<seqan3::detail::trace_directions>> expect{{N, N, N, N, N, N, N, N, N, N},
+                                                                      {u, D, Dul, Du, Du, D, Dul, Du, Du, D},
+                                                                      {u, Du, D, Dul, Du, Du, D, Dl, Dul, Du},
+                                                                      {u, u, D, Dl, Dul, u, Du, D, Dl, u},
+                                                                      {u, u, Du, D, Dl, u, Du, D, Dl, ul},
+                                                                      {u, u, u, D, Dl, Dul, u, Du, D, D},
+                                                                      {u, u, u, Du, D, Dl, u, Du, D, D},
+                                                                      {u, u, u, u, D, Dl, Dul, u, Du, Du},
+                                                                      {u, u, u, u, Du, D, Dl, u, Du, D},
+                                                                      {N, Du, u, u, u, D, Dl, Dul, u, Du},
+                                                                      {N, N, u, u, u, Du, D, Dl, u, Du},
+                                                                      {N, N, N, u, u, u, D, Dl, Dul, u},
+                                                                      {N, N, N, N, u, u, Du, D, Dl, u},
+                                                                      {N, N, N, N, N, u, u, D, Dl, Dul},
+                                                                      {N, N, N, N, N, N, u, Du, D, Dl},
+                                                                      {N, N, N, N, N, N, N, u, D, Dl},
+                                                                      {N, N, N, N, N, N, N, N, Du, D},
+                                                                      {N, N, N, N, N, N, N, N, N, D}};
 
     EXPECT_EQ(result, expect);
 }

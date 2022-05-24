@@ -159,77 +159,78 @@ void test_buffer_queue_wait_throw(size_t initialCapacity)
     seqan3::contrib::queue_op_status pop_status = seqan3::contrib::queue_op_status::success;
     for (size_t tid = 0; tid < thread_count; ++tid)
     {
-        workers.push_back(std::thread([&, tid]()
-        {
-            // Become writer!
-            if (tid < writer_count)
+        workers.push_back(std::thread(
+            [&, tid]()
             {
-                {  // Wait until all reader are present.
-                    seqan3::detail::spin_delay delay{};
+                // Become writer!
+                if (tid < writer_count)
+                {
+                    { // Wait until all reader are present.
+                        seqan3::detail::spin_delay delay{};
+                        ++registered_writer;
+                        while (registered_reader.load() < (thread_count - writer_count))
+                            delay.wait();
+                    }
+
+                    // printf("start writer #%ld\n", tid);
+                    size_t offset = tid * (random.size() / writer_count);
+                    size_t offset_end =
+                        std::min(static_cast<size_t>((tid + 1) * (random.size() / writer_count)), random.size());
+                    for (size_t pos = offset; pos != offset_end; ++pos)
+                    {
+                        try
+                        {
+                            queue.push(random[pos]);
+                        }
+                        catch (seqan3::contrib::queue_op_status & ex)
+                        {
+                            push_status = ex;
+                        }
+                    }
+                    // printf("stop writer #%ld %lu\n", tid, offset_end - offset);
+                    // Last writer! No more values will come, so we close the queue.
                     ++registered_writer;
-                    while (registered_reader.load() < (thread_count - writer_count))
-                        delay.wait();
+                    if (registered_writer.load() == (2 * writer_count))
+                    {
+                        queue.close();
+                        // printf("writer #%ld closed the queue\n", tid);
+                    }
                 }
 
-                // printf("start writer #%ld\n", tid);
-                size_t offset = tid * (random.size() / writer_count);
-                size_t offset_end = std::min(static_cast<size_t>((tid + 1) * (random.size() / writer_count)),
-                                             random.size());
-                for (size_t pos = offset; pos != offset_end; ++pos)
+                // Become reader!
+                if (tid >= writer_count)
                 {
-                    try
-                    {
-                        queue.push(random[pos]);
-                    }
-                    catch (seqan3::contrib::queue_op_status & ex)
-                    {
-                        push_status = ex;
-                    }
-                }
-                // printf("stop writer #%ld %lu\n", tid, offset_end - offset);
-                // Last writer! No more values will come, so we close the queue.
-                ++registered_writer;
-                if (registered_writer.load() == (2 * writer_count))
-                {
-                    queue.close();
-                    // printf("writer #%ld closed the queue\n", tid);
-                }
-            }
 
-            // Become reader!
-            if (tid >= writer_count)
-            {
-
-                {  // Wait until all writers are setup.
-                    seqan3::detail::spin_delay delay{};
-                    ++registered_reader;
-                    while (registered_writer.load() < writer_count)
-                        delay.wait();
-                }
-
-                // printf("start reader #%lu\n",  (long unsigned)tid);
-                size_t chk_sum_local = 0, cnt = 0;
-                for (;;)
-                {
-                    try
-                    {
-                        size_t val = queue.value_pop();
-                        chk_sum_local ^= val;
-                        ++cnt;
-                        // if ((cnt & 0xff) == 0)
-                        //    printf("%ld ", tid);
+                    { // Wait until all writers are setup.
+                        seqan3::detail::spin_delay delay{};
+                        ++registered_reader;
+                        while (registered_writer.load() < writer_count)
+                            delay.wait();
                     }
-                    catch (seqan3::contrib::queue_op_status & ex)
-                    {
-                        pop_status = ex;
-                        break;
-                    }
-                }
 
-                chk_sum2.fetch_xor(chk_sum_local);
-                // printf("stop reader #%lu %lu\n", static_cast<size_t>(tid), cnt);
-            }
-        }));
+                    // printf("start reader #%lu\n",  (long unsigned)tid);
+                    size_t chk_sum_local = 0, cnt = 0;
+                    for (;;)
+                    {
+                        try
+                        {
+                            size_t val = queue.value_pop();
+                            chk_sum_local ^= val;
+                            ++cnt;
+                            // if ((cnt & 0xff) == 0)
+                            //    printf("%ld ", tid);
+                        }
+                        catch (seqan3::contrib::queue_op_status & ex)
+                        {
+                            pop_status = ex;
+                            break;
+                        }
+                    }
+
+                    chk_sum2.fetch_xor(chk_sum_local);
+                    // printf("stop reader #%lu %lu\n", static_cast<size_t>(tid), cnt);
+                }
+            }));
     }
 
     for (auto & t : workers)

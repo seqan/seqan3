@@ -51,14 +51,12 @@ TEST(view_istreambuf, basic)
     std::istringstream is{data};
 
     // construct from istream:
-    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is),
-                    data)
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is), data)
 
     // construct from streambuf
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(*is.rdbuf()),
-                    data)
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(*is.rdbuf()), data)
 
     // combinability
     is.clear();
@@ -69,8 +67,7 @@ TEST(view_istreambuf, basic)
     // combinability 2
     is.clear();
     is.seekg(0, std::ios::beg);
-    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::detail::take_until(seqan3::is_space),
-                    "ACGTATATATAT"sv);
+    EXPECT_RANGE_EQ(seqan3::detail::istreambuf(is) | seqan3::detail::take_until(seqan3::is_space), "ACGTATATATAT"sv);
 }
 
 TEST(view_istreambuf, concepts)
@@ -98,7 +95,7 @@ TEST(view_istreambuf, big_file_stram)
 
     {
         std::ofstream os{file_name.get_path()};
-        for (size_t idx = 0; idx < 11000 ; ++idx)
+        for (size_t idx = 0; idx < 11000; ++idx)
             os << "halloballo\n";
     }
 
@@ -106,8 +103,6 @@ TEST(view_istreambuf, big_file_stram)
     auto v = seqan3::detail::istreambuf(istream);
     while (v.begin() != v.end())
     {
-        EXPECT_RANGE_EQ(v | seqan3::detail::take_until_or_throw_and_consume(seqan3::is_char<'\n'>),
-                        "halloballo"sv);
+        EXPECT_RANGE_EQ(v | seqan3::detail::take_until_or_throw_and_consume(seqan3::is_char<'\n'>), "halloballo"sv);
     }
-
 }

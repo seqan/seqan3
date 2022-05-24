@@ -12,13 +12,12 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/matrix_concept.hpp>
-#include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
+#include <seqan3/alignment/matrix/detail/two_dimensional_matrix_iterator_concept.hpp>
+#include <seqan3/test/simd_utility.hpp>
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/concept.hpp>
 #include <seqan3/utility/simd/simd.hpp>
-
-#include <seqan3/test/simd_utility.hpp>
 
 #include "../../../range/iterator_test_template.hpp"
 
@@ -34,24 +33,35 @@ std::vector<score_type, std::allocator<score_type>> create_matrix_storage()
     // note: we represent the same matrix in one case with a row-wise data layout and in the other case with a
     // column-wise data layout. Also note that the score_type can be a builtin integer or a simd vector of a builtin
     // integer.
-    storage_t row_wise
-    {{
-        score_type{0}, score_type{1}, score_type{ 2}, score_type{ 3},
-        score_type{4}, score_type{5}, score_type{ 6}, score_type{ 7},
-        score_type{8}, score_type{9}, score_type{10}, score_type{11}
-    }};
+    storage_t row_wise{{score_type{0},
+                        score_type{1},
+                        score_type{2},
+                        score_type{3},
+                        score_type{4},
+                        score_type{5},
+                        score_type{6},
+                        score_type{7},
+                        score_type{8},
+                        score_type{9},
+                        score_type{10},
+                        score_type{11}}};
 
-    storage_t column_wise
-    {{
-        score_type{0}, score_type{4}, score_type{8},
-        score_type{1}, score_type{5}, score_type{9},
-        score_type{2}, score_type{6}, score_type{10},
-        score_type{3}, score_type{7}, score_type{11}
-    }};
+    storage_t column_wise{{score_type{0},
+                           score_type{4},
+                           score_type{8},
+                           score_type{1},
+                           score_type{5},
+                           score_type{9},
+                           score_type{2},
+                           score_type{6},
+                           score_type{10},
+                           score_type{3},
+                           score_type{7},
+                           score_type{11}}};
 
     // for a simd vector we make sure that some simd values are completely set, i.e. each scalar value in that simd
     // vector has some value.
-    if constexpr(seqan3::simd::simd_concept<score_type>)
+    if constexpr (seqan3::simd::simd_concept<score_type>)
     {
         row_wise[5] = seqan3::simd::iota<score_type>(5); // 5, 6, 7, ...
         row_wise[8] = seqan3::simd::fill<score_type>(8); // 8, 8, 8, ...
@@ -65,7 +75,8 @@ std::vector<score_type, std::allocator<score_type>> create_matrix_storage()
 }
 
 template <typename score_t>
-struct make_unsigned_score_type : std::make_unsigned<score_t> {};
+struct make_unsigned_score_type : std::make_unsigned<score_t>
+{};
 
 template <seqan3::simd::simd_concept simd_score_t>
 struct make_unsigned_score_type<simd_score_t>
@@ -91,8 +102,8 @@ struct two_dimensional_matrix_test<test_matrix_t<score_t, order>> : public ::tes
     using score_type = typename matrix_type::value_type;
     static constexpr seqan3::detail::matrix_major_order matrix_order = order;
 
-    std::vector<score_type> expected_matrix_content{create_matrix_storage<score_type,
-                                                    seqan3::detail::matrix_major_order::row>()};
+    std::vector<score_type> expected_matrix_content{
+        create_matrix_storage<score_type, seqan3::detail::matrix_major_order::row>()};
     std::vector<score_type> matrix_storage{create_matrix_storage<score_type, matrix_order>()};
 
     // Note: We construct the internal data representation of the matrix depending on the matrix_major_order.
@@ -101,36 +112,37 @@ struct two_dimensional_matrix_test<test_matrix_t<score_t, order>> : public ::tes
     matrix_type matrix{seqan3::detail::number_rows{3}, seqan3::detail::number_cols{4}, matrix_storage};
 
     template <typename value1_t, typename value2_t>
-        requires (!(seqan3::simd::simd_concept<std::decay_t<value1_t>> &&
-                    seqan3::simd::simd_concept<std::decay_t<value2_t>>))
+        requires (!(seqan3::simd::simd_concept<std::decay_t<value1_t>>
+                    && seqan3::simd::simd_concept<std::decay_t<value2_t>>))
     static void expect_eq(value1_t v1, value2_t v2)
     {
         EXPECT_EQ(v1, v2);
     }
 
     template <typename value1_t, typename value2_t>
-        requires (seqan3::simd::simd_concept<std::decay_t<value1_t>> &&
-                  seqan3::simd::simd_concept<std::decay_t<value2_t>>)
+        requires (seqan3::simd::simd_concept<std::decay_t<value1_t>>
+                  && seqan3::simd::simd_concept<std::decay_t<value2_t>>)
     static void expect_eq(value1_t && v1, value2_t && v2)
     {
         SIMD_EQ(v1, v2);
     }
 };
 
-using testing_types = ::testing::Types<test_matrix_t<int, seqan3::detail::matrix_major_order::row>,
-                                       test_matrix_t<int, seqan3::detail::matrix_major_order::column>,
-                                       test_matrix_t<seqan3::simd::simd_type_t<int>,
-                                                     seqan3::detail::matrix_major_order::row>,
-                                       test_matrix_t<seqan3::simd::simd_type_t<int>,
-                                                     seqan3::detail::matrix_major_order::column>>;
+using testing_types =
+    ::testing::Types<test_matrix_t<int, seqan3::detail::matrix_major_order::row>,
+                     test_matrix_t<int, seqan3::detail::matrix_major_order::column>,
+                     test_matrix_t<seqan3::simd::simd_type_t<int>, seqan3::detail::matrix_major_order::row>,
+                     test_matrix_t<seqan3::simd::simd_type_t<int>, seqan3::detail::matrix_major_order::column>>;
 TYPED_TEST_SUITE(two_dimensional_matrix_test, testing_types, );
 
 TEST(two_dimensional_matrix_test, initializer_list)
 {
     [[maybe_unused]] seqan3::detail::two_dimensional_matrix<int> matrix1{seqan3::detail::number_rows{0},
-                                                                         seqan3::detail::number_cols{0}, {}};
+                                                                         seqan3::detail::number_cols{0},
+                                                                         {}};
     [[maybe_unused]] seqan3::detail::two_dimensional_matrix<int> matrix2{seqan3::detail::number_rows{1},
-                                                                         seqan3::detail::number_cols{1}, {0}};
+                                                                         seqan3::detail::number_cols{1},
+                                                                         {0}};
 }
 
 TYPED_TEST(two_dimensional_matrix_test, concepts)
@@ -156,17 +168,13 @@ TYPED_TEST(two_dimensional_matrix_test, construction)
     EXPECT_TRUE(std::is_move_assignable_v<matrix_type>);
     EXPECT_TRUE(std::is_destructible_v<matrix_type>);
 
-    EXPECT_TRUE((std::is_constructible_v<matrix_type,
-                                         seqan3::detail::number_rows,
-                                         seqan3::detail::number_cols>));
+    EXPECT_TRUE((std::is_constructible_v<matrix_type, seqan3::detail::number_rows, seqan3::detail::number_cols>));
     EXPECT_TRUE((std::is_constructible_v<matrix_type,
                                          seqan3::detail::number_rows,
                                          seqan3::detail::number_cols,
                                          std::vector<score_type>>));
-    EXPECT_TRUE((std::is_constructible_v<matrix_type,
-                                         seqan3::detail::number_rows,
-                                         seqan3::detail::number_cols,
-                                         matrix_type>));
+    EXPECT_TRUE(
+        (std::is_constructible_v<matrix_type, seqan3::detail::number_rows, seqan3::detail::number_cols, matrix_type>));
 }
 
 TYPED_TEST(two_dimensional_matrix_test, cols)
@@ -203,7 +211,7 @@ TYPED_TEST(two_dimensional_matrix_test, range)
 {
     // For an explanation how this works see iterator_fixture further below in this file.
     auto it = this->matrix_storage.begin();
-    for (auto cell: this->matrix)
+    for (auto cell : this->matrix)
         this->expect_eq(cell, *(it++));
 }
 
@@ -227,7 +235,7 @@ TYPED_TEST(two_dimensional_matrix_test, subscript)
                     this->expected_matrix_content[6]);
     this->expect_eq(this->matrix[{seqan3::detail::row_index_type{1u}, seqan3::detail::column_index_type{3u}}],
                     this->expected_matrix_content[7]);
-    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u},  seqan3::detail::column_index_type{0u}}],
+    this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{0u}}],
                     this->expected_matrix_content[8]);
     this->expect_eq(this->matrix[{seqan3::detail::row_index_type{2u}, seqan3::detail::column_index_type{1u}}],
                     this->expected_matrix_content[9]);
@@ -273,18 +281,17 @@ TYPED_TEST(two_dimensional_matrix_test, at)
 TYPED_TEST(two_dimensional_matrix_test, construction_other_order)
 {
     // Test that changing the matrix layout works.
-    static constexpr seqan3::detail::matrix_major_order other_matrix_order = TestFixture::matrix_order
-                                                                           == seqan3::detail::matrix_major_order::row
-                                                                           ? seqan3::detail::matrix_major_order::column
-                                                                           : seqan3::detail::matrix_major_order::row;
+    static constexpr seqan3::detail::matrix_major_order other_matrix_order =
+        TestFixture::matrix_order == seqan3::detail::matrix_major_order::row
+            ? seqan3::detail::matrix_major_order::column
+            : seqan3::detail::matrix_major_order::row;
 
     // Test that the implicit conversion of the underlying value_type works.
     // This does not work for every SIMD backend, in such a case we use the original score type.
     using score_type = typename TestFixture::score_type;
     using unsigned_score_type = typename make_unsigned_score_type<score_type>::type;
-    using new_score_type = std::conditional_t<std::assignable_from<score_type &, unsigned_score_type &>,
-                                              unsigned_score_type,
-                                              score_type>;
+    using new_score_type =
+        std::conditional_t<std::assignable_from<score_type &, unsigned_score_type &>, unsigned_score_type, score_type>;
 
     // The new matrix type that has a new matrix major order and might have an implicit value conversion.
     using converted_matrix_t = test_matrix_t<new_score_type, other_matrix_order>;
@@ -356,8 +363,8 @@ TYPED_TEST(two_dimensional_matrix_iterator_test, two_dimensional_concept)
 TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_add)
 {
     auto it = this->matrix.begin();
-    auto it_advanced = it += seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                           seqan3::detail::column_index_type{2}};
+    auto it_advanced = it +=
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}};
 
     this->expect_eq(*it, this->expected_matrix_content[6]);
     this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
@@ -366,8 +373,8 @@ TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_add)
 TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add)
 {
     auto it = this->matrix.begin();
-    auto it_advanced = it + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                          seqan3::detail::column_index_type{2}};
+    auto it_advanced =
+        it + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}};
 
     this->expect_eq(*it, this->expected_matrix_content[0]);
     this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
@@ -376,8 +383,8 @@ TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add)
 TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add_friend)
 {
     auto it = this->matrix.begin();
-    auto it_advanced = seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                     seqan3::detail::column_index_type{2}} + it;
+    auto it_advanced =
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}} + it;
 
     this->expect_eq(*it, this->expected_matrix_content[0]);
     this->expect_eq(*it_advanced, this->expected_matrix_content[6]);
@@ -385,10 +392,10 @@ TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_add_fr
 
 TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_subtract)
 {
-    auto it = this->matrix.begin() + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                                   seqan3::detail::column_index_type{3}};
-    auto it_advanced = it -= seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                           seqan3::detail::column_index_type{2}};
+    auto it = this->matrix.begin()
+            + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}};
+    auto it_advanced = it -=
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}};
 
     this->expect_eq(*it, this->expected_matrix_content[5]);
     this->expect_eq(*it_advanced, this->expected_matrix_content[5]);
@@ -396,10 +403,10 @@ TYPED_TEST(two_dimensional_matrix_iterator_test, update_by_matrix_offset_subtrac
 
 TYPED_TEST(two_dimensional_matrix_iterator_test, advance_by_matrix_offset_subtract)
 {
-    auto it = this->matrix.begin() + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                                   seqan3::detail::column_index_type{3}};
-    auto it_advanced = it - seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                          seqan3::detail::column_index_type{2}};
+    auto it = this->matrix.begin()
+            + seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}};
+    auto it_advanced =
+        it - seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}};
 
     this->expect_eq(*it, this->expected_matrix_content[11]);
     this->expect_eq(*it_advanced, this->expected_matrix_content[5]);

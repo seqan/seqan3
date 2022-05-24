@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <seqan3/std/ranges>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/alignment/aligned_sequence/aligned_sequence_concept.hpp>
 #include <seqan3/alignment/decorator/gap_decorator.hpp>
@@ -16,17 +16,16 @@
 #include <seqan3/alphabet/views/to_char.hpp>
 #include <seqan3/utility/views/enforce_random_access.hpp>
 
-#include "../../range/iterator_test_template.hpp"
 #include "../../alignment/aligned_sequence_test_template.hpp"
+#include "../../range/iterator_test_template.hpp"
 
 using decorator_t = seqan3::gap_decorator<std::vector<seqan3::dna4> const &>;
 
 std::vector<seqan3::dna4> const dummy_obj{}; // dummy lvalue for type declaration of views
-using decorator_t2 = seqan3::gap_decorator<
-                         decltype(std::ranges::subrange<decltype(dummy_obj.begin()),
-                                                        decltype(dummy_obj.begin())>{dummy_obj.begin(),
-                                                                                     dummy_obj.end()})>;
-
+using decorator_t2 =
+    seqan3::gap_decorator<decltype(std::ranges::subrange<decltype(dummy_obj.begin()), decltype(dummy_obj.begin())>{
+        dummy_obj.begin(),
+        dummy_obj.end()})>;
 
 using test_types = ::testing::Types<decorator_t, decorator_t2>;
 
@@ -49,8 +48,8 @@ public:
     // will be initialised differently than the naive vector<seqan3::gapped<seqan3::dna>>.
     void initialise_typed_test_container(decorator_t2 & container, seqan3::dna4_vector const & target)
     {
-        container = std::ranges::subrange<decltype(target.begin()),
-                                           decltype(target.end())>{target.begin(), target.end()};
+        container =
+            std::ranges::subrange<decltype(target.begin()), decltype(target.end())>{target.begin(), target.end()};
     }
 };
 
@@ -73,7 +72,7 @@ struct iterator_fixture<std::ranges::iterator_t<decorator_t>> : public ::testing
         insert_gap(v, v.begin(), 5);
     }
 
-    std::vector<seqan3::gapped<seqan3::dna4>> expected_range = [this] ()
+    std::vector<seqan3::gapped<seqan3::dna4>> expected_range = [this]()
     {
         std::vector<seqan3::gapped<seqan3::dna4>> tmp{};
         assign_unaligned(tmp, vec);
@@ -81,7 +80,7 @@ struct iterator_fixture<std::ranges::iterator_t<decorator_t>> : public ::testing
         return tmp;
     }();
 
-    decorator_t test_range = [this] ()
+    decorator_t test_range = [this]()
     {
         decorator_t tmp{vec};
         initialise_with_gaps(tmp);
@@ -100,9 +99,8 @@ struct iterator_fixture<random_access_iterator_test> : iterator_fixture<std::ran
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    decltype(base_t::test_range
-             | seqan3::views::enforce_random_access) test_range = base_t::test_range
-                                                                | seqan3::views::enforce_random_access;
+    decltype(base_t::test_range | seqan3::views::enforce_random_access) test_range =
+        base_t::test_range | seqan3::views::enforce_random_access;
 };
 
 INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator_iterator, iterator_fixture, std::ranges::iterator_t<decorator_t>, );
@@ -113,7 +111,8 @@ INSTANTIATE_TYPED_TEST_SUITE_P(gap_decorator_iterator_random_access, iterator_fi
 // ---------------------------------------------------------------------------------------------------------------------
 
 template <typename t>
-class gap_decorator_f : public ::testing::Test {};
+class gap_decorator_f : public ::testing::Test
+{};
 
 TYPED_TEST_SUITE(gap_decorator_f, test_types, );
 
@@ -293,7 +292,7 @@ TEST(gap_decorator, decorator_on_views)
 {
     std::vector<seqan3::dna4> v{"ACTG"_dna4};
 
-    auto sub = std::ranges::subrange<decltype(v.begin()), decltype(v.begin())>{v.begin()+1, v.begin()+3};
+    auto sub = std::ranges::subrange<decltype(v.begin()), decltype(v.begin())>{v.begin() + 1, v.begin() + 3};
     seqan3::gap_decorator dec{sub};
 
     EXPECT_EQ(dec.size(), 2u);
@@ -313,7 +312,12 @@ TEST(gap_decorator, decorator_on_views)
     EXPECT_EQ(*dec2.begin(), 'A');
     EXPECT_EQ(*++dec2.begin(), 'C');
 
-    auto dec3 = dec | std::views::filter([] (auto chr) { return chr != seqan3::gap{}; });
+    auto dec3 = dec
+              | std::views::filter(
+                    [](auto chr)
+                    {
+                        return chr != seqan3::gap{};
+                    });
     EXPECT_EQ(*dec3.begin(), 'C'_dna4);
     EXPECT_EQ(*(std::next(dec3.begin())), 'T'_dna4);
 }

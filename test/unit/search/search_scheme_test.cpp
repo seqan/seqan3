@@ -5,14 +5,14 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <type_traits>
 
-#include "helper_search_scheme.hpp"
-
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 
-#include <gtest/gtest.h>
+#include "helper_search_scheme.hpp"
 
 #if SEQAN3_WORKAROUND_GCC_BOGUS_MEMCPY
 using integral_t = uint16_t;
@@ -27,17 +27,17 @@ void error_distributions(auto & expected, auto & actual)
     {
         auto const & oss{seqan3::detail::optimum_search_scheme<min_error, max_error>};
         seqan3::search_scheme_error_distribution(actual, oss);
-        seqan3::search_scheme_error_distribution(expected, seqan3::trivial_search_scheme(min_error,
-                                                                                         max_error,
-                                                                                         oss.front().blocks()));
+        seqan3::search_scheme_error_distribution(
+            expected,
+            seqan3::trivial_search_scheme(min_error, max_error, oss.front().blocks()));
     }
     else
     {
         auto const & ss{seqan3::detail::compute_ss(min_error, max_error)};
         seqan3::search_scheme_error_distribution(actual, ss);
-        seqan3::search_scheme_error_distribution(expected, seqan3::trivial_search_scheme(min_error,
-                                                                                         max_error,
-                                                                                         ss.front().blocks()));
+        seqan3::search_scheme_error_distribution(
+            expected,
+            seqan3::trivial_search_scheme(min_error, max_error, ss.front().blocks()));
     }
     std::sort(expected.begin(), expected.end());
     std::sort(actual.begin(), actual.end());
@@ -123,15 +123,14 @@ TEST(search_scheme_test, error_distribution_coverage_computed_search_schemes)
 template <uint8_t min_error, uint8_t max_error, bool precomputed_scheme>
 bool check_disjoint_search_scheme()
 {
-    std::vector<std::vector<integral_t> > error_distributions;
+    std::vector<std::vector<integral_t>> error_distributions;
 
     auto const & oss{seqan3::detail::optimum_search_scheme<min_error, max_error>};
     seqan3::search_scheme_error_distribution(error_distributions, oss);
     uint64_t size = error_distributions.size();
     std::sort(error_distributions.begin(), error_distributions.end());
-    error_distributions.erase(std::unique(error_distributions.begin(),
-                                          error_distributions.end()),
-                                          error_distributions.end());
+    error_distributions.erase(std::unique(error_distributions.begin(), error_distributions.end()),
+                              error_distributions.end());
     return size == error_distributions.size();
 }
 

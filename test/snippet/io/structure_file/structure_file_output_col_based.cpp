@@ -12,8 +12,8 @@ using namespace seqan3::literals;
 
 struct data_storage_t
 {
-    seqan3::concatenated_sequences<seqan3::rna5_vector>         sequences{"AACGUU"_rna5};
-    seqan3::concatenated_sequences<std::string>                 ids{std::string{"seq1"}};
+    seqan3::concatenated_sequences<seqan3::rna5_vector> sequences{"AACGUU"_rna5};
+    seqan3::concatenated_sequences<std::string> ids{std::string{"seq1"}};
     seqan3::concatenated_sequences<std::vector<seqan3::wuss51>> structures{".(())."_wuss51};
 };
 

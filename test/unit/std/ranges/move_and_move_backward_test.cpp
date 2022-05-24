@@ -7,9 +7,8 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-
 #include <algorithm>
+#include <vector>
 
 TEST(general, move)
 {

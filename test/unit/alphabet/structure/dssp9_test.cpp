@@ -24,23 +24,15 @@ INSTANTIATE_TYPED_TEST_SUITE_P(dssp9, semi_alphabet_constexpr, seqan3::dssp9, );
 // assign_char functions
 TEST(dssp9, assign_char)
 {
-    std::vector<char> input
-    {
-        '.', '(', ')',
-        ':', ',', '-', '_', '~', ';',
-        '<', '>', '[', ']', '{', '}',
-        'H', 'B', 'E', 'G', 'I', 'T', 'S'
-    };
+    std::vector<char> input{'.', '(', ')', ':', ',', '-', '_', '~', ';', '<', '>',
+                            '[', ']', '{', '}', 'H', 'B', 'E', 'G', 'I', 'T', 'S'};
 
-    std::vector<seqan3::dssp9> cmp
-    {
-        'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
-        'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
-        'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
-        'H'_dssp9, 'B'_dssp9, 'E'_dssp9, 'G'_dssp9, 'I'_dssp9, 'T'_dssp9, 'S'_dssp9
-    };
+    std::vector<seqan3::dssp9> cmp{'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
+                                   'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'X'_dssp9,
+                                   'X'_dssp9, 'X'_dssp9, 'X'_dssp9, 'H'_dssp9, 'B'_dssp9, 'E'_dssp9,
+                                   'G'_dssp9, 'I'_dssp9, 'T'_dssp9, 'S'_dssp9};
 
-    for (auto [ ch, cm ] : seqan3::views::zip(input, cmp))
+    for (auto [ch, cm] : seqan3::views::zip(input, cmp))
         EXPECT_EQ((seqan3::assign_char_to(ch, seqan3::dssp9{})), cm);
 }
 

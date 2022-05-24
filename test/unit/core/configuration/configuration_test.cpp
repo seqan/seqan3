@@ -44,8 +44,8 @@ TEST(configuration, standard_construction)
 
 TEST(configuration, construction_from_elements)
 {
-    seqan3::configuration cfg0{};       // empty
-    seqan3::configuration cfg1{bax{}};  // one element
+    seqan3::configuration cfg0{};      // empty
+    seqan3::configuration cfg1{bax{}}; // one element
 
     EXPECT_EQ((std::tuple_size_v<decltype(cfg0)>), 0u);
     EXPECT_EQ((std::tuple_size_v<decltype(cfg1)>), 1u);
@@ -249,7 +249,7 @@ TEST(configuration, remove_by_type)
         EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foo>()), seqan3::configuration<>);
     }
 
-    {   // const cfg
+    { // const cfg
         seqan3::configuration<foo, bax, bar> const cfg{};
 
         // remove middle
@@ -275,7 +275,7 @@ TEST(configuration, remove_by_type_template)
         EXPECT_SAME_TYPE(decltype(single_cfg.template remove<foobar>()), seqan3::configuration<>);
     }
 
-    {   //const cfg
+    { //const cfg
         seqan3::configuration<foo, foobar<>, bar> const cfg{};
 
         EXPECT_SAME_TYPE(decltype(cfg.template remove<foobar>()), (seqan3::configuration<foo, bar>));
@@ -372,7 +372,7 @@ TEST(configuration, get_or_by_type_template)
                         (std::vector{0, 1, 2, 3}));
         EXPECT_EQ((seqan3::configuration<bar, foobar<>>{cfg}.get_or(foo{"test"}).value), "test");
         EXPECT_TRUE((std::same_as<decltype(seqan3::configuration<bar, foobar<>>{cfg}.get_or(alternative)),
-                    foobar<std::vector<int>> &&>));
+                                  foobar<std::vector<int>> &&>));
     }
 
     { // const r-value
@@ -383,8 +383,8 @@ TEST(configuration, get_or_by_type_template)
         seqan3::configuration<bar, foobar<>> const cfg_cr3{cfg};
         EXPECT_EQ(std::move(cfg_cr3).get_or(foo{"test"}).value, "test");
         seqan3::configuration<bar, foobar<>> const cfg_cr4{cfg};
-        EXPECT_TRUE((std::same_as<decltype(std::move(cfg_cr4).get_or(alternative)),
-                     foobar<std::vector<int>> const &&>));
+        EXPECT_TRUE(
+            (std::same_as<decltype(std::move(cfg_cr4).get_or(alternative)), foobar<std::vector<int>> const &&>));
     }
 }
 

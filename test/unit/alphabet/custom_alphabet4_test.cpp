@@ -17,7 +17,7 @@ struct non_writeable_alphabet
     rank_t to_rank() const noexcept;
     char_t to_char() const noexcept;
 
-    constexpr static bool alphabet_size{1};
+    static constexpr bool alphabet_size{1};
 
     friend bool operator<(non_writeable_alphabet, non_writeable_alphabet);
     friend bool operator<=(non_writeable_alphabet, non_writeable_alphabet);
@@ -26,7 +26,6 @@ struct non_writeable_alphabet
     friend bool operator==(non_writeable_alphabet, non_writeable_alphabet);
     friend bool operator!=(non_writeable_alphabet, non_writeable_alphabet);
 };
-
 
 // see issue https://github.com/seqan/seqan3/issues/1518
 TEST(non_writeable_alphabet_test, issue1518)

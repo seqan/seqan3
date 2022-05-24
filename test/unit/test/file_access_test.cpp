@@ -33,16 +33,12 @@ struct file_access_test : public ::testing::Test
 
     static void remove_read_permission(std::filesystem::path const & path)
     {
-        std::filesystem::permissions(path,
-                                    std::filesystem::perms::owner_read,
-                                    std::filesystem::perm_options::remove);
+        std::filesystem::permissions(path, std::filesystem::perms::owner_read, std::filesystem::perm_options::remove);
     }
 
     static void remove_write_permission(std::filesystem::path const & path)
     {
-        std::filesystem::permissions(path,
-                                    std::filesystem::perms::owner_write,
-                                    std::filesystem::perm_options::remove);
+        std::filesystem::permissions(path, std::filesystem::perms::owner_write, std::filesystem::perm_options::remove);
     }
 
     // If we have root permissions, we can write to the file even when we do not have write permissions.

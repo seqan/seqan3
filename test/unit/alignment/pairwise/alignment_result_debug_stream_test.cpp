@@ -29,7 +29,7 @@ TEST(alignment_result_test, debug_streamable)
     coordinate_t end_coordinate{23, 35};
 
     aligned_seq_type gapped_seq1{'A'_dna4, 'T'_dna4, seqan3::gap{}, 'A'_dna4};
-    aligned_seq_type gapped_seq2{'A'_dna4, 'T'_dna4, 'C'_dna4,       seqan3::gap{}};
+    aligned_seq_type gapped_seq2{'A'_dna4, 'T'_dna4, 'C'_dna4, seqan3::gap{}};
     std::pair<aligned_seq_type, aligned_seq_type> alignment{gapped_seq1, gapped_seq2};
 
     std::ostringstream ostream{};
@@ -74,12 +74,13 @@ TEST(alignment_result_test, debug_streamable)
         seqan3::alignment_result result{result_value};
         debug_stream << result;
 
-        EXPECT_EQ(ostream.str(), "{sequence1 id: 3, sequence2 id: 3, score: -15, begin: (4,6), end: (23,35), \n"
-                                 "alignment:\n"
-                                 "      0     \n"
-                                 "        AT-A\n"
-                                 "        ||  \n"
-                                 "        ATC-\n"
-                                 "}");
+        EXPECT_EQ(ostream.str(),
+                  "{sequence1 id: 3, sequence2 id: 3, score: -15, begin: (4,6), end: (23,35), \n"
+                  "alignment:\n"
+                  "      0     \n"
+                  "        AT-A\n"
+                  "        ||  \n"
+                  "        ATC-\n"
+                  "}");
     }
 }

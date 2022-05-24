@@ -15,7 +15,7 @@ int main()
 
     seqan3::debug_stream << (text | seqan3::views::kmer_hash(0b101_shape)) << '\n'; // [2,7,8,14,1]
 
-    // Attention: the Shape is defined from right to left! 
+    // Attention: the Shape is defined from right to left!
     // The mask 0b11111101 applied to "AGAAAATA" ("A.AAAATA") will yield
     // the same hash value as mask 0b1111111 applied to "AAAAATA".
     {

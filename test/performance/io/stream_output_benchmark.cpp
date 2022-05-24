@@ -12,27 +12,27 @@
 #include <sstream>
 
 #if defined(SEQAN3_HAS_ZLIB)
-    #include <seqan3/contrib/stream/bgzf_ostream.hpp>
-    #include <seqan3/contrib/stream/gz_ostream.hpp>
+#    include <seqan3/contrib/stream/bgzf_ostream.hpp>
+#    include <seqan3/contrib/stream/gz_ostream.hpp>
 #endif
 
 #if defined(SEQAN3_HAS_BZIP2)
-    #include <seqan3/contrib/stream/bz2_ostream.hpp>
+#    include <seqan3/contrib/stream/bz2_ostream.hpp>
 #endif
 
 // SEQAN2
 #if __has_include(<seqan/stream.h>)
-    #define SEQAN3_HAS_SEQAN2 1
+#    define SEQAN3_HAS_SEQAN2 1
 
-    #if defined(SEQAN3_HAS_ZLIB)
-        #define SEQAN_HAS_ZLIB 1
-    #endif
+#    if defined(SEQAN3_HAS_ZLIB)
+#        define SEQAN_HAS_ZLIB 1
+#    endif
 
-    #if defined(SEQAN3_HAS_BZIP2)
-        #define SEQAN_HAS_BZIP2 1
-    #endif
+#    if defined(SEQAN3_HAS_BZIP2)
+#        define SEQAN_HAS_BZIP2 1
+#    endif
 
-    #include <seqan/stream.h>
+#    include <seqan/stream.h>
 #endif
 
 // ============================================================================
@@ -149,13 +149,13 @@ void seqan2_compressed(benchmark::State & state)
 }
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::Nothing);
 
-#ifdef SEQAN_HAS_ZLIB
+#    ifdef SEQAN_HAS_ZLIB
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::GZFile);
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BgzfFile);
-#endif
-#ifdef SEQAN_HAS_BZIP2
+#    endif
+#    ifdef SEQAN_HAS_BZIP2
 BENCHMARK_TEMPLATE(seqan2_compressed, seqan::BZ2File);
-#endif
+#    endif
 
 #endif // SEQAN3_HAS_SEQAN2
 

@@ -1,7 +1,7 @@
 #include <sstream>
 
-#include <seqan3/io/structure_file/output.hpp>
 #include <seqan3/io/structure_file/input.hpp>
+#include <seqan3/io/structure_file/output.hpp>
 
 auto input = R"(> S.cerevisiae_tRNA-PHE M10740/1-73
 GCGGAUUUAGCUCAGUUGGGAGAGCGCCAGACUGAAGAUUUGGAGGUCCUGUGUUCGAUCCACAGAAUUCGCA

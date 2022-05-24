@@ -16,7 +16,7 @@ int main()
 
     std::vector<seqan3::dna5_vector> sequences{"AAATTT"_dna5, "CCCGGG"_dna5};
 
-    seqan3::debug_stream << (sequences | std::views::take(1))  << '\n'; // [A,A,A,T,T,T]
+    seqan3::debug_stream << (sequences | std::views::take(1)) << '\n'; // [A,A,A,T,T,T]
 
     seqan3::debug_stream << (sequences | seqan3::views::deep{std::views::take(1)}) << '\n'; // [A,C]
     // constructor arguments passed via {} and arguments to underlying view passed via ()

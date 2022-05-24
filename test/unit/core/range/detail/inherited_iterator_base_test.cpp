@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <sstream>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include <seqan3/core/range/detail/inherited_iterator_base.hpp>
 
@@ -16,12 +16,12 @@
 
 //! [inherited_iterator_base def]
 
-class skip_odd_numbers_it : public seqan3::detail::inherited_iterator_base<skip_odd_numbers_it,
-                                                                           std::vector<int>::iterator>
+class skip_odd_numbers_it :
+    public seqan3::detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>
 {
 private:
     using base_base_t = std::vector<int>::iterator;
-    using base_t      = seqan3::detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>;
+    using base_t = seqan3::detail::inherited_iterator_base<skip_odd_numbers_it, std::vector<int>::iterator>;
 
 public:
     skip_odd_numbers_it() = default;
@@ -31,13 +31,14 @@ public:
     skip_odd_numbers_it & operator=(skip_odd_numbers_it && rhs) = default;
     ~skip_odd_numbers_it() = default;
 
-    skip_odd_numbers_it(base_base_t it) : base_t{it} {}
+    skip_odd_numbers_it(base_base_t it) : base_t{it}
+    {}
 
-    using difference_type       = typename std::iterator_traits<base_base_t>::difference_type;
-    using value_type            = typename std::iterator_traits<base_base_t>::value_type;
-    using reference             = typename std::iterator_traits<base_base_t>::reference;
-    using pointer               = typename std::iterator_traits<base_base_t>::pointer;
-    using iterator_category     = typename std::iterator_traits<base_base_t>::iterator_category;
+    using difference_type = typename std::iterator_traits<base_base_t>::difference_type;
+    using value_type = typename std::iterator_traits<base_base_t>::value_type;
+    using reference = typename std::iterator_traits<base_base_t>::reference;
+    using pointer = typename std::iterator_traits<base_base_t>::pointer;
+    using iterator_category = typename std::iterator_traits<base_base_t>::iterator_category;
 
     skip_odd_numbers_it & operator++()
     {
@@ -61,7 +62,7 @@ public:
 TEST(inherited_iterator_base, minimal)
 {
     //! [inherited_iterator_base desired]
-    std::vector<int> vec{0,1,2,3,4,5,6,7,8,9};
+    std::vector<int> vec{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     skip_odd_numbers_it it = begin(vec);
 

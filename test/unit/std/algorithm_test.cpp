@@ -18,7 +18,12 @@
 TEST(algorithm_test, gcc95578)
 {
     std::vector<int> v{};
-    auto && rng = v | std::views::take_while([](auto &&){return true;});
+    auto && rng = v
+                | std::views::take_while(
+                      [](auto &&)
+                      {
+                          return true;
+                      });
 
     std::vector<int> rng_copy{};
     std::ranges::copy(rng, std::back_inserter(rng_copy));

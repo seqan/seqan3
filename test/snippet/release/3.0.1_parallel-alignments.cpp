@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alignment/pairwise/all.hpp>
+#include <seqan3/alphabet/nucleotide/dna4.hpp>
 
 int main()
 {
@@ -10,11 +10,9 @@ int main()
     auto sequence1{"ACCA"_dna4};
     auto sequence2{"ATTA"_dna4};
 
-    seqan3::configuration alignment_config = seqan3::align_cfg::method_global{} |
-                                             seqan3::align_cfg::edit_scheme |
-                                             seqan3::align_cfg::parallel{4};
+    seqan3::configuration alignment_config =
+        seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | seqan3::align_cfg::parallel{4};
 
-    for (auto const & res : seqan3::align_pairwise(std::tie(sequence1, sequence2),
-                                                   alignment_config))
+    for (auto const & res : seqan3::align_pairwise(std::tie(sequence1, sequence2), alignment_config))
         std::cout << "Score: " << res.score() << '\n';
 }

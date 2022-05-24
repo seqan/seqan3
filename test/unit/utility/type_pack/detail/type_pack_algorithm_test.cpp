@@ -15,7 +15,7 @@
 // all_of
 //-----------------------------------------------------------------------------
 
-auto is_value_type_integral = [] (auto value)
+auto is_value_type_integral = [](auto value)
 {
     return std::is_integral_v<decltype(value)>;
 };
@@ -61,7 +61,7 @@ TEST(type_pack_algorithm, for_each2)
 
     auto fn = [&stream](auto const & arg)
     {
-        if constexpr(std::is_same_v<decltype(arg), alphabet const &>)
+        if constexpr (std::is_same_v<decltype(arg), alphabet const &>)
             stream << arg.chr << ";";
         else
             stream << arg << ";";

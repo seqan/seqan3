@@ -16,10 +16,11 @@ int main()
 {
     seqan3::structure_file_input fin{std::istringstream{input}, seqan3::format_vienna{}};
 
-    auto minimum_length5_filter = std::views::filter([] (auto const & rec)
-    {
-        return std::ranges::size(rec.sequence()) >= 5;
-    });
+    auto minimum_length5_filter = std::views::filter(
+        [](auto const & rec)
+        {
+            return std::ranges::size(rec.sequence()) >= 5;
+        });
 
     for (auto & rec : fin | minimum_length5_filter) // only record with sequence length >= 5 will "appear"
         seqan3::debug_stream << (rec.sequence() | seqan3::views::to_char) << '\n';

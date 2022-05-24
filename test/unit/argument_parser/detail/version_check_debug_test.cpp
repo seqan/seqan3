@@ -6,7 +6,7 @@
 // -----------------------------------------------------------------------------------------------------
 
 #if defined(NDEBUG)
-    #undef NDEBUG // test in debug mode
+#    undef NDEBUG // test in debug mode
 #endif
 
 #include <string>

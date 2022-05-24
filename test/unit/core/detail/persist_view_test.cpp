@@ -5,11 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <gtest/gtest.h>
 
 #include <concepts>
+#include <iostream>
 #include <seqan3/std/ranges>
 #include <string>
 
@@ -55,9 +54,14 @@ TEST(view_persist, wrap_temporary)
 
     // combinability
     EXPECT_RANGE_EQ("fo"sv, std::string{"foo"} | seqan3::detail::persist | std::views::take(2));
-    EXPECT_RANGE_EQ("o"sv, std::string{"foo"} | seqan3::detail::persist
-                                              | std::views::filter([](char const chr){return chr == 'o';})
-                                              | std::views::take(1));
+    EXPECT_RANGE_EQ("o"sv,
+                    std::string{"foo"} | seqan3::detail::persist
+                        | std::views::filter(
+                            [](char const chr)
+                            {
+                                return chr == 'o';
+                            })
+                        | std::views::take(1));
 }
 
 TEST(view_persist, const)

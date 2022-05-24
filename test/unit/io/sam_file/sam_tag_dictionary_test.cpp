@@ -108,7 +108,7 @@ TEST(sam_tag_dictionary, get_function_unknown_tag)
 
     seqan3::sam_tag_dictionary dict{};
 
-    dict["nm"_tag] = 'a'; // lower case nm tag type is NOT defined so it can be either type
+    dict["nm"_tag] = 'a';                           // lower case nm tag type is NOT defined so it can be either type
     dict["nm"_tag] = std::vector<int32_t>{3, 4, 5}; // overwrites previous
     dict["co"_tag] = std::string("comment");
     dict["cg"_tag] = std::vector<int32_t>{3, 4, 5};

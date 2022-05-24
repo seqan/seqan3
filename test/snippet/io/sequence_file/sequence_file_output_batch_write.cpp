@@ -12,12 +12,9 @@ int main()
 
     seqan3::sequence_file_output fout{std::ostringstream{}, seqan3::format_fasta{}};
 
-    std::vector<std::tuple<seqan3::dna5_vector, std::string>> range
-    {
-        { "ACGT"_dna5, "First" },
-        { "NATA"_dna5, "2nd" },
-        { "GATA"_dna5, "Third" }
-    }; // a range of "records"
+    std::vector<std::tuple<seqan3::dna5_vector, std::string>> range{{"ACGT"_dna5, "First"},
+                                                                    {"NATA"_dna5, "2nd"},
+                                                                    {"GATA"_dna5, "Third"}}; // a range of "records"
 
     fout = range;
     // the same as:

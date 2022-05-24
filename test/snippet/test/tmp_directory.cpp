@@ -1,5 +1,6 @@
-#include <fstream>
 #include <gtest/gtest.h>
+
+#include <fstream>
 
 #include <seqan3/test/tmp_directory.hpp>
 
@@ -20,4 +21,3 @@ TEST(snippet_tmp_directory, tmp_directory_)
     // check that everything was cleanup properly
     EXPECT_TRUE(tmp.empty());
 }
-

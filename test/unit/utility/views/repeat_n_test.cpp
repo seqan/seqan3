@@ -86,7 +86,12 @@ TEST(view, factory)
     // combinability
     {
         std::string str{"foobar"};
-        auto v = seqan3::views::repeat_n(str, 2) | std::views::transform([] (auto & str) { return str.substr(3); });
+        auto v = seqan3::views::repeat_n(str, 2)
+               | std::views::transform(
+                     [](auto & str)
+                     {
+                         return str.substr(3);
+                     });
         EXPECT_RANGE_EQ(v, (std::vector<std::string>{"bar", "bar"}));
     }
 }

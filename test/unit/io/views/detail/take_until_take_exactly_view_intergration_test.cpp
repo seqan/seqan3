@@ -25,7 +25,12 @@ TEST(integration_test, take_until_and_take_exactly)
     std::array<char, 10> arithmetic_buffer{};
 
     stream_view_t stream_view{iterator_t{*stream.rdbuf()}, sentinel_t{}};
-    auto stream_view_until = stream_view | seqan3::detail::take_until_or_throw([](auto) { return false; });
+    auto stream_view_until = stream_view
+                           | seqan3::detail::take_until_or_throw(
+                                 [](auto)
+                                 {
+                                     return false;
+                                 });
     auto stream_view_take2 = stream_view_until | seqan3::detail::take_exactly_or_throw(2);
 
     std::ranges::copy(stream_view_take2, arithmetic_buffer.data());

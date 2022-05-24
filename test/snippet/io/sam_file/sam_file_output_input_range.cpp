@@ -19,6 +19,6 @@ int main()
     fout = fin;
 
     // or in pipe notation:
-    seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}} |
-    seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
+    seqan3::sam_file_input{std::istringstream{sam_file_raw}, seqan3::format_sam{}}
+        | seqan3::sam_file_output{std::ostringstream{}, seqan3::format_sam{}};
 }

@@ -7,7 +7,7 @@ int main(int argc, char ** argv)
 
     std::string name{"Max Muster"}; // define default values directly in the variable.
     bool bonus{false};
-    std::vector<double> grades{};   // you can also specify a vector that is treated as a list option.
+    std::vector<double> grades{}; // you can also specify a vector that is treated as a list option.
 
     myparser.add_option(name, 'n', "name", "Please specify your name.");
     myparser.add_flag(bonus, 'b', "bonus", "Please specify if you got the bonus.");

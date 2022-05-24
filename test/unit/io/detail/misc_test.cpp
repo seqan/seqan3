@@ -17,12 +17,12 @@ struct dummy_file
 
     struct format1
     {
-        static inline std::vector<std::string> file_extensions{ {"fa"}, {"fasta"}};
+        static inline std::vector<std::string> file_extensions{{"fa"}, {"fasta"}};
     };
 
     struct format2
     {
-        static inline std::vector<std::string> file_extensions{ {"sam"}, {"bam"}};
+        static inline std::vector<std::string> file_extensions{{"sam"}, {"bam"}};
     };
 
     using valid_formats = seqan3::type_list<format1, format2>;
@@ -34,7 +34,7 @@ TEST(misc, valid_file_extensions)
     auto all_extensions = seqan3::detail::valid_file_extensions<dummy_file::valid_formats>();
 
     // define testing lambda
-    auto cmp_lambda = [&all_extensions] (auto & source)
+    auto cmp_lambda = [&all_extensions](auto & source)
     {
         return std::find(all_extensions.begin(), all_extensions.end(), source);
     };

@@ -5,21 +5,21 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <sstream>
-
 #include <gtest/gtest.h>
+
+#include <sstream>
 
 #include <seqan3/alignment/scoring/aminoacid_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/nucleotide_scoring_scheme.hpp>
 #include <seqan3/alignment/scoring/scoring_scheme_concept.hpp>
 #include <seqan3/alphabet/aminoacid/aa20.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/test/cereal.hpp>
 #include <seqan3/utility/type_list/detail/type_list_algorithm.hpp>
 #include <seqan3/utility/type_list/type_list.hpp>
@@ -42,7 +42,6 @@ using scoring_scheme_types = ::testing::Types<seqan3::nucleotide_scoring_scheme<
                                               seqan3::aminoacid_scoring_scheme<int>>;
 
 TYPED_TEST_SUITE(generic, scoring_scheme_types, );
-
 
 TEST(nucleotide_scoring_scheme, template_argument_deduction)
 {
@@ -80,7 +79,6 @@ TEST(aminoacid_scoring_scheme, template_argument_deduction)
         seqan3::aminoacid_scoring_scheme scheme{};
         EXPECT_TRUE((std::is_same_v<decltype(scheme), seqan3::aminoacid_scoring_scheme<int8_t>>));
     }
-
 
     {
         seqan3::aminoacid_scoring_scheme scheme{seqan3::match_score{6}, seqan3::mismatch_score{-4}};
@@ -167,8 +165,7 @@ TYPED_TEST(generic, simple_score_failure)
     if constexpr (std::is_same_v<typename TypeParam::score_type, int8_t>)
     {
         // Test constructor
-        EXPECT_THROW((TypeParam{seqan3::match_score{600}, seqan3::mismatch_score{-4}}),
-                     std::invalid_argument);
+        EXPECT_THROW((TypeParam{seqan3::match_score{600}, seqan3::mismatch_score{-4}}), std::invalid_argument);
 
         TypeParam scheme{};
         // Test set function
@@ -222,20 +219,21 @@ TYPED_TEST(generic, custom)
 
     if constexpr (seqan3::detail::is_type_specialisation_of_v<TypeParam, seqan3::aminoacid_scoring_scheme>)
     {
-        EXPECT_EQ(0*0+0,    scheme.score('A'_aa27, 'A'_aa27));
-        EXPECT_EQ(0*0+2,    scheme.score('A'_aa27, 'C'_aa27));
-        EXPECT_EQ(2*2+0,    scheme.score('C'_aa27, 'A'_aa27));
-        EXPECT_EQ(8*8+8,    scheme.score('I'_aa27, 'I'_aa27));
-        EXPECT_EQ(0*0+13,   scheme.score('A'_aa27, 'N'_aa27));
-        EXPECT_EQ(2*2+1,    scheme.score('C'_aa27, 'B'_aa27));
-    } else
+        EXPECT_EQ(0 * 0 + 0, scheme.score('A'_aa27, 'A'_aa27));
+        EXPECT_EQ(0 * 0 + 2, scheme.score('A'_aa27, 'C'_aa27));
+        EXPECT_EQ(2 * 2 + 0, scheme.score('C'_aa27, 'A'_aa27));
+        EXPECT_EQ(8 * 8 + 8, scheme.score('I'_aa27, 'I'_aa27));
+        EXPECT_EQ(0 * 0 + 13, scheme.score('A'_aa27, 'N'_aa27));
+        EXPECT_EQ(2 * 2 + 1, scheme.score('C'_aa27, 'B'_aa27));
+    }
+    else
     {
-        EXPECT_EQ(0*0+0,    scheme.score('A'_dna15, 'A'_dna15)); // A is 0th
-        EXPECT_EQ(0*0+2,    scheme.score('A'_dna15, 'C'_dna15)); // C is 2nd
-        EXPECT_EQ(2*2+0,    scheme.score('C'_dna15, 'A'_dna15));
-        EXPECT_EQ(3*3+3,    scheme.score('D'_dna15, 'D'_dna15)); // D is 3rd
-        EXPECT_EQ(8*8+0,    scheme.score('N'_dna15, 'A'_dna15)); // N is 8th
-        EXPECT_EQ(0*0+8,    scheme.score('A'_dna15, 'N'_dna15));
+        EXPECT_EQ(0 * 0 + 0, scheme.score('A'_dna15, 'A'_dna15)); // A is 0th
+        EXPECT_EQ(0 * 0 + 2, scheme.score('A'_dna15, 'C'_dna15)); // C is 2nd
+        EXPECT_EQ(2 * 2 + 0, scheme.score('C'_dna15, 'A'_dna15));
+        EXPECT_EQ(3 * 3 + 3, scheme.score('D'_dna15, 'D'_dna15)); // D is 3rd
+        EXPECT_EQ(8 * 8 + 0, scheme.score('N'_dna15, 'A'_dna15)); // N is 8th
+        EXPECT_EQ(0 * 0 + 8, scheme.score('A'_dna15, 'N'_dna15));
     }
 }
 
@@ -255,41 +253,35 @@ TYPED_TEST(generic, convertability)
     if constexpr (seqan3::detail::is_type_specialisation_of_v<TypeParam, seqan3::aminoacid_scoring_scheme>)
     {
         using aa_types = seqan3::type_list<seqan3::aa27, seqan3::aa20>;
-        seqan3::detail::for_each<aa_types>([&] (auto aa) constexpr
-        {
+        seqan3::detail::for_each<aa_types>([&](auto aa) constexpr {
             using nucl_t = std::decay_t<typename decltype(aa)::type>;
 
-            EXPECT_EQ(scheme.score('C'_aa27,                  'G'_aa27),
+            EXPECT_EQ(scheme.score('C'_aa27, 'G'_aa27),
                       scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
-            EXPECT_EQ(scheme.score('T'_aa27,                  nucl_t{}.assign_char('T')),
+            EXPECT_EQ(scheme.score('T'_aa27, nucl_t{}.assign_char('T')),
                       scheme.score(nucl_t{}.assign_char('T'), 'T'_aa27));
         });
-    } else
+    }
+    else
     {
 
-        using nucl_types = seqan3::type_list<seqan3::dna4,
-                                             seqan3::dna5,
-                                             seqan3::dna15,
-                                             seqan3::rna4,
-                                             seqan3::rna5,
-                                             seqan3::rna15>;
-        seqan3::detail::for_each<nucl_types>([&] (auto nucl) constexpr
-        {
+        using nucl_types =
+            seqan3::type_list<seqan3::dna4, seqan3::dna5, seqan3::dna15, seqan3::rna4, seqan3::rna5, seqan3::rna15>;
+        seqan3::detail::for_each<nucl_types>([&](auto nucl) constexpr {
             using nucl_t = std::decay_t<typename decltype(nucl)::type>;
 
-            EXPECT_EQ(scheme.score('C'_dna15,                 'G'_dna15),
+            EXPECT_EQ(scheme.score('C'_dna15, 'G'_dna15),
                       scheme.score(nucl_t{}.assign_char('C'), nucl_t{}.assign_char('G')));
-            EXPECT_EQ(scheme.score('T'_dna15,                 'T'_dna15),
+            EXPECT_EQ(scheme.score('T'_dna15, 'T'_dna15),
                       scheme.score(nucl_t{}.assign_char('T'), nucl_t{}.assign_char('T')));
-            EXPECT_EQ(scheme.score('A'_dna15,                 'C'_dna15),
+            EXPECT_EQ(scheme.score('A'_dna15, 'C'_dna15),
                       scheme.score(nucl_t{}.assign_char('A'), nucl_t{}.assign_char('C')));
 
-            EXPECT_EQ(scheme.score('C'_dna15,                 nucl_t{}.assign_char('G')),
+            EXPECT_EQ(scheme.score('C'_dna15, nucl_t{}.assign_char('G')),
                       scheme.score(nucl_t{}.assign_char('C'), 'G'_dna15));
-            EXPECT_EQ(scheme.score('C'_dna15,                 nucl_t{}.assign_char('A')),
+            EXPECT_EQ(scheme.score('C'_dna15, nucl_t{}.assign_char('A')),
                       scheme.score(nucl_t{}.assign_char('C'), 'A'_dna15));
         });
-
     }
 }
 
@@ -309,10 +301,10 @@ TYPED_TEST(generic, serialisation)
 // ------------------------------------------------------------------
 
 template <typename T>
-class aminoacid : public ::testing::Test {};
+class aminoacid : public ::testing::Test
+{};
 
-using aa_scheme_types = ::testing::Types<seqan3::aminoacid_scoring_scheme<>,
-                                         seqan3::aminoacid_scoring_scheme<int>>;
+using aa_scheme_types = ::testing::Types<seqan3::aminoacid_scoring_scheme<>, seqan3::aminoacid_scoring_scheme<int>>;
 
 TYPED_TEST_SUITE(aminoacid, aa_scheme_types, );
 
@@ -320,34 +312,34 @@ TYPED_TEST(aminoacid, similarity_matrix)
 {
     // Test constructor
     seqan3::aminoacid_scoring_scheme scheme{seqan3::aminoacid_similarity_matrix::blosum30};
-    EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
-    EXPECT_EQ(-3,    scheme.score('A'_aa27, 'C'_aa27));
-    EXPECT_EQ(-3,    scheme.score('C'_aa27, 'A'_aa27));
-    EXPECT_EQ( 9,    scheme.score('D'_aa27, 'D'_aa27));
-    EXPECT_EQ( 0,    scheme.score('N'_aa27, 'A'_aa27));
+    EXPECT_EQ(4, scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-3, scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-3, scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ(9, scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(0, scheme.score('N'_aa27, 'A'_aa27));
 
     // Test set function
     scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum45);
 
-    EXPECT_EQ( 5,    scheme.score('A'_aa27, 'A'_aa27));
-    EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));
-    EXPECT_EQ(-1,    scheme.score('C'_aa27, 'A'_aa27));
-    EXPECT_EQ( 7,    scheme.score('D'_aa27, 'D'_aa27));
-    EXPECT_EQ(-1,    scheme.score('N'_aa27, 'A'_aa27));
+    EXPECT_EQ(5, scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-1, scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-1, scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ(7, scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-1, scheme.score('N'_aa27, 'A'_aa27));
 
     scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum62);
 
-    EXPECT_EQ( 4,    scheme.score('A'_aa27, 'A'_aa27));
-    EXPECT_EQ( 0,    scheme.score('A'_aa27, 'C'_aa27));
-    EXPECT_EQ( 0,    scheme.score('C'_aa27, 'A'_aa27));
-    EXPECT_EQ( 6,    scheme.score('D'_aa27, 'D'_aa27));
-    EXPECT_EQ(-2,    scheme.score('N'_aa27, 'A'_aa27));
+    EXPECT_EQ(4, scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(0, scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(0, scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ(6, scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-2, scheme.score('N'_aa27, 'A'_aa27));
 
     scheme.set_similarity_matrix(seqan3::aminoacid_similarity_matrix::blosum80);
 
-    EXPECT_EQ( 7,    scheme.score('A'_aa27, 'A'_aa27));
-    EXPECT_EQ(-1,    scheme.score('A'_aa27, 'C'_aa27));
-    EXPECT_EQ(-1,    scheme.score('C'_aa27, 'A'_aa27));
-    EXPECT_EQ(10,    scheme.score('D'_aa27, 'D'_aa27));
-    EXPECT_EQ(-3,    scheme.score('N'_aa27, 'A'_aa27));
+    EXPECT_EQ(7, scheme.score('A'_aa27, 'A'_aa27));
+    EXPECT_EQ(-1, scheme.score('A'_aa27, 'C'_aa27));
+    EXPECT_EQ(-1, scheme.score('C'_aa27, 'A'_aa27));
+    EXPECT_EQ(10, scheme.score('D'_aa27, 'D'_aa27));
+    EXPECT_EQ(-3, scheme.score('N'_aa27, 'A'_aa27));
 }

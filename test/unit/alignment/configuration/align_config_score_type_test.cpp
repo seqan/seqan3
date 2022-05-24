@@ -17,7 +17,7 @@
 TEST(align_config_score_type, score_type)
 {
     EXPECT_TRUE((std::same_as<std::remove_cvref_t<decltype(seqan3::align_cfg::score_type<int32_t>{})>,
-                              seqan3::align_cfg::score_type<int32_t>>));                            // default case
+                              seqan3::align_cfg::score_type<int32_t>>));                 // default case
     EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<int32_t>{})::type, int32_t); // default case
 
     EXPECT_SAME_TYPE(decltype(seqan3::align_cfg::score_type<int16_t>{})::type, int16_t);

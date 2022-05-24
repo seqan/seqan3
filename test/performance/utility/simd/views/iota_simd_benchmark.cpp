@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <seqan3/std/ranges>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/utility/simd/algorithm.hpp>
 #include <seqan3/utility/simd/simd.hpp>
@@ -44,7 +44,7 @@ template <typename index_simd_t>
 struct transform_iota_with_simd_fill_benchmark
 {
     using iota_transform_view_type = decltype(std::views::iota(0u, static_cast<size_t>(1))
-                                            | std::views::transform(seqan3::simd::fill<index_simd_t>));
+                                              | std::views::transform(seqan3::simd::fill<index_simd_t>));
 
     iota_transform_view_type iota_simd_view;
 
@@ -97,7 +97,7 @@ struct for_loop_with_simd_add_benchmark
 // ============================================================================
 
 template <typename index_simd_t, template <typename> typename kernel_t>
-void iota_simd_benchmark(benchmark::State& state)
+void iota_simd_benchmark(benchmark::State & state)
 {
     kernel_t<index_simd_t> kernel{static_cast<size_t>(state.range(0))};
     index_simd_t count{};
@@ -113,60 +113,42 @@ void iota_simd_benchmark(benchmark::State& state)
 }
 
 // Baseline test using for loop and simd add.
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint8_t>,
-                   for_loop_with_simd_add_benchmark)->Arg(std::numeric_limits<uint8_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint16_t>,
-                   for_loop_with_simd_add_benchmark)->Arg(std::numeric_limits<uint16_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint32_t>,
-                   for_loop_with_simd_add_benchmark)->Arg(1'000'000);
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint64_t>,
-                   for_loop_with_simd_add_benchmark)->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint8_t>, for_loop_with_simd_add_benchmark)
+    ->Arg(std::numeric_limits<uint8_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint16_t>, for_loop_with_simd_add_benchmark)
+    ->Arg(std::numeric_limits<uint16_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint32_t>, for_loop_with_simd_add_benchmark)
+    ->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint64_t>, for_loop_with_simd_add_benchmark)
+    ->Arg(1'000'000);
 
 // Baseline test using for loop and simd fill.
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint8_t>,
-                   for_loop_with_simd_fill_benchmark)->Arg(std::numeric_limits<uint8_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint16_t>,
-                   for_loop_with_simd_fill_benchmark)->Arg(std::numeric_limits<uint16_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint32_t>,
-                   for_loop_with_simd_fill_benchmark)->Arg(1'000'000);
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint64_t>,
-                   for_loop_with_simd_fill_benchmark)->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint8_t>, for_loop_with_simd_fill_benchmark)
+    ->Arg(std::numeric_limits<uint8_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint16_t>, for_loop_with_simd_fill_benchmark)
+    ->Arg(std::numeric_limits<uint16_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint32_t>, for_loop_with_simd_fill_benchmark)
+    ->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint64_t>, for_loop_with_simd_fill_benchmark)
+    ->Arg(1'000'000);
 
 // Test iota view in combination with transform view that converts the scalar index to a simd vector on access.
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint8_t>,
-                   transform_iota_with_simd_fill_benchmark)->Arg(std::numeric_limits<uint8_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint16_t>,
-                   transform_iota_with_simd_fill_benchmark)->Arg(std::numeric_limits<uint16_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint32_t>,
-                   transform_iota_with_simd_fill_benchmark)->Arg(1'000'000);
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint64_t>,
-                   transform_iota_with_simd_fill_benchmark)->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint8_t>, transform_iota_with_simd_fill_benchmark)
+    ->Arg(std::numeric_limits<uint8_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint16_t>, transform_iota_with_simd_fill_benchmark)
+    ->Arg(std::numeric_limits<uint16_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint32_t>, transform_iota_with_simd_fill_benchmark)
+    ->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint64_t>, transform_iota_with_simd_fill_benchmark)
+    ->Arg(1'000'000);
 
 // Test seqan3::views::iota_simd.
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint8_t>,
-                   iota_simd_view_benchmark)->Arg(std::numeric_limits<uint8_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint16_t>,
-                   iota_simd_view_benchmark)->Arg(std::numeric_limits<uint16_t>::max());
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint32_t>,
-                   iota_simd_view_benchmark)->Arg(1'000'000);
-BENCHMARK_TEMPLATE(iota_simd_benchmark,
-                   seqan3::simd::simd_type_t<uint64_t>,
-                   iota_simd_view_benchmark)->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint8_t>, iota_simd_view_benchmark)
+    ->Arg(std::numeric_limits<uint8_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint16_t>, iota_simd_view_benchmark)
+    ->Arg(std::numeric_limits<uint16_t>::max());
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint32_t>, iota_simd_view_benchmark)->Arg(1'000'000);
+BENCHMARK_TEMPLATE(iota_simd_benchmark, seqan3::simd::simd_type_t<uint64_t>, iota_simd_view_benchmark)->Arg(1'000'000);
 
 // ============================================================================
 //  run

@@ -12,9 +12,9 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/aligned_sequence_builder.hpp>
+#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alignment/matrix/detail/trace_iterator.hpp>
 #include <seqan3/alignment/matrix/detail/two_dimensional_matrix.hpp>
-#include <seqan3/alignment/matrix/detail/trace_directions.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/to_char.hpp>
@@ -32,14 +32,10 @@ struct aligned_sequence_builder_fixture : ::testing::Test
     static constexpr seqan3::detail::trace_directions L = seqan3::detail::trace_directions::left;
     static constexpr seqan3::detail::trace_directions LO = seqan3::detail::trace_directions::left_open;
 
-    seqan3::detail::two_dimensional_matrix<seqan3::detail::trace_directions> matrix{seqan3::detail::number_rows{3},
-                                                                                    seqan3::detail::number_cols{4},
-                                                                                    std::vector
-    {
-        N,           LO, L,          L,
-        UO, D | LO | UO, L, D | L | UO,
-        U,       LO | U, D,          L
-    }};
+    seqan3::detail::two_dimensional_matrix<seqan3::detail::trace_directions> matrix{
+        seqan3::detail::number_rows{3},
+        seqan3::detail::number_cols{4},
+        std::vector{N, LO, L, L, UO, D | LO | UO, L, D | L | UO, U, LO | U, D, L}};
 
     using fst_seq_t = std::tuple_element_t<0, test_type>;
     using sec_seq_t = std::tuple_element_t<1, test_type>;
@@ -63,11 +59,9 @@ struct aligned_sequence_builder_fixture : ::testing::Test
     auto path(seqan3::detail::matrix_offset const & offset)
     {
         using iterator_t = decltype(seqan3::detail::trace_iterator{matrix.begin() + offset});
-        return std::ranges::subrange<iterator_t, std::default_sentinel_t>
-        {
+        return std::ranges::subrange<iterator_t, std::default_sentinel_t>{
             seqan3::detail::trace_iterator{matrix.begin() + offset},
-            std::default_sentinel
-        };
+            std::default_sentinel};
     }
 
     std::remove_reference_t<fst_seq_t> fst{};
@@ -88,8 +82,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, construction)
     using sequence2_type_reduce_t = seqan3::type_reduce_t<typename TestFixture::sec_seq_t>;
 
     EXPECT_EQ(std::is_default_constructible_v<typename TestFixture::type_param>,
-              std::is_default_constructible_v<sequence1_type_reduce_t> &&
-              std::is_default_constructible_v<sequence2_type_reduce_t>);
+              std::is_default_constructible_v<sequence1_type_reduce_t>
+                  && std::is_default_constructible_v<sequence2_type_reduce_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<typename TestFixture::type_param>);
     EXPECT_TRUE(std::is_move_constructible_v<typename TestFixture::type_param>);
     EXPECT_TRUE(std::is_copy_assignable_v<typename TestFixture::type_param>);
@@ -102,8 +96,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, construction)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                      seqan3::detail::column_index_type{3}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0, 3}));
@@ -114,8 +108,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_3)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                      seqan3::detail::column_index_type{2}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{2}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
@@ -126,8 +120,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_2)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                      seqan3::detail::column_index_type{1}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{1}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
@@ -138,8 +132,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_1)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                      seqan3::detail::column_index_type{0}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{0}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
@@ -150,8 +144,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_2_0)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                      seqan3::detail::column_index_type{3}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{3}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
@@ -162,8 +156,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_3)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                      seqan3::detail::column_index_type{2}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{2}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
@@ -174,8 +168,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_2)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                      seqan3::detail::column_index_type{1}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{1}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
@@ -186,8 +180,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_1)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1},
-                                                      seqan3::detail::column_index_type{0}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{1}, seqan3::detail::column_index_type{0}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
@@ -198,8 +192,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_1_0)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{3}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{3}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
@@ -210,8 +204,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_3)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{2}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{2}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 2u}));
@@ -222,8 +216,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_2)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{1}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{1}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 1u}));
@@ -234,8 +228,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_1)
 
 TYPED_TEST(aligned_sequence_builder_fixture, build_from_0_0)
 {
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{0}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{0}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = this->builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
@@ -251,8 +245,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, both_empty)
 
     typename TestFixture::type_param builder{first, second};
 
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{0}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{0}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
@@ -267,8 +261,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, first_empty)
 
     typename TestFixture::type_param builder{first, this->sec};
 
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2},
-                                                      seqan3::detail::column_index_type{0}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{0}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 0u}));
@@ -283,8 +277,8 @@ TYPED_TEST(aligned_sequence_builder_fixture, second_empty)
 
     typename TestFixture::type_param builder{this->fst, second};
 
-    auto p = this->path(seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0},
-                                                      seqan3::detail::column_index_type{3}});
+    auto p = this->path(
+        seqan3::detail::matrix_offset{seqan3::detail::row_index_type{0}, seqan3::detail::column_index_type{3}});
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(p);
 
     EXPECT_EQ(first_sequence_slice_positions, (std::pair<size_t, size_t>{0u, 3u}));
@@ -300,8 +294,7 @@ TYPED_TEST(aligned_sequence_builder_fixture, issue1921)
     auto && sequence2 = this->sec | std::views::drop(0);
 
     seqan3::detail::aligned_sequence_builder builder{sequence1, sequence2};
-    auto trace_path = this->path({seqan3::detail::row_index_type{2},
-                                  seqan3::detail::column_index_type{3}});
+    auto trace_path = this->path({seqan3::detail::row_index_type{2}, seqan3::detail::column_index_type{3}});
 
     auto [first_sequence_slice_positions, second_sequence_slice_positions, alignment] = builder(trace_path);
 

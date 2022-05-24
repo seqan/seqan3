@@ -29,7 +29,8 @@ int main()
          */
         auto current_end = it;
         size_t steps = std::ranges::advance(current_end, 10u, std::ranges::end(sequence));
-        using subrange_t = std::ranges::subrange<decltype(it), decltype(current_end), std::ranges::subrange_kind::sized>;
+        using subrange_t =
+            std::ranges::subrange<decltype(it), decltype(current_end), std::ranges::subrange_kind::sized>;
         // Be aware that your range_type must model std::ranges::borrowed_range in order to use the return value!
         it = stream_it.write_range(subrange_t{it, current_end, 10u - steps});
         stream_it = ' ';

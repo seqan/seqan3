@@ -14,11 +14,11 @@
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/core/debug_stream/range.hpp>
 #include <seqan3/search/configuration/default_configuration.hpp>
+#include <seqan3/search/detail/policy_max_error.hpp>
+#include <seqan3/search/detail/policy_search_result_builder.hpp>
 #include <seqan3/search/detail/search_configurator.hpp>
 #include <seqan3/search/detail/search_scheme_algorithm.hpp>
 #include <seqan3/search/detail/unidirectional_search_algorithm.hpp>
-#include <seqan3/search/detail/policy_max_error.hpp>
-#include <seqan3/search/detail/policy_search_result_builder.hpp>
 #include <seqan3/search/fm_index/bi_fm_index.hpp>
 #include <seqan3/test/performance/sequence_generator.hpp>
 #include <seqan3/utility/views/slice.hpp>
@@ -32,32 +32,40 @@
 // To modify the trivial search use the configuration settings of the search algorithm.
 template <typename index_t, typename query_t, typename delegate_t>
 static void search_trivial(index_t const & index,
-                            query_t const & query,
-                            seqan3::detail::search_param error_left,
-                            delegate_t && delegate)
+                           query_t const & query,
+                           seqan3::detail::search_param error_left,
+                           delegate_t && delegate)
 {
     using namespace seqan3::detail;
 
     // Configure the algorithm according to the given specifications.
-    auto cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{error_left.total}} |
-               seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{error_left.substitution}} |
-               seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{error_left.insertion}} |
-               seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{error_left.deletion}} |
-               seqan3::search_cfg::hit_all{} |
-               seqan3::search_cfg::output_index_cursor{};
+    auto cfg = seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{error_left.total}}
+             | seqan3::search_cfg::max_error_substitution{seqan3::search_cfg::error_count{error_left.substitution}}
+             | seqan3::search_cfg::max_error_insertion{seqan3::search_cfg::error_count{error_left.insertion}}
+             | seqan3::search_cfg::max_error_deletion{seqan3::search_cfg::error_count{error_left.deletion}}
+             | seqan3::search_cfg::hit_all{} | seqan3::search_cfg::output_index_cursor{};
 
     auto indexed_query = std::pair{size_t{0}, query};
-    auto algo = std::get<0>(seqan3::detail::search_configurator::configure_algorithm<decltype(indexed_query)>(cfg,
-                                                                                                              index));
+    auto algo =
+        std::get<0>(seqan3::detail::search_configurator::configure_algorithm<decltype(indexed_query)>(cfg, index));
 
     // Call the algorithm and call the delegate with the returned index cursor.
-    algo(indexed_query, [&] (auto result) { delegate(result.index_cursor()); });
+    algo(indexed_query,
+         [&](auto result)
+         {
+             delegate(result.index_cursor());
+         });
 }
 
 template <typename text_t>
-inline void test_search_hamming(auto index, text_t const & text, auto const & search, uint64_t const query_length,
-                                std::vector<uint8_t> const & error_distribution, size_t const seed,
-                                auto const & blocks_length, auto const & ordered_blocks_length,
+inline void test_search_hamming(auto index,
+                                text_t const & text,
+                                auto const & search,
+                                uint64_t const query_length,
+                                std::vector<uint8_t> const & error_distribution,
+                                size_t const seed,
+                                auto const & blocks_length,
+                                auto const & ordered_blocks_length,
                                 uint64_t const start_pos)
 {
     using char_t = typename text_t::value_type;
@@ -90,7 +98,8 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
             for (uint8_t error = 0; error < error_distribution[block]; ++error)
                 error_positions.push_back(std::rand() % single_block_length);
             std::sort(error_positions.begin(), error_positions.end());
-        } while (std::adjacent_find(error_positions.begin(), error_positions.end()) != error_positions.end());
+        }
+        while (std::adjacent_find(error_positions.begin(), error_positions.end()) != error_positions.end());
 
         // Construct query sequence with chosen error positions.
         for (uint8_t error = 0; error < error_positions.size(); ++error)
@@ -108,30 +117,30 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 
     std::vector<uint64_t> hits_trivial, hits_ss;
 
-    auto delegate_trivial = [&hits_trivial] (auto const & it)
+    auto delegate_trivial = [&hits_trivial](auto const & it)
     {
         for (auto && res : it.locate())
             hits_trivial.push_back(res.second);
     };
 
-    auto delegate_ss = [&hits_ss] (auto const & it)
+    auto delegate_ss = [&hits_ss](auto const & it)
     {
         for (auto && res : it.locate())
             hits_ss.push_back(res.second);
     };
 
-    auto remove_predicate_ss = [&text, &orig_query, query_length] (uint64_t const hit)
+    auto remove_predicate_ss = [&text, &orig_query, query_length](uint64_t const hit)
     {
-        seqan3::dna4_vector matched_seq = text | seqan3::views::slice(hit, hit + query_length)
-                                               | seqan3::views::to<seqan3::dna4_vector>;
+        seqan3::dna4_vector matched_seq =
+            text | seqan3::views::slice(hit, hit + query_length) | seqan3::views::to<seqan3::dna4_vector>;
         return (matched_seq != orig_query);
     };
 
-    auto remove_predicate_trivial = [&] (uint64_t const hit)
+    auto remove_predicate_trivial = [&](uint64_t const hit)
     {
         // filter only correct error distributions
-        seqan3::dna4_vector matched_seq = text | seqan3::views::slice(hit, hit + query_length)
-                                               | seqan3::views::to<seqan3::dna4_vector>;
+        seqan3::dna4_vector matched_seq =
+            text | seqan3::views::slice(hit, hit + query_length) | seqan3::views::to<seqan3::dna4_vector>;
         if (orig_query != matched_seq)
             return true;
 
@@ -155,14 +164,14 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
         return false;
     };
 
-    uint8_t const total        = search.u.back();
+    uint8_t const total = search.u.back();
     uint8_t const substitution = std::rand() % (total + 1);
 
     seqan3::detail::search_param error_left{total, substitution, 0, 0};
 
     // Find all hits using search schemes.
-    seqan3::detail::search_ss<false>(it, query, start_pos, start_pos + 1, 0, 0, true, search, blocks_length, error_left,
-                                     delegate_ss);
+    seqan3::detail::search_ss<
+        false>(it, query, start_pos, start_pos + 1, 0, 0, true, search, blocks_length, error_left, delegate_ss);
 
     // Find all hits using trivial backtracking.
     search_trivial(index, query, error_left, delegate_trivial);
@@ -191,13 +200,13 @@ inline void test_search_hamming(auto index, text_t const & text, auto const & se
 }
 
 template <typename search_scheme_t>
-inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, size_t const seed,
-                                       uint64_t const iterations)
+inline void
+test_search_scheme_hamming(search_scheme_t const & search_scheme, size_t const seed, uint64_t const iterations)
 {
     seqan3::dna4_vector text;
 
     search_scheme_t ordered_search_scheme;
-    std::vector<std::vector<std::vector<uint8_t> > > error_distributions(search_scheme.size());
+    std::vector<std::vector<std::vector<uint8_t>>> error_distributions(search_scheme.size());
 
     // Calculate all error distributions and sort each of them (from left to right).
     uint8_t max_error = 0;
@@ -215,7 +224,7 @@ inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, si
         uint64_t const query_length_min = std::max<uint64_t>(3, search_scheme.front().blocks() * max_error);
         uint64_t const query_length_max = std::min<uint64_t>(16, text_length);
 
-        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0/*variance*/, seed);
+        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0 /*variance*/, seed);
         seqan3::bi_fm_index index(text);
 
         for (uint64_t i = 0; i < iterations; ++i)
@@ -228,13 +237,22 @@ inline void test_search_scheme_hamming(search_scheme_t const & search_scheme, si
                     auto const & [blocks_length, start_pos] = block_info[search_id];
 
                     std::vector<uint64_t> ordered_blocks_length;
-                    seqan3::get_ordered_search(search_scheme[search_id], blocks_length,
-                                               ordered_search_scheme[search_id], ordered_blocks_length);
+                    seqan3::get_ordered_search(search_scheme[search_id],
+                                               blocks_length,
+                                               ordered_search_scheme[search_id],
+                                               ordered_blocks_length);
 
                     for (auto && error_distribution : error_distributions[search_id])
                     {
-                        test_search_hamming(index, text, search_scheme[search_id], query_length,
-                                            error_distribution, seed, blocks_length, ordered_blocks_length, start_pos);
+                        test_search_hamming(index,
+                                            text,
+                                            search_scheme[search_id],
+                                            query_length,
+                                            error_distribution,
+                                            seed,
+                                            blocks_length,
+                                            ordered_blocks_length,
+                                            start_pos);
                     }
                 }
             }
@@ -257,29 +275,29 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
         uint64_t const query_length_min = std::max<uint64_t>(3, search_scheme.front().blocks() * max_error);
         uint64_t const query_length_max = std::min<uint64_t>(16, text_length);
 
-        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0/*variance*/, seed);
+        text = seqan3::test::generate_sequence<seqan3::dna4>(text_length, 0 /*variance*/, seed);
         seqan3::bi_fm_index index(text);
 
         uint8_t const substitution = std::rand() % (max_error + 1);
-        uint8_t const insertion    = std::rand() % (max_error + 1);
-        uint8_t const deletion     = std::rand() % (max_error + 1);
+        uint8_t const insertion = std::rand() % (max_error + 1);
+        uint8_t const deletion = std::rand() % (max_error + 1);
         seqan3::detail::search_param error_left{max_error, substitution, insertion, deletion};
 
         for (uint64_t i = 0; i < iterations; ++i)
         {
             for (uint64_t query_length = query_length_min; query_length < query_length_max; ++query_length)
             {
-                query = seqan3::test::generate_sequence<seqan3::dna4>(query_length, 0/*variance*/, seed);
+                query = seqan3::test::generate_sequence<seqan3::dna4>(query_length, 0 /*variance*/, seed);
 
                 std::vector<uint64_t> hits_trivial, hits_ss;
 
-                auto delegate_trivial = [&hits_trivial] (auto const & it)
+                auto delegate_trivial = [&hits_trivial](auto const & it)
                 {
                     for (auto && res : it.locate())
                         hits_trivial.push_back(res.second);
                 };
 
-                auto delegate_ss = [&hits_ss] (auto const & it)
+                auto delegate_ss = [&hits_ss](auto const & it)
                 {
                     for (auto && res : it.locate())
                         hits_ss.push_back(res.second);
@@ -301,8 +319,8 @@ inline void test_search_scheme_edit(search_scheme_t const & search_scheme, size_
                     cerr << "Seed: " << seed << '\n'
                          << "Text: " << text << '\n'
                          << "Query: " << query << '\n'
-                         << "Errors: " << max_error << ", " << substitution << ", "
-                                       << insertion << ", " << deletion << '\n'
+                         << "Errors: " << max_error << ", " << substitution << ", " << insertion << ", " << deletion
+                         << '\n'
                          << "SS hits: " << hits_ss << '\n'
                          << "Trivial hits: " << hits_trivial << '\n';
                 }

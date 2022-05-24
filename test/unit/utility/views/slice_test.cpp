@@ -97,7 +97,7 @@ TEST(view_slice, underlying_is_shorter)
     using namespace std::literals;
 
     std::string vec{"foobar"};
-    EXPECT_NO_THROW(( seqan3::views::slice(vec, 1, 4) )); // no parsing
+    EXPECT_NO_THROW((seqan3::views::slice(vec, 1, 4))); // no parsing
 
     // full parsing on conversion
     EXPECT_RANGE_EQ("oob"sv, vec | seqan3::views::single_pass_input | seqan3::views::slice(1, 4));
@@ -111,25 +111,25 @@ TEST(view_slice, end_before_begin)
 
 TEST(view_slice, type_erasure)
 {
-    {   // string overload
+    { // string overload
         std::string const urange{"foobar"};
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_SAME_TYPE(decltype(v), std::string_view);
-        EXPECT_RANGE_EQ(v, urange.substr(1,3));
+        EXPECT_RANGE_EQ(v, urange.substr(1, 3));
     }
 
-    {   // stringview overload
+    { // stringview overload
         std::string_view urange{"foobar"};
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
         EXPECT_SAME_TYPE(decltype(v), std::string_view);
-        EXPECT_RANGE_EQ(v, urange.substr(1,3));
+        EXPECT_RANGE_EQ(v, urange.substr(1, 3));
     }
 
-    {   // contiguous overload
+    { // contiguous overload
         std::vector<int> urange{1, 2, 3, 4, 5, 6};
 
         auto v = seqan3::views::slice(urange, 1, 4);
@@ -138,7 +138,7 @@ TEST(view_slice, type_erasure)
         EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 
-    {   // contiguous overload
+    { // contiguous overload
         std::array<int, 6> urange{1, 2, 3, 4, 5, 6};
 
         auto v = seqan3::views::slice(urange, 1, 4);
@@ -147,13 +147,14 @@ TEST(view_slice, type_erasure)
         EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 
-    {   // random-access overload
+    { // random-access overload
         std::deque<int> urange{1, 2, 3, 4, 5, 6};
 
         auto v = seqan3::views::slice(urange, 1, 4);
 
-        EXPECT_TRUE((std::same_as<decltype(v), std::ranges::subrange<typename std::deque<int>::iterator,
-                                                                     typename std::deque<int>::iterator>>));
+        EXPECT_TRUE((std::same_as<
+                     decltype(v),
+                     std::ranges::subrange<typename std::deque<int>::iterator, typename std::deque<int>::iterator>>));
         EXPECT_RANGE_EQ(v, (std::vector{2, 3, 4}));
     }
 }

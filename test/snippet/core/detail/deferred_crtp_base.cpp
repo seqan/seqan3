@@ -8,7 +8,6 @@ template <typename derived_t, int value>
 class base1
 {
 public:
-
     int func1() const
     {
         return value;
@@ -20,7 +19,6 @@ template <typename derived_t, typename value_t, typename parameter_t>
 class base2
 {
 public:
-
     value_t func2(parameter_t const p) const
     {
         return static_cast<value_t>(p);
@@ -35,7 +33,7 @@ public:
 // Note that it is possible to define base classes with type template parameters (see base2) or
 // non-type template parameters (see base1), but non-type and type template parameters cannot be mixed in one
 // base class definition.
-template <typename ...deferred_bases_t>
+template <typename... deferred_bases_t>
 class derived : public seqan3::detail::invoke_deferred_crtp_base<deferred_bases_t, derived<deferred_bases_t...>>...
 {};
 

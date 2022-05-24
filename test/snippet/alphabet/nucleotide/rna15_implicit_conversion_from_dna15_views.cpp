@@ -3,8 +3,8 @@
 //![main]
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/utility/views/convert.hpp>
 
 int main()
@@ -15,7 +15,7 @@ int main()
 
     auto dna15_view = vector | seqan3::views::convert<seqan3::dna15>;
 
-    for (auto && chr: dna15_view) // converts lazily on-the-fly
+    for (auto && chr : dna15_view) // converts lazily on-the-fly
     {
         static_assert(std::same_as<decltype(chr), seqan3::dna15 &&>);
     }

@@ -3,8 +3,8 @@
 //![main]
 #include <vector>
 
-#include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
+#include <seqan3/alphabet/nucleotide/rna4.hpp>
 
 int main()
 {

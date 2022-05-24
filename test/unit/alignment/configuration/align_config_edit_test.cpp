@@ -20,10 +20,12 @@ TEST(align_cfg_edit, is_hamming)
         {
             if (i == j)
                 EXPECT_EQ((scheme.score(seqan3::assign_rank_to(i, seqan3::dna15{}),
-                                        seqan3::assign_rank_to(j, seqan3::dna15{}))), 0);
+                                        seqan3::assign_rank_to(j, seqan3::dna15{}))),
+                          0);
             else
                 EXPECT_EQ((scheme.score(seqan3::assign_rank_to(i, seqan3::dna15{}),
-                                        seqan3::assign_rank_to(j, seqan3::dna15{}))), -1);
+                                        seqan3::assign_rank_to(j, seqan3::dna15{}))),
+                          -1);
         }
     }
 }

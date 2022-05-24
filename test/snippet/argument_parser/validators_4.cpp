@@ -1,7 +1,7 @@
 #include <seqan3/argument_parser/all.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
-int main(int argc, const char ** argv)
+int main(int argc, char const ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
@@ -9,8 +9,7 @@ int main(int argc, const char ** argv)
     std::string my_string;
     seqan3::regex_validator my_validator{"[a-zA-Z]+@[a-zA-Z]+\\.com"};
 
-    myparser.add_option(my_string,'s',"str","Give me a string.",
-                        seqan3::option_spec::standard, my_validator);
+    myparser.add_option(my_string, 's', "str", "Give me a string.", seqan3::option_spec::standard, my_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies a string

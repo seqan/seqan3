@@ -11,10 +11,9 @@
 #include <seqan3/alignment/scoring/detail/simd_matrix_scoring_scheme.hpp>
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/core/debug_stream/range.hpp>
-#include <seqan3/utility/simd/simd.hpp>
-
 #include <seqan3/test/pretty_printing.hpp>
 #include <seqan3/test/simd_utility.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 
 template <typename simd_t>
 struct simd_matrix_scoring_scheme_test : public ::testing::Test
@@ -22,17 +21,15 @@ struct simd_matrix_scoring_scheme_test : public ::testing::Test
     using scalar_t = typename seqan3::simd_traits<simd_t>::scalar_type;
 };
 
-using simd_test_types = ::testing::Types<seqan3::simd::simd_type_t<int8_t>,
-                                         seqan3::simd::simd_type_t<int16_t>,
-                                         seqan3::simd::simd_type_t<int32_t>>;
+using simd_test_types = ::testing::
+    Types<seqan3::simd::simd_type_t<int8_t>, seqan3::simd::simd_type_t<int16_t>, seqan3::simd::simd_type_t<int32_t>>;
 
 TYPED_TEST_SUITE(simd_matrix_scoring_scheme_test, simd_test_types, );
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
 {
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
     EXPECT_TRUE(std::is_nothrow_default_constructible_v<scheme_t>);
     EXPECT_TRUE(std::is_copy_constructible_v<scheme_t>);
@@ -46,9 +43,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, basic_construction)
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, make_score_profile)
 {
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
     scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
@@ -59,9 +55,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, make_score_profile)
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothrow)
 {
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
     scheme_t simd_scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
@@ -78,9 +73,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_nothro
 TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_on_overflow)
 {
     using scalar_t = typename seqan3::simd_traits<TypeParam>::scalar_type;
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
     int64_t too_big = static_cast<int64_t>(std::numeric_limits<scalar_t>::max()) + 1;
     int64_t too_small = static_cast<int64_t>(std::numeric_limits<scalar_t>::lowest()) - 1;
@@ -90,26 +84,21 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, construct_from_scoring_scheme_throw_
     EXPECT_NO_THROW(scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}});
 
     matrix[0][0] = too_big;
-    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}),
-                 std::invalid_argument);
+    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}), std::invalid_argument);
     matrix[0][0] = too_small;
-    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}),
-                 std::invalid_argument);
+    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}), std::invalid_argument);
 
     matrix[0][0] = 0;
     matrix[seqan3::alphabet_size<seqan3::aa27> - 1][seqan3::alphabet_size<seqan3::aa27> - 1] = too_big;
-    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}),
-                 std::invalid_argument);
+    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}), std::invalid_argument);
     matrix[seqan3::alphabet_size<seqan3::aa27> - 1][seqan3::alphabet_size<seqan3::aa27> - 1] = too_small;
-    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}),
-                 std::invalid_argument);
+    EXPECT_THROW((scheme_t{seqan3::aminoacid_scoring_scheme<int64_t>{matrix}}), std::invalid_argument);
 }
 
 TYPED_TEST(simd_matrix_scoring_scheme_test, score_global)
 {
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_global>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
@@ -143,9 +132,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
     // Note: |aa27| = 27 and a score matrix needs 27 * 27 = 729 entries which do not fit into 8bit (=256 values).
     if constexpr (sizeof(typename seqan3::simd_traits<TypeParam>::scalar_type) != 1)
     {
-        using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                    seqan3::aa27,
-                                                                    seqan3::align_cfg::method_global>;
+        using scheme_t =
+            seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_global>;
 
         scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
@@ -176,9 +164,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_global_with_padding)
 TYPED_TEST(simd_matrix_scoring_scheme_test, score_local)
 {
     // In local alignment we always want to mismatch.
-    using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                seqan3::aa27,
-                                                                seqan3::align_cfg::method_local>;
+    using scheme_t =
+        seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_local>;
 
     scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 
@@ -213,9 +200,8 @@ TYPED_TEST(simd_matrix_scoring_scheme_test, score_local_with_padding)
     if constexpr (sizeof(typename seqan3::simd_traits<TypeParam>::scalar_type) != 1)
     {
         // In local alignment we always want to mismatch.
-        using scheme_t = seqan3::detail::simd_matrix_scoring_scheme<TypeParam,
-                                                                    seqan3::aa27,
-                                                                    seqan3::align_cfg::method_local>;
+        using scheme_t =
+            seqan3::detail::simd_matrix_scoring_scheme<TypeParam, seqan3::aa27, seqan3::align_cfg::method_local>;
 
         scheme_t scheme{seqan3::aminoacid_scoring_scheme{seqan3::aminoacid_similarity_matrix::blosum30}};
 

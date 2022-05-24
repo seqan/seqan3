@@ -14,15 +14,15 @@
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
-#include <seqan3/utility/views/deep.hpp>
 #include <seqan3/utility/range/concept.hpp>
+#include <seqan3/utility/views/deep.hpp>
 
 namespace seqan3::views
 {
 inline auto const deep_reverse = deep{std::views::reverse};
 inline auto const deep_take = deep{std::views::take};
 inline auto const deep_take2 = deep{std::views::take(2)};
-}
+} // namespace seqan3::views
 
 using seqan3::operator""_dna5;
 
@@ -82,7 +82,8 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::sized_range<decltype(v1)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v1)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v1)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v1), seqan3::dna5_vector>)); // view temporary returned in deep case
+    EXPECT_FALSE(
+        (std::ranges::output_range<decltype(v1), seqan3::dna5_vector>)); // view temporary returned in deep case
 
     auto v2 = v1 | std::views::reverse;
     EXPECT_TRUE(std::ranges::input_range<decltype(v2)>);
@@ -94,7 +95,8 @@ TEST(view_deep_reverse, concepts)
     EXPECT_TRUE(std::ranges::sized_range<decltype(v2)>);
     EXPECT_TRUE(std::ranges::common_range<decltype(v2)>);
     EXPECT_TRUE(seqan3::const_iterable_range<decltype(v2)>);
-    EXPECT_FALSE((std::ranges::output_range<decltype(v2), seqan3::dna5_vector>)); // view temporary returned in deep case
+    EXPECT_FALSE(
+        (std::ranges::output_range<decltype(v2), seqan3::dna5_vector>)); // view temporary returned in deep case
 
     // v_elem has type std::ranges::reverse_view<std::ranges::ref_view<std::vector<seqan3::dna5> > >
     auto v_elem = v1[0];

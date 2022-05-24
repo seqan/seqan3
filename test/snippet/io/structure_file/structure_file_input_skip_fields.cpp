@@ -26,11 +26,8 @@ int main()
         seqan3::debug_stream << "ID: " << id << '\n';
         // sequence and structure are part of the same vector, of type std::vector<structured_rna<rna5, wuss51>>
         // sequence and structure strings are extracted and converted to char on-the-fly
-        seqan3::debug_stream << "SEQ: "
-                             << (struc_seq | seqan3::views::elements<0> | seqan3::views::to_char)
-                             << '\n';
-        seqan3::debug_stream << "STRUCTURE: "
-                             << (struc_seq | seqan3::views::elements<1> | seqan3::views::to_char)
+        seqan3::debug_stream << "SEQ: " << (struc_seq | seqan3::views::elements<0> | seqan3::views::to_char) << '\n';
+        seqan3::debug_stream << "STRUCTURE: " << (struc_seq | seqan3::views::elements<1> | seqan3::views::to_char)
                              << '\n';
     }
 }

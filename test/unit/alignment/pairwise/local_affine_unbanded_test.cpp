@@ -12,16 +12,15 @@
 #include "fixture/local_affine_unbanded.hpp"
 #include "pairwise_alignment_single_test_template.hpp"
 
-using pairwise_local_affine_unbanded_testing_types = ::testing::Types<
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_01>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_02>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_03>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_04>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_05>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::rna5_01>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::aa27_01>,
-        pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::aa27_02>
-    >;
+using pairwise_local_affine_unbanded_testing_types =
+    ::testing::Types<pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_01>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_02>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_03>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_04>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::dna4_05>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::rna5_01>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::aa27_01>,
+                     pairwise_alignment_fixture<&seqan3::test::alignment::fixture::local::affine::unbanded::aa27_02>>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(pairwise_local_affine_unbanded,
                                pairwise_alignment_test,

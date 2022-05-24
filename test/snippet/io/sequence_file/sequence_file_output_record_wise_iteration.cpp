@@ -18,8 +18,8 @@ int main()
 
         // ...
 
-        fout.emplace_back(seq, id);          // as individual variables
+        fout.emplace_back(seq, id); // as individual variables
         // or:
-        fout.push_back(std::tie(seq, id));   // as a tuple
+        fout.push_back(std::tie(seq, id)); // as a tuple
     }
 }

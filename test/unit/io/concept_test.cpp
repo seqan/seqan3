@@ -7,12 +7,12 @@
 
 #include <gtest/gtest.h>
 
+#include <fstream>
 #include <istream>
 #include <ostream>
-#include <fstream>
 #include <sstream>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <seqan3/io/stream/concept.hpp>
 

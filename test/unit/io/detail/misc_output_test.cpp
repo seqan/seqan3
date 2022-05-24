@@ -11,7 +11,6 @@
 #include <vector>
 
 #include <seqan3/core/debug_stream.hpp>
-
 #include <seqan3/io/detail/misc_input.hpp>
 #include <seqan3/io/detail/misc_output.hpp>
 #include <seqan3/test/tmp_filename.hpp>

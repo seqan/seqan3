@@ -19,15 +19,14 @@ int main()
     std::mutex write_to_debug_stream{}; // Need mutex to synchronise the output.
 
     // Use edit distance with 4 threads.
-    auto const alignment_config = seqan3::align_cfg::method_global{} |
-                                  seqan3::align_cfg::edit_scheme |
-                                  seqan3::align_cfg::parallel{4} |
-                                  seqan3::align_cfg::on_result{[&] (auto && result)
-                                  {
-                                      std::lock_guard sync{write_to_debug_stream}; // critical section
-                                      seqan3::debug_stream << result << '\n';
-                                  }};
+    auto const alignment_config =
+        seqan3::align_cfg::method_global{} | seqan3::align_cfg::edit_scheme | seqan3::align_cfg::parallel{4}
+        | seqan3::align_cfg::on_result{[&](auto && result)
+                                       {
+                                           std::lock_guard sync{write_to_debug_stream}; // critical section
+                                           seqan3::debug_stream << result << '\n';
+                                       }};
 
     // Compute the alignments in parallel, and output them unordered using the callback (order is not deterministic).
-    seqan3::align_pairwise(sequences, alignment_config);  // seqan3::align_pairwise is now declared void.
+    seqan3::align_pairwise(sequences, alignment_config); // seqan3::align_pairwise is now declared void.
 }

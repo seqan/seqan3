@@ -5,6 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <gtest/gtest.h>
+
 #include <forward_list>
 #include <list>
 
@@ -13,26 +15,21 @@
 #include <seqan3/search/views/minimiser_hash.hpp>
 #include <seqan3/test/expect_range_eq.hpp>
 
-#include <gtest/gtest.h>
-
 #include "../../range/iterator_test_template.hpp"
 
 using seqan3::operator""_dna4;
 using seqan3::operator""_shape;
 using result_t = std::vector<size_t>;
-using iterator_type = std::ranges::iterator_t<decltype(std::declval<seqan3::dna4_vector&>()
-                                                       | seqan3::views::minimiser_hash(seqan3::ungapped{4},
-                                                                                       seqan3::window_size{8},
-                                                                                       seqan3::seed{0}))>;
+using iterator_type = std::ranges::iterator_t<
+    decltype(std::declval<seqan3::dna4_vector &>()
+             | seqan3::views::minimiser_hash(seqan3::ungapped{4}, seqan3::window_size{8}, seqan3::seed{0}))>;
 
 static constexpr seqan3::shape ungapped_shape = seqan3::ungapped{4};
 static constexpr seqan3::shape gapped_shape = 0b1001_shape;
-static constexpr auto ungapped_view = seqan3::views::minimiser_hash(ungapped_shape,
-                                                                    seqan3::window_size{8},
-                                                                    seqan3::seed{0});
-static constexpr auto gapped_view = seqan3::views::minimiser_hash(gapped_shape,
-                                                                  seqan3::window_size{8},
-                                                                  seqan3::seed{0});
+static constexpr auto ungapped_view =
+    seqan3::views::minimiser_hash(ungapped_shape, seqan3::window_size{8}, seqan3::seed{0});
+static constexpr auto gapped_view =
+    seqan3::views::minimiser_hash(gapped_shape, seqan3::window_size{8}, seqan3::seed{0});
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -51,7 +48,8 @@ using test_type = ::testing::Types<iterator_type>;
 INSTANTIATE_TYPED_TEST_SUITE_P(iterator_fixture, iterator_fixture, test_type, );
 
 template <typename T>
-class minimiser_hash_properties_test: public ::testing::Test { };
+class minimiser_hash_properties_test : public ::testing::Test
+{};
 
 using underlying_range_types = ::testing::Types<std::vector<seqan3::dna4>,
                                                 std::vector<seqan3::dna4> const,
@@ -82,8 +80,20 @@ protected:
 
 TYPED_TEST(minimiser_hash_properties_test, different_input_ranges)
 {
-    TypeParam text{'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4, 'C'_dna4, 'G'_dna4, 'A'_dna4, 'C'_dna4, 'G'_dna4, 'T'_dna4,
-                   'T'_dna4, 'T'_dna4, 'A'_dna4, 'G'_dna4}; // ACGTCGACGTTTAG
+    TypeParam text{'A'_dna4,
+                   'C'_dna4,
+                   'G'_dna4,
+                   'T'_dna4,
+                   'C'_dna4,
+                   'G'_dna4,
+                   'A'_dna4,
+                   'C'_dna4,
+                   'G'_dna4,
+                   'T'_dna4,
+                   'T'_dna4,
+                   'T'_dna4,
+                   'A'_dna4,
+                   'G'_dna4};            // ACGTCGACGTTTAG
     result_t ungapped{27, 97, 27, 6, 1}; // ACGT, CGAC, ACGT, aacg, aaac
     result_t gapped{3, 5, 3, 2, 1};      // A--T, C--C, A--T, a--g, a--c - "-" for gap
     EXPECT_RANGE_EQ(ungapped, text | ungapped_view);
@@ -96,7 +106,11 @@ TEST_F(minimiser_hash_test, ungapped)
     EXPECT_RANGE_EQ(result2, text2 | ungapped_view);
     EXPECT_RANGE_EQ(ungapped3, text3 | ungapped_view);
 
-    auto stop_at_t = std::views::take_while([] (seqan3::dna4 const x) { return x != 'T'_dna4; });
+    auto stop_at_t = std::views::take_while(
+        [](seqan3::dna4 const x)
+        {
+            return x != 'T'_dna4;
+        });
     EXPECT_RANGE_EQ(ungapped_stop_at_t3, text3 | stop_at_t | ungapped_view);
 }
 
@@ -106,7 +120,11 @@ TEST_F(minimiser_hash_test, gapped)
     EXPECT_RANGE_EQ(result2, text2 | gapped_view);
     EXPECT_RANGE_EQ(gapped3, text3 | gapped_view);
 
-    auto stop_at_t = std::views::take_while([] (seqan3::dna4 const x) { return x != 'T'_dna4; });
+    auto stop_at_t = std::views::take_while(
+        [](seqan3::dna4 const x)
+        {
+            return x != 'T'_dna4;
+        });
     EXPECT_RANGE_EQ(gapped_stop_at_t3, text3 | stop_at_t | gapped_view);
 }
 

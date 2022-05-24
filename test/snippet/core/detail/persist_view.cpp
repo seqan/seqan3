@@ -7,9 +7,9 @@
 // P2415R2 allows binding of rvalues with std::views::owning_view and also adapts
 // std::views::all to return an owning_view when applicable.
 #if defined(__cpp_lib_ranges) && (__cpp_lib_ranges < 202110L)
-#define SEQAN3_STL_HAS_OWNING_VIEW 0
+#    define SEQAN3_STL_HAS_OWNING_VIEW 0
 #else
-#define SEQAN3_STL_HAS_OWNING_VIEW 1
+#    define SEQAN3_STL_HAS_OWNING_VIEW 1
 #endif
 
 int main()

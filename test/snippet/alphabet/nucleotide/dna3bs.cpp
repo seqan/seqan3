@@ -7,9 +7,9 @@ int main()
 
     seqan3::dna3bs letter{'A'_dna3bs};
 
-    letter.assign_char('C'); // All C will be converted to T.
+    letter.assign_char('C');                // All C will be converted to T.
     seqan3::debug_stream << letter << '\n'; // prints "T"
 
-    letter.assign_char('F'); // Unknown characters are implicitly converted to A.
+    letter.assign_char('F');                // Unknown characters are implicitly converted to A.
     seqan3::debug_stream << letter << '\n'; // prints "A"
 }

@@ -11,6 +11,6 @@ int main()
     }
     catch (seqan3::invalid_char_assignment const &)
     {
-       seqan3::debug_stream << "\n[ERROR] Invalid char!\n"; // Will throw on parsing 'N'
+        seqan3::debug_stream << "\n[ERROR] Invalid char!\n"; // Will throw on parsing 'N'
     }
 }

@@ -9,5 +9,5 @@ int main()
 
     // Construct an Interleaved Bloom Filter that contains 43 bins, each using 256 KiBits,
     // and the default of 2 hash functions.
-    seqan3::interleaved_bloom_filter ibf2{seqan3::bin_count{43}, seqan3::bin_size{1ULL<<20}};
+    seqan3::interleaved_bloom_filter ibf2{seqan3::bin_count{43}, seqan3::bin_size{1ULL << 20}};
 }

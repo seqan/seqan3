@@ -16,7 +16,7 @@ int main()
 
     // ...
 
-    fout.emplace_back(mapping_pos, flag);  // note that the order the arguments is now different, because
+    fout.emplace_back(mapping_pos, flag); // note that the order the arguments is now different, because
     // or:                                    you specified that REF_OFFSET should be first
     fout.push_back(std::tie(mapping_pos, flag));
 }

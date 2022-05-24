@@ -1,7 +1,8 @@
-#include <seqan3/argument_parser/all.hpp>
 #include <filesystem>
 
-int main(int argc, const char ** argv)
+#include <seqan3/argument_parser/all.hpp>
+
+int main(int argc, char const ** argv)
 {
     seqan3::argument_parser myparser{"Test", argc, argv}; // initialize
 
@@ -11,8 +12,12 @@ int main(int argc, const char ** argv)
     seqan3::regex_validator absolute_path_validator{"(/[^/]+)+/.*\\.[^/\\.]+$"};
     seqan3::input_file_validator my_file_ext_validator{{"sa", "so"}};
 
-    myparser.add_option(file_name, 'f', "file","Give me a file name with an absolute path.",
-                        seqan3::option_spec::standard, absolute_path_validator | my_file_ext_validator);
+    myparser.add_option(file_name,
+                        'f',
+                        "file",
+                        "Give me a file name with an absolute path.",
+                        seqan3::option_spec::standard,
+                        absolute_path_validator | my_file_ext_validator);
     //![validator_call]
 
     // an exception will be thrown if the user specifies a file name

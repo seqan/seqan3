@@ -18,9 +18,8 @@ using seqan3::operator""_dna4;
 template <typename T>
 using debug_stream_test = ::testing::Test;
 
-using alphabet_types = ::testing::Types<seqan3::dna4,
-                                        seqan3::qualified<seqan3::dna4, seqan3::phred42>,
-                                        seqan3::gapped<seqan3::dna4>>;
+using alphabet_types =
+    ::testing::Types<seqan3::dna4, seqan3::qualified<seqan3::dna4, seqan3::phred42>, seqan3::gapped<seqan3::dna4>>;
 
 TYPED_TEST_SUITE(debug_stream_test, alphabet_types, );
 

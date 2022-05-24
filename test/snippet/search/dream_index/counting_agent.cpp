@@ -35,7 +35,7 @@ int main()
 
     // Search for specific values
     std::vector<size_t> const values{92, 1238, 812, 81273};
-    seqan3::debug_stream << agent.bulk_count(values) << '\n'; // [0,0,0,0,0,0,0,0]
+    seqan3::debug_stream << agent.bulk_count(values) << '\n';                      // [0,0,0,0,0,0,0,0]
     seqan3::debug_stream << agent.bulk_count(std::views::iota(0u, 1024u)) << '\n'; // [6,0,0,0,7,0,0,10]
 
     // The default counters are 16 bit unsigned integer.

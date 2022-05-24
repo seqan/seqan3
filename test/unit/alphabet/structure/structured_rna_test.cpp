@@ -16,9 +16,9 @@
 
 #include "../alphabet_constexpr_test_template.hpp"
 #include "../alphabet_test_template.hpp"
+#include "../composite/alphabet_tuple_base_test_template.hpp"
 #include "../semi_alphabet_constexpr_test_template.hpp"
 #include "../semi_alphabet_test_template.hpp"
-#include "../composite/alphabet_tuple_base_test_template.hpp"
 
 template <typename rna_type, typename structure_type>
 class alphabet_tuple_base_test<seqan3::structured_rna<rna_type, structure_type>> : public ::testing::Test
@@ -52,9 +52,12 @@ public:
     }
     auto values_to_cmp()
     {
-        return std::make_tuple(/*low */rna_type{}.assign_char('A'), structure_type{}.assign_char('.'),
-                               /*mid */rna_type{}.assign_char('C'), structure_type{}.assign_char('('),
-                               /*high*/rna_type{}.assign_char('T'), structure_type{}.assign_char(')'));
+        return std::make_tuple(/*low */ rna_type{}.assign_char('A'),
+                               structure_type{}.assign_char('.'),
+                               /*mid */ rna_type{}.assign_char('C'),
+                               structure_type{}.assign_char('('),
+                               /*high*/ rna_type{}.assign_char('T'),
+                               structure_type{}.assign_char(')'));
     }
 };
 

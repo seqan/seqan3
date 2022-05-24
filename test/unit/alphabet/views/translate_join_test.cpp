@@ -14,12 +14,12 @@
 
 #include <seqan3/alphabet/aminoacid/aa27.hpp>
 #include <seqan3/alphabet/detail/debug_stream_alphabet.hpp>
+#include <seqan3/alphabet/nucleotide/dna15.hpp>
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/nucleotide/dna5.hpp>
-#include <seqan3/alphabet/nucleotide/dna15.hpp>
+#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/nucleotide/rna4.hpp>
 #include <seqan3/alphabet/nucleotide/rna5.hpp>
-#include <seqan3/alphabet/nucleotide/rna15.hpp>
 #include <seqan3/alphabet/views/char_to.hpp>
 #include <seqan3/alphabet/views/complement.hpp>
 #include <seqan3/alphabet/views/translate_join.hpp>
@@ -31,7 +31,7 @@ using seqan3::operator""_aa27;
 using seqan3::operator""_dna4;
 
 using iterator_type =
-        decltype(seqan3::views::translate_join(std::declval<std::vector<seqan3::dna4_vector > &>()).begin());
+    decltype(seqan3::views::translate_join(std::declval<std::vector<seqan3::dna4_vector> &>()).begin());
 
 template <>
 struct iterator_fixture<iterator_type> : public ::testing::Test
@@ -39,10 +39,19 @@ struct iterator_fixture<iterator_type> : public ::testing::Test
     using iterator_tag = std::random_access_iterator_tag;
     static constexpr bool const_iterable = true;
 
-    std::vector<seqan3::dna4_vector > vec{"ACGTACGTACGTA"_dna4, "TCGAGAGCTTTAGC"_dna4};
-    std::vector<std::vector<seqan3::aa27> > expected_range{{"TYVR"_aa27}, {"RTYV"_aa27}, {"VRT"_aa27}, {"YVRT"_aa27},
-                                                           {"TYVR"_aa27}, {"RTY"_aa27}, {"SRAL"_aa27}, {"REL*"_aa27},
-                                                           {"ESFS"_aa27}, {"AKAL"_aa27}, {"LKLS"_aa27}, {"*SSR"_aa27}};
+    std::vector<seqan3::dna4_vector> vec{"ACGTACGTACGTA"_dna4, "TCGAGAGCTTTAGC"_dna4};
+    std::vector<std::vector<seqan3::aa27>> expected_range{{"TYVR"_aa27},
+                                                          {"RTYV"_aa27},
+                                                          {"VRT"_aa27},
+                                                          {"YVRT"_aa27},
+                                                          {"TYVR"_aa27},
+                                                          {"RTY"_aa27},
+                                                          {"SRAL"_aa27},
+                                                          {"REL*"_aa27},
+                                                          {"ESFS"_aa27},
+                                                          {"AKAL"_aa27},
+                                                          {"LKLS"_aa27},
+                                                          {"*SSR"_aa27}};
     decltype(seqan3::views::translate_join(vec)) test_range = seqan3::views::translate_join(vec);
 
     template <typename A, typename B>
@@ -60,12 +69,8 @@ class nucleotide : public ::testing::Test
 {};
 
 // add all alphabets here
-using nucleotide_types = ::testing::Types<seqan3::dna4,
-                                          seqan3::dna5,
-                                          seqan3::dna15,
-                                          seqan3::rna4,
-                                          seqan3::rna5,
-                                          seqan3::rna15>;
+using nucleotide_types =
+    ::testing::Types<seqan3::dna4, seqan3::dna5, seqan3::dna15, seqan3::rna4, seqan3::rna5, seqan3::rna15>;
 
 TYPED_TEST_SUITE(nucleotide, nucleotide_types, );
 
@@ -149,7 +154,7 @@ TYPED_TEST(nucleotide, view_translate)
     // user-defined frame combination
     auto v7 = vec
             | seqan3::views::translate_join(seqan3::translation_frames::forward_frame0
-            | seqan3::translation_frames::forward_frame2);
+                                            | seqan3::translation_frames::forward_frame2);
     EXPECT_EQ(v7.size(), 4u);
     EXPECT_RANGE_EQ(v7[0], "TYVR"_aa27);
     EXPECT_RANGE_EQ(v7[1], "VRT"_aa27);
@@ -165,9 +170,8 @@ TYPED_TEST(nucleotide, view_translate)
     EXPECT_RANGE_EQ(v8[3], "AKAL"_aa27);
 
     // combinability
-    auto v9 = vec
-            | seqan3::views::complement
-            | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0);
+    auto v9 =
+        vec | seqan3::views::complement | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0);
     EXPECT_EQ(v9.size(), 4u);
     EXPECT_RANGE_EQ(v9[0], "CMHA"_aa27);
     EXPECT_RANGE_EQ(v9[1], "MHAC"_aa27);
@@ -175,10 +179,8 @@ TYPED_TEST(nucleotide, view_translate)
     EXPECT_RANGE_EQ(v9[3], "RFRE"_aa27);
 
     // combinability
-    auto v10 = vec
-             | seqan3::views::complement
-             | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0)
-             | std::views::take(1);
+    auto v10 = vec | seqan3::views::complement
+             | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0) | std::views::take(1);
     EXPECT_EQ(v10.size(), 1u);
     EXPECT_RANGE_EQ(v10[0], "CMHA"_aa27);
 
@@ -192,8 +194,7 @@ TYPED_TEST(nucleotide, view_translate)
     EXPECT_RANGE_EQ(v11[3], "RFRE"_aa27);
 
     // combinability
-    auto v12 = vec
-             | seqan3::views::complement
+    auto v12 = vec | seqan3::views::complement
              | seqan3::views::translate_join(seqan3::translation_frames::forward_reverse0)
              | seqan3::views::deep{std::views::reverse};
     EXPECT_EQ(v12.size(), 4u);

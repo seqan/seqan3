@@ -20,7 +20,7 @@ int main()
 
     for (auto & rec : fin)
     {
-        seqan3::debug_stream << "flag:  "            << rec.flag() << '\n';
+        seqan3::debug_stream << "flag:  " << rec.flag() << '\n';
         seqan3::debug_stream << "mapping quality:  " << rec.mapping_quality() << '\n';
     }
 }

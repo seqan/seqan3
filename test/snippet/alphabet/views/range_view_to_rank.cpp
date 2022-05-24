@@ -1,8 +1,8 @@
 #include <vector>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
-#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/quality/aliases.hpp>
+#include <seqan3/alphabet/quality/phred42.hpp>
 #include <seqan3/alphabet/views/to_rank.hpp>
 #include <seqan3/core/debug_stream.hpp>
 
@@ -27,9 +27,15 @@ int main()
     auto v3 = qvec | seqan3::views::to_rank;
     seqan3::debug_stream << v3 << '\n'; // [0,7,5,3,7,4,30,16,23]
 
-    std::vector<seqan3::dna4q> qcvec{{'C'_dna4, '!'_phred42}, {'A'_dna4, '('_phred42}, {'G'_dna4, '&'_phred42},
-                                     {'T'_dna4, '$'_phred42}, {'G'_dna4, '('_phred42}, {'A'_dna4, '%'_phred42},
-                                     {'C'_dna4, '?'_phred42}, {'T'_dna4, '1'_phred42}, {'A'_dna4, '8'_phred42}};
+    std::vector<seqan3::dna4q> qcvec{{'C'_dna4, '!'_phred42},
+                                     {'A'_dna4, '('_phred42},
+                                     {'G'_dna4, '&'_phred42},
+                                     {'T'_dna4, '$'_phred42},
+                                     {'G'_dna4, '('_phred42},
+                                     {'A'_dna4, '%'_phred42},
+                                     {'C'_dna4, '?'_phred42},
+                                     {'T'_dna4, '1'_phred42},
+                                     {'A'_dna4, '8'_phred42}};
     auto v4 = qcvec | seqan3::views::to_rank;
     seqan3::debug_stream << v4 << '\n'; // [42,7,89,129,91,4,72,142,23]
 }

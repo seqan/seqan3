@@ -5,8 +5,8 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
-#include <gtest/gtest.h>
 #include <gtest/gtest-spi.h> // provides test utility to test google test itself
+#include <gtest/gtest.h>
 
 #include <span>
 #include <string_view>
@@ -99,15 +99,39 @@ struct input_range
 
         input_range * host;
 
-        int const & operator*() const { return *host->current; }
-        iterator & operator++() { ++host->current; return *this; }
-        value_type operator++(int) { value_type x = *(*this); ++*this; return x; }
-        bool operator==(iterator const &) const { return host->current == host->sentinel; }
-        bool operator!=(iterator const & sentinel) const { return !(*this == sentinel);}
+        int const & operator*() const
+        {
+            return *host->current;
+        }
+        iterator & operator++()
+        {
+            ++host->current;
+            return *this;
+        }
+        value_type operator++(int)
+        {
+            value_type x = *(*this);
+            ++*this;
+            return x;
+        }
+        bool operator==(iterator const &) const
+        {
+            return host->current == host->sentinel;
+        }
+        bool operator!=(iterator const & sentinel) const
+        {
+            return !(*this == sentinel);
+        }
     };
 
-    iterator begin() { return {this}; }
-    iterator end() { return {this}; }
+    iterator begin()
+    {
+        return {this};
+    }
+    iterator end()
+    {
+        return {this};
+    }
 };
 
 TEST(input_range, range_eq_pass)

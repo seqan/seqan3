@@ -20,8 +20,8 @@ TEST(record_like, record)
     EXPECT_TRUE((seqan3::detail::record_like<record_type>));
 }
 
-struct my_record : seqan3::record<seqan3::type_list<std::string, std::string>,
-                                  seqan3::fields<seqan3::field::id, seqan3::field::seq>>
+struct my_record :
+    seqan3::record<seqan3::type_list<std::string, std::string>, seqan3::fields<seqan3::field::id, seqan3::field::seq>>
 {};
 
 namespace std

@@ -31,11 +31,10 @@ private:
     // === lookup-table implementation detail ===
 
     // map 0 -> A and 1 -> B
-    static std::array<char_type, alphabet_size> constexpr rank_to_char_table{'A', 'B'};
+    static constexpr std::array<char_type, alphabet_size> rank_to_char_table{'A', 'B'};
 
     // map every letter to rank zero, except Bs
-    static std::array<rank_type, 256> constexpr char_to_rank_table
-    {
+    static constexpr std::array<rank_type, 256> char_to_rank_table{
         // initialise with an immediately evaluated lambda expression:
         []()
         {
@@ -46,8 +45,7 @@ private:
             ret['B'] = 1;
 
             return ret;
-        }()
-    };
+        }()};
 };
 
 // The class ab satisfies the alphabet concept.

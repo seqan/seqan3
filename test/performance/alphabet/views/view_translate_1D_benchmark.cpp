@@ -5,10 +5,10 @@
 // shipped with this file and also available at: https://github.com/seqan/seqan3/blob/master/LICENSE.md
 // -----------------------------------------------------------------------------------------------------
 
+#include <benchmark/benchmark.h>
+
 #include <random>
 #include <vector>
-
-#include <benchmark/benchmark.h>
 
 #include <seqan3/alphabet/nucleotide/dna4.hpp>
 #include <seqan3/alphabet/views/translate.hpp>
@@ -17,14 +17,16 @@
 #include <seqan3/utility/views/to.hpp>
 
 #ifdef SEQAN3_HAS_SEQAN2
-#include <seqan/sequence.h>
-#include <seqan/seq_io.h>
-#include <seqan/translation.h>
+#    include <seqan/seq_io.h>
+#    include <seqan/sequence.h>
+#    include <seqan/translation.h>
 #endif
 
 // Tags used to define the benchmark type
-struct baseline_tag{}; // Baseline where view is applied and only iterating the output range is benchmarked
-struct translate_tag{}; // Benchmark seqan3::views::translate_single
+struct baseline_tag
+{}; // Baseline where view is applied and only iterating the output range is benchmarked
+struct translate_tag
+{}; // Benchmark seqan3::views::translate_single
 
 // ============================================================================
 //  sequential_read
@@ -45,8 +47,8 @@ void sequential_read(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        seqan3::aa27_vector translated_aa_sequence = dna_sequence | seqan3::views::translate_single
-                                                                  | seqan3::views::to<seqan3::aa27_vector>;
+        seqan3::aa27_vector translated_aa_sequence =
+            dna_sequence | seqan3::views::translate_single | seqan3::views::to<seqan3::aa27_vector>;
         sequential_read_impl(state, translated_aa_sequence);
     }
     else if constexpr (std::is_same_v<tag_t, translate_tag>)
@@ -86,8 +88,8 @@ void random_access(benchmark::State & state)
 
     if constexpr (std::is_same_v<tag_t, baseline_tag>)
     {
-        seqan3::aa27_vector translated_aa_sequence = dna_sequence | seqan3::views::translate_single
-                                                                  | seqan3::views::to<seqan3::aa27_vector>;
+        seqan3::aa27_vector translated_aa_sequence =
+            dna_sequence | seqan3::views::translate_single | seqan3::views::to<seqan3::aa27_vector>;
         random_access_impl(state, translated_aa_sequence, access_positions);
     }
     else
@@ -110,8 +112,8 @@ void copy_impl(benchmark::State & state, std::vector<seqan3::dna4> const & dna_s
     for (auto _ : state)
     {
         seqan3::aa27_vector translated_aa_sequence{};
-        benchmark::DoNotOptimize(translated_aa_sequence = dna_sequence | adaptor
-                                                                       | seqan3::views::to<seqan3::aa27_vector>);
+        benchmark::DoNotOptimize(translated_aa_sequence =
+                                     dna_sequence | adaptor | seqan3::views::to<seqan3::aa27_vector>);
     }
 }
 

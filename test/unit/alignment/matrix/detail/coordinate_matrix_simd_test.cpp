@@ -10,9 +10,8 @@
 #include <vector>
 
 #include <seqan3/alignment/matrix/detail/coordinate_matrix.hpp>
-#include <seqan3/utility/simd/simd.hpp>
-
 #include <seqan3/test/simd_utility.hpp>
+#include <seqan3/utility/simd/simd.hpp>
 
 #include "../../../range/iterator_test_template.hpp"
 

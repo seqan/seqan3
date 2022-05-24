@@ -18,7 +18,7 @@
 #include <seqan3/utility/views/to.hpp>
 
 #if SEQAN3_HAS_SEQAN2
-#include <seqan/index.h>
+#    include <seqan/index.h>
 #endif
 
 static constexpr int32_t max_length{50'000};
@@ -30,7 +30,7 @@ static void arguments(benchmark::internal::Benchmark * b)
     for (int32_t length : {50, 5000})
 #else
     for (int32_t length : {50, 5000, 50'000})
-#endif  // NDEBUG
+#endif // NDEBUG
     {
         if (length > max_length)
             throw std::logic_error{"Increase max_length to at least " + std::to_string(length)};
@@ -51,11 +51,12 @@ struct sequence_store_seqan3
 {
     std::vector<seqan3::dna4> const dna4_rng{seqan3::test::generate_sequence<seqan3::dna4>(max_length, 0, seed)};
     std::vector<seqan3::aa27> const aa27_rng{seqan3::test::generate_sequence<seqan3::aa27>(max_length, 0, seed)};
-    std::string const char_rng{[] ()
-    {
-        std::vector<uint8_t> const ranks{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
-        return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
-    }()};
+    std::string const char_rng{[]()
+                               {
+                                   std::vector<uint8_t> const ranks{
+                                       seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
+                                   return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+                               }()};
 };
 
 sequence_store_seqan3 store{};
@@ -64,7 +65,8 @@ template <tag index_tag, typename rng_t>
 void index_benchmark_seqan3(benchmark::State & state)
 {
     using alphabet_t = seqan3::range_innermost_value_t<rng_t>;
-    using inner_rng_t = std::conditional_t<seqan3::range_dimension_v<rng_t> == 1, rng_t, std::ranges::range_value_t<rng_t>>;
+    using inner_rng_t =
+        std::conditional_t<seqan3::range_dimension_v<rng_t> == 1, rng_t, std::ranges::range_value_t<rng_t>>;
 
     rng_t sequence;
     inner_rng_t inner_sequence;
@@ -98,14 +100,15 @@ void index_benchmark_seqan3(benchmark::State & state)
 struct sequence_store_seqan2
 {
     seqan::String<seqan::Dna> const dna4_rng{seqan3::test::generate_sequence_seqan2<seqan::Dna>(max_length, 0, seed)};
-    seqan::String<seqan::AminoAcid> const aa27_rng{seqan3::test::generate_sequence_seqan2<seqan::AminoAcid>(max_length,
-                                                                                                            0,
-                                                                                                            seed)};
-    seqan::String<char> const char_rng{[] ()
-    {
-        std::vector<uint8_t> const ranks{seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
-        return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
-    }()};
+    seqan::String<seqan::AminoAcid> const aa27_rng{
+        seqan3::test::generate_sequence_seqan2<seqan::AminoAcid>(max_length, 0, seed)};
+    seqan::String<char> const char_rng{
+        []()
+        {
+            std::vector<uint8_t> const ranks{
+                seqan3::test::generate_numeric_sequence<uint8_t>(max_length, 0, 253, seed)};
+            return ranks | seqan3::views::rank_to<char> | seqan3::views::to<std::string>;
+        }()};
 };
 
 sequence_store_seqan2 store2{};
@@ -118,7 +121,7 @@ constexpr size_t seqan_dimension_v()
         return 1;
     if (seqan3::detail::is_type_specialisation_of_v<rng_t, seqan::StringSet>)
         return 2;
-   return 0;
+    return 0;
 }
 
 template <tag index_tag, typename rng_t>
@@ -128,10 +131,10 @@ void index_benchmark_seqan2(benchmark::State & state)
     static_assert(dimension != 0, "Use seqan::String or seqan::StringSet for SeqAn2 index benchmarks!");
 
     // Calling std::ranges::range_value_t twice on seqan::String<char> is not valid.
-    using alphabet_t = seqan3::detail::lazy_conditional_t<dimension == 1,
-                                                         std::ranges::range_value_t<rng_t>,
-                                                         seqan3::detail::lazy<std::ranges::range_value_t,
-                                                                              std::ranges::range_value_t<rng_t>>>;
+    using alphabet_t = seqan3::detail::lazy_conditional_t<
+        dimension == 1,
+        std::ranges::range_value_t<rng_t>,
+        seqan3::detail::lazy<std::ranges::range_value_t, std::ranges::range_value_t<rng_t>>>;
 
     using inner_rng_t = std::conditional_t<dimension == 1, rng_t, std::ranges::range_value_t<rng_t>>;
     using index_cfg = seqan::FastFMIndexConfig<void, uint64_t>;
@@ -172,18 +175,18 @@ using one_dimensional = std::conditional_t<std::same_as<std::string, t>, std::st
 template <typename t>
 using two_dimensional = std::vector<one_dimensional<t>>;
 
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    one_dimensional<seqan3::dna4>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    two_dimensional<seqan3::dna4>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    one_dimensional<seqan3::aa27>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    two_dimensional<seqan3::aa27>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    one_dimensional<std::string> )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index,    two_dimensional<std::string> )->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, one_dimensional<seqan3::dna4>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, two_dimensional<seqan3::dna4>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, one_dimensional<seqan3::aa27>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, two_dimensional<seqan3::aa27>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, one_dimensional<std::string>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::fm_index, two_dimensional<std::string>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, one_dimensional<seqan3::dna4>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, two_dimensional<seqan3::dna4>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, one_dimensional<seqan3::aa27>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, two_dimensional<seqan3::aa27>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, one_dimensional<std::string> )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, two_dimensional<std::string> )->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, one_dimensional<std::string>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan3, tag::bi_fm_index, two_dimensional<std::string>)->Apply(arguments);
 
 #if SEQAN3_HAS_SEQAN2
 template <typename t>
@@ -191,18 +194,18 @@ using one_dimensional2 = seqan::String<t>;
 template <typename t>
 using two_dimensional2 = seqan::StringSet<seqan::String<t>>;
 
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    one_dimensional2<seqan::Dna>      )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    two_dimensional2<seqan::Dna>      )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    one_dimensional2<seqan::AminoAcid>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    two_dimensional2<seqan::AminoAcid>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    one_dimensional2<char>            )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index,    two_dimensional2<char>            )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan::Dna>      )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan::Dna>      )->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan::Dna>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan::Dna>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<seqan::AminoAcid>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<seqan::AminoAcid>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, one_dimensional2<char>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::fm_index, two_dimensional2<char>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan::Dna>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan::Dna>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<seqan::AminoAcid>)->Apply(arguments);
 BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<seqan::AminoAcid>)->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<char>            )->Apply(arguments);
-BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<char>            )->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, one_dimensional2<char>)->Apply(arguments);
+BENCHMARK_TEMPLATE(index_benchmark_seqan2, tag::bi_fm_index, two_dimensional2<char>)->Apply(arguments);
 #endif // SEQAN3_HAS_SEQAN2
 
 BENCHMARK_MAIN();

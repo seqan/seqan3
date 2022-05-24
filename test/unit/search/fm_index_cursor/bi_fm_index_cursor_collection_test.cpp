@@ -37,11 +37,10 @@ struct bi_fm_index_cursor_collection_test : public ::testing::Test
     std::vector<text_type> text_col3{text4, text2};
     std::vector<text_type> text_col4{text, text2};
 
-    std::vector<text_type> rev_text1 = text_col1 | seqan3::views::deep{std::views::reverse}
-                                                 | seqan3::views::to<std::vector<text_type>>;
-    std::vector<text_type> rev_text2 = text_col4 | seqan3::views::deep{std::views::reverse}
-                                                 | std::views::reverse
-                                                 | seqan3::views::to<std::vector<text_type>>;
+    std::vector<text_type> rev_text1 =
+        text_col1 | seqan3::views::deep{std::views::reverse} | seqan3::views::to<std::vector<text_type>>;
+    std::vector<text_type> rev_text2 = text_col4 | seqan3::views::deep{std::views::reverse} | std::views::reverse
+                                     | seqan3::views::to<std::vector<text_type>>;
 
     text_type pattern1{convert(std::string_view{"CAG"})};
     text_type pattern2{convert(std::string_view{"TT"})};

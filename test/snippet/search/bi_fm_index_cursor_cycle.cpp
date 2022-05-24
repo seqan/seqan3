@@ -11,9 +11,9 @@ int main()
     seqan3::debug_stream << "Example cycle_back() and cycle_front()\n";
 
     seqan3::dna4_vector genome{"GAATTAATGAAC"_dna4};
-    seqan3::bi_fm_index index{genome};                      // build the bidirectional index
+    seqan3::bi_fm_index index{genome}; // build the bidirectional index
 
-    auto cur = index.cursor();                              // create a cursor
+    auto cur = index.cursor(); // create a cursor
     // cur.cycle_back();                                    // cycle_back / cycle_front on begin() is undefined behaviour!
     cur.extend_right("AAC"_dna4);                           // search the sequence "AAC"
     seqan3::debug_stream << cur.path_label(genome) << '\n'; // outputs "AAC"

@@ -15,8 +15,8 @@ int main()
         dynamic_hit = seqan3::search_cfg::hit_single_best{};
 
     // Combine it with other configurations.
-    seqan3::configuration const cfg = dynamic_hit |
-                                      seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
+    seqan3::configuration const cfg =
+        dynamic_hit | seqan3::search_cfg::max_error_total{seqan3::search_cfg::error_count{1}};
 
     // Directly initialised.
     seqan3::search_cfg::hit dynamic_hit2{seqan3::search_cfg::hit_all_best{}};

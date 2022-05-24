@@ -10,6 +10,6 @@ int main()
     letter.assign_char('~');
     seqan3::debug_stream << letter << '\n'; // prints "~"
 
-    letter.assign_char('#'); // Unknown characters are implicitly converted to ';'.
+    letter.assign_char('#');                // Unknown characters are implicitly converted to ';'.
     seqan3::debug_stream << letter << '\n'; // prints ";"
 }
