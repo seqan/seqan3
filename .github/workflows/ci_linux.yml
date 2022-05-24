@@ -7,7 +7,10 @@ on:
       - 'master'
       # Push events to branches matching refs/heads/release*
       - 'release*'
+  # Trigger after PR was unlabeled
   pull_request:
+    types:
+      - unlabeled
   # Enables a manual trigger, may run on any branch
   workflow_dispatch:
 
@@ -29,7 +32,7 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-22.04
     timeout-minutes: 120
-    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch'
+    if: github.repository_owner == 'seqan' || github.event_name == 'workflow_dispatch' || github.event.label.name == 'clang-format'
     strategy:
       fail-fast: true
       matrix:

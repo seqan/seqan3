@@ -1,0 +1,105 @@
+name: SeqAn3 lint
+
+on:
+  pull_request_target:
+
+env:
+  CLANG_VERSION: 1:15~++20220523042142+b86440ecde5c-1~exp1~20220523042228.188
+  TZ: Europe/Berlin
+
+defaults:
+  run:
+    shell: bash -exo pipefail {0}
+
+jobs:
+  # Cancel other workflows that are dependent on this workflow by adding jobs that have the same concurrency group.
+  cancel_linux:
+    name: Cancel Linux
+    concurrency:
+      group: linux-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Cancel Linux"
+        run: echo "Cancelling Linux"
+  cancel_macos:
+    name: Cancel macOS
+    concurrency:
+      group: macos-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Cancel macOS"
+        run: echo "Cancelling macOS"
+  cancel_misc:
+    name: Cancel Misc
+    concurrency:
+      group: misc-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Cancel Misc"
+        run: echo "Cancelling Misc"
+  build:
+    name: clang-format
+    concurrency:
+      group: clang-format-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Add label
+        env:
+            GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+            PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr edit $PR_URL --add-label "clang-format"
+
+      - name: Checkout SeqAn3
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: seqan3
+          submodules: false
+
+      - name: Install clang-format
+        run: |
+          echo 'APT::Acquire::Retries "5";' | sudo tee -a /etc/apt/apt.conf.d/80-retries > /dev/null
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository --no-update --yes "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main"
+          sudo apt-get update
+          sudo apt-get install --yes clang-format-15=${CLANG_VERSION}
+
+      - name: Run clang-format
+        run: |
+          find seqan3 \( -path "seqan3/include/seqan3/std/*" -or -iname "*.hpp" -or -iname "*.cpp" \) \
+          -and -not -path "seqan3/submodules/*" \
+          -and -not -path "seqan3/include/seqan3/contrib/*" | \
+          xargs clang-format-15 --style=file:seqan3/.clang-format -i
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          workdir: seqan3
+          gpg_private_key: ${{ secrets.SEQAN_ACTIONS_GPG_KEY }}
+          passphrase: ${{ secrets.SEQAN_ACTIONS_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: seqan-actions[bot]
+          author_email: seqan-actions@users.noreply.github.com
+          message: '[MISC] clang-format'
+          cwd: './seqan3'
+
+      # Wait for 5 seconds such that workflows triggered by adding the label run on the newest commit.
+      - name: Defer workflow
+        run: sleep 5
+
+      - name: Remove label
+        env:
+            GITHUB_TOKEN: ${{ secrets.SEQAN_ACTIONS_PAT }}
+            PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr edit $PR_URL --remove-label "clang-format"
